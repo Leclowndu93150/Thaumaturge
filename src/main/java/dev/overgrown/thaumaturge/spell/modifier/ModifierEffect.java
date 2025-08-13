@@ -1,10 +1,11 @@
 package dev.overgrown.thaumaturge.spell.modifier;
 
-/**
- * Marker interface for spell modifiers in the 1.20.1 backport.
- * Aspect effects inspect the list of modifiers directly (e.g., instanceof PowerModifierEffect).
- * No hooks here; execution is centralized in AspectEffect implementations.
- */
+import dev.overgrown.thaumaturge.spell.tier.AoeSpellDelivery;
+import dev.overgrown.thaumaturge.spell.tier.SelfSpellDelivery;
+import dev.overgrown.thaumaturge.spell.tier.TargetedSpellDelivery;
+
 public interface ModifierEffect {
-    // marker only
+    default void applySelf(SelfSpellDelivery delivery) {}
+    default void applyTargeted(TargetedSpellDelivery delivery) {}
+    default void applyAoe(AoeSpellDelivery delivery) {}
 }
