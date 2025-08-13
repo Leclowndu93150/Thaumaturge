@@ -26,17 +26,14 @@ public class ResonanceGauntletItem extends Item {
         ItemStack stack = user.getStackInHand(hand);
 
         if (user.isSneaking()) {
-            NbtList foci = getFoci(stack);
             GauntletComponent component = ModComponents.getGauntletState(stack);
             
-            if (!foci.isEmpty() || !component.entries().isEmpty()) {
-                for (NbtElement element : foci) {
-                    ItemStack focus = ItemStack.fromNbt((NbtCompound) element);
-                    user.giveItemStack(focus);
-                }
-
+            if (!component.entries().isEmpty()) {
                 for (GauntletComponent.FociEntry entry : component.entries()) {
                     ItemStack focusStack = new ItemStack(entry.item());
+                    if (entry.modifierId() != null && !entry.modifierId().toString().equals("thaumaturge:stable")) {
+                        focusStack.getOrCreateNbt().putString("Modifier", entry.modifierId().toString());
+                    }
                     user.giveItemStack(focusStack);
                 }
 

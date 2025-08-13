@@ -1,5 +1,6 @@
 package dev.overgrown.thaumaturge.item.focus;
 
+import dev.overgrown.aspectslib.AspectsLib;
 import dev.overgrown.aspectslib.api.AspectsAPI;
 import dev.overgrown.aspectslib.data.AspectData;
 import net.minecraft.item.Item;
@@ -22,7 +23,8 @@ public class GreaterFocusItem extends Item implements FocusItem {
         if (!data.isEmpty()) {
             return data.getAspectIds().iterator().next(); // Get first aspect
         }
-        return new Identifier("thaumaturge", "null");
+        // Default to ignis aspect for greater focus when no aspect data is present
+        return AspectsLib.identifier("ignis");
     }
 
     @Override

@@ -34,6 +34,8 @@ run/
 
 # java
 
+codebase
+
 hs_err_*.log
 replay_*.log
 *.hprof
