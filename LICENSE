@@ -1,0 +1,150 @@
+Thaumaturge License
+Copyright (c) 2026 Leclowndu93150 and contributors. All rights reserved.
+
+
+SUMMARY (not part of the license)
+
+The source is public so you can read it, learn from it, fork it on GitHub, and
+contribute to it. What you may not do is publish it: no uploading this mod or a
+modified version of it to CurseForge, Modrinth, or anywhere else, and no
+distributing builds of it. If the author disappears for a year, the license
+converts to MIT so the project can be continued by someone else.
+
+
+1. DEFINITIONS
+
+1.1 "Software" means the source code, configuration, and build scripts in the
+    Canonical Repository, and any binary built from them.
+
+1.2 "Author" means Leclowndu93150, reachable at the GitHub account
+    github.com/Leclowndu93150 and the Discord account Leclowndu93150.
+
+1.3 "Canonical Repository" means https://github.com/Leclowndu93150/Thaumaturge
+    or a successor repository designated by the Author.
+
+1.4 "You" means any person or entity exercising the permissions in section 2.
+
+1.5 "Publish" means to make the Software, a modified version of it, or a binary
+    built from it, available to any third party, including uploading it to a mod
+    distribution platform, hosting it for download, bundling it in a modpack, or
+    sending it to another person.
+
+
+2. PERMISSIONS
+
+Subject to section 3, You may:
+
+2.1 View, read, and study the Software.
+
+2.2 Fork the Canonical Repository on GitHub, and create branches and pull
+    requests against it.
+
+2.3 Modify the Software for Your own use.
+
+2.4 Build the Software and run the result yourself, including on a server You
+    operate, whether or not other people connect to that server.
+
+2.5 Quote short excerpts of the source code for the purpose of discussion,
+    review, bug reporting, or teaching.
+
+
+3. RESTRICTIONS
+
+3.1 You may not Publish the Software or any modified version of it, in source or
+    binary form, without prior written permission from the Author. This includes
+    but is not limited to CurseForge, Modrinth, GitHub Releases on a fork,
+    Discord servers, file hosts, and modpacks.
+
+3.2 You may not sell the Software, charge for access to it, or place it behind
+    advertising, link shorteners, or any other revenue mechanism.
+
+3.3 You may not release a competing or continued version of this mod under this
+    or any other name while this license is in force and section 4 has not been
+    triggered.
+
+3.4 You may not remove or alter this license, the copyright notices, or the
+    authorship metadata in the Software.
+
+3.5 Forks permitted under section 2.2 exist for reading, contribution, and
+    personal modification. Publishing from a fork is still Publishing and is
+    governed by section 3.1.
+
+
+4. DORMANCY AND AUTOMATIC RELICENSING
+
+The Author intends this project to survive the Author. This section converts the
+license automatically if the Author becomes inactive or unreachable.
+
+4.1 Trigger. This section is triggered when either condition is met:
+
+    (a) No commit authored by the Author has been pushed to the Canonical
+        Repository for 365 consecutive days; or
+
+    (b) The Author has failed to respond within 90 days to a good-faith contact
+        attempt made through BOTH of the following: a message to the Discord
+        account named in section 1.2, and a public issue opened in the Canonical
+        Repository.
+
+4.2 Notice and cure. Before relying on this section, You must open a public
+    issue in the Canonical Repository titled "Dormancy notice" stating which
+    condition You believe is met, and wait 30 days. If the Author responds in
+    that window, or pushes a commit in that window, this section is not
+    triggered and both clocks reset.
+
+4.3 Effect. Once triggered and the cure period has passed without response, this
+    license converts irrevocably, for everyone, to the MIT License, with the
+    copyright notice "Copyright (c) 2026 Leclowndu93150 and contributors". From
+    that moment sections 3.1 through 3.3 no longer apply.
+
+4.4 Scope. The conversion in section 4.3 applies only to material the Author is
+    entitled to license. It does not and cannot grant rights in the material
+    described in section 5.
+
+4.5 Reset. Any commit pushed by the Author to the Canonical Repository restarts
+    the period in section 4.1(a).
+
+
+5. THIRD-PARTY MATERIAL
+
+5.1 Portions of the Software, including certain textures, sounds, and text
+    content, derive from works whose rights are held by third parties. Those
+    portions are not the Author's to license, are not covered by the permissions
+    in section 2, and are unaffected by section 4.
+
+5.2 Nothing in this license grants You any right in that third-party material.
+    If You intend to use, reproduce, or redistribute any part of it, it is Your
+    responsibility to obtain permission from the party that holds those rights.
+
+5.3 This license applies to the Author's own contributions to the Software.
+
+
+6. CONTRIBUTIONS
+
+6.1 By submitting a pull request or patch to the Canonical Repository, You grant
+    the Author a perpetual, worldwide, irrevocable, royalty-free license to use,
+    modify, sublicense, and relicense Your contribution as part of the Software,
+    including under the conversion described in section 4.
+
+6.2 You retain copyright in Your contribution.
+
+
+7. DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR OR
+CONTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+8. GENERAL
+
+8.1 Permission beyond this license may be requested from the Author at the
+    contacts in section 1.2. Permission granted for one case is not permission
+    for any other.
+
+8.2 If any provision of this license is held unenforceable, the remaining
+    provisions remain in force.
+
+8.3 The Author may release the Software under different terms at any time.
