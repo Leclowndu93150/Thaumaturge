@@ -1,0 +1,92 @@
+name: Bug Report
+description: Report a single bug (crash, broken mechanic, wrong behavior).
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Please file one bug per issue.** If you have several unrelated problems, open a separate issue for each — it lets me track and close them individually. Lists of many bugs in one issue are much harder to fix.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you start
+      options:
+        - label: This report covers a single bug (not a list of unrelated issues).
+          required: true
+        - label: I searched existing issues and this hasn't already been reported.
+          required: true
+  - type: dropdown
+    id: mc-version
+    attributes:
+      label: Minecraft version
+      description: Which version of the mod is this about? Check the file name if you are unsure.
+      options:
+        - "26.1.2"
+        - "1.21.1"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly. What did you do, and what went wrong?
+      placeholder: e.g. Using Salis Mundus on a workbench to complete First Steps gets stuck on "Completing..." and no research can proceed.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      description: What should happen instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps so I can trigger it myself.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: false
+  - type: input
+    id: tc-version
+    attributes:
+      label: Thaumcraft version
+      description: Exact file name or version of this mod.
+      placeholder: e.g. thaumcraft-26.1.2-NeoForge-BETA-0.1.2
+    validations:
+      required: false
+  - type: input
+    id: loader-version
+    attributes:
+      label: Mod loader + version
+      placeholder: e.g. NeoForge 26.1.2.80
+    validations:
+      required: false
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Relevant dependency versions
+      description: Versions of dependencies that might be involved (Curios, TerraBlender, etc.).
+      placeholder: e.g. Curios API 15.0.0-beta2, TerraBlender 26.1.2.0.3
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Crash report / log
+      description: If it crashed, paste the crash report or link it. This is automatically formatted, no backticks needed.
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / video
+      description: Drag images or video here if they help show the problem.
+    validations:
+      required: false

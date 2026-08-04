@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: I have several unrelated bugs
+    url: https://github.com/Leclowndu93150/Thaumcraft-Issues/issues/new/choose
+    about: Please don't list them all in one issue. Open a separate Bug Report for each one so they can be tracked and closed individually.

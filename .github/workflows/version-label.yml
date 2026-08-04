@@ -1,0 +1,31 @@
+name: Version label
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply the version label picked in the issue form
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          version=$(printf '%s\n' "$BODY" | tr -d '\r' \
+            | awk '/^### Minecraft version$/ { found = 1; next } found && NF { print; exit }')
+          case "$version" in
+            26.1.2|1.21.1)
+              echo "Labelling #$NUMBER as $version"
+              gh issue edit "$NUMBER" --repo "$REPO" --add-label "$version"
+              ;;
+            *)
+              echo "No recognised version heading in #$NUMBER (read: '$version') - leaving unlabelled"
+              ;;
+          esac

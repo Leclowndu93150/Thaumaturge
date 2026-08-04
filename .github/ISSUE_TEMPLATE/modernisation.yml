@@ -1,0 +1,62 @@
+name: Modernisation
+description: Something that differs from the newer versions of Minecraft (missing, changed, or behaves differently).
+title: "[Modernisation]: "
+labels: ["modernisation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when a feature doesn't exist but does in **newer Minecraft version**, or is missing entirely. E.g. Stripped logs for Greatwood **One difference per issue, please.** — without that I can't tell what needs changing.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you start
+      options:
+        - label: This report covers a single feature/difference (not a list).
+          required: true
+        - label: I searched existing issues and this hasn't already been reported.
+          required: true
+  - type: dropdown
+    id: mc-version
+    attributes:
+      label: Minecraft version
+      description: Which version of the mod is this about? Check the file name if you are unsure.
+      options:
+        - "26.1.2"
+        - "1.21.1"
+    validations:
+      required: true
+  - type: input
+    id: feature
+    attributes:
+      label: Feature / Mechanic / Block / Tools
+      description: What is this about?
+      placeholder: e.g. Research Table multiblock, Salis Mundus recipe, Void Guardian bosses
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of difference
+      options:
+        - Missing entirely (not in this version yet)
+        - Present but behaves differently
+        - Present but incomplete (missing recipe / texture / entries)
+        - Wrong values / stats / recipe
+    validations:
+      required: true
+  - type: textarea
+    id: original
+    attributes:
+      label: The new feature
+      description: Describe the newer feature. Screenshots, wiki links, or version notes are very welcome.
+      placeholder: e.g. In the newer version, logs have stripped logs that can be make with axes
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / references
+      description: Images comparing original vs current, wiki links, etc.
+    validations:
+      required: false
