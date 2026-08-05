@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -51,28 +52,28 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null) {
             return InteractionResult.PASS;
         }
-        player.swing(context.getHand(), true);
         Level level = context.getLevel();
+        ISealEntity seal =
+                SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
+        if (seal == null) {
+            return InteractionResult.PASS;
+        }
+        player.swing(context.getHand(), true);
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        ISealEntity seal =
-                SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
-        if (seal != null) {
-            if (player.isShiftKeyDown()) {
-                SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-                level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-            } else {
-                SealGuiOpener.open(player, seal);
-            }
-            return InteractionResult.SUCCESS_SERVER;
+        if (player.isShiftKeyDown()) {
+            SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
+            level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        } else {
+            SealGuiOpener.open(player, seal);
         }
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     public static @Nullable ISealEntity getAimedSeal(Player player) {

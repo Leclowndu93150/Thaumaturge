@@ -3,7 +3,7 @@
         "ctm_version": 1,
         "type":"CTM",
         "textures":[
-            "thaumaturge:blocks/ancient_glyph_ctm"
+            "thaumaturge:block/ancient_glyph_ctm"
         ],
         "extra":{
         	"ignore_states":"false"
