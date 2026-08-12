@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.content.particle.RiftShardParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.ScanGlyphParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.SlashParticleOptions;
+import com.leclowndu93150.thaumaturge.content.particle.SlimyBubbleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.SmokeSpiralParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
@@ -76,6 +77,9 @@ public final class TCParticles {
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<BubbleParticleOptions>> BUBBLE =
             register("bubble", BubbleParticleOptions.CODEC, BubbleParticleOptions.STREAM_CODEC);
+
+    public static final DeferredHolder<ParticleType<?>, ParticleType<SlimyBubbleParticleOptions>> SLIMY_BUBBLE =
+            register("slimy_bubble", SlimyBubbleParticleOptions.CODEC, SlimyBubbleParticleOptions.STREAM_CODEC);
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<SparkParticleOptions>> SPARK =
             register("spark", SparkParticleOptions.CODEC, SparkParticleOptions.STREAM_CODEC);

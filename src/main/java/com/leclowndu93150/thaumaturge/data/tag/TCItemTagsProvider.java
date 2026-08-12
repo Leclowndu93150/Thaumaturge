@@ -152,5 +152,76 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(TCItemTags.RUNIC_SHIELDABLE)
                 .addOptionalTags(
                         CuriosTags.HEAD, CuriosTags.NECKLACE, CuriosTags.RING, CuriosTags.BELT, CuriosTags.CHARM);
+
+        tag(ItemTags.SWORDS)
+                .add(
+                        TCItems.THAUMIUM_SWORD.get(),
+                        TCItems.VOID_SWORD.get(),
+                        TCItems.ELEMENTAL_SWORD.get(),
+                        TCItems.CRIMSON_BLADE.get());
+        tag(ItemTags.PICKAXES)
+                .add(
+                        TCItems.THAUMIUM_PICKAXE.get(),
+                        TCItems.VOID_PICKAXE.get(),
+                        TCItems.ELEMENTAL_PICKAXE.get(),
+                        TCItems.PRIMAL_CRUSHER.get());
+        tag(ItemTags.AXES).add(TCItems.THAUMIUM_AXE.get(), TCItems.VOID_AXE.get(), TCItems.ELEMENTAL_AXE.get());
+        tag(ItemTags.SHOVELS)
+                .add(TCItems.THAUMIUM_SHOVEL.get(), TCItems.VOID_SHOVEL.get(), TCItems.ELEMENTAL_SHOVEL.get());
+        tag(ItemTags.HOES).add(TCItems.THAUMIUM_HOE.get(), TCItems.VOID_HOE.get(), TCItems.ELEMENTAL_HOE.get());
+
+        tag(ItemTags.HEAD_ARMOR)
+                .add(
+                        TCItems.THAUMIUM_HELM.get(),
+                        TCItems.VOID_HELM.get(),
+                        TCItems.VOID_ROBE_HELM.get(),
+                        TCItems.FORTRESS_HELM.get(),
+                        TCItems.CRIMSON_PLATE_HELM.get(),
+                        TCItems.CRIMSON_ROBE_HELM.get(),
+                        TCItems.CRIMSON_PRAETOR_HELM.get(),
+                        TCItems.GOGGLES_REVEALING.get());
+        tag(ItemTags.CHEST_ARMOR)
+                .add(
+                        TCItems.THAUMIUM_CHEST.get(),
+                        TCItems.VOID_CHEST.get(),
+                        TCItems.VOID_ROBE_CHEST.get(),
+                        TCItems.FORTRESS_CHEST.get(),
+                        TCItems.CLOTH_CHEST.get(),
+                        TCItems.CRIMSON_PLATE_CHEST.get(),
+                        TCItems.CRIMSON_ROBE_CHEST.get(),
+                        TCItems.CRIMSON_PRAETOR_CHEST.get());
+        tag(ItemTags.LEG_ARMOR)
+                .add(
+                        TCItems.THAUMIUM_LEGS.get(),
+                        TCItems.VOID_LEGS.get(),
+                        TCItems.VOID_ROBE_LEGS.get(),
+                        TCItems.FORTRESS_LEGS.get(),
+                        TCItems.CLOTH_LEGS.get(),
+                        TCItems.CRIMSON_PLATE_LEGS.get(),
+                        TCItems.CRIMSON_ROBE_LEGS.get(),
+                        TCItems.CRIMSON_PRAETOR_LEGS.get());
+        tag(ItemTags.FOOT_ARMOR)
+                .add(
+                        TCItems.THAUMIUM_BOOTS.get(),
+                        TCItems.VOID_BOOTS.get(),
+                        TCItems.TRAVELLER_BOOTS.get(),
+                        TCItems.CLOTH_BOOTS.get(),
+                        TCItems.CRIMSON_BOOTS.get());
+
+        tag(Tags.Items.MELEE_WEAPON_TOOLS)
+                .add(
+                        TCItems.THAUMIUM_SWORD.get(),
+                        TCItems.VOID_SWORD.get(),
+                        TCItems.ELEMENTAL_SWORD.get(),
+                        TCItems.CRIMSON_BLADE.get(),
+                        TCItems.THAUMIUM_AXE.get(),
+                        TCItems.VOID_AXE.get(),
+                        TCItems.ELEMENTAL_AXE.get());
+        tag(Tags.Items.MINING_TOOL_TOOLS)
+                .add(
+                        TCItems.THAUMIUM_PICKAXE.get(),
+                        TCItems.VOID_PICKAXE.get(),
+                        TCItems.ELEMENTAL_PICKAXE.get(),
+                        TCItems.PRIMAL_CRUSHER.get());
     }
 }

@@ -39,3 +39,4 @@ nv-gametest.log
 
 # Local credentials (never commit)
 .env
+build-datagen

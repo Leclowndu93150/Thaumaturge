@@ -23,40 +23,11 @@
                 0
             ]
         },
-        "firstperson_lefthand": {
-            "translation": [
-                -16.96,
-                0.096,
-                -6.4
-            ],
-            "rotation": [
-                90,
-                0,
-                0
-            ]
-        },
         "thirdperson_righthand": {
             "translation": [
                 -1.6,
                 1.6,
                 0
-            ],
-            "rotation": [
-                90,
-                0,
-                -90
-            ],
-            "scale": [
-                0.2,
-                0.2,
-                0.2
-            ]
-        },
-        "thirdperson_lefthand": {
-            "translation": [
-                -1.6,
-                0,
-                1.6
             ],
             "rotation": [
                 90,

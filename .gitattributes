@@ -1,0 +1,25 @@
+# Normalize every text file to LF in the repository.
+# Working trees check out LF too, so WSL and Windows tooling agree.
+* text=auto eol=lf
+
+*.java   text eol=lf
+*.json   text eol=lf
+*.mcmeta text eol=lf
+*.tcmesh text eol=lf
+*.gradle text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+*.toml   text eol=lf
+*.vsh    text eol=lf
+*.fsh    text eol=lf
+*.properties text eol=lf
+
+# Windows batch files must keep CRLF to stay runnable from cmd.exe.
+*.bat text eol=crlf
+
+gradlew text eol=lf
+
+*.png  binary
+*.ogg  binary
+*.jar  binary
+*.nbt  binary

@@ -259,6 +259,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.elemental_sword.toggle", "Sneak + right-click to toggle the whirlwind");
         add("item.thaumaturge.jar_brace", "Brass Lid Brace");
         add("item.thaumaturge.label", "Label");
+        add("item.thaumaturge.marked_label", "Marked Label");
         add("item.thaumaturge.salis_mundus", "Salis Mundus");
         add(
                 "tooltip.thaumaturge.salis_mundus.desc",
@@ -275,6 +276,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.spa", "Arcane Spa");
         add("block.thaumaturge.purifying_fluid", "Purifying Fluid");
         add("fluid_type.thaumaturge.purifying", "Purifying Fluid");
+        add("block.thaumaturge.liquid_death", "Liquid Death");
+        add("fluid_type.thaumaturge.liquid_death", "Liquid Death");
+        add("item.thaumaturge.liquid_death_bucket", "Liquid Death Bucket");
         add("gui.thaumaturge.spa.mix.true", "Mix with ingredient");
         add("gui.thaumaturge.spa.mix.false", "Use just the fluid");
         add("item.thaumaturge.chunk_beef", "Beef Nugget");
@@ -829,10 +833,12 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("warp.thaumaturge.lose.temporary", "You have lost temporary Warp!");
         add("warp.thaumaturge.text.1", "You feel oddly drained.");
         add("warp.thaumaturge.text.2", "A sudden and unnatural hunger consumes you.");
+        add("warp.thaumaturge.text.3", "Strange whispers reveal secrets to you.");
         add("warp.thaumaturge.text.4", "Your vision becomes strange and grim.");
         add("warp.thaumaturge.text.5", "The light suddenly becomes overwhelmingly bright and burns your skin.");
         add("warp.thaumaturge.text.6", "A thick fog appears from nowhere. Something stirs in its depths.");
         add("warp.thaumaturge.text.7", "They're everywhere! Run!");
+        add("warp.thaumaturge.text.8", "Surely there must be a way to stop these headaches?");
         add("warp.thaumaturge.text.9", "You suddenly feel reluctant to break things.");
         add("warp.thaumaturge.text.10", "Your perception suddenly expands.");
         add("warp.thaumaturge.text.11", "What was that noise? Something is behind you.");

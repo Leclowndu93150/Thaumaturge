@@ -3,9 +3,6 @@ package com.leclowndu93150.thaumaturge.content.research;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
-import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
-import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
@@ -22,7 +19,6 @@ import net.minecraft.server.network.Filterable;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
@@ -85,24 +81,14 @@ public final class ResearchProgressionEvents {
     }
 
     private static boolean isCraftReference(ServerPlayer player, ItemStack crafted) {
-        Holder<Item> holder = crafted.getItem().builtInRegistryHolder();
-        return player.registryAccess()
-                .lookup(IResearchEntry.REGISTRY_KEY)
-                .map(lookup -> lookup.listElements().anyMatch(entry -> {
-                    for (IResearchStage stage : entry.value().stages()) {
-                        for (ResearchRequirement req : stage.craft()) {
-                            if (req.items().contains(holder)) return true;
-                        }
-                    }
-                    return false;
-                }))
-                .orElse(false);
+        return CraftReferenceHolder.isReference(player.registryAccess(), crafted.getItem());
     }
 
     @SubscribeEvent
     public static void onItemPickup(ItemEntityPickupEvent.Post event) {
         if (!(event.getPlayer() instanceof ServerPlayer player)) return;
         ItemStack stack = event.getOriginalStack();
+        recordCrafted(player, stack);
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
         if (stack.is(TCItems.ESSENTIA_CRYSTAL.get()) && !knowledge.isResearchKnown(GOT_CRYSTALS)) {
             knowledge.addResearch(GOT_CRYSTALS);

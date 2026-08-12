@@ -3,21 +3,8 @@ package com.leclowndu93150.thaumaturge.data.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.color.AspectColorTint;
-import com.leclowndu93150.thaumaturge.client.color.AspectFilterTint;
-import com.leclowndu93150.thaumaturge.client.color.CrystalAspectTint;
-import com.leclowndu93150.thaumaturge.client.color.FocusColorTint;
-import com.leclowndu93150.thaumaturge.client.color.GolemMaterialTint;
-import com.leclowndu93150.thaumaturge.client.color.NoteColorTint;
-import com.leclowndu93150.thaumaturge.client.model.CentrifugeItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.DeconTableItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.GolemBuilderItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.JarBrainItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.JarItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.JarNodeItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.NodeStabilizerItemSpecialRenderer;
-import com.leclowndu93150.thaumaturge.client.model.WandIsStaffProperty;
-import com.leclowndu93150.thaumaturge.client.model.WandItemSpecialRenderer;
+import com.leclowndu93150.thaumaturge.client.color.*;
+import com.leclowndu93150.thaumaturge.client.model.*;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
@@ -51,17 +38,10 @@ import net.minecraft.client.data.models.blockstates.ConditionBuilder;
 import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelInstance;
-import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.data.models.model.ModelTemplate;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.renderer.block.dispatch.VariantMutator;
 import net.minecraft.client.renderer.item.*;
-import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.properties.conditional.HasComponent;
 import net.minecraft.client.renderer.item.properties.numeric.Damage;
 import net.minecraft.client.renderer.item.properties.select.ComponentContents;
@@ -76,11 +56,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.block.state.properties.*;
 import org.joml.Matrix4f;
 
 public final class TCModelProvider extends ModelProvider {
@@ -92,9 +68,421 @@ public final class TCModelProvider extends ModelProvider {
             TextureSlot.LAYER0,
             TextureSlot.LAYER1,
             TextureSlot.LAYER2);
+    private static final int FOLIAGE_DEFAULT_COLOR = 0x48B518;
+    private static final int INSET_DEPTH = 2;
+    private static final int INSET_ALL_EXPOSED = 63;
 
     public TCModelProvider(PackOutput output) {
         super(output, TCIds.MODID);
+    }
+
+    private static void registerVoidRobePiece(ItemModelGenerators itemModels, Item item, String name) {
+        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
+        Material clothTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
+        Material metalTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
+        ModelTemplates.TWO_LAYERED_ITEM.create(
+                itemModelId, TextureMapping.layered(clothTex, metalTex), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
+    }
+
+    private static Variant applyRotation(Variant base, Direction direction) {
+        VariantMutator mutator =
+                switch (direction) {
+                    case DOWN -> BlockModelGenerators.NOP;
+                    case UP -> BlockModelGenerators.X_ROT_180;
+                    case NORTH -> BlockModelGenerators.X_ROT_270;
+                    case SOUTH -> BlockModelGenerators.X_ROT_90;
+                    case WEST -> BlockModelGenerators.X_ROT_270.then(BlockModelGenerators.Y_ROT_270);
+                    case EAST -> BlockModelGenerators.X_ROT_270.then(BlockModelGenerators.Y_ROT_90);
+                };
+        return mutator.apply(base);
+    }
+
+    private static void registerInvisibleBlock(BlockModelGenerators blockModels, Block block) {
+        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
+        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
+    }
+
+    private static void registerNitor(BlockModelGenerators blockModels, ItemModelGenerators itemModels, DyeColor dye) {
+        var block = TCBlocks.NITORS.get(dye).get();
+        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
+        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
+
+        var item = TCItems.NITORS.get(dye).get();
+        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/nitor");
+        int rgb = dye.getTextureDiffuseColor() & 0xFFFFFF;
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Constant(rgb)));
+    }
+
+    private static void registerInfusionAltar(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch<VariantMutator> facing = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
+                .select(Direction.NORTH, BlockModelGenerators.NOP)
+                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90)
+                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
+                .select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
+        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ARCANE.get(), "pillar_arcane", facing);
+        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ANCIENT.get(), "pillar_ancient", facing);
+        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ELDRITCH.get(), "pillar_eldritch", facing);
+        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ARCANE.get(), "pedestal_arcane");
+        registerSimpleWithItem(blockModels, itemModels, TCBlocks.RECHARGE_PEDESTAL.get(), "recharge_pedestal");
+        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ANCIENT.get(), "pedestal_ancient");
+        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ELDRITCH.get(), "pedestal_eldritch");
+        registerSimpleWithItem(blockModels, itemModels, TCBlocks.INFUSION_MATRIX.get(), "infusion_matrix");
+        itemModels.itemModelOutput.accept(
+                TCBlocks.INFUSION_MATRIX.asItem(),
+                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/infusion_matrix")));
+    }
+
+    private static void registerPillar(
+            BlockModelGenerators blockModels,
+            ItemModelGenerators itemModels,
+            Block block,
+            String modelName,
+            PropertyDispatch<VariantMutator> facing) {
+        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(block, variant).with(facing));
+        itemModels.itemModelOutput.accept(
+                block.asItem(), ItemModelUtils.plainModel(model), new ClientItem.Properties(true, true, 1));
+    }
+
+    private static void registerSimpleWithItem(
+            BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName) {
+        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
+        if (block != TCBlocks.INFUSION_MATRIX.get()) {
+            itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(model));
+        }
+    }
+
+    private static void registerSpa(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Identifier spaModel = ModelTemplates.CUBE_BOTTOM_TOP.create(
+                ModelLocationUtils.getModelLocation(TCBlocks.SPA.get()),
+                new TextureMapping()
+                        .put(
+                                TextureSlot.SIDE,
+                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_side")))
+                        .put(
+                                TextureSlot.TOP,
+                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_top")))
+                        .put(TextureSlot.BOTTOM, new Material(Identifier.withDefaultNamespace("block/furnace_top"))),
+                blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                TCBlocks.SPA.get(), new MultiVariant(WeightedList.of(new Variant(spaModel)))));
+        itemModels.itemModelOutput.accept(TCItems.SPA.get(), ItemModelUtils.plainModel(spaModel));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                TCBlocks.PURIFYING_FLUID.get(),
+                new MultiVariant(WeightedList.of(
+                        new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/purifying_fluid"))))));
+        itemModels.generateFlatItem(TCItems.BUCKET_LIQUID_DEATH.get(), ModelTemplates.FLAT_ITEM);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                TCBlocks.LIQUID_DEATH.get(),
+                new MultiVariant(WeightedList.of(
+                        new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/liquid_death"))))));
+    }
+
+    private static void registerGolemancy(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        itemModels.generateFlatItem(TCItems.MIND_CLOCKWORK.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.MIND_BIOTHAUMIC.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.MODULE_VISION.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.MODULE_AGGRESSION.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_BELL.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_TOP_HAT.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_FEZ.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_GLASSES.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_BOWTIE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GOLEM_VISOR.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_BLANK.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_PICKUP.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_PICKUP_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_FILL.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_FILL_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_EMPTY.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_EMPTY_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_HARVEST.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_BUTCHER.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_GUARD.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_GUARD_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_LUMBER.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_BREAKER.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_BREAKER_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_USE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_PROVIDER.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.SEAL_STOCK.get(), ModelTemplates.FLAT_ITEM);
+
+        Identifier golemModel = ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCItems.GOLEM_PLACER.get()),
+                TextureMapping.layer0(TCItems.GOLEM_PLACER.get()),
+                itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(
+                TCItems.GOLEM_PLACER.get(), ItemModelUtils.tintedModel(golemModel, new GolemMaterialTint()));
+
+        Identifier inlayDot = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_dot");
+        Identifier inlaySide = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_side");
+        MultiPartGenerator inlayGenerator = MultiPartGenerator.multiPart(TCBlocks.INLAY.get())
+                .with(new MultiVariant(WeightedList.of(new Variant(inlayDot))));
+        inlayGenerator = inlayGenerator.with(
+                new ConditionBuilder().term(BlockInlay.NORTH, true),
+                new MultiVariant(WeightedList.of(new Variant(inlaySide))));
+        inlayGenerator = inlayGenerator.with(
+                new ConditionBuilder().term(BlockInlay.EAST, true),
+                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_90.apply(new Variant(inlaySide)))));
+        inlayGenerator = inlayGenerator.with(
+                new ConditionBuilder().term(BlockInlay.SOUTH, true),
+                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_180.apply(new Variant(inlaySide)))));
+        inlayGenerator = inlayGenerator.with(
+                new ConditionBuilder().term(BlockInlay.WEST, true),
+                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_270.apply(new Variant(inlaySide)))));
+        blockModels.blockStateOutput.accept(inlayGenerator);
+        Identifier inlayItemModel = ModelTemplates.TWO_LAYERED_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCItems.INLAY.get()),
+                TextureMapping.layered(
+                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect_under")),
+                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect1"))),
+                itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(TCItems.INLAY.get(), ItemModelUtils.plainModel(inlayItemModel));
+
+        Identifier patternCrafterModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/pattern_crafter");
+        PropertyDispatch<VariantMutator> patternCrafterFacing = PropertyDispatch.modify(
+                        BlockStateProperties.HORIZONTAL_FACING)
+                .select(Direction.NORTH, BlockModelGenerators.NOP)
+                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
+                .select(Direction.WEST, BlockModelGenerators.Y_ROT_270)
+                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                        TCBlocks.PATTERN_CRAFTER.get(),
+                        new MultiVariant(WeightedList.of(new Variant(patternCrafterModel))))
+                .with(patternCrafterFacing));
+        itemModels.itemModelOutput.accept(
+                TCItems.PATTERN_CRAFTER.get(), ItemModelUtils.plainModel(patternCrafterModel));
+
+        Identifier sprayerModel = ModelTemplates.CUBE_BOTTOM_TOP.create(
+                TCBlocks.POTION_SPRAYER.get(),
+                new TextureMapping()
+                        .put(
+                                TextureSlot.TOP,
+                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_top")))
+                        .put(
+                                TextureSlot.BOTTOM,
+                                new Material(
+                                        Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_bottom")))
+                        .put(
+                                TextureSlot.SIDE,
+                                new Material(
+                                        Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_side"))),
+                blockModels.modelOutput);
+        PropertyDispatch<VariantMutator> sprayerFacing = PropertyDispatch.modify(BlockStateProperties.FACING)
+                .select(Direction.UP, BlockModelGenerators.NOP)
+                .select(Direction.DOWN, BlockModelGenerators.X_ROT_180)
+                .select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
+                .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
+                .select(Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270))
+                .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                        TCBlocks.POTION_SPRAYER.get(), new MultiVariant(WeightedList.of(new Variant(sprayerModel))))
+                .with(sprayerFacing));
+        itemModels.itemModelOutput.accept(TCItems.POTION_SPRAYER.get(), ItemModelUtils.plainModel(sprayerModel));
+
+        PropertyDispatch<VariantMutator> levitatorFacing = PropertyDispatch.modify(BlockStateProperties.FACING)
+                .select(Direction.UP, BlockModelGenerators.NOP)
+                .select(Direction.DOWN, BlockModelGenerators.X_ROT_180)
+                .select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
+                .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
+                .select(Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270))
+                .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
+        Identifier levitatorOn = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_on");
+        Identifier levitatorOff = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_off");
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.LEVITATOR.get())
+                .with(PropertyDispatch.initial(BlockStateProperties.ENABLED)
+                        .select(true, new MultiVariant(WeightedList.of(new Variant(levitatorOn))))
+                        .select(false, new MultiVariant(WeightedList.of(new Variant(levitatorOff)))))
+                .with(levitatorFacing));
+        itemModels.itemModelOutput.accept(TCItems.LEVITATOR.get(), ItemModelUtils.plainModel(levitatorOff));
+
+        registerInvisibleBlock(blockModels, TCBlocks.GOLEM_BUILDER.get());
+        itemModels.itemModelOutput.accept(
+                TCItems.GOLEM_BUILDER.get(),
+                new SpecialModelWrapper.Unbaked(
+                        Identifier.fromNamespaceAndPath(TCIds.MODID, "item/golem_builder_base"),
+                        Optional.empty(),
+                        new GolemBuilderItemSpecialRenderer.Unbaked()));
+        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_IRON_BARS.get());
+        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_CAULDRON.get());
+        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_ANVIL.get());
+        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_TABLE.get());
+    }
+
+    private static void registerConstructs(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        itemModels.generateFlatItem(TCItems.TURRET_BASIC.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.TURRET_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.TURRET_BORE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_TIP.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_SPOOL.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.ELDRITCH_EYE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.RUNED_TABLET.get(), ModelTemplates.FLAT_ITEM);
+        ItemModel.Unbaked unloaded =
+                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_1"));
+        ItemModel.Unbaked loaded =
+                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_2"));
+        itemModels.itemModelOutput.accept(
+                TCItems.GRAPPLE_GUN.get(),
+                ItemModelUtils.conditional(
+                        ItemModelUtils.hasComponent(TCDataComponents.GRAPPLE_LOADED.get()), loaded, unloaded));
+        registerActivatorRail(blockModels);
+    }
+
+    private static void registerActivatorRail(BlockModelGenerators blockModels) {
+        Block block = TCBlocks.ACTIVATOR_RAIL.get();
+        MultiVariant flat = BlockModelGenerators.plainVariant(
+                ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), blockModels.modelOutput));
+        MultiVariant risingNE = BlockModelGenerators.plainVariant(
+                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), blockModels.modelOutput));
+        MultiVariant risingSW = BlockModelGenerators.plainVariant(
+                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), blockModels.modelOutput));
+
+        MultiVariant flatOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_FLAT.createWithSuffix(
+                block,
+                "_on",
+                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
+                blockModels.modelOutput));
+        MultiVariant risingNEOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_NE.createWithSuffix(
+                block,
+                "_on",
+                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
+                blockModels.modelOutput));
+        MultiVariant risingSWOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_SW.createWithSuffix(
+                block,
+                "_on",
+                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
+                blockModels.modelOutput));
+        blockModels.registerSimpleFlatItemModel(block);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block)
+                .with(PropertyDispatch.initial(BlockStateProperties.POWERED, BlockStateProperties.RAIL_SHAPE_STRAIGHT)
+                        .generate((powered, railShape) -> switch (railShape) {
+                            case NORTH_SOUTH -> powered ? flatOn : flat;
+                            case EAST_WEST -> (powered ? flatOn : flat).with(BlockModelGenerators.Y_ROT_90);
+                            case ASCENDING_EAST ->
+                                (powered ? risingNEOn : risingNE).with(BlockModelGenerators.Y_ROT_90);
+                            case ASCENDING_WEST ->
+                                (powered ? risingSWOn : risingSW).with(BlockModelGenerators.Y_ROT_90);
+                            case ASCENDING_NORTH -> powered ? risingNEOn : risingNE;
+                            case ASCENDING_SOUTH -> powered ? risingSWOn : risingSW;
+                            default -> throw new UnsupportedOperationException();
+                        })));
+    }
+
+    private static void registerCasters(ItemModelGenerators itemModels) {
+        registerFocusItem(itemModels, TCItems.FOCUS_1.get());
+        registerFocusItem(itemModels, TCItems.FOCUS_2.get());
+        registerFocusItem(itemModels, TCItems.FOCUS_3.get());
+    }
+
+    private static void registerFocusItem(ItemModelGenerators itemModels, Item item) {
+        Identifier model = ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(item), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new FocusColorTint()));
+    }
+
+    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name) {
+        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
+        Material baseTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
+        Material overTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
+        ModelTemplates.TWO_LAYERED_ITEM.create(
+                itemModelId, TextureMapping.layered(baseTex, overTex), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
+    }
+
+    private static void registerMirrorItem(ItemModelGenerators itemModels, Item item, String frameTexture) {
+        Material frame = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + frameTexture));
+        Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(
+                ModelLocationUtils.getModelLocation(item),
+                TextureMapping.layered(
+                        frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpane"))),
+                itemModels.modelOutput);
+        Identifier linkedModel = ModelTemplates.TWO_LAYERED_ITEM.create(
+                ModelLocationUtils.getModelLocation(item, "_on"),
+                TextureMapping.layered(
+                        frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpaneopen"))),
+                itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(
+                item,
+                ItemModelUtils.conditional(
+                        new HasComponent(TCDataComponents.MIRROR_LINK.get(), false),
+                        ItemModelUtils.plainModel(linkedModel),
+                        ItemModelUtils.plainModel(model)));
+    }
+
+    private static void mirrorBlockState(BlockModelGenerators blockModels, Block block) {
+        Identifier model = ModelTemplates.PARTICLE_ONLY.createWithSuffix(
+                block,
+                "_state",
+                TextureMapping.particle(
+                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorframe"))),
+                blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(
+                MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
+    }
+
+    private static void cubeAllTexture(BlockModelGenerators blockModels, Block block, String textureName) {
+        Identifier textureId = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + textureName);
+        Material texture = new Material(textureId);
+        Identifier modelId =
+                ModelTemplates.CUBE_ALL.create(block, TextureMapping.cube(texture), blockModels.modelOutput);
+        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(modelId)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
+    }
+
+    private static boolean insetExposed(int mask, Direction dir) {
+        return (mask & (1 << dir.get3DDataValue())) != 0;
+    }
+
+    private static ModelInstance insetModel(Identifier texture, int mask) {
+        return () -> {
+            JsonObject root = new JsonObject();
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", texture.toString());
+            textures.addProperty("all", texture.toString());
+            root.add("textures", textures);
+            JsonObject element = new JsonObject();
+            element.add(
+                    "from",
+                    insetCoords(
+                            insetExposed(mask, Direction.WEST) ? INSET_DEPTH : 0,
+                            insetExposed(mask, Direction.DOWN) ? INSET_DEPTH : 0,
+                            insetExposed(mask, Direction.NORTH) ? INSET_DEPTH : 0));
+            element.add(
+                    "to",
+                    insetCoords(
+                            insetExposed(mask, Direction.EAST) ? 16 - INSET_DEPTH : 16,
+                            insetExposed(mask, Direction.UP) ? 16 - INSET_DEPTH : 16,
+                            insetExposed(mask, Direction.SOUTH) ? 16 - INSET_DEPTH : 16));
+            JsonObject faces = new JsonObject();
+            for (Direction dir : Direction.values()) {
+                JsonObject face = new JsonObject();
+                face.addProperty("texture", "#all");
+                if (!insetExposed(mask, dir)) {
+                    face.addProperty("cullface", dir.getSerializedName());
+                }
+                faces.add(dir.getSerializedName(), face);
+            }
+            element.add("faces", faces);
+            JsonArray elements = new JsonArray();
+            elements.add(element);
+            root.add("elements", elements);
+            return root;
+        };
+    }
+
+    private static JsonArray insetCoords(int x, int y, int z) {
+        JsonArray coords = new JsonArray();
+        coords.add(x);
+        coords.add(y);
+        coords.add(z);
+        return coords;
     }
 
     @Override
@@ -298,7 +686,19 @@ public final class TCModelProvider extends ModelProvider {
                 TCItems.THAUMOMETER.get(),
                 ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/thaumometer")));
         itemModels.generateFlatItem(TCItems.JAR_BRACE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
+        Identifier labelModelId = itemModels.createFlatItemModel(TCItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
+        Identifier labelOverlayModelId =
+                itemModels.createFlatItemModel(TCItems.LABEL.get(), "_overlay", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(
+                TCItems.LABEL.get(),
+                new CompositeModel.Unbaked(
+                        List.of(
+                                ItemModelUtils.plainModel(labelModelId),
+                                ItemModelUtils.conditional(
+                                        ItemModelUtils.hasComponent(TCDataComponents.ASPECT_FILTER.get()),
+                                        ItemModelUtils.tintedModel(labelOverlayModelId, new AspectFilterTint(0xffffff)),
+                                        ItemModelUtils.plainModel(labelModelId))),
+                        Optional.empty()));
         itemModels.generateFlatItem(TCItems.BOTTLE_TAINT.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.VIS_RESONATOR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.THAUMIC_SLIME_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -644,15 +1044,6 @@ public final class TCModelProvider extends ModelProvider {
         registerVoidRobePiece(itemModels, TCItems.VOID_ROBE_LEGS.get(), "void_robe_legs");
     }
 
-    private static void registerVoidRobePiece(ItemModelGenerators itemModels, Item item, String name) {
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
-        Material clothTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
-        Material metalTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
-        ModelTemplates.TWO_LAYERED_ITEM.create(
-                itemModelId, TextureMapping.layered(clothTex, metalTex), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
-    }
-
     private void registerCelestialNotes(ItemModelGenerators itemModels) {
         Material sheet = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/celestial_notes_sheet"));
         List<SelectItemModel.SwitchCase<CelestialBody>> cases = new ArrayList<>();
@@ -708,19 +1099,6 @@ public final class TCModelProvider extends ModelProvider {
                 block.asItem(),
                 new CuboidItemModelWrapper.Unbaked(
                         Identifier.fromNamespaceAndPath(TCIds.MODID, "block/alembic"), Optional.empty(), List.of()));
-    }
-
-    private static Variant applyRotation(Variant base, Direction direction) {
-        VariantMutator mutator =
-                switch (direction) {
-                    case DOWN -> BlockModelGenerators.NOP;
-                    case UP -> BlockModelGenerators.X_ROT_180;
-                    case NORTH -> BlockModelGenerators.X_ROT_270;
-                    case SOUTH -> BlockModelGenerators.X_ROT_90;
-                    case WEST -> BlockModelGenerators.X_ROT_270.then(BlockModelGenerators.Y_ROT_270);
-                    case EAST -> BlockModelGenerators.X_ROT_270.then(BlockModelGenerators.Y_ROT_90);
-                };
-        return mutator.apply(base);
     }
 
     private void registerSmelter(
@@ -788,299 +1166,6 @@ public final class TCModelProvider extends ModelProvider {
         Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/table_wood");
         registerInvisibleBlock(blockModels, TCBlocks.RESEARCH_TABLE.get());
         blockModels.registerSimpleItemModel(TCBlocks.RESEARCH_TABLE.get().asItem(), model);
-    }
-
-    private static void registerInvisibleBlock(BlockModelGenerators blockModels, Block block) {
-        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
-        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
-    }
-
-    private static void registerNitor(BlockModelGenerators blockModels, ItemModelGenerators itemModels, DyeColor dye) {
-        var block = TCBlocks.NITORS.get(dye).get();
-        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
-        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
-
-        var item = TCItems.NITORS.get(dye).get();
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/nitor");
-        int rgb = dye.getTextureDiffuseColor() & 0xFFFFFF;
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Constant(rgb)));
-    }
-
-    private static void registerInfusionAltar(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        PropertyDispatch<VariantMutator> facing = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
-                .select(Direction.NORTH, BlockModelGenerators.NOP)
-                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90)
-                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
-                .select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
-        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ARCANE.get(), "pillar_arcane", facing);
-        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ANCIENT.get(), "pillar_ancient", facing);
-        registerPillar(blockModels, itemModels, TCBlocks.PILLAR_ELDRITCH.get(), "pillar_eldritch", facing);
-        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ARCANE.get(), "pedestal_arcane");
-        registerSimpleWithItem(blockModels, itemModels, TCBlocks.RECHARGE_PEDESTAL.get(), "recharge_pedestal");
-        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ANCIENT.get(), "pedestal_ancient");
-        registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ELDRITCH.get(), "pedestal_eldritch");
-        registerSimpleWithItem(blockModels, itemModels, TCBlocks.INFUSION_MATRIX.get(), "infusion_matrix");
-        itemModels.itemModelOutput.accept(
-                TCBlocks.INFUSION_MATRIX.asItem(),
-                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/infusion_matrix")));
-    }
-
-    private static void registerPillar(
-            BlockModelGenerators blockModels,
-            ItemModelGenerators itemModels,
-            Block block,
-            String modelName,
-            PropertyDispatch<VariantMutator> facing) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
-        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
-        blockModels.blockStateOutput.accept(
-                MultiVariantGenerator.dispatch(block, variant).with(facing));
-        itemModels.itemModelOutput.accept(
-                block.asItem(), ItemModelUtils.plainModel(model), new ClientItem.Properties(true, true, 1));
-    }
-
-    private static void registerSimpleWithItem(
-            BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
-        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
-        if (block != TCBlocks.INFUSION_MATRIX.get()) {
-            itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(model));
-        }
-    }
-
-    private static void registerSpa(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Identifier spaModel = ModelTemplates.CUBE_BOTTOM_TOP.create(
-                ModelLocationUtils.getModelLocation(TCBlocks.SPA.get()),
-                new TextureMapping()
-                        .put(
-                                TextureSlot.SIDE,
-                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_side")))
-                        .put(
-                                TextureSlot.TOP,
-                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_top")))
-                        .put(TextureSlot.BOTTOM, new Material(Identifier.withDefaultNamespace("block/furnace_top"))),
-                blockModels.modelOutput);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
-                TCBlocks.SPA.get(), new MultiVariant(WeightedList.of(new Variant(spaModel)))));
-        itemModels.itemModelOutput.accept(TCItems.SPA.get(), ItemModelUtils.plainModel(spaModel));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
-                TCBlocks.PURIFYING_FLUID.get(),
-                new MultiVariant(WeightedList.of(
-                        new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/purifying_fluid"))))));
-    }
-
-    private static void registerGolemancy(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        itemModels.generateFlatItem(TCItems.MIND_CLOCKWORK.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.MIND_BIOTHAUMIC.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.MODULE_VISION.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.MODULE_AGGRESSION.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_BELL.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_TOP_HAT.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_FEZ.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_GLASSES.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_BOWTIE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GOLEM_VISOR.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_BLANK.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_PICKUP.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_PICKUP_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_FILL.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_FILL_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_EMPTY.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_EMPTY_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_HARVEST.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_BUTCHER.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_GUARD.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_GUARD_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_LUMBER.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_BREAKER.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_BREAKER_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_USE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_PROVIDER.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.SEAL_STOCK.get(), ModelTemplates.FLAT_ITEM);
-
-        Identifier golemModel = ModelTemplates.FLAT_ITEM.create(
-                ModelLocationUtils.getModelLocation(TCItems.GOLEM_PLACER.get()),
-                TextureMapping.layer0(TCItems.GOLEM_PLACER.get()),
-                itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(
-                TCItems.GOLEM_PLACER.get(), ItemModelUtils.tintedModel(golemModel, new GolemMaterialTint()));
-
-        Identifier inlayDot = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_dot");
-        Identifier inlaySide = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_side");
-        MultiPartGenerator inlayGenerator = MultiPartGenerator.multiPart(TCBlocks.INLAY.get())
-                .with(new MultiVariant(WeightedList.of(new Variant(inlayDot))));
-        inlayGenerator = inlayGenerator.with(
-                new ConditionBuilder().term(BlockInlay.NORTH, true),
-                new MultiVariant(WeightedList.of(new Variant(inlaySide))));
-        inlayGenerator = inlayGenerator.with(
-                new ConditionBuilder().term(BlockInlay.EAST, true),
-                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_90.apply(new Variant(inlaySide)))));
-        inlayGenerator = inlayGenerator.with(
-                new ConditionBuilder().term(BlockInlay.SOUTH, true),
-                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_180.apply(new Variant(inlaySide)))));
-        inlayGenerator = inlayGenerator.with(
-                new ConditionBuilder().term(BlockInlay.WEST, true),
-                new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_270.apply(new Variant(inlaySide)))));
-        blockModels.blockStateOutput.accept(inlayGenerator);
-        Identifier inlayItemModel = ModelTemplates.TWO_LAYERED_ITEM.create(
-                ModelLocationUtils.getModelLocation(TCItems.INLAY.get()),
-                TextureMapping.layered(
-                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect_under")),
-                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect1"))),
-                itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(TCItems.INLAY.get(), ItemModelUtils.plainModel(inlayItemModel));
-
-        Identifier patternCrafterModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/pattern_crafter");
-        PropertyDispatch<VariantMutator> patternCrafterFacing = PropertyDispatch.modify(
-                        BlockStateProperties.HORIZONTAL_FACING)
-                .select(Direction.NORTH, BlockModelGenerators.NOP)
-                .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
-                .select(Direction.WEST, BlockModelGenerators.Y_ROT_270)
-                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
-                        TCBlocks.PATTERN_CRAFTER.get(),
-                        new MultiVariant(WeightedList.of(new Variant(patternCrafterModel))))
-                .with(patternCrafterFacing));
-        itemModels.itemModelOutput.accept(
-                TCItems.PATTERN_CRAFTER.get(), ItemModelUtils.plainModel(patternCrafterModel));
-
-        Identifier sprayerModel = ModelTemplates.CUBE_BOTTOM_TOP.create(
-                TCBlocks.POTION_SPRAYER.get(),
-                new TextureMapping()
-                        .put(
-                                TextureSlot.TOP,
-                                new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_top")))
-                        .put(
-                                TextureSlot.BOTTOM,
-                                new Material(
-                                        Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_bottom")))
-                        .put(
-                                TextureSlot.SIDE,
-                                new Material(
-                                        Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_side"))),
-                blockModels.modelOutput);
-        PropertyDispatch<VariantMutator> sprayerFacing = PropertyDispatch.modify(BlockStateProperties.FACING)
-                .select(Direction.UP, BlockModelGenerators.NOP)
-                .select(Direction.DOWN, BlockModelGenerators.X_ROT_180)
-                .select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
-                .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
-                .select(Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270))
-                .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(
-                        TCBlocks.POTION_SPRAYER.get(), new MultiVariant(WeightedList.of(new Variant(sprayerModel))))
-                .with(sprayerFacing));
-        itemModels.itemModelOutput.accept(TCItems.POTION_SPRAYER.get(), ItemModelUtils.plainModel(sprayerModel));
-
-        PropertyDispatch<VariantMutator> levitatorFacing = PropertyDispatch.modify(BlockStateProperties.FACING)
-                .select(Direction.UP, BlockModelGenerators.NOP)
-                .select(Direction.DOWN, BlockModelGenerators.X_ROT_180)
-                .select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
-                .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
-                .select(Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270))
-                .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
-        Identifier levitatorOn = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_on");
-        Identifier levitatorOff = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_off");
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.LEVITATOR.get())
-                .with(PropertyDispatch.initial(BlockStateProperties.ENABLED)
-                        .select(true, new MultiVariant(WeightedList.of(new Variant(levitatorOn))))
-                        .select(false, new MultiVariant(WeightedList.of(new Variant(levitatorOff)))))
-                .with(levitatorFacing));
-        itemModels.itemModelOutput.accept(TCItems.LEVITATOR.get(), ItemModelUtils.plainModel(levitatorOff));
-
-        registerInvisibleBlock(blockModels, TCBlocks.GOLEM_BUILDER.get());
-        itemModels.itemModelOutput.accept(
-                TCItems.GOLEM_BUILDER.get(),
-                new SpecialModelWrapper.Unbaked(
-                        Identifier.fromNamespaceAndPath(TCIds.MODID, "item/golem_builder_base"),
-                        Optional.empty(),
-                        new GolemBuilderItemSpecialRenderer.Unbaked()));
-        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_IRON_BARS.get());
-        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_CAULDRON.get());
-        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_ANVIL.get());
-        registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_TABLE.get());
-    }
-
-    private static void registerConstructs(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        itemModels.generateFlatItem(TCItems.TURRET_BASIC.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.TURRET_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.TURRET_BORE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_TIP.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_SPOOL.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.ELDRITCH_EYE.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.RUNED_TABLET.get(), ModelTemplates.FLAT_ITEM);
-        ItemModel.Unbaked unloaded =
-                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_1"));
-        ItemModel.Unbaked loaded =
-                ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_2"));
-        itemModels.itemModelOutput.accept(
-                TCItems.GRAPPLE_GUN.get(),
-                ItemModelUtils.conditional(
-                        ItemModelUtils.hasComponent(TCDataComponents.GRAPPLE_LOADED.get()), loaded, unloaded));
-        registerActivatorRail(blockModels);
-    }
-
-    private static void registerActivatorRail(BlockModelGenerators blockModels) {
-        Block block = TCBlocks.ACTIVATOR_RAIL.get();
-        MultiVariant flat = BlockModelGenerators.plainVariant(
-                ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), blockModels.modelOutput));
-        MultiVariant risingNE = BlockModelGenerators.plainVariant(
-                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), blockModels.modelOutput));
-        MultiVariant risingSW = BlockModelGenerators.plainVariant(
-                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), blockModels.modelOutput));
-
-        MultiVariant flatOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_FLAT.createWithSuffix(
-                block,
-                "_on",
-                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
-                blockModels.modelOutput));
-        MultiVariant risingNEOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_NE.createWithSuffix(
-                block,
-                "_on",
-                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
-                blockModels.modelOutput));
-        MultiVariant risingSWOn = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_SW.createWithSuffix(
-                block,
-                "_on",
-                TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")),
-                blockModels.modelOutput));
-        blockModels.registerSimpleFlatItemModel(block);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block)
-                .with(PropertyDispatch.initial(BlockStateProperties.POWERED, BlockStateProperties.RAIL_SHAPE_STRAIGHT)
-                        .generate((powered, railShape) -> switch (railShape) {
-                            case NORTH_SOUTH -> powered ? flatOn : flat;
-                            case EAST_WEST -> (powered ? flatOn : flat).with(BlockModelGenerators.Y_ROT_90);
-                            case ASCENDING_EAST ->
-                                (powered ? risingNEOn : risingNE).with(BlockModelGenerators.Y_ROT_90);
-                            case ASCENDING_WEST ->
-                                (powered ? risingSWOn : risingSW).with(BlockModelGenerators.Y_ROT_90);
-                            case ASCENDING_NORTH -> powered ? risingNEOn : risingNE;
-                            case ASCENDING_SOUTH -> powered ? risingSWOn : risingSW;
-                            default -> throw new UnsupportedOperationException();
-                        })));
-    }
-
-    private static void registerCasters(ItemModelGenerators itemModels) {
-        registerFocusItem(itemModels, TCItems.FOCUS_1.get());
-        registerFocusItem(itemModels, TCItems.FOCUS_2.get());
-        registerFocusItem(itemModels, TCItems.FOCUS_3.get());
-    }
-
-    private static void registerFocusItem(ItemModelGenerators itemModels, Item item) {
-        Identifier model = ModelTemplates.FLAT_ITEM.create(
-                ModelLocationUtils.getModelLocation(item), TextureMapping.layer0(item), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(model, new FocusColorTint()));
-    }
-
-    private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name) {
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
-        Material baseTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
-        Material overTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
-        ModelTemplates.TWO_LAYERED_ITEM.create(
-                itemModelId, TextureMapping.layered(baseTex, overTex), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
     }
 
     private void registerJarBrain(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
@@ -1322,48 +1407,6 @@ public final class TCModelProvider extends ModelProvider {
                         .select(false, new MultiVariant(WeightedList.of(new Variant(dioptraOff))))));
         itemModels.itemModelOutput.accept(TCItems.DIOPTRA.get(), ItemModelUtils.plainModel(dioptraOn));
     }
-
-    private static void registerMirrorItem(ItemModelGenerators itemModels, Item item, String frameTexture) {
-        Material frame = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + frameTexture));
-        Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(
-                ModelLocationUtils.getModelLocation(item),
-                TextureMapping.layered(
-                        frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpane"))),
-                itemModels.modelOutput);
-        Identifier linkedModel = ModelTemplates.TWO_LAYERED_ITEM.create(
-                ModelLocationUtils.getModelLocation(item, "_on"),
-                TextureMapping.layered(
-                        frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpaneopen"))),
-                itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(
-                item,
-                ItemModelUtils.conditional(
-                        new HasComponent(TCDataComponents.MIRROR_LINK.get(), false),
-                        ItemModelUtils.plainModel(linkedModel),
-                        ItemModelUtils.plainModel(model)));
-    }
-
-    private static void mirrorBlockState(BlockModelGenerators blockModels, Block block) {
-        Identifier model = ModelTemplates.PARTICLE_ONLY.createWithSuffix(
-                block,
-                "_state",
-                TextureMapping.particle(
-                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorframe"))),
-                blockModels.modelOutput);
-        blockModels.blockStateOutput.accept(
-                MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
-    }
-
-    private static void cubeAllTexture(BlockModelGenerators blockModels, Block block, String textureName) {
-        Identifier textureId = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + textureName);
-        Material texture = new Material(textureId);
-        Identifier modelId =
-                ModelTemplates.CUBE_ALL.create(block, TextureMapping.cube(texture), blockModels.modelOutput);
-        MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(modelId)));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
-    }
-
-    private static final int FOLIAGE_DEFAULT_COLOR = 0x48B518;
 
     private void stoneAndStairModels(BlockModelGenerators blockModels) {
         simpleCube(blockModels, TCBlocks.STONE_ARCANE.get(), "stone_arcane");
@@ -2176,9 +2219,6 @@ public final class TCModelProvider extends ModelProvider {
         stairsFromTexture(blockModels, TCBlocks.STAIRS_ELDRITCH.get(), texture("eldritch_stone"));
     }
 
-    private static final int INSET_DEPTH = 2;
-    private static final int INSET_ALL_EXPOSED = 63;
-
     private void insetBlock(BlockModelGenerators blockModels, Block block, String textureName) {
         Identifier texture = TCIds.rl("block/" + textureName);
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block);
@@ -2194,55 +2234,6 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(generator);
         blockModels.registerSimpleItemModel(
                 block.asItem(), TCIds.rl("block/" + textureName + "_inset_" + INSET_ALL_EXPOSED));
-    }
-
-    private static boolean insetExposed(int mask, Direction dir) {
-        return (mask & (1 << dir.get3DDataValue())) != 0;
-    }
-
-    private static ModelInstance insetModel(Identifier texture, int mask) {
-        return () -> {
-            JsonObject root = new JsonObject();
-            JsonObject textures = new JsonObject();
-            textures.addProperty("particle", texture.toString());
-            textures.addProperty("all", texture.toString());
-            root.add("textures", textures);
-            JsonObject element = new JsonObject();
-            element.add(
-                    "from",
-                    insetCoords(
-                            insetExposed(mask, Direction.WEST) ? INSET_DEPTH : 0,
-                            insetExposed(mask, Direction.DOWN) ? INSET_DEPTH : 0,
-                            insetExposed(mask, Direction.NORTH) ? INSET_DEPTH : 0));
-            element.add(
-                    "to",
-                    insetCoords(
-                            insetExposed(mask, Direction.EAST) ? 16 - INSET_DEPTH : 16,
-                            insetExposed(mask, Direction.UP) ? 16 - INSET_DEPTH : 16,
-                            insetExposed(mask, Direction.SOUTH) ? 16 - INSET_DEPTH : 16));
-            JsonObject faces = new JsonObject();
-            for (Direction dir : Direction.values()) {
-                JsonObject face = new JsonObject();
-                face.addProperty("texture", "#all");
-                if (!insetExposed(mask, dir)) {
-                    face.addProperty("cullface", dir.getSerializedName());
-                }
-                faces.add(dir.getSerializedName(), face);
-            }
-            element.add("faces", faces);
-            JsonArray elements = new JsonArray();
-            elements.add(element);
-            root.add("elements", elements);
-            return root;
-        };
-    }
-
-    private static JsonArray insetCoords(int x, int y, int z) {
-        JsonArray coords = new JsonArray();
-        coords.add(x);
-        coords.add(y);
-        coords.add(z);
-        return coords;
     }
 
     private void cube(BlockModelGenerators blockModels, Block block, String textureName, boolean item) {

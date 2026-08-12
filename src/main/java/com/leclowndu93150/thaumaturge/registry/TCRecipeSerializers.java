@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapelessCraftingRecipe;
 import net.minecraft.core.registries.Registries;
@@ -57,6 +58,9 @@ public final class TCRecipeSerializers {
             RECIPE_SERIALIZERS.register(
                     "salis_mundus",
                     () -> new RecipeSerializer<>(SalisMundusRecipe.MAP_CODEC, SalisMundusRecipe.STREAM_CODEC));
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<LabelFilterRecipe>> LABEL_FILTER =
+            RECIPE_SERIALIZERS.register("label_filter", () -> LabelFilterRecipe.SERIALIZER);
 
     private TCRecipeSerializers() {}
 

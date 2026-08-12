@@ -17,6 +17,8 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 public final class TCClientFluidExtensions {
     private static final int PURIFYING_TINT = 0x77FFEEAA;
 
+    private static final int LIQUID_DEATH_TINT = 0xFF4D0066;
+
     private TCClientFluidExtensions() {}
 
     @SubscribeEvent
@@ -39,5 +41,10 @@ public final class TCClientFluidExtensions {
                         BlockTintSources.constant(PURIFYING_TINT)),
                 TCFluids.PURIFYING_SOURCE.get(),
                 TCFluids.PURIFYING_FLOWING.get());
+        Material deathTexture = new Material(TCIds.rl("block/animatedglow"));
+        event.register(
+                new FluidModel.Unbaked(deathTexture, deathTexture, null, BlockTintSources.constant(LIQUID_DEATH_TINT)),
+                TCFluids.LIQUID_DEATH_SOURCE.get(),
+                TCFluids.LIQUID_DEATH_FLOWING.get());
     }
 }

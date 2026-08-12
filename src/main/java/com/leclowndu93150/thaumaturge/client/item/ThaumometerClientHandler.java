@@ -53,7 +53,7 @@ public final class ThaumometerClientHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || mc.level == null) {
+        if (player == null || mc.level == null || mc.isPaused()) {
             return;
         }
         tickScanning(mc, player);

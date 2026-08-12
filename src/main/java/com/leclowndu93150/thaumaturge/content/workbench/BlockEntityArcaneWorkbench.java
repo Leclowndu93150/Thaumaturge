@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -113,6 +114,13 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
                 }
             }
         }
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (level == null || level.isClientSide()) return;
+        Containers.dropContents(level, getBlockPos(), getInventory().getItems());
     }
 
     @Override

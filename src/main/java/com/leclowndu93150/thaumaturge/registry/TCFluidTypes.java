@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.alchemy.LiquidDeathFluidType;
 import com.leclowndu93150.thaumaturge.content.spa.PurifyingFluidType;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooFluidType;
 import net.minecraft.sounds.SoundEvents;
@@ -38,6 +39,16 @@ public final class TCFluidTypes {
                     .descriptionId("fluid_type.thaumaturge.purifying")
                     .lightLevel(5)
                     .canConvertToSource(false)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                    .rarity(Rarity.RARE)));
+
+    public static final DeferredHolder<FluidType, LiquidDeathFluidType> LIQUID_DEATH = FLUID_TYPES.register(
+            "liquid_death",
+            () -> new LiquidDeathFluidType(FluidType.Properties.create()
+                    .descriptionId("fluid_type.thaumaturge.liquid_death")
+                    .canConvertToSource(false)
+                    .canDrown(true)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
                     .rarity(Rarity.RARE)));

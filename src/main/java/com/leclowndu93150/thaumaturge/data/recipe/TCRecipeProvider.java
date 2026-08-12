@@ -18,6 +18,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.CrucibleRecipeBuilder;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.InfusionEnchantmentRecipeBuilder;
@@ -148,6 +149,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .requires(TCItems.LABEL)
                 .unlockedBy("has", has(TCItems.LABEL))
                 .save(output, TCIds.MODID + ":label_clear");
+
+        SpecialRecipeBuilder.special(LabelFilterRecipe::new)
+                .save(output, TCIds.rl("label_filter").toString());
 
         shaped(RecipeCategory.MISC, TCItems.JAR_BRACE, 2)
                 .pattern("SBS")
@@ -1475,11 +1479,23 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
+                        new ItemStackTemplate(TCItems.BUCKET_LIQUID_DEATH.get()),
+                        Ingredient.of(Items.BUCKET))
+                .aspect(TCAspects.MORTUUS, 100)
+                .aspect(TCAspects.PERDITIO, 50)
+                .aspect(TCAspects.ALKIMIA, 20)
+                .gate(gate("liquid_death", 0))
+                .unlockedBy("has", has(Items.BUCKET))
+                .save(output, TCIds.MODID + ":crucible/liquid_death");
+
+        new CrucibleRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
                         new ItemStackTemplate(TCItems.INGOT_BRASS.get()),
-                        Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_IRON)))
+                        Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_COPPER)))
                 .aspect(TCAspects.INSTRUMENTUM, 5)
                 .gate(gate("metallurgy", 0))
-                .unlockedBy("has", has(Tags.Items.INGOTS_IRON))
+                .unlockedBy("has", has(Tags.Items.INGOTS_COPPER))
                 .save(output);
 
         new CrucibleRecipeBuilder(

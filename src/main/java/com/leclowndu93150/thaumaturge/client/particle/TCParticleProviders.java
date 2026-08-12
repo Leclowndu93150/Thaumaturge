@@ -23,6 +23,7 @@ public final class TCParticleProviders {
         event.registerSpecial(TCParticles.LIGHTNING_FLASH.get(), new LightningFlashParticle.Provider());
         event.registerSpecial(TCParticles.STABILIZER_RUNE.get(), new StabilizerRuneParticle.Provider());
         event.registerSpecial(TCParticles.BUBBLE.get(), new BubbleParticle.Provider());
+        event.registerSpecial(TCParticles.SLIMY_BUBBLE.get(), new SlimyBubbleParticle.Provider());
         event.registerSpecial(TCParticles.SPARK.get(), new SparkParticle.Provider());
         event.registerSpecial(TCParticles.BURST.get(), new BurstParticle.Provider());
         event.registerSpecial(TCParticles.SCAN_GLYPH.get(), new ScanGlyphParticle.Provider());

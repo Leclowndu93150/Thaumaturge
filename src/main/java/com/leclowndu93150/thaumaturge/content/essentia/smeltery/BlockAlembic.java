@@ -5,7 +5,7 @@ import static com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentia
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.blocks.ILabelable;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.items.ILabel;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.MapCodec;
@@ -101,16 +101,10 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
     @Override
     public boolean applyLabel(Player player, BlockPos pos, Direction face, ItemStack stack) {
         if (!(player.level().getBlockEntity(pos) instanceof BlockEntityAlembic alembic)) return false;
+        if (!(stack.getItem() instanceof ILabel label)) return false;
         if (face.getStepY() != 0) return false;
         if (alembic.aspectFilterKey() != null) return false;
-        ResourceKey<IAspect> labelAspect = null;
-        if (!((IEssentiaContainerItem) stack.getItem()).getAspects(stack).isEmpty())
-            labelAspect = ((IEssentiaContainerItem) stack.getItem())
-                    .getAspects(stack)
-                    .entries()
-                    .getFirst()
-                    .aspect()
-                    .getKey();
+        ResourceKey<IAspect> labelAspect = label.getFilteredAspect(stack);
 
         if (alembic.amount() == 0 && labelAspect == null) return false;
 
@@ -119,6 +113,7 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
         if (alembic.amount() > 0) aspect = alembic.aspectKey();
 
         if (aspect == null) return false;
+        if (labelAspect != null && !labelAspect.equals(aspect)) return false;
 
         BlockState state = player.level().getBlockState(pos);
         setPlacedBy(player.level(), pos, state, player, stack);

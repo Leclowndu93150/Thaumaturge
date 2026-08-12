@@ -779,7 +779,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
             boolean met = obtain
                     ? countMatching(player, req) >= req.amount()
-                    : ResearchManager.isCraftSatisfied(KnowledgeAccess.of(player), req);
+                    : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req);
             satisfied[i] = met;
             if (met) {
                 graphics.blit(
@@ -2225,8 +2225,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     >= stage.obtain().get(i).amount();
         }
         for (int i = 0; i < stage.craft().size(); i++) {
-            craftSatisfied[i] =
-                    ResearchManager.isCraftSatisfied(knowledge, stage.craft().get(i));
+            craftSatisfied[i] = ResearchManager.isCraftSatisfied(
+                    player, knowledge, stage.craft().get(i));
         }
         int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
         for (int i = 0; i < stage.requiredKnowledge().size(); i++) {

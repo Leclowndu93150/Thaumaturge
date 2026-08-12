@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.content.alchemy.BlockLiquidDeath;
 import com.leclowndu93150.thaumaturge.content.aura.BlockRechargePedestal;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockNode;
@@ -309,6 +310,17 @@ public final class TCBlocks {
                     .strength(100.0F)
                     .pushReaction(PushReaction.DESTROY)
                     .lightLevel(state -> 5)
+                    .noLootTable()
+                    .liquid());
+
+    public static final DeferredBlock<BlockLiquidDeath> LIQUID_DEATH = BLOCKS.registerBlock(
+            "liquid_death",
+            props -> new BlockLiquidDeath(TCFluids.LIQUID_DEATH_SOURCE.get(), props),
+            props -> props.mapColor(MapColor.COLOR_PURPLE)
+                    .replaceable()
+                    .noCollision()
+                    .strength(100.0F)
+                    .pushReaction(PushReaction.DESTROY)
                     .noLootTable()
                     .liquid());
 

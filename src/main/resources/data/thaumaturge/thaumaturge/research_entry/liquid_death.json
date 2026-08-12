@@ -23,7 +23,9 @@
     },
     {
       "text": "research.thaumaturge.liquid_death.stage_1",
-      "recipes": []
+      "recipes": [
+        "thaumaturge:crucible/liquid_death"
+      ]
     }
   ],
   "note_aspects": [

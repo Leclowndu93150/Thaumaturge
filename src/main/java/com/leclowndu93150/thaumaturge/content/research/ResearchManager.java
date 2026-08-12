@@ -183,7 +183,7 @@ public final class ResearchManager {
             if (countMatching(player, req) < req.amount()) return false;
         }
         for (ResearchRequirement req : stage.craft()) {
-            if (!isCraftSatisfied(knowledge, req)) return false;
+            if (!isCraftSatisfied(player, knowledge, req)) return false;
         }
         int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry, stageIndex);
         for (KnowledgeReward cost : stage.requiredKnowledge()) {
@@ -197,12 +197,12 @@ public final class ResearchManager {
         return true;
     }
 
-    public static boolean isCraftSatisfied(IPlayerKnowledge knowledge, ResearchRequirement req) {
+    public static boolean isCraftSatisfied(Player player, IPlayerKnowledge knowledge, ResearchRequirement req) {
         for (Holder<Item> holder : req.items()) {
             Identifier itemId = holder.unwrapKey().map(ResourceKey::identifier).orElse(null);
             if (itemId != null && knowledge.isResearchKnown(craftedKey(itemId))) return true;
         }
-        return false;
+        return countMatching(player, req) > 0;
     }
 
     public static int countMatching(Player player, ResearchRequirement req) {

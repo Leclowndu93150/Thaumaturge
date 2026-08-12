@@ -21,10 +21,6 @@ public final class JarCapabilities {
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
                 (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
-                TCItems.LABEL.get());
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
                 TCItems.PHIAL.get());
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,

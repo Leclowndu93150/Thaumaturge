@@ -144,11 +144,12 @@ tasks.register('generateData', Exec) {
     }
 }
 
-if (!project.hasProperty('datagenPass')) {
-    tasks.named('processResources') {
-        dependsOn 'generateData'
-    }
-}
+// NOTE: processResources deliberately does NOT depend on generateData. That task shells out to a
+// second Gradle build on this same project, and --no-daemon forks a single-use daemon that keeps
+// writing to build/classes/java/main after the Exec returns. The outer build then fails with
+// "Unable to delete directory ... new files were found", and any cache entry stored from that
+// half-written output stays poisoned until the build cache is purged.
+// Run `gradlew runData` yourself after changing content; it is a single build with no nesting.
 
 jar {
     exclude("com/leclowndu93150/thaumaturge/debug/**")
