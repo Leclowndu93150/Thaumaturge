@@ -222,7 +222,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
 
     @Override
     public boolean hurtClient(DamageSource source, float damage) {
-        return super.hurt(source, damage);
+        return super.hurtClient(source, damage);
     }
 
     public int getAttackTimer() {
