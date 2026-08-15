@@ -249,8 +249,9 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                     }
                 }
             }
-            this.aspects = this.aspects.add(instance);
         }
+
+        this.aspects = this.aspects.add(aspects);
 
         if (flux > 0) {
             int pp = 0;
@@ -306,7 +307,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
             AuraHelper.polluteAura(level, getBlockPos(), pp, true);
         }
-        this.vis = aspects.totalAmount();
+        this.vis = this.aspects.totalAmount();
         inventory.extractItem(0, 1, false);
     }
 
