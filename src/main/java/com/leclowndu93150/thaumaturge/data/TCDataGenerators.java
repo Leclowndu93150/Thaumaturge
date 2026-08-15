@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.data.damagetype.TCDamageTypeBootstrap;
 import com.leclowndu93150.thaumaturge.data.datamap.*;
 import com.leclowndu93150.thaumaturge.data.lang.TCEnglishProvider;
+import com.leclowndu93150.thaumaturge.data.lang.TCSimplifiedChineseProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCEntityLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGameplayLootSubProvider;
@@ -68,6 +69,8 @@ public final class TCDataGenerators {
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TCEnglishProvider::new);
+        event.createProvider(TCSimplifiedChineseProvider::new);
+
         event.createProvider(TCModelProvider::new);
         event.createProvider(TCRecipeProvider.Runner::new);
         event.createProvider(AuraModifierProvider::new);
