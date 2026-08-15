@@ -181,7 +181,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("button.thaumaturge.scrap_theory", "放弃理论");
         add("block.thaumaturge.research_table", "研究台");
         add("block.thaumaturge.arcane_workbench", "奥术工作台");
-        add("block.thaumaturge.arcane_workbench_charger", "魔力充能中继器");
+        add("block.thaumaturge.arcane_workbench_charger", "奥术工作台充能器");
         add("block.thaumaturge.crucible", "坩埚");
         add("block.thaumaturge.infernal_furnace", "炼狱熔炉");
         add("block.thaumaturge.alembic", "奥术蒸馏器");
