@@ -402,7 +402,11 @@ public final class TCModelProvider implements DataProvider {
                     pod,
                     "_stage" + i,
                     TextureMapping.cross(TextureMapping.getBlockTexture(pod, "_stem_" + i)),
-                    modelOutput);
+                    (id, json) -> modelOutput.accept(id, () -> {
+                        JsonElement element = json.get();
+                        element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                        return element;
+                    }));
         }
         PropertyDispatch ages = PropertyDispatch.property(BlockManaPod.AGE)
                 .select(0, v(stems[0]))
@@ -1315,7 +1319,14 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private void cross(Block block) {
-        ResourceLocation model = ModelTemplates.CROSS.create(block, TextureMapping.cross(block), modelOutput);
+        ResourceLocation model = ModelTemplates.CROSS.create(
+                block,
+                TextureMapping.cross(block),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
         simpleBlock(block, model);
     }
 

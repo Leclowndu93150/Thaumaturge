@@ -1,5 +1,6 @@
 {
     "parent": "minecraft:block/cross",
+    "render_type": "minecraft:cutout",
     "textures": {
         "cross": "thaumaturge:block/sapling_greatwood"
     }
