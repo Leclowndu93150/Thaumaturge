@@ -15,7 +15,7 @@ public final class CultistLeaderRenderer
     private static final float SHADOW = 0.5F;
 
     public CultistLeaderRenderer(EntityRendererProvider.Context context) {
-        super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), SHADOW);
+        super(context, new HumanoidModel<>(context.bakeLayer(TCModelLayers.CULTIST)), SHADOW);
         this.addLayer(new HumanoidArmorLayer<>(
                 this,
                 new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)),

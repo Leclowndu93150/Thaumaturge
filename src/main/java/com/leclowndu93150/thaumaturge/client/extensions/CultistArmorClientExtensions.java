@@ -33,6 +33,15 @@ public final class CultistArmorClientExtensions {
                         TCModelLayers.KNIGHT_ARMOR_HEAD,
                         TCModelLayers.KNIGHT_ARMOR_CHEST,
                         TCModelLayers.KNIGHT_ARMOR_LEGS),
+                TCItems.CRIMSON_PRAETOR_HELM.get(),
+                TCItems.CRIMSON_PRAETOR_CHEST.get(),
+                TCItems.CRIMSON_PRAETOR_LEGS.get());
+        event.registerItem(
+                new CustomArmorExtension(
+                        KnightArmorModel::new,
+                        TCModelLayers.KNIGHT_ARMOR_HEAD,
+                        TCModelLayers.KNIGHT_ARMOR_CHEST,
+                        TCModelLayers.KNIGHT_ARMOR_LEGS),
                 TCItems.CRIMSON_PLATE_HELM.get(),
                 TCItems.CRIMSON_PLATE_CHEST.get(),
                 TCItems.CRIMSON_PLATE_LEGS.get());

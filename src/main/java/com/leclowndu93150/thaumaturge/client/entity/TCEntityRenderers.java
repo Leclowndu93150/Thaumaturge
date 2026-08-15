@@ -25,6 +25,9 @@ import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.RobeArmorModel;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.ItemEntityRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -44,6 +47,9 @@ public final class TCEntityRenderers {
 
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(
+                TCModelLayers.CULTIST,
+                () -> LayerDefinition.create(HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F), 64, 32));
         event.registerLayerDefinition(
                 TCModelLayers.TAINTACLE, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_LENGTH));
         event.registerLayerDefinition(
