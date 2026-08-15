@@ -356,7 +356,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     public boolean hurtClient(DamageSource source, float damage) {
-        return super.hurt(source, damage);
+        return super.hurtClient(source, damage);
     }
 
     @Override
