@@ -75,6 +75,15 @@ public final class TCMaterials {
             0.0F,
             () -> Ingredient.of(TCItemTags.INGOTS_THAUMIUM),
             false);
+    public static final Holder<ArmorMaterial> ARMOR_GOGGLES = register(
+            "goggles_revealing",
+            defense(0, 0, 0, 0),
+            25,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            0.0F,
+            0.0F,
+            () -> Ingredient.EMPTY,
+            false);
     public static final Holder<ArmorMaterial> ARMOR_ROBES = register(
             "robes",
             defense(1, 2, 3, 1),
