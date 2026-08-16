@@ -125,16 +125,20 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     public void setRemoved() {
         super.setRemoved();
+    }
+
+    void dropContents() {
         if (level == null || level.isClientSide()) return;
         NonNullList<ItemStack> drops = NonNullList.withSize(getInventory().getSlots(), ItemStack.EMPTY);
         for (int slot = 0; slot < getInventory().getSlots(); slot++) {
-            drops.set(slot, getInventory().getStackInSlot(slot));
+            drops.set(slot, getInventory().getStackInSlot(slot).copy());
+            getInventory().setStackInSlot(slot, ItemStack.EMPTY);
         }
         Containers.dropContents(level, getBlockPos(), drops);
         if (aspects.totalAmount() > 0) {
             AuraHelper.polluteAura(level, getBlockPos(), aspects.totalAmount(), true);
-            setChanged();
-            syncToClient();
+            aspects = AspectList.EMPTY;
+            vis = 0;
         }
     }
 
