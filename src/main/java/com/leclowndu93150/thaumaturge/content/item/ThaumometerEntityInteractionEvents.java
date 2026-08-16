@@ -16,34 +16,33 @@ public final class ThaumometerEntityInteractionEvents {
 
     @SubscribeEvent
     public static void onEntityInteractSpecific(PlayerInteractEvent.EntityInteractSpecific event) {
-        InteractionResult result = tryBeginScan(event.getEntity(), event.getHand(), event.getTarget());
-        if (result == InteractionResult.PASS) {
+        if (!intercept(event.getEntity(), event.getHand(), event.getTarget())) {
             return;
         }
-        event.setCancellationResult(result);
+        event.setCancellationResult(InteractionResult.CONSUME);
         event.setCanceled(true);
     }
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        InteractionResult result = tryBeginScan(event.getEntity(), event.getHand(), event.getTarget());
-        if (result == InteractionResult.PASS) {
+        if (!intercept(event.getEntity(), event.getHand(), event.getTarget())) {
             return;
         }
-        event.setCancellationResult(result);
+        event.setCancellationResult(InteractionResult.CONSUME);
         event.setCanceled(true);
     }
 
-    private static InteractionResult tryBeginScan(Player player, InteractionHand hand, Entity target) {
-        if (player.isShiftKeyDown()) {
-            return InteractionResult.PASS;
+    private static boolean intercept(Player player, InteractionHand hand, Entity target) {
+        boolean isInteracting = !player.isShiftKeyDown()
+                && player.getItemInHand(hand).getItem() instanceof ThaumometerItem;
+
+        if (!isInteracting) {
+            return false;
         }
 
-        ItemStack stack = player.getItemInHand(hand);
-        if (!(stack.getItem() instanceof ThaumometerItem)) {
-            return InteractionResult.PASS;
+        if (!player.level().isClientSide()) {
+            ThaumometerItem.beginScanAt(player, hand, target);
         }
-
-        return ThaumometerItem.beginScanAt(player, hand, target);
+        return true;
     }
 }
