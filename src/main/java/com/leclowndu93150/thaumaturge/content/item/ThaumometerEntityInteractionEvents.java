@@ -5,7 +5,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -33,8 +32,8 @@ public final class ThaumometerEntityInteractionEvents {
     }
 
     private static boolean intercept(Player player, InteractionHand hand, Entity target) {
-        boolean isInteracting = !player.isShiftKeyDown()
-                && player.getItemInHand(hand).getItem() instanceof ThaumometerItem;
+        boolean isInteracting =
+                !player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof ThaumometerItem;
 
         if (!isInteracting) {
             return false;
