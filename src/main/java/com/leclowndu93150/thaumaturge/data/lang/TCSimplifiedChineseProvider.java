@@ -60,7 +60,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
 
         researchCategory("basics", "基础学");
         researchCategory("auromancy", "神秘学");
-        researchCategory("alchemy", "炼金术");
+        researchCategory("alchemy", "炼金学");
         researchCategory("artifice", "炼化学");
         researchCategory("infusion", "注魔学");
         researchCategory("golemancy", "傀儡学");
@@ -632,15 +632,15 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.concentrate.name", "浓缩");
         add(
                 "card.thaumaturge.concentrate.text",
-                "通过将物质浓缩成最纯净的形式，你能够学到许多知识。尝试浓缩%1$s源质，获得15点 炼金术 进度并获得一次额外的抽卡机会。还有机会获得1点灵感。");
+                "通过将物质浓缩成最纯净的形式，你能够学到许多知识。尝试浓缩%1$s源质，获得15点 炼金学 进度并获得一次额外的抽卡机会。还有机会获得1点灵感。");
         add("card.thaumaturge.reactions.name", "反应");
         add(
                 "card.thaumaturge.reactions.text",
-                "研究两种不同的Vis之间如何反应也有所裨益。你应当研究%1$s源质如何与%2$s源质进行反应。获得25点 炼金术 进度。还有机会获得1点灵感。");
+                "研究两种不同的Vis之间如何反应也有所裨益。你应当研究%1$s源质如何与%2$s源质进行反应。获得25点 炼金学 进度。还有机会获得1点灵感。");
         add("card.thaumaturge.synthesis.name", "合成");
         add(
                 "card.thaumaturge.synthesis.text",
-                "当源质相互结合形成更复杂的形式时，总会产生许多有趣和复杂的反应。你通过研究%1$s与%2$s源质的结合学到了很多知识。获得40点 炼金术 进度。还有机会获得1点灵感。");
+                "当源质相互结合形成更复杂的形式时，总会产生许多有趣和复杂的反应。你通过研究%1$s与%2$s源质的结合学到了很多知识。获得40点 炼金学 进度。还有机会获得1点灵感。");
         add("card.thaumaturge.measure.name", "测量");
         add("card.thaumaturge.measure.text", "你花费大量时间详细测量不同种类的源质以及它们所蕴含的Vis。获得15点 注魔学 进度并获得一次额外的备选研究。");
         add("card.thaumaturge.channel.name", "引导 %1$s 源质");
@@ -674,7 +674,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.synergy.name", "协同");
         add(
                 "card.thaumaturge.synergy.text",
-                "从根源来说，傀儡学是炼金术、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。 总共失去15点进度，平均分配于 炼金术、炼化学与注魔学 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
+                "从根源来说，傀儡学是炼金学、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。 总共失去15点进度，平均分配于 炼金学、炼化学与注魔学 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
         add("card.thaumaturge.darkwhisper.name", "黑暗低语");
         add("card.thaumaturge.darkwhisper.text", "最近缸中之脑总是口若悬河，它承诺将所有古老的秘密都告诉你。你能相信它么？");
         add("card.thaumaturge.glyph.name", "研究雕纹");
