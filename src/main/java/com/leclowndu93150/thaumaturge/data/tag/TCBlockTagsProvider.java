@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.data.tag;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
@@ -12,6 +11,8 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jspecify.annotations.NonNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public final class TCBlockTagsProvider extends BlockTagsProvider {
     public TCBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -103,6 +104,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.OBSIDIAN_PLACEHOLDER.get())
                 .add(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get())
                 .add(TCBlocks.INFERNAL_FURNACE.get())
+                .add(TCBlocks.INFUSION_MATRIX.get())
                 .add(TCBlocks.PEDESTAL_ARCANE.get())
                 .add(TCBlocks.PEDESTAL_ANCIENT.get())
                 .add(TCBlocks.PEDESTAL_ELDRITCH.get())
@@ -166,12 +168,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(TCBlockTags.STORAGE_BLOCKS_BRASS).add(TCBlocks.METAL_BRASS_BLOCK.get());
         tag(TCBlockTags.STORAGE_BLOCKS_THAUMIUM).add(TCBlocks.METAL_THAUMIUM_BLOCK.get());
         tag(TCBlockTags.STORAGE_BLOCKS_VOID_METAL).add(TCBlocks.METAL_VOID_BLOCK.get());
-        tag(Tags.Blocks.STORAGE_BLOCKS)
-                .addTags(
-                        TCBlockTags.STORAGE_BLOCKS_AMBER,
-                        TCBlockTags.STORAGE_BLOCKS_BRASS,
-                        TCBlockTags.STORAGE_BLOCKS_THAUMIUM,
-                        TCBlockTags.STORAGE_BLOCKS_VOID_METAL);
+        tag(Tags.Blocks.STORAGE_BLOCKS).addTags(
+                TCBlockTags.STORAGE_BLOCKS_AMBER,
+                TCBlockTags.STORAGE_BLOCKS_BRASS,
+                TCBlockTags.STORAGE_BLOCKS_THAUMIUM,
+                TCBlockTags.STORAGE_BLOCKS_VOID_METAL);
 
         tag(TCBlockTags.GREATWOOD_LOGS)
                 .add(
