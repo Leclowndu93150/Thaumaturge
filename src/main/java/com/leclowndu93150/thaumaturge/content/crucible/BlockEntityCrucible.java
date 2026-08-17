@@ -194,7 +194,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                             new Vec3(
                                     getBlockPos().getX() + x / 32.0F + 1 / 64F,
                                     getBlockPos().getY() + 0.05F + getFluidHeight(),
-                                    getBlockPos().getX() + x / 32.0F + 1 / 64F))
+                                    getBlockPos().getZ() + y / 32.0F + 1 / 64F))
                     .color(r, g, b)
                     .send();
         }
