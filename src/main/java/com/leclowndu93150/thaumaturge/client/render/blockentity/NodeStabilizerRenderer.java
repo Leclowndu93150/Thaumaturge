@@ -163,13 +163,19 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
             GolemMeshes.renderPart(lock, lockPose, buffers.getBuffer(TRANSDUCER_OVERLAY), glowLight, WHITE);
         }
         if (piston != null) {
+            float extension = Mth.clamp(chargeFraction, 0.0F, 1.0F) * TRANSDUCER_EXTEND;
+            int glow = OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * Mth.clamp(chargeFraction, 0.0F, 1.0F));
+            int glowUnit = Mth.clamp(glow / 16, 0, 15);
+            int glowLight = (glowUnit << 4) | (glowUnit << 20);
             for (int arm = 0; arm < ARM_COUNT; arm++) {
                 poseStack.pushPose();
                 poseStack.mulPose(Axis.ZP.rotationDegrees(ARM_ANGLE_STEP * arm));
                 poseStack.mulPose(Axis.YP.rotationDegrees(ARM_TWIST));
-                float armPulse = Mth.sin((ticks + arm * 5) / 3.0F) * 0.1F + 0.9F;
-                poseStack.translate(0.0F, 0.0F, chargeFraction * armPulse * TRANSDUCER_EXTEND);
-                GolemMeshes.renderPart(piston, poseStack.last(), buffers.getBuffer(TRANSDUCER_BASE), light, WHITE);
+                poseStack.translate(0.0F, 0.0F, extension);
+                PoseStack.Pose armPose = poseStack.last();
+                GolemMeshes.renderPart(piston, armPose, buffers.getBuffer(TRANSDUCER_BASE), light, WHITE);
+                GolemMeshes.renderPart(
+                        piston, armPose, buffers.getBuffer(TRANSDUCER_OVERLAY), glowLight, WHITE);
                 poseStack.popPose();
             }
         }
