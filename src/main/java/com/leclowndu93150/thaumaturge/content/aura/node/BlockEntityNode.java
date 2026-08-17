@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -49,6 +50,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -82,6 +84,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final int HUNGRY_REACH = 16;
     private static final double HUNGRY_RAY_START_OFFSET = 0.25;
     private static final double HUNGRY_PULL_RANGE = 15.0;
+    private static final double HUNGRY_ITEM_PULL_RANGE = HUNGRY_REACH + 0.5;
     private static final double HUNGRY_EAT_RANGE_SQ = 4.0;
     private static final float HUNGRY_MAX_HARDNESS = 5.0F;
     private static final int DARK_SPAWN_PLAYER_RANGE = 24;
@@ -805,7 +808,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         Vec3 center = Vec3.atCenterOf(pos);
-        List<Entity> targets = serverLevel.getEntitiesOfClass(Entity.class, new AABB(pos).inflate(HUNGRY_PULL_RANGE));
+        List<Entity> targets =
+                serverLevel.getEntitiesOfClass(Entity.class, new AABB(pos).inflate(HUNGRY_ITEM_PULL_RANGE));
         for (Entity target : targets) {
             if (target instanceof Player player && (player.isCreative() || player.isSpectator())) {
                 continue;
@@ -814,14 +818,28 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 continue;
             }
             double distanceSq = target.distanceToSqr(center);
+            double pullRange = target instanceof ItemEntity ? HUNGRY_ITEM_PULL_RANGE : HUNGRY_PULL_RANGE;
+            if (distanceSq >= pullRange * pullRange) {
+                continue;
+            }
             if (distanceSq < HUNGRY_EAT_RANGE_SQ) {
-                target.hurt(serverLevel.damageSources().fellOutOfWorld(), 1.0F);
+                if (target instanceof ItemEntity item) {
+                    ItemStack stack = item.getItem();
+                    AspectList itemAspects = AspectIndexAccess.of(stack);
+                    item.hurt(serverLevel.damageSources().fellOutOfWorld(), 1.0F);
+                    if (!item.isAlive()) {
+                        devour(serverLevel, itemAspects, stack.getCount());
+                        change = true;
+                    }
+                } else {
+                    target.hurt(serverLevel.damageSources().fellOutOfWorld(), 1.0F);
+                }
                 if (!target.isAlive() && target instanceof LivingEntity living) {
                     devour(serverLevel, living);
                     change = true;
                 }
             }
-            Vec3 delta = center.subtract(target.position()).scale(1.0 / HUNGRY_PULL_RANGE);
+            Vec3 delta = center.subtract(target.position()).scale(1.0 / pullRange);
             double length = delta.length();
             double power = 1.0 - length;
             if (power > 0.0) {
@@ -836,11 +854,14 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private void devour(ServerLevel serverLevel, LivingEntity living) {
-        AspectList entityAspects = EntityAspects.of(living);
-        if (entityAspects.isEmpty()) {
+        devour(serverLevel, EntityAspects.of(living), 1);
+    }
+
+    private void devour(ServerLevel serverLevel, AspectList sourceAspects, int count) {
+        if (sourceAspects.isEmpty() || count <= 0) {
             return;
         }
-        Map<ResourceKey<IAspect>, Integer> primals = WandChargingEvents.reduceToPrimals(entityAspects);
+        Map<ResourceKey<IAspect>, Integer> primals = WandChargingEvents.reduceToPrimals(sourceAspects);
         if (primals.isEmpty()) {
             return;
         }
@@ -849,10 +870,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         ResourceKey<IAspect> chosen = keys.get(random.nextInt(keys.size()));
         Holder<IAspect> holder =
                 serverLevel.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(chosen);
+        int available = primals.get(chosen) * count;
         if (aspects.amountOf(holder) < aspectsBase.amountOf(holder)) {
             addToContainer(holder, 1);
-        } else if (random.nextInt(1 + aspectsBase.amountOf(holder) * 2) < primals.get(chosen)) {
+        } else if (random.nextInt(1 + aspectsBase.amountOf(holder) * 2) < available) {
             aspectsBase = raiseBase(aspectsBase, holder, 1);
+            aspects = aspects.add(holder, 1);
         }
         nodeChange();
     }
