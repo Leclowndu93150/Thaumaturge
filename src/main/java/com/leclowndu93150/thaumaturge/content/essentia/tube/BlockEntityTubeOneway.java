@@ -29,4 +29,28 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
         }
         return super.facing();
     }
+
+    @Override
+    public boolean rotateFacing() {
+        if (level == null) return false;
+        Direction current = facing();
+        Direction next = findNextFacing(current, true);
+        if (next == null) {
+            next = findNextFacing(current, false);
+        }
+        if (next == null) return false;
+        level.setBlock(getBlockPos(), getBlockState().setValue(BlockStateProperties.FACING, next), 3);
+        return true;
+    }
+
+    private Direction findNextFacing(Direction current, boolean requireNeighbour) {
+        int start = current.ordinal();
+        for (int offset = 1; offset < Direction.values().length; offset++) {
+            Direction candidate = Direction.values()[(start + offset) % Direction.values().length];
+            if (isSideOpen(candidate) && (!requireNeighbour || hasTransportNeighbour(candidate))) {
+                return candidate;
+            }
+        }
+        return null;
+    }
 }

@@ -1,0 +1,20 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "indicator": "minecraft:block/blue_concrete",
+    "particle": "thaumaturge:block/tube"
+  },
+  "elements": [
+    {
+      "from": [6.25, 6.25, 5.75],
+      "to": [9.75, 9.75, 7.0],
+      "faces": {
+        "up": { "uv": [6.25, 5.75, 9.75, 7.0], "texture": "#indicator" },
+        "down": { "uv": [6.25, 5.75, 9.75, 7.0], "texture": "#indicator" },
+        "west": { "uv": [5.75, 6.25, 7.0, 9.75], "texture": "#indicator" },
+        "east": { "uv": [5.75, 6.25, 7.0, 9.75], "texture": "#indicator" },
+        "north": { "uv": [6.25, 6.25, 9.75, 9.75], "texture": "#indicator" }
+      }
+    }
+  ]
+}
