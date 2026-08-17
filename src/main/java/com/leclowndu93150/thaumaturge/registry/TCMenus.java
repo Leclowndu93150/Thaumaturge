@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvance
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumatorium;
+import com.leclowndu93150.thaumaturge.content.golem.MenuGolemLogistics;
 import com.leclowndu93150.thaumaturge.content.golem.press.MenuGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
@@ -51,6 +52,9 @@ public final class TCMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuGolemBuilder>> GOLEM_BUILDER =
             MENUS.register("golem_builder", () -> IMenuTypeExtension.create(MenuGolemBuilder::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuGolemLogistics>> GOLEM_LOGISTICS =
+            MENUS.register("golem_logistics", () -> IMenuTypeExtension.create(MenuGolemLogistics::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuThaumatorium>> THAUMATORIUM =
             MENUS.register("thaumatorium", () -> IMenuTypeExtension.create(MenuThaumatorium::new));

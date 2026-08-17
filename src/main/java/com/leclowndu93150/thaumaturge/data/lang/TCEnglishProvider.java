@@ -804,6 +804,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.vis_generator", "Vis Generator");
         add("block.thaumaturge.essentia_input", "Filling Essentia Transfuser");
         add("block.thaumaturge.essentia_output", "Emptying Essentia Transfuser");
+        add("gui.thaumaturge.golem_logistics", "Golem Logistics");
         add("block.thaumaturge.condenser", "Flux Condenser");
         add("block.thaumaturge.condenser_lattice", "Flux Condenser Lattice");
         add("block.thaumaturge.condenser_lattice_dirty", "Clogged Flux Condenser Lattice");

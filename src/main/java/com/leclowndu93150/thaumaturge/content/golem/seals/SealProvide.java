@@ -65,7 +65,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
                         || request.getLinkedTask().isSuspended()
                         || request.getLinkedTask().isCompleted()
                         || request.getTimeout() < level.getGameTime()) {
-                    iterator.remove();
+                    requests.remove(request);
                 }
             }
         }
@@ -81,7 +81,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         while (iterator.hasNext()) {
             ProvisionRequest request = iterator.next();
             if (request.isInvalid()) {
-                iterator.remove();
+                requests.remove(request);
                 continue;
             }
             if (request.getLinkedTask() != null || !isInRange(seal, request)) {
