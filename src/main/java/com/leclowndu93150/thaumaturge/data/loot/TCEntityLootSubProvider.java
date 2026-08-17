@@ -41,15 +41,7 @@ public final class TCEntityLootSubProvider extends EntityLootSubProvider {
                         .withPool(zombieRareDropsPool())
                         .withPool(brainPool()));
         add(TCEntities.MIND_SPIDER.get(), LootTable.lootTable());
-        add(
-                TCEntities.FIRE_BAT.get(),
-                LootTable.lootTable()
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .add(LootItem.lootTableItem(Items.GUNPOWDER)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(
-                                                this.registries, UniformGenerator.between(0.0F, 1.0F))))));
+        add(TCEntities.FIRE_BAT.get(), LootTable.lootTable());
         add(
                 TCEntities.GIANT_BRAINY_ZOMBIE.get(),
                 LootTable.lootTable()

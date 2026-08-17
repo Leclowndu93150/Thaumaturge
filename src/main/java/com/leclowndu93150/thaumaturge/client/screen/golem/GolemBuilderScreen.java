@@ -26,11 +26,14 @@ import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
@@ -62,6 +65,8 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
     private static final int STAT_HEARTS_X = 48;
     private static final int STAT_ARMOR_X = 72;
     private static final int STAT_DAMAGE_X = 97;
+    private static final int STAT_ICON_Y = 92;
+    private static final int STAT_ICON_SIZE = 9;
     private static final int COST_RIGHT_X = 162;
     private static final int COST_Y = 24;
     private static final int CRAFT_X = 120;
@@ -71,7 +76,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
     private static final int CRAFT_U = 216;
     private static final int CRAFT_V = 64;
     private static final int CRAFT_DISABLED_V = 40;
-    private static final int WHITE = 0xFFFFFF;
+    private static final int WHITE = 0xFFFFFFFF;
 
     private static int headIndex;
     private static int matIndex;
@@ -414,6 +419,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             if (craftButton != null) {
                 craftButton.active = false;
             }
+            updateCraftTooltip();
             return;
         }
         allFound = true;
@@ -440,6 +446,38 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         if (!disableAll && craftButton != null) {
             craftButton.active = allFound;
         }
+        updateCraftTooltip();
+    }
+
+    private void updateCraftTooltip() {
+        if (craftButton == null) {
+            return;
+        }
+        MutableComponent text =
+                Component.translatable("gui.thaumaturge.golembuilder.craft").copy();
+        if (disableAll) {
+            text.append(newline("gui.thaumaturge.golembuilder.problem.in_progress"));
+        } else if (components.isEmpty()) {
+            text.append(newline("gui.thaumaturge.golembuilder.problem.no_parts"));
+        } else {
+            for (int i = 0; i < components.size(); i++) {
+                if (i < owns.length && !owns[i]) {
+                    ItemStack stack = components.get(i);
+                    text.append(newline(
+                            "gui.thaumaturge.golembuilder.problem.component", stack.getCount(), stack.getHoverName()));
+                }
+            }
+            if (allFound) {
+                text.append(Component.literal("\n")
+                        .append(Component.translatable("gui.thaumaturge.golembuilder.problem.ready")
+                                .withStyle(ChatFormatting.GREEN)));
+            }
+        }
+        craftButton.setTooltip(Tooltip.create(text));
+    }
+
+    private static Component newline(String key, Object... args) {
+        return Component.literal("\n").append(Component.translatable(key, args).withStyle(ChatFormatting.RED));
     }
 
     private void redoComps() {
@@ -571,6 +609,17 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         drawCentered(graphics, String.valueOf(hearts), leftPos + STAT_HEARTS_X, topPos + STAT_Y);
         drawCentered(graphics, String.valueOf(armor), leftPos + STAT_ARMOR_X, topPos + STAT_Y);
         drawCentered(graphics, String.valueOf(damage), leftPos + STAT_DAMAGE_X, topPos + STAT_Y);
+        statTooltip(graphics, STAT_HEARTS_X, "gui.thaumaturge.golembuilder.stat.health", mouseX, mouseY);
+        statTooltip(graphics, STAT_ARMOR_X, "gui.thaumaturge.golembuilder.stat.armor", mouseX, mouseY);
+        statTooltip(graphics, STAT_DAMAGE_X, "gui.thaumaturge.golembuilder.stat.damage", mouseX, mouseY);
+    }
+
+    private void statTooltip(GuiGraphicsExtractor graphics, int centerX, String tooltipKey, int mouseX, int mouseY) {
+        int x = leftPos + centerX - STAT_ICON_SIZE / 2;
+        int y = topPos + STAT_ICON_Y;
+        if (mouseX >= x && mouseX < x + STAT_ICON_SIZE && mouseY >= y && mouseY < y + STAT_ICON_SIZE) {
+            graphics.setComponentTooltipForNextFrame(font, List.of(Component.translatable(tooltipKey)), mouseX, mouseY);
+        }
     }
 
     private void drawCentered(GuiGraphicsExtractor graphics, String text, int centerX, int y) {

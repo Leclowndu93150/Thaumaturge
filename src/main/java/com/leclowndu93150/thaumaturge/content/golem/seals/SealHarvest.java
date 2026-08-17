@@ -194,6 +194,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
         }
         ItemStack seed = info.stack.copy();
         seed.setCount(1);
+        ItemStack planted = seed.copy();
         player.setItemInHand(InteractionHand.MAIN_HAND, seed);
         InteractionResult result = seed.useOn(new UseOnContext(
                 player,
@@ -207,7 +208,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
         if (result instanceof InteractionResult.Success) {
             level.globalLevelEvent(
                     LEVEL_EVENT_BLOCK_BREAK, task.getPos(), Block.getId(level.getBlockState(task.getPos())));
-            golem.dropItem(seed);
+            golem.dropItem(planted);
             golem.addRankXp(1);
             golem.swingArm();
         }

@@ -381,7 +381,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                                         text,
                                         leftPos + slot.x + 17 - font.width(text),
                                         topPos + slot.y + 9,
-                                        limit == 0 ? 0xFFAA00 : WHITE,
+                                        ARGB.opaque(limit == 0 ? 0xFFAA00 : WHITE),
                                         true);
                             }
                         }

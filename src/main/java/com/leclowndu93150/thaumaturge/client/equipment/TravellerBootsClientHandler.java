@@ -17,7 +17,11 @@ public final class TravellerBootsClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
-        LocalPlayer player = Minecraft.getInstance().player;
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.isPaused()) {
+            return;
+        }
+        LocalPlayer player = minecraft.player;
         if (player == null || !player.isAlive()) {
             return;
         }

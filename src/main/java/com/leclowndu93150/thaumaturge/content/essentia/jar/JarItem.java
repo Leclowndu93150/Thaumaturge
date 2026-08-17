@@ -102,7 +102,16 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
                         }
                         int taken = alembic.takeEssentia(aspect, alembicAmount, Direction.UP);
                         if (taken > 0) {
-                            setAspects(stack, aspects.add(aspect, taken));
+                            ItemStack filled = stack.copyWithCount(1);
+                            setAspects(filled, aspects.add(aspect, taken));
+                            if (stack.getCount() == 1) {
+                                player.setItemInHand(context.getHand(), filled);
+                            } else {
+                                stack.shrink(1);
+                                if (!player.addItem(filled)) {
+                                    player.drop(filled, false);
+                                }
+                            }
                             level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
                             return InteractionResult.SUCCESS;
                         }

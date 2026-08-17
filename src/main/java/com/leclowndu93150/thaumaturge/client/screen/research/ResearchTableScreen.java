@@ -290,7 +290,24 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         return lines;
     }
 
+    private boolean isDepleted(@Nullable BlockEntityResearchTable table, @Nullable Holder<IAspect> aspect) {
+        return aspect != null
+                && pool().amount(AspectPools.idOf(aspect)) <= 0
+                && (table == null || table.bonusAspects().amountOf(aspect) <= 0);
+    }
+
+    private void clearDepletedSelections() {
+        BlockEntityResearchTable table = table();
+        if (isDepleted(table, select1)) {
+            select1 = null;
+        }
+        if (isDepleted(table, select2)) {
+            select2 = null;
+        }
+    }
+
     private void drawCombineTray(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        clearDepletedSelections();
         drawSelectTag(graphics, select1, leftPos + SELECT1_CENTER_X, topPos + SELECT_CENTER_Y);
         drawSelectTag(graphics, select2, leftPos + SELECT2_CENTER_X, topPos + SELECT_CENTER_Y);
         if (select1 != null && select2 != null) {
@@ -874,8 +891,6 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         ClientPacketDistributor.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
         playSound(TCSounds.HHON.get(), 0.3F, 1.0F);
-        select1 = null;
-        select2 = null;
         return true;
     }
 

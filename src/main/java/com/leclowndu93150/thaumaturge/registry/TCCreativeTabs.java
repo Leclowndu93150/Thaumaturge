@@ -354,6 +354,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.MIND_BIOTHAUMIC.get());
                         output.accept(TCItems.MODULE_VISION.get());
                         output.accept(TCItems.MODULE_AGGRESSION.get());
+                        output.accept(TCItems.GOLEM_BUILDER.get());
                         output.accept(TCItems.GOLEM_BELL.get());
                         output.accept(TCItems.GOLEM_TOP_HAT.get());
                         output.accept(TCItems.GOLEM_FEZ.get());

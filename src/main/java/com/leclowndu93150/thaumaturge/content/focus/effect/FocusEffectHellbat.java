@@ -23,6 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -34,6 +35,8 @@ public final class FocusEffectHellbat implements FocusEffect {
     private static final int BAT_COMPLEXITY_FACTOR = 8;
     private static final int SPAWN_LEVEL_EVENT = 2004;
     private static final float SPAWN_SPREAD = 0.5F;
+    private static final int MAX_ACTIVE_BATS = 16;
+    private static final double ACTIVE_BAT_RANGE = 32.0;
 
     @Override
     public Identifier id() {
@@ -75,7 +78,10 @@ public final class FocusEffectHellbat implements FocusEffect {
             struck = null;
         }
         Vec3 origin = target.getLocation();
-        int bats = settings.value("bats");
+        int bats = Math.min(settings.value("bats"), remainingBatBudget(level, caster, origin));
+        if (bats <= 0) {
+            return false;
+        }
         int bonus = Math.round(ctx.power()) - 1;
         boolean spawned = false;
         for (int i = 0; i < bats; i++) {
@@ -109,6 +115,13 @@ public final class FocusEffectHellbat implements FocusEffect {
                     0.95F + level.getRandom().nextFloat() * 0.1F);
         }
         return spawned;
+    }
+
+    private static int remainingBatBudget(ServerLevel level, @Nullable LivingEntity caster, Vec3 origin) {
+        AABB area = new AABB(origin, origin).inflate(ACTIVE_BAT_RANGE);
+        int active = level.getEntitiesOfClass(EntityFireBat.class, area, bat -> bat.owner == caster)
+                .size();
+        return MAX_ACTIVE_BATS - active;
     }
 
     @Override

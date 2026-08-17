@@ -25,6 +25,8 @@ public enum GolemComponentProvider implements IEntityComponentProvider {
             return;
         }
         tooltip.add(Component.translatable(
-                "jade.thaumaturge.golem.rank", golem.getProperties().getRank(), golem.getRankXp()));
+                "jade.thaumaturge.golem.rank",
+                golem.getProperties().getRank(),
+                accessor.getServerData().getIntOr("RankXp", 0)));
     }
 }

@@ -262,7 +262,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int INSERT_PAPER_SIZE = 255;
 
     private static final int CONSTRUCT_PAGE_Y = 26;
-    private static final int CONSTRUCT_TITLE_COLOR = 0x505050;
+    private static final int CONSTRUCT_TITLE_COLOR = 0xFF505050;
     private static final int CONSTRUCT_STRUCT_Y = 108;
     private static final int CONSTRUCT_LAYER_STRIDE = 50;
     private static final int CONSTRUCT_LAYER_HALF_STRIDE = 25;
@@ -848,6 +848,34 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
     }
 
+    private static int knowledgeSpacing(int rewardCount) {
+        return rewardCount > 6 ? SLOT_BUDGET / rewardCount : SLOT_DEFAULT_SPACING;
+    }
+
+    private int[] knowledgeSlotXs(List<KnowledgeReward> rewards, int innerX, int spacing) {
+        int[] slotXs = new int[rewards.size()];
+        int observationChips = ResearchNotes.stageObservationCost(
+                        entry.value(), entry.value().stages().get(currentStageIndex()))
+                .entries()
+                .size();
+        int shift = SLOT_BASE_SHIFT;
+        boolean observationCounted = false;
+        for (int i = 0; i < rewards.size(); i++) {
+            slotXs[i] = innerX + shift;
+            if (rewards.get(i).type() != KnowledgeType.THEORY) {
+                if (observationCounted) {
+                    continue;
+                }
+                observationCounted = true;
+                if (observationChips > 1) {
+                    shift += (observationChips - 1) * spacing;
+                }
+            }
+            shift += spacing;
+        }
+        return slotXs;
+    }
+
     private void renderKnowledgeRow(
             GuiGraphicsExtractor graphics,
             List<KnowledgeReward> rewards,
@@ -857,9 +885,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int mouseX,
             int mouseY,
             boolean[] satisfied) {
-        int spacing = rewards.size() > 6 ? SLOT_BUDGET / rewards.size() : SLOT_DEFAULT_SPACING;
-        int shift = SLOT_BASE_SHIFT;
+        int spacing = knowledgeSpacing(rewards.size());
         int innerX = x + SLOT_INNER_OFFSET_X;
+        int[] slotXs = knowledgeSlotXs(rewards, innerX, spacing);
         int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
         AspectList observationCost = ResearchNotes.stageObservationCost(
                 entry.value(), entry.value().stages().get(currentStageIndex()));
@@ -868,7 +896,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         boolean observationDrawn = false;
         for (int i = 0; i < rewards.size(); i++) {
             KnowledgeReward reward = rewards.get(i);
-            int slotX = innerX + shift;
+            int slotX = slotXs[i];
             boolean met;
             if (reward.type() == KnowledgeType.THEORY) {
                 Identifier learnKey = ResearchNoteData.learnKey(entryId, theoryOrdinal);
@@ -974,11 +1002,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         }
                     }
                 }
-                if (entries.size() > 1) {
-                    int extra = (entries.size() - 1) * spacing;
-                    slotX += extra;
-                    shift += extra;
-                }
             }
             satisfied[i] = met;
 
@@ -989,7 +1012,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         .ifPresent(k -> graphics.setTooltipForNextFrame(
                                 font, TCTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
             }
-            shift += spacing;
         }
     }
 
@@ -2177,25 +2199,17 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (!stage.craft().isEmpty()) rowsAbove++;
         int rowY = sh + REQ_TOP_Y_OFFSET - REQ_ROW_STEP * rowsAbove;
         List<KnowledgeReward> rewards = stage.requiredKnowledge();
-        int spacing = rewards.size() > 6 ? SLOT_BUDGET / rewards.size() : SLOT_DEFAULT_SPACING;
-        int shift = SLOT_BASE_SHIFT;
+        int spacing = knowledgeSpacing(rewards.size());
         int innerX = sw + SLOT_INNER_OFFSET_X;
+        int[] slotXs = knowledgeSlotXs(rewards, innerX, spacing);
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
-        for (KnowledgeReward reward : rewards) {
-            int slotX = innerX + shift;
-            shift += spacing;
-            if (reward.type() != KnowledgeType.THEORY) {
-                int chips = ResearchNotes.observationCost(entry.value(), reward.amount())
-                        .entries()
-                        .size();
-                if (chips > 1) {
-                    shift += (chips - 1) * spacing;
-                }
+        for (int i = 0; i < rewards.size(); i++) {
+            if (rewards.get(i).type() != KnowledgeType.THEORY) {
                 continue;
             }
             int ordinal = theoryOrdinal++;
-            if (!mouseInside(slotX, rowY, SLOT_HIT_SIZE, SLOT_HIT_SIZE, (int) mx, (int) my)) {
+            if (!mouseInside(slotXs[i], rowY, SLOT_HIT_SIZE, SLOT_HIT_SIZE, (int) mx, (int) my)) {
                 continue;
             }
             Identifier learnKey = ResearchNoteData.learnKey(entryId, ordinal);
