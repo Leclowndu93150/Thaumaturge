@@ -248,7 +248,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 TCMenus.ARCANE_WORKBENCH.get(),
                 ArcaneWorkbenchCategory.RECIPE_TYPE,
                 1,
-                15,
+                9,
                 16,
                 36);
         registration.addRecipeTransferHandler(
