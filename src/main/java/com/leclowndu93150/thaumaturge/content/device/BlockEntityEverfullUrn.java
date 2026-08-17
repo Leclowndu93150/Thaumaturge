@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -33,6 +34,7 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     private static final float MAX_REFILL_VIS = 0.1F;
     private static final int ZONE_XZ = 5;
     private static final int ZONE_Y = 3;
+    private static final int STREAM_PARTICLES = 10;
 
     private final FluidTank tank = new FluidTank(CAPACITY) {
         @Override
@@ -151,6 +153,12 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     }
 
     private void splashAt(ServerLevel server, BlockPos target) {
+        Vec3 from = Vec3.atCenterOf(getBlockPos()).add(0.0, 0.25, 0.0);
+        Vec3 to = Vec3.atCenterOf(target).add(0.0, 0.5, 0.0);
+        for (int step = 1; step <= STREAM_PARTICLES; step++) {
+            Vec3 point = from.lerp(to, step / (double) STREAM_PARTICLES);
+            server.sendParticles(ParticleTypes.SPLASH, point.x, point.y, point.z, 1, 0.03, 0.03, 0.03, 0.0);
+        }
         server.sendParticles(
                 ParticleTypes.SPLASH,
                 target.getX() + 0.5,
