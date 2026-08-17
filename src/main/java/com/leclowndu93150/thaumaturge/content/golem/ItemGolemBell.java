@@ -63,19 +63,28 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
     }
 
     @Override
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        return interactWithSeal(context);
+    }
+
+    @Override
     public InteractionResult useOn(UseOnContext context) {
+        return interactWithSeal(context);
+    }
+
+    private InteractionResult interactWithSeal(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null) {
             return InteractionResult.PASS;
         }
-        player.swing(context.getHand(), true);
         Level level = context.getLevel();
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
         ISealEntity seal =
                 SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
         if (seal != null) {
+            player.swing(context.getHand(), true);
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
             if (player.isShiftKeyDown()) {
                 SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
                 level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
