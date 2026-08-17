@@ -30,17 +30,38 @@ public final class InfernalBonusProvider extends DataMapProvider {
                 b,
                 Tags.Items.ORES_IRON,
                 InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.ORES_COPPER,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_COPPER)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 Tags.Items.ORES_GOLD,
+                InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD)
+                        .count(2)
+                        .chance(0.33F)
+                        .build());
+        add(
+                b,
+                Tags.Items.RAW_MATERIALS_IRON,
+                InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON)
+                        .chance(0.33F)
+                        .build());
+        add(
+                b,
+                Tags.Items.RAW_MATERIALS_COPPER,
+                InfernalBonus.builder(items, TCItemTags.NUGGETS_COPPER)
+                        .chance(0.33F)
+                        .build());
+        add(
+                b,
+                Tags.Items.RAW_MATERIALS_GOLD,
                 InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD)
                         .chance(0.33F)
                         .build());
@@ -48,30 +69,35 @@ public final class InfernalBonusProvider extends DataMapProvider {
                 b,
                 Tags.Items.ORES_QUARTZ,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_QUARTZ)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TCItemTags.ORES_CINNABAR,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TCItemTags.ORES_LEAD,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_LEAD)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TCItemTags.ORES_SILVER,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_SILVER)
+                        .count(2)
                         .chance(0.33F)
                         .build());
         add(
                 b,
                 TCItemTags.ORES_TIN,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_TIN)
+                        .count(2)
                         .chance(0.33F)
                         .build());
 
