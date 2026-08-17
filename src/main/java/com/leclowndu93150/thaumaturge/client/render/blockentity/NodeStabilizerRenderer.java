@@ -174,8 +174,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
                 poseStack.translate(0.0F, 0.0F, extension);
                 PoseStack.Pose armPose = poseStack.last();
                 GolemMeshes.renderPart(piston, armPose, buffers.getBuffer(TRANSDUCER_BASE), light, WHITE);
-                GolemMeshes.renderPart(
-                        piston, armPose, buffers.getBuffer(TRANSDUCER_OVERLAY), glowLight, WHITE);
+                GolemMeshes.renderPart(piston, armPose, buffers.getBuffer(TRANSDUCER_OVERLAY), glowLight, WHITE);
                 poseStack.popPose();
             }
         }
