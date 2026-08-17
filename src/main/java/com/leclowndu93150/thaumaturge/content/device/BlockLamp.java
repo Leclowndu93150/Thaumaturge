@@ -26,7 +26,7 @@ public abstract class BlockLamp extends BaseEntityBlock {
         registerDefaultState(getStateDefinition()
                 .any()
                 .setValue(BlockStateProperties.FACING, Direction.DOWN)
-                .setValue(BlockStateProperties.ENABLED, false));
+                .setValue(BlockStateProperties.ENABLED, true));
     }
 
     @Override
@@ -43,7 +43,9 @@ public abstract class BlockLamp extends BaseEntityBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite())
-                .setValue(BlockStateProperties.ENABLED, false);
+                .setValue(
+                        BlockStateProperties.ENABLED,
+                        !context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override

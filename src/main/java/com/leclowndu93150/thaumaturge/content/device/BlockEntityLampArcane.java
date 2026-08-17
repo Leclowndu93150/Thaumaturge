@@ -10,6 +10,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -27,7 +28,14 @@ public final class BlockEntityLampArcane extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampArcane lamp) {
-        if (level.getGameTime() % SPAWN_INTERVAL != 0 || level.hasNeighborSignal(pos)) {
+        boolean enabled = !level.hasNeighborSignal(pos);
+        if (state.getValue(BlockStateProperties.ENABLED) != enabled) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, enabled), Block.UPDATE_ALL);
+            if (!enabled) {
+                lamp.removeLights();
+            }
+        }
+        if (level.getGameTime() % SPAWN_INTERVAL != 0 || !enabled) {
             return;
         }
         int x = level.getRandom().nextInt(SPREAD) - level.getRandom().nextInt(SPREAD);
