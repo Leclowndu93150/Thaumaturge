@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jspecify.annotations.NonNull;
 
 public final class TCBlockTagsProvider extends BlockTagsProvider {
     public TCBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -18,7 +19,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider lookupProvider) {
+    protected void addTags(HolderLookup.@NonNull Provider lookupProvider) {
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
         tag(TCBlockTags.INFUSION_STABILISERS)
                 .add(Blocks.SKELETON_SKULL)
@@ -101,7 +102,14 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.METAL_VOID_BLOCK.get())
                 .add(TCBlocks.OBSIDIAN_PLACEHOLDER.get())
                 .add(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get())
-                .add(TCBlocks.INFERNAL_FURNACE.get());
+                .add(TCBlocks.INFERNAL_FURNACE.get())
+                .add(TCBlocks.PEDESTAL_ARCANE.get())
+                .add(TCBlocks.PEDESTAL_ANCIENT.get())
+                .add(TCBlocks.PEDESTAL_ELDRITCH.get())
+                .add(TCBlocks.RECHARGE_PEDESTAL.get())
+                .add(TCBlocks.PILLAR_ARCANE.get())
+                .add(TCBlocks.PILLAR_ANCIENT.get())
+                .add(TCBlocks.PILLAR_ELDRITCH.get());
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())
