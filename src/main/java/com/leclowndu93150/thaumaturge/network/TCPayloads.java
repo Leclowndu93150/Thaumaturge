@@ -85,6 +85,10 @@ public final class TCPayloads {
                 ServerboundRequestSyncAspectPoolPayload.STREAM_CODEC,
                 ServerboundRequestSyncAspectPoolPayload::handle);
         registrar.playToServer(
+                ServerboundInventoryScanPayload.TYPE,
+                ServerboundInventoryScanPayload.STREAM_CODEC,
+                ServerboundInventoryScanPayload::handle);
+        registrar.playToServer(
                 ServerboundObtainNotePayload.TYPE,
                 ServerboundObtainNotePayload.STREAM_CODEC,
                 ServerboundObtainNotePayload::handle);
