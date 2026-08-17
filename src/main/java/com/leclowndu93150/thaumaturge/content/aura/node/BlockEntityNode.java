@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
@@ -80,6 +81,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final float BRIGHTEN_FILL_FRACTION = 0.9F;
     private static final int BRIGHTEN_CHANCE = 50;
     private static final int HUNGRY_REACH = 16;
+    private static final double HUNGRY_RAY_START_OFFSET = 0.25;
     private static final double HUNGRY_PULL_RANGE = 15.0;
     private static final double HUNGRY_EAT_RANGE_SQ = 2.0;
     private static final float HUNGRY_MAX_HARDNESS = 5.0F;
@@ -859,10 +861,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int tx = pos.getX() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
         int ty = pos.getY() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
         int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = serverLevel.clip(
-                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
+        BlockHitResult hit = hungryNodeClip(serverLevel, pos, to);
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -875,6 +875,21 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (!state.isAir() && hardness >= 0.0F && hardness < HUNGRY_MAX_HARDNESS) {
             serverLevel.destroyBlock(target, true);
         }
+    }
+
+    /**
+     * Clips outward from just beyond the node's outline. Starting at the block center makes the
+     * node hit its own selection shape, preventing hungry nodes from ever reaching another block.
+     */
+    private static BlockHitResult hungryNodeClip(Level level, BlockPos pos, Vec3 to) {
+        Vec3 center = Vec3.atCenterOf(pos);
+        Vec3 direction = to.subtract(center);
+        if (direction.lengthSqr() < 1.0E-7) {
+            return BlockHitResult.miss(to, Direction.UP, pos);
+        }
+        Vec3 from = center.add(direction.normalize().scale(HUNGRY_RAY_START_OFFSET));
+        return level.clip(
+                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
@@ -960,8 +975,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = clientLevel.clip(
-                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
+        BlockHitResult hit = hungryNodeClip(clientLevel, pos, to);
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
