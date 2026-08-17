@@ -3,16 +3,21 @@ package com.leclowndu93150.thaumaturge.client.screen;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.CategoryComponents;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
-import java.util.ArrayList;
-import java.util.List;
+import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 public final class TCTooltips {
-    private TCTooltips() {}
+    private TCTooltips() {
+    }
 
     public static Component categoryName(ResourceKey<IResearchCategory> key) {
         return CategoryComponents.name(key);
@@ -104,7 +109,8 @@ public final class TCTooltips {
                     lines.add(Component.literal(" - ").append(parent).withStyle(ChatFormatting.YELLOW));
                 }
             }
-            case COMPLETE -> {}
+            case COMPLETE -> {
+            }
         }
         if (hasNewResearch) lines.add(researchNew());
         if (hasNewPage) lines.add(pageNew());
@@ -116,6 +122,18 @@ public final class TCTooltips {
         if (path.startsWith("scanned/aspect/")) {
             String aspect = path.substring(path.lastIndexOf('/') + 1);
             return Component.translatable("aspect.thaumaturge." + aspect);
+        }
+        // Resolve the entry from the registry so a custom "name" key from a datapack is respected;
+        // fall back to the legacy thaumaturge key only when the entry cannot be found.
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null) {
+            Optional<? extends net.minecraft.core.Holder<IResearchEntry>> holder = mc.player
+                    .registryAccess()
+                    .lookup(IResearchEntry.REGISTRY_KEY)
+                    .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id)));
+            if (holder.isPresent()) {
+                return Component.translatable(holder.get().value().nameKey());
+            }
         }
         return Component.translatableWithFallback("research.thaumaturge." + path + ".title", "?");
     }

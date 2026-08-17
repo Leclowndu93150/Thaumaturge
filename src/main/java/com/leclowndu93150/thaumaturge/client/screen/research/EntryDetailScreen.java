@@ -1,23 +1,12 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.*;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
-import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
-import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
-import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
-import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
-import com.leclowndu93150.thaumaturge.api.research.ResearchAddendum;
-import com.leclowndu93150.thaumaturge.api.research.ResearchConstruct;
-import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
-import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
+import com.leclowndu93150.thaumaturge.api.research.*;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
@@ -35,13 +24,6 @@ import com.leclowndu93150.thaumaturge.network.ServerboundObtainNotePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestItemRecipePayload;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -70,6 +52,8 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int PANE_W = 256;
@@ -308,7 +292,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private final Deque<Identifier> history = new ArrayDeque<>();
 
     public EntryDetailScreen(Holder<IResearchEntry> entry, Identifier entryId, @Nullable Screen parent) {
-        super(Component.translatable("research.thaumaturge." + entryId.getPath() + ".title"));
+        super(Component.translatable(entry.value().nameKey()));
         this.entry = entry;
         this.entryId = entryId;
         this.parent = parent;
@@ -360,7 +344,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private List<ResearchAddendum> unlockedAddenda() {
-        if (!isComplete || minecraft == null || minecraft.player == null) return List.of();
+        if (!isComplete || minecraft.player == null) return List.of();
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         List<ResearchAddendum> unlocked = new ArrayList<>();
         for (ResearchAddendum addendum : entry.value().addenda()) {
@@ -389,7 +373,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private int activeKnowledgeRowCount() {
-        if (minecraft == null || minecraft.player == null) return 0;
+        if (minecraft.player == null) return 0;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         HolderLookup.Provider registries = minecraft.player.registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
@@ -414,7 +398,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private int currentStageIndex() {
-        if (minecraft == null || minecraft.player == null) return 0;
+        if (minecraft.player == null) return 0;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         isComplete = knowledge.isResearchComplete(entryId);
         int total = entry.value().stages().size();
@@ -425,13 +409,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         } else if (rawStage >= total) {
             rawStage = total - 1;
         }
-        if (hold
-                && (isComplete
-                        || knowledge.researchStage(entryId) > lastStage
-                        || minecraft.player.level().getGameTime() - holdSince > HOLD_TIMEOUT_TICKS)) {
+        if (hold && (isComplete
+                || knowledge.researchStage(entryId) > lastStage
+                || minecraft.player.level().getGameTime() - holdSince > HOLD_TIMEOUT_TICKS)) {
             hold = false;
         }
-        return Math.min(Math.max(0, rawStage), total - 1);
+        return Math.clamp(rawStage, 0, total - 1);
     }
 
     @Override
@@ -440,8 +423,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         renderPaneBackground(graphics);
         IResearchStage stage = entry.value().stages().get(currentStageIndex());
         boolean insertOpen = insertOpen();
-        int pageMouseX = insertOpen ? Integer.MIN_VALUE : mouseX;
-        int pageMouseY = insertOpen ? Integer.MIN_VALUE : mouseY;
+        int pageMouseX = insertOpen
+                ? Integer.MIN_VALUE
+                : mouseX;
+        int pageMouseY = insertOpen
+                ? Integer.MIN_VALUE
+                : mouseY;
         int pageBaseY = sh + CONTENT_Y_OFFSET;
         renderTextPages(graphics, pageBaseY, pageMouseX, pageMouseY);
         renderRequirements(graphics, stage, sw, pageMouseX, pageMouseY);
@@ -508,16 +495,17 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
         int textX = x + PAGE_LEFT_OFFSET + side * PAGE_SIDE_OFFSET;
         for (PageParser.PageElement element : page.elements()) {
-            if (element instanceof PageParser.PageElement.Text text) {
+            if (element instanceof PageParser.PageElement.Text(
+                    String content, net.minecraft.network.chat.Style style, boolean paragraphBreak
+            )) {
                 FormattedCharSequence sequence =
-                        sink -> StringDecomposer.iterateFormatted(text.content(), text.style(), sink);
+                        sink -> StringDecomposer.iterateFormatted(content, style, sink);
                 graphics.text(font, sequence, textX, currentY - 6, TEXT_LINE_COLOR, false);
                 currentY += LINE_HEIGHT;
-                if (text.paragraphBreak()) {
+                if (paragraphBreak) {
                     currentY += (int) (LINE_HEIGHT * 0.66F);
                 }
-            } else if (element instanceof PageParser.PageElement.Image image) {
-                PageParser.PageImage pi = image.image();
+            } else if (element instanceof PageParser.PageElement.Image(PageParser.PageImage pi)) {
                 int pad = (PAGE_WIDTH - pi.renderedWidth()) / 2;
                 graphics.pose().pushMatrix();
                 graphics.pose().translate(textX + pad, currentY - 5);
@@ -575,7 +563,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private void renderRequirements(
             GuiGraphicsExtractor graphics, IResearchStage stage, int x, int mouseX, int mouseY) {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft.player == null) return;
         if (currentPage > 0) return;
         if (isComplete) return;
         Player player = minecraft.player;
@@ -673,14 +661,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean knowsResearch(Identifier id) {
-        if (minecraft == null || minecraft.player == null) return false;
+        if (minecraft.player == null) return false;
         return KnowledgeAccess.of(minecraft.player).isResearchComplete(id);
     }
 
     private void renderWarpIndicator(
             GuiGraphicsExtractor graphics, IResearchStage stage, int x, int y, int mouseX, int mouseY) {
-        if (minecraft == null || minecraft.player == null) return;
-        if (isComplete) return;
+        if (minecraft.player == null || isComplete) return;
         int warp = stage.warp();
         if (warp <= 0) return;
         if (warp > 5) warp = 5;
@@ -704,7 +691,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void drawForbiddenNode(GuiGraphicsExtractor graphics, int centerX, int centerY) {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft.player == null) return;
         int ticksExisted = minecraft.player.tickCount;
         int frame = ticksExisted % FORBIDDEN_NODE_FRAME_COUNT;
         Identifier nodeTex = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
@@ -745,13 +732,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (mouseInside(x + LABEL_OFFSET_X, y, LABEL_WIDTH / 4, LABEL_HEIGHT, mouseX, mouseY)) {
             switch (v) {
                 case LABEL_KNOW_V ->
-                    graphics.setTooltipForNextFrame(Component.translatable("tc.need.know"), mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(Component.translatable("tc.need.know"), mouseX, mouseY);
                 case LABEL_CRAFT_V ->
-                    graphics.setTooltipForNextFrame(Component.translatable("tc.need.craft"), mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(Component.translatable("tc.need.craft"), mouseX, mouseY);
                 case LABEL_OBTAIN_V ->
-                    graphics.setTooltipForNextFrame(Component.translatable("tc.need.obtain"), mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(Component.translatable("tc.need.obtain"), mouseX, mouseY);
                 case LABEL_RESEARCH_V ->
-                    graphics.setTooltipForNextFrame(Component.translatable("tc.need.research"), mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(Component.translatable("tc.need.research"), mouseX, mouseY);
             }
         }
     }
@@ -777,9 +764,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (!stack.isEmpty()) {
                 graphics.item(stack, slotX, y);
             }
-            boolean met = obtain
-                    ? countMatching(player, req) >= req.amount()
-                    : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req);
+            boolean met = false;
+            if (player != null) {
+                met = obtain
+                        ? countMatching(player, req) >= req.amount()
+                        : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req);
+            }
             satisfied[i] = met;
             if (met) {
                 graphics.blit(
@@ -909,11 +899,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                             "tc.researchtheory",
                             Component.translatable(entry.value().nameKey())));
                     if (!met) {
-                        lines.add(Component.translatable(
-                                        ResearchNotes.hasNoteFor(minecraft.player, learnKey)
-                                                ? "tc.researchnote.table"
-                                                : "tc.researchnote.click")
-                                .withStyle(ChatFormatting.GRAY));
+                        if (minecraft.player != null) {
+                            lines.add(Component.translatable(
+                                            ResearchNotes.hasNoteFor(minecraft.player, learnKey)
+                                                    ? "tc.researchnote.table"
+                                                    : "tc.researchnote.click")
+                                    .withStyle(ChatFormatting.GRAY));
+                        }
                     }
                     graphics.setTooltipForNextFrame(font, lines, Optional.empty(), mouseX, mouseY);
                 }
@@ -939,8 +931,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     continue;
                 }
                 observationDrawn = true;
-                AspectList cost = observationCost;
-                List<AspectInstance> entries = cost.entries();
+                List<AspectInstance> entries = observationCost.entries();
                 for (int a = 0; a < entries.size(); a++) {
                     AspectInstance instance = entries.get(a);
                     int chipX = slotX + a * spacing;
@@ -1095,7 +1086,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         List<Identifier> recipes = displayRecipes(stage);
         boolean hasConstruct = stage.construct().isPresent();
         int totalBookmarks = recipes.size() + (hasConstruct ? 1 : 0);
-        if (totalBookmarks == 0) return;
+        if (totalBookmarks == 0 || minecraft.level == null) return;
         int space = Math.min(RECIPE_BOOKMARK_MAX_STEP, RECIPE_BOOKMARK_TOTAL_BUDGET / totalBookmarks);
         int slotY = sh + RECIPE_BOOKMARK_BASE_Y_OFFSET;
         Random rng = new Random(rhash);
@@ -1106,7 +1097,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 continue;
             }
             ItemStack result = ItemStack.EMPTY;
-            RecipeDisplay first = displays.get(0);
+            RecipeDisplay first = displays.getFirst();
             SlotDisplay sd = first.result();
             try {
                 result = sd.resolveForFirstStack(SlotDisplayContext.fromLevel(minecraft.level));
@@ -1116,7 +1107,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int shJitter = rng.nextInt(3);
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
             int le = rng.nextInt(3) + (hoverState ? 0 : 3);
-            int tint = rid.equals(shownRecipe) ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
+            int tint = 0;
+            if (shownRecipe != null) {
+                tint = rid.equals(shownRecipe)
+                        ? RECIPE_BOOKMARK_TINT_SELECTED
+                        : RECIPE_BOOKMARK_TINT_NORMAL;
+            }
             graphics.blit(
                     RenderPipelines.GUI_TEXTURED,
                     TCScreenTextures.RESEARCH_BOOK,
@@ -1206,7 +1202,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void renderRecipePage(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        if (shownRecipe == null) return;
+        if (shownRecipe == null || minecraft.player != null) return;
         int paperX = (width - 256) / 2;
         int paperY = (height - 256) / 2;
         graphics.blit(
@@ -1286,7 +1282,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 INSERT_PAPER_SIZE,
                 TCScreenTextures.TEX_SIZE,
                 TCScreenTextures.TEX_SIZE);
-        long gameTime = minecraft.player.level().getGameTime();
+        long gameTime = 0;
+        if (minecraft.player != null) {
+            gameTime = minecraft.player.level().getGameTime();
+        }
         int centerX = paperX + INSERT_PAPER_SIZE / 2;
         int pageY = paperY + CONSTRUCT_PAGE_Y;
         Component title = Component.translatable("recipe.type.construct");
@@ -1394,7 +1393,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
     }
 
-    private record ConstructCellDraw(int px, int py, ItemStack stack) {}
+    private record ConstructCellDraw(int px, int py, ItemStack stack) {
+    }
 
     private static ItemStack resolveConstructCell(String spec, long gameTime) {
         if (spec.isEmpty()) {
@@ -1617,12 +1617,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean knowsAspect(Holder<IAspect> aspect) {
-        if (minecraft == null || minecraft.player == null) return false;
+        if (minecraft.player == null) return false;
         return AspectPools.isDiscovered(minecraft.player, aspect);
     }
 
     private AspectList listedAspects() {
-        if (minecraft == null || minecraft.player == null) return AspectList.EMPTY;
+        if (minecraft.player == null) return AspectList.EMPTY;
         HolderLookup.Provider registries = minecraft.player.registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IAspect>> lookupOpt = registries.lookup(IAspect.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return AspectList.EMPTY;
@@ -1637,7 +1637,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private Component aspectProgress() {
-        if (minecraft == null || minecraft.player == null) return Component.empty();
+        if (minecraft.player == null) return Component.empty();
         HolderLookup.Provider registries = minecraft.player.registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IAspect>> lookupOpt = registries.lookup(IAspect.REGISTRY_KEY);
         if (lookupOpt.isEmpty()) return Component.empty();
@@ -1682,7 +1682,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean hasAnyKnowledge() {
-        if (minecraft == null || minecraft.player == null) return false;
+        if (minecraft.player == null) return false;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
                 minecraft.player.registryAccess().lookup(IResearchCategory.REGISTRY_KEY);
@@ -1699,7 +1699,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void drawKnowledges(GuiGraphicsExtractor graphics, int x, int y, int mouseX, int mouseY, boolean inpage) {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft.player == null) return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         HolderLookup.Provider registries = minecraft.player.registryAccess();
         Optional<? extends HolderLookup.RegistryLookup<IResearchCategory>> lookupOpt =
@@ -1736,7 +1736,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                             cy + KNOW_GRID_AMT_Y_OFFSET,
                             KNOW_GRID_AMT_COLOR,
                             true);
-                    if (par > 0 && type.progression() > 0) {
+                    if (par > 0) {
                         int l = (int) ((float) par / type.progression() * KNOW_GRID_BAR_BAR_WIDTH);
                         graphics.blit(
                                 RenderPipelines.GUI_TEXTURED,
@@ -1861,7 +1861,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private float bob() {
-        if (minecraft == null || minecraft.player == null) return 0.0F;
+        if (minecraft.player == null) return 0.0F;
         return Mth.sin(minecraft.player.tickCount / 3.0F) * 0.2F + 0.1F;
     }
 
@@ -2046,10 +2046,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int hitRecipe = hitRecipeBookmark(mx, my, stage);
             if (hitRecipe >= 0) {
                 Identifier rid = displayRecipes(stage).get(hitRecipe);
-                if (rid.equals(shownRecipe)) {
+                if (rid.equals(Objects.requireNonNull(shownRecipe))) {
                     shownRecipe = null;
-                } else {
-                    shownRecipe = rid;
                 }
                 showingAspects = false;
                 showingKnowledge = false;
@@ -2075,7 +2073,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     ClientPacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
                     playSound(TCSounds.WRITE.get(), 0.66F, 1.0F);
                     lastStage = KnowledgeAccess.of(minecraft.player).researchStage(entryId);
-                    holdSince = minecraft.player.level().getGameTime();
+                    if (minecraft.player != null) {
+                        holdSince = minecraft.player.level().getGameTime();
+                    }
                     hold = true;
                     return true;
                 }
@@ -2085,7 +2085,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean handleRecipeIngredientClick(double mx, double my) {
-        if (shownRecipe == null || minecraft == null || minecraft.player == null) return false;
+        if (shownRecipe == null || minecraft.player == null) return false;
         List<RecipeDisplay> displays = RecipeDisplayCache.get(shownRecipe);
         if (displays == null || displays.isEmpty()) return false;
         RecipeDisplay current = displays.get(Math.min(recipePage, displays.size() - 1));
@@ -2108,10 +2108,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     public void openRecipeFromNavigation(Identifier recipeId) {
-        if (recipeId.equals(shownRecipe)) return;
-        if (shownRecipe != null) {
-            history.push(shownRecipe);
-        }
+        if (recipeId.equals(Objects.requireNonNull(shownRecipe))) return;
+        history.push(shownRecipe);
         shownRecipe = recipeId;
         recipePage = 0;
         showingAspects = false;
@@ -2153,7 +2151,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void playSound(SoundEvent sound, float volume, float pitch) {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft.player == null) return;
         minecraft.player.playSound(sound, volume, pitch);
     }
 
@@ -2188,9 +2186,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean handleTheoryNoteClick(double mx, double my, IResearchStage stage) {
-        if (minecraft == null
-                || minecraft.player == null
-                || stage.requiredKnowledge().isEmpty()) {
+        if (minecraft.player == null || stage.requiredKnowledge().isEmpty()) {
             return false;
         }
         int rowsAbove = 1;
@@ -2223,7 +2219,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean hitStageComplete(double mx, double my, IResearchStage stage) {
-        if (minecraft == null || minecraft.player == null) return false;
+        if (minecraft.player == null) return false;
         Player player = minecraft.player;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
         boolean[] researchSatisfied = new boolean[stage.requiredResearch().size()];
@@ -2281,7 +2277,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private int clampPage(int page) {
         int max = Math.max(0, parsedPages.size() - 1);
-        return Math.min(Math.max(0, page), max);
+        return Math.clamp(page, 0, max);
     }
 
     @Override
@@ -2294,11 +2290,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
             return;
         }
-        if (minecraft != null) minecraft.setScreen(parent);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+        minecraft.setScreen(parent);
     }
 }
