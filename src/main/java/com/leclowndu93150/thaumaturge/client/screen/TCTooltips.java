@@ -4,6 +4,9 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.CategoryComponents;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -11,13 +14,8 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 public final class TCTooltips {
-    private TCTooltips() {
-    }
+    private TCTooltips() {}
 
     public static Component categoryName(ResourceKey<IResearchCategory> key) {
         return CategoryComponents.name(key);
@@ -109,8 +107,7 @@ public final class TCTooltips {
                     lines.add(Component.literal(" - ").append(parent).withStyle(ChatFormatting.YELLOW));
                 }
             }
-            case COMPLETE -> {
-            }
+            case COMPLETE -> {}
         }
         if (hasNewResearch) lines.add(researchNew());
         if (hasNewPage) lines.add(pageNew());

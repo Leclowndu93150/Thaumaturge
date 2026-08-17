@@ -393,6 +393,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         langConstructs();
         langDecorSweep();
         langOuterLands();
+        langCommands();
     }
 
     private void aspect(String tag, String name, String description, String help) {
@@ -1613,5 +1614,68 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.relay.linked_relay", "Linked through %s relays");
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
         add("jade.thaumaturge.golem.rank", "Rank %s (%s XP)");
+    }
+
+    private void langCommands() {
+        add("commands.thaumaturge.invalid_research", "Unknown Research Entry : %s");
+        add("commands.thaumaturge.invalid_aspect", "Unknown Aspect : %s");
+        add("commands.thaumaturge.failed", "Failed: %s");
+        add("commands.thaumaturge.reset.success", "Reset %1$s research entries and all knowledge");
+        add("commands.thaumaturge.grant_all.success", "Granted %1$s research entries and all aspect research points");
+        add("commands.thaumaturge.grant_all_aspects.success", "Granted %1$s research points to all %2$s aspects");
+        add("commands.thaumaturge.grant_aspect.success", "Granted %1$s research points of %2$s");
+        add("commands.thaumaturge.revoke.success", "Revoked research %1$s");
+        add("commands.thaumaturge.revoke.failed", "Failed to revoke research entry");
+        add("commands.thaumaturge.grant.success", "Unlocked research %1$s");
+        add("commands.thaumaturge.grant.failed", "Failed to grant research entry");
+        add("commands.thaumaturge.warp.info", "Warp: permanent %1$s, normal %2$s, temporary %3$s, counter %4$s");
+        add("commands.thaumaturge.warp.modify.remove", "Removed %1$s %2$s warp");
+        add("commands.thaumaturge.warp.modify.add", "Added %1$s %2$s warp");
+        add("commands.thaumaturge.warp.unknown_type", "Unknown warp type");
+        add("commands.thaumaturge.warp.clear", "Warp cleared");
+        add("commands.thaumaturge.warp.event", "Warp event check rolled");
+        add("commands.thaumaturge.aura.info", "Aura at %1$s: vis %2$.1f, flux %3$.1f, base %4$s");
+        add("commands.thaumaturge.aura.vis.drain", "Drained %1$.1f vis");
+        add("commands.thaumaturge.aura.vis.add", "Added %1$.1f vis");
+        add("commands.thaumaturge.aura.flux.drain", "Drained %1$.1f flux");
+        add("commands.thaumaturge.aura.flux.add", "Added %1$.1f flux");
+        add("commands.thaumaturge.feature.placed", "Placed %1$s");
+        add("commands.thaumaturge.feature.refused", "Feature refused to place here (bad soil or no clearance)");
+        add("commands.thaumaturge.taint.spread", "Forced taint spread at %1$s");
+        add("commands.thaumaturge.flux_goo.set", "Placed flux goo at level %1$s");
+        add("commands.thaumaturge.effect.unknown", "Unknown effect: %1$s");
+        add("commands.thaumaturge.rift.spawn", "Spawned flux rift (size %1$s)");
+        add("commands.thaumaturge.rift.create_failed", "Failed to create rift");
+        add("commands.thaumaturge.champion.unknown", "Unknown champion modifier: %1$s");
+        add("commands.thaumaturge.champion.not_monster", "Champion modifiers only apply to monsters: %1$s");
+        add("commands.thaumaturge.champion.spawn", "Spawned %1$s champion %2$s");
+        add("commands.thaumaturge.entity.unknown", "Unknown entity: %1$s");
+        add("commands.thaumaturge.entity.create_failed", "Failed to create %1$s");
+        add("commands.thaumaturge.entity.spawn", "Spawned %1$s");
+        add("commands.thaumaturge.focus.unknown", "Unknown focus element: %1$s");
+        add("commands.thaumaturge.focus.over_cap", "Warning: complexity %1$s exceeds tier cap %2$s");
+        add("commands.thaumaturge.focus.socketed", "Socketed focus (complexity %1$s) into held caster");
+        add("commands.thaumaturge.focus.gave", "Gave focus (complexity %1$s)");
+        add("commands.thaumaturge.crystal.gave", "Gave crystal of %1$s");
+        add("commands.thaumaturge.maze.exists", "A maze already exists in range.");
+        add(
+                "commands.thaumaturge.maze.generated",
+                "Maze %1$sx%2$s generated around chunk %3$s,%4$s (portal room at that chunk in the Outer Lands)");
+        add("commands.thaumaturge.particle.header", "=== Thaumaturge Particle Demos ===");
+        add("commands.thaumaturge.particle.usage", "Use /tc particle <name> — spawns 3 blocks in front of you");
+        add("commands.thaumaturge.particle.total", "Total: %1$s demos");
+        add("commands.thaumaturge.particle.unknown", "Unknown demo: %1$s — try /tc particle list");
+        add("commands.thaumaturge.particle.spawned", "Spawned demo: %1$s");
+        add("commands.thaumaturge.node.random_ok", "Random node created");
+        add("commands.thaumaturge.node.place_failed", "Could not place node");
+        add("commands.thaumaturge.node.unknown_type", "Unknown node type: %1$s");
+        add(
+                "commands.thaumaturge.node.aspect_pairs",
+                "Aspects must be pairs: <aspect> <amount> [<aspect> <amount> ...]");
+        add("commands.thaumaturge.node.unknown_aspect", "Unknown aspect: %1$s");
+        add("commands.thaumaturge.node.bad_amount", "Bad amount: %1$s");
+        add("commands.thaumaturge.node.positive_amount", "Amount must be positive: %1$s");
+        add("commands.thaumaturge.node.created", "Node created");
+        add("commands.thaumaturge.link.unlink", "Removed %1$s research link links");
     }
 }

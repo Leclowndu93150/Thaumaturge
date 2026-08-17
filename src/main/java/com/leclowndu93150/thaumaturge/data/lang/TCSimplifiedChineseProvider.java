@@ -377,6 +377,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         langConstructs();
         langDecorSweep();
         langOuterLands();
+        langCommands();
     }
 
     private void aspect(String tag, String name, String description, String help) {
@@ -1454,5 +1455,64 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("jade.thaumaturge.relay.linked_relay", "经由 %s 个中继器连接");
         add("jade.thaumaturge.relay.unlinked", "范围内没有充能节点");
         add("jade.thaumaturge.golem.rank", "等级 %s（%s 经验）");
+    }
+
+    private void langCommands() {
+        add("commands.thaumaturge.invalid_research", "未知的研究条目：%s");
+        add("commands.thaumaturge.invalid_aspect", "未知的要素：%s");
+        add("commands.thaumaturge.failed", "失败：%s");
+        add("commands.thaumaturge.reset.success", "已重置 %1$s 个研究条目与全部知识");
+        add("commands.thaumaturge.grant_all.success", "已授予 %1$s 个研究条目与全部要素研究点");
+        add("commands.thaumaturge.grant_all_aspects.success", "已向全部 %2$s 个要素授予 %1$s 个研究点");
+        add("commands.thaumaturge.grant_aspect.success", "已授予 %1$s 个 %2$s 的研究点");
+        add("commands.thaumaturge.revoke.success", "已撤销研究 %1$s");
+        add("commands.thaumaturge.revoke.failed", "撤销研究条目失败");
+        add("commands.thaumaturge.grant.success", "已解锁研究 %1$s");
+        add("commands.thaumaturge.grant.failed", "授予研究条目失败");
+        add("commands.thaumaturge.warp.info", "扭曲：永久 %1$s，普通 %2$s，临时 %3$s，计数 %4$s");
+        add("commands.thaumaturge.warp.modify.remove", "已移除 %1$s 点 %2$s 扭曲");
+        add("commands.thaumaturge.warp.modify.add", "已增加 %1$s 点 %2$s 扭曲");
+        add("commands.thaumaturge.warp.unknown_type", "未知的扭曲类型");
+        add("commands.thaumaturge.warp.clear", "扭曲已清除");
+        add("commands.thaumaturge.warp.event", "已触发扭曲事件检定");
+        add("commands.thaumaturge.aura.info", "在 %1$s 处的灵气：灵气 %2$.1f，污染 %3$.1f，基础 %4$s");
+        add("commands.thaumaturge.aura.vis.drain", "已吸取 %1$.1f 点灵气");
+        add("commands.thaumaturge.aura.vis.add", "已增加 %1$.1f 点灵气");
+        add("commands.thaumaturge.aura.flux.drain", "已吸取 %1$.1f 点污染");
+        add("commands.thaumaturge.aura.flux.add", "已增加 %1$.1f 点污染");
+        add("commands.thaumaturge.feature.placed", "已放置 %1$s");
+        add("commands.thaumaturge.feature.refused", "该结构拒绝在此生成（土壤不合适或空间不足）");
+        add("commands.thaumaturge.taint.spread", "已在 %1$s 强制传播污染");
+        add("commands.thaumaturge.flux_goo.set", "已在等级 %1$s 放置污染黏液");
+        add("commands.thaumaturge.effect.unknown", "未知的效果：%1$s");
+        add("commands.thaumaturge.rift.spawn", "已生成污染裂隙（大小 %1$s）");
+        add("commands.thaumaturge.rift.create_failed", "创建裂隙失败");
+        add("commands.thaumaturge.champion.unknown", "未知的冠军修饰：%1$s");
+        add("commands.thaumaturge.champion.not_monster", "冠军修饰仅适用于怪物：%1$s");
+        add("commands.thaumaturge.champion.spawn", "已生成 %1$s 冠军 %2$s");
+        add("commands.thaumaturge.entity.unknown", "未知的实体：%1$s");
+        add("commands.thaumaturge.entity.create_failed", "创建 %1$s 失败");
+        add("commands.thaumaturge.entity.spawn", "已生成 %1$s");
+        add("commands.thaumaturge.focus.unknown", "未知的咒术元素：%1$s");
+        add("commands.thaumaturge.focus.over_cap", "警告：复杂度 %1$s 超过该等级上限 %2$s");
+        add("commands.thaumaturge.focus.socketed", "已将咒术（复杂度 %1$s）嵌入手持的施法器");
+        add("commands.thaumaturge.focus.gave", "已给予咒术（复杂度 %1$s）");
+        add("commands.thaumaturge.crystal.gave", "已给予 %1$s 水晶");
+        add("commands.thaumaturge.maze.exists", "该范围内已存在一个迷宫。");
+        add("commands.thaumaturge.maze.generated", "已在区块 %3$s,%4$s 周围生成 %1$sx%2$s 迷宫（传送门房间位于外部领域中该区块处）");
+        add("commands.thaumaturge.particle.header", "=== Thaumaturge 粒子演示 ===");
+        add("commands.thaumaturge.particle.usage", "使用 /tc particle <名称> —— 在你前方生成 3 格");
+        add("commands.thaumaturge.particle.total", "共 %1$s 个演示");
+        add("commands.thaumaturge.particle.unknown", "未知的演示：%1$s —— 试试 /tc particle list");
+        add("commands.thaumaturge.particle.spawned", "已生成演示：%1$s");
+        add("commands.thaumaturge.node.random_ok", "已创建随机节点");
+        add("commands.thaumaturge.node.place_failed", "无法放置节点");
+        add("commands.thaumaturge.node.unknown_type", "未知的节点类型：%1$s");
+        add("commands.thaumaturge.node.aspect_pairs", "要素必须成对出现：<要素> <数量> [<要素> <数量> ...]");
+        add("commands.thaumaturge.node.unknown_aspect", "未知的要素：%1$s");
+        add("commands.thaumaturge.node.bad_amount", "数量无效：%1$s");
+        add("commands.thaumaturge.node.positive_amount", "数量必须为正数：%1$s");
+        add("commands.thaumaturge.node.created", "已创建节点");
+        add("commands.thaumaturge.link.unlink", "已移除 %1$s 条研究链接");
     }
 }

@@ -109,10 +109,14 @@ public final class TCCommands {
 
     private static final double CHAMPION_SPAWN_DISTANCE = 4.0;
 
-    private static final DynamicCommandExceptionType ERROR_INVALID_GATE =
-            new DynamicCommandExceptionType((value) -> Component.literal("Unknown Research Entry : " + value));
-    private static final DynamicCommandExceptionType ERROR_INVALID_ASPECT =
-            new DynamicCommandExceptionType((value) -> Component.literal("Unknown Aspect : " + value));
+    private static final DynamicCommandExceptionType ERROR_INVALID_GATE = new DynamicCommandExceptionType(
+            (value) -> Component.translatable("commands.thaumaturge.invalid_research", value));
+    private static final DynamicCommandExceptionType ERROR_INVALID_ASPECT = new DynamicCommandExceptionType(
+            (value) -> Component.translatable("commands.thaumaturge.invalid_aspect", value));
+
+    private static Component failure(Throwable e) {
+        return Component.translatable("commands.thaumaturge.failed", e.getMessage());
+    }
 
     @SubscribeEvent
     public static void onRegister(RegisterCommandsEvent event) {
@@ -282,13 +286,10 @@ public final class TCCommands {
             ResearchManager.applyAutoUnlock(player);
             knowledge.sync(player);
             ctx.getSource()
-                    .sendSuccess(
-                            () -> Component.literal(
-                                    String.format("Reset %d research entries and all knowledge", cleared)),
-                            false);
+                    .sendSuccess(() -> Component.translatable("commands.thaumaturge.reset.success", cleared), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -299,12 +300,10 @@ public final class TCCommands {
             int granted = ResearchGrants.grantAll(player);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(String.format(
-                                    "Granted %d research entries and all aspect research points", granted)),
-                            false);
+                            () -> Component.translatable("commands.thaumaturge.grant_all.success", granted), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -315,12 +314,12 @@ public final class TCCommands {
             int count = AspectPools.grantAllForCommand(player, amount);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(
-                                    String.format("Granted %d research points to all %d aspects", amount, count)),
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.grant_all_aspects.success", amount, count),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -335,12 +334,12 @@ public final class TCCommands {
             AspectPools.grantForCommand(player, aspect, amount);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(
-                                    String.format("Granted %d research points of %s", amount, key.identifier())),
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.grant_aspect.success", amount, key.identifier()),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -355,15 +354,15 @@ public final class TCCommands {
                 knowledge.sync(player);
                 ctx.getSource()
                         .sendSuccess(
-                                () -> Component.literal(String.format("Revoked research %s ", key.identifier())),
+                                () -> Component.translatable("commands.thaumaturge.revoke.success", key.identifier()),
                                 false);
                 return Command.SINGLE_SUCCESS;
             } else {
-                ctx.getSource().sendFailure(Component.literal("Failed to revoke research entry"));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.revoke.failed"));
                 return 0;
             }
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -372,7 +371,6 @@ public final class TCCommands {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             ServerLevel level = (ServerLevel) player.level();
-            BlockPos pos = player.blockPosition();
             ResourceKey<IResearchEntry> key =
                     ResourceKeyArgument.getRegistryKey(ctx, "entry", IResearchEntry.REGISTRY_KEY, ERROR_INVALID_GATE);
             Holder<IResearchEntry> holder = level.registryAccess()
@@ -383,15 +381,15 @@ public final class TCCommands {
                         player, key.identifier(), holder.value().stages().size());
                 ctx.getSource()
                         .sendSuccess(
-                                () -> Component.literal(String.format("Unlocked research %s ", key.identifier())),
+                                () -> Component.translatable("commands.thaumaturge.grant.success", key.identifier()),
                                 false);
                 return Command.SINGLE_SUCCESS;
             } else {
-                ctx.getSource().sendFailure(Component.literal("Failed to grant research entry"));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.grant.failed"));
                 return 0;
             }
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -402,16 +400,16 @@ public final class TCCommands {
             IPlayerWarp warp = WarpHelper.getWarp(player);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(String.format(
-                                    "Warp: permanent %d, normal %d, temporary %d, counter %d",
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.warp.info",
                                     warp.get(WarpType.PERMANENT),
                                     warp.get(WarpType.NORMAL),
                                     warp.get(WarpType.TEMPORARY),
-                                    warp.getCounter())),
+                                    warp.getCounter()),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -425,14 +423,19 @@ public final class TCCommands {
             WarpHelper.addWarp(player, remove ? -amount : amount, type);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal((remove ? "Removed " : "Added ") + amount + " " + type + " warp"),
+                            () -> Component.translatable(
+                                    remove
+                                            ? "commands.thaumaturge.warp.modify.remove"
+                                            : "commands.thaumaturge.warp.modify.add",
+                                    amount,
+                                    type),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (IllegalArgumentException e) {
-            ctx.getSource().sendFailure(Component.literal("Unknown warp type"));
+            ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.warp.unknown_type"));
             return 0;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -442,10 +445,10 @@ public final class TCCommands {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             WarpHelper.getWarp(player).clear();
             player.syncData(TCAttachments.WARP);
-            ctx.getSource().sendSuccess(() -> Component.literal("Warp cleared"), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("commands.thaumaturge.warp.clear"), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -454,10 +457,10 @@ public final class TCCommands {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             WarpEvents.checkWarpEvent(player);
-            ctx.getSource().sendSuccess(() -> Component.literal("Warp event check rolled"), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("commands.thaumaturge.warp.event"), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -472,12 +475,12 @@ public final class TCCommands {
             int base = AuraHelper.getAuraBase(level, pos);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(String.format(
-                                    "Aura at %s: vis %.1f, flux %.1f, base %d", pos.toShortString(), vis, flux, base)),
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.aura.info", pos.toShortString(), vis, flux, base),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -490,14 +493,17 @@ public final class TCCommands {
             float amount = FloatArgumentType.getFloat(ctx, "amount");
             if (remove) {
                 float drained = AuraHelper.drainVis(level, pos, amount, false);
-                ctx.getSource().sendSuccess(() -> Component.literal(String.format("Drained %.1f vis", drained)), false);
+                ctx.getSource()
+                        .sendSuccess(
+                                () -> Component.translatable("commands.thaumaturge.aura.vis.drain", drained), false);
             } else {
                 AuraHelper.addVis(level, pos, amount);
-                ctx.getSource().sendSuccess(() -> Component.literal(String.format("Added %.1f vis", amount)), false);
+                ctx.getSource()
+                        .sendSuccess(() -> Component.translatable("commands.thaumaturge.aura.vis.add", amount), false);
             }
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -511,14 +517,16 @@ public final class TCCommands {
             if (remove) {
                 float drained = AuraHelper.drainFlux(level, pos, amount, false);
                 ctx.getSource()
-                        .sendSuccess(() -> Component.literal(String.format("Drained %.1f flux", drained)), false);
+                        .sendSuccess(
+                                () -> Component.translatable("commands.thaumaturge.aura.flux.drain", drained), false);
             } else {
                 AuraHelper.addFlux(level, pos, amount);
-                ctx.getSource().sendSuccess(() -> Component.literal(String.format("Added %.1f flux", amount)), false);
+                ctx.getSource()
+                        .sendSuccess(() -> Component.translatable("commands.thaumaturge.aura.flux.add", amount), false);
             }
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -533,13 +541,16 @@ public final class TCCommands {
                     .getOrThrow(key);
             boolean placed = holder.value().place(level, level.getChunkSource().getGenerator(), level.getRandom(), pos);
             if (placed) {
-                ctx.getSource().sendSuccess(() -> Component.literal("Placed " + key.identifier()), false);
+                ctx.getSource()
+                        .sendSuccess(
+                                () -> Component.translatable("commands.thaumaturge.feature.placed", key.identifier()),
+                                false);
                 return Command.SINGLE_SUCCESS;
             }
-            ctx.getSource().sendFailure(Component.literal("Feature refused to place here (bad soil or no clearance)"));
+            ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.feature.refused"));
             return 0;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -551,10 +562,12 @@ public final class TCCommands {
             BlockPos pos = player.blockPosition();
             TaintApi.spreadFibres(level, pos, true);
             ctx.getSource()
-                    .sendSuccess(() -> Component.literal("Forced taint spread at " + pos.toShortString()), false);
+                    .sendSuccess(
+                            () -> Component.translatable("commands.thaumaturge.taint.spread", pos.toShortString()),
+                            false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -567,10 +580,11 @@ public final class TCCommands {
             ServerLevel serverLevel = (ServerLevel) player.level();
             var state = TCBlocks.FLUX_GOO.get().defaultBlockState();
             serverLevel.setBlock(pos, state, Block.UPDATE_ALL);
-            ctx.getSource().sendSuccess(() -> Component.literal("Placed flux goo at level " + level), false);
+            ctx.getSource()
+                    .sendSuccess(() -> Component.translatable("commands.thaumaturge.flux_goo.set", level), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -586,13 +600,13 @@ public final class TCCommands {
                         default -> null;
                     };
             if (effect == null) {
-                ctx.getSource().sendFailure(Component.literal("Unknown effect: " + key));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.effect.unknown", key));
                 return 0;
             }
             player.addEffect(new MobEffectInstance(effect, 600, 0, true, true, true));
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -640,7 +654,7 @@ public final class TCCommands {
             ServerLevel level = (ServerLevel) player.level();
             EntityFluxRift rift = TCEntities.FLUX_RIFT.get().create(level, EntitySpawnReason.COMMAND);
             if (rift == null) {
-                ctx.getSource().sendFailure(Component.literal("Failed to create rift"));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.rift.create_failed"));
                 return 0;
             }
             Vec3 pos = player.getEyePosition().add(player.getLookAngle().scale(RIFT_SPAWN_DISTANCE));
@@ -648,10 +662,10 @@ public final class TCCommands {
             rift.snapTo(pos.x, pos.y, pos.z, level.getRandom().nextInt(360), 0.0F);
             rift.setRiftSize(size);
             level.addFreshEntity(rift);
-            ctx.getSource().sendSuccess(() -> Component.literal("Spawned flux rift (size " + size + ")"), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("commands.thaumaturge.rift.spawn", size), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -674,7 +688,7 @@ public final class TCCommands {
                 }
             }
             if (type < 0) {
-                ctx.getSource().sendFailure(Component.literal("Unknown champion modifier: " + modName));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.champion.unknown", modName));
                 return 0;
             }
             EntityType<?> toSpawn = entityType == null ? EntityType.ZOMBIE : entityType.value();
@@ -684,8 +698,8 @@ public final class TCCommands {
                     entity.discard();
                 }
                 ctx.getSource()
-                        .sendFailure(Component.literal(
-                                "Champion modifiers only apply to monsters: " + toSpawn.getDescriptionId()));
+                        .sendFailure(Component.translatable(
+                                "commands.thaumaturge.champion.not_monster", toSpawn.getDescriptionId()));
                 return 0;
             }
             Vec3 pos = player.position()
@@ -699,12 +713,12 @@ public final class TCCommands {
             String finalName = ChampionModifier.MODS.get(type).name();
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal("Spawned " + finalName + " champion "
-                                    + monster.getName().getString()),
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.champion.spawn", finalName, monster.getName()),
                             false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -725,12 +739,12 @@ public final class TCCommands {
                         default -> null;
                     };
             if (type == null) {
-                ctx.getSource().sendFailure(Component.literal("Unknown entity: " + name));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.entity.unknown", name));
                 return 0;
             }
             var entity = type.create(level, EntitySpawnReason.COMMAND);
             if (entity == null) {
-                ctx.getSource().sendFailure(Component.literal("Failed to create " + name));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.entity.create_failed", name));
                 return 0;
             }
             entity.setPos(player.getX(), player.getY(), player.getZ());
@@ -738,10 +752,10 @@ public final class TCCommands {
                 slime.setSize(2, true);
             }
             level.addFreshEntity(entity);
-            ctx.getSource().sendSuccess(() -> Component.literal("Spawned " + name), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("commands.thaumaturge.entity.spawn", name), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -760,7 +774,7 @@ public final class TCCommands {
                         : Identifier.fromNamespaceAndPath(TCIds.MODID, token);
                 FocusElement element = FocusEngine.element(id);
                 if (element == null) {
-                    ctx.getSource().sendFailure(Component.literal("Unknown focus element: " + id));
+                    ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.focus.unknown", id));
                     return 0;
                 }
                 complexity += element.complexity(FocusSettings.defaults(element));
@@ -779,8 +793,10 @@ public final class TCCommands {
             if (complexity > focusItem.getMaxComplexity()) {
                 ctx.getSource()
                         .sendSuccess(
-                                () -> Component.literal("Warning: complexity " + finalComplexity + " exceeds tier cap "
-                                        + focusItem.getMaxComplexity()),
+                                () -> Component.translatable(
+                                        "commands.thaumaturge.focus.over_cap",
+                                        finalComplexity,
+                                        focusItem.getMaxComplexity()),
                                 false);
             }
             ItemStack held = player.getMainHandItem();
@@ -792,17 +808,18 @@ public final class TCCommands {
                 caster.setFocus(held, focusStack);
                 ctx.getSource()
                         .sendSuccess(
-                                () -> Component.literal(
-                                        "Socketed focus (complexity " + finalComplexity + ") into held caster"),
+                                () -> Component.translatable("commands.thaumaturge.focus.socketed", finalComplexity),
                                 false);
             } else {
                 player.getInventory().add(focusStack);
                 ctx.getSource()
-                        .sendSuccess(() -> Component.literal("Gave focus (complexity " + finalComplexity + ")"), false);
+                        .sendSuccess(
+                                () -> Component.translatable("commands.thaumaturge.focus.gave", finalComplexity),
+                                false);
             }
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -815,10 +832,10 @@ public final class TCCommands {
                     ResourceKey.create(IAspect.REGISTRY_KEY, Identifier.fromNamespaceAndPath(TCIds.MODID, tag));
             ItemStack stack = EssentiaCrystalFactory.of(player.registryAccess(), key);
             player.getInventory().add(stack);
-            ctx.getSource().sendSuccess(() -> Component.literal("Gave crystal of " + tag), false);
+            ctx.getSource().sendSuccess(() -> Component.translatable("commands.thaumaturge.crystal.gave", tag), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -833,18 +850,18 @@ public final class TCCommands {
             int chunkX = (int) ctx.getSource().getPosition().x >> 4;
             int chunkZ = (int) ctx.getSource().getPosition().z >> 4;
             if (maze.mazesInRange(chunkX, chunkZ, width, height)) {
-                ctx.getSource().sendFailure(Component.literal("A maze already exists in range."));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.maze.exists"));
                 return 0;
             }
             maze.generateMaze(chunkX, chunkZ, width, height, rand.nextLong());
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal("Maze " + width + "x" + height + " generated around chunk " + chunkX
-                                    + "," + chunkZ + " (portal room at that chunk in the Outer Lands)"),
+                            () -> Component.translatable(
+                                    "commands.thaumaturge.maze.generated", width, height, chunkX, chunkZ),
                             true);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -855,7 +872,7 @@ public final class TCCommands {
             player.getInventory().add(new ItemStack(TCItems.RESEARCH_TABLE.get()));
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -866,7 +883,7 @@ public final class TCCommands {
             player.getInventory().add(new ItemStack(TCItems.THAUMONOMICON.get()));
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -874,12 +891,12 @@ public final class TCCommands {
     private static int listParticles(CommandContext<CommandSourceStack> ctx) {
         ctx.getSource()
                 .sendSuccess(
-                        () -> Component.literal("=== Thaumaturge Particle Demos ===")
+                        () -> Component.translatable("commands.thaumaturge.particle.header")
                                 .withStyle(ChatFormatting.GOLD),
                         false);
         ctx.getSource()
                 .sendSuccess(
-                        () -> Component.literal("Use /tc particle <name> — spawns 3 blocks in front of you")
+                        () -> Component.translatable("commands.thaumaturge.particle.usage")
                                 .withStyle(ChatFormatting.GRAY),
                         false);
         for (var entry : ParticleDemos.DEMOS.entrySet()) {
@@ -894,7 +911,7 @@ public final class TCCommands {
         }
         ctx.getSource()
                 .sendSuccess(
-                        () -> Component.literal("Total: " + ParticleDemos.DEMOS.size() + " demos")
+                        () -> Component.translatable("commands.thaumaturge.particle.total", ParticleDemos.DEMOS.size())
                                 .withStyle(ChatFormatting.GOLD),
                         false);
         return Command.SINGLE_SUCCESS;
@@ -905,16 +922,18 @@ public final class TCCommands {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             String name = StringArgumentType.getString(ctx, "name");
             if (!ParticleDemos.DEMOS.containsKey(name)) {
-                ctx.getSource().sendFailure(Component.literal("Unknown demo: " + name + " — try /tc particle list"));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.particle.unknown", name));
                 return 0;
             }
             ParticleDemos.run(player, name);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal("Spawned demo: " + name).withStyle(ChatFormatting.GREEN), false);
+                            () -> Component.translatable("commands.thaumaturge.particle.spawned", name)
+                                    .withStyle(ChatFormatting.GREEN),
+                            false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
@@ -951,7 +970,11 @@ public final class TCCommands {
                     NodeGenerator.DEFAULT_BASE_AURA);
             ctx.getSource()
                     .sendSuccess(
-                            () -> Component.literal(placed ? "Random node created" : "Could not place node"), true);
+                            () -> Component.translatable(
+                                    placed
+                                            ? "commands.thaumaturge.node.random_ok"
+                                            : "commands.thaumaturge.node.place_failed"),
+                            true);
             return placed ? 1 : 0;
         }
         NodeType type = null;
@@ -961,7 +984,7 @@ public final class TCCommands {
             }
         }
         if (type == null) {
-            ctx.getSource().sendFailure(Component.literal("Unknown node type: " + typeName));
+            ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.node.unknown_type", typeName));
             return 0;
         }
         NodeModifier modifier = null;
@@ -983,9 +1006,7 @@ public final class TCCommands {
         } else {
             String[] tokens = aspectSpec.trim().split("\\s+");
             if (tokens.length % 2 != 0) {
-                ctx.getSource()
-                        .sendFailure(
-                                Component.literal("Aspects must be pairs: <aspect> <amount> [<aspect> <amount> ...]"));
+                ctx.getSource().sendFailure(Component.translatable("commands.thaumaturge.node.aspect_pairs"));
                 return 0;
             }
             list = AspectList.EMPTY;
@@ -994,25 +1015,35 @@ public final class TCCommands {
                 Holder<IAspect> holder = aspects.get(ResourceKey.create(IAspect.REGISTRY_KEY, id))
                         .orElse(null);
                 if (holder == null) {
-                    ctx.getSource().sendFailure(Component.literal("Unknown aspect: " + tokens[i]));
+                    ctx.getSource()
+                            .sendFailure(Component.translatable("commands.thaumaturge.node.unknown_aspect", tokens[i]));
                     return 0;
                 }
                 int amount;
                 try {
                     amount = Integer.parseInt(tokens[i + 1]);
                 } catch (NumberFormatException e) {
-                    ctx.getSource().sendFailure(Component.literal("Bad amount: " + tokens[i + 1]));
+                    ctx.getSource()
+                            .sendFailure(Component.translatable("commands.thaumaturge.node.bad_amount", tokens[i + 1]));
                     return 0;
                 }
                 if (amount < 1) {
-                    ctx.getSource().sendFailure(Component.literal("Amount must be positive: " + tokens[i + 1]));
+                    ctx.getSource()
+                            .sendFailure(
+                                    Component.translatable("commands.thaumaturge.node.positive_amount", tokens[i + 1]));
                     return 0;
                 }
                 list = list.add(holder, amount);
             }
         }
         boolean placed = NodeGenerator.createNodeAt(level, pos, type, modifier, list);
-        ctx.getSource().sendSuccess(() -> Component.literal(placed ? "Node created" : "Could not place node"), true);
+        ctx.getSource()
+                .sendSuccess(
+                        () -> Component.translatable(
+                                placed
+                                        ? "commands.thaumaturge.node.created"
+                                        : "commands.thaumaturge.node.place_failed"),
+                        true);
         return placed ? 1 : 0;
     }
 
@@ -1021,11 +1052,10 @@ public final class TCCommands {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             int removed = ResearchLinkData.get(player.level().getServer()).unlinkAll(player.getUUID());
             ctx.getSource()
-                    .sendSuccess(
-                            () -> Component.literal(String.format("Removed %d research link links", removed)), false);
+                    .sendSuccess(() -> Component.translatable("commands.thaumaturge.link.unlink", removed), false);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            ctx.getSource().sendFailure(failure(e));
             return 0;
         }
     }
