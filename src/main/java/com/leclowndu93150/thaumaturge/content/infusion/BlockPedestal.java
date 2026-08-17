@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -22,16 +23,21 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockPedestal extends BaseEntityBlock {
     public static final MapCodec<BlockPedestal> CODEC = simpleCodec(BlockPedestal::new);
     public static final IntegerProperty CHARGE = IntegerProperty.create("charge", 0, 15);
 
-    private static final VoxelShape SHAPE = Shapes.or(
+    private static final VoxelShape SHAPE_TALL = Shapes.or(
             Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
             Block.box(4.0, 4.0, 4.0, 12.0, 12.0, 12.0),
             Block.box(2.0, 12.0, 2.0, 14.0, 16.0, 14.0));
+    private static final VoxelShape SHAPE_SHORT = Shapes.or(
+            Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
+            Block.box(2.0, 4.0, 2.0, 14.0, 8.0, 14.0),
+            Block.box(4.0, 8.0, 4.0, 12.0, 12.0, 12.0));
 
     public BlockPedestal(Properties properties) {
         super(properties);
@@ -45,10 +51,10 @@ public final class BlockPedestal extends BaseEntityBlock {
 
     @Override
     protected void neighborChanged(
-            BlockState state,
+            @NonNull BlockState state,
             Level level,
-            BlockPos pos,
-            Block neighborBlock,
+            @NonNull BlockPos pos,
+            @NonNull Block neighborBlock,
             @Nullable Orientation orientation,
             boolean movedByPiston) {
         if (!level.isClientSide()) {
@@ -57,35 +63,45 @@ public final class BlockPedestal extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<BlockPedestal> codec() {
+    protected @NonNull MapCodec<BlockPedestal> codec() {
         return CODEC;
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public @NonNull BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
         return new BlockEntityPedestal(pos, state);
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+    protected @NonNull VoxelShape getShape(
+            BlockState state,
+            @NonNull BlockGetter level,
+            @NonNull BlockPos pos,
+            @NonNull CollisionContext context) {
+        // Arcane pedestal is a full block tall; ancient/eldritch pedestals are shorter
+        // (their models stop at y=12), so they need a matching shorter collision box.
+        return state.getBlock() == TCBlocks.PEDESTAL_ARCANE.get() ? SHAPE_TALL : SHAPE_SHORT;
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected @NonNull InteractionResult useWithoutItem(
+            @NonNull BlockState state,
+            @NonNull Level level,
+            @NonNull BlockPos pos,
+            @NonNull Player player,
+            @NonNull BlockHitResult hit) {
         return swap(level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
+    protected @NonNull InteractionResult useItemOn(
+            @NonNull ItemStack stack,
+            @NonNull BlockState state,
+            @NonNull Level level,
+            @NonNull BlockPos pos,
+            @NonNull Player player,
+            @NonNull InteractionHand hand,
+            @NonNull BlockHitResult hit) {
         return swap(level, pos, player, hand);
     }
 
@@ -116,7 +132,10 @@ public final class BlockPedestal extends BaseEntityBlock {
 
     @Override
     protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+            @NonNull BlockState state,
+            ServerLevel level,
+            @NonNull BlockPos pos,
+            boolean movedByPiston) {
         if (level.getBlockEntity(pos) instanceof BlockEntityPedestal pedestal
                 && !pedestal.getItem().isEmpty()) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, pedestal.getItem());
