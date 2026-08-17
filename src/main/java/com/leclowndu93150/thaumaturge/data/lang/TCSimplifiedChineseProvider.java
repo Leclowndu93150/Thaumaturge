@@ -626,7 +626,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.beacon.name", "灵气作用");
         add(
                 "card.thaumaturge.beacon.text",
-                "你相信信标能够以某种方式影响周围神秘的灵气。你仔细地进行研究，虽然没有取得十足的进展，但也从中受到了启发。你获得了2点灵感与一次额外的抽卡机会，并且将会有多个额外的分支在完成时获得全额奖励。 ");
+                "你相信信标能够以某种方式影响周围神秘的灵气。你仔细地进行研究，虽然没有取得十足的进展，但也从中受到了启发。你获得了2点灵感与一次额外的抽卡机会，并且将会有多个额外的分支在完成时获得全额奖励。");
         add("card.thaumaturge.dragonegg.name", "龙之研究");
         add("card.thaumaturge.dragonegg.text", "龙蛋周围萦绕着强大的灵力与混沌的能量，偶尔你也能在其中看到混沌的秩序。");
         add("card.thaumaturge.concentrate.name", "浓缩");
@@ -674,7 +674,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.synergy.name", "协同");
         add(
                 "card.thaumaturge.synergy.text",
-                "从根源来说，傀儡学是炼金学、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。 总共失去15点进度，平均分配于 炼金学、炼化学与注魔学 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
+                "从根源来说，傀儡学是炼金学、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。总共失去15点进度，平均分配于 炼金学、炼化学与注魔学 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
         add("card.thaumaturge.darkwhisper.name", "黑暗低语");
         add("card.thaumaturge.darkwhisper.text", "最近缸中之脑总是口若悬河，它承诺将所有古老的秘密都告诉你。你能相信它么？");
         add("card.thaumaturge.glyph.name", "研究雕纹");
@@ -688,7 +688,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.realization.name", "顿悟");
         add(
                 "card.thaumaturge.realization.text",
-                "在探寻邪术学的本质时，你突然对天地万物的本质有了惊人的见解。你获得15点 邪术学 进度并获得5到10点两个随机分支的进度。 同时你也会获得一些临时扭曲。你也有可能会获得一些粘性扭曲。");
+                "在探寻邪术学的本质时，你突然对天地万物的本质有了惊人的见解。你获得15点 邪术学 进度并获得5到10点两个随机分支的进度。同时你也会获得一些临时扭曲。你也有可能会获得一些粘性扭曲。");
         add("card.thaumaturge.truth.name", "寻求真相");
         add("card.thaumaturge.truth.text", "你拼命寻求邪术学背后的真相以及它对于世界的意义。你获得10到25点 邪术学 进度并获得一次额外的抽卡机会。同时你也会获得一些临时扭曲。");
         add("card.thaumaturge.celestial.name", "天象研究");
