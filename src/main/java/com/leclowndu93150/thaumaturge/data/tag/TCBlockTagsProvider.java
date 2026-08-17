@@ -150,6 +150,9 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.SMELTER_VENT.get())
                 .add(TCBlocks.SPA.get())
                 .add(TCBlocks.ARCANE_WORKBENCH_CHARGER.get())
+                .add(TCBlocks.PEDESTAL_ARCANE.get())
+                .add(TCBlocks.PEDESTAL_ANCIENT.get())
+                .add(TCBlocks.PEDESTAL_ELDRITCH.get())
                 .add(TCBlocks.ALCHEMICAL_CONSTRUCT.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
 
