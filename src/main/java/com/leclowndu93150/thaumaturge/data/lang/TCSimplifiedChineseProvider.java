@@ -295,11 +295,11 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("tc.knowledge.name", "知识总览");
         add("tc.aspect.primal", "元始要素");
         add("tc.aspect.unknown", "未知要素");
-        add("tc.aspect.unknown.short", "???");
+        add("tc.aspect.unknown.short", "？？？");
         add("tc.aspect.unknown.desc", "其性质尚不清楚");
         add("tc.aspect.composition", "%1$s + %2$s");
         add("tc.aspect.progress", "要素已知 %1$s/%2$s");
-        add("tc.discoveryerror.derive", "要窥破其中真谛你需要研究 %1$s.");
+        add("tc.discoveryerror.derive", "要窥破其中真谛你需要研究 %1$s。");
         add("tc.addendumtext", "§o附录 %1$s§r");
 
         add("jei.thaumaturge.category.arcane_workbench", "奥术工作台");
@@ -439,7 +439,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("item.thaumaturge.hand_mirror", "魔力手镜");
         add("tc.handmirrorlinked", "链接已建立。");
         add("tc.handmirrorerror", "目标魔镜遗失或被重置，链接损坏。");
-        add("tc.handmirrorlinkedto.full", "已连接至 %s 的 %s,%s,%s");
+        add("tc.handmirrorlinkedto.full", "已连接至 %s 的 %s, %s, %s");
         add("tc.mirrorlinkedalready", "那面魔镜已连接至有效目标。");
         add("fail.crimsonrites", "这本书里不过只有一些胡言乱语。");
         add("item.thaumaturge.creative_flux_sponge", "创造咒波海绵");
@@ -702,15 +702,15 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
                 "低语已汇聚成合唱，我终于明白它们想让我做什么。散布于世界各处的方尖碑并非纪念碑——它们是门，而每扇门都有钥匙。<BR>我最初遭遇血腥邪徒的那些怪异祭坛上，有一块标有四个空凹槽的拱顶石。四只眼睛必须安放其中——或制作，或交易得来——拱顶石上方的凶险能量则必须保持完好。<BR>在尝试如此鲁莽之事前，我应当先理清自己的理论。");
         add(
                 "research.thaumaturge.oculus.stage_1",
-                "一切都那么简单——我惊讶于血腥邪徒竟然从未发现这一点。<BR>把四只邪术之眼安放在拱顶石上，再以法杖将一股聚焦的魔力注入祭坛。当地灵气付出代价，所谓的\"眼\"便就此睁开。<BR>当然，我完全不知道那意味着什么。无妨——只有傻瓜才会畏惧未知！");
+                "一切都那么简单——我惊讶于血腥邪徒竟然从未发现这一点。<BR>把四只邪术之眼安放在拱顶石上，再以法杖将一股聚焦的魔力注入祭坛。当地灵气付出代价，所谓的“眼”便就此睁开。<BR>当然，我完全不知道那意味着什么。无妨——只有傻瓜才会畏惧未知！");
         add("research.thaumaturge.enter_outer_lands.title", "外域");
         add(
                 "research.thaumaturge.enter_outer_lands.stage_0",
-                "通过开眼仪式时你并不十分确定你究竟在期待什么,但肯定不是眼前这些碎裂石块建成的诡异建筑和这些七拐八弯的扭曲通道.<BR>这里有些不对劲 - 这些建筑物看上去除了构成巨大的致命迷宫外别无设计目的.<BR>四周涌动着诡异的能量波动,你的魔力在这异域的环境中似乎表现得有些异常.即使你遇到的其他生物看上去也给你一种格格不入的诡异感觉.");
+                "通过开眼仪式时你并不十分确定你究竟在期待什么，但肯定不是眼前这些碎裂石块建成的诡异建筑和这些七拐八弯的扭曲通道。<BR>这里有些不对劲 - 这些建筑物看上去除了构成巨大的致命迷宫外别无设计目的。<BR>四周涌动着诡异的能量波动，你的魔力在这异域的环境中似乎表现得有些异常。即使你遇到的其他生物看上去也给你一种格格不入的诡异感觉。");
         add("research.thaumaturge.outer_revelations.title", "外域启示");
         add(
                 "research.thaumaturge.outer_revelations.stage_0",
-                "你所疑虑的事情得到了证实.这里并非你打算命名为外域人的种族的家园.这完全是另一个地方.你并不相信它存在于你所理解的\"现实\"当中 - 相比实在的事物它更接近某种精神上的结构,但什么样的精神能够容纳它呢?<BR>你仅仅能破译出少量的符文,但你确信这地方是一个陷阱,一个用于考验来客并淘汰掉弱者的地方.出于何种目的你还不得而知.");
+                "你所疑虑的事情得到了证实。这里并非你打算命名为外域人的种族的家园。这完全是另一个地方。你并不相信它存在于你所理解的“现实”当中 - 相比实在的事物它更接近某种精神上的结构，但什么样的精神能够容纳它呢？<BR>你仅仅能破译出少量的符文，但你确信这地方是一个陷阱，一个用于考验来客并淘汰掉弱者的地方。出于何种目的你还不得而知。");
         add("gui.thaumaturge.altar.ritual_unknown", "拱顶石嗡鸣作响，但它的用途暂时超出了你的理解……");
     }
 
@@ -959,11 +959,11 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("item.thaumaturge.staff_rod_silverwood", "银树杖芯");
         add("item.thaumaturge.staff_rod_primal", "元始杖芯");
         add("item.thaumaturge.primal_charm", "元始魔力");
-        add("tooltip.thaumaturge.primal_charm.0", "它好像在释放着什么.");
-        add("tooltip.thaumaturge.primal_charm.1", "你恍惚听见有耳语响起.");
-        add("tooltip.thaumaturge.primal_charm.2", "一阵猛烈的颠簸.");
-        add("tooltip.thaumaturge.primal_charm.3", "它嗡嗡作响,声音十分舒缓.");
-        add("tooltip.thaumaturge.primal_charm.4", "稍等,它刚刚闪烁着七色的光芒?");
+        add("tooltip.thaumaturge.primal_charm.0", "它好像在释放着什么。");
+        add("tooltip.thaumaturge.primal_charm.1", "你恍惚听见有耳语响起。");
+        add("tooltip.thaumaturge.primal_charm.2", "一阵猛烈的颠簸。");
+        add("tooltip.thaumaturge.primal_charm.3", "它嗡嗡作响，声音十分舒缓。");
+        add("tooltip.thaumaturge.primal_charm.4", "稍等，它刚刚闪烁着七色的光芒？");
         add("item.thaumaturge.focus_1", "空白次级核心");
         add("item.thaumaturge.focus_2", "空白高级核心");
         add("item.thaumaturge.focus_3", "空白大师核心");
