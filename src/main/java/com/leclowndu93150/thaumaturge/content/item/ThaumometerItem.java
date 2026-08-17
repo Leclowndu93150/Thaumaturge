@@ -58,7 +58,11 @@ public final class ThaumometerItem extends Item {
     }
 
     private InteractionResult beginScan(Level level, Player player, InteractionHand hand) {
-        if (!ScanningManager.isThingStillScannable(player, resolveTarget(level, player))) {
+        return beginScanAt(player, hand, resolveTarget(level, player));
+    }
+
+    static InteractionResult beginScanAt(Player player, InteractionHand hand, @Nullable Object target) {
+        if (!ScanningManager.isThingStillScannable(player, target)) {
             return InteractionResult.PASS;
         }
         player.startUsingItem(hand);
