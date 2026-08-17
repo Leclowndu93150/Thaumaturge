@@ -62,7 +62,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         researchCategory("auromancy", "神秘学");
         researchCategory("alchemy", "炼金术");
         researchCategory("artifice", "炼化学");
-        researchCategory("infusion", "奥术注魔");
+        researchCategory("infusion", "注魔学");
         researchCategory("golemancy", "傀儡学");
         researchCategory("eldritch", "邪术学");
 
@@ -622,7 +622,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.enchantment.name", "研究附魔");
         add(
                 "card.thaumaturge.enchantment.text",
-                "你通过研究基础附魔来从根本探寻它运作的方式。你相信在注魔和炼化学当中的附魔与之有许多共通之处。你失去5个经验等级，以换取15到20点 注魔和炼化学 的进度。");
+                "你通过研究基础附魔来从根本探寻它运作的方式。你相信在注魔学和炼化学当中的附魔与之有许多共通之处。你失去5个经验等级，以换取15到20点 注魔学和炼化学 的进度。");
         add("card.thaumaturge.beacon.name", "灵气作用");
         add(
                 "card.thaumaturge.beacon.text",
@@ -642,13 +642,13 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
                 "card.thaumaturge.synthesis.text",
                 "当源质相互结合形成更复杂的形式时，总会产生许多有趣和复杂的反应。你通过研究%1$s与%2$s源质的结合学到了很多知识。获得40点 炼金术 进度。还有机会获得1点灵感。");
         add("card.thaumaturge.measure.name", "测量");
-        add("card.thaumaturge.measure.text", "你花费大量时间详细测量不同种类的源质以及它们所蕴含的Vis。获得15点 注魔 进度并获得一次额外的备选研究。");
+        add("card.thaumaturge.measure.text", "你花费大量时间详细测量不同种类的源质以及它们所蕴含的Vis。获得15点 注魔学 进度并获得一次额外的备选研究。");
         add("card.thaumaturge.channel.name", "引导 %1$s 源质");
-        add("card.thaumaturge.channel.text", "你通过一些简单的实验来测试注魔过程当中引导 %1$s 源质会发生什么。获得25点 注魔 进度。");
+        add("card.thaumaturge.channel.text", "你通过一些简单的实验来测试注魔过程当中引导 %1$s 源质会发生什么。获得25点 注魔学 进度。");
         add("card.thaumaturge.infuse.name", "注魔实验");
         add(
                 "card.thaumaturge.infuse.text",
-                "通过假定使用源质注魔特定物体的效果，并对成果进行测试，你获得了宝贵的见解。你通过将%1$s源质与%2$s进行结合并研究其成果，学到了很多知识。获得%3$s点 注魔 进度。");
+                "通过假定使用源质注魔特定物体的效果，并对成果进行测试，你获得了宝贵的见解。你通过将%1$s源质与%2$s进行结合并研究其成果，学到了很多知识。获得%3$s点 注魔学 进度。");
         add("card.thaumaturge.calibrate.name", "校准");
         add("card.thaumaturge.calibrate.text", "你花了一些时间来校准你的仪器与工具。获得15点 炼化学 进度并获得一次额外的抽卡机会。");
         add("card.thaumaturge.mindmatter.name", "意识超脱于物质");
@@ -674,7 +674,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("card.thaumaturge.synergy.name", "协同");
         add(
                 "card.thaumaturge.synergy.text",
-                "从根源来说，傀儡学是炼金术、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。 总共失去15点进度，平均分配于 炼金术、炼化学与注魔 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
+                "从根源来说，傀儡学是炼金术、炼化学与注魔的结合。只有充分理解这三个分支如何相互作用，才能够真正精通傀儡学。 总共失去15点进度，平均分配于 炼金术、炼化学与注魔学 方面，同时获得30点 傀儡学 进度，并且将会有一个额外的分支在完成时获得全额奖励。");
         add("card.thaumaturge.darkwhisper.name", "黑暗低语");
         add("card.thaumaturge.darkwhisper.text", "最近缸中之脑总是口若悬河，它承诺将所有古老的秘密都告诉你。你能相信它么？");
         add("card.thaumaturge.glyph.name", "研究雕纹");
@@ -690,7 +690,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
                 "card.thaumaturge.realization.text",
                 "在探寻邪术学的本质时，你突然对天地万物的本质有了惊人的见解。你获得15点 邪术学 进度并获得5到10点两个随机分支的进度。 同时你也会获得一些临时扭曲。你也有可能会获得一些粘性扭曲。");
         add("card.thaumaturge.truth.name", "寻求真相");
-        add("card.thaumaturge.truth.text", "你拼命寻求邪术学背后的真相以及它对于世界的意义。你获得10到25点 邪术学 进度并获得一次额外的抽卡机会。 同时你也会获得一些临时扭曲。");
+        add("card.thaumaturge.truth.text", "你拼命寻求邪术学背后的真相以及它对于世界的意义。你获得10到25点 邪术学 进度并获得一次额外的抽卡机会。同时你也会获得一些临时扭曲。");
         add("card.thaumaturge.celestial.name", "天象研究");
         add("card.thaumaturge.celestial.text", "你拿一些你记录的天象笔记，并将它们与你的主要研究分支进行比对。你在 %1$s 获得25到50点进度的启发。你同时也可能获得其他的东西……");
 
