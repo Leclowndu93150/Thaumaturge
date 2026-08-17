@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -59,6 +60,12 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final int BUBBLE_LIGHT = 0x00F000F0;
 
     public NodeStabilizerRenderer(BlockEntityRendererProvider.Context context) {}
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityNodeStabilizer stabilizer) {
+        Vec3 center = Vec3.atCenterOf(stabilizer.getBlockPos()).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
+        return new AABB(center, center).inflate(BUBBLE_HALF);
+    }
 
     @Override
     public void render(
