@@ -10,10 +10,12 @@ import com.leclowndu93150.thaumaturge.registry.TCItems;
 import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,6 +25,8 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public final class CultistArmorClientExtensions {
+    private static final float DEG_TO_RAD = (float) (Math.PI / 180.0);
+
     private CultistArmorClientExtensions() {}
 
     @SubscribeEvent
@@ -98,6 +102,21 @@ public final class CultistArmorClientExtensions {
             return chest;
         }
 
+        @Override
+        public void setupModelAnimations(
+                LivingEntity entity,
+                ItemStack stack,
+                EquipmentSlot slot,
+                Model model,
+                float limbSwing,
+                float limbSwingAmount,
+                float partialTick,
+                float ageInTicks,
+                float netHeadYaw,
+                float headPitch) {
+            applyArmorStandHeadPose(entity, slot, model);
+        }
+
         private FortressArmorModel bake(ModelLayerLocation layer) {
             return new FortressArmorModel(
                     Minecraft.getInstance().getEntityModels().bakeLayer(layer));
@@ -145,8 +164,35 @@ public final class CultistArmorClientExtensions {
             return chest;
         }
 
+        @Override
+        public void setupModelAnimations(
+                LivingEntity entity,
+                ItemStack stack,
+                EquipmentSlot slot,
+                Model model,
+                float limbSwing,
+                float limbSwingAmount,
+                float partialTick,
+                float ageInTicks,
+                float netHeadYaw,
+                float headPitch) {
+            applyArmorStandHeadPose(entity, slot, model);
+        }
+
         private HumanoidModel<LivingEntity> bake(ModelLayerLocation layer) {
             return factory.apply(Minecraft.getInstance().getEntityModels().bakeLayer(layer));
         }
+    }
+
+    private static void applyArmorStandHeadPose(LivingEntity entity, EquipmentSlot slot, Model model) {
+        if (!(entity instanceof ArmorStand stand)
+                || slot != EquipmentSlot.HEAD
+                || !(model instanceof HumanoidModel<?> humanoid)) {
+            return;
+        }
+        humanoid.head.xRot = stand.getHeadPose().getX() * DEG_TO_RAD;
+        humanoid.head.yRot = stand.getHeadPose().getY() * DEG_TO_RAD;
+        humanoid.head.zRot = stand.getHeadPose().getZ() * DEG_TO_RAD;
+        humanoid.hat.copyFrom(humanoid.head);
     }
 }
