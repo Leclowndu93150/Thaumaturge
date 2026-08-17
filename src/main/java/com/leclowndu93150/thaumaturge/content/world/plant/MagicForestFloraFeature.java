@@ -2,12 +2,9 @@ package com.leclowndu93150.thaumaturge.content.world.plant;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -51,10 +48,9 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
                 pos = pos.below();
             }
             BlockPos above = pos.above();
-            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
-                    && level.getBlockState(above).canBeReplaced()
-                    && isAdjacentToWood(level, above)) {
-                level.setBlock(above, config.vishroom().defaultBlockState(), PLACE_FLAGS);
+            var vishroom = config.vishroom().defaultBlockState();
+            if (level.getBlockState(above).canBeReplaced() && vishroom.canSurvive(level, above)) {
+                level.setBlock(above, vishroom, PLACE_FLAGS);
                 any = true;
             }
         }
@@ -63,15 +59,5 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
         return new BlockPos(x, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z), z);
-    }
-
-    private static boolean isAdjacentToWood(WorldGenLevel level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            BlockState neighbor = level.getBlockState(pos.relative(direction));
-            if (neighbor.is(BlockTags.LOGS) || neighbor.is(BlockTags.PLANKS)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
