@@ -27,10 +27,12 @@ import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -135,9 +137,21 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     private @Nullable Holder<IAspect> select2;
     private int page;
     private long combineCooldownUntil;
+    private @Nullable EditBox aspectSearch;
 
     public ResearchTableScreen(MenuResearchTable menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE, GUI_SIZE, GUI_SIZE);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        aspectSearch =
+                new EditBox(font, leftPos + PALETTE_X, topPos + 23, PALETTE_W, 14, Component.translatable("tc.search"));
+        aspectSearch.setMaxLength(32);
+        aspectSearch.setHint(Component.translatable("tc.search"));
+        aspectSearch.setResponder(ignored -> page = 0);
+        addRenderableWidget(aspectSearch);
     }
 
     @Override
@@ -193,6 +207,18 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         ids.sort(ResourceLocation::compareTo);
         for (ResourceLocation id : ids) {
             lookup.get(ResourceKey.create(IAspect.REGISTRY_KEY, id)).ifPresent(result::add);
+        }
+        if (aspectSearch != null && !aspectSearch.getValue().isBlank()) {
+            String query = aspectSearch.getValue().toLowerCase(Locale.ROOT);
+            result.removeIf(aspect -> {
+                String name = AspectComponents.name(aspect).getString().toLowerCase(Locale.ROOT);
+                String id = aspect.unwrapKey()
+                        .map(ResourceKey::location)
+                        .map(ResourceLocation::toString)
+                        .orElse(aspect.value().tag())
+                        .toLowerCase(Locale.ROOT);
+                return !name.contains(query) && !id.contains(query);
+            });
         }
         return result;
     }
