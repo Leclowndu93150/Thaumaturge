@@ -863,7 +863,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private void eatBlock(ServerLevel serverLevel, BlockPos pos, RandomSource random) {
-        int range = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
+        int range = hungryBlockEatRange();
         int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
         int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
         int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
@@ -884,6 +884,25 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (!state.isAir() && hardness >= 0.0F && hardness < maxHardness) {
             serverLevel.destroyBlock(target, true);
         }
+    }
+
+    private int hungryBlockEatRange() {
+        if (!ThaumaturgeCommonConfig.SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER.get()) {
+            return ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
+        }
+        int minimum = ThaumaturgeCommonConfig.HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE.get();
+        int maximum = Math.max(minimum, ThaumaturgeCommonConfig.HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE.get());
+        int difference = maximum - minimum;
+        if (nodeModifier == NodeModifier.BRIGHT) {
+            return maximum;
+        }
+        if (nodeModifier == NodeModifier.PALE) {
+            return minimum + Math.round(difference / 3.0F);
+        }
+        if (nodeModifier == NodeModifier.FADING) {
+            return minimum;
+        }
+        return minimum + Math.round(difference * 2.0F / 3.0F);
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
@@ -964,7 +983,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         RandomSource random = clientLevel.getRandom();
-        int range = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
+        int range = hungryBlockEatRange();
         int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
         int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
         int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);

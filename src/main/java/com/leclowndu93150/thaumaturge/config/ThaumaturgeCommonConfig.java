@@ -11,6 +11,9 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_RANGE;
+    public static final ModConfigSpec.BooleanValue SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE;
     public static final ModConfigSpec.DoubleValue HUNGRY_NODE_BLOCK_HARDNESS;
     public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_INTERVAL;
     public static final ModConfigSpec.IntValue SHIELD_RECHARGE;
@@ -43,6 +46,20 @@ public final class ThaumaturgeCommonConfig {
                         "Default: 16. Range: 1 to 64. A larger area gives each attempt more possible targets; it does not guarantee a distant block will be selected.",
                         "This setting does not change entity or dropped-item pulling range.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
+        SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER = builder.comment(
+                        "Whether a hungry node's block-eating range scales with its current modifier (quality).",
+                        "False: hungryNodeBlockEatRange is always used. True: the minimum/maximum settings below override hungryNodeBlockEatRange.",
+                        "Fading uses the minimum, pale and normal are evenly spaced between them, and bright uses the maximum.")
+                .define("scaleHungryNodeBlockEatRangeByModifier", false);
+        HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE = builder.comment(
+                        "Block-eating range of a fading hungry node when modifier scaling is enabled.",
+                        "Default: 16. Range: 1 to 64. This setting does nothing while scaleHungryNodeBlockEatRangeByModifier is false.")
+                .defineInRange("hungryNodeMinimumBlockEatRange", 16, 1, 64);
+        HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE = builder.comment(
+                        "Block-eating range of a bright hungry node when modifier scaling is enabled.",
+                        "Default: 32. Range: 1 to 64. This overrides hungryNodeBlockEatRange while scaling is enabled.",
+                        "If set below the minimum range, the minimum is used for every modifier.")
+                .defineInRange("hungryNodeMaximumBlockEatRange", 32, 1, 64);
         HUNGRY_NODE_BLOCK_HARDNESS = builder.comment(
                         "Maximum block hardness a hungry node can eat. The comparison is strictly below this value, not equal to it.",
                         "Examples: dirt 0.5, stone 1.5, most logs 2, ores/deepslate 3, iron and diamond blocks 5, obsidian 50.",
