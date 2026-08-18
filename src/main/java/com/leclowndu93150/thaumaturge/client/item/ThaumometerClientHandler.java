@@ -8,16 +8,16 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
+import com.leclowndu93150.thaumaturge.client.tooltip.AspectChipsClientTooltip;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
 import com.leclowndu93150.thaumaturge.network.ServerboundInventoryScanPayload;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
@@ -236,13 +236,21 @@ public final class ThaumometerClientHandler {
         if (aspects.isEmpty()) {
             return;
         }
-        event.getGuiGraphics()
-                .renderTooltip(
-                        mc.font,
-                        List.of(),
-                        Optional.of(new AspectChipsTooltip(aspects)),
-                        event.getMouseX(),
-                        event.getMouseY());
+        AspectChipsClientTooltip tooltip = new AspectChipsClientTooltip(new AspectChipsTooltip(aspects));
+        int width = tooltip.getWidth(mc.font);
+        int height = tooltip.getHeight();
+        int x = event.getMouseX() + TooltipRenderUtil.MOUSE_OFFSET;
+        if (x + width + 4 > screen.width) {
+            x = event.getMouseX() - TooltipRenderUtil.MOUSE_OFFSET - width;
+        }
+        x = Mth.clamp(x, 4, Math.max(4, screen.width - width - 4));
+        int y = Mth.clamp(event.getMouseY() - 12, 4, Math.max(4, screen.height - height - 4));
+        GuiGraphics graphics = event.getGuiGraphics();
+        graphics.pose().pushPose();
+        TooltipRenderUtil.renderTooltipBackground(graphics, x, y, width, height, 400);
+        graphics.pose().translate(0.0F, 0.0F, 400.0F);
+        tooltip.renderImage(mc.font, x, y, graphics);
+        graphics.pose().popPose();
     }
 
     private static void clearInventoryScan() {
