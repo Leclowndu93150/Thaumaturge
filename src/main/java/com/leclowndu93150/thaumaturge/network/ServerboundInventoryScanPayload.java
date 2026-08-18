@@ -30,38 +30,43 @@ public record ServerboundInventoryScanPayload(int containerId, int slotIndex, It
                     ServerboundInventoryScanPayload::new);
 
     public static void handle(ServerboundInventoryScanPayload payload, IPayloadContext context) {
-        Player player = context.player();
-        if (payload.target().isEmpty()) {
-            return;
-        }
-        AbstractContainerMenu menu = player.containerMenu;
-        if (player.isCreative()) {
-            if (!menu.getCarried().is(TCItems.THAUMOMETER.get()) || !inventoryContains(player, payload.target())) {
+        context.enqueueWork(() -> {
+            Player player = context.player();
+            if (payload.target().isEmpty()) {
                 return;
             }
-            ScanningManager.scanTheThing(player, payload.target());
-            return;
-        }
-        if (menu.containerId != payload.containerId()
-                || payload.slotIndex() < 0
-                || payload.slotIndex() >= menu.slots.size()
-                || !menu.getCarried().is(TCItems.THAUMOMETER.get())) {
-            return;
-        }
-        Slot slot = menu.getSlot(payload.slotIndex());
-        if (slot instanceof ResultSlot
-                || !slot.hasItem()
-                || !slot.mayPickup(player)
-                || !ItemStack.isSameItemSameComponents(slot.getItem(), payload.target())) {
-            return;
-        }
-        ScanningManager.scanTheThing(player, slot.getItem());
+            AbstractContainerMenu menu = player.containerMenu;
+            if (player.isCreative()) {
+                if (!hasThaumometer(player, menu)) {
+                    return;
+                }
+                ScanningManager.scanTheThing(player, payload.target());
+                return;
+            }
+            if (menu.containerId != payload.containerId()
+                    || payload.slotIndex() < 0
+                    || payload.slotIndex() >= menu.slots.size()
+                    || !menu.getCarried().is(TCItems.THAUMOMETER.get())) {
+                return;
+            }
+            Slot slot = menu.getSlot(payload.slotIndex());
+            if (slot instanceof ResultSlot
+                    || !slot.hasItem()
+                    || !slot.mayPickup(player)
+                    || !ItemStack.isSameItemSameComponents(slot.getItem(), payload.target())) {
+                return;
+            }
+            ScanningManager.scanTheThing(player, slot.getItem());
+        });
     }
 
-    private static boolean inventoryContains(Player player, ItemStack target) {
+    private static boolean hasThaumometer(Player player, AbstractContainerMenu menu) {
+        if (menu.getCarried().is(TCItems.THAUMOMETER.get())) {
+            return true;
+        }
         for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
             ItemStack stack = player.getInventory().getItem(index);
-            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, target)) {
+            if (stack.is(TCItems.THAUMOMETER.get())) {
                 return true;
             }
         }
