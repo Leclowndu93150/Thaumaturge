@@ -10,6 +10,9 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_RANGE;
+    public static final ModConfigSpec.DoubleValue HUNGRY_NODE_BLOCK_HARDNESS;
+    public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_INTERVAL;
     public static final ModConfigSpec.IntValue SHIELD_RECHARGE;
     public static final ModConfigSpec.IntValue SHIELD_WAIT;
     public static final ModConfigSpec.DoubleValue SHIELD_COST;
@@ -35,6 +38,15 @@ public final class ThaumaturgeCommonConfig {
         CRIMSON_PORTAL_RARITY = builder.comment(
                         "Average number of chunks per wild lesser crimson portal. Higher is rarer. 0 disables wild portals entirely.")
                 .defineInRange("crimsonPortalRarity", 500, 0, 1000000);
+        HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
+                        "Hungry-node block eating range in blocks. Default: 16. Range: 1 to 64. This does not change entity or item pulling range.")
+                .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
+        HUNGRY_NODE_BLOCK_HARDNESS = builder.comment(
+                        "Highest block hardness hungry nodes can eat. They eat blocks below this value, not equal to it. Default: 5.0. Range: 0 to 100. 0 disables block destruction.")
+                .defineInRange("hungryNodeBlockEatHardness", 5.0, 0.0, 100.0);
+        HUNGRY_NODE_BLOCK_EAT_INTERVAL = builder.comment(
+                        "Ticks between hungry-node block eating attempts. Default: 50 ticks (2.5 seconds). Range: 1 to 12000. Lower values eat faster; Minecraft normally runs at 20 ticks per second.")
+                .defineInRange("hungryNodeBlockEatInterval", 50, 1, 12000);
         SHIELD_RECHARGE = builder.comment("Ticks between each point of runic shielding recharge.")
                 .defineInRange("shieldRecharge", 40, 1, 12000);
         SHIELD_WAIT = builder.comment("Ticks runic shielding waits before recharging after being fully depleted.")
