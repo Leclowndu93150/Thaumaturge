@@ -8,12 +8,13 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
-import com.leclowndu93150.thaumaturge.client.tooltip.AspectChipsClientTooltip;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
 import com.leclowndu93150.thaumaturge.network.ServerboundInventoryScanPayload;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -235,10 +236,13 @@ public final class ThaumometerClientHandler {
         if (aspects.isEmpty()) {
             return;
         }
-        AspectChipsClientTooltip tooltip = new AspectChipsClientTooltip(new AspectChipsTooltip(aspects));
-        int x = Mth.clamp(event.getMouseX() + 9, 4, Math.max(4, screen.width - tooltip.getWidth(mc.font) - 4));
-        int y = Math.max(4, event.getMouseY() - 34);
-        tooltip.renderImage(mc.font, x, y, event.getGuiGraphics());
+        event.getGuiGraphics()
+                .renderTooltip(
+                        mc.font,
+                        List.of(),
+                        Optional.of(new AspectChipsTooltip(aspects)),
+                        event.getMouseX(),
+                        event.getMouseY());
     }
 
     private static void clearInventoryScan() {
