@@ -37,9 +37,6 @@ public record ServerboundInventoryScanPayload(int containerId, int slotIndex, It
             }
             AbstractContainerMenu menu = player.containerMenu;
             if (player.isCreative()) {
-                if (!hasThaumometer(player, menu)) {
-                    return;
-                }
                 ScanningManager.scanTheThing(player, payload.target());
                 return;
             }
@@ -58,19 +55,6 @@ public record ServerboundInventoryScanPayload(int containerId, int slotIndex, It
             }
             ScanningManager.scanTheThing(player, slot.getItem());
         });
-    }
-
-    private static boolean hasThaumometer(Player player, AbstractContainerMenu menu) {
-        if (menu.getCarried().is(TCItems.THAUMOMETER.get())) {
-            return true;
-        }
-        for (int index = 0; index < player.getInventory().getContainerSize(); index++) {
-            ItemStack stack = player.getInventory().getItem(index);
-            if (stack.is(TCItems.THAUMOMETER.get())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
