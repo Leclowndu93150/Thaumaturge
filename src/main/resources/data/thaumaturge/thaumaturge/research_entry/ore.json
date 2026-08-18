@@ -5,7 +5,8 @@
   "row": 0,
   "meta": [
     "round",
-    "hidden"
+    "hidden",
+    "autounlock"
   ],
   "icons": [
     "minecraft:iron_pickaxe"

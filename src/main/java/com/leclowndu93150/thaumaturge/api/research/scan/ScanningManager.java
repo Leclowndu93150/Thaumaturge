@@ -108,17 +108,23 @@ public final class ScanningManager {
         boolean found = false;
         boolean suppress = false;
         Component failure = null;
+        List<IScanThing> matchingThings = new ArrayList<>();
         for (IScanThing thing : THINGS) {
             if (!thing.checkThing(player, target)) {
                 continue;
             }
+            matchingThings.add(thing);
             Component fail = thing.scanFailure(player, target);
-            if (fail != null) {
-                if (failure == null) {
-                    failure = fail;
-                }
-                continue;
+            if (failure == null && fail != null) {
+                failure = fail;
             }
+        }
+        if (failure != null) {
+            player.displayClientMessage(
+                    failure.copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
+            return;
+        }
+        for (IScanThing thing : matchingThings) {
             ResourceLocation key = thing.getResearchKey(player, target);
             if (key != null && !bindingOrThrow().progressResearch(player, key)) {
                 continue;
@@ -134,10 +140,7 @@ public final class ScanningManager {
                 found = true;
             }
         }
-        if (failure != null) {
-            player.displayClientMessage(
-                    failure.copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC), true);
-        } else if (!suppress) {
+        if (!suppress) {
             if (found) {
                 player.displayClientMessage(
                         Component.translatable("tc.knownobject").withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC),
