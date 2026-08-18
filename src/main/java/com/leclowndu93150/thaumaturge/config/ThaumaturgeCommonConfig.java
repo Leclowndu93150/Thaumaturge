@@ -10,6 +10,14 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
+    public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue MAGICAL_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue EERIE_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue NETHER_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue DARK_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue UNSTABLE_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue PURE_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue HUNGRY_NODE_CHANCE;
     public static final ModConfigSpec.IntValue SHIELD_RECHARGE;
     public static final ModConfigSpec.IntValue SHIELD_WAIT;
     public static final ModConfigSpec.DoubleValue SHIELD_COST;
@@ -35,6 +43,32 @@ public final class ThaumaturgeCommonConfig {
         CRIMSON_PORTAL_RARITY = builder.comment(
                         "Average number of chunks per wild lesser crimson portal. Higher is rarer. 0 disables wild portals entirely.")
                 .defineInRange("crimsonPortalRarity", 500, 0, 1000000);
+        builder.push("nodes");
+        WILD_NODE_CHANCE = builder.comment(
+                        "Chance from 0 to 100 for a wild node placement attempt in each Overworld chunk. 4 means 4%, or about one attempt per 25 chunks. 0 disables this source.")
+                .defineInRange("wildSpawnChance", 4.0, 0.0, 100.0);
+        MAGICAL_NODE_CHANCE = builder.comment(
+                        "Additional chance from 0 to 100 in each Magical Forest chunk. This stacks with wildSpawnChance. 8.333 means roughly one additional attempt per 12 chunks.")
+                .defineInRange("magicalBonusSpawnChance", 100.0 / 12.0, 0.0, 100.0);
+        EERIE_NODE_CHANCE = builder.comment(
+                        "Additional chance from 0 to 100 in each Eerie biome chunk. This stacks with wildSpawnChance and its node is always dark. 12.5 means one attempt per 8 chunks.")
+                .defineInRange("eerieBonusSpawnChance", 12.5, 0.0, 100.0);
+        NETHER_NODE_CHANCE = builder.comment(
+                        "Chance from 0 to 100 for a node placement attempt in each Nether chunk. 2.5 means one attempt per 40 chunks. 0 disables Nether nodes.")
+                .defineInRange("netherSpawnChance", 2.5, 0.0, 100.0);
+        builder.comment(
+                        "The following values are percentages among ordinary random nodes. Their default total is 6.6667%, leaving 93.3333% normal nodes. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
+                .push("types");
+        DARK_NODE_CHANCE = builder.comment("Dark-node percentage, from 0 to 100. Default: 2%.")
+                .defineInRange("darkChance", 2.0, 0.0, 100.0);
+        UNSTABLE_NODE_CHANCE = builder.comment("Unstable-node percentage, from 0 to 100. Default: 2%.")
+                .defineInRange("unstableChance", 2.0, 0.0, 100.0);
+        PURE_NODE_CHANCE = builder.comment("Pure-node percentage, from 0 to 100. Default: 2%.")
+                .defineInRange("pureChance", 2.0, 0.0, 100.0);
+        HUNGRY_NODE_CHANCE = builder.comment(
+                        "Hungry-node percentage, from 0 to 100. Default: 0.6667%, approximately one hungry node per 150 ordinary nodes.")
+                .defineInRange("hungryChance", 2.0 / 3.0, 0.0, 100.0);
+        builder.pop(2);
         SHIELD_RECHARGE = builder.comment("Ticks between each point of runic shielding recharge.")
                 .defineInRange("shieldRecharge", 40, 1, 12000);
         SHIELD_WAIT = builder.comment("Ticks runic shielding waits before recharging after being fully depleted.")
