@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCWandParts;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
@@ -155,6 +156,17 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     public void setNodeType(NodeType type) {
         this.nodeType = type;
+        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+            NodeLocationIndex.get(serverLevel).register(worldPosition, type);
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+            NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        }
     }
 
     public @Nullable NodeModifier getNodeModifier() {
@@ -495,7 +507,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         } else if (nodeModifier == NodeModifier.PALE) {
             nodeModifier = NodeModifier.FADING;
         } else if (nodeModifier == NodeModifier.FADING && nodeType != NodeType.HUNGRY) {
-            nodeType = NodeType.HUNGRY;
+            setNodeType(NodeType.HUNGRY);
         }
         nodeChange();
     }
@@ -510,7 +522,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 && nodeType != NodeType.PURE
                 && flux > base * FLUX_TAINT_THRESHOLD
                 && random.nextInt(FLUX_TAINT_CHANCE) == 0) {
-            nodeType = NodeType.TAINTED;
+            setNodeType(NodeType.TAINTED);
             nodeChange();
             return;
         }
@@ -678,7 +690,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                     return true;
                 }
             } else if (random.nextInt(UNSTABLE_CURE_ROLL / lock) == UNSTABLE_CURE_MAGIC) {
-                nodeType = NodeType.NORMAL;
+                setNodeType(NodeType.NORMAL);
                 nodeChange();
                 return true;
             }

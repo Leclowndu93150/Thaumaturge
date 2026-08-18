@@ -18,7 +18,9 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
+import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
@@ -66,7 +68,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -115,6 +119,8 @@ public final class TCCommands {
             new DynamicCommandExceptionType((value) -> Component.literal("Unknown Research Entry : " + value));
     private static final DynamicCommandExceptionType ERROR_INVALID_ASPECT =
             new DynamicCommandExceptionType((value) -> Component.literal("Unknown Aspect : " + value));
+    private static final DynamicCommandExceptionType ERROR_INVALID_NODE_TYPE =
+            new DynamicCommandExceptionType((value) -> Component.literal("Unknown node type: " + value));
 
     @SubscribeEvent
     public static void onRegister(RegisterCommandsEvent event) {
@@ -273,6 +279,59 @@ public final class TCCommands {
                                         .executes(ctx ->
                                                 grantAspect(ctx, IntegerArgumentType.getInteger(ctx, "amount"))))));
         event.getDispatcher().register(tc);
+        event.getDispatcher()
+                .register(Commands.literal("thaumaturge")
+                        .then(Commands.literal("locate")
+                                .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                                .then(Commands.literal("node")
+                                        .then(Commands.argument("type", StringArgumentType.word())
+                                                .suggests(NODE_LOCATE_TYPES)
+                                                .executes(TCCommands::locateNode)))));
+    }
+
+    private static int locateNode(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        ServerLevel level = player.serverLevel();
+        String typeName = StringArgumentType.getString(ctx, "type");
+        NodeType type = Arrays.stream(NodeType.values())
+                .filter(candidate -> candidate.getSerializedName().equalsIgnoreCase(typeName))
+                .findFirst()
+                .orElseThrow(() -> ERROR_INVALID_NODE_TYPE.create(typeName));
+
+        NodeLocationIndex index = NodeLocationIndex.get(level);
+        BlockPos origin = player.blockPosition();
+        Optional<BlockPos> result;
+        while ((result = index.findNearest(player.getUUID(), origin, type)).isPresent()) {
+            BlockPos candidate = result.get();
+            if (!level.hasChunkAt(candidate)) {
+                break;
+            }
+            if (level.getBlockEntity(candidate) instanceof BlockEntityNode node && node.getNodeType() == type) {
+                break;
+            }
+            index.remove(candidate);
+        }
+        if (result.isEmpty()) {
+            ctx.getSource().sendFailure(Component.literal("No indexed " + type.getSerializedName() + " node found"));
+            return 0;
+        }
+
+        BlockPos pos = result.get();
+        String teleport = "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
+        Component coordinates = Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]")
+                .withStyle(style -> style.withColor(ChatFormatting.GREEN)
+                        .withUnderlined(true)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, teleport))
+                        .withHoverEvent(new HoverEvent(
+                                HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy " + teleport))));
+        int distance = (int) Math.round(Math.sqrt(pos.distSqr(origin)));
+        ctx.getSource()
+                .sendSuccess(
+                        () -> Component.literal("Nearest " + type.getSerializedName() + " node is at ")
+                                .append(coordinates)
+                                .append(Component.literal(" (" + distance + " blocks away)")),
+                        false);
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int resetResearch(CommandContext<CommandSourceStack> ctx) {
@@ -925,6 +984,10 @@ public final class TCCommands {
         builder.suggest("random");
         return builder.buildFuture();
     };
+
+    private static final SuggestionProvider<CommandSourceStack> NODE_LOCATE_TYPES =
+            (ctx, builder) -> SharedSuggestionProvider.suggest(
+                    Arrays.stream(NodeType.values()).map(NodeType::getSerializedName), builder);
 
     private static final SuggestionProvider<CommandSourceStack> NODE_MODIFIERS = (ctx, builder) -> {
         for (NodeModifier modifier : NodeModifier.values()) {
