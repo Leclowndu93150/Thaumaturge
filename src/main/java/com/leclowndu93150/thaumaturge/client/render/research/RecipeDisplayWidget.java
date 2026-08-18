@@ -390,8 +390,16 @@ public final class RecipeDisplayWidget {
         return new Layout(Kind.UNKNOWN, new ArrayList<>(), resultOf(recipe, reg), 0, List.of());
     }
 
-    private static ItemStack resultOf(Recipe<?> recipe, HolderLookup.Provider reg) {
-        return reg == null ? ItemStack.EMPTY : recipe.getResultItem(reg);
+    public static ItemStack resultOf(Recipe<?> recipe, HolderLookup.Provider reg) {
+        if (reg == null) {
+            return ItemStack.EMPTY;
+        }
+        try {
+            ItemStack result = recipe.getResultItem(reg);
+            return result == null ? ItemStack.EMPTY : result;
+        } catch (RuntimeException ignored) {
+            return ItemStack.EMPTY;
+        }
     }
 
     private static List<ItemStack> cycle(Ingredient ingredient) {
