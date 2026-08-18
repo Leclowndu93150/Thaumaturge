@@ -299,6 +299,14 @@ public final class TCCommands {
                 .orElseThrow(() -> ERROR_INVALID_NODE_TYPE.create(typeName));
 
         NodeLocationIndex index = NodeLocationIndex.get(level);
+        if (!index.isMigrationComplete()) {
+            int total = index.migrationTotal();
+            int scanned = Math.max(0, total - index.migrationRemaining());
+            ctx.getSource()
+                    .sendFailure(Component.literal(
+                            "Indexing nodes in existing chunks: " + scanned + "/" + total + ". Try again shortly."));
+            return 0;
+        }
         BlockPos origin = player.blockPosition();
         Optional<BlockPos> result;
         while ((result = index.findNearest(player.getUUID(), origin, type)).isPresent()) {
