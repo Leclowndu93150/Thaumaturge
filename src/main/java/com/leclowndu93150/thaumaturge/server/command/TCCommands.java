@@ -277,16 +277,14 @@ public final class TCCommands {
                                 .executes(ctx -> grantAspect(ctx, AspectPools.SOFT_CAP))
                                 .then(Commands.argument("amount", IntegerArgumentType.integer(1, 10000))
                                         .executes(ctx ->
-                                                grantAspect(ctx, IntegerArgumentType.getInteger(ctx, "amount"))))));
+                                                grantAspect(ctx, IntegerArgumentType.getInteger(ctx, "amount"))))))
+                .then(Commands.literal("locate")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .then(Commands.literal("node")
+                                .then(Commands.argument("type", StringArgumentType.word())
+                                        .suggests(NODE_LOCATE_TYPES)
+                                        .executes(TCCommands::locateNode))));
         event.getDispatcher().register(tc);
-        event.getDispatcher()
-                .register(Commands.literal("thaumaturge")
-                        .then(Commands.literal("locate")
-                                .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                                .then(Commands.literal("node")
-                                        .then(Commands.argument("type", StringArgumentType.word())
-                                                .suggests(NODE_LOCATE_TYPES)
-                                                .executes(TCCommands::locateNode)))));
     }
 
     private static int locateNode(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
