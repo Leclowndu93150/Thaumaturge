@@ -309,7 +309,7 @@ public final class TCCommands {
         }
         BlockPos origin = player.blockPosition();
         Optional<BlockPos> result;
-        while ((result = index.findNearest(player.getUUID(), origin, type)).isPresent()) {
+        while ((result = index.findNearest(origin, type)).isPresent()) {
             BlockPos candidate = result.get();
             if (!level.hasChunkAt(candidate)) {
                 break;
