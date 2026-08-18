@@ -355,7 +355,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("item.thaumaturge.cluster_silver", "银原矿簇");
         add("item.thaumaturge.cluster_lead", "铅原矿簇");
         add("item.thaumaturge.cluster_tin", "锡原矿簇");
-        add("item.thaumaturge.cluster_cinnabar", "天然朱砂簇");
+        add("item.thaumaturge.cluster_cinnabar", "朱砂原矿簇");
         add("item.thaumaturge.cluster_quartz", "石英原矿簇");
 
         langBCrystals();
