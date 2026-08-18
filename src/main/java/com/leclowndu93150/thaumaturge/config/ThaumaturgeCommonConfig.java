@@ -39,13 +39,20 @@ public final class ThaumaturgeCommonConfig {
                         "Average number of chunks per wild lesser crimson portal. Higher is rarer. 0 disables wild portals entirely.")
                 .defineInRange("crimsonPortalRarity", 500, 0, 1000000);
         HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
-                        "Hungry-node block eating range in blocks. Default: 16. Range: 1 to 64. This does not change entity or item pulling range.")
+                        "Maximum length in blocks of a hungry node's random block-eating ray.",
+                        "Default: 16. Range: 1 to 64. A larger area gives each attempt more possible targets; it does not guarantee a distant block will be selected.",
+                        "This setting does not change entity or dropped-item pulling range.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
         HUNGRY_NODE_BLOCK_HARDNESS = builder.comment(
-                        "Highest block hardness hungry nodes can eat. They eat blocks below this value, not equal to it. Default: 5.0. Range: 0 to 100. 0 disables block destruction.")
+                        "Maximum block hardness a hungry node can eat. The comparison is strictly below this value, not equal to it.",
+                        "Examples: dirt 0.5, stone 1.5, most logs 2, ores/deepslate 3, iron and diamond blocks 5, obsidian 50.",
+                        "Default: 5.0, so it can eat ordinary terrain and ores, but not hardness-5 metal/gem blocks or obsidian.",
+                        "Range: 0 to 100. 0 disables block destruction. Unbreakable blocks such as bedrock have negative hardness and are never eaten.")
                 .defineInRange("hungryNodeBlockEatHardness", 5.0, 0.0, 100.0);
         HUNGRY_NODE_BLOCK_EAT_INTERVAL = builder.comment(
-                        "Ticks between hungry-node block eating attempts. Default: 50 ticks (2.5 seconds). Range: 1 to 12000. Lower values eat faster; Minecraft normally runs at 20 ticks per second.")
+                        "Ticks between hungry-node block-eating attempts. Minecraft normally runs at 20 ticks per second; lower values are faster.",
+                        "Examples: 1 = 20 attempts/second, 20 = once/second, 50 = once/2.5 seconds, 1200 = once/minute.",
+                        "Default: 50. Range: 1 to 12000. An attempt may miss or hit an ineligible block, so this is not a guaranteed destruction interval.")
                 .defineInRange("hungryNodeBlockEatInterval", 50, 1, 12000);
         SHIELD_RECHARGE = builder.comment("Ticks between each point of runic shielding recharge.")
                 .defineInRange("shieldRecharge", 40, 1, 12000);
