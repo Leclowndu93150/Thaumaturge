@@ -1064,11 +1064,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 slotY += space;
                 continue;
             }
-            ItemStack result = ItemStack.EMPTY;
-            try {
-                result = displays.get(0).value().getResultItem(minecraft.level.registryAccess());
-            } catch (Exception ignored) {
-            }
+            ItemStack result = RecipeDisplayWidget.resultOf(displays.get(0).value(), minecraft.level.registryAccess());
             int x = sw + RECIPE_BOOKMARK_OFFSET_X;
             int shJitter = rng.nextInt(3);
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
@@ -1986,7 +1982,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         HolderLookup.Provider reg = minecraft.level.registryAccess();
         ResourceLocation fallback = null;
         for (RecipeHolder<?> holder : minecraft.level.getRecipeManager().getRecipes()) {
-            ItemStack result = holder.value().getResultItem(reg);
+            ItemStack result = RecipeDisplayWidget.resultOf(holder.value(), reg);
             if (result.isEmpty() || result.getItem() != item) continue;
             if (holder.id().getNamespace().equals(TCIds.MODID)) {
                 return holder.id();
