@@ -74,4 +74,12 @@ public final class BlockNode extends Block implements EntityBlock {
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (level instanceof ServerLevel serverLevel && !state.is(newState.getBlock())) {
+            NodeLocationIndex.get(serverLevel).remove(pos);
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
 }
