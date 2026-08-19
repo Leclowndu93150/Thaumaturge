@@ -305,7 +305,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private final Deque<ResourceLocation> history = new ArrayDeque<>();
 
     public EntryDetailScreen(Holder<IResearchEntry> entry, ResourceLocation entryId, @Nullable Screen parent) {
-        super(Component.translatable("research.thaumaturge." + entryId.getPath() + ".title"));
+        super(Component.translatable(entry.value().nameKey()));
         this.entry = entry;
         this.entryId = entryId;
         this.parent = parent;
