@@ -62,7 +62,7 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Spid
     @Override
     protected @Nullable RenderType getRenderType(
             EntityMindSpider entity, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
-        return RenderType.itemEntityTranslucentCull(getTextureLocation(entity));
+        return RenderType.entityTranslucent(getTextureLocation(entity));
     }
 
     @Override
@@ -73,7 +73,7 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Spid
     private static final class GhostSpiderEyesLayer
             extends RenderLayer<EntityMindSpider, SpiderModel<EntityMindSpider>> {
         private static final RenderType SPIDER_EYES =
-                RenderType.eyes(ResourceLocation.withDefaultNamespace("textures/entity/spider/spider_eyes.png"));
+                RenderType.eyes(ResourceLocation.withDefaultNamespace("textures/entity/spider_eyes.png"));
 
         GhostSpiderEyesLayer(RenderLayerParent<EntityMindSpider, SpiderModel<EntityMindSpider>> renderer) {
             super(renderer);
