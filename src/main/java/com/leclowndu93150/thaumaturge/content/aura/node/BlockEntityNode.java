@@ -79,10 +79,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final float BRIGHTEN_FLUX_LIMIT = 0.1F;
     private static final float BRIGHTEN_FILL_FRACTION = 0.9F;
     private static final int BRIGHTEN_CHANCE = 50;
-    private static final int HUNGRY_REACH = 16;
     private static final double HUNGRY_PULL_RANGE = 15.0;
     private static final double HUNGRY_EAT_RANGE_SQ = 2.0;
-    private static final float HUNGRY_MAX_HARDNESS = 5.0F;
     private static final int DARK_SPAWN_PLAYER_RANGE = 24;
     private static final int DARK_SPAWN_CAP = 3;
     private static final float PURE_FLUX_CLEANSE = 0.25F;
@@ -748,10 +746,20 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private boolean handleTypeBehavior(ServerLevel serverLevel, BlockPos pos, boolean change) {
-        if (count % BEHAVIOR_INTERVAL != 0 || !allowTypeBehavior()) {
+        if (!allowTypeBehavior()) {
             return change;
         }
         RandomSource random = serverLevel.getRandom();
+        if (nodeType == NodeType.HUNGRY) {
+            int interval = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_INTERVAL.get();
+            if (count % interval == 0) {
+                eatBlock(serverLevel, pos, random);
+            }
+            return change;
+        }
+        if (count % BEHAVIOR_INTERVAL != 0) {
+            return change;
+        }
         switch (nodeType) {
             case TAINTED -> {
                 BlockPos target = pos.offset(
@@ -764,7 +772,6 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             }
             case PURE -> AuraHelper.drainFlux(serverLevel, pos, PURE_FLUX_CLEANSE, false);
             case DARK -> spawnDarkGuard(serverLevel, pos, random);
-            case HUNGRY -> eatBlock(serverLevel, pos, random);
             default -> {}
         }
         return change;
@@ -856,9 +863,10 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private void eatBlock(ServerLevel serverLevel, BlockPos pos, RandomSource random) {
-        int tx = pos.getX() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int ty = pos.getY() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
+        int range = hungryBlockEatRange();
+        int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
+        int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
+        int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
         BlockHitResult hit = serverLevel.clip(
@@ -867,14 +875,34 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > 256.0) {
+        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
             return;
         }
         BlockState state = serverLevel.getBlockState(target);
         float hardness = state.getDestroySpeed(serverLevel, target);
-        if (!state.isAir() && hardness >= 0.0F && hardness < HUNGRY_MAX_HARDNESS) {
+        double maxHardness = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get();
+        if (!state.isAir() && hardness >= 0.0F && hardness < maxHardness) {
             serverLevel.destroyBlock(target, true);
         }
+    }
+
+    private int hungryBlockEatRange() {
+        if (!ThaumaturgeCommonConfig.SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER.get()) {
+            return ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
+        }
+        int minimum = ThaumaturgeCommonConfig.HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE.get();
+        int maximum = Math.max(minimum, ThaumaturgeCommonConfig.HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE.get());
+        int difference = maximum - minimum;
+        if (nodeModifier == NodeModifier.BRIGHT) {
+            return maximum;
+        }
+        if (nodeModifier == NodeModifier.PALE) {
+            return minimum + Math.round(difference / 3.0F);
+        }
+        if (nodeModifier == NodeModifier.FADING) {
+            return minimum;
+        }
+        return minimum + Math.round(difference * 2.0F / 3.0F);
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
@@ -955,9 +983,10 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         RandomSource random = clientLevel.getRandom();
-        int tx = pos.getX() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int ty = pos.getY() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
+        int range = hungryBlockEatRange();
+        int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
+        int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
+        int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
         BlockHitResult hit = clientLevel.clip(
@@ -966,11 +995,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > 256.0) {
+        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
             return;
         }
         BlockState state = clientLevel.getBlockState(target);
-        if (state.isAir()) {
+        float hardness = state.getDestroySpeed(clientLevel, target);
+        if (state.isAir() || hardness < 0.0F || hardness >= ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get()) {
             return;
         }
         Vec3 pull = from.subtract(Vec3.atCenterOf(target)).normalize().scale(0.3);
