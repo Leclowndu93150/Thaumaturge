@@ -125,16 +125,20 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     public void setRemoved() {
         super.setRemoved();
+    }
+
+    void dropContents() {
         if (level == null || level.isClientSide()) return;
         NonNullList<ItemStack> drops = NonNullList.withSize(getInventory().getSlots(), ItemStack.EMPTY);
         for (int slot = 0; slot < getInventory().getSlots(); slot++) {
-            drops.set(slot, getInventory().getStackInSlot(slot));
+            drops.set(slot, getInventory().getStackInSlot(slot).copy());
+            getInventory().setStackInSlot(slot, ItemStack.EMPTY);
         }
         Containers.dropContents(level, getBlockPos(), drops);
         if (aspects.totalAmount() > 0) {
             AuraHelper.polluteAura(level, getBlockPos(), aspects.totalAmount(), true);
-            setChanged();
-            syncToClient();
+            aspects = AspectList.EMPTY;
+            vis = 0;
         }
     }
 
@@ -249,8 +253,9 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                     }
                 }
             }
-            this.aspects = this.aspects.add(instance);
         }
+
+        this.aspects = this.aspects.add(aspects);
 
         if (flux > 0) {
             int pp = 0;
@@ -306,7 +311,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
             AuraHelper.polluteAura(level, getBlockPos(), pp, true);
         }
-        this.vis = aspects.totalAmount();
+        this.vis = this.aspects.totalAmount();
         inventory.extractItem(0, 1, false);
     }
 
