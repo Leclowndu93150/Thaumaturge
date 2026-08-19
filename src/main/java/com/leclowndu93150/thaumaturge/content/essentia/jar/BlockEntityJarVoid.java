@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -33,6 +34,12 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
             return 0;
         }
         return requested;
+    }
+
+    @Override
+    public int addToContainer(Holder<IAspect> aspect, int amount) {
+        ResourceKey<IAspect> key = aspect.unwrapKey().orElse(null);
+        return key == null ? amount : doAddToContainer(key, amount);
     }
 
     @Override
