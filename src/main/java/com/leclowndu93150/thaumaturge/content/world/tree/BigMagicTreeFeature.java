@@ -11,6 +11,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -254,10 +255,13 @@ public final class BigMagicTreeFeature extends Feature<BigMagicTreeConfig> {
         }
 
         private boolean validTreeLocation() {
-            /*BlockState soil = level.getBlockState(basePos.below());
+            if (!level.getFluidState(basePos).isEmpty()) {
+                return false;
+            }
+            BlockState soil = level.getBlockState(basePos.below());
             if (!soil.is(BlockTags.DIRT) && !soil.is(Blocks.FARMLAND)) {
                 return false;
-            }*/
+            }
             int clearance = checkBlockLine(basePos, basePos.above(heightLimit - 1));
             if (clearance == -1) {
                 return true;

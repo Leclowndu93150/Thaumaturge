@@ -62,10 +62,13 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
             }
         }
 
-        /*BlockState soil = level.getBlockState(new BlockPos(x, y - 1, z));
+        if (!level.getFluidState(origin).isEmpty()) {
+            return false;
+        }
+        BlockState soil = level.getBlockState(origin.below());
         if (!soil.is(BlockTags.DIRT) && !soil.is(Blocks.FARMLAND)) {
             return false;
-        }*/
+        }
 
         Set<BlockPos> placedLogs = new HashSet<>();
         Set<BlockPos> placedLeaves = new HashSet<>();
@@ -105,7 +108,7 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
         if (config.node()) {
             NodeGenerator.createRandomNodeAt(
                     level,
-                    new BlockPos(x + 1, y + height - 1, z),
+                    new BlockPos(x, y + height - 1, z),
                     random,
                     true,
                     false,

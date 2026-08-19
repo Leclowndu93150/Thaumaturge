@@ -383,11 +383,15 @@ public final class BigTreeFeature extends Feature<BigTreeConfig> {
         private boolean validTreeLocation(int offsetX, int offsetZ) {
             int[] from = {basePos[0] + offsetX, basePos[1], basePos[2] + offsetZ};
             int[] to = {basePos[0] + offsetX, basePos[1] + heightLimit - 1, basePos[2] + offsetZ};
-            /*BlockPos soilPos = new BlockPos(basePos[0] + offsetX, basePos[1] - 1, basePos[2] + offsetZ);
+            BlockPos trunkPos = new BlockPos(basePos[0] + offsetX, basePos[1], basePos[2] + offsetZ);
+            if (!level.getFluidState(trunkPos).isEmpty()) {
+                return false;
+            }
+            BlockPos soilPos = trunkPos.below();
             BlockState soil = level.getBlockState(soilPos);
             if (!soil.is(BlockTags.DIRT) && !soil.is(Blocks.FARMLAND)) {
                 return false;
-            }*/
+            }
             int clearance = checkBlockLine(from, to);
             if (clearance == -1) {
                 return true;

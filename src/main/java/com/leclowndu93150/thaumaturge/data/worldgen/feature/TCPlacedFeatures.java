@@ -105,7 +105,8 @@ public final class TCPlacedFeatures {
                                         MAGIC_FOREST_EXTRA_TREE_CHANCE,
                                         MAGIC_FOREST_EXTRA_TREE_COUNT),
                                 InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
+                                PlacementUtils.HEIGHTMAP,
+                                PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()),
                                 BiomeFilter.biome())));
 
         context.register(
