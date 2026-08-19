@@ -12,11 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -35,6 +37,7 @@ public final class SealWorldRenderer {
     private static final float ICON_SCALE = 0.5F;
     private static final float RING_ALPHA = 0.8F;
     private static final float CORNER_ALPHA = 0.7F;
+    private static final RenderType ICON_TYPE = TCRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
 
     private static final Direction[][] ROT_FACES = {
         {Direction.DOWN, Direction.NORTH, Direction.WEST},
@@ -107,8 +110,31 @@ public final class SealWorldRenderer {
         poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.55 : 0.55);
         float shade = inactive ? 0.5F : 1.0F;
         int color = ARGB32.colorFromFloat(alpha, shade, shade, shade);
-        drawQuad(poseStack, buffers.getBuffer(typeFor(seal.getSeal().getSealIcon())), ICON_SCALE / 2.0F, color);
+        TextureAtlasSprite sprite = iconSprite(seal.getSeal().getSealIcon());
+        drawQuad(
+                poseStack,
+                buffers.getBuffer(ICON_TYPE),
+                ICON_SCALE / 2.0F,
+                color,
+                sprite.getU0(),
+                sprite.getV0(),
+                sprite.getU1(),
+                sprite.getV1());
         poseStack.popPose();
+    }
+
+    private static TextureAtlasSprite iconSprite(ResourceLocation icon) {
+        String path = icon.getPath();
+        if (path.startsWith("textures/")) {
+            path = path.substring("textures/".length());
+        }
+        if (path.endsWith(".png")) {
+            path = path.substring(0, path.length() - ".png".length());
+        }
+        ResourceLocation spriteId = ResourceLocation.fromNamespaceAndPath(icon.getNamespace(), path);
+        return Minecraft.getInstance()
+                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .apply(spriteId);
     }
 
     private static void drawSealRing(
@@ -195,10 +221,15 @@ public final class SealWorldRenderer {
     }
 
     private static void drawQuad(PoseStack poseStack, VertexConsumer buffer, float half, int color) {
+        drawQuad(poseStack, buffer, half, color, 0.0F, 0.0F, 1.0F, 1.0F);
+    }
+
+    private static void drawQuad(
+            PoseStack poseStack, VertexConsumer buffer, float half, int color, float u0, float v0, float u1, float v1) {
         PoseStack.Pose pose = poseStack.last();
-        buffer.addVertex(pose, -half, half, 0.0F).setUv(1.0F, 1.0F).setColor(color);
-        buffer.addVertex(pose, half, half, 0.0F).setUv(1.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, half, -half, 0.0F).setUv(0.0F, 0.0F).setColor(color);
-        buffer.addVertex(pose, -half, -half, 0.0F).setUv(0.0F, 1.0F).setColor(color);
+        buffer.addVertex(pose, -half, half, 0.0F).setUv(u1, v1).setColor(color);
+        buffer.addVertex(pose, half, half, 0.0F).setUv(u1, v0).setColor(color);
+        buffer.addVertex(pose, half, -half, 0.0F).setUv(u0, v0).setColor(color);
+        buffer.addVertex(pose, -half, -half, 0.0F).setUv(u0, v1).setColor(color);
     }
 }
