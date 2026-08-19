@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.feature;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.world.objects.ConfigNodeSpawnFilter;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigRarityFilter;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.List;
@@ -57,10 +58,6 @@ public final class TCPlacedFeatures {
     private static final int CINDERPEARL_RARITY = 30;
     private static final int CINDERPEARL_TRIES = 18;
     private static final int CINDERPEARL_XZ_SPREAD = 8;
-    private static final int NODE_WILD_RARITY = 25;
-    private static final int NODE_MAGICAL_RARITY = 12;
-    private static final int NODE_EERIE_RARITY = 8;
-    private static final int NODE_NETHER_RARITY = 40;
     private static final int OBSIDIAN_TOTEM_RARITY = 1440;
     private static final int HILLTOP_STONES_RARITY = 720;
     private static final int NODE_NETHER_MIN_Y = 32;
@@ -166,35 +163,39 @@ public final class TCPlacedFeatures {
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
                         List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_WILD_RARITY), InSquarePlacement.spread(),
+                                ConfigNodeSpawnFilter.WILD,
+                                InSquarePlacement.spread(),
                                 HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
+                                BiomeFilter.biome())));
         context.register(
                 NODES_MAGICAL,
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
                         List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_MAGICAL_RARITY), InSquarePlacement.spread(),
+                                ConfigNodeSpawnFilter.MAGICAL,
+                                InSquarePlacement.spread(),
                                 HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
+                                BiomeFilter.biome())));
         context.register(
                 NODES_EERIE,
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.NODES_EERIE),
                         List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_EERIE_RARITY), InSquarePlacement.spread(),
+                                ConfigNodeSpawnFilter.EERIE,
+                                InSquarePlacement.spread(),
                                 HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
+                                BiomeFilter.biome())));
         context.register(
                 NODES_NETHER,
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
                         List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_NETHER_RARITY), InSquarePlacement.spread(),
+                                ConfigNodeSpawnFilter.NETHER,
+                                InSquarePlacement.spread(),
                                 HeightRangePlacement.uniform(
-                                                VerticalAnchor.absolute(NODE_NETHER_MIN_Y),
-                                                VerticalAnchor.absolute(NODE_NETHER_MAX_Y)),
-                                        BiomeFilter.biome())));
+                                        VerticalAnchor.absolute(NODE_NETHER_MIN_Y),
+                                        VerticalAnchor.absolute(NODE_NETHER_MAX_Y)),
+                                BiomeFilter.biome())));
 
         context.register(
                 OBSIDIAN_TOTEM,

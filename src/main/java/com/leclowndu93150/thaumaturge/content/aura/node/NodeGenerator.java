@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
 import java.util.ArrayList;
@@ -85,13 +86,8 @@ public final class NodeGenerator {
             type = NodeType.PURE;
         } else if (eerie) {
             type = NodeType.DARK;
-        } else if (random.nextInt(specialRarity) == 0) {
-            type = switch (random.nextInt(10)) {
-                case 0, 1, 2 -> NodeType.DARK;
-                case 3, 4, 5 -> NodeType.UNSTABLE;
-                case 6, 7, 8 -> NodeType.PURE;
-                default -> NodeType.HUNGRY;
-            };
+        } else {
+            type = rollConfiguredType(random);
         }
 
         NodeModifier modifier = null;
@@ -153,6 +149,28 @@ public final class NodeGenerator {
         }
 
         return new NodeData(type, Optional.ofNullable(modifier), distributed, distributed);
+    }
+
+    private static NodeType rollConfiguredType(RandomSource random) {
+        double dark = ThaumaturgeCommonConfig.DARK_NODE_CHANCE.get();
+        double unstable = ThaumaturgeCommonConfig.UNSTABLE_NODE_CHANCE.get();
+        double pure = ThaumaturgeCommonConfig.PURE_NODE_CHANCE.get();
+        double hungry = ThaumaturgeCommonConfig.HUNGRY_NODE_CHANCE.get();
+        double specialTotal = dark + unstable + pure + hungry;
+        double roll = random.nextDouble() * Math.max(100.0, specialTotal);
+        if ((roll -= dark) < 0.0) {
+            return NodeType.DARK;
+        }
+        if ((roll -= unstable) < 0.0) {
+            return NodeType.UNSTABLE;
+        }
+        if ((roll -= pure) < 0.0) {
+            return NodeType.PURE;
+        }
+        if (roll < hungry) {
+            return NodeType.HUNGRY;
+        }
+        return NodeType.NORMAL;
     }
 
     public static boolean createNodeAt(

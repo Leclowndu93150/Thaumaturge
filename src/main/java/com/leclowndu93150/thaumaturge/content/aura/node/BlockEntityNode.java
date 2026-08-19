@@ -24,6 +24,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCWandParts;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
@@ -159,6 +160,17 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     public void setNodeType(NodeType type) {
         this.nodeType = type;
+        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+            NodeLocationIndex.get(serverLevel).register(worldPosition, type);
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+            NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        }
     }
 
     public @Nullable NodeModifier getNodeModifier() {
@@ -499,7 +511,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         } else if (nodeModifier == NodeModifier.PALE) {
             nodeModifier = NodeModifier.FADING;
         } else if (nodeModifier == NodeModifier.FADING && nodeType != NodeType.HUNGRY) {
-            nodeType = NodeType.HUNGRY;
+            setNodeType(NodeType.HUNGRY);
         }
         nodeChange();
     }
@@ -514,7 +526,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 && nodeType != NodeType.PURE
                 && flux > base * FLUX_TAINT_THRESHOLD
                 && random.nextInt(FLUX_TAINT_CHANCE) == 0) {
-            nodeType = NodeType.TAINTED;
+            setNodeType(NodeType.TAINTED);
             nodeChange();
             return;
         }
@@ -682,7 +694,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                     return true;
                 }
             } else if (random.nextInt(UNSTABLE_CURE_ROLL / lock) == UNSTABLE_CURE_MAGIC) {
-                nodeType = NodeType.NORMAL;
+                setNodeType(NodeType.NORMAL);
                 nodeChange();
                 return true;
             }
@@ -752,10 +764,20 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private boolean handleTypeBehavior(ServerLevel serverLevel, BlockPos pos, boolean change) {
-        if (count % BEHAVIOR_INTERVAL != 0 || !allowTypeBehavior()) {
+        if (!allowTypeBehavior()) {
             return change;
         }
         RandomSource random = serverLevel.getRandom();
+        if (nodeType == NodeType.HUNGRY) {
+            int interval = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_INTERVAL.get();
+            if (count % interval == 0) {
+                eatBlock(serverLevel, pos, random);
+            }
+            return change;
+        }
+        if (count % BEHAVIOR_INTERVAL != 0) {
+            return change;
+        }
         switch (nodeType) {
             case TAINTED -> {
                 BlockPos target = pos.offset(
@@ -768,7 +790,6 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             }
             case PURE -> AuraHelper.drainFlux(serverLevel, pos, PURE_FLUX_CLEANSE, false);
             case DARK -> spawnDarkGuard(serverLevel, pos, random);
-            case HUNGRY -> eatBlock(serverLevel, pos, random);
             default -> {}
         }
         return change;
@@ -881,21 +902,23 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private void eatBlock(ServerLevel serverLevel, BlockPos pos, RandomSource random) {
-        int tx = pos.getX() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int ty = pos.getY() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
+        int range = hungryBlockEatRange();
+        int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
+        int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
+        int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
         BlockHitResult hit = hungryNodeClip(serverLevel, pos, to);
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
         BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > 256.0) {
+        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
             return;
         }
         BlockState state = serverLevel.getBlockState(target);
         float hardness = state.getDestroySpeed(serverLevel, target);
-        if (!state.isAir() && hardness >= 0.0F && hardness < HUNGRY_MAX_HARDNESS) {
+        double maxHardness = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get();
+        if (!state.isAir() && hardness >= 0.0F && hardness < maxHardness) {
             serverLevel.destroyBlock(target, true);
         }
     }
@@ -913,6 +936,25 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         Vec3 from = center.add(direction.normalize().scale(HUNGRY_RAY_START_OFFSET));
         return level.clip(
                 new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
+    }
+
+    private int hungryBlockEatRange() {
+        if (!ThaumaturgeCommonConfig.SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER.get()) {
+            return ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_EAT_RANGE.get();
+        }
+        int minimum = ThaumaturgeCommonConfig.HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE.get();
+        int maximum = Math.max(minimum, ThaumaturgeCommonConfig.HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE.get());
+        int difference = maximum - minimum;
+        if (nodeModifier == NodeModifier.BRIGHT) {
+            return maximum;
+        }
+        if (nodeModifier == NodeModifier.PALE) {
+            return minimum + Math.round(difference / 3.0F);
+        }
+        if (nodeModifier == NodeModifier.FADING) {
+            return minimum;
+        }
+        return minimum + Math.round(difference * 2.0F / 3.0F);
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
@@ -993,9 +1035,10 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         RandomSource random = clientLevel.getRandom();
-        int tx = pos.getX() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int ty = pos.getY() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
-        int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
+        int range = hungryBlockEatRange();
+        int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
+        int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
+        int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
         BlockHitResult hit = hungryNodeClip(clientLevel, pos, to);
@@ -1003,11 +1046,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > 256.0) {
+        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
             return;
         }
         BlockState state = clientLevel.getBlockState(target);
-        if (state.isAir()) {
+        float hardness = state.getDestroySpeed(clientLevel, target);
+        if (state.isAir() || hardness < 0.0F || hardness >= ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get()) {
             return;
         }
         clientLevel.addParticle(

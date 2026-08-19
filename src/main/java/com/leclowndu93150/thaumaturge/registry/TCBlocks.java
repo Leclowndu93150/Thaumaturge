@@ -591,9 +591,8 @@ public final class TCBlocks {
             BlockInfusionMatrix::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
-                    .strength(-1.0F, 3600000.0F)
+                    .strength(5.0F, 10.0F)
                     .sound(SoundType.STONE)
-                    .noLootTable()
                     .noOcclusion()
                     .lightLevel(s -> 15));
 
