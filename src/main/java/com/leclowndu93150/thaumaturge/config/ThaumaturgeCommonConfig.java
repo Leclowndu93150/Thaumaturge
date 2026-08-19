@@ -66,11 +66,11 @@ public final class ThaumaturgeCommonConfig {
         NETHER_NODE_CHANCE = builder.comment(
                         "Chance from 0 to 100 for a node placement attempt in each Nether chunk. 2.5 means one attempt per 40 chunks. 0 disables Nether nodes.")
                 .defineInRange("netherSpawnChance", 2.5, 0.0, 100.0);
-      
+
         builder.comment(
                         "The following values are percentages among ordinary random nodes. Their default total is 6.6667%, leaving 93.3333% normal nodes. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
                 .push("types");
-      
+
         DARK_NODE_CHANCE = builder.comment("Dark-node percentage, from 0 to 100. Default: 2%.")
                 .defineInRange("darkChance", 2.0, 0.0, 100.0);
         UNSTABLE_NODE_CHANCE = builder.comment("Unstable-node percentage, from 0 to 100. Default: 2%.")
@@ -80,9 +80,9 @@ public final class ThaumaturgeCommonConfig {
         HUNGRY_NODE_CHANCE = builder.comment(
                         "Hungry-node percentage, from 0 to 100. Default: 0.6667%, approximately one hungry node per 150 ordinary nodes.")
                 .defineInRange("hungryChance", 2.0 / 3.0, 0.0, 100.0);
-      
+
         builder.pop(2);
-      
+
         HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
                         "Maximum length in blocks of a hungry node's random block-eating ray.",
                         "Default: 16. Range: 1 to 64. A larger area gives each attempt more possible targets; it does not guarantee a distant block will be selected.",
@@ -125,24 +125,23 @@ public final class ThaumaturgeCommonConfig {
         NO_SLEEP = builder.comment(
                         "Setting this to true will make you get the recipe book for salis mundus without having to sleep first.")
                 .define("noSleep", false);
-      
+
         builder.pop();
         builder.push("sounds");
-      
+
         NO_STRESS = builder.comment(
                         "Set to true to disable anxiety triggers like the heartbeat sound and warp-event jump scares.")
                 .define("nostress", false);
-      
+
         builder.pop();
         builder.push("golems");
-      
+
         SHOW_GOLEM_EMOTES = builder.comment(
                         "Will golems display emote particles if they receive orders or encounter problems.")
                 .define("showGolemEmotes", true);
-      
+
         builder.pop();
         SPEC = builder.build();
-      
     }
 
     private ThaumaturgeCommonConfig() {}
