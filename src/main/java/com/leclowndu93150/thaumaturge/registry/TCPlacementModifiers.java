@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.world.objects.ConfigNodeSpawnFilter;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigRarityFilter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
@@ -15,6 +16,9 @@ public final class TCPlacementModifiers {
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ConfigRarityFilter>>
             CRIMSON_PORTAL_RARITY =
                     PLACEMENT_MODIFIERS.register("crimson_portal_rarity", () -> () -> ConfigRarityFilter.CODEC);
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ConfigNodeSpawnFilter>>
+            NODE_SPAWN_CHANCE =
+                    PLACEMENT_MODIFIERS.register("node_spawn_chance", () -> () -> ConfigNodeSpawnFilter.CODEC);
 
     private TCPlacementModifiers() {}
 
