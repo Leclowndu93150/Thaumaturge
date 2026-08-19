@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,7 @@ public final class EssentiaSources {
 
     private final BlockPos center;
     private final int range;
+    private Predicate<BlockPos> sourceFilter = pos -> true;
     private @Nullable Vec3 drainEffectTarget;
     private @Nullable List<BlockPos> sources;
     private long retryAt;
@@ -40,6 +42,12 @@ public final class EssentiaSources {
 
     public EssentiaSources drainEffectTarget(Vec3 target) {
         this.drainEffectTarget = target;
+        return this;
+    }
+
+    public EssentiaSources sourceFilter(Predicate<BlockPos> filter) {
+        this.sourceFilter = filter;
+        invalidate();
         return this;
     }
 
@@ -115,7 +123,7 @@ public final class EssentiaSources {
             for (int x = -range; x <= range; x++) {
                 for (int z = -range; z <= range; z++) {
                     cursor.set(center.getX() + x, center.getY() + y, center.getZ() + z);
-                    if (!level.isLoaded(cursor)) {
+                    if (!sourceFilter.test(cursor) || !level.isLoaded(cursor)) {
                         continue;
                     }
                     IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, cursor, null);

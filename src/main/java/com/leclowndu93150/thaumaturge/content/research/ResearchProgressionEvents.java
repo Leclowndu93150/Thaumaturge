@@ -19,6 +19,10 @@ import net.minecraft.server.network.Filterable;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.LlamaSpit;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
@@ -30,6 +34,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class ResearchProgressionEvents {
@@ -47,6 +52,10 @@ public final class ResearchProgressionEvents {
     private static final ResourceLocation UNLOCK_AUROMANCY = TCIds.rl("unlock_auromancy");
     private static final ResourceLocation BASE_AUROMANCY = TCIds.rl("base_auromancy");
     private static final ResourceLocation F_ONFIRE = TCIds.rl("f_onfire");
+    private static final ResourceLocation FOCUS_PROJECTILE = TCIds.rl("focus_projectile");
+    private static final ResourceLocation F_ARROW = TCIds.rl("f_arrow");
+    private static final ResourceLocation F_FIREBALL = TCIds.rl("f_fireball");
+    private static final ResourceLocation F_SPIT = TCIds.rl("f_spit");
 
     private ResearchProgressionEvents() {}
 
@@ -150,6 +159,28 @@ public final class ResearchProgressionEvents {
         pk.markComplete(F_ONFIRE);
         pk.sync(player);
         sendActionBar(player, "got.onfire");
+    }
+
+    @SubscribeEvent
+    public static void onProjectileDamage(LivingDamageEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        ResourceLocation research = projectileResearch(event.getSource().getDirectEntity());
+        if (research == null) return;
+        IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
+        if (!knowledge.isResearchKnown(FOCUS_PROJECTILE, 1) && !knowledge.isResearchComplete(FOCUS_PROJECTILE)) return;
+        if (knowledge.isResearchKnown(research)) return;
+        PlayerKnowledge pk = (PlayerKnowledge) knowledge;
+        pk.addResearch(research);
+        pk.markComplete(research);
+        pk.sync(player);
+        sendActionBar(player, "got.projectile");
+    }
+
+    private static @Nullable ResourceLocation projectileResearch(@Nullable Entity direct) {
+        if (direct instanceof AbstractArrow) return F_ARROW;
+        if (direct instanceof AbstractHurtingProjectile) return F_FIREBALL;
+        if (direct instanceof LlamaSpit) return F_SPIT;
+        return null;
     }
 
     @SubscribeEvent

@@ -32,7 +32,9 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
     public BlockEntityEssentiaPort(BlockPos pos, BlockState state, boolean input) {
         super(TCBlockEntities.ESSENTIA_PORT.get(), pos, state);
         this.input = input;
-        this.sources = new EssentiaSources(pos, SEARCH_RANGE).drainEffectTarget(Vec3.atCenterOf(pos));
+        this.sources = new EssentiaSources(pos, SEARCH_RANGE)
+                .sourceFilter(this::isInTargetHalfSpace)
+                .drainEffectTarget(Vec3.atCenterOf(pos));
     }
 
     private Direction facing() {
@@ -41,6 +43,15 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     private Direction tubeSide() {
         return facing().getOpposite();
+    }
+
+    private boolean isInTargetHalfSpace(BlockPos target) {
+        BlockPos offset = target.subtract(getBlockPos());
+        Direction direction = facing();
+        return offset.getX() * direction.getStepX()
+                        + offset.getY() * direction.getStepY()
+                        + offset.getZ() * direction.getStepZ()
+                > 0;
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEssentiaPort port) {

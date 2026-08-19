@@ -4,11 +4,10 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectChipsTooltip;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
+import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -23,10 +22,10 @@ public final class AspectTooltipEvents {
         if (event.getItemStack().isEmpty()) {
             return;
         }
-        /*if (!isContainerScreenOpen()) {
-            return;
-        }*/
-        if (!shouldShowAspects()) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null
+                || !KnowledgeAccess.of(mc.player)
+                        .isResearchKnown(ScanKeys.item(event.getItemStack().getItem()))) {
             return;
         }
         AspectList aspects = AspectIndexAccess.index().of(event.getItemStack());
@@ -34,14 +33,5 @@ public final class AspectTooltipEvents {
             return;
         }
         event.getTooltipElements().add(Either.right(new AspectChipsTooltip(aspects)));
-    }
-
-    private static boolean isContainerScreenOpen() {
-        return Minecraft.getInstance().screen instanceof AbstractContainerScreen<?>;
-    }
-
-    private static boolean shouldShowAspects() {
-        boolean shift = Screen.hasShiftDown();
-        return shift != ThaumaturgeClientConfig.showAspectsByDefault();
     }
 }

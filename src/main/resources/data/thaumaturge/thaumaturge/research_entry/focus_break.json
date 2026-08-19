@@ -20,13 +20,27 @@
           "items": [
             "minecraft:enchanted_book"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "minecraft:stored_enchantments": {
+              "levels": {
+                "minecraft:fortune": 1
+              }
+            }
+          }
         },
         {
           "items": [
             "minecraft:enchanted_book"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "minecraft:stored_enchantments": {
+              "levels": {
+                "minecraft:silk_touch": 1
+              }
+            }
+          }
         }
       ],
       "required_knowledge": [
