@@ -24,18 +24,12 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  */
 public final class AspectDataMaps {
     /** Item-to-aspect base assignments, keyed {@code thaumaturge:base_aspects}. */
-    public static final DataMapType<Item, AspectList> BASE_ASPECTS = DataMapType.builder(
-                    Identifier.fromNamespaceAndPath("thaumaturge", "base_aspects"), Registries.ITEM, AspectList.CODEC)
-            .synced(AspectList.CODEC, false)
-            .build();
+    public static final DataMapType<Item, AspectList> BASE_ASPECTS = DataMapType.builder(Identifier.fromNamespaceAndPath("thaumaturge", "base_aspects"), Registries.ITEM, AspectList.CODEC)
+            .synced(AspectList.CODEC, false).build();
 
     /** Entity-to-aspect assignments, keyed {@code thaumaturge:entity_aspects}. */
-    public static final DataMapType<EntityType<?>, AspectList> ENTITY_ASPECTS = DataMapType.builder(
-                    Identifier.fromNamespaceAndPath("thaumaturge", "entity_aspects"),
-                    Registries.ENTITY_TYPE,
-                    AspectList.CODEC)
-            .synced(AspectList.CODEC, false)
-            .build();
+    public static final DataMapType<EntityType<?>, AspectList> ENTITY_ASPECTS = DataMapType
+            .builder(Identifier.fromNamespaceAndPath("thaumaturge", "entity_aspects"), Registries.ENTITY_TYPE, AspectList.CODEC).synced(AspectList.CODEC, false).build();
 
     private AspectDataMaps() {}
 }

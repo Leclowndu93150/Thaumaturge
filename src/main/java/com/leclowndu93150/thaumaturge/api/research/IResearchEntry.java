@@ -19,8 +19,7 @@ import net.minecraft.resources.ResourceKey;
  */
 public interface IResearchEntry {
     /** Datapack registry key for research entries. */
-    ResourceKey<Registry<IResearchEntry>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "research_entry"));
+    ResourceKey<Registry<IResearchEntry>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "research_entry"));
 
     /**
      * Category this entry belongs to.

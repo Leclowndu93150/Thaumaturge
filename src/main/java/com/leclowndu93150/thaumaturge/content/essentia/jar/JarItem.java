@@ -85,15 +85,14 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
-        if (player == null) return super.useOn(context);
+        if (player == null)
+            return super.useOn(context);
         if (level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic) {
             AspectList aspects = getAspects(stack);
             // We use Direction.UP to allow insertion/extraction from all faces with fials
             if (alembic.aspectKey() != null) {
                 Holder<IAspect> aspect = EssentiaTransportHelper.resolve(level, alembic.aspectKey());
-                if (aspect != null
-                        && (aspects.isEmpty()
-                                || aspect == aspects.entries().getFirst().aspect())) {
+                if (aspect != null && (aspects.isEmpty() || aspect == aspects.entries().getFirst().aspect())) {
                     int alembicAmount = Math.min(alembic.amount(), BlockEntityJar.CAPACITY - aspects.totalAmount());
                     if (alembicAmount >= 0) {
                         if (level.isClientSide()) {
@@ -102,7 +101,16 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
                         }
                         int taken = alembic.takeEssentia(aspect, alembicAmount, Direction.UP);
                         if (taken > 0) {
-                            setAspects(stack, aspects.add(aspect, taken));
+                            ItemStack filled = stack.copyWithCount(1);
+                            setAspects(filled, aspects.add(aspect, taken));
+                            if (stack.getCount() == 1) {
+                                player.setItemInHand(context.getHand(), filled);
+                            } else {
+                                stack.shrink(1);
+                                if (!player.addItem(filled)) {
+                                    player.drop(filled, false);
+                                }
+                            }
                             level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
                             return InteractionResult.SUCCESS;
                         }

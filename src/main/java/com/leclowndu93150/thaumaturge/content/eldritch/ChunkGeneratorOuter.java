@@ -27,9 +27,8 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 
 public final class ChunkGeneratorOuter extends ChunkGenerator {
-    public static final MapCodec<ChunkGeneratorOuter> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(Biome.CODEC.fieldOf("biome").forGetter(generator -> generator.biome))
-                    .apply(instance, ChunkGeneratorOuter::new));
+    public static final MapCodec<ChunkGeneratorOuter> CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(Biome.CODEC.fieldOf("biome").forGetter(generator -> generator.biome)).apply(instance, ChunkGeneratorOuter::new));
 
     private static final int GEN_DEPTH = 128;
 
@@ -46,14 +45,12 @@ public final class ChunkGeneratorOuter extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(
-            Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk) {
+    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess chunk) {
         return CompletableFuture.completedFuture(chunk);
     }
 
     @Override
-    public void buildSurface(
-            WorldGenRegion level, StructureManager structureManager, RandomState randomState, ChunkAccess chunk) {}
+    public void buildSurface(WorldGenRegion level, StructureManager structureManager, RandomState randomState, ChunkAccess chunk) {}
 
     @Override
     public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager) {
@@ -61,27 +58,19 @@ public final class ChunkGeneratorOuter extends ChunkGenerator {
         ChunkPos chunkPos = chunk.getPos();
         MazeCell cell = MazeSavedData.get(level.getLevel()).getCell(chunkPos.x(), chunkPos.z());
         if (cell != null) {
-            RandomSource random =
-                    RandomSource.create(level.getSeed() + chunkPos.x() * 341873128712L + chunkPos.z() * 132897987541L);
+            RandomSource random = RandomSource.create(level.getSeed() + chunkPos.x() * 341873128712L + chunkPos.z() * 132897987541L);
             MazeChunkStamper.stamp(level, random, chunkPos.x(), chunkPos.z(), cell);
         }
     }
 
     @Override
-    public void applyCarvers(
-            WorldGenRegion region,
-            long seed,
-            RandomState randomState,
-            BiomeManager biomeManager,
-            StructureManager structureManager,
-            ChunkAccess chunk) {}
+    public void applyCarvers(WorldGenRegion region, long seed, RandomState randomState, BiomeManager biomeManager, StructureManager structureManager, ChunkAccess chunk) {}
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion region) {}
 
     @Override
-    public int getBaseHeight(
-            int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
+    public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor heightAccessor, RandomState randomState) {
         return OuterLands.MAZE_Y;
     }
 

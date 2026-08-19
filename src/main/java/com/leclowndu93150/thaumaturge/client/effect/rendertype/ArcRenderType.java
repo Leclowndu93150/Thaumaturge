@@ -15,12 +15,9 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 public final class ArcRenderType {
     public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/effect/beamh.png");
 
-    public static final RenderPipeline PIPELINE =
-            TCFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/arc"));
+    public static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/arc"));
 
-    public static final RenderType RENDER_TYPE = RenderType.create(
-            "thaumaturge_arc",
-            RenderSetup.builder(PIPELINE).withTexture("Sampler0", TEXTURE).createRenderSetup());
+    public static final RenderType RENDER_TYPE = RenderType.create("thaumaturge_arc", RenderSetup.builder(PIPELINE).withTexture("Sampler0", TEXTURE).createRenderSetup());
 
     @SubscribeEvent
     static void register(RegisterRenderPipelinesEvent event) {

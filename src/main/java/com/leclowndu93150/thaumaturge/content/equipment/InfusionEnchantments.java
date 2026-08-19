@@ -12,14 +12,12 @@ import net.minecraft.network.codec.StreamCodec;
 public record InfusionEnchantments(Map<InfusionEnchantment, Integer> levels) {
     public static final InfusionEnchantments EMPTY = new InfusionEnchantments(Map.of());
 
-    public static final Codec<InfusionEnchantments> CODEC = Codec.unboundedMap(
-                    InfusionEnchantment.CODEC, Codec.intRange(1, Integer.MAX_VALUE))
-            .xmap(InfusionEnchantments::new, InfusionEnchantments::levels);
+    public static final Codec<InfusionEnchantments> CODEC = Codec.unboundedMap(InfusionEnchantment.CODEC, Codec.intRange(1, Integer.MAX_VALUE)).xmap(InfusionEnchantments::new,
+            InfusionEnchantments::levels);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, InfusionEnchantments> STREAM_CODEC =
-            ByteBufCodecs.<RegistryFriendlyByteBuf, InfusionEnchantment, Integer, Map<InfusionEnchantment, Integer>>map(
-                            LinkedHashMap::new, InfusionEnchantment.STREAM_CODEC, ByteBufCodecs.VAR_INT)
-                    .map(InfusionEnchantments::new, InfusionEnchantments::levels);
+    public static final StreamCodec<RegistryFriendlyByteBuf, InfusionEnchantments> STREAM_CODEC = ByteBufCodecs
+            .<RegistryFriendlyByteBuf, InfusionEnchantment, Integer, Map<InfusionEnchantment, Integer>>map(LinkedHashMap::new, InfusionEnchantment.STREAM_CODEC, ByteBufCodecs.VAR_INT)
+            .map(InfusionEnchantments::new, InfusionEnchantments::levels);
 
     public InfusionEnchantments {
         EnumMap<InfusionEnchantment, Integer> copy = new EnumMap<>(InfusionEnchantment.class);

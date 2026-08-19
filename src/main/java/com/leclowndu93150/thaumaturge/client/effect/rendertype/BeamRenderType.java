@@ -18,8 +18,7 @@ public final class BeamRenderType {
     public static final Identifier BEAMH = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/effect/beamh.png");
     public static final Identifier NODE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/effect/auranodes.png");
 
-    public static final RenderPipeline PIPELINE =
-            TCFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/beam"));
+    public static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/beam"));
 
     public static final RenderType TRUNK_BEAM = makeType("thaumaturge_beam_trunk_beam", BEAM);
     public static final RenderType TRUNK_BEAML = makeType("thaumaturge_beam_trunk_beaml", BEAML);
@@ -35,9 +34,7 @@ public final class BeamRenderType {
     }
 
     private static RenderType makeType(String name, Identifier texture) {
-        return RenderType.create(
-                name,
-                RenderSetup.builder(PIPELINE).withTexture("Sampler0", texture).createRenderSetup());
+        return RenderType.create(name, RenderSetup.builder(PIPELINE).withTexture("Sampler0", texture).createRenderSetup());
     }
 
     @SubscribeEvent

@@ -13,16 +13,19 @@
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
-    "world.level.block.entity.AbstractFurnaceBlockEntityAccessor"
+    "world.level.block.FireBlockMixin",
+    "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
+    "world.level.block.piston.PistonBaseBlockMixin"
   ],
   "client": [
-    "jei.gui.ingredients.IngredientFilterAccessor",
-    "jei.gui.ingredients.IngredientFilterApiAccessor",
     "client.gui.GuiGraphicsExtractorAccessor",
+    "client.multiplayer.ClientLevelMixin",
     "client.renderer.GameRendererInvoker",
-    "client.renderer.entity.LivingEntityRendererMixin",
     "client.renderer.entity.LivingEntityRenderStateMixin",
-    "client.renderer.entity.layers.HumanoidArmorLayerAccessor"
+    "client.renderer.entity.LivingEntityRendererMixin",
+    "client.renderer.entity.layers.HumanoidArmorLayerAccessor",
+    "jei.gui.ingredients.IngredientFilterAccessor",
+    "jei.gui.ingredients.IngredientFilterApiAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

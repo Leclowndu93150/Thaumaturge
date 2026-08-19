@@ -18,15 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
 public final class GenRooms extends GenCommonPieces {
-    private static final int[][] PAT_DOORWAY = {
-        {0, 2, 2, 2, 2, 2, 0},
-        {2, 2, 9, 9, 9, 2, 2},
-        {2, 9, 9, 9, 9, 9, 2},
-        {2, 9, 9, 1, 9, 9, 2},
-        {2, 9, 9, 9, 9, 9, 2},
-        {2, 2, 9, 9, 9, 2, 2},
-        {0, 2, 2, 2, 2, 2, 0}
-    };
+    private static final int[][] PAT_DOORWAY = {{0, 2, 2, 2, 2, 2, 0}, {2, 2, 9, 9, 9, 2, 2}, {2, 9, 9, 9, 9, 9, 2}, {2, 9, 9, 1, 9, 9, 2}, {2, 9, 9, 9, 9, 9, 2}, {2, 2, 9, 9, 9, 2, 2},
+            {0, 2, 2, 2, 2, 2, 0}};
 
     private GenRooms() {}
 
@@ -94,11 +87,8 @@ public final class GenRooms extends GenCommonPieces {
         for (int a = 2; a <= 14; a++) {
             for (int b = 2; b <= 14; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 2 || a == 14 || b == 2 || b == 14)
-                            && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10)
-                            && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10)
-                            && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 2 || a == 14 || b == 2 || b == 14) && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10) && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
+                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10) && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -107,11 +97,7 @@ public final class GenRooms extends GenCommonPieces {
         for (int a = 3; a <= 13; a++) {
             for (int b = 3; b <= 13; b++) {
                 for (int c = 2; c < 11; c++) {
-                    if ((a == 3 || a == 13 || b == 3 || b == 13)
-                            && (a > 4 || b > 4)
-                            && (a > 4 || b < 12)
-                            && (a < 12 || b > 4)
-                            && (a < 12 || b < 12)) {
+                    if ((a == 3 || a == 13 || b == 3 || b == 13) && (a > 4 || b > 4) && (a > 4 || b < 12) && (a < 12 || b > 4) && (a < 12 || b < 12)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.STONE, cell);
                     }
                 }
@@ -156,14 +142,8 @@ public final class GenRooms extends GenCommonPieces {
             }
         }
         stairCorners(ctx, cell, x, z, y);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 2, z + 8),
-                TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(),
-                3);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 3, z + 8),
-                TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(),
-                3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
         EldritchArenaShapes.genObelisk(ctx.level, x + 8, y + 4, z + 8);
     }
 
@@ -209,11 +189,8 @@ public final class GenRooms extends GenCommonPieces {
         for (int a = 2; a <= 14; a++) {
             for (int b = 2; b <= 14; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 2 || a == 14 || b == 2 || b == 14)
-                            && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10)
-                            && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10)
-                            && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 2 || a == 14 || b == 2 || b == 14) && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10) && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
+                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10) && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -223,8 +200,7 @@ public final class GenRooms extends GenCommonPieces {
             for (int b = 3; b <= 13; b++) {
                 for (int c = 2; c < 11; c++) {
                     if (a == 3 || a == 13 || b == 3 || b == 13) {
-                        if (c > 3 && c < 9 && (a == 8 || b == 8)
-                                || c > 4 && c < 8 && (a == 7 || b == 7 || a == 9 || b == 9)) {
+                        if (c > 3 && c < 9 && (a == 8 || b == 8) || c > 4 && c < 8 && (a == 7 || b == 7 || a == 9 || b == 9)) {
                             if (a != 8 && b != 8 || c != 6) {
                                 ctx.placeBlock(x + a, y + c, z + b, GenContext.STONE_NOSPAWN, cell);
                             }
@@ -264,26 +240,17 @@ public final class GenRooms extends GenCommonPieces {
             ctx.placeBlock(x + 4, y + 2, z + 6 + g, GenContext.STAIR_DIRECTIONAL, Direction.WEST, cell);
         }
         generateConnections(ctx, cx, cz, y, cell, 3, true);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 2, z + 8),
-                TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(),
-                3);
-        EntitySpecialItem item = new EntitySpecialItem(
-                ctx.level.getLevel(), x + 8.5, y + 3.5, z + 8.5, new ItemStack(TCItems.RUNED_TABLET.get()));
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        EntitySpecialItem item = new EntitySpecialItem(ctx.level.getLevel(), x + 8.5, y + 3.5, z + 8.5, new ItemStack(TCItems.RUNED_TABLET.get()));
         item.setDeltaMovement(0.0, 0.0, 0.0);
         item.setUnlimitedLifetime();
         ctx.level.addFreshEntity(item);
         Difficulty difficulty = ctx.level.getDifficulty();
         int guardians = 2 + (difficulty == Difficulty.HARD ? 2 : difficulty == Difficulty.NORMAL ? 1 : 0);
         for (int qq = 0; qq < guardians; qq++) {
-            EntityEldritchGuardian guardian =
-                    new EntityEldritchGuardian(TCEntities.ELDRITCH_GUARDIAN.get(), ctx.level.getLevel());
-            double gx = x
-                    + 8.5
-                    + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
-            double gz = z
-                    + 8.5
-                    + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
+            EntityEldritchGuardian guardian = new EntityEldritchGuardian(TCEntities.ELDRITCH_GUARDIAN.get(), ctx.level.getLevel());
+            double gx = x + 8.5 + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
+            double gz = z + 8.5 + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
             guardian.snapTo(gx, y + 2, gz, 0.0F, 0.0F);
             guardian.setHomeTo(new BlockPos(x + 8, y + 2, z + 8), 16);
             if (qq == 0 && guardians >= 4) {
@@ -308,11 +275,8 @@ public final class GenRooms extends GenCommonPieces {
         for (int a = 2; a <= 14; a++) {
             for (int b = 2; b <= 14; b++) {
                 for (int c = 1; c < 10; c++) {
-                    if ((a == 2 || a == 14 || b == 2 || b == 14)
-                            && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10)
-                            && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10)
-                            && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 2 || a == 14 || b == 2 || b == 14) && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10) && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
+                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10) && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -324,11 +288,7 @@ public final class GenRooms extends GenCommonPieces {
                     if (a == 3 || a == 13 || b == 3 || b == 13) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.CRUST, cell);
                     }
-                    if ((a == 4 && !cell.west
-                                    || a == 12 && !cell.east
-                                    || b == 4 && !cell.north
-                                    || b == 12 && !cell.south)
-                            && ctx.random.nextBoolean()) {
+                    if ((a == 4 && !cell.west || a == 12 && !cell.east || b == 4 && !cell.north || b == 12 && !cell.south) && ctx.random.nextBoolean()) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.CRUST, cell);
                     }
                 }
@@ -345,10 +305,7 @@ public final class GenRooms extends GenCommonPieces {
                 if (ctx.random.nextBoolean()) {
                     ctx.placeBlock(x + a, y + 8, z + b, GenContext.CRUST, cell);
                 } else if (ctx.random.nextBoolean() && ctx.level.isEmptyBlock(new BlockPos(x + a, y + 8, z + b))) {
-                    ctx.level.setBlock(
-                            new BlockPos(x + a, y + 8, z + b),
-                            TCBlocks.CRYSTAL_VITIUM.get().defaultBlockState(),
-                            3);
+                    ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TCBlocks.CRYSTAL_VITIUM.get().defaultBlockState(), 3);
                 }
             }
         }
@@ -402,17 +359,11 @@ public final class GenRooms extends GenCommonPieces {
                     boolean crate = ctx.random.nextFloat() < 0.2F;
                     BlockState loot;
                     if (roll < 0.15F) {
-                        loot = crate
-                                ? TCBlocks.LOOT_CRATE_RARE.get().defaultBlockState()
-                                : TCBlocks.LOOT_URN_RARE.get().defaultBlockState();
+                        loot = crate ? TCBlocks.LOOT_CRATE_RARE.get().defaultBlockState() : TCBlocks.LOOT_URN_RARE.get().defaultBlockState();
                     } else if (roll < 0.4F) {
-                        loot = crate
-                                ? TCBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState()
-                                : TCBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState();
+                        loot = crate ? TCBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState();
                     } else {
-                        loot = crate
-                                ? TCBlocks.LOOT_CRATE_COMMON.get().defaultBlockState()
-                                : TCBlocks.LOOT_URN_COMMON.get().defaultBlockState();
+                        loot = crate ? TCBlocks.LOOT_CRATE_COMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_COMMON.get().defaultBlockState();
                     }
                     ctx.level.setBlock(target, loot, 3);
                 }
@@ -435,11 +386,8 @@ public final class GenRooms extends GenCommonPieces {
         for (int a = 2; a <= 14; a++) {
             for (int b = 2; b <= 14; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 2 || a == 14 || b == 2 || b == 14)
-                            && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10)
-                            && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10)
-                            && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 2 || a == 14 || b == 2 || b == 14) && (a != 2 || b <= 3 || b >= 12 || !cell.west || c >= 10) && (a != 14 || b <= 3 || b >= 12 || !cell.east || c >= 10)
+                            && (b != 2 || a <= 3 || a >= 12 || !cell.north || c >= 10) && (b != 14 || a <= 3 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -468,14 +416,8 @@ public final class GenRooms extends GenCommonPieces {
                         ctx.placeBlock(x + a, y + 9, z + b, GenContext.STONE, cell);
                     }
                     if (a == 5 && b == 5 || a == 5 && b == 11 || a == 11 && b == 5 || a == 11 && b == 11) {
-                        ctx.level.setBlock(
-                                new BlockPos(x + a, y + 3, z + b),
-                                TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(),
-                                3);
-                        ctx.level.setBlock(
-                                new BlockPos(x + a, y + 8, z + b),
-                                TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(),
-                                3);
+                        ctx.level.setBlock(new BlockPos(x + a, y + 3, z + b), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+                        ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
                     }
                 }
             }
@@ -494,33 +436,19 @@ public final class GenRooms extends GenCommonPieces {
         crystalPillar(ctx, x + 5, y, z + 11);
         crystalPillar(ctx, x + 11, y, z + 5);
         crystalPillar(ctx, x + 11, y, z + 11);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 2, z + 8),
-                TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(),
-                3);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 3, z + 8),
-                TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(),
-                3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x + 8, y + 4, z + 8), bottomSlab(), 3);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 9, z + 8),
-                TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(),
-                3);
-        ctx.level.setBlock(
-                new BlockPos(x + 8, y + 8, z + 8),
-                TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(),
-                3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 9, z + 8), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 8, z + 8), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x + 8, y + 7, z + 8), topSlab(), 3);
         generateConnections(ctx, cx, cz, y, cell, 3, true);
     }
 
     private static void crystalPillar(GenContext ctx, int x, int y, int z) {
-        ctx.level.setBlock(
-                new BlockPos(x, y + 4, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x, y + 4, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x, y + 5, z), bottomSlab(), 3);
-        ctx.level.setBlock(
-                new BlockPos(x, y + 7, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x, y + 7, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x, y + 6, z), topSlab(), 3);
     }
 

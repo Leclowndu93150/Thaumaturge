@@ -109,26 +109,19 @@ public final class PechTradeBootstrap {
     }
 
     private static PechTrade crystal(HolderGetter<IAspect> aspects, int tier, ResourceKey<IAspect> aspect) {
-        DataComponentPatch patch = DataComponentPatch.builder()
-                .set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1))
-                .build();
+        DataComponentPatch patch = DataComponentPatch.builder().set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1)).build();
         return new PechTrade(tier, new ItemStackTemplate(TCItems.ESSENTIA_CRYSTAL.get(), patch));
     }
 
     private static PechTrade potion(int tier, Holder<Potion> potion) {
-        DataComponentPatch patch = DataComponentPatch.builder()
-                .set(DataComponents.POTION_CONTENTS, new PotionContents(potion))
-                .build();
+        DataComponentPatch patch = DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(potion)).build();
         return new PechTrade(tier, new ItemStackTemplate(Items.POTION, patch));
     }
 
-    private static PechTrade book(
-            HolderGetter<Enchantment> enchantments, int tier, ResourceKey<Enchantment> enchantment) {
+    private static PechTrade book(HolderGetter<Enchantment> enchantments, int tier, ResourceKey<Enchantment> enchantment) {
         ItemEnchantments.Mutable stored = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
         stored.set(enchantments.getOrThrow(enchantment), 1);
-        DataComponentPatch patch = DataComponentPatch.builder()
-                .set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable())
-                .build();
+        DataComponentPatch patch = DataComponentPatch.builder().set(DataComponents.STORED_ENCHANTMENTS, stored.toImmutable()).build();
         return new PechTrade(tier, new ItemStackTemplate(Items.ENCHANTED_BOOK, patch));
     }
 }

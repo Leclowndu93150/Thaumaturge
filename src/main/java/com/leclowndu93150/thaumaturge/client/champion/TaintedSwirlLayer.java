@@ -20,10 +20,8 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
-public final class TaintedSwirlLayer<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
-        extends RenderLayer<S, M> {
-    private static final Identifier TAINT_FIBRES =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/models/taint_fibres.png");
+public final class TaintedSwirlLayer<S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLayer<S, M> {
+    private static final Identifier TAINT_FIBRES = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/models/taint_fibres.png");
     private static final float ALPHA = 0.66F;
     private static final int COLOR = ARGB.colorFromFloat(ALPHA, 1.0F, 1.0F, 1.0F);
     private static final float U_FREQUENCY = 2.5E-4F;
@@ -36,42 +34,21 @@ public final class TaintedSwirlLayer<S extends LivingEntityRenderState, M extend
     }
 
     @Override
-    public void submit(
-            PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, S state, float yRot, float xRot) {
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, S state, float yRot, float xRot) {
         if (((ChampionRenderState) state).thaumaturge$championType() != ChampionModifier.TAINTED) {
             return;
         }
         float id = ((ChampionRenderState) state).thaumaturge$entityId();
         float u = Mth.cos(id * U_FREQUENCY);
         float v = id * V_FACTOR;
-        collector
-                .order(1)
-                .submitModel(
-                        this.getParentModel(),
-                        state,
-                        poseStack,
-                        swirl(u, v, state.isInvisible),
-                        lightCoords,
-                        OverlayTexture.NO_OVERLAY,
-                        COLOR,
-                        null,
-                        state.outlineColor,
-                        null);
+        collector.order(1).submitModel(this.getParentModel(), state, poseStack, swirl(u, v, state.isInvisible), lightCoords, OverlayTexture.NO_OVERLAY, COLOR, null, state.outlineColor, null);
     }
 
     private static RenderType swirl(float u, float v, boolean invisible) {
         RenderPipeline pipeline = invisible ? TCRenderPipelines.TAINTED_SWIRL_NO_DEPTH : RenderPipelines.BREEZE_WIND;
-        return RenderType.create(
-                "thaumaturge_tainted_swirl",
-                RenderSetup.builder(pipeline)
-                        .withTexture("Sampler0", TAINT_FIBRES)
-                        .setTextureTransform(new TextureTransform(
-                                "tainted_swirl",
-                                () -> new Matrix4f()
-                                        .scaling(UV_SCALE_U, UV_SCALE_V, 1.0F)
-                                        .translate(u, v, 0.0F)))
-                        .useLightmap()
-                        .sortOnUpload()
+        return RenderType.create("thaumaturge_tainted_swirl",
+                RenderSetup.builder(pipeline).withTexture("Sampler0", TAINT_FIBRES)
+                        .setTextureTransform(new TextureTransform("tainted_swirl", () -> new Matrix4f().scaling(UV_SCALE_U, UV_SCALE_V, 1.0F).translate(u, v, 0.0F))).useLightmap().sortOnUpload()
                         .createRenderSetup());
     }
 }

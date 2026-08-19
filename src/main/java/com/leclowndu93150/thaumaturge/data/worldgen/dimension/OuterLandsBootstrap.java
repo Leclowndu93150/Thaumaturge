@@ -27,42 +27,15 @@ public final class OuterLandsBootstrap {
     private OuterLandsBootstrap() {}
 
     public static void bootstrapTypes(BootstrapContext<DimensionType> context) {
-        EnvironmentAttributeMap attributes = EnvironmentAttributeMap.builder()
-                .set(EnvironmentAttributes.FOG_COLOR, FOG_COLOR)
-                .set(EnvironmentAttributes.SKY_COLOR, SKY_COLOR)
-                .set(EnvironmentAttributes.FOG_START_DISTANCE, FOG_START)
-                .set(EnvironmentAttributes.FOG_END_DISTANCE, FOG_END)
-                .set(EnvironmentAttributes.SKY_LIGHT_FACTOR, 0.0F)
-                .set(EnvironmentAttributes.BED_RULE, BedRule.EXPLODES)
-                .set(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false)
-                .set(EnvironmentAttributes.CAN_START_RAID, false)
-                .build();
-        context.register(
-                OuterLands.DIMENSION_TYPE,
-                new DimensionType(
-                        true,
-                        false,
-                        false,
-                        false,
-                        1.0,
-                        0,
-                        HEIGHT,
-                        HEIGHT,
-                        BlockTags.INFINIBURN_OVERWORLD,
-                        AMBIENT_LIGHT,
-                        new DimensionType.MonsterSettings(ConstantInt.of(7), 15),
-                        DimensionType.Skybox.NONE,
-                        CardinalLighting.Type.DEFAULT,
-                        attributes,
-                        HolderSet.direct(),
-                        Optional.empty()));
+        EnvironmentAttributeMap attributes = EnvironmentAttributeMap.builder().set(EnvironmentAttributes.FOG_COLOR, FOG_COLOR).set(EnvironmentAttributes.SKY_COLOR, SKY_COLOR)
+                .set(EnvironmentAttributes.FOG_START_DISTANCE, FOG_START).set(EnvironmentAttributes.FOG_END_DISTANCE, FOG_END).set(EnvironmentAttributes.SKY_LIGHT_FACTOR, 0.0F)
+                .set(EnvironmentAttributes.BED_RULE, BedRule.EXPLODES).set(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false).set(EnvironmentAttributes.CAN_START_RAID, false).build();
+        context.register(OuterLands.DIMENSION_TYPE, new DimensionType(true, false, false, false, 1.0, 0, HEIGHT, HEIGHT, BlockTags.INFINIBURN_OVERWORLD, AMBIENT_LIGHT,
+                new DimensionType.MonsterSettings(ConstantInt.of(7), 15), DimensionType.Skybox.NONE, CardinalLighting.Type.DEFAULT, attributes, HolderSet.direct(), Optional.empty()));
     }
 
     public static void bootstrapStems(BootstrapContext<LevelStem> context) {
-        context.register(
-                OuterLands.STEM,
-                new LevelStem(
-                        context.lookup(Registries.DIMENSION_TYPE).getOrThrow(OuterLands.DIMENSION_TYPE),
-                        new ChunkGeneratorOuter(context.lookup(Registries.BIOME).getOrThrow(TCBiomes.ELDRITCH))));
+        context.register(OuterLands.STEM, new LevelStem(context.lookup(Registries.DIMENSION_TYPE).getOrThrow(OuterLands.DIMENSION_TYPE),
+                new ChunkGeneratorOuter(context.lookup(Registries.BIOME).getOrThrow(TCBiomes.ELDRITCH))));
     }
 }

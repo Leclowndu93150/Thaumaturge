@@ -21,19 +21,11 @@ import org.joml.Matrix4fc;
 public final class WispRenderer extends EntityRenderer<WispEntity, WispRenderState> {
     private static final Identifier NODES = TCIds.rl("textures/misc/auranodes.png");
 
-    private static final RenderType PARTICLES_TYPE = RenderType.create(
-            "tc_wisp_particles",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE)
-                    .withTexture("Sampler0", ParticleTextures.PARTICLES)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType PARTICLES_TYPE = RenderType.create("tc_wisp_particles",
+            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.PARTICLES).useLightmap().createRenderSetup());
 
-    private static final RenderType NODES_TYPE = RenderType.create(
-            "tc_wisp_nodes",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE)
-                    .withTexture("Sampler0", NODES)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType NODES_TYPE = RenderType.create("tc_wisp_nodes",
+            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", NODES).useLightmap().createRenderSetup());
 
     private static final int PARTICLE_GRID = 64;
     private static final int NODE_GRID = 32;
@@ -70,8 +62,7 @@ public final class WispRenderer extends EntityRenderer<WispEntity, WispRenderSta
     }
 
     @Override
-    public void submit(
-            WispRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(WispRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
         if (state.dead) {
             return;
@@ -80,59 +71,24 @@ public final class WispRenderer extends EntityRenderer<WispEntity, WispRenderSta
         poseStack.translate(0.0F, CENTER_Y, 0.0F);
         poseStack.mulPose(camera.orientation);
         int frame = state.tick % FRAME_SPREAD;
-        submitQuad(
-                collector,
-                poseStack,
-                PARTICLES_TYPE,
-                PARTICLE_GRID,
-                CORE_FRAME_START + frame,
-                CORE_SCALE,
-                0xFFFFFF,
-                1.0F);
-        submitQuad(
-                collector,
-                poseStack,
-                PARTICLES_TYPE,
-                PARTICLE_GRID,
-                HALO_FRAME_START + frame,
-                HALO_SCALE,
-                0xFFFFFF,
-                HALO_ALPHA);
-        submitQuad(
-                collector,
-                poseStack,
-                NODES_TYPE,
-                NODE_GRID,
-                NODE_FRAME_START + frame,
-                NODE_SCALE,
-                state.color,
-                NODE_ALPHA);
+        submitQuad(collector, poseStack, PARTICLES_TYPE, PARTICLE_GRID, CORE_FRAME_START + frame, CORE_SCALE, 0xFFFFFF, 1.0F);
+        submitQuad(collector, poseStack, PARTICLES_TYPE, PARTICLE_GRID, HALO_FRAME_START + frame, HALO_SCALE, 0xFFFFFF, HALO_ALPHA);
+        submitQuad(collector, poseStack, NODES_TYPE, NODE_GRID, NODE_FRAME_START + frame, NODE_SCALE, state.color, NODE_ALPHA);
         poseStack.popPose();
     }
 
-    private static void submitQuad(
-            SubmitNodeCollector collector,
-            PoseStack poseStack,
-            RenderType type,
-            int grid,
-            int frame,
-            float scale,
-            int color,
-            float alpha) {
+    private static void submitQuad(SubmitNodeCollector collector, PoseStack poseStack, RenderType type, int grid, int frame, float scale, int color, float alpha) {
         float texFrame = 1.0F / grid;
         float u0 = (frame % grid) * texFrame;
         float v0 = (frame / grid) * texFrame;
         float u1 = u0 + texFrame;
         float v1 = v0 + texFrame;
         float half = scale * QUAD_HALF_FACTOR;
-        int tint = ARGB.colorFromFloat(
-                alpha, ARGB.red(color) / 255.0F, ARGB.green(color) / 255.0F, ARGB.blue(color) / 255.0F);
-        collector.submitCustomGeometry(
-                poseStack, type, (pose, buffer) -> addQuad(buffer, pose.pose(), half, u0, v0, u1, v1, tint));
+        int tint = ARGB.colorFromFloat(alpha, ARGB.red(color) / 255.0F, ARGB.green(color) / 255.0F, ARGB.blue(color) / 255.0F);
+        collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> addQuad(buffer, pose.pose(), half, u0, v0, u1, v1, tint));
     }
 
-    private static void addQuad(
-            VertexConsumer buffer, Matrix4fc mat, float half, float u0, float v0, float u1, float v1, int tint) {
+    private static void addQuad(VertexConsumer buffer, Matrix4fc mat, float half, float u0, float v0, float u1, float v1, int tint) {
         buffer.addVertex(mat, -half, -half, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, -half, half, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, half, half, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);

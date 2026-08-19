@@ -85,8 +85,7 @@ public final class BlockEntityManaPod extends BlockEntity {
                 nearby.add(aspect);
             }
             for (Direction dir : Direction.Plane.HORIZONTAL) {
-                if (level.getBlockEntity(getBlockPos().relative(dir)) instanceof BlockEntityManaPod pod
-                        && pod.aspect != null) {
+                if (level.getBlockEntity(getBlockPos().relative(dir)) instanceof BlockEntityManaPod pod && pod.aspect != null) {
                     nearby.add(pod.aspect);
                 }
             }
@@ -129,12 +128,7 @@ public final class BlockEntityManaPod extends BlockEntity {
         if (random.nextInt(HERBA_CHANCE) == 0) {
             aspect = TCAspects.HERBA;
         } else {
-            List<ResourceKey<IAspect>> primals = registries
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .listElements()
-                    .filter(entry -> entry.value().isPrimal())
-                    .map(Holder.Reference::key)
-                    .toList();
+            List<ResourceKey<IAspect>> primals = registries.lookupOrThrow(IAspect.REGISTRY_KEY).listElements().filter(entry -> entry.value().isPrimal()).map(Holder.Reference::key).toList();
             aspect = primals.get(random.nextInt(primals.size()));
         }
         setChanged();
@@ -180,8 +174,7 @@ public final class BlockEntityManaPod extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector collector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector collector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(collector, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

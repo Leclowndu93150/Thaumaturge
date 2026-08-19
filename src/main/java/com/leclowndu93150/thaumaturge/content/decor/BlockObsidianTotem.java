@@ -30,21 +30,11 @@ public class BlockObsidianTotem extends Block {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
-        return defaultBlockState()
-                .setValue(UP, isTotem(context.getLevel().getBlockState(pos.above())))
-                .setValue(DOWN, isTotem(context.getLevel().getBlockState(pos.below())));
+        return defaultBlockState().setValue(UP, isTotem(context.getLevel().getBlockState(pos.above()))).setValue(DOWN, isTotem(context.getLevel().getBlockState(pos.below())));
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (directionToNeighbour == Direction.UP) {
             return state.setValue(UP, isTotem(neighbourState));
         }
@@ -59,7 +49,6 @@ public class BlockObsidianTotem extends Block {
     }
 
     public static BlockState shapedState(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.setValue(UP, isTotem(level.getBlockState(pos.above())))
-                .setValue(DOWN, isTotem(level.getBlockState(pos.below())));
+        return state.setValue(UP, isTotem(level.getBlockState(pos.above()))).setValue(DOWN, isTotem(level.getBlockState(pos.below())));
     }
 }

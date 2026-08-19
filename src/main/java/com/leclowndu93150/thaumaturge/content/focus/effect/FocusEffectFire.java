@@ -55,8 +55,7 @@ public final class FocusEffectFire implements FocusEffect {
 
     @Override
     public int complexity(FocusSettings settings) {
-        return settings.value("duration") * DURATION_COMPLEXITY_FACTOR
-                + settings.value("power") * POWER_COMPLEXITY_FACTOR;
+        return settings.value("duration") * DURATION_COMPLEXITY_FACTOR + settings.value("power") * POWER_COMPLEXITY_FACTOR;
     }
 
     @Override
@@ -65,8 +64,7 @@ public final class FocusEffectFire implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
@@ -88,13 +86,7 @@ public final class FocusEffectFire implements FocusEffect {
         if (target instanceof BlockHitResult blockHit && settings.value("duration") > 0) {
             BlockPos pos = blockHit.getBlockPos().relative(blockHit.getDirection());
             if (level.getBlockState(pos).isAir() && level.getRandom().nextFloat() < ctx.power()) {
-                level.playSound(
-                        null,
-                        pos,
-                        SoundEvents.FLINTANDSTEEL_USE,
-                        SoundSource.BLOCKS,
-                        1.0F,
-                        level.getRandom().nextFloat() * 0.4F + 0.8F);
+                level.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
                 level.setBlock(pos, BaseFireBlock.getState(level, pos), FIRE_PLACE_FLAGS);
                 return true;
             }
@@ -104,27 +96,18 @@ public final class FocusEffectFire implements FocusEffect {
 
     @Override
     public List<SettingDefinition> settings() {
-        return List.of(
-                new SettingDefinition("power", "focus.common.power", new SettingDefinition.IntRange(1, 5)),
+        return List.of(new SettingDefinition("power", "focus.common.power", new SettingDefinition.IntRange(1, 5)),
                 new SettingDefinition("duration", "focus.fire.burn", new SettingDefinition.IntRange(0, 5)));
     }
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
-        FlameFanParticleOptions data =
-                new FlameFanParticleOptions((float) (1.5 + level.getRandom().nextGaussian() * 0.2F), -0.2F, 0.7F);
+        FlameFanParticleOptions data = new FlameFanParticleOptions((float) (1.5 + level.getRandom().nextGaussian() * 0.2F), -0.2F, 0.7F);
         level.addParticle(data, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.FIRECHARGE_USE,
-                        SoundSource.PLAYERS,
-                        1.0F,
-                        1.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0F, 1.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
     }
 }

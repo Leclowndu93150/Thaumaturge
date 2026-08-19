@@ -18,9 +18,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public final class CultistClericRenderer
-        extends HumanoidMobRenderer<
-                EntityCultistCleric, CultistClericRenderer.State, HumanoidModel<CultistClericRenderer.State>> {
+public final class CultistClericRenderer extends HumanoidMobRenderer<EntityCultistCleric, CultistClericRenderer.State, HumanoidModel<CultistClericRenderer.State>> {
     public static final class State extends HumanoidRenderState {
         public boolean ritualist;
         public float bob;
@@ -45,10 +43,7 @@ public final class CultistClericRenderer
 
     public CultistClericRenderer(EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), SHADOW);
-        this.addLayer(new HumanoidArmorLayer<>(
-                this,
-                ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new),
-                context.getEquipmentRenderer()));
+        this.addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new), context.getEquipmentRenderer()));
     }
 
     @Override
@@ -69,10 +64,7 @@ public final class CultistClericRenderer
         state.lineStartY = entity.getEyeHeight() * LINE_START_EYE_SCALE;
         BlockPos anchor = entity.ritualAnchor();
         Vec3 position = entity.getPosition(partialTicks);
-        state.lineTo = new Vec3(
-                anchor.getX() + 0.5 - position.x,
-                anchor.getY() + LINE_END_HEIGHT - state.bob - (position.y + state.lineStartY),
-                anchor.getZ() + 0.5 - position.z);
+        state.lineTo = new Vec3(anchor.getX() + 0.5 - position.x, anchor.getY() + LINE_END_HEIGHT - state.bob - (position.y + state.lineStartY), anchor.getZ() + 0.5 - position.z);
         state.time = FloatyLineRenderer.time(entity.level().getGameTime(), partialTicks);
         state.lineFade = Math.min(entity.tickCount, LINE_FADE_IN_TICKS) / LINE_FADE_IN_TICKS;
     }
@@ -87,8 +79,7 @@ public final class CultistClericRenderer
         poseStack.translate(0.0F, state.bob, 0.0F);
         super.submit(state, poseStack, collector, camera);
         poseStack.translate(0.0F, state.lineStartY, 0.0F);
-        FloatyLineRenderer.submit(
-                poseStack, collector, state.lineTo, state.time, LINE_COLOR, LINE_SPEED, state.lineFade, LINE_WIDTH);
+        FloatyLineRenderer.submit(poseStack, collector, state.lineTo, state.time, LINE_COLOR, LINE_SPEED, state.lineFade, LINE_WIDTH);
         poseStack.popPose();
     }
 

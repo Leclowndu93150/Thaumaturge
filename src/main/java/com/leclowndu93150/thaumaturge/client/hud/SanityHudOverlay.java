@@ -54,19 +54,7 @@ public final class SanityHudOverlay implements LeftHudStack.Gauge {
     public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                HUD,
-                HUD_X,
-                HUD_Y,
-                FRAME_U,
-                FRAME_V,
-                FRAME_W,
-                FRAME_H,
-                FRAME_W,
-                FRAME_H,
-                TEX_SIZE,
-                TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, HUD_X, HUD_Y, FRAME_U, FRAME_V, FRAME_W, FRAME_H, FRAME_W, FRAME_H, TEX_SIZE, TEX_SIZE);
         IPlayerWarp warp = WarpHelper.getWarp(player);
         int permanent = warp.get(WarpType.PERMANENT);
         int normal = warp.get(WarpType.NORMAL);
@@ -89,19 +77,7 @@ public final class SanityHudOverlay implements LeftHudStack.Gauge {
         if (permanent > 0) {
             fill(graphics, temporaryHeight + normalHeight + gap, FILL_RANGE, PERMANENT_TINT);
         }
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                HUD,
-                HUD_X,
-                HUD_Y,
-                OVERLAY_U,
-                FRAME_V,
-                FRAME_W,
-                FRAME_H,
-                FRAME_W,
-                FRAME_H,
-                TEX_SIZE,
-                TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, HUD_X, HUD_Y, OVERLAY_U, FRAME_V, FRAME_W, FRAME_H, FRAME_W, FRAME_H, TEX_SIZE, TEX_SIZE);
     }
 
     private static void fill(GuiGraphicsExtractor graphics, int from, int to, int tint) {
@@ -109,20 +85,7 @@ public final class SanityHudOverlay implements LeftHudStack.Gauge {
         if (height <= 0) {
             return;
         }
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                HUD,
-                HUD_X + FILL_X - 1,
-                HUD_Y + FILL_TOP - 1 + from,
-                FILL_U,
-                from,
-                FILL_W,
-                height,
-                FILL_W,
-                height,
-                TEX_SIZE,
-                TEX_SIZE,
-                tint);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, HUD_X + FILL_X - 1, HUD_Y + FILL_TOP - 1 + from, FILL_U, from, FILL_W, height, FILL_W, height, TEX_SIZE, TEX_SIZE, tint);
     }
 
     private static boolean holds(Player player, boolean main) {

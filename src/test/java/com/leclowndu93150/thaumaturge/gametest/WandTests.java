@@ -46,13 +46,9 @@ public final class WandTests {
 
         r.add("wand/aspect_index_varies_by_parts", 20, helper -> {
             ItemStack ironWood = new ItemStack(TCItems.WAND.get());
-            ironWood.set(
-                    TCDataComponents.WAND_PARTS.get(),
-                    new WandParts(TCWandParts.CAP_IRON.get(), TCWandParts.ROD_WOOD.get(), false));
+            ironWood.set(TCDataComponents.WAND_PARTS.get(), new WandParts(TCWandParts.CAP_IRON.get(), TCWandParts.ROD_WOOD.get(), false));
             ItemStack goldGreatwood = new ItemStack(TCItems.WAND.get());
-            goldGreatwood.set(
-                    TCDataComponents.WAND_PARTS.get(),
-                    new WandParts(TCWandParts.CAP_GOLD.get(), TCWandParts.ROD_GREATWOOD.get(), false));
+            goldGreatwood.set(TCDataComponents.WAND_PARTS.get(), new WandParts(TCWandParts.CAP_GOLD.get(), TCWandParts.ROD_GREATWOOD.get(), false));
             var first = AspectIndexHolder.getConcrete().of(ironWood);
             var second = AspectIndexHolder.getConcrete().of(goldGreatwood);
             if (first.isEmpty() || second.isEmpty()) {

@@ -25,8 +25,7 @@ public final class FocusSlider extends AbstractWidget {
     private final Consumer<Float> onChange;
     private float position;
 
-    public FocusSlider(
-            int x, int y, int w, int h, float min, float max, float value, boolean vertical, Consumer<Float> onChange) {
+    public FocusSlider(int x, int y, int w, int h, float min, float max, float value, boolean vertical, Consumer<Float> onChange) {
         super(x, y, w, h, Component.empty());
         this.min = min;
         this.max = max;
@@ -44,9 +43,7 @@ public final class FocusSlider extends AbstractWidget {
     }
 
     private void updateFromMouse(double mouseX, double mouseY) {
-        float raw = vertical
-                ? (float) (mouseY - (getY() + TRACK_INSET)) / (height - HANDLE_SIZE)
-                : (float) (mouseX - (getX() + TRACK_INSET)) / (width - HANDLE_SIZE);
+        float raw = vertical ? (float) (mouseY - (getY() + TRACK_INSET)) / (height - HANDLE_SIZE) : (float) (mouseX - (getX() + TRACK_INSET)) / (width - HANDLE_SIZE);
         position = Mth.clamp(raw, 0.0F, 1.0F);
         onChange.accept(value());
     }
@@ -63,17 +60,7 @@ public final class FocusSlider extends AbstractWidget {
         }
         int hx = vertical ? getX() : getX() + (int) (position * (width - HANDLE_SIZE));
         int hy = vertical ? getY() + (int) (position * (height - HANDLE_SIZE)) : getY();
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.GUI_BASE,
-                hx,
-                hy,
-                HANDLE_U,
-                HANDLE_V,
-                HANDLE_SIZE,
-                HANDLE_SIZE,
-                ATLAS,
-                ATLAS);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.GUI_BASE, hx, hy, HANDLE_U, HANDLE_V, HANDLE_SIZE, HANDLE_SIZE, ATLAS, ATLAS);
     }
 
     @Override

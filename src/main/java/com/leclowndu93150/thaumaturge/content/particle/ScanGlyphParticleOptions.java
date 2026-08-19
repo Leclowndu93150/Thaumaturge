@@ -12,21 +12,12 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record ScanGlyphParticleOptions(int color, int delay, boolean additive) implements ParticleOptions {
 
-    public static final MapCodec<ScanGlyphParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    Codec.INT.fieldOf("color").forGetter(ScanGlyphParticleOptions::color),
-                    Codec.INT.fieldOf("delay").forGetter(ScanGlyphParticleOptions::delay),
-                    Codec.BOOL.fieldOf("additive").forGetter(ScanGlyphParticleOptions::additive))
-            .apply(inst, ScanGlyphParticleOptions::new));
+    public static final MapCodec<ScanGlyphParticleOptions> CODEC = RecordCodecBuilder
+            .mapCodec(inst -> inst.group(Codec.INT.fieldOf("color").forGetter(ScanGlyphParticleOptions::color), Codec.INT.fieldOf("delay").forGetter(ScanGlyphParticleOptions::delay),
+                    Codec.BOOL.fieldOf("additive").forGetter(ScanGlyphParticleOptions::additive)).apply(inst, ScanGlyphParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ScanGlyphParticleOptions> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.INT,
-                    ScanGlyphParticleOptions::color,
-                    ByteBufCodecs.VAR_INT,
-                    ScanGlyphParticleOptions::delay,
-                    ByteBufCodecs.BOOL,
-                    ScanGlyphParticleOptions::additive,
-                    ScanGlyphParticleOptions::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ScanGlyphParticleOptions> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT, ScanGlyphParticleOptions::color, ByteBufCodecs.VAR_INT,
+            ScanGlyphParticleOptions::delay, ByteBufCodecs.BOOL, ScanGlyphParticleOptions::additive, ScanGlyphParticleOptions::new);
 
     @Override
     public ParticleType<?> getType() {

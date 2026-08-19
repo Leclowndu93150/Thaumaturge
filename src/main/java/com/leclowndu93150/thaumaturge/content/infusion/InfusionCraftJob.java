@@ -11,14 +11,9 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.world.item.ItemStack;
 
 public final class InfusionCraftJob {
-    public static final Codec<InfusionCraftJob> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    ItemStack.CODEC.listOf().fieldOf("ingredients").forGetter(j -> j.ingredients),
-                    AspectList.CODEC.fieldOf("essentia").forGetter(j -> j.essentia),
-                    ItemStack.CODEC.fieldOf("result").forGetter(j -> j.result),
-                    ItemStack.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
-                    Codec.INT.fieldOf("instability").forGetter(j -> j.instability),
-                    UUIDUtil.CODEC.optionalFieldOf("player").forGetter(j -> j.player))
-            .apply(i, InfusionCraftJob::new));
+    public static final Codec<InfusionCraftJob> CODEC = RecordCodecBuilder.create(i -> i.group(ItemStack.CODEC.listOf().fieldOf("ingredients").forGetter(j -> j.ingredients),
+            AspectList.CODEC.fieldOf("essentia").forGetter(j -> j.essentia), ItemStack.CODEC.fieldOf("result").forGetter(j -> j.result), ItemStack.CODEC.fieldOf("catalyst").forGetter(j -> j.catalyst),
+            Codec.INT.fieldOf("instability").forGetter(j -> j.instability), UUIDUtil.CODEC.optionalFieldOf("player").forGetter(j -> j.player)).apply(i, InfusionCraftJob::new));
 
     private final List<ItemStack> ingredients;
     private AspectList essentia;
@@ -27,13 +22,7 @@ public final class InfusionCraftJob {
     private final int instability;
     private final Optional<UUID> player;
 
-    public InfusionCraftJob(
-            List<ItemStack> ingredients,
-            AspectList essentia,
-            ItemStack result,
-            ItemStack catalyst,
-            int instability,
-            Optional<UUID> player) {
+    public InfusionCraftJob(List<ItemStack> ingredients, AspectList essentia, ItemStack result, ItemStack catalyst, int instability, Optional<UUID> player) {
         this.ingredients = new ArrayList<>(ingredients);
         this.essentia = essentia;
         this.result = result;

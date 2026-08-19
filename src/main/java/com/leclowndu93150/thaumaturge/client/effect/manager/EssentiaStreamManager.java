@@ -33,18 +33,7 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
 
     private static final double PORT_ROUTING_MIN_DISTANCE = 1.75;
 
-    public static void spawn(
-            double sx,
-            double sy,
-            double sz,
-            double tx,
-            double ty,
-            double tz,
-            int color,
-            int count,
-            float scale,
-            int extend,
-            double my) {
+    public static void spawn(double sx, double sy, double sz, double tx, double ty, double tz, int color, int count, float scale, int extend, double my) {
         String key = key(sx, sy, sz, tx, ty, tz, color);
         EssentiaStreamInstance existing = ACTIVE.get(key);
         if (existing != null && !existing.isExpired()) {
@@ -54,8 +43,7 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
         ACTIVE.put(key, routed(new Vec3(sx, sy, sz), new Vec3(tx, ty, tz), color, count, scale, extend, my));
     }
 
-    private static EssentiaStreamInstance routed(
-            Vec3 from, Vec3 to, int color, int count, float scale, int extend, double my) {
+    private static EssentiaStreamInstance routed(Vec3 from, Vec3 to, int color, int count, float scale, int extend, double my) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null || from.distanceTo(to) < PORT_ROUTING_MIN_DISTANCE) {
             return new EssentiaStreamInstance(from, List.of(to), null, 1, color, count, scale, extend, my);
@@ -91,8 +79,7 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
         return new EssentiaStreamInstance(start, route, launch, fixedTail, color, count, scale, extend, my);
     }
 
-    private static IEssentiaStreamPort.@Nullable StreamPort portAt(
-            ClientLevel level, Vec3 at, Vec3 far, boolean outgoing) {
+    private static IEssentiaStreamPort.@Nullable StreamPort portAt(ClientLevel level, Vec3 at, Vec3 far, boolean outgoing) {
         BlockPos pos = BlockPos.containing(at);
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof IEssentiaStreamPort port) {
@@ -102,31 +89,30 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
     }
 
     private static String key(double sx, double sy, double sz, double tx, double ty, double tz, int color) {
-        return ((int) Math.floor(sx)) + "," + ((int) Math.floor(sy)) + "," + ((int) Math.floor(sz))
-                + ":" + ((int) Math.floor(tx)) + "," + ((int) Math.floor(ty)) + "," + ((int) Math.floor(tz))
-                + ":" + color;
+        return ((int) Math.floor(sx)) + "," + ((int) Math.floor(sy)) + "," + ((int) Math.floor(sz)) + ":" + ((int) Math.floor(tx)) + "," + ((int) Math.floor(ty)) + "," + ((int) Math.floor(tz)) + ":"
+                + color;
     }
 
     @Override
     protected Collection<EssentiaStreamInstance> activeInstances() {
-        throw new UnsupportedOperationException(
-                "EssentiaStreamManager overrides tickAll directly to handle map-keyed dedup");
+        throw new UnsupportedOperationException("EssentiaStreamManager overrides tickAll directly to handle map-keyed dedup");
     }
 
     @Override
     public void tickAll(ClientLevel level) {
-        Iterator<Map.Entry<String, EssentiaStreamInstance>> it =
-                ACTIVE.entrySet().iterator();
+        Iterator<Map.Entry<String, EssentiaStreamInstance>> it = ACTIVE.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, EssentiaStreamInstance> e = it.next();
             e.getValue().tick();
-            if (e.getValue().isExpired()) it.remove();
+            if (e.getValue().isExpired())
+                it.remove();
         }
     }
 
     @Override
     public void renderAll(PoseStack poseStack, Camera camera, float partialTick) {
-        if (ACTIVE.isEmpty()) return;
+        if (ACTIVE.isEmpty())
+            return;
         MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
         VertexConsumer consumer = bufferSource.getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
         double cx = camera.position().x;
@@ -134,18 +120,11 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
         double cz = camera.position().z;
         for (EssentiaStreamInstance inst : ACTIVE.values()) {
             StreamInstance.Snapshot snap = inst.snapshot(partialTick);
-            if (snap == null) continue;
+            if (snap == null)
+                continue;
             poseStack.pushPose();
             poseStack.translate(snap.originX() - cx, snap.originY() - cy, snap.originZ() - cz);
-            PolyCone.render(
-                    poseStack,
-                    consumer,
-                    snap.points(),
-                    snap.colours(),
-                    snap.radii(),
-                    0x00F000F0,
-                    snap.texSlice(),
-                    snap.start());
+            PolyCone.render(poseStack, consumer, snap.points(), snap.colours(), snap.radii(), 0x00F000F0, snap.texSlice(), snap.start());
             poseStack.popPose();
         }
         bufferSource.endBatch(EssentiaStreamRenderType.RENDER_TYPE);

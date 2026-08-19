@@ -55,12 +55,7 @@ public final class WispZapGoal extends Goal {
         }
         double distSq = wisp.distanceToSqr(target);
         if (distSq > CHASE_DISTANCE_SQ && wisp.hasLineOfSight(target)) {
-            wisp.getMoveControl()
-                    .setWantedPosition(
-                            target.getX(),
-                            target.getY() + target.getEyeHeight() * TARGET_HEIGHT_FACTOR,
-                            target.getZ(),
-                            1.0);
+            wisp.getMoveControl().setWantedPosition(target.getX(), target.getY() + target.getEyeHeight() * TARGET_HEIGHT_FACTOR, target.getZ(), 1.0);
         }
         if (distSq < ATTACK_RANGE_SQ && wisp.hasLineOfSight(target)) {
             attackCounter++;
@@ -75,16 +70,13 @@ public final class WispZapGoal extends Goal {
 
     private void zap(LivingEntity target) {
         wisp.playSound(TCSounds.ZAP.get(), 1.0F, ZAP_PITCH);
-        PacketDistributor.sendToPlayersTrackingEntityAndSelf(
-                wisp, new ClientboundWispZapPayload(wisp.getId(), target.getId()));
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(wisp, new ClientboundWispZapPayload(wisp.getId(), target.getId()));
         if (!(wisp.level() instanceof ServerLevel server)) {
             return;
         }
         float damage = (float) wisp.getAttributeValue(Attributes.ATTACK_DAMAGE);
         Vec3 motion = target.getDeltaMovement();
-        boolean stationary = Math.abs(motion.x) <= STATIONARY_SPEED
-                && Math.abs(motion.y) <= STATIONARY_SPEED
-                && Math.abs(motion.z) <= STATIONARY_SPEED;
+        boolean stationary = Math.abs(motion.x) <= STATIONARY_SPEED && Math.abs(motion.y) <= STATIONARY_SPEED && Math.abs(motion.z) <= STATIONARY_SPEED;
         DamageSource source = wisp.damageSources().mobAttack(wisp);
         if (stationary) {
             if (wisp.getRandom().nextFloat() < STATIONARY_HIT_CHANCE) {

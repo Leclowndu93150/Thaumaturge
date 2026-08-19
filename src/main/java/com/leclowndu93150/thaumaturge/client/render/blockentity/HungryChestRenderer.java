@@ -36,38 +36,19 @@ public final class HungryChestRenderer implements BlockEntityRenderer<BlockEntit
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityHungryChest chest,
-            HungryChestRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityHungryChest chest, HungryChestRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(chest, state, partialTicks, cameraPosition, breakProgress);
         state.facing = chest.getBlockState().getValue(ChestBlock.FACING);
         state.open = chest.getOpenNess(partialTicks);
     }
 
     @Override
-    public void submit(
-            HungryChestRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(HungryChestRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.mulPose(ChestRenderer.modelTransformation(state.facing));
         float open = 1.0F - state.open;
         open = 1.0F - open * open * open;
-        collector.submitModel(
-                model,
-                open,
-                poseStack,
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                -1,
-                SPRITE,
-                sprites,
-                0,
-                state.breakProgress);
+        collector.submitModel(model, open, poseStack, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, SPRITE, sprites, 0, state.breakProgress);
         poseStack.popPose();
     }
 }

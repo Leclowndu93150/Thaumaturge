@@ -44,8 +44,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     @Override
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         int availableVis = menu.getCachedVis();
-        IArcaneRecipe recipe = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(
-                minecraft.level, menu.getCraftingInventory().asArcaneCraftInput(), minecraft.player);
+        IArcaneRecipe recipe = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(minecraft.level, menu.getCraftingInventory().asArcaneCraftInput(), minecraft.player);
         WorkbenchPayment.Plan plan = null;
         if (recipe != null && recipe.doesPassGate(minecraft.player)) {
             plan = WorkbenchPayment.plan(recipe, menu.getCraftingInventory(), minecraft.player);
@@ -54,44 +53,18 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                WAND_SLOT_TEXTURE,
-                x + MenuArcaneWorkbench.WAND_X - WAND_SLOT_TEX_OFFSET_X,
-                y + MenuArcaneWorkbench.WAND_Y - WAND_SLOT_TEX_OFFSET_Y,
-                0.0F,
-                0.0F,
-                WAND_SLOT_TEX_W,
-                WAND_SLOT_TEX_H,
-                WAND_SLOT_TEX_W,
-                WAND_SLOT_TEX_H,
-                WAND_SLOT_TEX_W,
-                WAND_SLOT_TEX_H);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, WAND_SLOT_TEXTURE, x + MenuArcaneWorkbench.WAND_X - WAND_SLOT_TEX_OFFSET_X, y + MenuArcaneWorkbench.WAND_Y - WAND_SLOT_TEX_OFFSET_Y, 0.0F, 0.0F,
+                WAND_SLOT_TEX_W, WAND_SLOT_TEX_H, WAND_SLOT_TEX_W, WAND_SLOT_TEX_H, WAND_SLOT_TEX_W, WAND_SLOT_TEX_H);
 
         if (plan != null && !plan.crystalsToConsume().isEmpty()) {
             for (AspectInstance instance : plan.crystalsToConsume().entries()) {
                 int color = instance.aspect().value().color();
-                int index = MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(
-                        instance.aspect().getKey());
+                int index = MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(instance.aspect().getKey());
                 graphics.pose().pushMatrix();
-                graphics.pose()
-                        .translate(
-                                x + MenuArcaneWorkbench.CRYSTAL_X[index] + 7.5F,
-                                y + MenuArcaneWorkbench.CRYSTAL_Y[index] + 8F);
+                graphics.pose().translate(x + MenuArcaneWorkbench.CRYSTAL_X[index] + 7.5F, y + MenuArcaneWorkbench.CRYSTAL_Y[index] + 8F);
                 graphics.pose().rotate(index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) % 360);
                 graphics.pose().scale(0.5f);
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TCScreenTextures.ARCANE_WORKBENCH,
-                        -32,
-                        -32,
-                        192,
-                        0,
-                        64,
-                        64,
-                        256,
-                        256,
-                        ARGB.color(128, color));
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.ARCANE_WORKBENCH, -32, -32, 192, 0, 64, 64, 256, 256, ARGB.color(128, color));
                 graphics.pose().popMatrix();
             }
         }
@@ -101,13 +74,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
         graphics.pose().scale(0.5f);
         Component available = Component.translatable("gui.thaumaturge.arcane_workbench.vis_available", availableVis);
         int availableWidth = font.width(available) / 2;
-        graphics.text(
-                font,
-                available,
-                -availableWidth,
-                0,
-                0xFF000000 | (requiredVis > availableVis ? 15625838 : 7237358),
-                false);
+        graphics.text(font, available, -availableWidth, 0, 0xFF000000 | (requiredVis > availableVis ? 15625838 : 7237358), false);
         graphics.pose().popMatrix();
 
         if (plan != null && requiredVis > 0) {
@@ -115,8 +82,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
             Component required;
             if (requiredVis < baseVis) {
                 int discountPercentage = Math.round(100.0F - requiredVis * 100.0F / baseVis);
-                required = Component.translatable(
-                        "gui.thaumaturge.arcane_workbench.required_vis_discount", requiredVis, discountPercentage);
+                required = Component.translatable("gui.thaumaturge.arcane_workbench.required_vis_discount", requiredVis, discountPercentage);
             } else if (!plan.crystalsToConsume().isEmpty()) {
                 required = Component.translatable("gui.thaumaturge.arcane_workbench.required_vis_crude", requiredVis);
             } else {
@@ -132,16 +98,13 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
 
         if (plan != null && !plan.wandCentivis().isEmpty()) {
             MutableComponent amounts = null;
-            for (Map.Entry<ResourceKey<IAspect>, Integer> entry :
-                    plan.wandCentivis().entrySet()) {
+            for (Map.Entry<ResourceKey<IAspect>, Integer> entry : plan.wandCentivis().entrySet()) {
                 float cost = entry.getValue() / (float) WandEconomy.CENTIVIS_PER_VIS;
-                Component chunk = Component.literal(WAND_COST_FORMAT.format(cost))
-                        .withStyle(WandTooltips.primalColor(minecraft.level.registryAccess(), entry.getKey()));
+                Component chunk = Component.literal(WAND_COST_FORMAT.format(cost)).withStyle(WandTooltips.primalColor(minecraft.level.registryAccess(), entry.getKey()));
                 if (amounts == null) {
                     amounts = Component.empty().append(chunk);
                 } else {
-                    amounts.append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
-                            .append(chunk);
+                    amounts.append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY)).append(chunk);
                 }
             }
             int lineCenterX = x + MenuArcaneWorkbench.WAND_X + 8;
@@ -153,17 +116,8 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
             graphics.text(font, amounts, -amountsWidth, 0, 0xFFFFFFFF, false);
             graphics.pose().popMatrix();
             int hoverHalfWidth = Math.max(amountsWidth / 2, WAND_COST_HOVER_MIN_HALF_WIDTH);
-            if (mouseX >= lineCenterX - hoverHalfWidth
-                    && mouseX < lineCenterX + hoverHalfWidth
-                    && mouseY >= lineY - 1
-                    && mouseY < lineY + WAND_COST_HOVER_HEIGHT) {
-                graphics.setTooltipForNextFrame(
-                        font,
-                        Component.translatable(
-                                "gui.thaumaturge.arcane_workbench.wand_pay.tooltip",
-                                WandEconomy.CRYSTAL_SUBSTITUTE_VIS),
-                        mouseX,
-                        mouseY);
+            if (mouseX >= lineCenterX - hoverHalfWidth && mouseX < lineCenterX + hoverHalfWidth && mouseY >= lineY - 1 && mouseY < lineY + WAND_COST_HOVER_HEIGHT) {
+                graphics.setTooltipForNextFrame(font, Component.translatable("gui.thaumaturge.arcane_workbench.wand_pay.tooltip", WandEconomy.CRYSTAL_SUBSTITUTE_VIS), mouseX, mouseY);
             }
         }
     }

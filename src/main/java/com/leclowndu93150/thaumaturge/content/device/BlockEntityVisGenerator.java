@@ -37,8 +37,7 @@ public final class BlockEntityVisGenerator extends BlockEntity implements Energy
             generator.setChanged();
         }
         Direction facing = state.getValue(BlockStateProperties.FACING);
-        EnergyHandler target =
-                level.getCapability(Capabilities.Energy.BLOCK, pos.relative(facing), facing.getOpposite());
+        EnergyHandler target = level.getCapability(Capabilities.Energy.BLOCK, pos.relative(facing), facing.getOpposite());
         if (target != null) {
             int pushed;
             try (Transaction ctx = Transaction.openRoot()) {

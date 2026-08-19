@@ -8,20 +8,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
-public record BlockPreviewRenderState(
-        Map<BlockPos, BlockState> blocks,
-        float rotX,
-        float rotY,
-        float zoom,
-        float previewScale,
-        float centerX,
-        float centerY,
-        int x0,
-        int y0,
-        int x1,
-        int y1,
-        @Nullable ScreenRectangle scissorArea)
-        implements PictureInPictureRenderState {
+public record BlockPreviewRenderState(Map<BlockPos, BlockState> blocks, float rotX, float rotY, float zoom, float previewScale, float centerX, float centerY, int x0, int y0, int x1, int y1,
+        @Nullable ScreenRectangle scissorArea) implements PictureInPictureRenderState {
 
     @Override
     public float scale() {

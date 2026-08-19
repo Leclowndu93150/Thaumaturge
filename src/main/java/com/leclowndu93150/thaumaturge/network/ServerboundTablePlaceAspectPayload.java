@@ -16,22 +16,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Optional<Identifier> aspect)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTablePlaceAspectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("table_place_aspect"));
+public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Optional<Identifier> aspect) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ServerboundTablePlaceAspectPayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("table_place_aspect"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTablePlaceAspectPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
-                    ServerboundTablePlaceAspectPayload::pos,
-                    ByteBufCodecs.VAR_INT,
-                    ServerboundTablePlaceAspectPayload::q,
-                    ByteBufCodecs.VAR_INT,
-                    ServerboundTablePlaceAspectPayload::r,
-                    ByteBufCodecs.optional(Identifier.STREAM_CODEC),
-                    ServerboundTablePlaceAspectPayload::aspect,
-                    ServerboundTablePlaceAspectPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTablePlaceAspectPayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundTablePlaceAspectPayload::pos,
+            ByteBufCodecs.VAR_INT, ServerboundTablePlaceAspectPayload::q, ByteBufCodecs.VAR_INT, ServerboundTablePlaceAspectPayload::r, ByteBufCodecs.optional(Identifier.STREAM_CODEC),
+            ServerboundTablePlaceAspectPayload::aspect, ServerboundTablePlaceAspectPayload::new);
 
     public static void handle(ServerboundTablePlaceAspectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
@@ -44,12 +34,8 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
             if (!(player.level().getBlockEntity(payload.pos()) instanceof BlockEntityResearchTable table)) {
                 return;
             }
-            Holder<IAspect> holder = payload.aspect()
-                    .flatMap(id -> player.registryAccess()
-                            .lookupOrThrow(IAspect.REGISTRY_KEY)
-                            .get(ResourceKey.create(IAspect.REGISTRY_KEY, id)))
-                    .map(reference -> (Holder<IAspect>) reference)
-                    .orElse(null);
+            Holder<IAspect> holder = payload.aspect().flatMap(id -> player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, id)))
+                    .map(reference -> (Holder<IAspect>) reference).orElse(null);
             table.placeAspect(player, new HexGrid.Hex(payload.q(), payload.r()), holder);
         });
     }

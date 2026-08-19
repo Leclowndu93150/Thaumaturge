@@ -14,16 +14,7 @@ public final class EarthPebbleParticle extends TCParticle {
 
     private final float startSize;
 
-    private EarthPebbleParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            EarthPebbleParticleOptions options,
-            ParticleSheet sheet) {
+    private EarthPebbleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, EarthPebbleParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
         this.friction = FRICTION;
@@ -50,16 +41,7 @@ public final class EarthPebbleParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("earth_pebble");
 
         @Override
-        public Particle createParticle(
-                EarthPebbleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(EarthPebbleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new EarthPebbleParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

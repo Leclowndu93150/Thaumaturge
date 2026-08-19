@@ -34,29 +34,20 @@ public final class BlockTubeValve extends BlockTube {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-            return createTickerHelper(
-                    type, TCBlockEntities.TUBE_VALVE.get(), (lvl, pos, st, tube) -> tube.tickClient(lvl, pos, st));
+            return createTickerHelper(type, TCBlockEntities.TUBE_VALVE.get(), (lvl, pos, st, tube) -> tube.tickClient(lvl, pos, st));
         }
-        return createTickerHelper(
-                type, TCBlockEntities.TUBE_VALVE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+        return createTickerHelper(type, TCBlockEntities.TUBE_VALVE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeValve valve)) return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeValve valve))
+            return InteractionResult.PASS;
         if (!level.isClientSide()) {
             valve.setAllowFlow(!valve.allowFlow());
-            level.playSound(
-                    null,
-                    pos,
-                    TCSounds.SQUEEK.get(),
-                    SoundSource.BLOCKS,
-                    0.7F,
-                    0.9F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, pos, TCSounds.SQUEEK.get(), SoundSource.BLOCKS, 0.7F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         }
         return InteractionResult.SUCCESS;
     }

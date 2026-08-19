@@ -13,12 +13,7 @@ public final class WandIsStaffProperty implements ConditionalItemModelProperty {
     public static final MapCodec<WandIsStaffProperty> MAP_CODEC = MapCodec.unit(WandIsStaffProperty::new);
 
     @Override
-    public boolean get(
-            ItemStack stack,
-            @Nullable ClientLevel level,
-            @Nullable LivingEntity owner,
-            int seed,
-            ItemDisplayContext displayContext) {
+    public boolean get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner, int seed, ItemDisplayContext displayContext) {
         return WandVisHelper.getParts(stack).rod().staff();
     }
 

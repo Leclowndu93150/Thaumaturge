@@ -51,20 +51,7 @@ public final class BeamInstance implements IFXInstance {
     private float prevSize;
     private boolean expired;
 
-    public BeamInstance(
-            double sx,
-            double sy,
-            double sz,
-            double tx,
-            double ty,
-            double tz,
-            int color,
-            int age,
-            int beamType,
-            float endMod,
-            boolean reverse,
-            int sourceEntityId,
-            boolean withSource) {
+    public BeamInstance(double sx, double sy, double sz, double tx, double ty, double tz, int color, int age, int beamType, float endMod, boolean reverse, int sourceEntityId, boolean withSource) {
         this.colorR = ((color >> 16) & 0xFF) / 255.0F;
         this.colorG = ((color >> 8) & 0xFF) / 255.0F;
         this.colorB = (color & 0xFF) / 255.0F;
@@ -196,36 +183,20 @@ public final class BeamInstance implements IFXInstance {
         Entity anchor = resolveAnchor();
         if (anchor != null) {
             Vec3 lead = anchor.getViewVector(1.0F).scale(LOOK_LEAD);
-            Vec3 before = handAnchor(anchor, anchor.xOld, anchor.yOld, anchor.zOld, anchor.yRotO)
-                    .add(lead);
-            Vec3 now = handAnchor(
-                            anchor,
-                            anchor.getX(),
-                            anchor.getY(),
-                            anchor.getZ(),
-                            Mth.lerp(partial, anchor.yRotO, anchor.getYRot()))
-                    .add(lead);
+            Vec3 before = handAnchor(anchor, anchor.xOld, anchor.yOld, anchor.zOld, anchor.yRotO).add(lead);
+            Vec3 now = handAnchor(anchor, anchor.getX(), anchor.getY(), anchor.getZ(), Mth.lerp(partial, anchor.yRotO, anchor.getYRot())).add(lead);
             return before.lerp(now, partial);
         }
-        return new Vec3(
-                Mth.lerp(partial, this.prevSourceX, this.sourceX),
-                Mth.lerp(partial, this.prevSourceY, this.sourceY),
-                Mth.lerp(partial, this.prevSourceZ, this.sourceZ));
+        return new Vec3(Mth.lerp(partial, this.prevSourceX, this.sourceX), Mth.lerp(partial, this.prevSourceY, this.sourceY), Mth.lerp(partial, this.prevSourceZ, this.sourceZ));
     }
 
     private static Vec3 handAnchor(Entity entity, double x, double y, double z, float yawDegrees) {
         double yawRad = Math.toRadians(yawDegrees);
-        return new Vec3(
-                x - Math.cos(yawRad) * HAND_SIDE_X,
-                y + anchorHeight(entity) - HAND_DROP,
-                z - Math.sin(yawRad) * HAND_SIDE_Z);
+        return new Vec3(x - Math.cos(yawRad) * HAND_SIDE_X, y + anchorHeight(entity) - HAND_DROP, z - Math.sin(yawRad) * HAND_SIDE_Z);
     }
 
     public Vec3 targetPos(float partial) {
-        return new Vec3(
-                Mth.lerp(partial, this.prevTargetX, this.targetX),
-                Mth.lerp(partial, this.prevTargetY, this.targetY),
-                Mth.lerp(partial, this.prevTargetZ, this.targetZ));
+        return new Vec3(Mth.lerp(partial, this.prevTargetX, this.targetX), Mth.lerp(partial, this.prevTargetY, this.targetY), Mth.lerp(partial, this.prevTargetZ, this.targetZ));
     }
 
     public float yawAt(float partial) {
@@ -260,9 +231,7 @@ public final class BeamInstance implements IFXInstance {
     }
 
     public float worldRotation(float partial) {
-        long worldTime = Minecraft.getInstance().level != null
-                ? Minecraft.getInstance().level.getGameTime()
-                : 0;
+        long worldTime = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.getGameTime() : 0;
         return worldTime % (360 / this.rotationSpeed) * this.rotationSpeed + this.rotationSpeed * partial;
     }
 }

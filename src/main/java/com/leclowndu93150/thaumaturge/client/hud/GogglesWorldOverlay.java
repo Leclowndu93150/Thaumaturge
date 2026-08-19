@@ -57,8 +57,7 @@ public final class GogglesWorldOverlay {
         }
         BlockPos pos = hit.getBlockPos();
         BlockEntity be = mc.level.getBlockEntity(pos);
-        if (be instanceof BlockEntityNode node
-                && !KnowledgeAccess.of(mc.player).isResearchKnown(ScanNode.researchKey(mc.level, pos))) {
+        if (be instanceof BlockEntityNode node && !KnowledgeAccess.of(mc.player).isResearchKnown(ScanNode.researchKey(mc.level, pos))) {
             resetAnimation();
             return;
         }
@@ -87,8 +86,7 @@ public final class GogglesWorldOverlay {
     }
 
     private static boolean holdsThaumometer(Player player) {
-        return player.getMainHandItem().is(TCItems.THAUMOMETER.get())
-                || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
+        return player.getMainHandItem().is(TCItems.THAUMOMETER.get()) || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
     }
 
     private static void resetAnimation() {
@@ -96,8 +94,7 @@ public final class GogglesWorldOverlay {
         lastTarget = null;
     }
 
-    private static void drawTags(
-            PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
+    private static void drawTags(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
         AspectTagWorldRenderer.renderTagCloud(poseStack, mc, x, y, z, aspects, dir, tagScale, TAG_ALPHA);
     }
 }

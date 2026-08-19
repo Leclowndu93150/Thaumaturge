@@ -45,48 +45,39 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
 
     private static final double CORE_MIN = 5.0 / 16.0;
     private static final double CORE_MAX = 11.0 / 16.0;
-    private static final VoxelShape CORE = Block.box(
-            CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_DOWN =
-            Block.box(CORE_MIN * 16.0, 0.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_UP =
-            Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_NORTH =
-            Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, 0.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_SOUTH =
-            Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, 16.0);
-    private static final VoxelShape STUB_WEST =
-            Block.box(0.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_EAST =
-            Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape CORE = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape STUB_DOWN = Block.box(CORE_MIN * 16.0, 0.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape STUB_UP = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape STUB_NORTH = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, 0.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape STUB_SOUTH = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, 16.0);
+    private static final VoxelShape STUB_WEST = Block.box(0.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private static final VoxelShape STUB_EAST = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
 
     protected BlockEssentiaTransport(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition
-                .any()
-                .setValue(NORTH, false)
-                .setValue(EAST, false)
-                .setValue(SOUTH, false)
-                .setValue(WEST, false)
-                .setValue(UP, false)
-                .setValue(DOWN, false));
+        registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false).setValue(DOWN, false));
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape shape = CORE;
-        if (state.getValue(DOWN)) shape = Shapes.or(shape, STUB_DOWN);
-        if (state.getValue(UP)) shape = Shapes.or(shape, STUB_UP);
-        if (state.getValue(NORTH)) shape = Shapes.or(shape, STUB_NORTH);
-        if (state.getValue(SOUTH)) shape = Shapes.or(shape, STUB_SOUTH);
-        if (state.getValue(WEST)) shape = Shapes.or(shape, STUB_WEST);
-        if (state.getValue(EAST)) shape = Shapes.or(shape, STUB_EAST);
+        if (state.getValue(DOWN))
+            shape = Shapes.or(shape, STUB_DOWN);
+        if (state.getValue(UP))
+            shape = Shapes.or(shape, STUB_UP);
+        if (state.getValue(NORTH))
+            shape = Shapes.or(shape, STUB_NORTH);
+        if (state.getValue(SOUTH))
+            shape = Shapes.or(shape, STUB_SOUTH);
+        if (state.getValue(WEST))
+            shape = Shapes.or(shape, STUB_WEST);
+        if (state.getValue(EAST))
+            shape = Shapes.or(shape, STUB_EAST);
         return shape;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return getShape(state, level, pos, context);
     }
 
@@ -106,15 +97,15 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
         };
     }
 
-    public static BlockState recomputeConnections(
-            BlockState state, LevelReader level, BlockPos pos, Direction... ignored) {
+    public static BlockState recomputeConnections(BlockState state, LevelReader level, BlockPos pos, Direction... ignored) {
         BlockState next = state;
         if (!(level instanceof Level lvl)) {
             return next;
         }
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (Direction direction : Direction.values()) {
-            if (Arrays.stream(ignored).anyMatch(d -> d == direction)) continue;
+            if (Arrays.stream(ignored).anyMatch(d -> d == direction))
+                continue;
             cursor.setWithOffset(pos, direction);
             boolean connect = canConnectTo(lvl, cursor.immutable(), direction.getOpposite());
             next = next.setValue(propertyFor(direction), connect);
@@ -123,21 +114,12 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     }
 
     public static boolean canConnectTo(Level level, BlockPos neighbourPos, Direction faceFromNeighbour) {
-        IEssentiaTransport remote =
-                level.getCapability(EssentiaCapabilities.TRANSPORT, neighbourPos, faceFromNeighbour);
+        IEssentiaTransport remote = level.getCapability(EssentiaCapabilities.TRANSPORT, neighbourPos, faceFromNeighbour);
         return remote != null && remote.isConnectable(faceFromNeighbour);
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (level instanceof Level lvl) {
             boolean connect = canConnectTo(lvl, neighbourPos, directionToNeighbour.getOpposite());
             return state.setValue(propertyFor(directionToNeighbour), connect);
@@ -148,7 +130,8 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
-        if (state == null) return null;
+        if (state == null)
+            return null;
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         return recomputeConnections(state, level, pos);
@@ -167,37 +150,28 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
 
     protected static void spillEssentiaOnBreak(Level level, BlockPos pos) {
         BlockEntity te = level.getBlockEntity(pos);
-        if (!(te instanceof IEssentiaTransport transport)) return;
+        if (!(te instanceof IEssentiaTransport transport))
+            return;
         int amount = transport.getEssentiaAmount(Direction.UP);
-        if (amount <= 0) return;
-        if (!(level instanceof ServerLevel server)) return;
+        if (amount <= 0)
+            return;
+        if (!(level instanceof ServerLevel server))
+            return;
         AuraHelper.addFlux(server, pos, amount);
         RandomSource rand = server.getRandom();
-        server.playSound(
-                null,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                SoundEvents.LAVA_EXTINGUISH,
-                SoundSource.BLOCKS,
-                0.1F,
-                1.0F + rand.nextFloat() * 0.1F);
+        server.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.1F, 1.0F + rand.nextFloat() * 0.1F);
         for (int i = 0; i < FLUX_VENT_COUNT; i++) {
             double ox = pos.getX() + 0.33 + rand.nextFloat() * 0.33;
             double oy = pos.getY() + 0.33 + rand.nextFloat() * 0.33;
             double oz = pos.getZ() + 0.33 + rand.nextFloat() * 0.33;
-            Effects.vent2(server, new Vec3(ox, oy, oz))
-                    .motion(0.0, 0.1 + rand.nextFloat() * 0.2, 0.0)
-                    .color(0x800080)
-                    .scale(FLUX_VENT_SCALE)
-                    .withFlame()
-                    .send();
+            Effects.vent2(server, new Vec3(ox, oy, oz)).motion(0.0, 0.1 + rand.nextFloat() * 0.2, 0.0).color(0x800080).scale(FLUX_VENT_SCALE).withFlame().send();
         }
     }
 
     public static @Nullable BlockState refreshConnections(LevelAccessor level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof BlockEssentiaTransport tube)) return null;
+        if (!(state.getBlock() instanceof BlockEssentiaTransport tube))
+            return null;
         if (level instanceof LevelReader reader) {
             BlockState next = tube.recomputeConnections(state, reader, pos);
             if (!next.equals(state)) {

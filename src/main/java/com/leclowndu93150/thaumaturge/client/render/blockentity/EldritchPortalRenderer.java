@@ -18,15 +18,10 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
-public final class EldritchPortalRenderer
-        implements BlockEntityRenderer<BlockEntityEldritchPortal, EldritchPortalRenderState> {
+public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEntityEldritchPortal, EldritchPortalRenderState> {
     private static final Identifier TEXTURE = TCIds.rl("textures/misc/eldritch_portal.png");
-    private static final RenderType PORTAL_TYPE = RenderType.create(
-            "tc_eldritch_portal",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT)
-                    .withTexture("Sampler0", TEXTURE)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType PORTAL_TYPE = RenderType.create("tc_eldritch_portal",
+            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", TEXTURE).useLightmap().createRenderSetup());
 
     private static final int FRAMES = 16;
     private static final float FRAME_WIDTH = 0.0625F;
@@ -42,12 +37,7 @@ public final class EldritchPortalRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityEldritchPortal portal,
-            EldritchPortalRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityEldritchPortal portal, EldritchPortalRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(portal, state, partialTicks, cameraPosition, breakProgress);
         state.openCount = portal.opencount + partialTicks;
         var viewEntity = Minecraft.getInstance().getCameraEntity();
@@ -55,11 +45,7 @@ public final class EldritchPortalRenderer
     }
 
     @Override
-    public void submit(
-            EldritchPortalRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(EldritchPortalRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.openCount < 0.0F) {
             return;
         }

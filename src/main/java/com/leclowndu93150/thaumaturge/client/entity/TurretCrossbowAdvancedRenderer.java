@@ -19,8 +19,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 
-public final class TurretCrossbowAdvancedRenderer
-        extends EntityRenderer<EntityTurretCrossbowAdvanced, TurretCrossbowAdvancedRenderer.State> {
+public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced, TurretCrossbowAdvancedRenderer.State> {
     public static final class State extends TurretCrossbowRenderState {
         public float headYaw;
         public float headPitch;
@@ -73,10 +72,7 @@ public final class TurretCrossbowAdvancedRenderer
         if (state.hurtTime > 0) {
             color = HURT_TINT;
             float jiggle = state.hurtTime / HURT_JIGGLE_DIVISOR;
-            poseStack.translate(
-                    jiggleRandom.nextGaussian() * jiggle,
-                    jiggleRandom.nextGaussian() * jiggle,
-                    jiggleRandom.nextGaussian() * jiggle);
+            poseStack.translate(jiggleRandom.nextGaussian() * jiggle, jiggleRandom.nextGaussian() * jiggle, jiggleRandom.nextGaussian() * jiggle);
         }
         poseStack.mulPose(Axis.YN.rotationDegrees(state.headYaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(state.headPitch));
@@ -102,14 +98,12 @@ public final class TurretCrossbowAdvancedRenderer
         poseStack.popPose();
     }
 
-    private static void submitPart(
-            TCMesh mesh, String name, PoseStack poseStack, SubmitNodeCollector collector, int color, State state) {
+    private static void submitPart(TCMesh mesh, String name, PoseStack poseStack, SubmitNodeCollector collector, int color, State state) {
         RenderType type = RenderTypes.entityCutout(TEXTURE);
         int light = state.lightCoords;
         for (TCMeshPart part : mesh.parts()) {
             if (name.equals(part.name())) {
-                collector.submitCustomGeometry(
-                        poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, color));
+                collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, color));
             }
         }
     }

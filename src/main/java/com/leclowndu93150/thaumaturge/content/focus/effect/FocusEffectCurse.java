@@ -70,19 +70,12 @@ public final class FocusEffectCurse implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
-        Effects.bamf(level, target.getLocation())
-                .color(
-                        ((BAMF_COLOR >> 16) & 0xFF) / COLOR_DIVISOR,
-                        ((BAMF_COLOR >> 8) & 0xFF) / COLOR_DIVISOR,
-                        (BAMF_COLOR & 0xFF) / COLOR_DIVISOR)
-                .withSound()
-                .fancy()
-                .send();
+        Effects.bamf(level, target.getLocation()).color(((BAMF_COLOR >> 16) & 0xFF) / COLOR_DIVISOR, ((BAMF_COLOR >> 8) & 0xFF) / COLOR_DIVISOR, (BAMF_COLOR & 0xFF) / COLOR_DIVISOR).withSound()
+                .fancy().send();
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
             float damage = damageForDisplay(settings, ctx.power());
@@ -117,14 +110,10 @@ public final class FocusEffectCurse implements FocusEffect {
             }
         } else if (target instanceof BlockHitResult blockHit) {
             float f = (float) Math.min(MAX_SAP_RADIUS, SAP_RADIUS_FACTOR * settings.value("power") * ctx.power());
-            for (BlockPos pos : BlockPos.betweenClosed(
-                    blockHit.getBlockPos().offset((int) -f, (int) -f, (int) -f),
-                    blockHit.getBlockPos().offset((int) f, (int) f, (int) f))) {
-                if (pos.distToCenterSqr(target.getLocation().x, target.getLocation().y, target.getLocation().z) <= f * f
-                        && level.getBlockState(pos.above()).isAir()
+            for (BlockPos pos : BlockPos.betweenClosed(blockHit.getBlockPos().offset((int) -f, (int) -f, (int) -f), blockHit.getBlockPos().offset((int) f, (int) f, (int) f))) {
+                if (pos.distToCenterSqr(target.getLocation().x, target.getLocation().y, target.getLocation().z) <= f * f && level.getBlockState(pos.above()).isAir()
                         && level.getBlockState(pos).isCollisionShapeFullBlock(level, pos)) {
-                    level.setBlockAndUpdate(
-                            pos.above(), TCBlocks.EFFECT_SAP.get().defaultBlockState());
+                    level.setBlockAndUpdate(pos.above(), TCBlocks.EFFECT_SAP.get().defaultBlockState());
                 }
             }
         }
@@ -133,8 +122,7 @@ public final class FocusEffectCurse implements FocusEffect {
 
     @Override
     public List<SettingDefinition> settings() {
-        return List.of(
-                new SettingDefinition("power", "focus.common.power", new SettingDefinition.IntRange(1, 5)),
+        return List.of(new SettingDefinition("power", "focus.common.power", new SettingDefinition.IntRange(1, 5)),
                 new SettingDefinition("duration", "focus.common.duration", new SettingDefinition.IntRange(1, 10)));
     }
 
@@ -145,13 +133,6 @@ public final class FocusEffectCurse implements FocusEffect {
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.ELDER_GUARDIAN_CURSE,
-                        SoundSource.PLAYERS,
-                        0.15F,
-                        1.0F + caster.level().getRandom().nextFloat() / 2.0F);
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.PLAYERS, 0.15F, 1.0F + caster.level().getRandom().nextFloat() / 2.0F);
     }
 }

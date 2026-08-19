@@ -25,15 +25,8 @@ public final class TreasureLootPools {
     public static final int UNCOMMON = 1;
     public static final int RARE = 2;
 
-    private static final List<Holder<Potion>> LOOT_POTIONS = List.of(
-            Potions.HEALING,
-            Potions.REGENERATION,
-            Potions.SWIFTNESS,
-            Potions.STRENGTH,
-            Potions.LEAPING,
-            Potions.FIRE_RESISTANCE,
-            Potions.NIGHT_VISION,
-            Potions.WATER_BREATHING);
+    private static final List<Holder<Potion>> LOOT_POTIONS = List.of(Potions.HEALING, Potions.REGENERATION, Potions.SWIFTNESS, Potions.STRENGTH, Potions.LEAPING, Potions.FIRE_RESISTANCE,
+            Potions.NIGHT_VISION, Potions.WATER_BREATHING);
 
     private TreasureLootPools() {}
 
@@ -51,10 +44,7 @@ public final class TreasureLootPools {
         pool.add(counted(Items.EXPERIENCE_BOTTLE, 1, 5 * (1 << rarity)));
         pool.add(counted(Items.ENCHANTED_GOLDEN_APPLE, 1, 1 + rarity));
         pool.add(counted(Items.GOLDEN_APPLE, 1, 3 + rarity * 3));
-        pool.add(LootItem.lootTableItem(Items.BOOK)
-                .setWeight(10)
-                .apply(EnchantWithLevelsFunction.enchantWithLevels(
-                        registries, UniformGenerator.between(5.0F, 5.0F + rarity * 13.0F))));
+        pool.add(LootItem.lootTableItem(Items.BOOK).setWeight(10).apply(EnchantWithLevelsFunction.enchantWithLevels(registries, UniformGenerator.between(5.0F, 5.0F + rarity * 13.0F))));
         switch (rarity) {
             case COMMON -> pool.add(pearl(1, 7));
             case UNCOMMON -> {
@@ -83,25 +73,19 @@ public final class TreasureLootPools {
     }
 
     private static LootPoolEntryContainer.Builder<?> counted(ItemLike item, int count, int weight) {
-        return LootItem.lootTableItem(item)
-                .setWeight(weight)
-                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(count)));
+        return LootItem.lootTableItem(item).setWeight(weight).apply(SetItemCountFunction.setCount(ConstantValue.exactly(count)));
     }
 
     private static LootPoolEntryContainer.Builder<?> nugget(int rarity) {
-        int weight =
-                switch (rarity) {
-                    case UNCOMMON -> 2250;
-                    case RARE -> 2000;
-                    default -> 2500;
-                };
+        int weight = switch (rarity) {
+            case UNCOMMON -> 2250;
+            case RARE -> 2000;
+            default -> 2500;
+        };
         return counted(Items.GOLD_NUGGET, 1 + rarity, weight);
     }
 
     private static LootPoolEntryContainer.Builder<?> pearl(int weight, int damage) {
-        return LootItem.lootTableItem(TCItems.PRIMORDIAL_PEARL.get())
-                .setWeight(weight)
-                .apply(SetItemDamageFunction.setDamage(
-                        ConstantValue.exactly((float) damage / PrimordialPearlItem.MAX_DAMAGE)));
+        return LootItem.lootTableItem(TCItems.PRIMORDIAL_PEARL.get()).setWeight(weight).apply(SetItemDamageFunction.setDamage(ConstantValue.exactly((float) damage / PrimordialPearlItem.MAX_DAMAGE)));
     }
 }

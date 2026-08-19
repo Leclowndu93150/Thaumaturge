@@ -78,7 +78,8 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
         BlockState state = level.getBlockState(pos);
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
-        if (player == null) return InteractionResult.PASS;
+        if (player == null)
+            return InteractionResult.PASS;
         if (level.getBlockEntity(pos) instanceof BlockEntityJar jar) {
             return interactWith(stack, player, context.getHand(), level, pos, jar, true);
         }
@@ -88,14 +89,7 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
         return InteractionResult.PASS;
     }
 
-    private InteractionResult interactWith(
-            ItemStack stack,
-            Player player,
-            InteractionHand hand,
-            Level level,
-            BlockPos pos,
-            IEssentiaTransport container,
-            boolean canDeposit) {
+    private InteractionResult interactWith(ItemStack stack, Player player, InteractionHand hand, Level level, BlockPos pos, IEssentiaTransport container, boolean canDeposit) {
         AspectList aspects = getAspects(stack);
         // We use Direction.UP to allow insertion/extraction from all faces with fials
         if (aspects.isEmpty()) {
@@ -106,7 +100,8 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
                 }
                 Holder<IAspect> aspect = container.getEssentiaType(Direction.UP);
                 if (container.takeEssentia(aspect, BASE_AMOUNT, Direction.UP) == BASE_AMOUNT) {
-                    if (!player.getAbilities().instabuild) stack.shrink(1);
+                    if (!player.getAbilities().instabuild)
+                        stack.shrink(1);
                     ItemStack phial = makeFilled(aspect);
                     if (!player.addItem(phial)) {
                         player.drop(phial, false);

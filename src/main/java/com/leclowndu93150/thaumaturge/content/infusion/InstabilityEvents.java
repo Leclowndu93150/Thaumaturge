@@ -41,16 +41,14 @@ public final class InstabilityEvents {
     private static final Identifier INSTABILITY_RESEARCH = TCIds.rl("instability");
 
     private static void grantInstabilityResearch(ServerLevel level, BlockPos matrixPos) {
-        List<ServerPlayer> targets =
-                level.getEntitiesOfClass(ServerPlayer.class, new AABB(matrixPos).inflate(EVENT_RANGE));
+        List<ServerPlayer> targets = level.getEntitiesOfClass(ServerPlayer.class, new AABB(matrixPos).inflate(EVENT_RANGE));
         for (ServerPlayer player : targets) {
             PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
             if (!knowledge.isResearchKnown(INSTABILITY_RESEARCH)) {
                 knowledge.addResearch(INSTABILITY_RESEARCH);
                 knowledge.markComplete(INSTABILITY_RESEARCH);
                 knowledge.sync(player);
-                player.connection.send(new ClientboundSetActionBarTextPacket(
-                        Component.translatable("got.instability").withStyle(ChatFormatting.DARK_PURPLE)));
+                player.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("got.instability").withStyle(ChatFormatting.DARK_PURPLE)));
             }
         }
     }
@@ -70,24 +68,12 @@ public final class InstabilityEvents {
             case 18, 19 -> harm(level, matrixPos, false);
             case 20, 21 -> ejectItem(level, matrixPos, pedestals, EjectKind.DROP_EXPLODE);
             case 22 -> harm(level, matrixPos, true);
-            case 23 ->
-                level.explode(
-                        null,
-                        matrixPos.getX() + 0.5,
-                        matrixPos.getY() + 0.5,
-                        matrixPos.getZ() + 0.5,
-                        1.5F + rand.nextFloat(),
-                        Level.ExplosionInteraction.NONE);
+            case 23 -> level.explode(null, matrixPos.getX() + 0.5, matrixPos.getY() + 0.5, matrixPos.getZ() + 0.5, 1.5F + rand.nextFloat(), Level.ExplosionInteraction.NONE);
         }
     }
 
     private enum EjectKind {
-        DROP,
-        DROP_GOO,
-        DROP_POLLUTE,
-        DELETE_GOO,
-        DELETE_POLLUTE,
-        DROP_EXPLODE;
+        DROP, DROP_GOO, DROP_POLLUTE, DELETE_GOO, DELETE_POLLUTE, DROP_EXPLODE;
 
         boolean deletes() {
             return this == DELETE_GOO || this == DELETE_POLLUTE;
@@ -98,47 +84,30 @@ public final class InstabilityEvents {
         RandomSource rand = level.getRandom();
         for (int retries = 0; retries < EJECT_RETRIES && !pedestals.isEmpty(); retries++) {
             BlockPos pedestalPos = pedestals.get(rand.nextInt(pedestals.size()));
-            if (!(level.getBlockEntity(pedestalPos) instanceof BlockEntityPedestal pedestal)
-                    || pedestal.getItem().isEmpty()) {
+            if (!(level.getBlockEntity(pedestalPos) instanceof BlockEntityPedestal pedestal) || pedestal.getItem().isEmpty()) {
                 continue;
             }
             BlockPos mitigatorPos = pedestal.findInstabilityMitigator();
-            if (mitigatorPos != null
-                    && level.getBlockEntity(mitigatorPos) instanceof BlockEntityStabilizer stabilizer
-                    && stabilizer.mitigate(Mth.nextInt(rand, 5, 10))) {
+            if (mitigatorPos != null && level.getBlockEntity(mitigatorPos) instanceof BlockEntityStabilizer stabilizer && stabilizer.mitigate(Mth.nextInt(rand, 5, 10))) {
                 return;
             }
             if (kind.deletes()) {
                 pedestal.setItem(ItemStack.EMPTY);
             } else {
-                Containers.dropItemStack(
-                        level,
-                        pedestalPos.getX() + 0.5,
-                        pedestalPos.getY() + 1.0,
-                        pedestalPos.getZ() + 0.5,
-                        pedestal.getItem());
+                Containers.dropItemStack(level, pedestalPos.getX() + 0.5, pedestalPos.getY() + 1.0, pedestalPos.getZ() + 0.5, pedestal.getItem());
                 pedestal.setItem(ItemStack.EMPTY);
             }
             switch (kind) {
                 case DROP_GOO, DELETE_GOO -> {
-                    level.setBlockAndUpdate(
-                            pedestalPos.above(), TCBlocks.FLUX_GOO.get().defaultBlockState());
+                    level.setBlockAndUpdate(pedestalPos.above(), TCBlocks.FLUX_GOO.get().defaultBlockState());
                     level.playSound(null, pedestalPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.3F, 1.0F);
                 }
-                case DROP_POLLUTE, DELETE_POLLUTE ->
-                    AuraHelper.polluteAura(level, pedestalPos, 5 + rand.nextInt(5), true);
-                case DROP_EXPLODE ->
-                    level.explode(
-                            null,
-                            pedestalPos.getX() + 0.5,
-                            pedestalPos.getY() + 0.5,
-                            pedestalPos.getZ() + 0.5,
-                            1.0F,
-                            Level.ExplosionInteraction.NONE);
-                default -> {}
+                case DROP_POLLUTE, DELETE_POLLUTE -> AuraHelper.polluteAura(level, pedestalPos, 5 + rand.nextInt(5), true);
+                case DROP_EXPLODE -> level.explode(null, pedestalPos.getX() + 0.5, pedestalPos.getY() + 0.5, pedestalPos.getZ() + 0.5, 1.0F, Level.ExplosionInteraction.NONE);
+                default -> {
+                }
             }
-            EffectDispatch.spawnArc(
-                    level, Vec3.atCenterOf(matrixPos), Vec3.atCenterOf(pedestalPos.above()), ARC_COLOR, 0.0F);
+            EffectDispatch.spawnArc(level, Vec3.atCenterOf(matrixPos), Vec3.atCenterOf(pedestalPos.above()), ARC_COLOR, 0.0F);
             return;
         }
     }
@@ -146,12 +115,7 @@ public final class InstabilityEvents {
     private static void zap(ServerLevel level, BlockPos matrixPos, boolean all) {
         RandomSource rand = level.getRandom();
         for (LivingEntity target : nearbyLiving(level, matrixPos)) {
-            EffectDispatch.spawnArc(
-                    level,
-                    Vec3.atCenterOf(matrixPos),
-                    target.position().add(0.0, target.getBbHeight() / 2.0, 0.0),
-                    ARC_COLOR,
-                    0.0F);
+            EffectDispatch.spawnArc(level, Vec3.atCenterOf(matrixPos), target.position().add(0.0, target.getBbHeight() / 2.0, 0.0), ARC_COLOR, 0.0F);
             target.hurt(level.damageSources().magic(), 4 + rand.nextInt(4));
             if (!all) {
                 return;

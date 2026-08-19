@@ -19,26 +19,14 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
 public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxRiftRenderState> {
-    private static final RenderType RIFT_GLOW_TYPE = RenderType.create(
-            "tc_rift_glow",
-            RenderSetup.builder(TCRenderPipelines.RIFT_GLOW)
-                    .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .createRenderSetup());
+    private static final RenderType RIFT_GLOW_TYPE = RenderType.create("tc_rift_glow", RenderSetup.builder(TCRenderPipelines.RIFT_GLOW)
+            .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
-    private static final RenderType RIFT_GLOW_NO_DEPTH_TYPE = RenderType.create(
-            "tc_rift_glow_no_depth",
-            RenderSetup.builder(TCRenderPipelines.RIFT_GLOW_NO_DEPTH)
-                    .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .createRenderSetup());
+    private static final RenderType RIFT_GLOW_NO_DEPTH_TYPE = RenderType.create("tc_rift_glow_no_depth", RenderSetup.builder(TCRenderPipelines.RIFT_GLOW_NO_DEPTH)
+            .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
-    private static final RenderType RIFT_SOLID_TYPE = RenderType.create(
-            "tc_rift_solid",
-            RenderSetup.builder(TCRenderPipelines.RIFT_SOLID)
-                    .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION)
-                    .createRenderSetup());
+    private static final RenderType RIFT_SOLID_TYPE = RenderType.create("tc_rift_solid", RenderSetup.builder(TCRenderPipelines.RIFT_SOLID)
+            .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
     private static final int TUBE_SIDES = 6;
     private static final int GLOW_PASSES = 3;
@@ -72,13 +60,11 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
         state.widths.addAll(entity.pointsWidth);
         state.stability = entity.getRiftStability();
         state.animationTime = entity.tickCount + partialTicks;
-        state.goggles =
-                Minecraft.getInstance().player != null && GogglesAccess.wearsGoggles(Minecraft.getInstance().player);
+        state.goggles = Minecraft.getInstance().player != null && GogglesAccess.wearsGoggles(Minecraft.getInstance().player);
     }
 
     @Override
-    public void submit(
-            FluxRiftRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(FluxRiftRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
         int count = state.points.size();
         if (count <= 2) {
@@ -95,9 +81,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
                 time += a * TIME_OFFSET_PER_POINT;
             }
             Vec3 p = state.points.get(a);
-            centers[a] = new Vec3(
-                    p.x + Math.sin(time / WOBBLE_X_PERIOD) * WOBBLE_AMPLITUDE * stab,
-                    p.y + Math.sin(time / WOBBLE_Y_PERIOD) * WOBBLE_AMPLITUDE * stab,
+            centers[a] = new Vec3(p.x + Math.sin(time / WOBBLE_X_PERIOD) * WOBBLE_AMPLITUDE * stab, p.y + Math.sin(time / WOBBLE_Y_PERIOD) * WOBBLE_AMPLITUDE * stab,
                     p.z + Math.sin(time / WOBBLE_Z_PERIOD) * WOBBLE_AMPLITUDE * stab);
             double pulse = 1.0 - Math.sin(time / WIDTH_PULSE_PERIOD) * 0.1F * stab;
             radii[a] = (float) (state.widths.get(a) * pulse);
@@ -116,13 +100,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
         }
     }
 
-    private static void submitTube(
-            SubmitNodeCollector collector,
-            PoseStack poseStack,
-            RenderType type,
-            Vec3[] centers,
-            float[] radii,
-            float radiusScale) {
+    private static void submitTube(SubmitNodeCollector collector, PoseStack poseStack, RenderType type, Vec3[] centers, float[] radii, float radiusScale) {
         collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> {
             Vector3f[] previousRing = null;
             for (int a = 0; a < centers.length; a++) {
@@ -167,9 +145,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
             double angle = (Math.PI * 2.0 * side) / TUBE_SIDES;
             double cos = Math.cos(angle) * radius;
             double sin = Math.sin(angle) * radius;
-            ring[side] = new Vector3f(
-                    (float) (center.x + u.x * cos + v.x * sin), (float) (center.y + u.y * cos + v.y * sin), (float)
-                            (center.z + u.z * cos + v.z * sin));
+            ring[side] = new Vector3f((float) (center.x + u.x * cos + v.x * sin), (float) (center.y + u.y * cos + v.y * sin), (float) (center.z + u.z * cos + v.z * sin));
         }
         return ring;
     }

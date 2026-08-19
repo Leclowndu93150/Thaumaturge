@@ -7,7 +7,8 @@ import net.minecraft.world.item.crafting.RecipeInput;
 public record CrucibleRecipeInput(ItemStack catalyst, AspectList availableAspects) implements RecipeInput {
     @Override
     public ItemStack getItem(int i) {
-        if (i == 0) return catalyst;
+        if (i == 0)
+            return catalyst;
         return ItemStack.EMPTY;
     }
 

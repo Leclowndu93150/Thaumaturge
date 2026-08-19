@@ -36,31 +36,25 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (type != TCBlockEntities.FOCAL_MANIPULATOR.get()) {
             return null;
         }
         return level.isClientSide()
-                ? createTickerHelper(
-                        type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::clientTick)
-                : createTickerHelper(
-                        type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::serverTick);
+                ? createTickerHelper(type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::clientTick)
+                : createTickerHelper(type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::serverTick);
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
-        if (level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table
-                && !table.focusStack().isEmpty()) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        if (level.getBlockEntity(pos) instanceof BlockEntityFocalManipulator table && !table.focusStack().isEmpty()) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, table.focusStack());
         }
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("unlock_auromancy"))) {
             return InteractionResult.SUCCESS_SERVER;
         }

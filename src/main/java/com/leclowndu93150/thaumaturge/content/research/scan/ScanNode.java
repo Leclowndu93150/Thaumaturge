@@ -97,7 +97,8 @@ public final class ScanNode implements IScanThing {
                 mergeMax(points, player, TCAspects.MORTUUS, TYPE_BONUS_SMALL);
                 mergeSum(points, player, TCAspects.TENEBRAE, TYPE_BONUS_SMALL);
             }
-            case NORMAL -> {}
+            case NORMAL -> {
+            }
         }
         AspectList result = AspectList.EMPTY;
         for (Map.Entry<Holder<IAspect>, Integer> entry : points.entrySet()) {
@@ -106,13 +107,11 @@ public final class ScanNode implements IScanThing {
         return result;
     }
 
-    private static void mergeMax(
-            Map<Holder<IAspect>, Integer> points, Player player, ResourceKey<IAspect> key, int amount) {
+    private static void mergeMax(Map<Holder<IAspect>, Integer> points, Player player, ResourceKey<IAspect> key, int amount) {
         points.merge(holder(player, key), amount, Math::max);
     }
 
-    private static void mergeSum(
-            Map<Holder<IAspect>, Integer> points, Player player, ResourceKey<IAspect> key, int amount) {
+    private static void mergeSum(Map<Holder<IAspect>, Integer> points, Player player, ResourceKey<IAspect> key, int amount) {
         points.merge(holder(player, key), amount, Integer::sum);
     }
 

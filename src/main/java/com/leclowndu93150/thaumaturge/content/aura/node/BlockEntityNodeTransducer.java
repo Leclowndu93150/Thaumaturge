@@ -52,18 +52,12 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
             checkStatus(level, pos);
         }
         BlockEntity below = level.getBlockEntity(pos.below());
-        if (status == STATUS_NODE
-                && count >= CHARGE_TARGET
-                && below instanceof BlockEntityNode node
-                && !node.isEnergized()) {
+        if (status == STATUS_NODE && count >= CHARGE_TARGET && below instanceof BlockEntityNode node && !node.isEnergized()) {
             node.setEnergized(true);
             checkStatus(level, pos);
             setChanged();
         }
-        if (status == STATUS_ENERGIZED
-                && count <= REVERT_THRESHOLD
-                && below instanceof BlockEntityNode node
-                && node.isEnergized()) {
+        if (status == STATUS_ENERGIZED && count <= REVERT_THRESHOLD && below instanceof BlockEntityNode node && node.isEnergized()) {
             node.setEnergized(false);
             List<AspectInstance> stored = node.getAspects().entries();
             for (AspectInstance entry : stored) {
@@ -96,31 +90,14 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         if (level.getGameTime() % SYNC_INTERVAL == 0) {
             level.sendBlockUpdated(pos, getBlockState(), getBlockState(), 3);
         }
-        if (level instanceof ServerLevel serverLevel
-                && count > REVERT_THRESHOLD
-                && count < CHARGE_TARGET
-                && level.getGameTime() % BOLT_INTERVAL == 0) {
+        if (level instanceof ServerLevel serverLevel && count > REVERT_THRESHOLD && count < CHARGE_TARGET && level.getGameTime() % BOLT_INTERVAL == 0) {
             if (level.getRandom().nextBoolean()) {
-                Effects.arcBolt(
-                                serverLevel,
-                                new Vec3(
-                                        pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5,
-                                        pos.getY() + 0.5,
-                                        pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
-                        .to(Vec3.atCenterOf(pos.below()))
-                        .width(BOLT_WIDTH)
-                        .send();
+                Effects.arcBolt(serverLevel, new Vec3(pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5, pos.getY() + 0.5, pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
+                        .to(Vec3.atCenterOf(pos.below())).width(BOLT_WIDTH).send();
             }
             if (level.getRandom().nextBoolean() && hasStabilizer(level, pos)) {
-                Effects.arcBolt(
-                                serverLevel,
-                                new Vec3(
-                                        pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5,
-                                        pos.getY() - 1.5,
-                                        pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
-                        .to(Vec3.atCenterOf(pos.below()))
-                        .width(BOLT_WIDTH)
-                        .send();
+                Effects.arcBolt(serverLevel, new Vec3(pos.getX() + 0.25 + level.getRandom().nextFloat() * 0.5, pos.getY() - 1.5, pos.getZ() + 0.25 + level.getRandom().nextFloat() * 0.5))
+                        .to(Vec3.atCenterOf(pos.below())).width(BOLT_WIDTH).send();
             }
         }
     }
@@ -152,8 +129,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
 
     private static boolean hasStabilizer(Level level, BlockPos pos) {
         BlockPos stabilizerPos = pos.below(2);
-        return level.getBlockEntity(stabilizerPos) instanceof BlockEntityNodeStabilizer
-                && !level.hasNeighborSignal(stabilizerPos);
+        return level.getBlockEntity(stabilizerPos) instanceof BlockEntityNodeStabilizer && !level.hasNeighborSignal(stabilizerPos);
     }
 
     @Override

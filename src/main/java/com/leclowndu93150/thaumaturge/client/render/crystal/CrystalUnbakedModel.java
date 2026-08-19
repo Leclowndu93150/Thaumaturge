@@ -15,8 +15,7 @@ import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
 public final class CrystalUnbakedModel implements CustomUnbakedBlockStateModel {
     public static final CrystalUnbakedModel INSTANCE = new CrystalUnbakedModel();
     public static final MapCodec<CrystalUnbakedModel> CODEC = MapCodec.unit(INSTANCE);
-    public static final Identifier MODEL_LOCATION =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "models/mesh/crystal.tcmesh");
+    public static final Identifier MODEL_LOCATION = Identifier.fromNamespaceAndPath(TCIds.MODID, "models/mesh/crystal.tcmesh");
     public static final Identifier SPRITE_LOCATION = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/crystal");
     public static final Identifier DEBUG_NAME = Identifier.fromNamespaceAndPath(TCIds.MODID, "crystal");
 

@@ -44,11 +44,7 @@ public final class GolemMeshes {
             float nx = normals[vertex * 3];
             float ny = normals[vertex * 3 + 1];
             float nz = normals[vertex * 3 + 2];
-            buffer.addVertex(pose, positions[vertex * 3], positions[vertex * 3 + 1], positions[vertex * 3 + 2])
-                    .setColor(color)
-                    .setUv(u, v)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(light)
+            buffer.addVertex(pose, positions[vertex * 3], positions[vertex * 3 + 1], positions[vertex * 3 + 2]).setColor(color).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light)
                     .setNormal(pose, nx, ny, nz);
         }
     }

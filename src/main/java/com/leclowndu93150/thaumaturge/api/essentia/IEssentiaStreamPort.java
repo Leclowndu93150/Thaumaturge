@@ -39,5 +39,6 @@ public interface IEssentiaStreamPort {
      * @param anchor the point the stream visually attaches to, in world coordinates
      * @param clearance the point the stream passes through straight off the port before curving away
      */
-    record StreamPort(Vec3 anchor, Vec3 clearance) {}
+    record StreamPort(Vec3 anchor, Vec3 clearance) {
+    }
 }

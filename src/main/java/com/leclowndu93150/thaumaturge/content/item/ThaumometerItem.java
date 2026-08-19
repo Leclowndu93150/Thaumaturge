@@ -102,9 +102,7 @@ public final class ThaumometerItem extends Item {
 
     public static @Nullable Object resolveTarget(Level level, Player player) {
         HitResult hitResult = ScanRaycastHelper.performRaycast(player, ClipContext.Fluid.SOURCE_ONLY);
-        return hitResult.getType() == HitResult.Type.BLOCK
-                ? ((BlockHitResult) hitResult).getBlockPos()
-                : hitResult instanceof EntityHitResult result ? result.getEntity() : null;
+        return hitResult.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) hitResult).getBlockPos() : hitResult instanceof EntityHitResult result ? result.getEntity() : null;
     }
 
     @Override
@@ -118,12 +116,10 @@ public final class ThaumometerItem extends Item {
     private static void warnAboutFlux(ServerLevel level, ServerPlayer player) {
         BlockPos pos = player.blockPosition();
         float flux = AuraHelper.getFlux(level, pos);
-        boolean dangerous = flux > AuraHelper.getVis(level, pos)
-                || flux > AuraHelper.getAuraBase(level, pos) / (float) FLUX_WARN_BASE_DIVISOR;
+        boolean dangerous = flux > AuraHelper.getVis(level, pos) || flux > AuraHelper.getAuraBase(level, pos) / (float) FLUX_WARN_BASE_DIVISOR;
         if (dangerous && !KnowledgeAccess.of(player).isResearchKnown(TCResearchEntries.FLUX)) {
             ResearchManager.complete(player, TCResearchEntries.FLUX);
-            player.sendOverlayMessage(
-                    Component.translatable("research.thaumaturge.flux.warn").withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendOverlayMessage(Component.translatable("research.thaumaturge.flux.warn").withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
 }

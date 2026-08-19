@@ -16,14 +16,10 @@ public class TCBlockFamilies {
             // .wall(Blocks.ANDESITE_WALL)
             .stairs(TCBlocks.STAIRS_ARCANE.get())
             // .slab(TCBlocks.SLAB_ARCANE.get())
-            .polished(TCBlocks.STONE_ARCANE_BRICK.get())
-            .generateStonecutterRecipe()
-            .getFamily();
-    public static final BlockFamily ARCANE_STONE_BRICKS = familyBuilder(TCBlocks.STONE_ARCANE_BRICK.get())
-            .stairs(TCBlocks.STAIRS_ARCANE_BRICK.get())
+            .polished(TCBlocks.STONE_ARCANE_BRICK.get()).generateStonecutterRecipe().getFamily();
+    public static final BlockFamily ARCANE_STONE_BRICKS = familyBuilder(TCBlocks.STONE_ARCANE_BRICK.get()).stairs(TCBlocks.STAIRS_ARCANE_BRICK.get())
             // .slab(Blocks.POLISHED_ANDESITE_SLAB)
-            .generateStonecutterRecipe()
-            .getFamily();
+            .generateStonecutterRecipe().getFamily();
 
     private static BlockFamily.Builder familyBuilder(Block base) {
         BlockFamily.Builder builder = new BlockFamily.Builder(base);

@@ -11,9 +11,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class BlockSaplingTC extends SaplingBlock {
-    public static final MapCodec<BlockSaplingTC> CODEC = RecordCodecBuilder.mapCodec(
-            i -> i.group(TreeGrower.CODEC.fieldOf("tree").forGetter(b -> b.treeGrower), propertiesCodec())
-                    .apply(i, BlockSaplingTC::new));
+    public static final MapCodec<BlockSaplingTC> CODEC = RecordCodecBuilder
+            .mapCodec(i -> i.group(TreeGrower.CODEC.fieldOf("tree").forGetter(b -> b.treeGrower), propertiesCodec()).apply(i, BlockSaplingTC::new));
 
     private static final float BONEMEAL_SUCCESS_CHANCE = 0.25F;
 

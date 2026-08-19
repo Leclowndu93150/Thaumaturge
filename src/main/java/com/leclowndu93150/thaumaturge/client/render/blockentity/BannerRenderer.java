@@ -56,12 +56,7 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityBanner banner,
-            BannerRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityBanner banner, BannerRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(banner, state, partialTicks, cameraPosition, breakProgress);
         BlockState blockState = banner.getBlockState();
         state.onWall = blockState.getBlock() instanceof BannerWallBlock;
@@ -81,24 +76,15 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         state.aspectTexture = null;
         ResourceKey<IAspect> aspect = banner.aspect();
         if (aspect != null && banner.getLevel() != null) {
-            state.aspectTexture = banner.getLevel()
-                    .registryAccess()
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .get(aspect)
-                    .map(Holder::value)
-                    .map(IAspect::texture)
-                    .orElse(null);
+            state.aspectTexture = banner.getLevel().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(aspect).map(Holder::value).map(IAspect::texture).orElse(null);
         }
         BlockPos pos = banner.getBlockPos();
-        float time = (pos.getX() * 7 + pos.getY() * 9 + pos.getZ() * 13)
-                + (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount)
-                + partialTicks;
+        float time = (pos.getX() * 7 + pos.getY() * 9 + pos.getZ() * 13) + (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
         state.sway = SWAY_BASE - Mth.sin(time / SWAY_PERIOD) * SWAY_BASE;
     }
 
     @Override
-    public void submit(
-            BannerRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(BannerRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         Identifier texture = state.color == -1 ? TEX_CULTIST : TEX_BLANK;
         int tint = state.color == -1 ? -1 : state.color;
         poseStack.pushPose();
@@ -121,22 +107,8 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         poseStack.popPose();
     }
 
-    private void submitPart(
-            SubmitNodeCollector collector,
-            PoseStack poseStack,
-            ModelPart part,
-            Identifier texture,
-            int color,
-            BannerRenderState state) {
-        collector.submitModelPart(
-                part,
-                poseStack,
-                RenderTypes.entityCutout(texture),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                color,
-                null);
+    private void submitPart(SubmitNodeCollector collector, PoseStack poseStack, ModelPart part, Identifier texture, int color, BannerRenderState state) {
+        collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, color, null);
     }
 
     private void submitAspect(SubmitNodeCollector collector, PoseStack poseStack, BannerRenderState state) {
@@ -144,25 +116,18 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         poseStack.translate(0.0F, -5.0F / 16.0F, 0.0F);
         poseStack.mulPose(Axis.XP.rotation(state.sway));
         int light = state.lightCoords;
-        collector.submitCustomGeometry(
-                poseStack, RenderTypes.entityTranslucent(state.aspectTexture), (pose, buffer) -> {
-                    Matrix4fc mat = pose.pose();
-                    int color = ARGB.colorFromFloat(0.75F, 1.0F, 1.0F, 1.0F);
-                    addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_TOP, 0.0F, 1.0F, color, light);
-                    addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_TOP, 1.0F, 1.0F, color, light);
-                    addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 1.0F, 0.0F, color, light);
-                    addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 0.0F, 0.0F, color, light);
-                });
+        collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(state.aspectTexture), (pose, buffer) -> {
+            Matrix4fc mat = pose.pose();
+            int color = ARGB.colorFromFloat(0.75F, 1.0F, 1.0F, 1.0F);
+            addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_TOP, 0.0F, 1.0F, color, light);
+            addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_TOP, 1.0F, 1.0F, color, light);
+            addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 1.0F, 0.0F, color, light);
+            addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 0.0F, 0.0F, color, light);
+        });
         poseStack.popPose();
     }
 
-    private static void addVertex(
-            VertexConsumer buffer, Matrix4fc mat, float x, float y, float u, float v, int color, int light) {
-        buffer.addVertex(mat, x, y, ASPECT_Z)
-                .setUv(u, v)
-                .setColor(color)
-                .setLight(light)
-                .setNormal(0.0F, 0.0F, -1.0F)
-                .setOverlay(OverlayTexture.NO_OVERLAY);
+    private static void addVertex(VertexConsumer buffer, Matrix4fc mat, float x, float y, float u, float v, int color, int light) {
+        buffer.addVertex(mat, x, y, ASPECT_Z).setUv(u, v).setColor(color).setLight(light).setNormal(0.0F, 0.0F, -1.0F).setOverlay(OverlayTexture.NO_OVERLAY);
     }
 }

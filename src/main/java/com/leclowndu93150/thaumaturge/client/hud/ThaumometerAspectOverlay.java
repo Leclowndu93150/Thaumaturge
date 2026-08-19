@@ -55,31 +55,21 @@ public final class ThaumometerAspectOverlay {
             resetAnimation();
             return;
         }
-        if (mc.options.getCameraType().isFirstPerson()
-                && mc.player.getMainHandItem().is(TCItems.THAUMOMETER.get())
-                && mc.player.getOffhandItem().isEmpty()) {
+        if (mc.options.getCameraType().isFirstPerson() && mc.player.getMainHandItem().is(TCItems.THAUMOMETER.get()) && mc.player.getOffhandItem().isEmpty()) {
             resetAnimation();
             return;
         }
         HitResult result = ScanRaycastHelper.performRaycast(mc.player, ClipContext.Fluid.SOURCE_ONLY);
         if (result instanceof EntityHitResult entityResult) {
             Entity entityTarget = entityResult.getEntity();
-            AspectList aspects =
-                    scannedAspects(mc.player, EntityAspects.of(entityTarget), ScanKeys.entity(entityTarget.getType()));
+            AspectList aspects = scannedAspects(mc.player, EntityAspects.of(entityTarget), ScanKeys.entity(entityTarget.getType()));
             if (aspects.isEmpty()) {
                 resetAnimation();
                 return;
             }
             advanceAnimation(entityTarget);
             Vec3 pos = entityTarget.position();
-            drawTags(
-                    event.getPoseStack(),
-                    mc,
-                    pos.x - 0.5,
-                    pos.y + entityTarget.getBbHeight() + SPACE_ABOVE_LIFT,
-                    pos.z - 0.5,
-                    aspects,
-                    Direction.UP);
+            drawTags(event.getPoseStack(), mc, pos.x - 0.5, pos.y + entityTarget.getBbHeight() + SPACE_ABOVE_LIFT, pos.z - 0.5, aspects, Direction.UP);
             return;
         }
         if (!(result instanceof BlockHitResult hit) || result.getType() != HitResult.Type.BLOCK) {
@@ -94,14 +84,7 @@ public final class ThaumometerAspectOverlay {
                 return;
             }
             advanceAnimation(pos.immutable());
-            drawTags(
-                    event.getPoseStack(),
-                    mc,
-                    pos.getX(),
-                    pos.getY() + SPACE_ABOVE_LIFT,
-                    pos.getZ(),
-                    nodeAspects,
-                    Direction.UP);
+            drawTags(event.getPoseStack(), mc, pos.getX(), pos.getY() + SPACE_ABOVE_LIFT, pos.getZ(), nodeAspects, Direction.UP);
             return;
         }
         BlockState state = mc.level.getBlockState(pos);
@@ -110,8 +93,7 @@ public final class ThaumometerAspectOverlay {
             resetAnimation();
             return;
         }
-        AspectList aspects =
-                scannedAspects(mc.player, AspectIndexAccess.index().of(pick), ScanKeys.item(pick.getItem()));
+        AspectList aspects = scannedAspects(mc.player, AspectIndexAccess.index().of(pick), ScanKeys.item(pick.getItem()));
         if (aspects.isEmpty()) {
             resetAnimation();
             return;
@@ -120,19 +102,11 @@ public final class ThaumometerAspectOverlay {
         boolean topFree = mc.level.getBlockState(pos.above()).isAir();
         boolean topVisible = mc.player.getEyeY() > pos.getY() + 1.0;
         Direction dir = topFree && topVisible ? Direction.UP : hit.getDirection();
-        drawTags(
-                event.getPoseStack(),
-                mc,
-                pos.getX() + dir.getStepX() / 2.0,
-                pos.getY() + dir.getStepY() / 2.0,
-                pos.getZ() + dir.getStepZ() / 2.0,
-                aspects,
-                dir);
+        drawTags(event.getPoseStack(), mc, pos.getX() + dir.getStepX() / 2.0, pos.getY() + dir.getStepY() / 2.0, pos.getZ() + dir.getStepZ() / 2.0, aspects, dir);
     }
 
     private static boolean holdsThaumometer(Player player) {
-        return player.getMainHandItem().is(TCItems.THAUMOMETER.get())
-                || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
+        return player.getMainHandItem().is(TCItems.THAUMOMETER.get()) || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
     }
 
     private static AspectList scannedAspects(Player player, AspectList aspects, Identifier scanKey) {
@@ -157,19 +131,8 @@ public final class ThaumometerAspectOverlay {
         lastTarget = null;
     }
 
-    private static void drawTags(
-            PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
+    private static void drawTags(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
         Player player = mc.player;
-        AspectTagWorldRenderer.renderTagCloud(
-                poseStack,
-                mc,
-                x,
-                y,
-                z,
-                aspects,
-                dir,
-                tagScale,
-                TAG_ALPHA,
-                aspect -> player != null && AspectPools.isDiscovered(player, aspect));
+        AspectTagWorldRenderer.renderTagCloud(poseStack, mc, x, y, z, aspects, dir, tagScale, TAG_ALPHA, aspect -> player != null && AspectPools.isDiscovered(player, aspect));
     }
 }

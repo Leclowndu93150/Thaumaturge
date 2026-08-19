@@ -34,16 +34,12 @@ public final class GolemArmDart implements GolemArm.IArmFunction {
         double dz = target.getZ() - shooter.getZ();
         dart.shoot(dx, dy, dz, DART_VELOCITY, DART_INACCURACY);
         golem.getGolemWorld().addFreshEntity(dart);
-        shooter.playSound(
-                SoundEvents.ARROW_SHOOT,
-                1.0F,
-                1.0F / (golem.getGolemWorld().getRandom().nextFloat() * 0.4F + 0.8F));
+        shooter.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (golem.getGolemWorld().getRandom().nextFloat() * 0.4F + 0.8F));
     }
 
     @Override
     public Goal createRangedAttackGoal(RangedAttackMob mob) {
-        return new GolemArrowAttackGoal(
-                mob, ATTACK_MOVE_SPEED, ATTACK_INTERVAL_MIN, ATTACK_INTERVAL_MAX, ATTACK_RADIUS);
+        return new GolemArrowAttackGoal(mob, ATTACK_MOVE_SPEED, ATTACK_INTERVAL_MIN, ATTACK_INTERVAL_MAX, ATTACK_RADIUS);
     }
 
     @Override

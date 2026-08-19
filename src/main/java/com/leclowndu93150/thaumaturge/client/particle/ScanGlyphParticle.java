@@ -13,8 +13,7 @@ public final class ScanGlyphParticle extends TCParticle {
 
     private final boolean additive;
 
-    private ScanGlyphParticle(
-            ClientLevel level, double x, double y, double z, ScanGlyphParticleOptions options, ParticleSheet sheet) {
+    private ScanGlyphParticle(ClientLevel level, double x, double y, double z, ScanGlyphParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         setColor(options.color());
         this.additive = options.additive();
@@ -32,25 +31,14 @@ public final class ScanGlyphParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return this.additive
-                ? TCParticleLayers.additiveNoDepth(this.sheet)
-                : TCParticleLayers.translucentNoDepth(this.sheet);
+        return this.additive ? TCParticleLayers.additiveNoDepth(this.sheet) : TCParticleLayers.translucentNoDepth(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<ScanGlyphParticleOptions> {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("scan_glyph");
 
         @Override
-        public Particle createParticle(
-                ScanGlyphParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(ScanGlyphParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new ScanGlyphParticle(level, x, y, z, options, SHEET);
         }
     }

@@ -27,8 +27,7 @@ public class BlockBellows extends BaseEntityBlock {
 
     public BlockBellows(Properties properties) {
         super(properties);
-        registerDefaultState(
-                defaultBlockState().setValue(FACING, Direction.NORTH).setValue(ENABLED, true));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH).setValue(ENABLED, true));
     }
 
     @Override
@@ -43,9 +42,7 @@ public class BlockBellows extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(FACING, context.getNearestLookingDirection())
-                .setValue(ENABLED, true);
+        return defaultBlockState().setValue(FACING, context.getNearestLookingDirection()).setValue(ENABLED, true);
     }
 
     @Override
@@ -54,8 +51,7 @@ public class BlockBellows extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState blockState, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
         return createTickerHelper(type, TCBlockEntities.BELLOWS.get(), BlockEntityBellows::staticTick);
     }
 }

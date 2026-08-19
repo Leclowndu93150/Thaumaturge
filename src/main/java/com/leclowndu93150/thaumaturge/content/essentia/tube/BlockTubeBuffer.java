@@ -47,24 +47,24 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
 
     @Override
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer)) return 0;
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer))
+            return 0;
         int size = buffer.visSize();
-        if (size <= 0) return 0;
+        if (size <= 0)
+            return 0;
         float ratio = size / (float) BlockEntityTubeBuffer.MAX_AMOUNT;
         return Math.min(15, (int) Math.floor(ratio * 14.0F) + 1);
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
-        return createTickerHelper(
-                type, TCBlockEntities.TUBE_BUFFER.get(), (lvl, pos, st, buffer) -> buffer.tickServer(lvl, pos, st));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide())
+            return null;
+        return createTickerHelper(type, TCBlockEntities.TUBE_BUFFER.get(), (lvl, pos, st, buffer) -> buffer.tickServer(lvl, pos, st));
     }
 
     @Override
-    public void setPlacedBy(
-            Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer) {
             buffer.setFacingForPlacement(placer);
@@ -72,11 +72,13 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer)) return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.isSecondaryUseActive())
+            return InteractionResult.PASS;
+        if (level.isClientSide())
+            return InteractionResult.SUCCESS;
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer))
+            return InteractionResult.PASS;
         int subHit = BlockTube.resolveSubHit(hit, pos);
         if (buffer.handleCasterClick(subHit, player.isShiftKeyDown())) {
             player.swing(player.getUsedItemHand());

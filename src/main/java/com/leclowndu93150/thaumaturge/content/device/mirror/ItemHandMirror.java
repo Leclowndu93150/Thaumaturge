@@ -36,9 +36,7 @@ public final class ItemHandMirror extends Item {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
-        if (!(level.getBlockState(pos).getBlock() instanceof BlockMirror clicked)
-                || clicked.isEssentia()
-                || player == null) {
+        if (!(level.getBlockState(pos).getBlock() instanceof BlockMirror clicked) || clicked.isEssentia() || player == null) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
@@ -67,17 +65,7 @@ public final class ItemHandMirror extends Item {
         BlockEntity target = targetLevel == null ? null : targetLevel.getBlockEntity(link.pos());
         if (!(target instanceof BlockEntityMirror)) {
             stack.remove(TCDataComponents.MIRROR_LINK.get());
-            serverPlayer
-                    .level()
-                    .playSound(
-                            null,
-                            serverPlayer.getX(),
-                            serverPlayer.getY(),
-                            serverPlayer.getZ(),
-                            TCSounds.ZAP.get(),
-                            SoundSource.PLAYERS,
-                            1.0F,
-                            0.8F);
+            serverPlayer.level().playSound(null, serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(), TCSounds.ZAP.get(), SoundSource.PLAYERS, 1.0F, 0.8F);
             serverPlayer.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
             return InteractionResult.SUCCESS;
         }
@@ -104,30 +92,12 @@ public final class ItemHandMirror extends Item {
         BlockEntity target = targetLevel == null ? null : targetLevel.getBlockEntity(link.pos());
         if (target instanceof BlockEntityMirror targetMirror) {
             if (targetMirror.transportDirect(items)) {
-                player.level()
-                        .playSound(
-                                null,
-                                player.getX(),
-                                player.getY(),
-                                player.getZ(),
-                                SoundEvents.ENDERMAN_TELEPORT,
-                                SoundSource.PLAYERS,
-                                0.1F,
-                                1.0F);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.1F, 1.0F);
             }
             return true;
         }
         mirror.remove(TCDataComponents.MIRROR_LINK.get());
-        player.level()
-                .playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        TCSounds.ZAP.get(),
-                        SoundSource.PLAYERS,
-                        1.0F,
-                        0.8F);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.ZAP.get(), SoundSource.PLAYERS, 1.0F, 0.8F);
         player.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
         return false;
     }
@@ -138,21 +108,11 @@ public final class ItemHandMirror extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
         GlobalPos link = stack.get(TCDataComponents.MIRROR_LINK.get());
         if (link != null) {
-            tooltip.accept(Component.translatable(
-                    "tc.handmirrorlinkedto.full",
-                    link.pos().getX(),
-                    link.pos().getY(),
-                    link.pos().getZ(),
-                    link.dimension().identifier().toString()));
+            tooltip.accept(Component.translatable("tc.handmirrorlinkedto.full", link.pos().getX(), link.pos().getY(), link.pos().getZ(), link.dimension().identifier().toString()));
         }
     }
 }

@@ -35,8 +35,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class EntityFireBat extends Monster {
     private static final int SPAWN_LIGHT_CAP = 7;
-    private static final EntityDataAccessor<Boolean> DATA_HANGING =
-            SynchedEntityData.defineId(EntityFireBat.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_HANGING = SynchedEntityData.defineId(EntityFireBat.class, EntityDataSerializers.BOOLEAN);
 
     private static final int BAT_TAKEOFF_LEVEL_EVENT = 1025;
     private static final double WAKE_PLAYER_RANGE = 4.0;
@@ -76,12 +75,7 @@ public final class EntityFireBat extends Monster {
         return summonLife > 0;
     }
 
-    public static boolean checkFireBatSpawnRules(
-            EntityType<EntityFireBat> type,
-            ServerLevelAccessor level,
-            EntitySpawnReason reason,
-            BlockPos pos,
-            RandomSource random) {
+    public static boolean checkFireBatSpawnRules(EntityType<EntityFireBat> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         if (level.getMaxLocalRawBrightness(pos) > random.nextInt(SPAWN_LIGHT_CAP)) {
             return false;
         }
@@ -95,11 +89,7 @@ public final class EntityFireBat extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 5.0)
-                .add(Attributes.ATTACK_DAMAGE, 1.0)
-                .add(Attributes.FOLLOW_RANGE, 12.0)
-                .add(Attributes.FLYING_SPEED, 0.1);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 5.0).add(Attributes.ATTACK_DAMAGE, 1.0).add(Attributes.FOLLOW_RANGE, 12.0).add(Attributes.FLYING_SPEED, 0.1);
     }
 
     @Override
@@ -108,10 +98,7 @@ public final class EntityFireBat extends Monster {
         this.goalSelector.addGoal(5, new FlyingWanderGoal(this, false, () -> !isHanging()));
         this.goalSelector.addGoal(7, new Ghast.GhastLookGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(
-                2,
-                new NearestAttackableTargetGoal<>(
-                        this, Player.class, 10, false, false, (target, level) -> target != this.owner));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (target, level) -> target != this.owner));
     }
 
     @Override
@@ -234,9 +221,7 @@ public final class EntityFireBat extends Monster {
             } else if (this.random.nextInt(HEAD_TURN_ONE_IN) == 0) {
                 this.yHeadRot = this.random.nextInt(360);
             }
-        } else if (this.getTarget() == null
-                && this.random.nextInt(HANG_ONE_IN) == 0
-                && this.level().getBlockState(above).isRedstoneConductor(this.level(), above)) {
+        } else if (this.getTarget() == null && this.random.nextInt(HANG_ONE_IN) == 0 && this.level().getBlockState(above).isRedstoneConductor(this.level(), above)) {
             setHanging(true);
         }
     }

@@ -23,18 +23,9 @@ public final class CausalityCollapserItem extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        level.playSound(
-                null,
-                player.getX(),
-                player.getY(),
-                player.getZ(),
-                SoundEvents.EGG_THROW,
-                SoundSource.NEUTRAL,
-                THROW_VOLUME,
-                0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EGG_THROW, SoundSource.NEUTRAL, THROW_VOLUME, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (level instanceof ServerLevel serverLevel) {
-            Projectile.spawnProjectileFromRotation(
-                    EntityCausalityCollapser::new, serverLevel, stack, player, 0.0F, SHOOT_POWER, 2.0F);
+            Projectile.spawnProjectileFromRotation(EntityCausalityCollapser::new, serverLevel, stack, player, 0.0F, SHOOT_POWER, 2.0F);
         }
         stack.consume(1, player);
         return InteractionResult.SUCCESS;

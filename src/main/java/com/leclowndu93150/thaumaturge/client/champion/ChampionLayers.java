@@ -23,8 +23,7 @@ public final class ChampionLayers {
         }
     }
 
-    private static <S extends LivingEntityRenderState, M extends EntityModel<? super S>> void addTaintedLayer(
-            LivingEntityRenderer<?, S, M> renderer) {
+    private static <S extends LivingEntityRenderState, M extends EntityModel<? super S>> void addTaintedLayer(LivingEntityRenderer<?, S, M> renderer) {
         renderer.addLayer(new TaintedSwirlLayer<>(renderer));
     }
 }

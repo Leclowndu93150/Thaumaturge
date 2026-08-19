@@ -16,8 +16,7 @@ public final class FireMoteParticle extends TCParticle {
     private final float startSize;
     private final boolean translucent;
 
-    private FireMoteParticle(
-            ClientLevel level, double x, double y, double z, FireMoteParticleOptions options, ParticleSheet sheet) {
+    private FireMoteParticle(ClientLevel level, double x, double y, double z, FireMoteParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, options.vx(), options.vy(), options.vz(), sheet);
         this.rCol = normalize(options.r());
         this.gCol = normalize(options.g());
@@ -62,16 +61,7 @@ public final class FireMoteParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("fire_mote");
 
         @Override
-        public Particle createParticle(
-                FireMoteParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(FireMoteParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FireMoteParticle(level, x, y, z, options, SHEET);
         }
     }

@@ -42,12 +42,7 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityJarBrain jar,
-            JarBrainRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityJarBrain jar, JarBrainRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(jar, state, partialTicks, cameraPosition, breakProgress);
         float delta = jar.rota - jar.rotb;
         while (delta >= (float) Math.PI) {
@@ -57,14 +52,12 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
             delta += (float) (Math.PI * 2);
         }
         state.yawRadians = jar.rotb + delta * partialTicks;
-        float time =
-                (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
+        float time = (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
         state.bobOffset = Mth.sin(time / BOB_PERIOD) * BOB_AMPLITUDE + BOB_AMPLITUDE;
     }
 
     @Override
-    public void submit(
-            JarBrainRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(JarBrainRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.01F, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
@@ -74,26 +67,10 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
         poseStack.mulPose(Axis.YP.rotationDegrees(state.yawRadians * Mth.RAD_TO_DEG));
         poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
         poseStack.scale(BRAIN_SCALE, BRAIN_SCALE, BRAIN_SCALE);
-        collector.submitModelPart(
-                brain.root,
-                poseStack,
-                RenderTypes.entityCutout(TEX_BRAIN),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(brain.root, poseStack, RenderTypes.entityCutout(TEX_BRAIN), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
 
-        collector.submitModelPart(
-                brine.root,
-                poseStack,
-                RenderTypes.entityTranslucent(TEX_BRINE),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(brine.root, poseStack, RenderTypes.entityTranslucent(TEX_BRINE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
     }
 }

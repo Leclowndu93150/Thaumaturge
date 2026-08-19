@@ -29,16 +29,15 @@ public final class BlockEntityHungryChest extends ChestBlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityHungryChest chest) {
-        if (chest.tickSinceLastItem > 0) chest.tickSinceLastItem++;
+        if (chest.tickSinceLastItem > 0)
+            chest.tickSinceLastItem++;
 
         if (chest.tickSinceLastItem >= 5) {
             chest.tickSinceLastItem = 0;
             level.blockEvent(pos, state.getBlock(), 1, 0);
         }
 
-        List<ItemEntity> items = level.getEntitiesOfClass(
-                ItemEntity.class,
-                new AABB(pos).inflate(EAT_REACH, 0.0, EAT_REACH).expandTowards(0.0, EAT_REACH * 3.0, 0.0));
+        List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(EAT_REACH, 0.0, EAT_REACH).expandTowards(0.0, EAT_REACH * 3.0, 0.0));
         if (items.isEmpty()) {
             return;
         }
@@ -49,10 +48,7 @@ public final class BlockEntityHungryChest extends ChestBlockEntity {
             ItemStack original = item.getItem();
             ItemStack leftovers = InvHelper.insertStackAt(level, pos, Direction.UP, original.copy(), false);
             if (leftovers.getCount() != original.getCount()) {
-                item.playSound(
-                        SoundEvents.GENERIC_EAT.value(),
-                        0.25F,
-                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
+                item.playSound(SoundEvents.GENERIC_EAT.value(), 0.25F, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
                 chest.setChanged();
                 level.blockEvent(pos, state.getBlock(), 1, 1);
                 chest.tickSinceLastItem = 1;

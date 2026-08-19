@@ -10,18 +10,14 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 public record EssentiaDropParticleOptions(int color, float alpha) implements ParticleOptions {
-    public static final MapCodec<EssentiaDropParticleOptions> CODEC =
-            RecordCodecBuilder.mapCodec(instance -> instance.group(
-                            Codec.INT.fieldOf("color").forGetter(EssentiaDropParticleOptions::color),
-                            Codec.FLOAT.fieldOf("alpha").forGetter(EssentiaDropParticleOptions::alpha))
+    public static final MapCodec<EssentiaDropParticleOptions> CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(Codec.INT.fieldOf("color").forGetter(EssentiaDropParticleOptions::color), Codec.FLOAT.fieldOf("alpha").forGetter(EssentiaDropParticleOptions::alpha))
                     .apply(instance, EssentiaDropParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EssentiaDropParticleOptions> STREAM_CODEC = StreamCodec.of(
-            (buf, data) -> {
-                buf.writeInt(data.color);
-                buf.writeFloat(data.alpha);
-            },
-            buf -> new EssentiaDropParticleOptions(buf.readInt(), buf.readFloat()));
+    public static final StreamCodec<RegistryFriendlyByteBuf, EssentiaDropParticleOptions> STREAM_CODEC = StreamCodec.of((buf, data) -> {
+        buf.writeInt(data.color);
+        buf.writeFloat(data.alpha);
+    }, buf -> new EssentiaDropParticleOptions(buf.readInt(), buf.readFloat()));
 
     @Override
     public ParticleType<?> getType() {

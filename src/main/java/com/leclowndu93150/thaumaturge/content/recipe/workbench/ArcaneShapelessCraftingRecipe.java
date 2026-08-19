@@ -28,49 +28,22 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
-    public static final MapCodec<ArcaneShapelessCraftingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(
-                    CommonInfo.MAP_CODEC.forGetter((o) -> o.commonInfo),
-                    ExtraCodecs.POSITIVE_INT.fieldOf("vis").forGetter(o -> o.vis),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(o -> o.gate),
-                    ArcaneCraftingRecipe.PRIMAL_ASPECTS_CODEC
-                            .fieldOf("crystals")
-                            .forGetter(o -> o.aspects),
-                    ItemStackTemplate.CODEC.fieldOf("result").forGetter((o) -> o.result),
-                    Codec.lazyInitialized(() -> Ingredient.CODEC.listOf(
-                                    1, ArcaneShapedRecipePattern.maxHeight * ArcaneShapedRecipePattern.maxWidth))
-                            .fieldOf("ingredients")
-                            .forGetter((o) -> o.ingredients))
+    public static final MapCodec<ArcaneShapelessCraftingRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec((i) -> i.group(CommonInfo.MAP_CODEC.forGetter((o) -> o.commonInfo),
+            ExtraCodecs.POSITIVE_INT.fieldOf("vis").forGetter(o -> o.vis), ResearchGate.CODEC.optionalFieldOf("research").forGetter(o -> o.gate),
+            ArcaneCraftingRecipe.PRIMAL_ASPECTS_CODEC.fieldOf("crystals").forGetter(o -> o.aspects), ItemStackTemplate.CODEC.fieldOf("result").forGetter((o) -> o.result),
+            Codec.lazyInitialized(() -> Ingredient.CODEC.listOf(1, ArcaneShapedRecipePattern.maxHeight * ArcaneShapedRecipePattern.maxWidth)).fieldOf("ingredients").forGetter((o) -> o.ingredients))
             .apply(i, ArcaneShapelessCraftingRecipe::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ArcaneShapelessCraftingRecipe> STREAM_CODEC =
-            StreamCodec.composite(
-                    CommonInfo.STREAM_CODEC,
-                    (o) -> o.commonInfo,
-                    ByteBufCodecs.VAR_INT,
-                    (o) -> o.vis,
-                    ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
-                    o -> o.gate,
-                    AspectList.STREAM_CODEC,
-                    o -> o.aspects,
-                    ItemStackTemplate.STREAM_CODEC,
-                    (o) -> o.result,
-                    Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
-                    (o) -> o.ingredients,
-                    ArcaneShapelessCraftingRecipe::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ArcaneShapelessCraftingRecipe> STREAM_CODEC = StreamCodec.composite(CommonInfo.STREAM_CODEC, (o) -> o.commonInfo, ByteBufCodecs.VAR_INT,
+            (o) -> o.vis, ByteBufCodecs.optional(ResearchGate.STREAM_CODEC), o -> o.gate, AspectList.STREAM_CODEC, o -> o.aspects, ItemStackTemplate.STREAM_CODEC, (o) -> o.result,
+            Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), (o) -> o.ingredients, ArcaneShapelessCraftingRecipe::new);
 
-    public static final RecipeSerializer<ArcaneShapelessCraftingRecipe> SERIALIZER =
-            new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<ArcaneShapelessCraftingRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
     private final ItemStackTemplate result;
     private final List<Ingredient> ingredients;
     private final boolean isSimple;
 
-    public ArcaneShapelessCraftingRecipe(
-            Recipe.CommonInfo commonInfo,
-            int vis,
-            Optional<ResearchGate> researchGate,
-            AspectList aspects,
-            ItemStackTemplate result,
-            List<Ingredient> ingredients) {
+    public ArcaneShapelessCraftingRecipe(Recipe.CommonInfo commonInfo, int vis, Optional<ResearchGate> researchGate, AspectList aspects, ItemStackTemplate result, List<Ingredient> ingredients) {
         super(commonInfo, vis, researchGate, aspects);
         this.result = result;
         this.ingredients = ingredients;
@@ -86,7 +59,8 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
     }
 
     public boolean matches(IArcaneCraftingInput input, Level level) {
-        if (!super.matches(input, level)) return false;
+        if (!super.matches(input, level))
+            return false;
         if (input.ingredientCount() != this.ingredients.size()) {
             return false;
         } else if (!this.isSimple) {
@@ -100,9 +74,7 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
 
             return RecipeMatcher.findMatches(nonEmptyItems, this.ingredients) != null;
         } else {
-            return input.size() == 1 && this.ingredients.size() == 1
-                    ? this.ingredients.getFirst().test(input.getItem(0))
-                    : input.stackedContents().canCraft(this, null);
+            return input.size() == 1 && this.ingredients.size() == 1 ? this.ingredients.getFirst().test(input.getItem(0)) : input.stackedContents().canCraft(this, null);
         }
     }
 
@@ -119,17 +91,7 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
     }
 
     public List<RecipeDisplay> display() {
-        return List.of(new ArcaneCraftingRecipeDisplay(
-                0,
-                0,
-                true,
-                this.ingredients.stream()
-                        .map(Ingredient::display)
-                        .map(d -> (SlotDisplay) d)
-                        .toList(),
-                new SlotDisplay.ItemStackSlotDisplay(this.result),
-                new SlotDisplay.ItemSlotDisplay(TCBlocks.ARCANE_WORKBENCH.get().asItem()),
-                this.vis,
-                crystalDisplays()));
+        return List.of(new ArcaneCraftingRecipeDisplay(0, 0, true, this.ingredients.stream().map(Ingredient::display).map(d -> (SlotDisplay) d).toList(),
+                new SlotDisplay.ItemStackSlotDisplay(this.result), new SlotDisplay.ItemSlotDisplay(TCBlocks.ARCANE_WORKBENCH.get().asItem()), this.vis, crystalDisplays()));
     }
 }

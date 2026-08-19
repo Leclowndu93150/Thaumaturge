@@ -77,8 +77,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -96,15 +95,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (!state.canSurvive(level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -112,13 +103,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
     }
 
     @Override
-    public int getExpDrop(
-            BlockState state,
-            LevelAccessor level,
-            BlockPos pos,
-            @Nullable BlockEntity blockEntity,
-            @Nullable Entity breaker,
-            ItemStack tool) {
+    public int getExpDrop(BlockState state, LevelAccessor level, BlockPos pos, @Nullable BlockEntity blockEntity, @Nullable Entity breaker, ItemStack tool) {
         RandomSource random = level.getRandom();
         return XP_BASE + random.nextInt(XP_ROLL) + random.nextInt(XP_ROLL);
     }
@@ -129,11 +114,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(
-                type,
-                TCBlockEntities.ELDRITCH_CRAB_SPAWNER.get(),
-                (tickLevel, pos, tickState, spawner) -> spawner.tick(tickLevel, pos, tickState));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TCBlockEntities.ELDRITCH_CRAB_SPAWNER.get(), (tickLevel, pos, tickState, spawner) -> spawner.tick(tickLevel, pos, tickState));
     }
 }

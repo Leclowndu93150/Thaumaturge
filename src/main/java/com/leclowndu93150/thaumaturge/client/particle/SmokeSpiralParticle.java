@@ -22,8 +22,7 @@ public final class SmokeSpiralParticle extends TCParticle {
     private final float startAngle;
     private final int floorY;
 
-    private SmokeSpiralParticle(
-            ClientLevel level, double x, double y, double z, SmokeSpiralParticleOptions options, ParticleSheet sheet) {
+    private SmokeSpiralParticle(ClientLevel level, double x, double y, double z, SmokeSpiralParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
         this.gravity = -0.01F;
@@ -55,12 +54,7 @@ public final class SmokeSpiralParticle extends TCParticle {
         centerY = Math.max(centerY, this.floorY + 0.1);
         Quaternionf rotation = new Quaternionf();
         getFacingCameraMode().setRotation(rotation, camera, partialTickTime);
-        extractRotatedQuad(
-                renderState,
-                rotation,
-                (float) (centerX - Mth.sin(azimuth) * ring - cam.x()),
-                (float) (centerY - cam.y()),
-                (float) (centerZ + Mth.cos(azimuth) * ring - cam.z()),
+        extractRotatedQuad(renderState, rotation, (float) (centerX - Mth.sin(azimuth) * ring - cam.x()), (float) (centerY - cam.y()), (float) (centerZ + Mth.cos(azimuth) * ring - cam.z()),
                 partialTickTime);
     }
 
@@ -68,16 +62,7 @@ public final class SmokeSpiralParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("smoke_spiral");
 
         @Override
-        public Particle createParticle(
-                SmokeSpiralParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SmokeSpiralParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new SmokeSpiralParticle(level, x, y, z, options, SHEET);
         }
     }

@@ -38,10 +38,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.ENABLED, true));
     }
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            box(3.0, 0.0, 3.0, 13.0, 2.0, 13.0),
-            box(4.0, 2.0, 4.0, 12.0, 11.0, 12.0),
-            box(3.0, 8.0, 3.0, 13.0, 10.0, 13.0),
+    private static final VoxelShape SHAPE = Shapes.or(box(3.0, 0.0, 3.0, 13.0, 2.0, 13.0), box(4.0, 2.0, 4.0, 12.0, 11.0, 12.0), box(3.0, 8.0, 3.0, 13.0, 10.0, 13.0),
             box(6.0, 11.0, 6.0, 10.0, 16.0, 10.0));
 
     @Override
@@ -61,18 +58,11 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
+        return defaultBlockState().setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block block,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
@@ -86,37 +76,31 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("void_siphon"))) {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (player instanceof ServerPlayer serverPlayer
-                && level.getBlockEntity(pos) instanceof BlockEntityVoidSiphon siphon) {
-            serverPlayer.openMenu(
-                    new MenuProvider() {
-                        @Override
-                        public Component getDisplayName() {
-                            return Component.translatable("block.thaumaturge.void_siphon");
-                        }
+        if (player instanceof ServerPlayer serverPlayer && level.getBlockEntity(pos) instanceof BlockEntityVoidSiphon siphon) {
+            serverPlayer.openMenu(new MenuProvider() {
+                @Override
+                public Component getDisplayName() {
+                    return Component.translatable("block.thaumaturge.void_siphon");
+                }
 
-                        @Override
-                        public AbstractContainerMenu createMenu(
-                                int containerId, net.minecraft.world.entity.player.Inventory inventory, Player p) {
-                            return new MenuVoidSiphon(containerId, inventory, siphon);
-                        }
-                    },
-                    buf -> buf.writeBlockPos(pos));
+                @Override
+                public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory, Player p) {
+                    return new MenuVoidSiphon(containerId, inventory, siphon);
+                }
+            }, buf -> buf.writeBlockPos(pos));
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

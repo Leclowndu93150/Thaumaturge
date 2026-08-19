@@ -40,15 +40,7 @@ public final class NodeGenerator {
 
     private NodeGenerator() {}
 
-    public static boolean createRandomNodeAt(
-            ServerLevelAccessor level,
-            BlockPos pos,
-            RandomSource random,
-            boolean silverwood,
-            boolean eerie,
-            boolean small,
-            int specialRarity,
-            int baseAura) {
+    public static boolean createRandomNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random, boolean silverwood, boolean eerie, boolean small, int specialRarity, int baseAura) {
         NodeData data = rollRandomNodeData(level, pos, random, silverwood, eerie, small, specialRarity, baseAura);
         if (data == null) {
             return false;
@@ -56,17 +48,8 @@ public final class NodeGenerator {
         return createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
     }
 
-    public static @Nullable NodeData rollRandomNodeData(
-            ServerLevelAccessor level,
-            BlockPos pos,
-            RandomSource random,
-            boolean silverwood,
-            boolean eerie,
-            boolean small,
-            int specialRarity,
-            int baseAura) {
-        HolderLookup.RegistryLookup<IAspect> aspectRegistry =
-                level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+    public static @Nullable NodeData rollRandomNodeData(ServerLevelAccessor level, BlockPos pos, RandomSource random, boolean silverwood, boolean eerie, boolean small, int specialRarity, int baseAura) {
+        HolderLookup.RegistryLookup<IAspect> aspectRegistry = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         List<Holder<IAspect>> basicAspects = new ArrayList<>();
         List<Holder<IAspect>> complexAspects = new ArrayList<>();
         aspectRegistry.listElements().forEach(holder -> {
@@ -155,12 +138,7 @@ public final class NodeGenerator {
         return new NodeData(type, Optional.ofNullable(modifier), distributed, distributed);
     }
 
-    public static boolean createNodeAt(
-            ServerLevelAccessor level,
-            BlockPos pos,
-            NodeType type,
-            @Nullable NodeModifier modifier,
-            AspectList aspects) {
+    public static boolean createNodeAt(ServerLevelAccessor level, BlockPos pos, NodeType type, @Nullable NodeModifier modifier, AspectList aspects) {
         if (level.getBlockEntity(pos) instanceof BlockEntityNode existing) {
             return configureNode(existing, type, modifier, aspects);
         }
@@ -175,8 +153,7 @@ public final class NodeGenerator {
         return false;
     }
 
-    private static boolean configureNode(
-            BlockEntityNode node, NodeType type, @Nullable NodeModifier modifier, AspectList aspects) {
+    private static boolean configureNode(BlockEntityNode node, NodeType type, @Nullable NodeModifier modifier, AspectList aspects) {
         node.setNodeType(type);
         node.setNodeModifier(modifier);
         node.setAspects(aspects);
@@ -184,19 +161,16 @@ public final class NodeGenerator {
         return true;
     }
 
-    private static @Nullable Holder<IAspect> randomBiomeAspect(
-            HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome, RandomSource random) {
+    private static @Nullable Holder<IAspect> randomBiomeAspect(HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome, RandomSource random) {
         BiomeAspects aspects = biome.getData(TCDataMaps.BIOME_ASPECTS);
         if (aspects == null || aspects.aspects().isEmpty()) {
             return null;
         }
-        ResourceKey<IAspect> key =
-                aspects.aspects().get(random.nextInt(aspects.aspects().size()));
+        ResourceKey<IAspect> key = aspects.aspects().get(random.nextInt(aspects.aspects().size()));
         return registry.get(key).orElse(null);
     }
 
-    private static AspectList addTypeFlavor(
-            HolderLookup.RegistryLookup<IAspect> registry, AspectList list, NodeType type, RandomSource random) {
+    private static AspectList addTypeFlavor(HolderLookup.RegistryLookup<IAspect> registry, AspectList list, NodeType type, RandomSource random) {
         switch (type) {
             case HUNGRY -> {
                 list = list.add(registry.getOrThrow(TCAspects.DESIDERIUM), 2);
@@ -204,8 +178,7 @@ public final class NodeGenerator {
                     list = list.add(registry.getOrThrow(TCAspects.VACUOS), 1);
                 }
             }
-            case PURE ->
-                list = list.add(registry.getOrThrow(random.nextBoolean() ? TCAspects.VICTUS : TCAspects.ORDO), 2);
+            case PURE -> list = list.add(registry.getOrThrow(random.nextBoolean() ? TCAspects.VICTUS : TCAspects.ORDO), 2);
             case DARK -> {
                 if (random.nextBoolean()) {
                     list = list.add(registry.getOrThrow(TCAspects.MORTUUS), 1);
@@ -220,13 +193,13 @@ public final class NodeGenerator {
                     list = list.add(registry.getOrThrow(TCAspects.TENEBRAE), 1);
                 }
             }
-            default -> {}
+            default -> {
+            }
         }
         return list;
     }
 
-    private static AspectList addEnvironmentFlavor(
-            HolderLookup.RegistryLookup<IAspect> registry, ServerLevelAccessor level, BlockPos pos, AspectList list) {
+    private static AspectList addEnvironmentFlavor(HolderLookup.RegistryLookup<IAspect> registry, ServerLevelAccessor level, BlockPos pos, AspectList list) {
         int water = 0;
         int lava = 0;
         int stone = 0;

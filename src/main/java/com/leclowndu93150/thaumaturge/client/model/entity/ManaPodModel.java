@@ -22,14 +22,8 @@ public final class ManaPodModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "core",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F),
-                PartPose.ZERO);
-        root.addOrReplaceChild(
-                "shell",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-3.5F, 0.0F, -3.5F, 7.0F, 9.0F, 7.0F),
-                PartPose.ZERO);
+        root.addOrReplaceChild("core", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-2.0F, 0.0F, -2.0F, 4.0F, 5.0F, 4.0F), PartPose.ZERO);
+        root.addOrReplaceChild("shell", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-3.5F, 0.0F, -3.5F, 7.0F, 9.0F, 7.0F), PartPose.ZERO);
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 }

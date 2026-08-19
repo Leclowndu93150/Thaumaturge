@@ -18,9 +18,7 @@ public final class CandleBlockColors {
     public static void onRegisterBlockColors(RegisterColorHandlersEvent.BlockTintSources event) {
         for (DyeColor dye : DyeColor.values()) {
             int color = 0xFF000000 | dye.getMapColor().col;
-            event.register(
-                    List.of(BlockTintSources.constant(color)),
-                    TCBlocks.CANDLES.get(dye).get());
+            event.register(List.of(BlockTintSources.constant(color)), TCBlocks.CANDLES.get(dye).get());
         }
     }
 

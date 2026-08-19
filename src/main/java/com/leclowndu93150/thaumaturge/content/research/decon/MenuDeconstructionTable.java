@@ -34,32 +34,21 @@ public final class MenuDeconstructionTable extends AbstractContainerMenu {
     }
 
     private static @Nullable BlockEntityDeconstructionTable clientBlockEntity(Inventory playerInventory, BlockPos pos) {
-        return playerInventory.player.level().getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table
-                ? table
-                : null;
+        return playerInventory.player.level().getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table ? table : null;
     }
 
-    public MenuDeconstructionTable(
-            int containerId, Inventory playerInventory, @Nullable BlockEntityDeconstructionTable blockEntity) {
+    public MenuDeconstructionTable(int containerId, Inventory playerInventory, @Nullable BlockEntityDeconstructionTable blockEntity) {
         super(TCMenus.DECONSTRUCTION_TABLE.get(), containerId);
         this.blockEntity = blockEntity;
-        this.access = blockEntity != null
-                ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos())
-                : ContainerLevelAccess.NULL;
+        this.access = blockEntity != null ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()) : ContainerLevelAccess.NULL;
         this.pos = blockEntity != null ? blockEntity.getBlockPos() : BlockPos.ZERO;
-        ItemStacksResourceHandler items =
-                blockEntity != null ? blockEntity.items() : new ItemStacksResourceHandler(TABLE_SLOTS);
+        ItemStacksResourceHandler items = blockEntity != null ? blockEntity.items() : new ItemStacksResourceHandler(TABLE_SLOTS);
 
-        addSlot(new ResourceHandlerSlot(
-                items, items::set, BlockEntityDeconstructionTable.SLOT_INPUT, INPUT_X, INPUT_Y));
+        addSlot(new ResourceHandlerSlot(items, items::set, BlockEntityDeconstructionTable.SLOT_INPUT, INPUT_X, INPUT_Y));
 
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        PLAYER_GRID_X + col * 18,
-                        PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {

@@ -30,9 +30,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
     private static final int BREAK_SPEED = 21;
     private static final int BREAK_SPEED_SILK = 7;
 
-    protected ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta")
-    };
+    protected ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta")};
 
     private int delay = System.identityHashCode(this) % 42;
     private final Map<Integer, Long> cache = new HashMap<>();
@@ -88,9 +86,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         BlockState state = level.getBlockState(task.getPos());
-        if (cache.containsKey(task.getId())
-                && isValidBlock(level, task.getPos())
-                && level instanceof ServerLevel serverLevel) {
+        if (cache.containsKey(task.getId()) && isValidBlock(level, task.getPos()) && level instanceof ServerLevel serverLevel) {
             golem.swingArm();
             boolean silky = getToggles().length > 1 && getToggles()[1].getValue();
             int breakSpeed = silky ? BREAK_SPEED_SILK : BREAK_SPEED;
@@ -100,19 +96,12 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
                 task.setData(task.getData() - breakSpeed);
                 int progress = (int) (9.0F * (1.0F - task.getData() / hardness));
                 SoundType sound = state.getSoundType();
-                level.playSound(
-                        null,
-                        task.getPos(),
-                        sound.getBreakSound(),
-                        SoundSource.BLOCKS,
-                        (sound.getVolume() + 0.7F) / 8.0F,
-                        sound.getPitch() * 0.5F);
+                level.playSound(null, task.getPos(), sound.getBreakSound(), SoundSource.BLOCKS, (sound.getVolume() + 0.7F) / 8.0F, sound.getPitch() * 0.5F);
                 level.destroyBlockProgress(golem.getGolemEntity().getId(), task.getPos(), progress);
                 return false;
             }
             level.destroyBlockProgress(golem.getGolemEntity().getId(), task.getPos(), 10);
-            BlockBreakerEngine.harvestBlock(
-                    serverLevel, TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()), task.getPos(), silky, 0);
+            BlockBreakerEngine.harvestBlock(serverLevel, TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()), task.getPos(), silky, 0);
             golem.addRankXp(1);
             cache.remove(task.getId());
         }
@@ -149,12 +138,12 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.BREAKER.get()};
+        return new GolemTrait[]{TCGolemTraits.BREAKER.get()};
     }
 
     @Override

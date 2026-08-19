@@ -35,32 +35,15 @@ public final class DeconTableItemSpecialRenderer implements NoDataSpecialModelRe
     }
 
     @Override
-    public void submit(
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            int lightCoords,
-            int overlayCoords,
-            boolean hasFoil,
-            int outlineColor) {
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.0F, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-        collector.submitModelPart(
-                model.root,
-                poseStack,
-                RenderTypes.entityCutout(TEXTURE),
-                lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(model.root, poseStack, RenderTypes.entityCutout(TEXTURE), lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
 
         ItemStackRenderState book = new ItemStackRenderState();
-        Minecraft.getInstance()
-                .getItemModelResolver()
-                .updateForTopItem(
-                        book, new ItemStack(TCItems.THAUMOMETER.get()), ItemDisplayContext.FIXED, null, null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(book, new ItemStack(TCItems.THAUMOMETER.get()), ItemDisplayContext.FIXED, null, null, 0);
         poseStack.pushPose();
         poseStack.translate(0.5F, BOOK_Y, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
@@ -82,8 +65,7 @@ public final class DeconTableItemSpecialRenderer implements NoDataSpecialModelRe
 
         @Override
         public @Nullable SpecialModelRenderer<Void> bake(SpecialModelRenderer.BakingContext context) {
-            return new DeconTableItemSpecialRenderer(
-                    new DeconTableModel(context.entityModelSet().bakeLayer(TCModelLayers.DECONSTRUCTION_TABLE)));
+            return new DeconTableItemSpecialRenderer(new DeconTableModel(context.entityModelSet().bakeLayer(TCModelLayers.DECONSTRUCTION_TABLE)));
         }
 
         @Override

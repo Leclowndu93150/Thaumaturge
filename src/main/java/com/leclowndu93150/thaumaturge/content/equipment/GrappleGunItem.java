@@ -57,8 +57,7 @@ public final class GrappleGunItem extends Item implements IRechargable {
         ItemStack stack = player.getItemInHand(hand);
         if (!level.isClientSide() && RechargeAccess.getCharge(stack) > 0) {
             EntityGrapple grapple = new EntityGrapple(TCEntities.GRAPPLE.get(), level, player, hand);
-            grapple.shootFromRotation(
-                    player, player.getXRot(), player.getYRot(), LAUNCH_PITCH_OFFSET, LAUNCH_VELOCITY, 0.0F);
+            grapple.shootFromRotation(player, player.getXRot(), player.getYRot(), LAUNCH_PITCH_OFFSET, LAUNCH_VELOCITY, 0.0F);
             int handSign = hand == InteractionHand.MAIN_HAND ? 1 : -1;
             double px = -Mth.cos((player.getYRot() - 0.5F) / 180.0F * (float) Math.PI) * 0.2F * handSign;
             double pz = -Mth.sin((player.getYRot() - 0.5F) / 180.0F * (float) Math.PI) * 0.3F * handSign;

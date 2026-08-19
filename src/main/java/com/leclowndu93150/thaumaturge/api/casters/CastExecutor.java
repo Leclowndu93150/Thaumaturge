@@ -13,17 +13,11 @@ import org.jspecify.annotations.Nullable;
 final class CastExecutor {
     private CastExecutor() {}
 
-    record StrikeKey(int entityId, UUID castId) {}
+    record StrikeKey(int entityId, UUID castId) {
+    }
 
-    static void run(
-            Level level,
-            FocusPackage pack,
-            @Nullable LivingEntity caster,
-            CastStreams streams,
-            UUID castId,
-            Set<StrikeKey> struck) {
-        CastContext ctx =
-                new CastContext(level, castId, pack.casterId().orElse(null), caster, pack.power(), pack.units());
+    static void run(Level level, FocusPackage pack, @Nullable LivingEntity caster, CastStreams streams, UUID castId, Set<StrikeKey> struck) {
+        CastContext ctx = new CastContext(level, castId, pack.casterId().orElse(null), caster, pack.power(), pack.units());
         run(ctx, streams, struck);
     }
 
@@ -59,8 +53,7 @@ final class CastExecutor {
         }
     }
 
-    private static CastStreams applyEffect(
-            CastContext ctx, FocusEffect effect, FocusSettings settings, CastStreams streams, Set<StrikeKey> struck) {
+    private static CastStreams applyEffect(CastContext ctx, FocusEffect effect, FocusSettings settings, CastStreams streams, Set<StrikeKey> struck) {
         HitResult[] targets = streams.targets();
         if (targets == null) {
             return CastStreams.EMPTY;
@@ -74,9 +67,7 @@ final class CastExecutor {
                     victim.invulnerableTime = 0;
                 }
             }
-            Trajectory trajectory = trajectories != null
-                    ? (trajectories.length == targets.length ? trajectories[i] : trajectories[0])
-                    : null;
+            Trajectory trajectory = trajectories != null ? (trajectories.length == targets.length ? trajectories[i] : trajectories[0]) : null;
             effect.apply(ctx, settings, target, trajectory, i);
         }
         return CastStreams.EMPTY;

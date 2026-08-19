@@ -19,23 +19,8 @@ public final class BoreDebrisParticle extends SeekerParticle {
     private final float patchU;
     private final float patchV;
 
-    private BoreDebrisParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            BoreDebrisParticleOptions options,
-            TextureAtlasSprite sprite) {
-        super(
-                level,
-                x,
-                y,
-                z,
-                sprite,
-                options.targetEntityId(),
-                new Vec3(options.tx(), options.ty(), options.tz()),
-                new Vec3(options.sx(), options.sy(), options.sz()),
-                DRIFT);
+    private BoreDebrisParticle(ClientLevel level, double x, double y, double z, BoreDebrisParticleOptions options, TextureAtlasSprite sprite) {
+        super(level, x, y, z, sprite, options.targetEntityId(), new Vec3(options.tx(), options.ty(), options.tz()), new Vec3(options.sx(), options.sy(), options.sz()), DRIFT);
         setColor(TINT, TINT, TINT);
         this.quadSize = (MIN_SCALE + this.random.nextFloat() * SCALE_RANGE) * 0.1F;
         this.patchU = this.random.nextFloat() * 3.0F;
@@ -72,24 +57,11 @@ public final class BoreDebrisParticle extends SeekerParticle {
 
     public static final class Provider implements ParticleProvider<BoreDebrisParticleOptions> {
         @Override
-        public @Nullable Particle createParticle(
-                BoreDebrisParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public @Nullable Particle createParticle(BoreDebrisParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             if (options.state().isAir()) {
                 return null;
             }
-            TextureAtlasSprite sprite = Minecraft.getInstance()
-                    .getModelManager()
-                    .getBlockStateModelSet()
-                    .getParticleMaterial(options.state())
-                    .sprite();
+            TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(options.state()).sprite();
             return new BoreDebrisParticle(level, x, y, z, options, sprite);
         }
     }

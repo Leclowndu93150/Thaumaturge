@@ -42,14 +42,7 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
     }
 
     @Override
-    public void postProcess(
-            WorldGenLevel level,
-            StructureManager structureManager,
-            ChunkGenerator generator,
-            RandomSource random,
-            BoundingBox chunkBB,
-            ChunkPos chunkPos,
-            BlockPos referencePos) {
+    public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator, RandomSource random, BoundingBox chunkBB, ChunkPos chunkPos, BlockPos referencePos) {
         if (!this.updateAverageGroundHeight(level, chunkBB, SURFACE_OFFSET)) {
             return;
         }
@@ -69,20 +62,17 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
         }
         this.placeBlock(level, TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), CENTER, GROUND, CENTER, chunkBB);
         this.placeBlock(level, TCBlocks.ELDRITCH_ALTAR.get().defaultBlockState(), CENTER, GROUND + 1, CENTER, chunkBB);
-        this.placeBlock(
-                level, TCBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), CENTER, GROUND + 3, CENTER, chunkBB);
+        this.placeBlock(level, TCBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), CENTER, GROUND + 3, CENTER, chunkBB);
         for (int q = GROUND + 4; q <= GROUND + 7; q++) {
             this.placeBlock(level, TCBlocks.ELDRITCH_PILLAR.get().defaultBlockState(), CENTER, q, CENTER, chunkBB);
         }
         for (int x = 0; x < SIZE_XZ; x++) {
             for (int z = 0; z < SIZE_XZ; z++) {
-                boolean edge = ((x == 0 || x == SIZE_XZ - 1) && Math.abs((z - CENTER) % 2) == 1
-                                || (z == 0 || z == SIZE_XZ - 1) && Math.abs((x - CENTER) % 2) == 1)
+                boolean edge = ((x == 0 || x == SIZE_XZ - 1) && Math.abs((z - CENTER) % 2) == 1 || (z == 0 || z == SIZE_XZ - 1) && Math.abs((x - CENTER) % 2) == 1)
                         && Math.abs(x - CENTER) != Math.abs(z - CENTER);
                 if (edge) {
                     this.placeBlock(level, TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), x, GROUND, z, chunkBB);
-                    this.placeBlock(
-                            level, TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), x, GROUND + 1, z, chunkBB);
+                    this.placeBlock(level, TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), x, GROUND + 1, z, chunkBB);
                 }
             }
         }
@@ -93,15 +83,7 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
     private void placeNode(WorldGenLevel level, RandomSource random, BoundingBox chunkBB) {
         BlockPos pos = this.getWorldPos(CENTER, GROUND + 2, CENTER);
         if (chunkBB.isInside(pos)) {
-            NodeGenerator.createRandomNodeAt(
-                    level,
-                    pos,
-                    random,
-                    false,
-                    true,
-                    false,
-                    NodeGenerator.DEFAULT_SPECIAL_RARITY,
-                    NodeGenerator.DEFAULT_BASE_AURA);
+            NodeGenerator.createRandomNodeAt(level, pos, random, false, true, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
         }
     }
 
@@ -132,14 +114,11 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
     }
 
     private void placeBanner(WorldGenLevel level, BoundingBox chunkBB, int x, int z, int rotation) {
-        BlockState banner =
-                TCBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BannerStandingBlock.ROTATION, rotation);
+        BlockState banner = TCBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BannerStandingBlock.ROTATION, rotation);
         this.placeBlock(level, banner, x, GROUND + 1, z, chunkBB);
     }
 
     private static BlockState platformState(RandomSource random) {
-        return random.nextInt((int) OBSIDIAN_CHANCE_ONE_IN) == 0
-                ? Blocks.OBSIDIAN.defaultBlockState()
-                : TCBlocks.OBSIDIAN_TILE.get().defaultBlockState();
+        return random.nextInt((int) OBSIDIAN_CHANCE_ONE_IN) == 0 ? Blocks.OBSIDIAN.defaultBlockState() : TCBlocks.OBSIDIAN_TILE.get().defaultBlockState();
     }
 }

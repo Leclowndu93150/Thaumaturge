@@ -115,12 +115,8 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
         float amount = spendAura(level, Math.min(DRAIN_PER_CYCLE, vis));
         if (amount > 0.0F) {
             RandomSource rand = level.getRandom();
-            Vec3 origin = new Vec3(
-                    worldPosition.getX() + rand.nextInt(3) - rand.nextInt(3),
-                    worldPosition.getY() + rand.nextInt(3),
-                    worldPosition.getZ() + rand.nextInt(3) - rand.nextInt(3));
-            EffectDispatch.spawnVisSparkle(
-                    level, origin, new Vec3(worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ()));
+            Vec3 origin = new Vec3(worldPosition.getX() + rand.nextInt(3) - rand.nextInt(3), worldPosition.getY() + rand.nextInt(3), worldPosition.getZ() + rand.nextInt(3) - rand.nextInt(3));
+            EffectDispatch.spawnVisSparkle(level, origin, new Vec3(worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ()));
             vis -= amount;
             setChanged();
             syncToClient();
@@ -135,24 +131,10 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
             return;
         }
         RandomSource rand = level.getRandom();
-        ShieldSparkParticleOptions fx = new ShieldSparkParticleOptions(
-                ARGB.colorFromFloat(
-                        1.0F,
-                        0.5F + rand.nextFloat() * 0.4F,
-                        1.0F - rand.nextFloat() * 0.4F,
-                        1.0F - rand.nextFloat() * 0.4F),
-                0.8F,
-                0.3F + rand.nextFloat() * 0.3F,
-                6 + rand.nextInt(5),
-                true);
-        level.addParticle(
-                fx,
-                worldPosition.getX() + 0.5 + (rand.nextFloat() - rand.nextFloat()) * 0.3F,
-                worldPosition.getY() + 1.4 + (rand.nextFloat() - rand.nextFloat()) * 0.3F,
-                worldPosition.getZ() + 0.5 + (rand.nextFloat() - rand.nextFloat()) * 0.3F,
-                0.0,
-                0.0,
-                0.0);
+        ShieldSparkParticleOptions fx = new ShieldSparkParticleOptions(ARGB.colorFromFloat(1.0F, 0.5F + rand.nextFloat() * 0.4F, 1.0F - rand.nextFloat() * 0.4F, 1.0F - rand.nextFloat() * 0.4F), 0.8F,
+                0.3F + rand.nextFloat() * 0.3F, 6 + rand.nextInt(5), 0, true);
+        level.addParticle(fx, worldPosition.getX() + 0.5 + (rand.nextFloat() - rand.nextFloat()) * 0.3F, worldPosition.getY() + 1.4 + (rand.nextFloat() - rand.nextFloat()) * 0.3F,
+                worldPosition.getZ() + 0.5 + (rand.nextFloat() - rand.nextFloat()) * 0.3F, 0.0, 0.0, 0.0);
     }
 
     private float spendAura(ServerLevel level, float amount) {
@@ -192,8 +174,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
             int a = compCount.getOrDefault(node.element.toString(), 0);
             node.complexityMultiplier = 0.5F * (++a + 1);
             compCount.put(node.element.toString(), a);
-            totalComplexity =
-                    (int) (totalComplexity + element.complexity(node.resolvedSettings()) * node.complexityMultiplier);
+            totalComplexity = (int) (totalComplexity + element.complexity(node.resolvedSettings()) * node.complexityMultiplier);
             if (element.aspect() != null) {
                 crystals = crystals.add(resolveAspect(element.aspect()), 1);
             }
@@ -295,8 +276,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
                 int a = compCount.getOrDefault(node.element.toString(), 0);
                 node.complexityMultiplier = 0.5F * (++a + 1);
                 compCount.put(node.element.toString(), a);
-                totalComplexity = (int)
-                        (totalComplexity + element.complexity(node.resolvedSettings()) * node.complexityMultiplier);
+                totalComplexity = (int) (totalComplexity + element.complexity(node.resolvedSettings()) * node.complexityMultiplier);
             }
         }
         FocusPackage.Builder core = FocusPackage.builder().complexity(totalComplexity);
@@ -376,8 +356,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

@@ -92,8 +92,7 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
                         newItems.add(items.get(i));
                     }
 
-                    return new ArcaneCraftingInput.Positioned(
-                            new ArcaneCraftingInput(newWidth, newHeight, newItems), left, top);
+                    return new ArcaneCraftingInput.Positioned(new ArcaneCraftingInput(newWidth, newHeight, newItems), left, top);
                 }
             } else {
                 return ArcaneCraftingInput.Positioned.EMPTY;
@@ -121,7 +120,8 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
     }
 
     public ItemStack wandStack() {
-        if (items.isEmpty()) return ItemStack.EMPTY;
+        if (items.isEmpty())
+            return ItemStack.EMPTY;
         return items.getLast();
     }
 
@@ -160,10 +160,7 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
             boolean var10000;
             if (obj instanceof ArcaneCraftingInput) {
                 ArcaneCraftingInput input = (ArcaneCraftingInput) obj;
-                var10000 = this.width == input.width
-                        && this.height == input.height
-                        && this.ingredientCount == input.ingredientCount
-                        && ItemStack.listMatches(this.items, input.items);
+                var10000 = this.width == input.width && this.height == input.height && this.ingredientCount == input.ingredientCount && ItemStack.listMatches(this.items, input.items);
             } else {
                 var10000 = false;
             }
@@ -180,14 +177,15 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
 
     @Override
     public AspectList availableCrystals() {
-        if (items.size() < 10 && height == 3 && width == 3) return AspectList.EMPTY;
-        if (items.size() - 7 < 0) return AspectList.EMPTY;
+        if (items.size() < 10 && height == 3 && width == 3)
+            return AspectList.EMPTY;
+        if (items.size() - 7 < 0)
+            return AspectList.EMPTY;
         List<ItemStack> crystals = items.subList(items.size() - 7, items.size() - 1);
         List<AspectInstance> aspects = new ArrayList<>();
         for (ItemStack crystal : crystals) {
             if (crystal.is(TCItems.ESSENTIA_CRYSTAL) && crystal.has(TCDataComponents.CRYSTAL_ASPECT)) {
-                Holder<IAspect> aspect =
-                        crystal.get(TCDataComponents.CRYSTAL_ASPECT.get()).aspect();
+                Holder<IAspect> aspect = crystal.get(TCDataComponents.CRYSTAL_ASPECT.get()).aspect();
                 aspects.add(new AspectInstance(aspect, crystal.count()));
             }
         }
@@ -195,7 +193,6 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
     }
 
     public static record Positioned(ArcaneCraftingInput input, int left, int top) {
-        public static final ArcaneCraftingInput.Positioned EMPTY =
-                new ArcaneCraftingInput.Positioned(ArcaneCraftingInput.EMPTY, 0, 0);
+        public static final ArcaneCraftingInput.Positioned EMPTY = new ArcaneCraftingInput.Positioned(ArcaneCraftingInput.EMPTY, 0, 0);
     }
 }

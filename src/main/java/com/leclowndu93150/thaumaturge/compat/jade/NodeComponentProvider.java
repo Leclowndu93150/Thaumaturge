@@ -32,20 +32,13 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
             return;
         }
         Player player = accessor.getPlayer();
-        if (!GogglesAccess.revealsNodes(player)
-                && !(player.getMainHandItem().getItem() instanceof ThaumometerItem)
-                && !(player.getOffhandItem().getItem() instanceof ThaumometerItem)) {
+        if (!GogglesAccess.revealsNodes(player) && !(player.getMainHandItem().getItem() instanceof ThaumometerItem) && !(player.getOffhandItem().getItem() instanceof ThaumometerItem)) {
             return;
         }
         if (node.getNodeType() != NodeType.NORMAL || node.getNodeModifier() != null) {
-            MutableComponent type = Component.translatable(
-                    "jade.thaumaturge.node.type." + node.getNodeType().getSerializedName());
+            MutableComponent type = Component.translatable("jade.thaumaturge.node.type." + node.getNodeType().getSerializedName());
             if (node.getNodeModifier() != null) {
-                type = Component.translatable(
-                        "jade.thaumaturge.node.modified",
-                        Component.translatable("jade.thaumaturge.node.modifier."
-                                + node.getNodeModifier().getSerializedName()),
-                        type);
+                type = Component.translatable("jade.thaumaturge.node.modified", Component.translatable("jade.thaumaturge.node.modifier." + node.getNodeModifier().getSerializedName()), type);
             }
             tooltip.add(type);
         }
@@ -54,12 +47,8 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
             tooltip.add(JadeComponents.aspectLine("jade.thaumaturge.node.aspects", aspects));
         }
         if (node.isEnergized()) {
-            tooltip.add(
-                    Component.translatable("jade.thaumaturge.node.energized").withStyle(ChatFormatting.AQUA));
-            tooltip.add(Component.translatable(
-                    node.getNodeType() == NodeType.TAINTED
-                            ? "jade.thaumaturge.node.feeds_flux"
-                            : "jade.thaumaturge.node.feeds_aura"));
+            tooltip.add(Component.translatable("jade.thaumaturge.node.energized").withStyle(ChatFormatting.AQUA));
+            tooltip.add(Component.translatable(node.getNodeType() == NodeType.TAINTED ? "jade.thaumaturge.node.feeds_flux" : "jade.thaumaturge.node.feeds_aura"));
             AspectList original = node.getAspectsBaseOriginal();
             if (original != null && !original.isEmpty()) {
                 tooltip.add(JadeComponents.aspectLine("jade.thaumaturge.node.reverts_to", original));

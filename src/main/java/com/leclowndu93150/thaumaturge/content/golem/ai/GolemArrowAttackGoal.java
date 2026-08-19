@@ -20,12 +20,7 @@ public final class GolemArrowAttackGoal extends Goal {
     private int attackTime = -1;
     private int seeTime;
 
-    public GolemArrowAttackGoal(
-            RangedAttackMob rangedMob,
-            double moveSpeed,
-            int attackIntervalMin,
-            int attackIntervalMax,
-            float attackRadius) {
+    public GolemArrowAttackGoal(RangedAttackMob rangedMob, double moveSpeed, int attackIntervalMin, int attackIntervalMax, float attackRadius) {
         this.rangedMob = rangedMob;
         this.mob = (Mob) rangedMob;
         this.moveSpeed = moveSpeed;

@@ -16,43 +16,23 @@ public final class TCMeshQuadBaker {
 
     private TCMeshQuadBaker() {}
 
-    public static void bakePart(
-            TCMeshPart part,
-            Material.Baked baked,
-            int tintIndex,
-            Matrix4f transform,
-            BakedQuad.MaterialInfo info,
-            List<BakedQuad> output) {
+    public static void bakePart(TCMeshPart part, Material.Baked baked, int tintIndex, Matrix4f transform, BakedQuad.MaterialInfo info, List<BakedQuad> output) {
         bakePart(part, baked, tintIndex, transform, info, false, output);
     }
 
-    public static void bakePart(
-            TCMeshPart part,
-            Material.Baked baked,
-            int tintIndex,
-            Matrix4f transform,
-            BakedQuad.MaterialInfo info,
-            boolean flipV,
-            List<BakedQuad> output) {
+    public static void bakePart(TCMeshPart part, Material.Baked baked, int tintIndex, Matrix4f transform, BakedQuad.MaterialInfo info, boolean flipV, List<BakedQuad> output) {
         for (int quad = 0; quad < part.quadCount(); quad++) {
             output.add(bakeQuad(part, quad, baked, transform, info, flipV));
         }
     }
 
-    private static BakedQuad bakeQuad(
-            TCMeshPart part,
-            int quad,
-            Material.Baked baked,
-            Matrix4f transform,
-            BakedQuad.MaterialInfo info,
-            boolean flipV) {
+    private static BakedQuad bakeQuad(TCMeshPart part, int quad, Material.Baked baked, Matrix4f transform, BakedQuad.MaterialInfo info, boolean flipV) {
         Vector3fc[] positions = new Vector3fc[4];
         float[] us = new float[4];
         float[] vs = new float[4];
         for (int i = 0; i < 4; i++) {
             int vertex = quad * 4 + i;
-            Vector3f pos = new Vector3f(
-                    part.positions()[vertex * 3], part.positions()[vertex * 3 + 1], part.positions()[vertex * 3 + 2]);
+            Vector3f pos = new Vector3f(part.positions()[vertex * 3], part.positions()[vertex * 3 + 1], part.positions()[vertex * 3 + 2]);
             float u = 0.0F;
             float v = 0.0F;
             if (part.uvs() != null) {
@@ -70,17 +50,7 @@ public final class TCMeshQuadBaker {
             packedUvs[i] = UVPair.pack(us[i], vs[i]);
         }
         Direction facing = computeFaceDirection(positions);
-        return new BakedQuad(
-                positions[0],
-                positions[1],
-                positions[2],
-                positions[3],
-                packedUvs[0],
-                packedUvs[1],
-                packedUvs[2],
-                packedUvs[3],
-                facing,
-                info);
+        return new BakedQuad(positions[0], positions[1], positions[2], positions[3], packedUvs[0], packedUvs[1], packedUvs[2], packedUvs[3], facing, info);
     }
 
     private static void contractUvs(float[] us, float[] vs, TextureAtlasSprite sprite) {

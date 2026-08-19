@@ -46,25 +46,19 @@ public final class BlockResearchTable extends BaseEntityBlock {
 
     public BlockResearchTable(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(
-                stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, ResearchTablePart.MAIN));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, ResearchTablePart.MAIN));
     }
 
     private static Map<Direction, VoxelShape> buildShapes() {
         Map<Direction, VoxelShape> shapes = new EnumMap<>(Direction.class);
         for (Direction facing : Direction.Plane.HORIZONTAL) {
             Direction legSide = facing.getOpposite();
-            VoxelShape legs =
-                    switch (legSide) {
-                        case WEST ->
-                            Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0));
-                        case EAST ->
-                            Shapes.or(box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
-                        case NORTH ->
-                            Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0));
-                        default ->
-                            Shapes.or(box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
-                    };
+            VoxelShape legs = switch (legSide) {
+                case WEST -> Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0));
+                case EAST -> Shapes.or(box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
+                case NORTH -> Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0));
+                default -> Shapes.or(box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
+            };
             shapes.put(facing, Shapes.or(SHAPE_TOP, legs));
         }
         return shapes;
@@ -85,23 +79,18 @@ public final class BlockResearchTable extends BaseEntityBlock {
         Direction facing = context.getHorizontalDirection().getClockWise();
         BlockPos partnerPos = context.getClickedPos().relative(facing);
         Level level = context.getLevel();
-        if (!level.getBlockState(partnerPos).canBeReplaced(context)
-                || !level.getWorldBorder().isWithinBounds(partnerPos)) {
+        if (!level.getBlockState(partnerPos).canBeReplaced(context) || !level.getWorldBorder().isWithinBounds(partnerPos)) {
             return null;
         }
         return defaultBlockState().setValue(FACING, facing).setValue(PART, ResearchTablePart.MAIN);
     }
 
     @Override
-    public void setPlacedBy(
-            Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (!level.isClientSide() && state.getValue(PART) == ResearchTablePart.MAIN) {
             Direction facing = state.getValue(FACING);
-            level.setBlock(
-                    pos.relative(facing),
-                    defaultBlockState().setValue(FACING, facing.getOpposite()).setValue(PART, ResearchTablePart.EXT),
-                    3);
+            level.setBlock(pos.relative(facing), defaultBlockState().setValue(FACING, facing.getOpposite()).setValue(PART, ResearchTablePart.EXT), 3);
         }
     }
 
@@ -121,8 +110,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
 
@@ -146,8 +134,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockPos main = mainPos(state, pos);
             MenuProvider provider = getMenuProvider(state, level, pos);
@@ -159,8 +146,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }
@@ -168,17 +154,14 @@ public final class BlockResearchTable extends BaseEntityBlock {
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         if (level.getBlockEntity(pos) instanceof BlockEntityResearchTable be) {
             be.dropContents(level, pos);
         }
         Direction facing = state.getValue(FACING);
         BlockPos partnerPos = pos.relative(facing);
         BlockState partner = level.getBlockState(partnerPos);
-        if (partner.is(this)
-                && partner.getValue(FACING) == facing.getOpposite()
-                && partner.getValue(PART) != state.getValue(PART)) {
+        if (partner.is(this) && partner.getValue(FACING) == facing.getOpposite() && partner.getValue(PART) != state.getValue(PART)) {
             if (level.getBlockEntity(partnerPos) instanceof BlockEntityResearchTable partnerBe) {
                 partnerBe.dropContents(level, partnerPos);
                 level.removeBlockEntity(partnerPos);

@@ -12,20 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import org.jspecify.annotations.Nullable;
 
 public record ResearchGate(Identifier entry, Optional<Integer> stage, boolean negate) {
-    public static final Codec<ResearchGate> CODEC = RecordCodecBuilder.create(i -> i.group(
-                    Identifier.CODEC.fieldOf("entry").forGetter(ResearchGate::entry),
-                    Codec.INT.optionalFieldOf("stage").forGetter(ResearchGate::stage),
-                    Codec.BOOL.optionalFieldOf("negate", false).forGetter(ResearchGate::negate))
-            .apply(i, ResearchGate::new));
+    public static final Codec<ResearchGate> CODEC = RecordCodecBuilder.create(i -> i.group(Identifier.CODEC.fieldOf("entry").forGetter(ResearchGate::entry),
+            Codec.INT.optionalFieldOf("stage").forGetter(ResearchGate::stage), Codec.BOOL.optionalFieldOf("negate", false).forGetter(ResearchGate::negate)).apply(i, ResearchGate::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ResearchGate> STREAM_CODEC = StreamCodec.composite(
-            Identifier.STREAM_CODEC,
-            ResearchGate::entry,
-            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT),
-            ResearchGate::stage,
-            ByteBufCodecs.BOOL,
-            ResearchGate::negate,
-            ResearchGate::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ResearchGate> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC, ResearchGate::entry,
+            ByteBufCodecs.optional(ByteBufCodecs.VAR_INT), ResearchGate::stage, ByteBufCodecs.BOOL, ResearchGate::negate, ResearchGate::new);
 
     private static BiPredicate<Player, ResearchGate> binding;
 

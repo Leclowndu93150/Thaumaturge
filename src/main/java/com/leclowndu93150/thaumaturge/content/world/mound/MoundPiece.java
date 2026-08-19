@@ -49,15 +49,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
     private boolean spawnedPortal;
 
     public MoundPiece(RandomSource random, int west, int north) {
-        super(
-                TCStructures.MOUND_PIECE.get(),
-                west,
-                64,
-                north,
-                MoundLayout.SIZE_X,
-                MoundLayout.SIZE_Y,
-                MoundLayout.SIZE_Z,
-                Direction.SOUTH);
+        super(TCStructures.MOUND_PIECE.get(), west, 64, north, MoundLayout.SIZE_X, MoundLayout.SIZE_Y, MoundLayout.SIZE_Z, Direction.SOUTH);
     }
 
     public MoundPiece(CompoundTag tag) {
@@ -72,14 +64,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
     }
 
     @Override
-    public void postProcess(
-            WorldGenLevel level,
-            StructureManager structureManager,
-            ChunkGenerator generator,
-            RandomSource random,
-            BoundingBox chunkBB,
-            ChunkPos chunkPos,
-            BlockPos referencePos) {
+    public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator generator, RandomSource random, BoundingBox chunkBB, ChunkPos chunkPos, BlockPos referencePos) {
         if (!this.updateAverageGroundHeight(level, chunkBB, SURFACE_OFFSET)) {
             return;
         }
@@ -133,15 +118,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
     private void placeNode(WorldGenLevel level, RandomSource random, BoundingBox chunkBB) {
         BlockPos pos = this.getWorldPos(NODE.getX(), NODE.getY(), NODE.getZ());
         if (chunkBB.isInside(pos)) {
-            NodeGenerator.createRandomNodeAt(
-                    level,
-                    pos,
-                    random,
-                    false,
-                    true,
-                    false,
-                    NodeGenerator.DEFAULT_SPECIAL_RARITY,
-                    NodeGenerator.DEFAULT_BASE_AURA);
+            NodeGenerator.createRandomNodeAt(level, pos, random, false, true, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
         }
     }
 
@@ -152,16 +129,14 @@ public class MoundPiece extends ScatteredFeaturePiece {
         }
         boolean trapped = random.nextInt(TRAPPED_CHEST_ONE_IN) == 0;
         Block chestBlock = trapped ? Blocks.TRAPPED_CHEST : Blocks.CHEST;
-        level.setBlock(
-                pos, chestBlock.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.WEST), 2);
+        level.setBlock(pos, chestBlock.defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, Direction.WEST), 2);
         RandomizableContainer.setBlockEntityLootTable(level, random, pos, BuiltInLootTables.SIMPLE_DUNGEON);
         if (trapped) {
             level.setBlock(pos.below(2), Blocks.TNT.defaultBlockState(), 2);
         }
     }
 
-    private void placeSpawner(
-            WorldGenLevel level, BoundingBox chunkBB, BlockPos local, EntityType<?> entityType, RandomSource random) {
+    private void placeSpawner(WorldGenLevel level, BoundingBox chunkBB, BlockPos local, EntityType<?> entityType, RandomSource random) {
         BlockPos pos = this.getWorldPos(local.getX(), local.getY(), local.getZ());
         if (!chunkBB.isInside(pos)) {
             return;
@@ -181,8 +156,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
             return;
         }
         this.spawnedPortal = true;
-        EntityCultistPortalLesser portal =
-                TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+        EntityCultistPortalLesser portal = TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (portal != null) {
             portal.setPersistenceRequired();
             portal.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
@@ -195,18 +169,12 @@ public class MoundPiece extends ScatteredFeaturePiece {
         float roll = random.nextFloat();
         boolean crate = random.nextFloat() < CRATE_CHANCE;
         if (roll < RARE_CHANCE) {
-            return (crate ? TCBlocks.LOOT_CRATE_RARE : TCBlocks.LOOT_URN_RARE)
-                    .get()
-                    .defaultBlockState();
+            return (crate ? TCBlocks.LOOT_CRATE_RARE : TCBlocks.LOOT_URN_RARE).get().defaultBlockState();
         }
         if (roll < UNCOMMON_CHANCE) {
-            return (crate ? TCBlocks.LOOT_CRATE_UNCOMMON : TCBlocks.LOOT_URN_UNCOMMON)
-                    .get()
-                    .defaultBlockState();
+            return (crate ? TCBlocks.LOOT_CRATE_UNCOMMON : TCBlocks.LOOT_URN_UNCOMMON).get().defaultBlockState();
         }
-        return (crate ? TCBlocks.LOOT_CRATE_COMMON : TCBlocks.LOOT_URN_COMMON)
-                .get()
-                .defaultBlockState();
+        return (crate ? TCBlocks.LOOT_CRATE_COMMON : TCBlocks.LOOT_URN_COMMON).get().defaultBlockState();
     }
 
     private static BlockState stateFor(int id) {
@@ -224,8 +192,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
             case MoundLayout.STAIRS_WEST_TOP -> stairs(Direction.WEST, Half.TOP);
             case MoundLayout.STAIRS_SOUTH_TOP -> stairs(Direction.SOUTH, Half.TOP);
             case MoundLayout.STAIRS_NORTH_TOP -> stairs(Direction.NORTH, Half.TOP);
-            case MoundLayout.LADDER_EAST ->
-                Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
+            case MoundLayout.LADDER_EAST -> Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
             case MoundLayout.IRON_BARS -> Blocks.IRON_BARS.defaultBlockState();
             case MoundLayout.CHISELED_STONE_BRICKS -> Blocks.CHISELED_STONE_BRICKS.defaultBlockState();
             default -> Blocks.AIR.defaultBlockState();
@@ -233,9 +200,6 @@ public class MoundPiece extends ScatteredFeaturePiece {
     }
 
     private static BlockState stairs(Direction facing, Half half) {
-        return Blocks.COBBLESTONE_STAIRS
-                .defaultBlockState()
-                .setValue(StairBlock.FACING, facing)
-                .setValue(StairBlock.HALF, half);
+        return Blocks.COBBLESTONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING, facing).setValue(StairBlock.HALF, half);
     }
 }

@@ -41,95 +41,53 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     private static final float[] VENT_CURIO_CHANCES = {0.01F, 0.01F, 0.02F, 0.03F};
 
     private LootTable.Builder dropSelfWithoutExplosion(Block block) {
-        return LootTable.lootTable()
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1.0F))
-                        .add(LootItem.lootTableItem(block)));
+        return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(block)));
     }
 
     private LootTable.Builder crystalTable(BlockCrystal block) {
-        Holder<IAspect> aspect =
-                lookupProvider.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(block.aspect());
+        Holder<IAspect> aspect = lookupProvider.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(block.aspect());
         LootPoolSingletonContainer.Builder<?> entry = LootItem.lootTableItem(TCItems.ESSENTIA_CRYSTAL.get())
-                .apply(SetComponentsFunction.setComponent(
-                        TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1)));
+                .apply(SetComponentsFunction.setComponent(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1)));
         for (int size = 1; size <= 3; size++) {
             entry = entry.apply(SetItemCountFunction.setCount(ConstantValue.exactly(size + 1), false)
-                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                            .setProperties(StatePropertiesPredicate.Builder.properties()
-                                    .hasProperty(BlockCrystal.SIZE, size))));
+                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockCrystal.SIZE, size))));
         }
-        return LootTable.lootTable()
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1.0F))
-                        .add(entry));
+        return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(entry));
     }
 
     private static final float SECOND_BEAN_CHANCE = 0.67F;
 
     private LootTable.Builder manaPodTable(Block block) {
-        LootItemBlockStatePropertyCondition.Builder[] grownStages =
-                new LootItemBlockStatePropertyCondition.Builder[BlockEntityManaPod.MAX_AGE - 1];
+        LootItemBlockStatePropertyCondition.Builder[] grownStages = new LootItemBlockStatePropertyCondition.Builder[BlockEntityManaPod.MAX_AGE - 1];
         for (int age = 2; age <= BlockEntityManaPod.MAX_AGE; age++) {
-            grownStages[age - 2] = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                    .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockManaPod.AGE, age));
+            grownStages[age - 2] = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockManaPod.AGE, age));
         }
         return LootTable.lootTable()
-                .withPool(this.applyExplosionCondition(
-                        block,
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .when(AnyOfCondition.anyOf(grownStages))
+                .withPool(this.applyExplosionCondition(block,
+                        LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AnyOfCondition.anyOf(grownStages))
                                 .add(LootItem.lootTableItem(TCItems.MANA_BEAN.get())
-                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                        LootContextParams.BLOCK_ENTITY)
-                                                .include(TCDataComponents.CRYSTAL_ASPECT.get())))))
-                .withPool(this.applyExplosionCondition(
-                        block,
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
+                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(TCDataComponents.CRYSTAL_ASPECT.get())))))
+                .withPool(this.applyExplosionCondition(block,
+                        LootPool.lootPool().setRolls(ConstantValue.exactly(1))
                                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                                        .setProperties(StatePropertiesPredicate.Builder.properties()
-                                                .hasProperty(BlockManaPod.AGE, BlockEntityManaPod.MAX_AGE)))
-                                .when(LootItemRandomChanceCondition.randomChance(SECOND_BEAN_CHANCE))
-                                .add(LootItem.lootTableItem(TCItems.MANA_BEAN.get())
-                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                        LootContextParams.BLOCK_ENTITY)
-                                                .include(TCDataComponents.CRYSTAL_ASPECT.get())))));
+                                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockManaPod.AGE, BlockEntityManaPod.MAX_AGE)))
+                                .when(LootItemRandomChanceCondition.randomChance(SECOND_BEAN_CHANCE)).add(LootItem.lootTableItem(TCItems.MANA_BEAN.get())
+                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(TCDataComponents.CRYSTAL_ASPECT.get())))));
     }
 
     private LootTable.Builder mirrorTable(Block block) {
-        return LootTable.lootTable()
-                .withPool(this.applyExplosionCondition(
-                        block,
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .add(LootItem.lootTableItem(block)
-                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                        LootContextParams.BLOCK_ENTITY)
-                                                .include(TCDataComponents.MIRROR_LINK.get())))));
+        return LootTable.lootTable().withPool(this.applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(block).apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(TCDataComponents.MIRROR_LINK.get())))));
     }
 
     private LootTable.Builder bannerTable(ItemLike item) {
-        return LootTable.lootTable()
-                .withPool(this.applyExplosionCondition(
-                        item,
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .add(LootItem.lootTableItem(item)
-                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                LootContextParams.BLOCK_ENTITY)))));
+        return LootTable.lootTable().withPool(this.applyExplosionCondition(item,
+                LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(item).apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)))));
     }
 
     private LootTable.Builder lootContainerTable(Block block, int rarity) {
-        return LootTable.lootTable()
-                .withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1))
-                        .when(this.hasSilkTouch())
-                        .add(LootItem.lootTableItem(block)))
-                .withPool(TreasureLootPools.treasurePool(
-                                lookupProvider, rarity, UniformGenerator.between(1.0F + rarity, 3.0F + rarity))
-                        .when(this.doesNotHaveSilkTouch()));
+        return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(this.hasSilkTouch()).add(LootItem.lootTableItem(block)))
+                .withPool(TreasureLootPools.treasurePool(lookupProvider, rarity, UniformGenerator.between(1.0F + rarity, 3.0F + rarity)).when(this.doesNotHaveSilkTouch()));
     }
 
     private final HolderLookup.Provider lookupProvider;
@@ -141,9 +99,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return TCBlocks.BLOCKS.getEntries().stream()
-                .map(holder -> (Block) holder.value())
-                .toList();
+        return TCBlocks.BLOCKS.getEntries().stream().map(holder -> (Block) holder.value()).toList();
     }
 
     @Override
@@ -152,26 +108,13 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.NODE_STABILIZER_ADVANCED.get());
         dropSelf(TCBlocks.NODE_TRANSDUCER.get());
         dropSelf(TCBlocks.VIS_RELAY.get());
-        add(
-                TCBlocks.JAR_NODE.get(),
-                LootTable.lootTable()
-                        .withPool(this.applyExplosionCondition(
-                                TCBlocks.JAR_NODE.get(),
-                                LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(1))
-                                        .add(LootItem.lootTableItem(TCBlocks.JAR_NODE.get())
-                                                .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                                LootContextParams.BLOCK_ENTITY)
-                                                        .include(TCDataComponents.NODE_DATA.get()))))));
+        add(TCBlocks.JAR_NODE.get(), LootTable.lootTable().withPool(this.applyExplosionCondition(TCBlocks.JAR_NODE.get(), LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem
+                .lootTableItem(TCBlocks.JAR_NODE.get()).apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(TCDataComponents.NODE_DATA.get()))))));
 
         for (DyeColor dye : DyeColor.values()) {
             dropSelf(TCBlocks.CANDLES.get(dye).get());
-            add(
-                    TCBlocks.BANNERS.get(dye).get(),
-                    bannerTable(TCItems.BANNERS.get(dye).get()));
-            add(
-                    TCBlocks.WALL_BANNERS.get(dye).get(),
-                    bannerTable(TCItems.BANNERS.get(dye).get()));
+            add(TCBlocks.BANNERS.get(dye).get(), bannerTable(TCItems.BANNERS.get(dye).get()));
+            add(TCBlocks.WALL_BANNERS.get(dye).get(), bannerTable(TCItems.BANNERS.get(dye).get()));
         }
         add(TCBlocks.BANNER_CRIMSON_CULT.get(), bannerTable(TCItems.BANNER_CRIMSON_CULT.get()));
         add(TCBlocks.WALL_BANNER_CRIMSON_CULT.get(), bannerTable(TCItems.BANNER_CRIMSON_CULT.get()));
@@ -241,12 +184,8 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
         dropSelf(TCBlocks.PLANK_GREATWOOD.get());
         dropSelf(TCBlocks.PLANK_SILVERWOOD.get());
-        add(
-                TCBlocks.LEAVES_GREATWOOD.get(),
-                createLeavesDrops(TCBlocks.LEAVES_GREATWOOD.get(), TCBlocks.SAPLING_GREATWOOD.get()));
-        add(
-                TCBlocks.LEAVES_SILVERWOOD.get(),
-                createLeavesDrops(TCBlocks.LEAVES_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get()));
+        add(TCBlocks.LEAVES_GREATWOOD.get(), createLeavesDrops(TCBlocks.LEAVES_GREATWOOD.get(), TCBlocks.SAPLING_GREATWOOD.get()));
+        add(TCBlocks.LEAVES_SILVERWOOD.get(), createLeavesDrops(TCBlocks.LEAVES_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get()));
         dropSelf(TCBlocks.PLANT_SHIMMERLEAF.get());
         dropSelf(TCBlocks.PLANT_CINDERPEARL.get());
         dropSelf(TCBlocks.PLANT_VISHROOM.get());
@@ -265,40 +204,20 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private LootTable.Builder jarLootTable(Block block) {
-        return LootTable.lootTable()
-                .withPool(applyExplosionCondition(
-                        block,
-                        LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(block)
-                                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(
-                                                        LootContextParams.BLOCK_ENTITY)
-                                                .include(TCDataComponents.ESSENTIA_CONTENTS.get())
-                                                .include(TCDataComponents.ASPECT_FILTER.get())))));
+        return LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(block).apply(CopyComponentsFunction
+                .copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY).include(TCDataComponents.ESSENTIA_CONTENTS.get()).include(TCDataComponents.ASPECT_FILTER.get())))));
     }
 
     private void generateResources() {
-        add(
-                TCBlocks.ORE_AMBER.get(),
-                b -> createOreDrop(b, TCItems.AMBER.get())
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .when(this.doesNotHaveSilkTouch())
-                                .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE))
-                                .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
+        add(TCBlocks.ORE_AMBER.get(), b -> createOreDrop(b, TCItems.AMBER.get()).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(this.doesNotHaveSilkTouch())
+                .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE)).add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
         add(TCBlocks.MIRROR.get(), this::mirrorTable);
         add(TCBlocks.MIRROR_ESSENTIA.get(), this::mirrorTable);
         add(TCBlocks.MANA_POD.get(), this::manaPodTable);
-        add(
-                TCBlocks.ELDRITCH_CRAB_SPAWNER.get(),
+        add(TCBlocks.ELDRITCH_CRAB_SPAWNER.get(),
                 b -> LootTable.lootTable()
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .when(BonusLevelTableCondition.bonusLevelFlatChance(
-                                        lookupProvider
-                                                .lookupOrThrow(Registries.ENCHANTMENT)
-                                                .getOrThrow(Enchantments.FORTUNE),
-                                        VENT_CURIO_CHANCES))
+                        .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(lookupProvider.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), VENT_CURIO_CHANCES))
                                 .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
         dropSelf(TCBlocks.ORE_CINNABAR.get());
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));

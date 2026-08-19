@@ -13,11 +13,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface HumanoidArmorLayerAccessor {
 
     @Invoker("renderArmorPiece")
-    <S extends HumanoidRenderState> void invokeRenderArmorPiece(
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            ItemStack itemStack,
-            EquipmentSlot slot,
-            int lightCoords,
-            S state);
+    <S extends HumanoidRenderState> void invokeRenderArmorPiece(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, ItemStack itemStack, EquipmentSlot slot, int lightCoords, S state);
 }

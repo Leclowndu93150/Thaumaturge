@@ -18,31 +18,12 @@ public final class EffectDispatch {
         spawnEssentiaStream(level, from, to, color, typeTag, level.getRandom().nextInt(8), 0.15F, 20, 0.0);
     }
 
-    public static void spawnEssentiaStream(
-            ServerLevel level,
-            Vec3 from,
-            Vec3 to,
-            int color,
-            int typeTag,
-            int count,
-            float scale,
-            int extend,
-            double my) {
+    public static void spawnEssentiaStream(ServerLevel level, Vec3 from, Vec3 to, int color, int typeTag, int count, float scale, int extend, double my) {
         EssentiaSourceEffectTracker.dispatch(level, from, to, color, typeTag, count, scale, extend, my);
     }
 
-    static void broadcastEssentiaStream(
-            ServerLevel level,
-            Vec3 from,
-            Vec3 to,
-            int color,
-            int typeTag,
-            int count,
-            float scale,
-            int extend,
-            double my) {
-        ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.essentia(
-                from.x, from.y, from.z, to.x, to.y, to.z, color, count, scale, extend, my);
+    static void broadcastEssentiaStream(ServerLevel level, Vec3 from, Vec3 to, int color, int typeTag, int count, float scale, int extend, double my) {
+        ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.essentia(from.x, from.y, from.z, to.x, to.y, to.z, color, count, scale, extend, my);
         PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
@@ -57,14 +38,12 @@ public final class EffectDispatch {
     }
 
     public static void spawnArc(ServerLevel level, Vec3 from, Vec3 to, int color, float gravityHint) {
-        ClientboundStreamEffectPayload payload =
-                ClientboundStreamEffectPayload.arc(from.x, from.y, from.z, to.x, to.y, to.z, color, gravityHint);
+        ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.arc(from.x, from.y, from.z, to.x, to.y, to.z, color, gravityHint);
         PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
     public static void spawnBolt(ServerLevel level, Vec3 from, Vec3 to, int color, float width) {
-        ClientboundStreamEffectPayload payload =
-                ClientboundStreamEffectPayload.bolt(from.x, from.y, from.z, to.x, to.y, to.z, color, width);
+        ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.bolt(from.x, from.y, from.z, to.x, to.y, to.z, color, width);
         PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 
@@ -78,13 +57,6 @@ public final class EffectDispatch {
     }
 
     private static void broadcast(ServerLevel level, ParticleOptions options, Vec3 origin) {
-        PacketDistributor.sendToPlayersNear(
-                level,
-                null,
-                origin.x,
-                origin.y,
-                origin.z,
-                DEFAULT_RADIUS,
-                new ClientboundSpawnParticlePayload(options, origin.x, origin.y, origin.z));
+        PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, DEFAULT_RADIUS, new ClientboundSpawnParticlePayload(options, origin.x, origin.y, origin.z));
     }
 }

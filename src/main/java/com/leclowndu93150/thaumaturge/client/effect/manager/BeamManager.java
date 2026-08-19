@@ -63,39 +63,44 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         while (it.hasNext()) {
             I inst = it.next();
             inst.tick();
-            if (inst.isExpired()) it.remove();
+            if (inst.isExpired())
+                it.remove();
         }
     }
 
     @Override
     public void renderAll(PoseStack poseStack, Camera camera, float partialTick) {
-        if (ARCS.isEmpty() && BOLTS.isEmpty() && BEAMS.isEmpty()) return;
+        if (ARCS.isEmpty() && BOLTS.isEmpty() && BEAMS.isEmpty())
+            return;
         Vec3 camPos = camera.position();
 
         if (!ARCS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
             VertexConsumer consumer = bufSource.getBuffer(ArcRenderType.RENDER_TYPE);
-            for (ArcInstance arc : ARCS) renderArc(poseStack, consumer, arc, camPos, partialTick);
+            for (ArcInstance arc : ARCS)
+                renderArc(poseStack, consumer, arc, camPos, partialTick);
             bufSource.endBatch(ArcRenderType.RENDER_TYPE);
         }
 
         if (!BOLTS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(4096));
             VertexConsumer consumer = bufSource.getBuffer(BoltRenderType.RENDER_TYPE);
-            for (BoltInstance bolt : BOLTS) renderBolt(poseStack, consumer, bolt, camPos, partialTick);
+            for (BoltInstance bolt : BOLTS)
+                renderBolt(poseStack, consumer, bolt, camPos, partialTick);
             bufSource.endBatch(BoltRenderType.RENDER_TYPE);
         }
 
         if (!BEAMS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(8192));
-            for (BeamInstance beam : BEAMS) renderBeam(poseStack, bufSource, beam, camPos, partialTick);
-            for (int t = 0; t < 4; t++) bufSource.endBatch(BeamRenderType.trunkForType(t));
+            for (BeamInstance beam : BEAMS)
+                renderBeam(poseStack, bufSource, beam, camPos, partialTick);
+            for (int t = 0; t < 4; t++)
+                bufSource.endBatch(BeamRenderType.trunkForType(t));
             bufSource.endBatch(BeamRenderType.NODE_TYPE);
         }
     }
 
-    private static void renderBeam(
-            PoseStack poseStack, MultiBufferSource bufSource, BeamInstance beam, Vec3 camPos, float partialTick) {
+    private static void renderBeam(PoseStack poseStack, MultiBufferSource bufSource, BeamInstance beam, Vec3 camPos, float partialTick) {
         VertexConsumer trunk = bufSource.getBuffer(BeamRenderType.trunkForType(beam.beamType()));
         Vec3 source = beam.sourcePos(partialTick);
         Vec3 target = beam.targetPos(partialTick);
@@ -160,13 +165,11 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         }
     }
 
-    private static void beamVertex(
-            VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
+    private static void beamVertex(VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
         consumer.addVertex(mat, (float) x, (float) y, (float) z).setColor(color).setUv(u, v);
     }
 
-    private static void renderArc(
-            PoseStack poseStack, VertexConsumer consumer, ArcInstance arc, Vec3 camPos, float partialTick) {
+    private static void renderArc(PoseStack poseStack, VertexConsumer consumer, ArcInstance arc, Vec3 camPos, float partialTick) {
         poseStack.pushPose();
         poseStack.translate(arc.startX - camPos.x, arc.startY - camPos.y, arc.startZ - camPos.z);
         Matrix4f mat = poseStack.last().pose();
@@ -192,31 +195,28 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         poseStack.popPose();
     }
 
-    private static void emitArcQuadY(
-            VertexConsumer consumer, Matrix4f mat, Vec3 v0, Vec3 v1, float u0, float u1, int color, float size) {
+    private static void emitArcQuadY(VertexConsumer consumer, Matrix4f mat, Vec3 v0, Vec3 v1, float u0, float u1, int color, float size) {
         vertex(consumer, mat, v0.x, v0.y - size, v0.z, u0, 1.0F, color);
         vertex(consumer, mat, v0.x, v0.y + size, v0.z, u0, 0.0F, color);
         vertex(consumer, mat, v1.x, v1.y + size, v1.z, u1, 0.0F, color);
         vertex(consumer, mat, v1.x, v1.y - size, v1.z, u1, 1.0F, color);
     }
 
-    private static void emitArcQuadXZ(
-            VertexConsumer consumer, Matrix4f mat, Vec3 v0, Vec3 v1, float u0, float u1, int color, float size) {
+    private static void emitArcQuadXZ(VertexConsumer consumer, Matrix4f mat, Vec3 v0, Vec3 v1, float u0, float u1, int color, float size) {
         vertex(consumer, mat, v0.x - size, v0.y, v0.z - size, u0, 1.0F, color);
         vertex(consumer, mat, v0.x + size, v0.y, v0.z + size, u0, 0.0F, color);
         vertex(consumer, mat, v1.x + size, v1.y, v1.z + size, u1, 0.0F, color);
         vertex(consumer, mat, v1.x - size, v1.y, v1.z - size, u1, 1.0F, color);
     }
 
-    private static void vertex(
-            VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
+    private static void vertex(VertexConsumer consumer, Matrix4f mat, double x, double y, double z, float u, float v, int color) {
         consumer.addVertex(mat, (float) x, (float) y, (float) z).setColor(color).setUv(u, v);
     }
 
-    private static void renderBolt(
-            PoseStack poseStack, VertexConsumer consumer, BoltInstance bolt, Vec3 camPos, float partialTick) {
+    private static void renderBolt(PoseStack poseStack, VertexConsumer consumer, BoltInstance bolt, Vec3 camPos, float partialTick) {
         List<BoltInstance.PathStep> path = bolt.computePath(partialTick);
-        if (path.size() < 3) return;
+        if (path.size() < 3)
+            return;
         poseStack.pushPose();
         poseStack.translate(bolt.startX - camPos.x, bolt.startY - camPos.y, bolt.startZ - camPos.z);
         float alpha = bolt.alpha(partialTick);
@@ -240,7 +240,8 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
             radii[i] = s.width() / 10.0;
         }
         PolyCone.render(poseStack, consumer, points, colours, radii, 0, 1.0F, 0.0F);
-        for (int i = 0; i < n; i++) radii[i] /= 3.0;
+        for (int i = 0; i < n; i++)
+            radii[i] /= 3.0;
         PolyCone.render(poseStack, consumer, points, colours, radii, 0, 1.0F, 0.0F);
         poseStack.popPose();
     }

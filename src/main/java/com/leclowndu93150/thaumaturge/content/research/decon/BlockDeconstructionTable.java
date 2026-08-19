@@ -31,13 +31,8 @@ public final class BlockDeconstructionTable extends BaseEntityBlock {
 
     public static final MapCodec<BlockDeconstructionTable> CODEC = simpleCodec(BlockDeconstructionTable::new);
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            Shapes.box(0.0, 0.5, 0.0, 1.0, 1.0, 1.0),
-            Shapes.box(0.0, 0.0, 0.0, 1.0, 0.25, 1.0),
-            Shapes.box(0.6875, 0.25, 0.6875, 0.9375, 0.5, 0.9375),
-            Shapes.box(0.0625, 0.25, 0.0625, 0.3125, 0.5, 0.3125),
-            Shapes.box(0.6875, 0.25, 0.0625, 0.9375, 0.5, 0.3125),
-            Shapes.box(0.0625, 0.25, 0.6875, 0.3125, 0.5, 0.9375));
+    private static final VoxelShape SHAPE = Shapes.or(Shapes.box(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), Shapes.box(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), Shapes.box(0.6875, 0.25, 0.6875, 0.9375, 0.5, 0.9375),
+            Shapes.box(0.0625, 0.25, 0.0625, 0.3125, 0.5, 0.3125), Shapes.box(0.6875, 0.25, 0.0625, 0.9375, 0.5, 0.3125), Shapes.box(0.0625, 0.25, 0.6875, 0.3125, 0.5, 0.9375));
 
     public BlockDeconstructionTable(Properties properties) {
         super(properties);
@@ -59,14 +54,10 @@ public final class BlockDeconstructionTable extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide()) {
-            if (player instanceof ServerPlayer serverPlayer
-                    && !KnowledgeAccess.of(serverPlayer).isResearchComplete(DECONSTRUCTOR_RESEARCH)) {
-                serverPlayer.connection.send(
-                        new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown")
-                                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
+            if (player instanceof ServerPlayer serverPlayer && !KnowledgeAccess.of(serverPlayer).isResearchComplete(DECONSTRUCTOR_RESEARCH)) {
+                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
                 return InteractionResult.SUCCESS;
             }
             if (level.getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table) {
@@ -77,18 +68,15 @@ public final class BlockDeconstructionTable extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(
-                type, TCBlockEntities.DECONSTRUCTION_TABLE.get(), BlockEntityDeconstructionTable::serverTick);
+        return createTickerHelper(type, TCBlockEntities.DECONSTRUCTION_TABLE.get(), BlockEntityDeconstructionTable::serverTick);
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         if (level.getBlockEntity(pos) instanceof BlockEntityDeconstructionTable table) {
             table.dropContents(level, pos);
         }

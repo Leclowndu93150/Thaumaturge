@@ -16,9 +16,7 @@ public final class DeviceGate {
             return true;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(
-                    new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown")
-                            .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
+            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
         }
         return false;
     }

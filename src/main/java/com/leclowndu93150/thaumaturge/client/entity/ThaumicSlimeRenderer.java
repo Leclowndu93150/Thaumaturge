@@ -18,8 +18,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public final class ThaumicSlimeRenderer extends MobRenderer<ThaumicSlime, SlimeRenderState, SlimeModel> {
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/thaumic_slime.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/thaumic_slime.png");
 
     public ThaumicSlimeRenderer(EntityRendererProvider.Context context) {
         super(context, new SlimeModel(context.bakeLayer(ModelLayers.SLIME)), 0.25F);
@@ -67,42 +66,16 @@ public final class ThaumicSlimeRenderer extends MobRenderer<ThaumicSlime, SlimeR
         }
 
         @Override
-        public void submit(
-                PoseStack poseStack,
-                SubmitNodeCollector collector,
-                int lightCoords,
-                SlimeRenderState state,
-                float yRot,
-                float xRot) {
+        public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, SlimeRenderState state, float yRot, float xRot) {
             boolean glowingInvisible = state.appearsGlowing() && state.isInvisible;
             if (state.isInvisible && !glowingInvisible) {
                 return;
             }
             int overlayCoords = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
             if (glowingInvisible) {
-                collector
-                        .order(1)
-                        .submitModel(
-                                this.model,
-                                state,
-                                poseStack,
-                                RenderTypes.outline(TEXTURE),
-                                lightCoords,
-                                overlayCoords,
-                                state.outlineColor,
-                                null);
+                collector.order(1).submitModel(this.model, state, poseStack, RenderTypes.outline(TEXTURE), lightCoords, overlayCoords, state.outlineColor, null);
             } else {
-                collector
-                        .order(1)
-                        .submitModel(
-                                this.model,
-                                state,
-                                poseStack,
-                                RenderTypes.entityTranslucent(TEXTURE),
-                                lightCoords,
-                                overlayCoords,
-                                state.outlineColor,
-                                null);
+                collector.order(1).submitModel(this.model, state, poseStack, RenderTypes.entityTranslucent(TEXTURE), lightCoords, overlayCoords, state.outlineColor, null);
             }
         }
     }

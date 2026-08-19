@@ -15,8 +15,10 @@ public final class BlockEntityNitor extends BlockEntity {
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityNitor be) {
-        if (!level.isClientSide()) return;
-        if (!(state.getBlock() instanceof BlockNitor nitor)) return;
+        if (!level.isClientSide())
+            return;
+        if (!(state.getBlock() instanceof BlockNitor nitor))
+            return;
         int rgb = nitor.dyeColor();
         double cx = pos.getX() + 0.5 + level.getRandom().nextGaussian() * 0.025;
         double cy = pos.getY() + 0.45 + level.getRandom().nextGaussian() * 0.025;

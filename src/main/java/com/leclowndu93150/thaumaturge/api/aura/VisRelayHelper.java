@@ -40,8 +40,7 @@ public final class VisRelayHelper {
          * @return the centivis drained, or drainable when simulating; zero when no linked relay
          *         with an energized source is in range
          */
-        int drainCentivis(
-                ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate);
+        int drainCentivis(ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate);
     }
 
     /**
@@ -64,8 +63,7 @@ public final class VisRelayHelper {
      * @param simulate when {@code true}, reports what could be drained without draining
      * @return the centivis drained, or drainable when simulating; zero when unavailable
      */
-    public static int drainCentivis(
-            ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
+    public static int drainCentivis(ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
         return impl == null ? 0 : impl.drainCentivis(level, consumerPos, primal, amount, simulate);
     }
 }

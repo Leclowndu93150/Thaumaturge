@@ -16,7 +16,6 @@ public final class WispEffects {
     }
 
     public static WispFlameParticleOptions mote(RandomSource random, int color) {
-        return new WispFlameParticleOptions(
-                color, MOTE_ALPHA, 1.0F + random.nextFloat() * MOTE_SCALE_SPREAD, MOTE_END_SCALE, 0);
+        return new WispFlameParticleOptions(color, MOTE_ALPHA, 1.0F + random.nextFloat() * MOTE_SCALE_SPREAD, MOTE_END_SCALE, 0);
     }
 }

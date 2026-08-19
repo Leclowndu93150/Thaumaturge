@@ -31,10 +31,7 @@ public abstract class EntityCultist extends Monster {
     }
 
     public static AttributeSupplier.Builder createCultistAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.FOLLOW_RANGE, 32.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.ATTACK_DAMAGE, 4.0);
+        return Monster.createMonsterAttributes().add(Attributes.FOLLOW_RANGE, 32.0).add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.ATTACK_DAMAGE, 4.0);
     }
 
     @Override
@@ -45,15 +42,10 @@ public abstract class EntityCultist extends Monster {
     protected void setLoot(DifficultyInstance difficulty) {}
 
     @Override
-    protected void populateDefaultEquipmentEnchantments(
-            ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {}
+    protected void populateDefaultEquipmentEnchantments(ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {}
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData groupData) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData groupData) {
         this.setLoot(difficulty);
         return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
@@ -81,21 +73,9 @@ public abstract class EntityCultist extends Monster {
                 double vx = this.random.nextGaussian() * 0.05;
                 double vy = this.random.nextGaussian() * 0.05;
                 double vz = this.random.nextGaussian() * 0.05;
-                this.level()
-                        .addParticle(
-                                ParticleTypes.POOF,
-                                this.getX()
-                                        + this.random.nextFloat() * this.getBbWidth() * 2.0F
-                                        - this.getBbWidth()
-                                        + vx * 2.0,
-                                this.getY() + this.random.nextFloat() * this.getBbHeight() + vy * 2.0,
-                                this.getZ()
-                                        + this.random.nextFloat() * this.getBbWidth() * 2.0F
-                                        - this.getBbWidth()
-                                        + vz * 2.0,
-                                vx,
-                                vy,
-                                vz);
+                this.level().addParticle(ParticleTypes.POOF, this.getX() + this.random.nextFloat() * this.getBbWidth() * 2.0F - this.getBbWidth() + vx * 2.0,
+                        this.getY() + this.random.nextFloat() * this.getBbHeight() + vy * 2.0, this.getZ() + this.random.nextFloat() * this.getBbWidth() * 2.0F - this.getBbWidth() + vz * 2.0, vx, vy,
+                        vz);
             }
         } else {
             super.handleEntityEvent(event);

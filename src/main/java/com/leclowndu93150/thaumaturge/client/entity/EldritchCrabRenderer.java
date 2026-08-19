@@ -8,8 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
-public final class EldritchCrabRenderer
-        extends MobRenderer<EntityEldritchCrab, EldritchCrabRenderState, EldritchCrabModel> {
+public final class EldritchCrabRenderer extends MobRenderer<EntityEldritchCrab, EldritchCrabRenderState, EldritchCrabModel> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/crab.png");
     private static final float SHADOW = 0.5F;
     private static final float SCALE = 0.8F;

@@ -13,27 +13,16 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 @EventBusSubscriber
 public final class EssentiaSourceEffectTracker {
-    private static final ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<String, PendingPulse>> PENDING =
-            new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<ResourceKey<Level>, ConcurrentHashMap<String, PendingPulse>> PENDING = new ConcurrentHashMap<>();
     private static final int FLUSH_TICKS = 1;
 
     private EssentiaSourceEffectTracker() {}
 
-    public static void dispatch(
-            ServerLevel level,
-            Vec3 from,
-            Vec3 to,
-            int color,
-            int typeTag,
-            int count,
-            float scale,
-            int extend,
-            double my) {
+    public static void dispatch(ServerLevel level, Vec3 from, Vec3 to, int color, int typeTag, int count, float scale, int extend, double my) {
         BlockPos bpFrom = BlockPos.containing(from);
         BlockPos bpTo = BlockPos.containing(to);
         String key = bpFrom.asLong() + ":" + bpTo.asLong() + ":" + color;
-        ConcurrentHashMap<String, PendingPulse> map =
-                PENDING.computeIfAbsent(level.dimension(), k -> new ConcurrentHashMap<>());
+        ConcurrentHashMap<String, PendingPulse> map = PENDING.computeIfAbsent(level.dimension(), k -> new ConcurrentHashMap<>());
         PendingPulse existing = map.get(key);
         if (existing != null) {
             existing.tickStamp = level.getGameTime();
@@ -59,8 +48,7 @@ public final class EssentiaSourceEffectTracker {
         while (it.hasNext()) {
             PendingPulse p = it.next();
             if (now - p.tickStamp >= FLUSH_TICKS) {
-                EffectDispatch.broadcastEssentiaStream(
-                        server, p.from, p.to, p.color, p.typeTag, p.count, p.scale, p.extend, p.my);
+                EffectDispatch.broadcastEssentiaStream(server, p.from, p.to, p.color, p.typeTag, p.count, p.scale, p.extend, p.my);
                 it.remove();
             }
         }
@@ -77,16 +65,7 @@ public final class EssentiaSourceEffectTracker {
         double my;
         long tickStamp;
 
-        PendingPulse(
-                Vec3 from,
-                Vec3 to,
-                int color,
-                int typeTag,
-                int count,
-                float scale,
-                int extend,
-                double my,
-                long tickStamp) {
+        PendingPulse(Vec3 from, Vec3 to, int color, int typeTag, int count, float scale, int extend, double my, long tickStamp) {
             this.from = from;
             this.to = to;
             this.color = color;

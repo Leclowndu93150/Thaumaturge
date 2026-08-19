@@ -27,8 +27,7 @@ import net.minecraft.world.level.block.Blocks;
 public final class SalisMundusRecipe extends CustomRecipe {
     public static final SalisMundusRecipe INSTANCE = new SalisMundusRecipe();
     public static final MapCodec<SalisMundusRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
-    public static final StreamCodec<RegistryFriendlyByteBuf, SalisMundusRecipe> STREAM_CODEC =
-            StreamCodec.unit(INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SalisMundusRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
     private SalisMundusRecipe() {}
 
@@ -65,8 +64,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
                 if (!stack.is(TCItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
                     return false;
                 }
-                if (crystals.size() >= REQUIRED_CRYSTALS
-                        || !crystals.add(aspect.aspect().getKey().identifier())) {
+                if (crystals.size() >= REQUIRED_CRYSTALS || !crystals.add(aspect.aspect().getKey().identifier())) {
                     return false;
                 }
             }
@@ -101,18 +99,11 @@ public final class SalisMundusRecipe extends CustomRecipe {
 
     @Override
     public List<RecipeDisplay> display() {
-        SlotDisplay crystal =
-                new SlotDisplay.ItemSlotDisplay(TCItems.ESSENTIA_CRYSTAL.get().builtInRegistryHolder());
+        SlotDisplay crystal = new SlotDisplay.ItemSlotDisplay(TCItems.ESSENTIA_CRYSTAL.get().builtInRegistryHolder());
         return List.of(new ShapelessCraftingRecipeDisplay(
-                List.of(
-                        new SlotDisplay.ItemSlotDisplay(Items.FLINT.builtInRegistryHolder()),
-                        new SlotDisplay.ItemSlotDisplay(Items.BOWL.builtInRegistryHolder()),
-                        new SlotDisplay.ItemSlotDisplay(Items.REDSTONE.builtInRegistryHolder()),
-                        crystal,
-                        crystal,
-                        crystal),
-                new SlotDisplay.ItemSlotDisplay(TCItems.SALIS_MUNDUS.get().builtInRegistryHolder()),
-                new SlotDisplay.ItemSlotDisplay(Blocks.CRAFTING_TABLE.asItem().builtInRegistryHolder())));
+                List.of(new SlotDisplay.ItemSlotDisplay(Items.FLINT.builtInRegistryHolder()), new SlotDisplay.ItemSlotDisplay(Items.BOWL.builtInRegistryHolder()),
+                        new SlotDisplay.ItemSlotDisplay(Items.REDSTONE.builtInRegistryHolder()), crystal, crystal, crystal),
+                new SlotDisplay.ItemSlotDisplay(TCItems.SALIS_MUNDUS.get().builtInRegistryHolder()), new SlotDisplay.ItemSlotDisplay(Blocks.CRAFTING_TABLE.asItem().builtInRegistryHolder())));
     }
 
     @Override

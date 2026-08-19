@@ -10,11 +10,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCChunkGenerators {
-    public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS =
-            DeferredRegister.create(Registries.CHUNK_GENERATOR, TCIds.MODID);
+    public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS = DeferredRegister.create(Registries.CHUNK_GENERATOR, TCIds.MODID);
 
-    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<ChunkGeneratorOuter>> OUTER_LANDS =
-            CHUNK_GENERATORS.register("outer_lands", () -> ChunkGeneratorOuter.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<ChunkGeneratorOuter>> OUTER_LANDS = CHUNK_GENERATORS.register("outer_lands", () -> ChunkGeneratorOuter.CODEC);
 
     private TCChunkGenerators() {}
 

@@ -51,21 +51,12 @@ public final class TCDataGenerators {
 
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent.Client event) {
-        RegistrySetBuilder registries = new RegistrySetBuilder()
-                .add(IAspect.REGISTRY_KEY, AspectBootstrap::bootstrap)
-                .add(IResearchCategory.REGISTRY_KEY, CategoryBootstrap::bootstrap)
-                .add(ScanEntry.REGISTRY_KEY, ScanEntryBootstrap::bootstrap)
-                .add(PechTradeTable.REGISTRY_KEY, PechTradeBootstrap::bootstrap)
-                .add(Blueprint.REGISTRY_KEY, BlueprintBootstrap::bootstrap)
-                .add(Registries.DAMAGE_TYPE, TCDamageTypeBootstrap::bootstrap)
-                .add(Registries.CONFIGURED_FEATURE, TCConfiguredFeatures::bootstrap)
-                .add(Registries.PLACED_FEATURE, TCPlacedFeatures::bootstrap)
-                .add(Registries.BIOME, TCBiomes::bootstrap)
-                .add(Registries.DIMENSION_TYPE, OuterLandsBootstrap::bootstrapTypes)
-                .add(Registries.LEVEL_STEM, OuterLandsBootstrap::bootstrapStems)
-                .add(Registries.STRUCTURE, TCStructureBootstrap::bootstrapStructures)
-                .add(Registries.STRUCTURE_SET, TCStructureBootstrap::bootstrapSets)
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TCBiomeModifiers::bootstrap);
+        RegistrySetBuilder registries = new RegistrySetBuilder().add(IAspect.REGISTRY_KEY, AspectBootstrap::bootstrap).add(IResearchCategory.REGISTRY_KEY, CategoryBootstrap::bootstrap)
+                .add(ScanEntry.REGISTRY_KEY, ScanEntryBootstrap::bootstrap).add(PechTradeTable.REGISTRY_KEY, PechTradeBootstrap::bootstrap).add(Blueprint.REGISTRY_KEY, BlueprintBootstrap::bootstrap)
+                .add(Registries.DAMAGE_TYPE, TCDamageTypeBootstrap::bootstrap).add(Registries.CONFIGURED_FEATURE, TCConfiguredFeatures::bootstrap)
+                .add(Registries.PLACED_FEATURE, TCPlacedFeatures::bootstrap).add(Registries.BIOME, TCBiomes::bootstrap).add(Registries.DIMENSION_TYPE, OuterLandsBootstrap::bootstrapTypes)
+                .add(Registries.LEVEL_STEM, OuterLandsBootstrap::bootstrapStems).add(Registries.STRUCTURE, TCStructureBootstrap::bootstrapStructures)
+                .add(Registries.STRUCTURE_SET, TCStructureBootstrap::bootstrapSets).add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TCBiomeModifiers::bootstrap);
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TCEnglishProvider::new);
@@ -87,15 +78,10 @@ public final class TCDataGenerators {
         event.createProvider(TCMobEffectTagsProvider::new);
         event.createProvider(TCEntityTypeTagsProvider::new);
 
-        event.createProvider((output, lookupProvider) -> new LootTableProvider(
-                output,
-                Set.of(),
-                List.of(
-                        new LootTableProvider.SubProviderEntry(TCBlockLootSubProvider::new, LootContextParamSets.BLOCK),
-                        new LootTableProvider.SubProviderEntry(
-                                TCEntityLootSubProvider::new, LootContextParamSets.ENTITY),
-                        new LootTableProvider.SubProviderEntry(
-                                TCGameplayLootSubProvider::new, LootContextParamSets.CHEST)),
+        event.createProvider((output, lookupProvider) -> new LootTableProvider(output, Set.of(),
+                List.of(new LootTableProvider.SubProviderEntry(TCBlockLootSubProvider::new, LootContextParamSets.BLOCK),
+                        new LootTableProvider.SubProviderEntry(TCEntityLootSubProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(TCGameplayLootSubProvider::new, LootContextParamSets.CHEST)),
                 lookupProvider));
 
         event.createProvider(TCGlobalLootModifierProvider::new);

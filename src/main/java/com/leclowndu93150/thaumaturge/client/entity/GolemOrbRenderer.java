@@ -21,12 +21,8 @@ public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb, Golem
         public boolean red;
     }
 
-    private static final RenderType ORB_TYPE = RenderType.create(
-            "tc_golem_orb",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE)
-                    .withTexture("Sampler0", ParticleTextures.PARTICLES)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType ORB_TYPE = RenderType.create("tc_golem_orb",
+            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.PARTICLES).useLightmap().createRenderSetup());
 
     private static final int GRID = 32;
     private static final int WHITE_ROW = 7;
@@ -70,19 +66,10 @@ public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb, Golem
         int tint = ARGB.colorFromFloat(ALPHA, 1.0F, 1.0F, 1.0F);
         collector.submitCustomGeometry(poseStack, ORB_TYPE, (pose, buffer) -> {
             Matrix4fc mat = pose.pose();
-            buffer.addVertex(mat, -HALF, -HALF, 0.0F)
-                    .setUv(u1, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, -HALF, HALF, 0.0F)
-                    .setUv(u1, v0)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -HALF, -HALF, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -HALF, HALF, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
             buffer.addVertex(mat, HALF, HALF, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, HALF, -HALF, 0.0F)
-                    .setUv(u0, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, HALF, -HALF, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
         });
         poseStack.popPose();
     }

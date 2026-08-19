@@ -91,16 +91,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
         }
         BlockState current = server.getBlockState(lastTarget);
         if (lastTargetState != null && current != lastTargetState) {
-            server.sendParticles(
-                    ParticleTypes.HAPPY_VILLAGER,
-                    lastTarget.getX() + 0.5,
-                    lastTarget.getY() + 0.5,
-                    lastTarget.getZ() + 0.5,
-                    6,
-                    0.3,
-                    0.3,
-                    0.3,
-                    0.0);
+            server.sendParticles(ParticleTypes.HAPPY_VILLAGER, lastTarget.getX() + 0.5, lastTarget.getY() + 0.5, lastTarget.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0.0);
             lastTargetState = current;
         }
         if (checklist.isEmpty()) {
@@ -115,15 +106,8 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(column.getX(), column.getY(), column.getZ());
         while (cursor.getY() >= getBlockPos().getY() - SCAN_DISTANCE) {
             BlockState state = server.getBlockState(cursor);
-            if (!state.isAir()
-                    && isPlant(state)
-                    && cursor.distToCenterSqr(
-                                    getBlockPos().getX() + 0.5,
-                                    getBlockPos().getY() + 0.5,
-                                    getBlockPos().getZ() + 0.5)
-                            < SCAN_DISTANCE * SCAN_DISTANCE
-                    && !isGrownCrop(server, cursor, state)
-                    && !state.is(TCBlockTags.LAMP_GROWTH_BLACKLIST)) {
+            if (!state.isAir() && isPlant(state) && cursor.distToCenterSqr(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5) < SCAN_DISTANCE * SCAN_DISTANCE
+                    && !isGrownCrop(server, cursor, state) && !state.is(TCBlockTags.LAMP_GROWTH_BLACKLIST)) {
                 charges--;
                 BlockPos target = cursor.immutable();
                 lastTarget = target;
@@ -143,10 +127,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
         if (block instanceof GrassBlock) {
             return false;
         }
-        return block instanceof BonemealableBlock
-                || block instanceof CactusBlock
-                || block instanceof SugarCaneBlock
-                || block instanceof NetherWartBlock;
+        return block instanceof BonemealableBlock || block instanceof CactusBlock || block instanceof SugarCaneBlock || block instanceof NetherWartBlock;
     }
 
     private static boolean isGrownCrop(ServerLevel level, BlockPos pos, BlockState state) {
@@ -171,8 +152,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
             return false;
         }
         Direction facing = getBlockState().getValue(BlockStateProperties.FACING);
-        IEssentiaTransport ic =
-                EssentiaFlowHandler.transport(level, getBlockPos().relative(facing), facing.getOpposite());
+        IEssentiaTransport ic = EssentiaFlowHandler.transport(level, getBlockPos().relative(facing), facing.getOpposite());
         if (ic == null || !ic.canOutputTo(facing.getOpposite())) {
             return false;
         }
@@ -259,8 +239,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

@@ -100,11 +100,9 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
             int zz = urn.handlers.get(i);
             BlockPos target = urn.zonePos(zz);
             BlockState targetState = server.getBlockState(target);
-            ResourceHandler<FluidResource> handler =
-                    server.getCapability(Capabilities.Fluid.BLOCK, target, Direction.UP);
+            ResourceHandler<FluidResource> handler = server.getCapability(Capabilities.Fluid.BLOCK, target, Direction.UP);
             if (handler == null) {
-                if (!targetState.is(Blocks.CAULDRON) && !targetState.is(Blocks.WATER_CAULDRON)
-                        || urn.waterAmount() < CAULDRON_COST) {
+                if (!targetState.is(Blocks.CAULDRON) && !targetState.is(Blocks.WATER_CAULDRON) || urn.waterAmount() < CAULDRON_COST) {
                     urn.handlers.remove(i);
                     urn.setChanged();
                     continue;
@@ -163,16 +161,7 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     }
 
     private void splashAt(ServerLevel server, BlockPos target) {
-        server.sendParticles(
-                ParticleTypes.SPLASH,
-                target.getX() + 0.5,
-                target.getY() + 1.0,
-                target.getZ() + 0.5,
-                4,
-                0.2,
-                0.1,
-                0.2,
-                0.0);
+        server.sendParticles(ParticleTypes.SPLASH, target.getX() + 0.5, target.getY() + 1.0, target.getZ() + 0.5, 4, 0.2, 0.1, 0.2, 0.0);
     }
 
     @Override
@@ -200,8 +189,7 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

@@ -21,8 +21,7 @@ public final class ConstructFollowOwnerGoal extends Goal {
     private final float stopDistance;
     private float oldWaterCost;
 
-    public ConstructFollowOwnerGoal(
-            EntityOwnedConstruct construct, double followSpeed, float startDistance, float stopDistance) {
+    public ConstructFollowOwnerGoal(EntityOwnedConstruct construct, double followSpeed, float startDistance, float stopDistance) {
         this.construct = construct;
         this.followSpeed = followSpeed;
         this.navigation = construct.getNavigation();
@@ -75,9 +74,7 @@ public final class ConstructFollowOwnerGoal extends Goal {
             return;
         }
         timeToRecalcPath = RECALC_INTERVAL;
-        if (navigation.moveTo(owner, followSpeed)
-                || construct.isLeashed()
-                || construct.distanceToSqr(owner) < TELEPORT_DIST_SQR) {
+        if (navigation.moveTo(owner, followSpeed) || construct.isLeashed() || construct.distanceToSqr(owner) < TELEPORT_DIST_SQR) {
             return;
         }
         int baseX = Mth.floor(owner.getX()) - 2;
@@ -85,12 +82,9 @@ public final class ConstructFollowOwnerGoal extends Goal {
         int baseY = Mth.floor(owner.getBoundingBox().minY);
         for (int dx = 0; dx <= 4; dx++) {
             for (int dz = 0; dz <= 4; dz++) {
-                if ((dx < 1 || dz < 1 || dx > 3 || dz > 3)
-                        && isSolidGround(new BlockPos(baseX + dx, baseY - 1, baseZ + dz))
-                        && isPassable(new BlockPos(baseX + dx, baseY, baseZ + dz))
+                if ((dx < 1 || dz < 1 || dx > 3 || dz > 3) && isSolidGround(new BlockPos(baseX + dx, baseY - 1, baseZ + dz)) && isPassable(new BlockPos(baseX + dx, baseY, baseZ + dz))
                         && isPassable(new BlockPos(baseX + dx, baseY + 1, baseZ + dz))) {
-                    construct.snapTo(
-                            baseX + dx + 0.5, baseY, baseZ + dz + 0.5, construct.getYRot(), construct.getXRot());
+                    construct.snapTo(baseX + dx + 0.5, baseY, baseZ + dz + 0.5, construct.getYRot(), construct.getXRot());
                     navigation.stop();
                     return;
                 }
@@ -99,8 +93,7 @@ public final class ConstructFollowOwnerGoal extends Goal {
     }
 
     private boolean isPassable(BlockPos pos) {
-        return construct.level().getBlockState(pos).isAir()
-                || !construct.level().getBlockState(pos).isCollisionShapeFullBlock(construct.level(), pos);
+        return construct.level().getBlockState(pos).isAir() || !construct.level().getBlockState(pos).isCollisionShapeFullBlock(construct.level(), pos);
     }
 
     private boolean isSolidGround(BlockPos pos) {

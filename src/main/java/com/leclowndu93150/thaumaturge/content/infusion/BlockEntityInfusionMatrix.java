@@ -51,8 +51,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityInfusionMatrix extends BlockEntity
-        implements IGogglesDisplayExtended, IInteractWithCaster {
+public final class BlockEntityInfusionMatrix extends BlockEntity implements IGogglesDisplayExtended, IInteractWithCaster {
     public static final float STABILITY_CAP = 25.0F;
     private static final float STABILITY_FLOOR = -100.0F;
     private static final int IDLE_VALIDATE_INTERVAL = 100;
@@ -156,17 +155,12 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
                 level.playSound(null, worldPosition, TCSounds.INFUSER.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             }
             RandomSource rand = level.getRandom();
-            Effects.blockRunes(level, Vec3.atLowerCornerOf(centralPedestal()))
-                    .color(0.5F + rand.nextFloat() * 0.2F, 0.1F, 0.7F + rand.nextFloat() * 0.3F)
-                    .duration(25)
-                    .gravity(-0.03F)
-                    .send();
+            Effects.blockRunes(level, Vec3.atLowerCornerOf(centralPedestal())).color(0.5F + rand.nextFloat() * 0.2F, 0.1F, 0.7F + rand.nextFloat() * 0.3F).duration(25).gravity(-0.03F).send();
         }
     }
 
     @Override
-    public boolean onCasterRightClick(
-            Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, InteractionHand hand) {
+    public boolean onCasterRightClick(Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, InteractionHand hand) {
         if (level instanceof ServerLevel serverLevel) {
             onRightClick(serverLevel, player);
         }
@@ -209,57 +203,36 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         }
         InfusionInput input = new InfusionInput(catalyst, components);
         float costMult = Math.max(MIN_COST_MULT, env.costMult());
-        Optional<RecipeHolder<InfusionRecipe>> match = level.recipeAccess()
-                .getRecipeFor(TCRecipeTypes.INFUSION.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
+        Optional<RecipeHolder<InfusionRecipe>> match = level.recipeAccess().getRecipeFor(TCRecipeTypes.INFUSION.get(), input, level)
+                .filter(holder -> ResearchManager.doesPassGate(player, holder.value().researchGate().orElse(null)));
         if (match.isPresent()) {
             InfusionRecipe recipe = match.get().value();
-            job = new InfusionCraftJob(
-                    recipe.matchComponents(components),
-                    scaleByEnvironment(recipe.aspects(), costMult),
-                    recipe.assemble(input),
-                    catalyst.copyWithCount(1),
-                    recipe.instability(),
+            job = new InfusionCraftJob(recipe.matchComponents(components), scaleByEnvironment(recipe.aspects(), costMult), recipe.assemble(input), catalyst.copyWithCount(1), recipe.instability(),
                     Optional.of(player.getUUID()));
             level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             setChanged();
             syncToClient();
             return;
         }
-        Optional<RecipeHolder<InfusionEnchantmentRecipe>> enchantMatch = level.recipeAccess()
-                .getRecipeFor(TCRecipeTypes.INFUSION_ENCHANTMENT.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
+        Optional<RecipeHolder<InfusionEnchantmentRecipe>> enchantMatch = level.recipeAccess().getRecipeFor(TCRecipeTypes.INFUSION_ENCHANTMENT.get(), input, level)
+                .filter(holder -> ResearchManager.doesPassGate(player, holder.value().researchGate().orElse(null)));
         if (enchantMatch.isPresent()) {
             InfusionEnchantmentRecipe recipe = enchantMatch.get().value();
-            job = new InfusionCraftJob(
-                    recipe.matchComponents(components),
-                    scaleByEnvironment(recipe.scaledAspects(catalyst), costMult),
-                    recipe.enchantedResult(catalyst, level.getRandom()),
-                    catalyst.copyWithCount(1),
-                    recipe.instability(),
-                    Optional.of(player.getUUID()));
+            job = new InfusionCraftJob(recipe.matchComponents(components), scaleByEnvironment(recipe.scaledAspects(catalyst), costMult), recipe.enchantedResult(catalyst, level.getRandom()),
+                    catalyst.copyWithCount(1), recipe.instability(), Optional.of(player.getUUID()));
             level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             setChanged();
             syncToClient();
             return;
         }
-        Optional<RecipeHolder<InfusionRunicAugmentRecipe>> runicMatch = level.recipeAccess()
-                .getRecipeFor(TCRecipeTypes.RUNIC_AUGMENT.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
+        Optional<RecipeHolder<InfusionRunicAugmentRecipe>> runicMatch = level.recipeAccess().getRecipeFor(TCRecipeTypes.RUNIC_AUGMENT.get(), input, level)
+                .filter(holder -> ResearchManager.doesPassGate(player, holder.value().researchGate().orElse(null)));
         if (runicMatch.isEmpty()) {
             return;
         }
         InfusionRunicAugmentRecipe recipe = runicMatch.get().value();
-        job = new InfusionCraftJob(
-                recipe.matchScaled(catalyst, components),
-                scaleByEnvironment(recipe.scaledAspects(catalyst), costMult),
-                recipe.augmentedResult(catalyst),
-                catalyst.copyWithCount(1),
-                recipe.scaledInstability(catalyst),
-                Optional.of(player.getUUID()));
+        job = new InfusionCraftJob(recipe.matchScaled(catalyst, components), scaleByEnvironment(recipe.scaledAspects(catalyst), costMult), recipe.augmentedResult(catalyst), catalyst.copyWithCount(1),
+                recipe.scaledInstability(catalyst), Optional.of(player.getUUID()));
         level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
@@ -339,21 +312,17 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
 
     @Override
     public Component[] getIGogglesText() {
-        Component tier = Component.translatable(STABILITY_LANG_PREFIX + stabilityTierKey())
-                .withStyle(ChatFormatting.BOLD);
-        Component gain = Component.literal(STABILITY_FORMAT.format(stabilityReplenish) + " ")
-                .append(Component.translatable(STABILITY_LANG_PREFIX + "gain"))
-                .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC);
+        Component tier = Component.translatable(STABILITY_LANG_PREFIX + stabilityTierKey()).withStyle(ChatFormatting.BOLD);
+        Component gain = Component.literal(STABILITY_FORMAT.format(stabilityReplenish) + " ").append(Component.translatable(STABILITY_LANG_PREFIX + "gain")).withStyle(ChatFormatting.GOLD,
+                ChatFormatting.ITALIC);
         float lpc = lossPerCycle();
         if (lpc == 0.0F) {
-            return new Component[] {tier, gain};
+            return new Component[]{tier, gain};
         }
         Component loss = Component.translatable(STABILITY_LANG_PREFIX + "range")
-                .append(Component.literal(STABILITY_FORMAT.format(lpc) + " ")
-                        .append(Component.translatable(STABILITY_LANG_PREFIX + "loss"))
-                        .withStyle(ChatFormatting.ITALIC))
+                .append(Component.literal(STABILITY_FORMAT.format(lpc) + " ").append(Component.translatable(STABILITY_LANG_PREFIX + "loss")).withStyle(ChatFormatting.ITALIC))
                 .withStyle(ChatFormatting.RED);
-        return new Component[] {tier, gain, loss};
+        return new Component[]{tier, gain, loss};
     }
 
     private boolean catalystStillPresent(ServerLevel level) {
@@ -428,19 +397,14 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         }
         ItemStack result = job.result().copy();
         ItemStack catalyst = pedestal.getItem();
-        if (catalyst.isDamageableItem()
-                && catalyst.getDamageValue() > 0
-                && result.isDamageableItem()
-                && result.getDamageValue() == 0) {
+        if (catalyst.isDamageableItem() && catalyst.getDamageValue() > 0 && result.isDamageableItem() && result.getDamageValue() == 0) {
             float damageRatio = (float) catalyst.getDamageValue() / catalyst.getMaxDamage();
             result.setDamageValue((int) (result.getMaxDamage() * damageRatio));
         }
         pedestal.setItem(result);
         Optional<InfusionCraftJob> finished = Optional.ofNullable(job);
         job = null;
-        finished.flatMap(InfusionCraftJob::player)
-                .map(uuid -> level.getServer().getPlayerList().getPlayer(uuid))
-                .ifPresent(player -> awardCraft(player, result));
+        finished.flatMap(InfusionCraftJob::player).map(uuid -> level.getServer().getPlayerList().getPlayer(uuid)).ifPresent(player -> awardCraft(player, result));
         InfusionFx.pedestalBamf(level, centralPedestal());
         level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
@@ -518,46 +482,20 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         double ty = worldPosition.getY() - 0.5;
         double tz = worldPosition.getZ() + 0.5;
         if (rand.nextInt(3) == 0) {
-            level.addParticle(
-                    new BoreSparkleParticleOptions(
-                            tx, ty, tz, 0.4F + rand.nextFloat() * 0.2F, 0.2F, 0.6F + rand.nextFloat() * 0.3F),
-                    loc.getX() + rand.nextFloat(),
-                    loc.getY() + rand.nextFloat() + 1.0F,
-                    loc.getZ() + rand.nextFloat(),
-                    0.0,
-                    0.0,
-                    0.0);
+            level.addParticle(new BoreSparkleParticleOptions(tx, ty, tz, 0.4F + rand.nextFloat() * 0.2F, 0.2F, 0.6F + rand.nextFloat() * 0.3F), loc.getX() + rand.nextFloat(),
+                    loc.getY() + rand.nextFloat() + 1.0F, loc.getZ() + rand.nextFloat(), 0.0, 0.0, 0.0);
             return;
         }
         ItemStackTemplate template = new ItemStackTemplate(stack.getItem());
         if (stack.getItem() instanceof BlockItem) {
             for (int a = 0; a < 4; a++) {
-                level.addParticle(
-                        new InfusionCrumbsParticleOptions(template, tx, ty, tz, 0.0, 0.0, 0.0),
-                        loc.getX() + rand.nextFloat(),
-                        loc.getY() + rand.nextFloat() + 1.0F,
-                        loc.getZ() + rand.nextFloat(),
-                        0.0,
-                        0.0,
-                        0.0);
+                level.addParticle(new InfusionCrumbsParticleOptions(template, tx, ty, tz, 0.0, 0.0, 0.0), loc.getX() + rand.nextFloat(), loc.getY() + rand.nextFloat() + 1.0F,
+                        loc.getZ() + rand.nextFloat(), 0.0, 0.0, 0.0);
             }
         } else {
             for (int a = 0; a < 4; a++) {
-                level.addParticle(
-                        new InfusionCrumbsParticleOptions(
-                                template,
-                                tx,
-                                ty,
-                                tz,
-                                rand.nextGaussian() * 0.03F,
-                                rand.nextGaussian() * 0.03F,
-                                rand.nextGaussian() * 0.03F),
-                        loc.getX() + 0.4F + rand.nextFloat() * 0.2F,
-                        loc.getY() + 1.23F + rand.nextFloat() * 0.2F,
-                        loc.getZ() + 0.4F + rand.nextFloat() * 0.2F,
-                        0.0,
-                        0.0,
-                        0.0);
+                level.addParticle(new InfusionCrumbsParticleOptions(template, tx, ty, tz, rand.nextGaussian() * 0.03F, rand.nextGaussian() * 0.03F, rand.nextGaussian() * 0.03F),
+                        loc.getX() + 0.4F + rand.nextFloat() * 0.2F, loc.getY() + 1.23F + rand.nextFloat() * 0.2F, loc.getZ() + 0.4F + rand.nextFloat() * 0.2F, 0.0, 0.0, 0.0);
             }
         }
     }
@@ -593,8 +531,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

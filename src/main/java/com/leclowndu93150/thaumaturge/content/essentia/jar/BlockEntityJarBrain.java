@@ -86,24 +86,14 @@ public final class BlockEntityJarBrain extends BlockEntity {
         if (jar.xp >= XP_MAX) {
             return;
         }
-        List<ExperienceOrb> orbs = level.getEntitiesOfClass(
-                ExperienceOrb.class,
-                new AABB(
-                        pos.getX() - EAT_INFLATE,
-                        pos.getY() - EAT_INFLATE,
-                        pos.getZ() - EAT_INFLATE,
-                        pos.getX() + 1 + EAT_INFLATE,
-                        pos.getY() + 1 + EAT_INFLATE,
-                        pos.getZ() + 1 + EAT_INFLATE));
+        List<ExperienceOrb> orbs = level.getEntitiesOfClass(ExperienceOrb.class,
+                new AABB(pos.getX() - EAT_INFLATE, pos.getY() - EAT_INFLATE, pos.getZ() - EAT_INFLATE, pos.getX() + 1 + EAT_INFLATE, pos.getY() + 1 + EAT_INFLATE, pos.getZ() + 1 + EAT_INFLATE));
         if (orbs.isEmpty()) {
             return;
         }
         for (ExperienceOrb orb : orbs) {
             jar.xp += orb.getValue();
-            orb.playSound(
-                    SoundEvents.GENERIC_EAT.value(),
-                    0.1F,
-                    (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
+            orb.playSound(SoundEvents.GENERIC_EAT.value(), 0.1F, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F + 1.0F);
             orb.discard();
         }
         jar.setChanged();
@@ -123,15 +113,7 @@ public final class BlockEntityJarBrain extends BlockEntity {
                 if (jar.nextSigh == Long.MIN_VALUE) {
                     jar.nextSigh = time + SIGH_INITIAL_DELAY;
                 } else if (time >= jar.nextSigh) {
-                    level.playLocalSound(
-                            pos.getX() + 0.5,
-                            pos.getY() + 0.5,
-                            pos.getZ() + 0.5,
-                            TCSounds.BRAIN.get(),
-                            SoundSource.AMBIENT,
-                            0.15F,
-                            0.8F + level.getRandom().nextFloat() * 0.4F,
-                            false);
+                    level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.BRAIN.get(), SoundSource.AMBIENT, 0.15F, 0.8F + level.getRandom().nextFloat() * 0.4F, false);
                     jar.nextSigh = time + SIGH_DELAY_BASE + level.getRandom().nextInt(SIGH_DELAY_SPREAD);
                 }
             }
@@ -144,8 +126,7 @@ public final class BlockEntityJarBrain extends BlockEntity {
             if (jar.wanderStep < 0.5F || level.getRandom().nextInt(40) == 0) {
                 float previous = jar.wander;
                 do {
-                    jar.wander = jar.wander
-                            + (level.getRandom().nextInt(4) - level.getRandom().nextInt(4));
+                    jar.wander = jar.wander + (level.getRandom().nextInt(4) - level.getRandom().nextInt(4));
                 } while (previous == jar.wander);
             }
         } else {
@@ -173,10 +154,7 @@ public final class BlockEntityJarBrain extends BlockEntity {
     private @Nullable Entity pullClosestOrb(Level level, BlockPos pos) {
         ExperienceOrb closest = null;
         double closestDist = Double.MAX_VALUE;
-        for (ExperienceOrb orb : level.getEntitiesOfClass(
-                ExperienceOrb.class,
-                new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                        .inflate(PULL_RANGE))) {
+        for (ExperienceOrb orb : level.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(PULL_RANGE))) {
             double dist = orb.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             if (dist < closestDist) {
                 closest = orb;
@@ -192,10 +170,7 @@ public final class BlockEntityJarBrain extends BlockEntity {
             if (strength > 0.0) {
                 strength *= strength;
                 Vec3 motion = closest.getDeltaMovement();
-                closest.setDeltaMovement(
-                        motion.x + dx / dist * strength * 0.3,
-                        motion.y + dy / dist * strength * 0.5,
-                        motion.z + dz / dist * strength * 0.3);
+                closest.setDeltaMovement(motion.x + dx / dist * strength * 0.3, motion.y + dy / dist * strength * 0.5, motion.z + dz / dist * strength * 0.3);
             }
         }
         return closest;
@@ -216,8 +191,7 @@ public final class BlockEntityJarBrain extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

@@ -14,7 +14,22 @@ spotless {
     lineEndings = LineEnding.UNIX
     java {
         target fileTree('src') { include '**/*.java' }
-        palantirJavaFormat('2.96.0')
+        eclipse('4.26').configProperties('''
+            org.eclipse.jdt.core.formatter.lineSplit=200
+            org.eclipse.jdt.core.formatter.join_wrapped_lines=true
+            org.eclipse.jdt.core.formatter.comment.format_javadoc_comments=false
+            org.eclipse.jdt.core.formatter.comment.format_block_comments=false
+            org.eclipse.jdt.core.formatter.comment.format_line_comments=false
+            org.eclipse.jdt.core.formatter.keep_method_body_on_one_line=one_line_if_empty
+            org.eclipse.jdt.core.formatter.keep_type_declaration_on_one_line=one_line_if_empty
+            org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration=0
+            org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration=0
+            org.eclipse.jdt.core.formatter.tabulation.char=space
+            org.eclipse.jdt.core.formatter.tabulation.size=4
+            org.eclipse.jdt.core.formatter.indentation.size=4
+            org.eclipse.jdt.core.formatter.continuation_indentation=2
+            org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve=1
+        ''')
         trimTrailingWhitespace()
         endWithNewline()
     }

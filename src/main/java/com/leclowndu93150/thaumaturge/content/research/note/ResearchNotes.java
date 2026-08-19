@@ -104,11 +104,7 @@ public final class ResearchNotes {
 
     public static boolean obtainNote(ServerPlayer player, Identifier entryId, int ordinal) {
         ResourceKey<IResearchEntry> key = ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId);
-        IResearchEntry entry = player.registryAccess()
-                .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
-                .get(key)
-                .map(holder -> holder.value())
-                .orElse(null);
+        IResearchEntry entry = player.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY).get(key).map(holder -> holder.value()).orElse(null);
         if (entry == null) {
             return false;
         }
@@ -118,15 +114,13 @@ public final class ResearchNotes {
             return false;
         }
         if ((!consumeInk(player, true) || !hasItem(player, Items.PAPER)) && !player.getAbilities().instabuild) {
-            player.sendSystemMessage(
-                    Component.translatable("tc.researchnote.missing").withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendSystemMessage(Component.translatable("tc.researchnote.missing").withStyle(ChatFormatting.DARK_PURPLE));
             return false;
         }
         consumeInk(player, false);
         consumeItem(player, Items.PAPER);
         AspectList anchors = anchors(player.registryAccess(), entry);
-        ResearchNoteData data =
-                NoteGenerator.generate(entryId, ordinal, anchors, entry.complexity(), player.getRandom());
+        ResearchNoteData data = NoteGenerator.generate(entryId, ordinal, anchors, entry.complexity(), player.getRandom());
         ItemStack note = new ItemStack(TCItems.RESEARCH_NOTE.get());
         note.set(TCDataComponents.RESEARCH_NOTE.get(), data);
         if (!player.getInventory().add(note)) {
@@ -180,10 +174,7 @@ public final class ResearchNotes {
     }
 
     public static Component entryName(HolderLookup.Provider registries, Identifier entryId) {
-        return registries
-                .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
-                .get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId))
-                .map(holder -> (Component) Component.translatable(holder.value().nameKey()))
-                .orElse(Component.literal(entryId.toString()));
+        return registries.lookupOrThrow(IResearchEntry.REGISTRY_KEY).get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId))
+                .map(holder -> (Component) Component.translatable(holder.value().nameKey())).orElse(Component.literal(entryId.toString()));
     }
 }

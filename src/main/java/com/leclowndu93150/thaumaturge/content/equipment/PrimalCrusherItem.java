@@ -19,17 +19,8 @@ public final class PrimalCrusherItem extends VoidGearItem {
 
     private static Tool crusherTool() {
         HolderGetter<Block> blocks = BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK);
-        return new Tool(
-                List.of(
-                        Tool.Rule.minesAndDrops(
-                                blocks.getOrThrow(BlockTags.MINEABLE_WITH_PICKAXE),
-                                TCMaterials.TOOL_PRIMAL_VOID.speed()),
-                        Tool.Rule.minesAndDrops(
-                                blocks.getOrThrow(BlockTags.MINEABLE_WITH_SHOVEL),
-                                TCMaterials.TOOL_PRIMAL_VOID.speed())),
-                1.0F,
-                1,
-                true);
+        return new Tool(List.of(Tool.Rule.minesAndDrops(blocks.getOrThrow(BlockTags.MINEABLE_WITH_PICKAXE), TCMaterials.TOOL_PRIMAL_VOID.speed()),
+                Tool.Rule.minesAndDrops(blocks.getOrThrow(BlockTags.MINEABLE_WITH_SHOVEL), TCMaterials.TOOL_PRIMAL_VOID.speed())), 1.0F, 1, true);
     }
 
     @Override

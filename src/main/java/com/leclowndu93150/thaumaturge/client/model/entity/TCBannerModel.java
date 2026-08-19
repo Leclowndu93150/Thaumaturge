@@ -30,26 +30,11 @@ public final class TCBannerModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "tab_left",
-                CubeListBuilder.create().texOffs(0, 29).mirror().addBox(-5.0F, -7.5F, -1.5F, 2.0F, 3.0F, 3.0F),
-                PartPose.ZERO);
-        root.addOrReplaceChild(
-                "tab_right",
-                CubeListBuilder.create().texOffs(0, 29).mirror().addBox(3.0F, -7.5F, -1.5F, 2.0F, 3.0F, 3.0F),
-                PartPose.ZERO);
-        root.addOrReplaceChild(
-                "beam",
-                CubeListBuilder.create().texOffs(30, 0).mirror().addBox(-7.0F, -7.0F, -1.0F, 14.0F, 2.0F, 2.0F),
-                PartPose.ZERO);
-        root.addOrReplaceChild(
-                "cloth",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, 0.0F, -0.5F, 14.0F, 28.0F, 1.0F),
-                PartPose.offset(0.0F, -5.0F, 0.0F));
-        root.addOrReplaceChild(
-                "pole",
-                CubeListBuilder.create().texOffs(62, 0).mirror().addBox(0.0F, 0.0F, -1.0F, 2.0F, 31.0F, 2.0F),
-                PartPose.offset(-1.0F, -7.0F, -2.0F));
+        root.addOrReplaceChild("tab_left", CubeListBuilder.create().texOffs(0, 29).mirror().addBox(-5.0F, -7.5F, -1.5F, 2.0F, 3.0F, 3.0F), PartPose.ZERO);
+        root.addOrReplaceChild("tab_right", CubeListBuilder.create().texOffs(0, 29).mirror().addBox(3.0F, -7.5F, -1.5F, 2.0F, 3.0F, 3.0F), PartPose.ZERO);
+        root.addOrReplaceChild("beam", CubeListBuilder.create().texOffs(30, 0).mirror().addBox(-7.0F, -7.0F, -1.0F, 14.0F, 2.0F, 2.0F), PartPose.ZERO);
+        root.addOrReplaceChild("cloth", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, 0.0F, -0.5F, 14.0F, 28.0F, 1.0F), PartPose.offset(0.0F, -5.0F, 0.0F));
+        root.addOrReplaceChild("pole", CubeListBuilder.create().texOffs(62, 0).mirror().addBox(0.0F, 0.0F, -1.0F, 2.0F, 31.0F, 2.0F), PartPose.offset(-1.0F, -7.0F, -2.0F));
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 }

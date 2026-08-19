@@ -24,7 +24,7 @@ public class SealFillAdvanced extends SealFill implements ISealConfigToggles {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
@@ -39,6 +39,6 @@ public class SealFillAdvanced extends SealFill implements ISealConfigToggles {
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.SMART.get()};
+        return new GolemTrait[]{TCGolemTraits.SMART.get()};
     }
 }

@@ -21,9 +21,7 @@ public final class Gen2x2 extends GenCommonPieces {
         for (int a = 2; a <= 15; a++) {
             for (int b = 2; b <= 15; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 2 || b == 2)
-                            && (a != 2 || b <= 4 || b >= 12 || !cell.west || c >= 10)
-                            && (b != 2 || a <= 4 || a >= 12 || !cell.north || c >= 10)) {
+                    if ((a == 2 || b == 2) && (a != 2 || b <= 4 || b >= 12 || !cell.west || c >= 10) && (b != 2 || a <= 4 || a >= 12 || !cell.north || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -65,9 +63,7 @@ public final class Gen2x2 extends GenCommonPieces {
         for (int a = 0; a <= 14; a++) {
             for (int b = 2; b <= 15; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 14 || b == 2)
-                            && (a != 14 || b <= 4 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 2 || a <= 4 || a >= 12 || !cell.north || c >= 10)) {
+                    if ((a == 14 || b == 2) && (a != 14 || b <= 4 || b >= 12 || !cell.east || c >= 10) && (b != 2 || a <= 4 || a >= 12 || !cell.north || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -109,9 +105,7 @@ public final class Gen2x2 extends GenCommonPieces {
         for (int a = 2; a <= 15; a++) {
             for (int b = 0; b <= 14; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 2 || b == 14)
-                            && (a != 2 || b <= 4 || b >= 12 || !cell.west || c >= 10)
-                            && (b != 14 || a <= 4 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 2 || b == 14) && (a != 2 || b <= 4 || b >= 12 || !cell.west || c >= 10) && (b != 14 || a <= 4 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -153,9 +147,7 @@ public final class Gen2x2 extends GenCommonPieces {
         for (int a = 0; a <= 14; a++) {
             for (int b = 0; b <= 14; b++) {
                 for (int c = 1; c < 12; c++) {
-                    if ((a == 14 || b == 14)
-                            && (a != 14 || b <= 4 || b >= 12 || !cell.east || c >= 10)
-                            && (b != 14 || a <= 4 || a >= 12 || !cell.south || c >= 10)) {
+                    if ((a == 14 || b == 14) && (a != 14 || b <= 4 || b >= 12 || !cell.east || c >= 10) && (b != 14 || a <= 4 || a >= 12 || !cell.south || c >= 10)) {
                         ctx.placeBlock(x + a, y + c, z + b, GenContext.VOID, cell);
                     }
                 }
@@ -182,8 +174,7 @@ public final class Gen2x2 extends GenCommonPieces {
         generateConnections(ctx, cx, cz, y, cell, 3, true);
     }
 
-    private static void floorAndCeiling(
-            GenContext ctx, MazeCell cell, int x, int z, int y, int aMin, int aMax, int bMin, int bMax) {
+    private static void floorAndCeiling(GenContext ctx, MazeCell cell, int x, int z, int y, int aMin, int aMax, int bMin, int bMax) {
         for (int a = aMin; a <= aMax; a++) {
             for (int b = bMin; b <= bMax; b++) {
                 ctx.placeBlock(x + a, y - 1, z + b, GenContext.BEDROCK, cell);

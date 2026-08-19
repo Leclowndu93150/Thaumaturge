@@ -9,13 +9,7 @@ public final class LongRangeAttackGoal extends RangedAttackGoal {
     private final Mob wielder;
     private final double minDistance;
 
-    public LongRangeAttackGoal(
-            RangedAttackMob mob,
-            double minDistance,
-            double speedModifier,
-            int attackIntervalMin,
-            int attackIntervalMax,
-            float attackRadius) {
+    public LongRangeAttackGoal(RangedAttackMob mob, double minDistance, double speedModifier, int attackIntervalMin, int attackIntervalMax, float attackRadius) {
         super(mob, speedModifier, attackIntervalMin, attackIntervalMax, attackRadius);
         this.minDistance = minDistance;
         this.wielder = (Mob) mob;

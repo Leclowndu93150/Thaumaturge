@@ -141,8 +141,7 @@ public final class FocusEngine {
      * @param trajectories the trajectories supplied to the first node, or null
      * @param targets      the targets supplied to the first node, or null
      */
-    public static void run(
-            Level level, FocusPackage pack, Trajectory @Nullable [] trajectories, HitResult @Nullable [] targets) {
+    public static void run(Level level, FocusPackage pack, Trajectory @Nullable [] trajectories, HitResult @Nullable [] targets) {
         run(level, pack, null, new CastStreams(trajectories, targets));
     }
 

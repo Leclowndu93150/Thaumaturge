@@ -30,8 +30,7 @@ public final class BoltParticle extends TCParticle {
     private final float[] waveY;
     private final float[] waveZ;
 
-    private BoltParticle(
-            ClientLevel level, double x, double y, double z, BoltParticleOptions options, ParticleSheet sheet) {
+    private BoltParticle(ClientLevel level, double x, double y, double z, BoltParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         setColor(options.r(), options.g(), options.b());
         this.setSize(0.02F, 0.02F);
@@ -80,34 +79,14 @@ public final class BoltParticle extends TCParticle {
                 py = (float) this.delta.y;
                 pz = (float) this.delta.z;
             } else {
-                px = (float) (this.delta.x * step / this.steps)
-                        + this.waveX[step] * amplitude
-                        + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
-                py = (float) (this.delta.y * step / this.steps)
-                        + this.waveY[step] * amplitude
-                        + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
-                pz = (float) (this.delta.z * step / this.steps)
-                        + this.waveZ[step] * amplitude
-                        + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
+                px = (float) (this.delta.x * step / this.steps) + this.waveX[step] * amplitude + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
+                py = (float) (this.delta.y * step / this.steps) + this.waveY[step] * amplitude + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
+                pz = (float) (this.delta.z * step / this.steps) + this.waveZ[step] * amplitude + (jitter.nextFloat() - jitter.nextFloat()) * JITTER;
             }
             for (int sub = 0; sub < SUBDIVISIONS; sub++) {
                 float t = (sub + 1.0F) / SUBDIVISIONS;
-                renderState.add(
-                        getLayer(),
-                        baseX + Mth.lerp(t, prevX, px),
-                        baseY + Mth.lerp(t, prevY, py),
-                        baseZ + Mth.lerp(t, prevZ, pz),
-                        camera.rotation().x,
-                        camera.rotation().y,
-                        camera.rotation().z,
-                        camera.rotation().w,
-                        this.beadSize,
-                        getU0(),
-                        getU1(),
-                        getV0(),
-                        getV1(),
-                        color,
-                        EMISSIVE_LIGHT);
+                renderState.add(getLayer(), baseX + Mth.lerp(t, prevX, px), baseY + Mth.lerp(t, prevY, py), baseZ + Mth.lerp(t, prevZ, pz), camera.rotation().x, camera.rotation().y,
+                        camera.rotation().z, camera.rotation().w, this.beadSize, getU0(), getU1(), getV0(), getV1(), color, EMISSIVE_LIGHT);
             }
             prevX = px;
             prevY = py;
@@ -124,16 +103,7 @@ public final class BoltParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("bolt");
 
         @Override
-        public Particle createParticle(
-                BoltParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(BoltParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BoltParticle(level, x, y, z, options, SHEET);
         }
     }

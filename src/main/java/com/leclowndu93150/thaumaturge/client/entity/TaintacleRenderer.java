@@ -10,8 +10,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
 public final class TaintacleRenderer extends MobRenderer<AbstractTaintacle, TaintacleRenderState, TaintacleModel> {
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/taintacle.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/taintacle.png");
     private static final float MODEL_Y_OFFSET = 1.501F;
     private static final float TALL_HEIGHT = 3.0F;
     private static final float TALL_LIFT = 0.6F;
@@ -19,8 +18,7 @@ public final class TaintacleRenderer extends MobRenderer<AbstractTaintacle, Tain
     private static final float HEIGHT_SCALE_DIVISOR = 3.0F;
     private static final float EMERGE_TICKS_PER_HEIGHT = 10.0F;
 
-    public TaintacleRenderer(
-            EntityRendererProvider.Context context, ModelLayerLocation layer, int length, float shadow) {
+    public TaintacleRenderer(EntityRendererProvider.Context context, ModelLayerLocation layer, int length, float shadow) {
         super(context, new TaintacleModel(context.bakeLayer(layer), length), shadow);
     }
 

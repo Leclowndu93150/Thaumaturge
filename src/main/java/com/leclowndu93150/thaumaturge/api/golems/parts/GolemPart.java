@@ -20,12 +20,7 @@ public abstract class GolemPart {
     private final List<Holder<GolemTrait>> traits;
     private final GolemPartModel model;
 
-    protected GolemPart(
-            List<Identifier> research,
-            Identifier icon,
-            List<GolemComponent> components,
-            List<Holder<GolemTrait>> traits,
-            @Nullable GolemPartModel model) {
+    protected GolemPart(List<Identifier> research, Identifier icon, List<GolemComponent> components, List<Holder<GolemTrait>> traits, @Nullable GolemPartModel model) {
         this.research = List.copyOf(research);
         this.icon = icon;
         this.components = List.copyOf(components);

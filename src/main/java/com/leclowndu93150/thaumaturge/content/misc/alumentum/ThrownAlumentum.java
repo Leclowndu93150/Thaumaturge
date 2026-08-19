@@ -39,31 +39,14 @@ public class ThrownAlumentum extends ThrowableItemProjectile {
         if (!level().isClientSide()) {
             for (int i = 0; i < 3; i++) {
                 double coeff = i / 3.0;
-                Effects.alumentum(
-                                (ServerLevel) level(),
-                                new Vec3(
-                                        (float) (this.xOld + (this.getX() - this.xOld) * coeff),
-                                        (float) (this.yOld + (this.getY() - this.yOld) * coeff)
-                                                + this.getBbHeight() / 2.0F,
-                                        (float) (this.zOld + (this.getZ() - this.zOld) * coeff)))
-                        .motion(
-                                0.0125F * (this.random.nextFloat() - 0.5F),
-                                0.0125F * (this.random.nextFloat() - 0.5F),
-                                0.0125F * (this.random.nextFloat() - 0.5F))
-                        .color(
-                                this.random.nextFloat() * 0.2F,
-                                this.random.nextFloat() * 0.1F,
-                                this.random.nextFloat() * 0.1F)
-                        .alpha(0.5F)
-                        .scale(4.0F)
-                        .send();
+                Effects.alumentum((ServerLevel) level(),
+                        new Vec3((float) (this.xOld + (this.getX() - this.xOld) * coeff), (float) (this.yOld + (this.getY() - this.yOld) * coeff) + this.getBbHeight() / 2.0F,
+                                (float) (this.zOld + (this.getZ() - this.zOld) * coeff)))
+                        .motion(0.0125F * (this.random.nextFloat() - 0.5F), 0.0125F * (this.random.nextFloat() - 0.5F), 0.0125F * (this.random.nextFloat() - 0.5F))
+                        .color(this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.1F, this.random.nextFloat() * 0.1F).alpha(0.5F).scale(4.0F).send();
 
-                Effects.spawn(
-                        (ServerLevel) level(),
-                        new ShieldSparkParticleOptions(0xFFFFFF, 0.7F, 0.3F, 8, false),
-                        getX() + level().getRandom().nextGaussian() * 0.2F,
-                        getY() + level().getRandom().nextGaussian() * 0.2F,
-                        getZ() + level().getRandom().nextGaussian() * 0.2F);
+                Effects.spawn((ServerLevel) level(), new ShieldSparkParticleOptions(0xFFFFFF, 0.7F, 0.3F, 8, 0, false), getX() + level().getRandom().nextGaussian() * 0.2F,
+                        getY() + level().getRandom().nextGaussian() * 0.2F, getZ() + level().getRandom().nextGaussian() * 0.2F);
             }
         }
     }

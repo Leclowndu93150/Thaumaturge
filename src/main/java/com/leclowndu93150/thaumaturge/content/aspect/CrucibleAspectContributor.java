@@ -20,7 +20,8 @@ import net.minecraft.world.item.crafting.RecipeManager;
 public final class CrucibleAspectContributor implements IAspectRecipeContributor {
     private Map<Item, List<Candidate>> candidates = Map.of();
 
-    private record Candidate(Ingredient catalyst, AspectList aspects, int count) {}
+    private record Candidate(Ingredient catalyst, AspectList aspects, int count) {
+    }
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
@@ -33,15 +34,13 @@ public final class CrucibleAspectContributor implements IAspectRecipeContributor
             if (output.isEmpty()) {
                 continue;
             }
-            map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
-                    .add(new Candidate(crucible.catalyst(), crucible.aspects(), output.getCount()));
+            map.computeIfAbsent(output.getItem(), item -> new ArrayList<>()).add(new Candidate(crucible.catalyst(), crucible.aspects(), output.getCount()));
         }
         candidates = map;
     }
 
     @Override
-    public Optional<AspectList> derive(
-            Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial) {
+    public Optional<AspectList> derive(Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial) {
         List<Candidate> list = candidates.get(item);
         if (list == null) {
             return Optional.empty();
@@ -52,8 +51,7 @@ public final class CrucibleAspectContributor implements IAspectRecipeContributor
                 continue;
             }
             AspectList out = partial.of(catalyst);
-            for (AspectInstance entry : RecipeAspectDerivation.drain(candidate.aspects(), candidate.count())
-                    .entries()) {
+            for (AspectInstance entry : RecipeAspectDerivation.drain(candidate.aspects(), candidate.count()).entries()) {
                 out = out.add(entry);
             }
             if (!out.isEmpty()) {

@@ -50,8 +50,7 @@ public final class ItemSealPlacer extends Item implements ISealDisplayer {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (SealHandler.addSealEntity((ServerLevel) level, pos, context.getClickedFace(), seal, player)
-                && !player.hasInfiniteMaterials()) {
+        if (SealHandler.addSealEntity((ServerLevel) level, pos, context.getClickedFace(), seal, player) && !player.hasInfiniteMaterials()) {
             stack.shrink(1);
         }
         return InteractionResult.SUCCESS_SERVER;

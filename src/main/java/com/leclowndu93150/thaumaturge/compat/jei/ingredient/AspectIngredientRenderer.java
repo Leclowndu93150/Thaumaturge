@@ -29,8 +29,7 @@ public final class AspectIngredientRenderer implements IIngredientRenderer<Aspec
             return;
         }
         if (ingredient.amount() > 1) {
-            AspectTagRenderer.render(
-                    guiGraphics, Minecraft.getInstance().font, 0, 0, ingredient.aspect(), ingredient.amount());
+            AspectTagRenderer.render(guiGraphics, Minecraft.getInstance().font, 0, 0, ingredient.aspect(), ingredient.amount());
         } else {
             AspectTagRenderer.render(guiGraphics, 0, 0, ingredient.aspect());
         }

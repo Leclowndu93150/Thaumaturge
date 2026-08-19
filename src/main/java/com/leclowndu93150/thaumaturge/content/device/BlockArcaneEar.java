@@ -31,9 +31,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockArcaneEar extends BaseEntityBlock {
-    public static final MapCodec<BlockArcaneEar> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(Codec.BOOL.fieldOf("toggle").forGetter(block -> block.toggle), propertiesCodec())
-                    .apply(instance, BlockArcaneEar::new));
+    public static final MapCodec<BlockArcaneEar> CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(Codec.BOOL.fieldOf("toggle").forGetter(block -> block.toggle), propertiesCodec()).apply(instance, BlockArcaneEar::new));
 
     private static final VoxelShape SHAPE_UP = box(2.0, 0.0, 2.0, 14.0, 6.0, 14.0);
     private static final VoxelShape SHAPE_DOWN = box(2.0, 10.0, 2.0, 14.0, 16.0, 14.0);
@@ -47,10 +46,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
     public BlockArcaneEar(boolean toggle, BlockBehaviour.Properties properties) {
         super(properties);
         this.toggle = toggle;
-        registerDefaultState(getStateDefinition()
-                .any()
-                .setValue(BlockStateProperties.FACING, Direction.UP)
-                .setValue(BlockStateProperties.ENABLED, false));
+        registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.UP).setValue(BlockStateProperties.ENABLED, false));
     }
 
     public boolean isToggle() {
@@ -81,9 +77,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.FACING, context.getClickedFace())
-                .setValue(BlockStateProperties.ENABLED, false);
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.getClickedFace()).setValue(BlockStateProperties.ENABLED, false);
     }
 
     @Override
@@ -94,15 +88,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (!canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -123,13 +109,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block block,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         if (level.getBlockEntity(pos) instanceof BlockEntityArcaneEar ear) {
             ear.updateTone();
@@ -137,8 +117,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -165,8 +144,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

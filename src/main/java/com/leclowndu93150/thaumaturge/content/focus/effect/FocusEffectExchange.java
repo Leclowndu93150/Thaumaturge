@@ -59,14 +59,11 @@ public final class FocusEffectExchange implements FocusEffect, IFocusBlockPicker
 
     @Override
     public int complexity(FocusSettings settings) {
-        return BASE_COMPLEXITY + settings.value("silk") * SILK_COMPLEXITY_FACTOR + settings.value("fortune") == 0
-                ? 0
-                : (settings.value("fortune") + 1) * FORTUNE_COMPLEXITY_FACTOR;
+        return BASE_COMPLEXITY + settings.value("silk") * SILK_COMPLEXITY_FACTOR + settings.value("fortune") == 0 ? 0 : (settings.value("fortune") + 1) * FORTUNE_COMPLEXITY_FACTOR;
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(target instanceof BlockHitResult blockHit)) {
             return false;
         }
@@ -90,48 +87,32 @@ public final class FocusEffectExchange implements FocusEffect, IFocusBlockPicker
         int fortune = settings.value("fortune");
         BlockState picked = ((ICaster) casterStack.getItem()).getPickedBlock(casterStack);
         if (caster instanceof Player player && picked != null && !picked.isAir()) {
-            BlockBreakerEngine.swapper(
-                            blockHit.getBlockPos(), level.getBlockState(blockHit.getBlockPos()), picked, player)
-                    .consumeTarget()
-                    .showFx(SWAP_FX_COLOR, false)
-                    .pickupDrops()
-                    .silkTouch(silk)
-                    .fortune(fortune)
-                    .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST)
-                    .queue(level);
+            BlockBreakerEngine.swapper(blockHit.getBlockPos(), level.getBlockState(blockHit.getBlockPos()), picked, player).consumeTarget().showFx(SWAP_FX_COLOR, false).pickupDrops().silkTouch(silk)
+                    .fortune(fortune).visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST).queue(level);
         }
         return true;
     }
 
     @Override
     public List<SettingDefinition> settings() {
-        int[] silk = new int[] {0, 1};
-        String[] silkDesc = new String[] {"focus.common.no", "focus.common.yes"};
-        int[] fortune = new int[] {0, 1, 2, 3, 4};
-        String[] fortuneDesc = new String[] {"focus.common.no", "I", "II", "III", "IV"};
-        return List.of(
-                new SettingDefinition(
-                        "fortune", "focus.common.fortune", new SettingDefinition.IntList(fortune, fortuneDesc)),
+        int[] silk = new int[]{0, 1};
+        String[] silkDesc = new String[]{"focus.common.no", "focus.common.yes"};
+        int[] fortune = new int[]{0, 1, 2, 3, 4};
+        String[] fortuneDesc = new String[]{"focus.common.no", "I", "II", "III", "IV"};
+        return List.of(new SettingDefinition("fortune", "focus.common.fortune", new SettingDefinition.IntList(fortune, fortuneDesc)),
                 new SettingDefinition("silk", "focus.common.silk", new SettingDefinition.IntList(silk, silkDesc)));
     }
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
         float shade = 0.25F + level.getRandom().nextFloat() * 0.25F;
-        ShieldSparkParticleOptions data =
-                new ShieldSparkParticleOptions(ARGB.colorFromFloat(1.0F, shade, shade, shade), 0.6F, 0.5F, 9, true);
+        ShieldSparkParticleOptions data = new ShieldSparkParticleOptions(ARGB.colorFromFloat(1.0F, shade, shade, shade), 0.6F, 0.5F, 9, 0, true);
         level.addParticle(data, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.ENCHANTMENT_TABLE_USE,
-                        SoundSource.PLAYERS,
-                        0.2F,
-                        2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.2F,
+                2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
     }
 }

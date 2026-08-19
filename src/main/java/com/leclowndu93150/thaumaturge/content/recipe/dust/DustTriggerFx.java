@@ -55,27 +55,12 @@ public final class DustTriggerFx {
             int delay = rand.nextInt(5);
             float decay = floaty ? 0.3F + rand.nextFloat() * 0.5F : 0.85F;
             float grav = floaty ? 0.2F : 0.5F;
-            Effects.simpleSparkle(level, v1)
-                    .motion(vx, vy, vz)
-                    .scale(0.5F)
-                    .color(r, g, b)
-                    .delay(delay)
-                    .decay(decay)
-                    .gravity(grav)
-                    .baseAge((int) BURST_BASE_AGE)
-                    .send();
+            Effects.simpleSparkle(level, v1).motion(vx, vy, vz).scale(0.5F).color(r, g, b).delay(delay).decay(decay).gravity(grav).baseAge((int) BURST_BASE_AGE).send();
         }
     }
 
-    public static void emitTriggerSparkles(
-            ServerLevel level,
-            ServerPlayer player,
-            BlockPos triggerPos,
-            DustTrigger trigger,
-            Vec3 hitStart,
-            @Nullable DustTriggerPlacement placement) {
-        List<BlockPos> sparkles = trigger.sparkle(
-                level, player, triggerPos, placement == null ? DustTriggerPlacement.origin() : placement);
+    public static void emitTriggerSparkles(ServerLevel level, ServerPlayer player, BlockPos triggerPos, DustTrigger trigger, Vec3 hitStart, @Nullable DustTriggerPlacement placement) {
+        List<BlockPos> sparkles = trigger.sparkle(level, player, triggerPos, placement == null ? DustTriggerPlacement.origin() : placement);
         if (sparkles == null || sparkles.isEmpty()) {
             return;
         }
@@ -96,7 +81,8 @@ public final class DustTriggerFx {
         box = box.inflate(0.1);
         double avgEdge = (box.getXsize() + box.getYsize() + box.getZsize()) / 3.0;
         int num = (int) (avgEdge * 20.0);
-        if (num < 1) num = 1;
+        if (num < 1)
+            num = 1;
         RandomSource rand = level.getRandom();
         for (Direction face : Direction.values()) {
             BlockPos neighbor = p.relative(face);
@@ -114,9 +100,12 @@ public final class DustTriggerFx {
                 double x = mx;
                 double y = my;
                 double z = mz;
-                if (rx) x = mx + rand.nextGaussian() * 0.6;
-                if (ry) y = my + rand.nextGaussian() * 0.6;
-                if (rz) z = mz + rand.nextGaussian() * 0.6;
+                if (rx)
+                    x = mx + rand.nextGaussian() * 0.6;
+                if (ry)
+                    y = my + rand.nextGaussian() * 0.6;
+                if (rz)
+                    z = mz + rand.nextGaussian() * 0.6;
                 x = Mth.clamp(x, box.minX, box.maxX);
                 y = Mth.clamp(y, box.minY, box.maxY);
                 z = Mth.clamp(z, box.minZ, box.maxZ);
@@ -132,15 +121,7 @@ public final class DustTriggerFx {
                 double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 int delay = rand.nextInt(5) + (int) (dist * SPARKLE_TICKS_PER_BLOCK);
                 float scale = 0.4F + (float) rand.nextGaussian() * 0.1F;
-                Effects.simpleSparkle(level, new Vec3(wx, wy, wz))
-                        .motion(0.0, 0.0025, 0.0)
-                        .scale(scale)
-                        .color(r, g, b)
-                        .delay(delay)
-                        .decay(1.0F)
-                        .gravity(0.01F)
-                        .baseAge(16)
-                        .send();
+                Effects.simpleSparkle(level, new Vec3(wx, wy, wz)).motion(0.0, 0.0025, 0.0).scale(scale).color(r, g, b).delay(delay).decay(1.0F).gravity(0.01F).baseAge(16).send();
             }
         }
     }

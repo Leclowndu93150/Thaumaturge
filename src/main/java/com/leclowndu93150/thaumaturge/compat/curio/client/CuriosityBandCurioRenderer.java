@@ -27,23 +27,12 @@ public final class CuriosityBandCurioRenderer implements ICurioRenderer {
     private static final float HELMET_LIFT = 0.06F;
 
     @Override
-    public <S extends LivingEntityRenderState, M extends EntityModel<? super S>> void render(
-            ItemStack stack,
-            SlotContext slotContext,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            int packedLight,
-            S renderState,
-            RenderLayerParent<S, M> renderLayerParent,
-            EntityRendererProvider.Context context,
-            float yRotation,
-            float xRotation) {
+    public <S extends LivingEntityRenderState, M extends EntityModel<? super S>> void render(ItemStack stack, SlotContext slotContext, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int packedLight, S renderState, RenderLayerParent<S, M> renderLayerParent, EntityRendererProvider.Context context, float yRotation, float xRotation) {
         if (!(renderLayerParent.getModel() instanceof HumanoidModel<?> humanoid)) {
             return;
         }
         LivingEntity wearer = slotContext.entity();
-        boolean helmeted =
-                wearer != null && !wearer.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
+        boolean helmeted = wearer != null && !wearer.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
         poseStack.pushPose();
         humanoid.head.translateAndRotate(poseStack);
         float z = FACE_Z - (helmeted ? HELMET_LIFT : 0.0F);
@@ -56,13 +45,7 @@ public final class CuriosityBandCurioRenderer implements ICurioRenderer {
         poseStack.popPose();
     }
 
-    private static void vertex(
-            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light) {
-        buffer.addVertex(pose, x, y, z)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+    private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int light) {
+        buffer.addVertex(pose, x, y, z).setColor(-1).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, 0.0F, 0.0F, -1.0F);
     }
 }

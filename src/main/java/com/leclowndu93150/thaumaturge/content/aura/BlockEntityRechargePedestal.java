@@ -132,8 +132,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
             for (int yy = -NODE_DRAW_RANGE; yy <= NODE_DRAW_RANGE; yy++) {
                 for (int zz = -NODE_DRAW_RANGE; zz <= NODE_DRAW_RANGE; zz++) {
                     cursor.setWithOffset(worldPosition, xx, yy, zz);
-                    if (!(level.getBlockEntity(cursor) instanceof BlockEntityNode node)
-                            || node instanceof BlockEntityJarNode) {
+                    if (!(level.getBlockEntity(cursor) instanceof BlockEntityNode node) || node instanceof BlockEntityJarNode) {
                         continue;
                     }
                     for (AspectInstance entry : node.getAspects().entries()) {
@@ -178,22 +177,11 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
 
     private void sendSparkle(ServerLevel level) {
         RandomSource rand = level.getRandom();
-        List<Holder.Reference<IAspect>> primals = level.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .listElements()
-                .filter(holder -> holder.value().isPrimal())
-                .toList();
-        int color = primals.isEmpty()
-                ? 0xFFFFFF
-                : primals.get(rand.nextInt(primals.size())).value().color();
-        Vec3 from = new Vec3(
-                worldPosition.getX() + rand.nextInt(SPARKLE_SPREAD) - rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat(),
-                worldPosition.getY() + 1 + rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat(),
-                worldPosition.getZ() + rand.nextInt(SPARKLE_SPREAD) - rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat());
-        Vec3 to = new Vec3(
-                worldPosition.getX() + 0.4 + rand.nextFloat() * 0.2F,
-                worldPosition.getY() + 1 + 0.4 + rand.nextFloat() * 0.2F,
-                worldPosition.getZ() + 0.4 + rand.nextFloat() * 0.2F);
+        List<Holder.Reference<IAspect>> primals = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().filter(holder -> holder.value().isPrimal()).toList();
+        int color = primals.isEmpty() ? 0xFFFFFF : primals.get(rand.nextInt(primals.size())).value().color();
+        Vec3 from = new Vec3(worldPosition.getX() + rand.nextInt(SPARKLE_SPREAD) - rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat(),
+                worldPosition.getY() + 1 + rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat(), worldPosition.getZ() + rand.nextInt(SPARKLE_SPREAD) - rand.nextInt(SPARKLE_SPREAD) + rand.nextFloat());
+        Vec3 to = new Vec3(worldPosition.getX() + 0.4 + rand.nextFloat() * 0.2F, worldPosition.getY() + 1 + 0.4 + rand.nextFloat() * 0.2F, worldPosition.getZ() + 0.4 + rand.nextFloat() * 0.2F);
         EffectDispatch.spawnVisSparkle(level, from, to, color);
     }
 }

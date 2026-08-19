@@ -64,27 +64,20 @@ public final class FocusEffectEarth implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
         FocusFX.impact(level, target.getLocation(), id());
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
-            struck.hurtServer(
-                    level, level.damageSources().thrown(struck, ctx.caster()), damageForDisplay(settings, ctx.power()));
+            struck.hurtServer(level, level.damageSources().thrown(struck, ctx.caster()), damageForDisplay(settings, ctx.power()));
             return true;
         }
         if (target instanceof BlockHitResult blockHit) {
             BlockPos pos = blockHit.getBlockPos();
-            if (ctx.caster() instanceof Player player
-                    && level.getBlockState(pos).getDestroySpeed(level, pos)
-                            <= damageForDisplay(settings, ctx.power()) / HARDNESS_DIVISOR) {
-                BlockBreakerEngine.breaker(pos, level.getBlockState(pos), player)
-                        .delay(index)
-                        .visCost(BREAK_VIS_COST)
-                        .queue(level);
+            if (ctx.caster() instanceof Player player && level.getBlockState(pos).getDestroySpeed(level, pos) <= damageForDisplay(settings, ctx.power()) / HARDNESS_DIVISOR) {
+                BlockBreakerEngine.breaker(pos, level.getBlockState(pos), player).delay(index).visCost(BREAK_VIS_COST).queue(level);
             }
         }
         return false;
@@ -103,13 +96,7 @@ public final class FocusEffectEarth implements FocusEffect {
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.DRAGON_FIREBALL_EXPLODE,
-                        SoundSource.PLAYERS,
-                        0.25F,
-                        1.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 0.25F,
+                1.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
     }
 }

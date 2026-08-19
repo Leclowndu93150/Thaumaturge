@@ -26,7 +26,8 @@ public final class MazeLayoutGenerator {
     private final List<Integer> deck = new ArrayList<>(Arrays.asList(N, S, E, W));
     public final int[][] grid;
 
-    private record Spot(int col, int row) {}
+    private record Spot(int col, int row) {
+    }
 
     public MazeLayoutGenerator(int width, int height, long seed) {
         this.width = width;

@@ -15,13 +15,7 @@ public final class TCDebugPayloads {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(TCIds.MODID + "_debug");
         // Debug Packets
-        registrar.playToClient(
-                ClientboundToggleRaycastDebugPayload.TYPE,
-                ClientboundToggleRaycastDebugPayload.STREAM_CODEC,
-                (payload, context) -> ToggleRaycastDebugHandler.handle(payload, context));
-        registrar.playToClient(
-                ClientboundRaycastDebugPayload.TYPE,
-                ClientboundRaycastDebugPayload.STREAM_CODEC,
-                (payload, context) -> ToggleRaycastDebugHandler.handleServerRaycast(payload, context));
+        registrar.playToClient(ClientboundToggleRaycastDebugPayload.TYPE, ClientboundToggleRaycastDebugPayload.STREAM_CODEC, (payload, context) -> ToggleRaycastDebugHandler.handle(payload, context));
+        registrar.playToClient(ClientboundRaycastDebugPayload.TYPE, ClientboundRaycastDebugPayload.STREAM_CODEC, (payload, context) -> ToggleRaycastDebugHandler.handleServerRaycast(payload, context));
     }
 }

@@ -13,17 +13,13 @@ public final class ThaumaturgeClientConfig {
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
-        SHOW_ASPECTS_BY_DEFAULT = builder.comment(
-                        "When true, item aspects render on tooltips by default and Shift hides them. When false, Shift reveals them.")
+        SHOW_ASPECTS_BY_DEFAULT = builder.comment("When true, item aspects render on tooltips by default and Shift hides them. When false, Shift reveals them.")
                 .define("tooltip.show_aspects_by_default", false);
 
-        LARGE_TAG_TEXT = builder.comment(
-                        "When true, aspect tag amount and bonus counters render at full font size. When false, they render half-scale to fit narrow GUIs (TC default).")
+        LARGE_TAG_TEXT = builder.comment("When true, aspect tag amount and bonus counters render at full font size. When false, they render half-scale to fit narrow GUIs (TC default).")
                 .define("graphics.large_tag_text", false);
 
-        DIAL_BOTTOM = builder.comment(
-                        "When true, the caster vis dial renders at the bottom left of the screen instead of the top left.")
-                .define("hud.dial_bottom", false);
+        DIAL_BOTTOM = builder.comment("When true, the caster vis dial renders at the bottom left of the screen instead of the top left.").define("hud.dial_bottom", false);
 
         /*HIDE_RECIPES_IF_MISSING_RESEARCH = builder
         .comment("Hide recipes from JEI if you don't have the research for it")

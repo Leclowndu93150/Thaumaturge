@@ -78,15 +78,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
         int previous = (int) centrifuge.rotation;
         centrifuge.rotation += centrifuge.rotationSpeed;
         if (centrifuge.rotation % 180.0F <= 20.0F && previous % 180 >= 160 && centrifuge.rotationSpeed > 0.0F) {
-            level.playLocalSound(
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    TCSounds.PUMP.get(),
-                    SoundSource.BLOCKS,
-                    1.0F,
-                    1.0F,
-                    false);
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.PUMP.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
         }
     }
 
@@ -108,15 +100,12 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
         if (level == null) {
             return;
         }
-        IEssentiaTransport ic =
-                EssentiaFlowHandler.transport(level, getBlockPos().below(), Direction.UP);
+        IEssentiaTransport ic = EssentiaFlowHandler.transport(level, getBlockPos().below(), Direction.UP);
         if (ic == null || !ic.canOutputTo(Direction.UP)) {
             return;
         }
         Holder<IAspect> available = null;
-        if (ic.getEssentiaAmount(Direction.UP) > 0
-                && ic.getSuctionAmount(Direction.UP) < getSuctionAmount(Direction.DOWN)
-                && getSuctionAmount(Direction.DOWN) >= ic.getMinimumSuction()) {
+        if (ic.getEssentiaAmount(Direction.UP) > 0 && ic.getSuctionAmount(Direction.UP) < getSuctionAmount(Direction.DOWN) && getSuctionAmount(Direction.DOWN) >= ic.getMinimumSuction()) {
             available = ic.getEssentiaType(Direction.UP);
         }
         if (available != null && !available.value().isPrimal() && ic.takeEssentia(available, 1, Direction.UP) == 1) {
@@ -235,8 +224,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

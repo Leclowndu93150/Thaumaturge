@@ -16,16 +16,7 @@ public final class FocusCloudParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private FocusCloudParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            ColorParticleOption options,
-            ParticleSheet sheet) {
+    private FocusCloudParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ColorParticleOption options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
@@ -50,16 +41,7 @@ public final class FocusCloudParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("focus_cloud");
 
         @Override
-        public Particle createParticle(
-                ColorParticleOption options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FocusCloudParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

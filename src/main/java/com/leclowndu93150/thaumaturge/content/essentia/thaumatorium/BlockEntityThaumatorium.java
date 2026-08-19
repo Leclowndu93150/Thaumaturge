@@ -93,9 +93,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
 
     private Direction facing() {
         BlockState state = getBlockState();
-        return state.hasProperty(HorizontalDirectionalBlock.FACING)
-                ? state.getValue(HorizontalDirectionalBlock.FACING)
-                : Direction.NORTH;
+        return state.hasProperty(HorizontalDirectionalBlock.FACING) ? state.getValue(HorizontalDirectionalBlock.FACING) : Direction.NORTH;
     }
 
     public void toggleRecipe(ServerLevel server, Player player, Identifier recipeId) {
@@ -158,10 +156,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
             machine.updateUpgrades(server);
         }
         machine.counter++;
-        if (!machine.heated
-                || machine.gettingPower(server)
-                || machine.counter % WORK_INTERVAL != 0
-                || machine.queue.isEmpty()) {
+        if (!machine.heated || machine.gettingPower(server) || machine.counter % WORK_INTERVAL != 0 || machine.queue.isEmpty()) {
             return;
         }
         ItemStack stack = machine.catalystStack();
@@ -169,17 +164,12 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
             machine.currentSuction = null;
             return;
         }
-        if (machine.currentCraft < 0
-                || machine.currentCraft >= machine.queue.size()
-                || machine.currentRecipe == null
-                || !machine.currentRecipe.catalyst().test(stack)) {
+        if (machine.currentCraft < 0 || machine.currentCraft >= machine.queue.size() || machine.currentRecipe == null || !machine.currentRecipe.catalyst().test(stack)) {
             machine.currentCraft = -1;
             machine.currentRecipe = null;
             for (int a = 0; a < machine.queue.size(); a++) {
                 RecipeHolder<?> holder = machine.findRecipe(server, machine.queue.get(a));
-                if (holder != null
-                        && holder.value() instanceof CrucibleRecipe recipe
-                        && recipe.catalyst().test(stack)) {
+                if (holder != null && holder.value() instanceof CrucibleRecipe recipe && recipe.catalyst().test(stack)) {
                     machine.currentCraft = a;
                     machine.currentRecipe = recipe;
                     break;
@@ -206,9 +196,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
     }
 
     private boolean gettingPower(ServerLevel server) {
-        return server.hasNeighborSignal(getBlockPos())
-                || server.hasNeighborSignal(getBlockPos().above())
-                || server.hasNeighborSignal(getBlockPos().below());
+        return server.hasNeighborSignal(getBlockPos()) || server.hasNeighborSignal(getBlockPos().above()) || server.hasNeighborSignal(getBlockPos().below());
     }
 
     private void updateUpgrades(ServerLevel server) {
@@ -250,13 +238,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
         ItemStack result = currentRecipe.assemble(new CrucibleRecipeInput(stack, essentia));
         essentia = AspectList.EMPTY;
         InvHelper.ejectStackAt(server, getBlockPos(), facing(), result);
-        server.playSound(
-                null,
-                getBlockPos(),
-                SoundEvents.LAVA_EXTINGUISH,
-                SoundSource.BLOCKS,
-                0.25F,
-                2.6F + (server.getRandom().nextFloat() - server.getRandom().nextFloat()) * 0.8F);
+        server.playSound(null, getBlockPos(), SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.25F, 2.6F + (server.getRandom().nextFloat() - server.getRandom().nextFloat()) * 0.8F);
         currentCraft = -1;
         currentRecipe = null;
         setChanged();
@@ -275,9 +257,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
                 if (ic == null) {
                     continue;
                 }
-                if (ic.getEssentiaAmount(dir.getOpposite()) > 0
-                        && ic.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir)
-                        && getSuctionAmount(dir) >= ic.getMinimumSuction()) {
+                if (ic.getEssentiaAmount(dir.getOpposite()) > 0 && ic.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir) && getSuctionAmount(dir) >= ic.getMinimumSuction()) {
                     int taken = ic.takeEssentia(currentSuction, 1, dir.getOpposite());
                     if (taken > 0) {
                         acceptEssentia(currentSuction, taken);
@@ -389,8 +369,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput out = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(out);
             nbt.merge(out.buildResult());

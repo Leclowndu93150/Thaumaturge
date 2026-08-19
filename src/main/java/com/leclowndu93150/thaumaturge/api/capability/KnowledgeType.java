@@ -17,15 +17,13 @@ import net.minecraft.util.StringRepresentable;
  * @since 1.0.0
  */
 public enum KnowledgeType implements StringRepresentable {
-    THEORY("theory", "T", 32),
-    OBSERVATION("observation", "O", 16);
+    THEORY("theory", "T", 32), OBSERVATION("observation", "O", 16);
 
     /** Codec for datapack and component serialization. */
     public static final Codec<KnowledgeType> CODEC = StringRepresentable.fromEnum(KnowledgeType::values);
 
     /** Network codec for payload sync. */
-    public static final StreamCodec<ByteBuf, KnowledgeType> STREAM_CODEC =
-            ByteBufCodecs.idMapper(i -> values()[i], KnowledgeType::ordinal);
+    public static final StreamCodec<ByteBuf, KnowledgeType> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], KnowledgeType::ordinal);
 
     private final String name;
     private final String abbreviation;

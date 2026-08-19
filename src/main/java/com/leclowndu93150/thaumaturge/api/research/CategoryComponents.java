@@ -43,7 +43,6 @@ public final class CategoryComponents {
      * @return the translation key
      */
     public static String translationKey(ResourceKey<IResearchCategory> key) {
-        return "research_category." + key.identifier().getNamespace() + "."
-                + key.identifier().getPath();
+        return "research_category." + key.identifier().getNamespace() + "." + key.identifier().getPath();
     }
 }

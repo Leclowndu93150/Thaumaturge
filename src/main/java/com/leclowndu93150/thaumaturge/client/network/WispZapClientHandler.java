@@ -38,14 +38,7 @@ public final class WispZapClientHandler {
                     b = ARGB.blue(color) / 255.0F;
                 }
             }
-            mc.level.addParticle(
-                    new BoltParticleOptions(target.getX(), target.getY(), target.getZ(), r, g, b, BOLT_WIDTH),
-                    source.getX(),
-                    source.getY(),
-                    source.getZ(),
-                    0.0,
-                    0.0,
-                    0.0);
+            mc.level.addParticle(new BoltParticleOptions(target.getX(), target.getY(), target.getZ(), r, g, b, BOLT_WIDTH), source.getX(), source.getY(), source.getZ(), 0.0, 0.0, 0.0);
         });
     }
 }

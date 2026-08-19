@@ -22,14 +22,9 @@ import net.minecraft.world.phys.AABB;
 public final class ManaBeanTests {
     private ManaBeanTests() {}
 
-    private static BlockEntityManaPod placePod(
-            GameTestHelper helper, BlockPos pos, int age, ResourceKey<IAspect> aspect) {
+    private static BlockEntityManaPod placePod(GameTestHelper helper, BlockPos pos, int age, ResourceKey<IAspect> aspect) {
         helper.setBlock(pos.above(), Blocks.OAK_LOG);
-        helper.getLevel()
-                .setBlock(
-                        helper.absolutePos(pos),
-                        TCBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age),
-                        3);
+        helper.getLevel().setBlock(helper.absolutePos(pos), TCBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age), 3);
         BlockEntityManaPod pod = (BlockEntityManaPod) helper.getLevel().getBlockEntity(helper.absolutePos(pos));
         if (pod != null && aspect != null) {
             pod.setAspect(aspect);
@@ -41,8 +36,7 @@ public final class ManaBeanTests {
         r.add("manabean/combination_lookup", 20, helper -> {
             var registries = helper.getLevel().registryAccess();
             var aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
-            Holder<IAspect> combo = AspectCombinations.result(
-                    registries, aspects.getOrThrow(TCAspects.AER), aspects.getOrThrow(TCAspects.ORDO));
+            Holder<IAspect> combo = AspectCombinations.result(registries, aspects.getOrThrow(TCAspects.AER), aspects.getOrThrow(TCAspects.ORDO));
             if (combo == null || !combo.is(TCAspects.MOTUS)) {
                 helper.fail("aer + ordo should combine into motus, got " + combo);
                 return;
@@ -59,9 +53,7 @@ public final class ManaBeanTests {
             for (int i = 0; i < BlockEntityManaPod.MAX_AGE; i++) {
                 pod.checkGrowth();
             }
-            int age = helper.getLevel()
-                    .getBlockState(helper.absolutePos(new BlockPos(2, 2, 2)))
-                    .getValue(BlockManaPod.AGE);
+            int age = helper.getLevel().getBlockState(helper.absolutePos(new BlockPos(2, 2, 2))).getValue(BlockManaPod.AGE);
             if (age != BlockEntityManaPod.MAX_AGE) {
                 helper.fail("Pod did not reach full age, at " + age);
                 return;

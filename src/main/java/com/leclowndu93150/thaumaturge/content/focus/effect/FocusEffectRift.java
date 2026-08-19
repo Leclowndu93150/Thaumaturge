@@ -57,14 +57,11 @@ public final class FocusEffectRift implements FocusEffect {
 
     @Override
     public int complexity(FocusSettings settings) {
-        return BASE_COMPLEXITY
-                + settings.value("duration") / DURATION_COMPLEXITY_DIVISOR
-                + settings.value("depth") / DEPTH_COMPLEXITY_DIVISOR;
+        return BASE_COMPLEXITY + settings.value("duration") / DURATION_COMPLEXITY_DIVISOR + settings.value("depth") / DEPTH_COMPLEXITY_DIVISOR;
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(target instanceof BlockHitResult blockHit)) {
             return false;
         }
@@ -75,11 +72,7 @@ public final class FocusEffectRift implements FocusEffect {
         BlockPos pos = blockHit.getBlockPos();
         for (distance = 0; distance < maxdis; distance++) {
             BlockState bi = level.getBlockState(pos);
-            if (bi.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST)
-                    || bi.is(Blocks.BEDROCK)
-                    || bi.is(TCBlocks.HOLE.get())
-                    || bi.isAir()
-                    || bi.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
+            if (bi.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST) || bi.is(Blocks.BEDROCK) || bi.is(TCBlocks.HOLE.get()) || bi.isAir() || bi.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
                 break;
             }
             pos = pos.relative(blockHit.getDirection().getOpposite());
@@ -90,17 +83,11 @@ public final class FocusEffectRift implements FocusEffect {
 
     public static boolean createHole(Level level, BlockPos pos, @Nullable Direction side, int count, int max) {
         BlockState bs = level.getBlockState(pos);
-        if (level.isClientSide()
-                || level.getBlockEntity(pos) != null
-                || bs.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST)
-                || bs.is(Blocks.BEDROCK)
-                || bs.is(TCBlocks.HOLE.get())
-                || (!bs.isAir() && bs.canBeReplaced())
-                || bs.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
+        if (level.isClientSide() || level.getBlockEntity(pos) != null || bs.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST) || bs.is(Blocks.BEDROCK) || bs.is(TCBlocks.HOLE.get())
+                || (!bs.isAir() && bs.canBeReplaced()) || bs.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
             return false;
         }
-        if (level.setBlock(pos, TCBlocks.HOLE.get().defaultBlockState(), Block.UPDATE_ALL)
-                && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
+        if (level.setBlock(pos, TCBlocks.HOLE.get().defaultBlockState(), Block.UPDATE_ALL) && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
             hole.configure(bs, max, count, side);
             hole.setChanged();
         }
@@ -109,29 +96,20 @@ public final class FocusEffectRift implements FocusEffect {
 
     @Override
     public List<SettingDefinition> settings() {
-        int[] depth = new int[] {8, 16, 24, 32};
-        String[] depthDesc = new String[] {"8", "16", "24", "32"};
-        return List.of(
-                new SettingDefinition("depth", "focus.rift.depth", new SettingDefinition.IntList(depth, depthDesc)),
+        int[] depth = new int[]{8, 16, 24, 32};
+        String[] depthDesc = new String[]{"8", "16", "24", "32"};
+        return List.of(new SettingDefinition("depth", "focus.rift.depth", new SettingDefinition.IntList(depth, depthDesc)),
                 new SettingDefinition("duration", "focus.common.duration", new SettingDefinition.IntRange(2, 10)));
     }
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
-        RiftShardParticleOptions data =
-                new RiftShardParticleOptions((float) (0.7F + level.getRandom().nextGaussian() * 0.3F));
+        RiftShardParticleOptions data = new RiftShardParticleOptions((float) (0.7F + level.getRandom().nextGaussian() * 0.3F));
         level.addParticle(data, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.ENCHANTMENT_TABLE_USE,
-                        SoundSource.PLAYERS,
-                        0.2F,
-                        0.7F);
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.2F, 0.7F);
     }
 }

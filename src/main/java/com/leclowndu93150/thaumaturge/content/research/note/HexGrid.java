@@ -13,10 +13,8 @@ public final class HexGrid {
     private HexGrid() {}
 
     public record Hex(int q, int r) {
-        public static final Codec<Hex> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        Codec.INT.fieldOf("q").forGetter(Hex::q),
-                        Codec.INT.fieldOf("r").forGetter(Hex::r))
-                .apply(instance, Hex::new));
+        public static final Codec<Hex> CODEC = RecordCodecBuilder
+                .create(instance -> instance.group(Codec.INT.fieldOf("q").forGetter(Hex::q), Codec.INT.fieldOf("r").forGetter(Hex::r)).apply(instance, Hex::new));
 
         public Hex neighbour(int direction) {
             return new Hex(q + NEIGHBOURS[direction][0], r + NEIGHBOURS[direction][1]);

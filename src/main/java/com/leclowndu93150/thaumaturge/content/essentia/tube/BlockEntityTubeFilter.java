@@ -48,7 +48,8 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
 
     @Override
     public AspectList queryAspects() {
-        if (aspectFilter == null || level == null) return AspectList.EMPTY;
+        if (aspectFilter == null || level == null)
+            return AspectList.EMPTY;
         return AspectList.EMPTY.add(EssentiaTransportHelper.resolve(level, aspectFilter), 1);
     }
 
@@ -61,6 +62,7 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        if (aspectFilter != null) output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
+        if (aspectFilter != null)
+            output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
     }
 }

@@ -82,189 +82,59 @@ public final class TCPlacedFeatures {
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        context.register(
-                GREATWOOD_CHECKED,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE),
-                        List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()))));
-        context.register(
-                SILVERWOOD_CHECKED,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.SILVERWOOD_TREE),
-                        List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_SILVERWOOD.get()))));
-        context.register(
-                BIG_MAGIC_CHECKED,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.BIG_MAGIC_TREE),
-                        List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()))));
+        context.register(GREATWOOD_CHECKED,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE), List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()))));
+        context.register(SILVERWOOD_CHECKED,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.SILVERWOOD_TREE), List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_SILVERWOOD.get()))));
+        context.register(BIG_MAGIC_CHECKED,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.BIG_MAGIC_TREE), List.of(PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()))));
 
-        context.register(
-                TREES_MAGIC_FOREST,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_TREES),
-                        List.of(
-                                PlacementUtils.countExtra(
-                                        MAGIC_FOREST_TREE_COUNT,
-                                        MAGIC_FOREST_EXTRA_TREE_CHANCE,
-                                        MAGIC_FOREST_EXTRA_TREE_COUNT),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
-                                BiomeFilter.biome())));
+        context.register(TREES_MAGIC_FOREST,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_TREES),
+                        List.of(PlacementUtils.countExtra(MAGIC_FOREST_TREE_COUNT, MAGIC_FOREST_EXTRA_TREE_CHANCE, MAGIC_FOREST_EXTRA_TREE_COUNT), InSquarePlacement.spread(),
+                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, BiomeFilter.biome())));
 
-        context.register(
-                GREATWOOD_NATURAL,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(GREATWOOD_RARITY),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
-                                PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()),
-                                BiomeFilter.biome())));
-        context.register(
-                GREATWOOD_NATURAL_RARE,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(GREATWOOD_RARE_RARITY),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
-                                PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()),
-                                BiomeFilter.biome())));
-        context.register(
-                SILVERWOOD_NATURAL,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.SILVERWOOD_TREE),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(SILVERWOOD_RARITY),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
-                                PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_SILVERWOOD.get()),
-                                BiomeFilter.biome())));
+        context.register(GREATWOOD_NATURAL, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE), List.of(RarityFilter.onAverageOnceEvery(GREATWOOD_RARITY),
+                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()), BiomeFilter.biome())));
+        context.register(GREATWOOD_NATURAL_RARE, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.GREATWOOD_TREE), List.of(RarityFilter.onAverageOnceEvery(GREATWOOD_RARE_RARITY),
+                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_GREATWOOD.get()), BiomeFilter.biome())));
+        context.register(SILVERWOOD_NATURAL, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.SILVERWOOD_TREE), List.of(RarityFilter.onAverageOnceEvery(SILVERWOOD_RARITY),
+                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_OCEAN_FLOOR, PlacementUtils.filteredByBlockSurvival(TCBlocks.SAPLING_SILVERWOOD.get()), BiomeFilter.biome())));
 
-        context.register(
-                MAGIC_FOREST_FLORA,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_FLORA), List.of(BiomeFilter.biome())));
+        context.register(MAGIC_FOREST_FLORA, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_FLORA), List.of(BiomeFilter.biome())));
 
-        context.register(
-                MANA_PODS,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.MANA_PODS),
-                        List.of(
-                                CountPlacement.of(MANA_POD_ATTEMPTS),
-                                InSquarePlacement.spread(),
-                                BiomeFilter.biome())));
+        context.register(MANA_PODS,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MANA_PODS), List.of(CountPlacement.of(MANA_POD_ATTEMPTS), InSquarePlacement.spread(), BiomeFilter.biome())));
 
-        context.register(
-                CRYSTALS,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.CRYSTALS), List.of(BiomeFilter.biome())));
+        context.register(CRYSTALS, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.CRYSTALS), List.of(BiomeFilter.biome())));
 
-        context.register(
-                NODES_WILD,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_WILD_RARITY), InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
-        context.register(
-                NODES_MAGICAL,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_MAGICAL_RARITY), InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
-        context.register(
-                NODES_EERIE,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.NODES_EERIE),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_EERIE_RARITY), InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
-        context.register(
-                NODES_NETHER,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(NODE_NETHER_RARITY), InSquarePlacement.spread(),
-                                HeightRangePlacement.uniform(
-                                                VerticalAnchor.absolute(NODE_NETHER_MIN_Y),
-                                                VerticalAnchor.absolute(NODE_NETHER_MAX_Y)),
-                                        BiomeFilter.biome())));
+        context.register(NODES_WILD, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
+                List.of(RarityFilter.onAverageOnceEvery(NODE_WILD_RARITY), InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
+        context.register(NODES_MAGICAL, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
+                List.of(RarityFilter.onAverageOnceEvery(NODE_MAGICAL_RARITY), InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
+        context.register(NODES_EERIE, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.NODES_EERIE),
+                List.of(RarityFilter.onAverageOnceEvery(NODE_EERIE_RARITY), InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
+        context.register(NODES_NETHER, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.NODES_WILD), List.of(RarityFilter.onAverageOnceEvery(NODE_NETHER_RARITY),
+                InSquarePlacement.spread(), HeightRangePlacement.uniform(VerticalAnchor.absolute(NODE_NETHER_MIN_Y), VerticalAnchor.absolute(NODE_NETHER_MAX_Y)), BiomeFilter.biome())));
 
-        context.register(
-                OBSIDIAN_TOTEM,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.OBSIDIAN_TOTEM),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(OBSIDIAN_TOTEM_RARITY), InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
-        context.register(
-                CRIMSON_PORTAL,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.CRIMSON_PORTAL),
-                        List.of(
-                                ConfigRarityFilter.CRIMSON_PORTAL,
-                                InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                BiomeFilter.biome())));
-        context.register(
-                HILLTOP_STONES,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.HILLTOP_STONES),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(HILLTOP_STONES_RARITY), InSquarePlacement.spread(),
-                                HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG),
-                                        BiomeFilter.biome())));
+        context.register(OBSIDIAN_TOTEM, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.OBSIDIAN_TOTEM),
+                List.of(RarityFilter.onAverageOnceEvery(OBSIDIAN_TOTEM_RARITY), InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
+        context.register(CRIMSON_PORTAL, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.CRIMSON_PORTAL),
+                List.of(ConfigRarityFilter.CRIMSON_PORTAL, InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
+        context.register(HILLTOP_STONES, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.HILLTOP_STONES),
+                List.of(RarityFilter.onAverageOnceEvery(HILLTOP_STONES_RARITY), InSquarePlacement.spread(), HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG), BiomeFilter.biome())));
 
-        context.register(
-                ORE_CINNABAR,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.ORE_CINNABAR),
-                        List.of(
-                                CountPlacement.of(ORE_CINNABAR_COUNT),
-                                InSquarePlacement.spread(),
-                                HeightRangePlacement.uniform(
-                                        VerticalAnchor.bottom(), VerticalAnchor.absolute(CINNABAR_MAX_Y)),
-                                BiomeFilter.biome())));
-        context.register(
-                ORE_QUARTZ,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.ORE_QUARTZ),
-                        List.of(
-                                CountPlacement.of(ORE_QUARTZ_COUNT),
-                                InSquarePlacement.spread(),
-                                HeightRangePlacement.uniform(
-                                        VerticalAnchor.bottom(), VerticalAnchor.absolute(QUARTZ_MAX_Y)),
-                                BiomeFilter.biome())));
-        context.register(
-                ORE_AMBER,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.ORE_AMBER),
-                        List.of(
-                                CountPlacement.of(ORE_AMBER_COUNT),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP,
-                                RandomOffsetPlacement.vertical(UniformInt.of(-AMBER_MAX_DEPTH_BELOW_SURFACE, 0)),
-                                BiomeFilter.biome())));
+        context.register(ORE_CINNABAR, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.ORE_CINNABAR), List.of(CountPlacement.of(ORE_CINNABAR_COUNT), InSquarePlacement.spread(),
+                HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(CINNABAR_MAX_Y)), BiomeFilter.biome())));
+        context.register(ORE_QUARTZ, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.ORE_QUARTZ), List.of(CountPlacement.of(ORE_QUARTZ_COUNT), InSquarePlacement.spread(),
+                HeightRangePlacement.uniform(VerticalAnchor.bottom(), VerticalAnchor.absolute(QUARTZ_MAX_Y)), BiomeFilter.biome())));
+        context.register(ORE_AMBER, new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.ORE_AMBER), List.of(CountPlacement.of(ORE_AMBER_COUNT), InSquarePlacement.spread(),
+                PlacementUtils.HEIGHTMAP, RandomOffsetPlacement.vertical(UniformInt.of(-AMBER_MAX_DEPTH_BELOW_SURFACE, 0)), BiomeFilter.biome())));
 
-        context.register(
-                CINDERPEARL,
-                new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.CINDERPEARL_PATCH),
-                        List.of(
-                                RarityFilter.onAverageOnceEvery(CINDERPEARL_RARITY),
-                                InSquarePlacement.spread(),
-                                PlacementUtils.HEIGHTMAP,
-                                BiomeFilter.biome(),
-                                CountPlacement.of(CINDERPEARL_TRIES),
-                                RandomOffsetPlacement.of(
-                                        UniformInt.of(-CINDERPEARL_XZ_SPREAD, CINDERPEARL_XZ_SPREAD),
-                                        UniformInt.of(-CINDERPEARL_Y_SPREAD, CINDERPEARL_Y_SPREAD)),
+        context.register(CINDERPEARL,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.CINDERPEARL_PATCH),
+                        List.of(RarityFilter.onAverageOnceEvery(CINDERPEARL_RARITY), InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome(), CountPlacement.of(CINDERPEARL_TRIES),
+                                RandomOffsetPlacement.of(UniformInt.of(-CINDERPEARL_XZ_SPREAD, CINDERPEARL_XZ_SPREAD), UniformInt.of(-CINDERPEARL_Y_SPREAD, CINDERPEARL_Y_SPREAD)),
                                 BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE))));
     }
 }

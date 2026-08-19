@@ -43,8 +43,7 @@ public final class ElementalAxeItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity player, ItemStack stack, int ticksRemaining) {
         super.onUseTick(level, player, stack, ticksRemaining);
-        List<ItemEntity> stuff = level.getEntitiesOfClass(
-                ItemEntity.class, player.getBoundingBox().inflate(MAGNET_RANGE));
+        List<ItemEntity> stuff = level.getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(MAGNET_RANGE));
         for (ItemEntity e : stuff) {
             if (!e.isAlive()) {
                 continue;
@@ -62,21 +61,9 @@ public final class ElementalAxeItem extends Item {
             double mz = Mth.clamp(motion.z - dz * MAGNET_STRENGTH, -MAGNET_SPEED_CAP, MAGNET_SPEED_CAP);
             e.setDeltaMovement(mx, my, mz);
             if (level.isClientSide()) {
-                ClientEffects.followingBubble(
-                        level,
-                        e.getX()
-                                + (level.getRandom().nextFloat()
-                                                - level.getRandom().nextFloat())
-                                        * 0.2F,
-                        e.getY()
-                                + e.getBbHeight()
-                                + (level.getRandom().nextFloat()
-                                                - level.getRandom().nextFloat())
-                                        * 0.2F,
-                        e.getZ()
-                                + (level.getRandom().nextFloat()
-                                                - level.getRandom().nextFloat())
-                                        * 0.2F);
+                ClientEffects.followingBubble(level, e.getX() + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F,
+                        e.getY() + e.getBbHeight() + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F,
+                        e.getZ() + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F);
             }
         }
     }

@@ -37,8 +37,7 @@ public final class BlockEntityStabilizer extends BlockEntity {
             energy -= amount;
             setChanged();
             if (level != null) {
-                level.updateNeighbourForOutputSignal(
-                        getBlockPos(), getBlockState().getBlock());
+                level.updateNeighbourForOutputSignal(getBlockPos(), getBlockState().getBlock());
             }
             return true;
         }
@@ -62,10 +61,7 @@ public final class BlockEntityStabilizer extends BlockEntity {
     }
 
     private void tryAddStability(Level level, BlockPos pos) {
-        List<EntityFluxRift> rifts = level.getEntitiesOfClass(
-                EntityFluxRift.class,
-                new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                        .inflate(RIFT_RANGE));
+        List<EntityFluxRift> rifts = level.getEntitiesOfClass(EntityFluxRift.class, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(RIFT_RANGE));
         for (EntityFluxRift rift : rifts) {
             if (!rift.isRemoved() && rift.getStability() != EntityFluxRift.Stability.VERY_STABLE && mitigate(1)) {
                 rift.addStability();

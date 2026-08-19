@@ -31,11 +31,8 @@ public final class RunicShieldingTests {
     }
 
     private static InfusionRunicAugmentRecipe recipe(GameTestHelper helper) {
-        return helper.getLevel().getServer().getRecipeManager().getRecipes().stream()
-                .filter(holder -> holder.value().getType() == TCRecipeTypes.RUNIC_AUGMENT.get())
-                .findFirst()
-                .map(holder -> (InfusionRunicAugmentRecipe) holder.value())
-                .orElse(null);
+        return helper.getLevel().getServer().getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == TCRecipeTypes.RUNIC_AUGMENT.get()).findFirst()
+                .map(holder -> (InfusionRunicAugmentRecipe) holder.value()).orElse(null);
     }
 
     public static void register(TCTestRegistrar r) {
@@ -46,8 +43,7 @@ public final class RunicShieldingTests {
                 return;
             }
             ItemStack fresh = new ItemStack(Items.IRON_CHESTPLATE);
-            InfusionInput freshInput = new InfusionInput(
-                    fresh, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get()), new ItemStack(TCItems.AMBER.get())));
+            InfusionInput freshInput = new InfusionInput(fresh, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get()), new ItemStack(TCItems.AMBER.get())));
             if (!recipe.matches(freshInput, helper.getLevel())) {
                 helper.fail("Fresh chestplate + salis + amber did not match");
                 return;
@@ -66,28 +62,21 @@ public final class RunicShieldingTests {
                 helper.fail("Charged item matched without the extra amber");
                 return;
             }
-            InfusionInput scaledInput = new InfusionInput(
-                    once,
-                    List.of(
-                            new ItemStack(TCItems.SALIS_MUNDUS.get()),
-                            new ItemStack(TCItems.AMBER.get()),
-                            new ItemStack(TCItems.AMBER.get())));
+            InfusionInput scaledInput = new InfusionInput(once, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get()), new ItemStack(TCItems.AMBER.get()), new ItemStack(TCItems.AMBER.get())));
             if (!recipe.matches(scaledInput, helper.getLevel())) {
                 helper.fail("Charged item did not match with the extra amber");
                 return;
             }
             AspectList scaledCost = recipe.scaledAspects(once);
             if (scaledCost.entries().get(0).amount() != 60) {
-                helper.fail("Charge-1 praemunio cost expected 60, got "
-                        + scaledCost.entries().get(0).amount());
+                helper.fail("Charge-1 praemunio cost expected 60, got " + scaledCost.entries().get(0).amount());
                 return;
             }
             if (recipe.scaledInstability(once) != 5) {
                 helper.fail("Charge-1 instability expected 5, got " + recipe.scaledInstability(once));
                 return;
             }
-            if (recipe.matches(
-                    new InfusionInput(new ItemStack(Items.STICK), freshInput.components()), helper.getLevel())) {
+            if (recipe.matches(new InfusionInput(new ItemStack(Items.STICK), freshInput.components()), helper.getLevel())) {
                 helper.fail("A stick should not be runic-shieldable");
                 return;
             }
@@ -96,12 +85,7 @@ public final class RunicShieldingTests {
 
         r.add("runic/shield_recharges_from_aura", 40, helper -> {
             ServerPlayer player = testPlayer(helper, "tc_runic_test");
-            player.snapTo(
-                    helper.absolutePos(new BlockPos(2, 1, 2)).getX() + 0.5,
-                    helper.absolutePos(new BlockPos(2, 1, 2)).getY(),
-                    helper.absolutePos(new BlockPos(2, 1, 2)).getZ() + 0.5,
-                    0.0F,
-                    0.0F);
+            player.snapTo(helper.absolutePos(new BlockPos(2, 1, 2)).getX() + 0.5, helper.absolutePos(new BlockPos(2, 1, 2)).getY(), helper.absolutePos(new BlockPos(2, 1, 2)).getZ() + 0.5, 0.0F, 0.0F);
             player.setAbsorptionAmount(0.0F);
             ItemStack armor = new ItemStack(Items.IRON_CHESTPLATE);
             armor.set(TCDataComponents.RUNIC_CHARGE.get(), 3);
@@ -144,8 +128,7 @@ public final class RunicShieldingTests {
             player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
             RunicShielding.tick(player);
             if (player.getAbsorptionAmount() != 0.0F) {
-                helper.fail(
-                        "Removing the armor should strip the granted absorption, has " + player.getAbsorptionAmount());
+                helper.fail("Removing the armor should strip the granted absorption, has " + player.getAbsorptionAmount());
                 return;
             }
             helper.succeed();

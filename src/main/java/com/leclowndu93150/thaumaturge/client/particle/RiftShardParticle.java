@@ -12,16 +12,7 @@ public final class RiftShardParticle extends TCParticle {
     private static final float FRICTION = 0.75F;
     private static final float DRIFT = 0.01F;
 
-    private RiftShardParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            RiftShardParticleOptions options,
-            ParticleSheet sheet) {
+    private RiftShardParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RiftShardParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(0.25F, 0.25F, 1.0F);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(16);
@@ -40,16 +31,7 @@ public final class RiftShardParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("rift_shard");
 
         @Override
-        public Particle createParticle(
-                RiftShardParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(RiftShardParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new RiftShardParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

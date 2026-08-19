@@ -23,29 +23,17 @@ public final class BlockWorkQueues {
         return swappers;
     }
 
-    public record SwapContext(ServerLevel level, Player player, BlockPos pos) {}
+    public record SwapContext(ServerLevel level, Player player, BlockPos pos) {
+    }
 
-    public record BreakerTask(
-            BlockPos pos,
-            BlockState source,
-            UUID playerId,
-            boolean fx,
-            boolean silk,
-            int fortune,
-            float strength,
-            float durability,
-            float durabilityMax,
-            int delay,
-            float visCost) {
+    public record BreakerTask(BlockPos pos, BlockState source, UUID playerId, boolean fx, boolean silk, int fortune, float strength, float durability, float durabilityMax, int delay, float visCost) {
 
         BreakerTask withDelay(int delay) {
-            return new BreakerTask(
-                    pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
+            return new BreakerTask(pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
         }
 
         BreakerTask withDurability(float durability) {
-            return new BreakerTask(
-                    pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
+            return new BreakerTask(pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
         }
 
         public static final class Builder {
@@ -104,56 +92,16 @@ public final class BlockWorkQueues {
             }
 
             public void queue(ServerLevel level) {
-                level.getData(TCAttachments.BLOCK_WORK_QUEUES)
-                        .breakers()
-                        .add(new BreakerTask(
-                                pos,
-                                source,
-                                playerId,
-                                fx,
-                                silk,
-                                fortune,
-                                strength,
-                                durability,
-                                durabilityMax,
-                                delay,
-                                visCost));
+                level.getData(TCAttachments.BLOCK_WORK_QUEUES).breakers().add(new BreakerTask(pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost));
             }
         }
     }
 
-    public record SwapperTask(
-            BlockPos pos,
-            @Nullable BlockState source,
-            @Nullable BlockState target,
-            boolean consumeTarget,
-            int lifespan,
-            UUID playerId,
-            boolean fx,
-            boolean fancy,
-            int color,
-            boolean pickup,
-            boolean silk,
-            int fortune,
-            Predicate<SwapContext> allowSwap,
-            float visCost) {
+    public record SwapperTask(BlockPos pos, @Nullable BlockState source, @Nullable BlockState target, boolean consumeTarget, int lifespan, UUID playerId, boolean fx, boolean fancy, int color,
+            boolean pickup, boolean silk, int fortune, Predicate<SwapContext> allowSwap, float visCost) {
 
         SwapperTask spreadTo(BlockPos neighbour) {
-            return new SwapperTask(
-                    neighbour,
-                    source,
-                    target,
-                    consumeTarget,
-                    lifespan - 1,
-                    playerId,
-                    fx,
-                    fancy,
-                    color,
-                    pickup,
-                    silk,
-                    fortune,
-                    allowSwap,
-                    visCost);
+            return new SwapperTask(neighbour, source, target, consumeTarget, lifespan - 1, playerId, fx, fancy, color, pickup, silk, fortune, allowSwap, visCost);
         }
 
         public static final class Builder {
@@ -222,23 +170,8 @@ public final class BlockWorkQueues {
             }
 
             public void queue(ServerLevel level) {
-                level.getData(TCAttachments.BLOCK_WORK_QUEUES)
-                        .swappers()
-                        .add(new SwapperTask(
-                                pos,
-                                source,
-                                target,
-                                consumeTarget,
-                                lifespan,
-                                playerId,
-                                fx,
-                                fancy,
-                                color,
-                                pickup,
-                                silk,
-                                fortune,
-                                allowSwap,
-                                visCost));
+                level.getData(TCAttachments.BLOCK_WORK_QUEUES).swappers()
+                        .add(new SwapperTask(pos, source, target, consumeTarget, lifespan, playerId, fx, fancy, color, pickup, silk, fortune, allowSwap, visCost));
             }
         }
     }

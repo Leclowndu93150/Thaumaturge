@@ -19,18 +19,12 @@ import org.jspecify.annotations.Nullable;
 public final class GolemBindings implements GolemHelper.Bindings {
     @Override
     public @Nullable ISeal createSeal(Identifier key) {
-        return TCSeals.registry()
-                .getOptional(key)
-                .map(type -> (ISeal) type.factory().get())
-                .orElse(null);
+        return TCSeals.registry().getOptional(key).map(type -> (ISeal) type.factory().get()).orElse(null);
     }
 
     @Override
     public ItemStack getSealStack(Identifier key) {
-        return TCSeals.registry()
-                .getOptional(key)
-                .map(type -> new ItemStack(type.placerItem().get()))
-                .orElse(ItemStack.EMPTY);
+        return TCSeals.registry().getOptional(key).map(type -> new ItemStack(type.placerItem().get())).orElse(ItemStack.EMPTY);
     }
 
     @Override

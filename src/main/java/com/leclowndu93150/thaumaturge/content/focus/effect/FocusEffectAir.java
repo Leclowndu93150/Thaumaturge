@@ -62,21 +62,12 @@ public final class FocusEffectAir implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
         FocusFX.impact(level, target.getLocation(), id());
-        level.playSound(
-                null,
-                target.getLocation().x,
-                target.getLocation().y,
-                target.getLocation().z,
-                SoundEvents.ENDER_DRAGON_FLAP,
-                SoundSource.PLAYERS,
-                0.5F,
-                0.66F);
+        level.playSound(null, target.getLocation().x, target.getLocation().y, target.getLocation().z, SoundEvents.ENDER_DRAGON_FLAP, SoundSource.PLAYERS, 0.5F, 0.66F);
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
             float damage = damageForDisplay(settings, ctx.power());
@@ -85,10 +76,7 @@ public final class FocusEffectAir implements FocusEffect {
                 if (trajectory != null) {
                     living.knockback(damage * KNOCKBACK_FACTOR, -trajectory.direction().x, -trajectory.direction().z);
                 } else {
-                    living.knockback(
-                            damage * KNOCKBACK_FACTOR,
-                            -Mth.sin(struck.getYRot() * DEG_TO_RAD),
-                            Mth.cos(struck.getYRot() * DEG_TO_RAD));
+                    living.knockback(damage * KNOCKBACK_FACTOR, -Mth.sin(struck.getYRot() * DEG_TO_RAD), Mth.cos(struck.getYRot() * DEG_TO_RAD));
                 }
             }
             return true;
@@ -109,8 +97,6 @@ public final class FocusEffectAir implements FocusEffect {
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null, caster.blockPosition().above(), TCSounds.WIND.get(), SoundSource.PLAYERS, 0.125F, 2.0F);
+        caster.level().playSound(null, caster.blockPosition().above(), TCSounds.WIND.get(), SoundSource.PLAYERS, 0.125F, 2.0F);
     }
 }

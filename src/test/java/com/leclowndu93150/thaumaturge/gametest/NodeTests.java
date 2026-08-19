@@ -47,8 +47,7 @@ public final class NodeTests {
             node.setEnergized(true);
             for (AspectInstance entry : node.getAspects().entries()) {
                 if (!entry.aspect().value().isPrimal()) {
-                    helper.fail("Energized node still holds compound aspect "
-                            + entry.aspect().unwrapKey().orElseThrow().identifier());
+                    helper.fail("Energized node still holds compound aspect " + entry.aspect().unwrapKey().orElseThrow().identifier());
                     return;
                 }
             }

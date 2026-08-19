@@ -16,28 +16,18 @@ public final class ResearchUtils {
 
     public static List<Component> generateMissingResearchList(ResearchGate... research) {
         List<Component> list = new ArrayList<>();
-        list.add(Component.translatable("jei.thaumaturge.research.missing_research")
-                .withStyle(ChatFormatting.GOLD));
+        list.add(Component.translatable("jei.thaumaturge.research.missing_research").withStyle(ChatFormatting.GOLD));
         for (ResearchGate gate : research) {
             if (!ResearchManager.doesPassGate(Minecraft.getInstance().player, gate)) {
                 RegistryAccess access = ThaumaturgeJEIPlugin.clientRegistryAccess();
                 if (access == null) {
-                    list.add(Component.literal("- ")
-                            .append(gate.entry().toString())
-                            .withStyle(ChatFormatting.RED));
+                    list.add(Component.literal("- ").append(gate.entry().toString()).withStyle(ChatFormatting.RED));
                 } else {
-                    IResearchEntry entry = access.lookupOrThrow(IResearchEntry.REGISTRY_KEY)
-                            .get(gate.entry())
-                            .map(Holder::value)
-                            .orElse(null);
+                    IResearchEntry entry = access.lookupOrThrow(IResearchEntry.REGISTRY_KEY).get(gate.entry()).map(Holder::value).orElse(null);
                     if (entry != null) {
-                        list.add(Component.literal("- ")
-                                .append(Component.translatable(entry.nameKey()))
-                                .withStyle(ChatFormatting.RED));
+                        list.add(Component.literal("- ").append(Component.translatable(entry.nameKey())).withStyle(ChatFormatting.RED));
                     } else {
-                        list.add(Component.literal("- ")
-                                .append(gate.entry().toString())
-                                .withStyle(ChatFormatting.RED));
+                        list.add(Component.literal("- ").append(gate.entry().toString()).withStyle(ChatFormatting.RED));
                     }
                 }
             }

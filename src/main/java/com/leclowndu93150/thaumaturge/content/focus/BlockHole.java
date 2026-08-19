@@ -40,8 +40,7 @@ public final class BlockHole extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -56,8 +55,7 @@ public final class BlockHole extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide()
                 ? createTickerHelper(type, TCBlockEntities.HOLE.get(), BlockEntityHole::clientTick)
                 : createTickerHelper(type, TCBlockEntities.HOLE.get(), BlockEntityHole::serverTick);

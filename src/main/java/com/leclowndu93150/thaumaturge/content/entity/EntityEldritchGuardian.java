@@ -63,22 +63,12 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 50.0)
-                .add(Attributes.FOLLOW_RANGE, 40.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.28)
-                .add(Attributes.ATTACK_DAMAGE, 7.0)
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 50.0).add(Attributes.FOLLOW_RANGE, 40.0).add(Attributes.MOVEMENT_SPEED, 0.28).add(Attributes.ATTACK_DAMAGE, 7.0)
                 .add(Attributes.ARMOR, 4.0);
     }
 
-    public static boolean checkGuardianSpawnRules(
-            EntityType<EntityEldritchGuardian> type,
-            ServerLevelAccessor level,
-            EntitySpawnReason reason,
-            BlockPos pos,
-            RandomSource random) {
-        boolean alone = level.getEntitiesOfClass(EntityEldritchGuardian.class, new AABB(pos).inflate(32.0, 16.0, 32.0))
-                .isEmpty();
+    public static boolean checkGuardianSpawnRules(EntityType<EntityEldritchGuardian> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
+        boolean alone = level.getEntitiesOfClass(EntityEldritchGuardian.class, new AABB(pos).inflate(32.0, 16.0, 32.0)).isEmpty();
         return alone && Monster.checkAnyLightMonsterSpawnRules(type, level, reason, pos, random);
     }
 
@@ -118,13 +108,10 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
             if (this.armLiftR > 0.0F) {
                 this.armLiftR -= ARM_LIFT_DECAY;
             }
-        } else if ((this.tickCount == 0 || this.tickCount % FOG_INTERVAL_TICKS == 0)
-                && this.level().getDifficulty() != Difficulty.EASY) {
+        } else if ((this.tickCount == 0 || this.tickCount % FOG_INTERVAL_TICKS == 0) && this.level().getDifficulty() != Difficulty.EASY) {
             double rangeSq = this.level().getDifficulty() == Difficulty.HARD ? FOG_RANGE_HARD_SQ : FOG_RANGE_SQ;
             for (Player player : this.level().players()) {
-                if (player.isAlive()
-                        && player instanceof ServerPlayer serverPlayer
-                        && player.distanceToSqr(this) < rangeSq) {
+                if (player.isAlive() && player instanceof ServerPlayer serverPlayer && player.distanceToSqr(this) < rangeSq) {
                     PacketDistributor.sendToPlayer(serverPlayer, ClientboundWarpFXPayload.mistShort());
                 }
             }
@@ -153,10 +140,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
             double xx = Mth.cos((this.getYRot() + rr) % 360.0F / 180.0F * (float) Math.PI) * 0.5F;
             double zz = Mth.sin((this.getYRot() + rr) % 360.0F / 180.0F * (float) Math.PI) * 0.5F;
             blast.setPos(blast.getX() - xx, blast.getY(), blast.getZ() - zz);
-            Vec3 v = target.position()
-                    .add(target.getDeltaMovement().scale(10.0))
-                    .subtract(this.position())
-                    .normalize();
+            Vec3 v = target.position().add(target.getDeltaMovement().scale(10.0)).subtract(this.position()).normalize();
             blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
             this.playSound(TCSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);

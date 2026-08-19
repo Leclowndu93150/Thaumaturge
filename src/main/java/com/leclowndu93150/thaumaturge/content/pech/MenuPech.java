@@ -40,10 +40,7 @@ public final class MenuPech extends AbstractContainerMenu {
     private final SimpleContainer tradeContainer = new SimpleContainer(SLOT_COUNT);
 
     public MenuPech(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(
-                containerId,
-                playerInventory,
-                playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityPech p ? p : null);
+        this(containerId, playerInventory, playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityPech p ? p : null);
     }
 
     public MenuPech(int containerId, Inventory playerInventory, @Nullable EntityPech pech) {
@@ -66,8 +63,7 @@ public final class MenuPech extends AbstractContainerMenu {
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
@@ -116,8 +112,7 @@ public final class MenuPech extends AbstractContainerMenu {
         } else if (rand.nextBoolean()) {
             value -= rand.nextInt(3);
         }
-        List<PechTrades.Entry> trades =
-                PechTrades.tradesFor(pech.getPechType(), player.level().registryAccess());
+        List<PechTrades.Entry> trades = PechTrades.tradesFor(pech.getPechType(), player.level().registryAccess());
         while (value > 0) {
             int amount = Math.min(MAX_TIER, Math.max((value + 1) / 2, rand.nextInt(value) + 1));
             value -= amount;
@@ -138,8 +133,7 @@ public final class MenuPech extends AbstractContainerMenu {
                 }
             } else if (amount < 4 || !rand.nextBoolean()) {
                 int wanted = amount;
-                List<PechTrades.Entry> pool =
-                        trades.stream().filter(entry -> entry.tier() == wanted).toList();
+                List<PechTrades.Entry> pool = trades.stream().filter(entry -> entry.tier() == wanted).toList();
                 if (!pool.isEmpty()) {
                     addStack(pool.get(rand.nextInt(pool.size())).stack().copy());
                 }
@@ -167,8 +161,7 @@ public final class MenuPech extends AbstractContainerMenu {
                 tradeContainer.setItem(slot, stack);
                 return;
             }
-            if (ItemStack.isSameItemSameComponents(existing, stack)
-                    && existing.getCount() + stack.getCount() < existing.getMaxStackSize()) {
+            if (ItemStack.isSameItemSameComponents(existing, stack) && existing.getCount() + stack.getCount() < existing.getMaxStackSize()) {
                 existing.grow(stack.getCount());
                 return;
             }

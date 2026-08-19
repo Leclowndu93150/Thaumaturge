@@ -35,8 +35,7 @@ public final class TransducerTests {
                 return;
             }
             helper.runAfterDelay(CHARGE_CHECK_TICKS, () -> {
-                BlockEntityNodeTransducer transducer =
-                        helper.getBlockEntity(TRANSDUCER_POS, BlockEntityNodeTransducer.class);
+                BlockEntityNodeTransducer transducer = helper.getBlockEntity(TRANSDUCER_POS, BlockEntityNodeTransducer.class);
                 if (transducer == null) {
                     helper.fail("Transducer block entity missing");
                     return;
@@ -60,10 +59,8 @@ public final class TransducerTests {
             }
             helper.runAfterDelay(FULL_CHARGE_TICKS, () -> {
                 if (!node.isEnergized()) {
-                    BlockEntityNodeTransducer transducer =
-                            helper.getBlockEntity(TRANSDUCER_POS, BlockEntityNodeTransducer.class);
-                    helper.fail("Node not energized after " + FULL_CHARGE_TICKS + " powered ticks; charge "
-                            + (transducer == null ? "?" : transducer.getCount()));
+                    BlockEntityNodeTransducer transducer = helper.getBlockEntity(TRANSDUCER_POS, BlockEntityNodeTransducer.class);
+                    helper.fail("Node not energized after " + FULL_CHARGE_TICKS + " powered ticks; charge " + (transducer == null ? "?" : transducer.getCount()));
                     return;
                 }
                 for (var entry : node.getAspectsBase().entries()) {
@@ -84,13 +81,11 @@ public final class TransducerTests {
         });
     }
 
-    private static void pollRevert(
-            GameTestHelper helper, BlockEntityNode node, int preservedVitium, int remainingTicks) {
+    private static void pollRevert(GameTestHelper helper, BlockEntityNode node, int preservedVitium, int remainingTicks) {
         helper.runAfterDelay(REVERT_POLL_TICKS, () -> {
             if (!node.isEnergized()) {
                 if (node.getAspectsBase().amountOf(vitium(helper)) != preservedVitium) {
-                    helper.fail("Reverted node base does not match the preserved snapshot of " + preservedVitium + ": "
-                            + node.getAspectsBase());
+                    helper.fail("Reverted node base does not match the preserved snapshot of " + preservedVitium + ": " + node.getAspectsBase());
                     return;
                 }
                 helper.succeed();

@@ -365,9 +365,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (energized) {
             boolean changed = false;
             if (tickLevel.getGameTime() % ENERGIZED_REFILL_INTERVAL == 0) {
-                float visPerPoint = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT
-                        .get()
-                        .floatValue();
+                float visPerPoint = ThaumaturgeCommonConfig.ENERGIZED_NODE_VIS_PER_POINT.get().floatValue();
                 boolean fluxFed = nodeType == NodeType.TAINTED;
                 for (AspectInstance entry : aspectsBase.entries()) {
                     int points = Math.max(1, entry.amount() / ENERGIZED_REFILL_BASE_DIVISOR);
@@ -375,9 +373,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                         if (aspects.amountOf(entry.aspect()) >= entry.amount()) {
                             break;
                         }
-                        float drained = fluxFed
-                                ? AuraHelper.drainFlux(serverLevel, pos, visPerPoint, false)
-                                : AuraHelper.drainVis(serverLevel, pos, visPerPoint, false);
+                        float drained = fluxFed ? AuraHelper.drainFlux(serverLevel, pos, visPerPoint, false) : AuraHelper.drainVis(serverLevel, pos, visPerPoint, false);
                         if (drained >= visPerPoint - 0.01F) {
                             aspects = aspects.add(entry.aspect(), 1);
                             changed = true;
@@ -464,9 +460,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         Holder<IAspect> target = depleted.get(random.nextInt(depleted.size()));
-        float drained = nodeType == NodeType.TAINTED
-                ? AuraHelper.drainFlux(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false)
-                : AuraHelper.drainVis(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false);
+        float drained = nodeType == NodeType.TAINTED ? AuraHelper.drainFlux(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false) : AuraHelper.drainVis(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false);
         if (drained >= FEED_RAW_VIS_PER_POINT - 0.01F) {
             addToContainer(target, 1);
             starvation = 0;
@@ -507,17 +501,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         float flux = AuraHelper.getFlux(serverLevel, pos);
-        if (nodeType != NodeType.TAINTED
-                && nodeType != NodeType.PURE
-                && flux > base * FLUX_TAINT_THRESHOLD
-                && random.nextInt(FLUX_TAINT_CHANCE) == 0) {
+        if (nodeType != NodeType.TAINTED && nodeType != NodeType.PURE && flux > base * FLUX_TAINT_THRESHOLD && random.nextInt(FLUX_TAINT_CHANCE) == 0) {
             nodeType = NodeType.TAINTED;
             nodeChange();
             return;
         }
-        boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT
-                && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION
-                && serverLevel.getBiome(pos).is(TCBiomes.MAGICAL_FOREST);
+        boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION && serverLevel.getBiome(pos).is(TCBiomes.MAGICAL_FOREST);
         if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;
@@ -584,8 +573,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int oldLock = lock;
         lock = 0;
         BlockPos below = pos.below();
-        if (!serverLevel.hasNeighborSignal(below)
-                && serverLevel.getBlockState(below).getBlock() instanceof BlockNodeStabilizer stabilizer) {
+        if (!serverLevel.hasNeighborSignal(below) && serverLevel.getBlockState(below).getBlock() instanceof BlockNodeStabilizer stabilizer) {
             lock = stabilizer.isAdvanced() ? LOCK_ADVANCED : LOCK_BASIC;
         }
         if (oldLock != lock) {
@@ -621,9 +609,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         BlockPos otherPos = pos.offset(x, y, z);
-        if (!(serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode other)
-                || !other.allowDischarge()
-                || other.lock > 0) {
+        if (!(serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode other) || !other.allowDischarge() || other.lock > 0) {
             return change;
         }
         int otherAvg = (other.aspects.totalAmount() + other.aspectsBase.totalAmount()) / 2;
@@ -632,8 +618,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         List<AspectInstance> otherEntries = other.aspects.entries();
-        Holder<IAspect> stolen =
-                otherEntries.get(random.nextInt(otherEntries.size())).aspect();
+        Holder<IAspect> stolen = otherEntries.get(random.nextInt(otherEntries.size())).aspect();
         boolean moved = false;
         if (aspects.amountOf(stolen) < aspectsBase.amountOf(stolen) && other.takeFromContainer(stolen, 1)) {
             addToContainer(stolen, 1);
@@ -655,10 +640,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             other.wait = other.regeneration / 2;
             other.setChanged();
             serverLevel.sendBlockUpdated(otherPos, other.getBlockState(), other.getBlockState(), 3);
-            Effects.arcBolt(serverLevel, Vec3.atCenterOf(otherPos))
-                    .to(Vec3.atCenterOf(pos))
-                    .width(ZAP_WIDTH)
-                    .send();
+            Effects.arcBolt(serverLevel, Vec3.atCenterOf(otherPos)).to(Vec3.atCenterOf(pos)).width(ZAP_WIDTH).send();
             return true;
         }
         return change;
@@ -674,8 +656,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 Holder<IAspect> primal = randomStoredPrimal(random);
                 if (primal != null && takeFromContainer(primal, 1)) {
                     ResourceKey<IAspect> key = primal.unwrapKey().orElseThrow();
-                    serverLevel.addFreshEntity(new EntityAspectOrb(
-                            serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
+                    serverLevel.addFreshEntity(new EntityAspectOrb(serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
                     return true;
                 }
             } else if (random.nextInt(UNSTABLE_CURE_ROLL / lock) == UNSTABLE_CURE_MAGIC) {
@@ -684,9 +665,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 return true;
             }
         }
-        if (nodeModifier == NodeModifier.FADING
-                && lock > 0
-                && random.nextInt(FADING_CURE_ROLL / lock) == FADING_CURE_MAGIC) {
+        if (nodeModifier == NodeModifier.FADING && lock > 0 && random.nextInt(FADING_CURE_ROLL / lock) == FADING_CURE_MAGIC) {
             nodeModifier = NodeModifier.PALE;
             nodeChange();
             return true;
@@ -730,8 +709,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         return false;
     }
 
-    private static void spreadBiomeColumn(
-            ServerLevel serverLevel, BlockPos origin, int range, ResourceKey<Biome> biomeKey) {
+    private static void spreadBiomeColumn(ServerLevel serverLevel, BlockPos origin, int range, ResourceKey<Biome> biomeKey) {
         RandomSource random = serverLevel.getRandom();
         int x = origin.getX() + random.nextInt(range) - random.nextInt(range);
         int z = origin.getZ() + random.nextInt(range) - random.nextInt(range);
@@ -739,13 +717,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (!serverLevel.hasChunkAt(sample) || serverLevel.getBiome(sample).is(biomeKey)) {
             return;
         }
-        Holder<Biome> biome =
-                serverLevel.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biomeKey);
-        FillBiomeCommand.fill(
-                serverLevel,
-                new BlockPos(x, serverLevel.getMinY(), z),
-                new BlockPos(x, serverLevel.getMaxY(), z),
-                biome);
+        Holder<Biome> biome = serverLevel.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biomeKey);
+        FillBiomeCommand.fill(serverLevel, new BlockPos(x, serverLevel.getMinY(), z), new BlockPos(x, serverLevel.getMaxY(), z), biome);
     }
 
     private boolean handleTypeBehavior(ServerLevel serverLevel, BlockPos pos, boolean change) {
@@ -755,10 +728,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         RandomSource random = serverLevel.getRandom();
         switch (nodeType) {
             case TAINTED -> {
-                BlockPos target = pos.offset(
-                        random.nextInt(5) - random.nextInt(5),
-                        random.nextInt(5) - random.nextInt(5),
-                        random.nextInt(5) - random.nextInt(5));
+                BlockPos target = pos.offset(random.nextInt(5) - random.nextInt(5), random.nextInt(5) - random.nextInt(5), random.nextInt(5) - random.nextInt(5));
                 if (random.nextBoolean()) {
                     TaintApi.spreadFibres(serverLevel, target, false);
                 }
@@ -766,7 +736,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             case PURE -> AuraHelper.drainFlux(serverLevel, pos, PURE_FLUX_CLEANSE, false);
             case DARK -> spawnDarkGuard(serverLevel, pos, random);
             case HUNGRY -> eatBlock(serverLevel, pos, random);
-            default -> {}
+            default -> {
+            }
         }
         return change;
     }
@@ -775,8 +746,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (!random.nextBoolean()) {
             return;
         }
-        Player player = serverLevel.getNearestPlayer(
-                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, DARK_SPAWN_PLAYER_RANGE, false);
+        Player player = serverLevel.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, DARK_SPAWN_PLAYER_RANGE, false);
         if (player == null) {
             return;
         }
@@ -827,8 +797,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             if (power > 0.0) {
                 power *= power;
                 Vec3 pull = delta.normalize();
-                target.setDeltaMovement(target.getDeltaMovement()
-                        .add(pull.x * power * 0.15, pull.y * power * 0.25, pull.z * power * 0.15));
+                target.setDeltaMovement(target.getDeltaMovement().add(pull.x * power * 0.15, pull.y * power * 0.25, pull.z * power * 0.15));
             }
         }
         return change;
@@ -846,8 +815,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         RandomSource random = serverLevel.getRandom();
         List<ResourceKey<IAspect>> keys = new ArrayList<>(primals.keySet());
         ResourceKey<IAspect> chosen = keys.get(random.nextInt(keys.size()));
-        Holder<IAspect> holder =
-                serverLevel.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(chosen);
+        Holder<IAspect> holder = serverLevel.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(chosen);
         if (aspects.amountOf(holder) < aspectsBase.amountOf(holder)) {
             addToContainer(holder, 1);
         } else if (random.nextInt(1 + aspectsBase.amountOf(holder) * 2) < primals.get(chosen)) {
@@ -862,8 +830,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = serverLevel.clip(
-                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
+        BlockHitResult hit = serverLevel.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -886,8 +853,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             while (remaining > 0) {
                 int value = Math.min(remaining, 1 + random.nextInt(ORB_BURST_MAX_PER_ASPECT));
                 remaining -= value;
-                serverLevel.addFreshEntity(new EntityAspectOrb(
-                        serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, entry.getKey(), value));
+                serverLevel.addFreshEntity(new EntityAspectOrb(serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, entry.getKey(), value));
             }
         }
         aspects = AspectList.EMPTY;
@@ -909,9 +875,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         WandParts parts = WandVisHelper.getParts(wandStack);
         boolean starterWand = parts.rod() == TCWandParts.ROD_WOOD.get() && parts.cap() == TCWandParts.CAP_IRON.get();
-        boolean preserve = !player.isShiftKeyDown()
-                && !starterWand
-                && KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_PRESERVE);
+        boolean preserve = !player.isShiftKeyDown() && !starterWand && KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_PRESERVE);
         RandomSource random = serverLevel.getRandom();
         List<Holder<IAspect>> candidates = new ArrayList<>();
         int min = preserve ? 1 : 0;
@@ -961,8 +925,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int tz = pos.getZ() + random.nextInt(HUNGRY_REACH) - random.nextInt(HUNGRY_REACH);
         Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = clientLevel.clip(
-                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
+        BlockHitResult hit = clientLevel.clip(new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
         if (hit.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -976,14 +939,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         Vec3 pull = from.subtract(Vec3.atCenterOf(target)).normalize().scale(0.3);
         for (int i = 0; i < 3; i++) {
-            clientLevel.addParticle(
-                    new BlockParticleOption(ParticleTypes.BLOCK, state),
-                    target.getX() + random.nextFloat(),
-                    target.getY() + random.nextFloat(),
-                    target.getZ() + random.nextFloat(),
-                    pull.x,
-                    pull.y + 0.05,
-                    pull.z);
+            clientLevel.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), target.getX() + random.nextFloat(), target.getY() + random.nextFloat(), target.getZ() + random.nextFloat(),
+                    pull.x, pull.y + 0.05, pull.z);
         }
     }
 
@@ -1019,8 +976,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         nodeModifier = input.read("Modifier", NodeModifier.CODEC).orElse(null);
         aspects = input.read("Aspects", AspectList.CODEC).orElse(AspectList.EMPTY);
         aspectsBase = input.read("AspectsBase", AspectList.CODEC).orElse(AspectList.EMPTY);
-        aspectsBaseOriginal =
-                input.read("AspectsBaseOriginal", AspectList.CODEC).orElse(null);
+        aspectsBaseOriginal = input.read("AspectsBaseOriginal", AspectList.CODEC).orElse(null);
         drainPlayer = input.read("DrainPlayer", UUIDUtil.CODEC).orElse(null);
         drainColor = input.getIntOr("DrainColor", 0xFFFFFF);
         jarringTicks = input.getIntOr("Jarring", 0);
@@ -1030,8 +986,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

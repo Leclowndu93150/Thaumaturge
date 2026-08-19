@@ -68,71 +68,33 @@ public final class ItemRequirementWidget {
     }
 
     private static void renderSectionHeader(GuiGraphicsExtractor graphics, int x, int y, int v) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BOOK,
-                x + SECTION_HEADER_OFFSET_X,
-                y + SECTION_HEADER_OFFSET_Y,
-                (float) SECTION_HEADER_U,
-                (float) v,
-                SECTION_HEADER_WIDTH,
-                SECTION_HEADER_HEIGHT,
-                SECTION_HEADER_WIDTH,
-                SECTION_HEADER_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                SECTION_HEADER_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + SECTION_HEADER_OFFSET_X, y + SECTION_HEADER_OFFSET_Y, (float) SECTION_HEADER_U, (float) v, SECTION_HEADER_WIDTH,
+                SECTION_HEADER_HEIGHT, SECTION_HEADER_WIDTH, SECTION_HEADER_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, SECTION_HEADER_TINT);
     }
 
-    public static void renderObtainHeaderTooltip(
-            GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY) {
+    public static void renderObtainHeaderTooltip(GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY) {
         renderSectionTooltip(graphics, font, x, y, mouseX, mouseY, "obtain");
     }
 
-    public static void renderCraftHeaderTooltip(
-            GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY) {
+    public static void renderCraftHeaderTooltip(GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY) {
         renderSectionTooltip(graphics, font, x, y, mouseX, mouseY, "craft");
     }
 
-    private static void renderSectionTooltip(
-            GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY, String which) {
+    private static void renderSectionTooltip(GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY, String which) {
         int popupX = x + SECTION_POPUP_OFFSET_X;
-        if (mouseX >= popupX
-                && mouseY >= y
-                && mouseX < popupX + SECTION_POPUP_WIDTH
-                && mouseY < y + SECTION_POPUP_HEIGHT) {
+        if (mouseX >= popupX && mouseY >= y && mouseX < popupX + SECTION_POPUP_WIDTH && mouseY < y + SECTION_POPUP_HEIGHT) {
             graphics.setTooltipForNextFrame(font, TCTooltips.need(which), mouseX, mouseY);
         }
     }
 
-    public static void renderSlot(
-            GuiGraphicsExtractor graphics,
-            Font font,
-            int x,
-            int y,
-            ResearchRequirement requirement,
-            int slotIndex,
-            boolean hasItem,
-            int mouseX,
-            int mouseY) {
+    public static void renderSlot(GuiGraphicsExtractor graphics, Font font, int x, int y, ResearchRequirement requirement, int slotIndex, boolean hasItem, int mouseX, int mouseY) {
         ItemStack stack = cycleItemStack(requirement, slotIndex);
         if (!stack.isEmpty()) {
             graphics.item(stack, x, y);
         }
         if (hasItem) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TCScreenTextures.RESEARCH_BOOK,
-                    x + CHECKMARK_OFFSET_X,
-                    y,
-                    (float) CHECKMARK_U,
-                    (float) CHECKMARK_V,
-                    CHECKMARK_SIZE,
-                    CHECKMARK_SIZE,
-                    CHECKMARK_SIZE,
-                    CHECKMARK_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
+                    CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
         }
         if (mouseX >= x && mouseY >= y && mouseX < x + ICON_SIZE && mouseY < y + ICON_SIZE && !stack.isEmpty()) {
             graphics.setTooltipForNextFrame(font, stack, mouseX, mouseY);

@@ -31,13 +31,6 @@ public final class RunicShieldingEvents {
         if (player.getAbsorptionAmount() <= 0.0F || player.getData(TCAttachments.RUNIC_SHIELD.get()).maxCharge <= 0) {
             return;
         }
-        player.level()
-                .playSound(
-                        null,
-                        player.blockPosition(),
-                        TCSounds.RUNICSHIELDEFFECT.get(),
-                        SoundSource.PLAYERS,
-                        EFFECT_VOLUME,
-                        1.1F + player.getRandom().nextFloat() * 0.1F);
+        player.level().playSound(null, player.blockPosition(), TCSounds.RUNICSHIELDEFFECT.get(), SoundSource.PLAYERS, EFFECT_VOLUME, 1.1F + player.getRandom().nextFloat() * 0.1F);
     }
 }

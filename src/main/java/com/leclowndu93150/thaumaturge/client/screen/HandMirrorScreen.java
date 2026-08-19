@@ -9,8 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class HandMirrorScreen extends AbstractTCContainerScreen<MenuHandMirror> {
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_handmirror.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_handmirror.png");
     private static final int WIDTH = 176;
     private static final int HEIGHT = 166;
     private static final int BLOCKED_X = 8;
@@ -29,16 +28,6 @@ public final class HandMirrorScreen extends AbstractTCContainerScreen<MenuHandMi
 
     @Override
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                leftPos + BLOCKED_X + menu.mirrorHotbarSlot * SLOT_SIZE,
-                topPos + BLOCKED_Y,
-                BLOCKED_U,
-                BLOCKED_V,
-                BLOCKED_SIZE,
-                BLOCKED_SIZE,
-                256,
-                256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + BLOCKED_X + menu.mirrorHotbarSlot * SLOT_SIZE, topPos + BLOCKED_Y, BLOCKED_U, BLOCKED_V, BLOCKED_SIZE, BLOCKED_SIZE, 256, 256);
     }
 }

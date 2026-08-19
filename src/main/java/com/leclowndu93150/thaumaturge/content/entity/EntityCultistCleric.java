@@ -38,10 +38,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityCultistCleric extends EntityCultist implements RangedAttackMob {
-    private static final EntityDataAccessor<Boolean> DATA_RITUALIST =
-            SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<BlockPos> DATA_RITUAL_ANCHOR =
-            SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BLOCK_POS);
+    private static final EntityDataAccessor<Boolean> DATA_RITUALIST = SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<BlockPos> DATA_RITUAL_ANCHOR = SynchedEntityData.defineId(EntityCultistCleric.class, EntityDataSerializers.BLOCK_POS);
 
     private static final float RITUAL_PITCH_STEP = 10.0F;
     private static final double RITUAL_ANCHOR_HEIGHT = 1.5;
@@ -116,16 +114,12 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
         double dx = target.getX() - this.getX();
-        double dy =
-                target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
+        double dy = target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
         double dz = target.getZ() - this.getZ();
         this.swing(this.getUsedItemHand());
         if (this.random.nextFloat() > 1.0F - ORB_CHANCE) {
             EntityGolemOrb blast = new EntityGolemOrb(this.level(), this, target, true);
-            Vec3 v = target.position()
-                    .add(target.getDeltaMovement().scale(10.0))
-                    .subtract(this.position())
-                    .normalize();
+            Vec3 v = target.position().add(target.getDeltaMovement().scale(10.0)).subtract(this.position()).normalize();
             blast.setPos(blast.getX() + v.x, blast.getY() + v.y, blast.getZ() + v.z);
             blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
             this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
@@ -134,8 +128,7 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
             float spread = Mth.sqrt(velocity) * 0.5F;
             this.level().levelEvent(null, FIREBALL_LEVEL_EVENT, this.blockPosition(), 0);
             for (int i = 0; i < FIREBALL_COUNT; i++) {
-                Vec3 shot = new Vec3(
-                        dx + this.random.nextGaussian() * spread, dy, dz + this.random.nextGaussian() * spread);
+                Vec3 shot = new Vec3(dx + this.random.nextGaussian() * spread, dy, dz + this.random.nextGaussian() * spread);
                 SmallFireball fireball = new SmallFireball(this.level(), this, shot.normalize());
                 fireball.setPos(fireball.getX(), this.getY() + this.getBbHeight() / 2.0F + 0.5, fireball.getZ());
                 this.level().addFreshEntity(fireball);

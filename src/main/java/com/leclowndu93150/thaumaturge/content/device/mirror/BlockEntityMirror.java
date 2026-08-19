@@ -106,10 +106,8 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
             return false;
         }
         Direction face = getBlockState().getValue(BlockMirror.FACING);
-        ItemEntity entity = new ItemEntity(
-                level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.25, worldPosition.getZ() + 0.5, stack);
-        entity.setDeltaMovement(
-                face.getStepX() * EJECT_SPEED, face.getStepY() * EJECT_SPEED, face.getStepZ() * EJECT_SPEED);
+        ItemEntity entity = new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.25, worldPosition.getZ() + 0.5, stack);
+        entity.setDeltaMovement(face.getStepX() * EJECT_SPEED, face.getStepY() * EJECT_SPEED, face.getStepZ() * EJECT_SPEED);
         entity.setPortalCooldown(ITEM_PORTAL_COOLDOWN);
         return level.addFreshEntity(entity);
     }
@@ -117,15 +115,13 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        outputStacks =
-                new ArrayList<>(input.read("Items", ItemStack.CODEC.listOf()).orElse(List.of()));
+        outputStacks = new ArrayList<>(input.read("Items", ItemStack.CODEC.listOf()).orElse(List.of()));
     }
 
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        List<ItemStack> filtered =
-                outputStacks.stream().filter(stack -> !stack.isEmpty()).toList();
+        List<ItemStack> filtered = outputStacks.stream().filter(stack -> !stack.isEmpty()).toList();
         output.store("Items", ItemStack.CODEC.listOf(), filtered);
     }
 }

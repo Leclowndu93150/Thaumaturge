@@ -7,19 +7,9 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 public interface GolemPartRenderHook {
     GolemPartRenderHook NONE = Noop.INSTANCE;
 
-    default void preRenderObjectPart(
-            String partName,
-            GolemRenderState state,
-            PoseStack poseStack,
-            GolemPartModel.LimbSide side,
-            float partialTick) {}
+    default void preRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, GolemPartModel.LimbSide side, float partialTick) {}
 
-    default void postRenderObjectPart(
-            String partName,
-            GolemRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            GolemPartModel.LimbSide side) {}
+    default void postRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, SubmitNodeCollector collector, GolemPartModel.LimbSide side) {}
 
     default float armRotationX(GolemRenderState state, GolemPartModel.LimbSide side, float inputRot) {
         return inputRot;

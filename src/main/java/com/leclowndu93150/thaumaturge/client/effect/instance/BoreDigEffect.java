@@ -49,18 +49,11 @@ public final class BoreDigEffect implements IFXInstance {
             double y = this.target.getY() + random.nextFloat();
             double z = this.target.getZ() + random.nextFloat();
             if (random.nextInt(SPARKLE_CHANCE) == 0) {
-                BoreSparkleParticleOptions options = new BoreSparkleParticleOptions(
-                        this.boreEntityId,
-                        destination.x,
-                        destination.y,
-                        destination.z,
-                        SPARKLE_RED,
-                        SPARKLE_GREEN_BASE + random.nextFloat() * SPARKLE_GREEN_RANGE,
-                        SPARKLE_BLUE);
+                BoreSparkleParticleOptions options = new BoreSparkleParticleOptions(this.boreEntityId, destination.x, destination.y, destination.z, SPARKLE_RED,
+                        SPARKLE_GREEN_BASE + random.nextFloat() * SPARKLE_GREEN_RANGE, SPARKLE_BLUE);
                 this.level.addParticle(options, x, y, z, 0.0, 0.0, 0.0);
             } else {
-                BoreDebrisParticleOptions options = new BoreDebrisParticleOptions(
-                        this.state, this.boreEntityId, destination.x, destination.y, destination.z, 0.0, 0.0, 0.0);
+                BoreDebrisParticleOptions options = new BoreDebrisParticleOptions(this.state, this.boreEntityId, destination.x, destination.y, destination.z, 0.0, 0.0, 0.0);
                 this.level.addParticle(options, x, y, z, 0.0, 0.0, 0.0);
             }
         }

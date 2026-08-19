@@ -59,9 +59,7 @@ public final class ItemEssentiaCrystal extends Item implements IEssentiaContaine
             stack.remove(TCDataComponents.CRYSTAL_ASPECT.get());
             return;
         }
-        stack.set(
-                TCDataComponents.CRYSTAL_ASPECT.get(),
-                aspects.entries().getFirst().withAmount(1));
+        stack.set(TCDataComponents.CRYSTAL_ASPECT.get(), aspects.entries().getFirst().withAmount(1));
     }
 
     @Override

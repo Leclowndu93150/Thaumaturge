@@ -22,10 +22,8 @@ public final class EffectTextures {
 
     private static void preload(ResourceManager manager) {
         TextureManager textures = Minecraft.getInstance().getTextureManager();
-        for (String directory : new String[] {"textures/effect", "textures/misc"}) {
-            for (Identifier id : manager.listResources(
-                            directory, path -> path.getPath().endsWith(".png"))
-                    .keySet()) {
+        for (String directory : new String[]{"textures/effect", "textures/misc"}) {
+            for (Identifier id : manager.listResources(directory, path -> path.getPath().endsWith(".png")).keySet()) {
                 if (id.getNamespace().equals(TCIds.MODID)) {
                     textures.getTexture(id);
                 }

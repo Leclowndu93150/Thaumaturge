@@ -50,12 +50,8 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
     public abstract int getArea();
 
     public static AttributeSupplier.Builder createSeedAttributes(double maxHealth, double attackDamage) {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, maxHealth)
-                .add(Attributes.ATTACK_DAMAGE, attackDamage)
-                .add(Attributes.MOVEMENT_SPEED, 0.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, maxHealth).add(Attributes.ATTACK_DAMAGE, attackDamage).add(Attributes.MOVEMENT_SPEED, 0.0)
+                .add(Attributes.FOLLOW_RANGE, 16.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
     @Override
@@ -101,16 +97,9 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
             return;
         }
         for (int i = 0; i < AMBIENT_FUMES; i++) {
-            Effects.taint(
-                            server,
-                            this.position()
-                                    .add(
-                                            (this.random.nextDouble() - 0.5) * this.getBbWidth(),
-                                            this.random.nextDouble() * this.getBbHeight(),
-                                            (this.random.nextDouble() - 0.5) * this.getBbWidth()))
-                    .motion(0.0, AMBIENT_FUME_RISE + this.random.nextDouble() * AMBIENT_FUME_RISE, 0.0)
-                    .scale(AMBIENT_FUME_SCALE)
-                    .send();
+            Effects.taint(server,
+                    this.position().add((this.random.nextDouble() - 0.5) * this.getBbWidth(), this.random.nextDouble() * this.getBbHeight(), (this.random.nextDouble() - 0.5) * this.getBbWidth()))
+                    .motion(0.0, AMBIENT_FUME_RISE + this.random.nextDouble() * AMBIENT_FUME_RISE, 0.0).scale(AMBIENT_FUME_SCALE).send();
         }
         BlockPos pos = this.blockPosition();
         float saturation = AuraHelper.getFluxSaturation(server, pos);
@@ -129,12 +118,8 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
 
     private void applyAuraTouch(ServerLevel server) {
         double radius = getArea() * FLUX_TAINT_RADIUS_MULT;
-        for (LivingEntity target : server.getEntitiesOfClass(
-                LivingEntity.class,
-                this.getBoundingBox().inflate(radius),
-                e -> e != this && !(e instanceof ITaintedMob))) {
-            target.addEffect(new MobEffectInstance(
-                    TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
+        for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radius), e -> e != this && !(e instanceof ITaintedMob))) {
+            target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
         }
     }
 

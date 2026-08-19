@@ -13,10 +13,7 @@ public final class MazeChunkStamper {
         int y = OuterLands.MAZE_Y;
         switch (cell.feature) {
             case MazeCell.FEATURE_PORTAL -> GenRooms.generatePortalRoom(ctx, cx, cz, y, cell);
-            case MazeCell.FEATURE_BOSS_NW,
-                    MazeCell.FEATURE_BOSS_NE,
-                    MazeCell.FEATURE_BOSS_SW,
-                    MazeCell.FEATURE_BOSS_SE -> GenRooms.generateBossRoom(ctx, cx, cz, y, cell);
+            case MazeCell.FEATURE_BOSS_NW, MazeCell.FEATURE_BOSS_NE, MazeCell.FEATURE_BOSS_SW, MazeCell.FEATURE_BOSS_SE -> GenRooms.generateBossRoom(ctx, cx, cz, y, cell);
             case MazeCell.FEATURE_KEY -> GenRooms.generateKeyRoom(ctx, cx, cz, y, cell);
             case MazeCell.FEATURE_NEST -> GenRooms.generateNestRoom(ctx, cx, cz, y, cell);
             case MazeCell.FEATURE_LIBRARY -> GenRooms.generateLibraryRoom(ctx, cx, cz, y, cell);

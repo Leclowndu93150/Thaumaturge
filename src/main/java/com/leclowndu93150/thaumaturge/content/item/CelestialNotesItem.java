@@ -49,8 +49,7 @@ public final class CelestialNotesItem extends Item {
                     AspectPools.grant(serverPlayer, holder, STUDY_POINTS);
                 }
             }
-            serverPlayer.sendSystemMessage(
-                    Component.translatable("tc.celestial.studied").withStyle(ChatFormatting.DARK_PURPLE));
+            serverPlayer.sendSystemMessage(Component.translatable("tc.celestial.studied").withStyle(ChatFormatting.DARK_PURPLE));
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
@@ -70,14 +69,7 @@ public final class CelestialNotesItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
-        tooltip.accept(Component.translatable(
-                        "item.thaumaturge.celestial_notes." + bodyOf(stack).getSerializedName() + ".text")
-                .withStyle(ChatFormatting.AQUA));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("item.thaumaturge.celestial_notes." + bodyOf(stack).getSerializedName() + ".text").withStyle(ChatFormatting.AQUA));
     }
 }

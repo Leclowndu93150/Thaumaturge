@@ -10,14 +10,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundTableDuplicatePayload(BlockPos pos) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTableDuplicatePayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("table_duplicate"));
+    public static final CustomPacketPayload.Type<ServerboundTableDuplicatePayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("table_duplicate"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableDuplicatePayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
-                    ServerboundTableDuplicatePayload::pos,
-                    ServerboundTableDuplicatePayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableDuplicatePayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundTableDuplicatePayload::pos,
+            ServerboundTableDuplicatePayload::new);
 
     public static void handle(ServerboundTableDuplicatePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {

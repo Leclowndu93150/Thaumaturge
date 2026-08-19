@@ -80,14 +80,9 @@ public final class AspectIndexBuilder {
     private static AspectList cap(AspectList list, HolderLookup.Provider registries) {
         AspectList result = AspectList.EMPTY;
         for (var entry : list.entries()) {
-            Holder<IAspect> bound = entry.aspect()
-                    .unwrapKey()
-                    .map(key -> Aspects.resolve(registries, key))
-                    .orElse(null);
+            Holder<IAspect> bound = entry.aspect().unwrapKey().map(key -> Aspects.resolve(registries, key)).orElse(null);
             if (bound == null) {
-                Thaumaturge.LOGGER.warn(
-                        "Dropping aspect {} while building the aspect index: not resolvable in the active registries",
-                        entry.aspect());
+                Thaumaturge.LOGGER.warn("Dropping aspect {} while building the aspect index: not resolvable in the active registries", entry.aspect());
                 continue;
             }
             int capped = Math.min(MAX_AMOUNT_PER_ASPECT, entry.amount());

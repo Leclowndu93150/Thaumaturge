@@ -49,20 +49,10 @@ public final class RobeArmorModel extends AbstractTCArmorModel {
     public static LayerDefinition createHead() {
         MeshDefinition mesh = emptyMesh();
         PartDefinition head = mesh.getRoot().getChild("head");
-        head.addOrReplaceChild(
-                "hood1", CubeListBuilder.create().texOffs(16, 7).addBox(-4.5F, -9.0F, -4.6F, 9, 9, 9), PartPose.ZERO);
-        head.addOrReplaceChild(
-                "hood2",
-                CubeListBuilder.create().texOffs(52, 13).addBox(-4.0F, -9.7F, 2.0F, 8, 9, 3),
-                PartPose.rotation(-0.2268928F, 0.0F, 0.0F));
-        head.addOrReplaceChild(
-                "hood3",
-                CubeListBuilder.create().texOffs(52, 14).addBox(-3.5F, -10.0F, 3.5F, 7, 8, 3),
-                PartPose.rotation(-0.3490659F, 0.0F, 0.0F));
-        head.addOrReplaceChild(
-                "hood4",
-                CubeListBuilder.create().texOffs(53, 15).addBox(-3.0F, -10.7F, 3.5F, 6, 7, 3),
-                PartPose.rotation(-0.5759587F, 0.0F, 0.0F));
+        head.addOrReplaceChild("hood1", CubeListBuilder.create().texOffs(16, 7).addBox(-4.5F, -9.0F, -4.6F, 9, 9, 9), PartPose.ZERO);
+        head.addOrReplaceChild("hood2", CubeListBuilder.create().texOffs(52, 13).addBox(-4.0F, -9.7F, 2.0F, 8, 9, 3), PartPose.rotation(-0.2268928F, 0.0F, 0.0F));
+        head.addOrReplaceChild("hood3", CubeListBuilder.create().texOffs(52, 14).addBox(-3.5F, -10.0F, 3.5F, 7, 8, 3), PartPose.rotation(-0.3490659F, 0.0F, 0.0F));
+        head.addOrReplaceChild("hood4", CubeListBuilder.create().texOffs(53, 15).addBox(-3.0F, -10.7F, 3.5F, 6, 7, 3), PartPose.rotation(-0.5759587F, 0.0F, 0.0F));
         return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
     }
 
@@ -71,90 +61,31 @@ public final class RobeArmorModel extends AbstractTCArmorModel {
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.getChild("body");
         addBelts(body);
-        body.addOrReplaceChild(
-                "chestplate",
-                CubeListBuilder.create().texOffs(16, 25).addBox(-4.0F, 1.0F, -3.0F, 8, 6, 1),
-                PartPose.ZERO);
-        body.addOrReplaceChild(
-                "chestthing",
-                CubeListBuilder.create().texOffs(56, 50).addBox(-2.5F, 1.0F, -4.0F, 5, 7, 1),
-                PartPose.ZERO);
-        body.addOrReplaceChild(
-                "scroll",
-                CubeListBuilder.create().texOffs(78, 25).addBox(-2.0F, 9.5F, 4.0F, 8, 3, 3),
-                PartPose.rotation(0.0F, 0.0F, 0.1919862F));
-        body.addOrReplaceChild(
-                "backplate",
-                CubeListBuilder.create().texOffs(36, 45).addBox(-4.0F, 1.0F, 1.9F, 8, 11, 2),
-                PartPose.ZERO);
-        body.addOrReplaceChild(
-                "book",
-                CubeListBuilder.create().texOffs(81, 16).addBox(1.0F, 0.0F, 4.0F, 5, 7, 2),
-                PartPose.rotation(0.0F, 0.0F, 0.7679449F));
-        body.addOrReplaceChild(
-                "clothchest_l",
-                CubeListBuilder.create().texOffs(108, 38).mirror().addBox(2.1F, 0.5F, -3.5F, 2, 8, 1),
-                PartPose.ZERO);
-        body.addOrReplaceChild(
-                "clothchest_r",
-                CubeListBuilder.create().texOffs(108, 38).addBox(-4.1F, 0.5F, -3.5F, 2, 8, 1),
-                PartPose.ZERO);
+        body.addOrReplaceChild("chestplate", CubeListBuilder.create().texOffs(16, 25).addBox(-4.0F, 1.0F, -3.0F, 8, 6, 1), PartPose.ZERO);
+        body.addOrReplaceChild("chestthing", CubeListBuilder.create().texOffs(56, 50).addBox(-2.5F, 1.0F, -4.0F, 5, 7, 1), PartPose.ZERO);
+        body.addOrReplaceChild("scroll", CubeListBuilder.create().texOffs(78, 25).addBox(-2.0F, 9.5F, 4.0F, 8, 3, 3), PartPose.rotation(0.0F, 0.0F, 0.1919862F));
+        body.addOrReplaceChild("backplate", CubeListBuilder.create().texOffs(36, 45).addBox(-4.0F, 1.0F, 1.9F, 8, 11, 2), PartPose.ZERO);
+        body.addOrReplaceChild("book", CubeListBuilder.create().texOffs(81, 16).addBox(1.0F, 0.0F, 4.0F, 5, 7, 2), PartPose.rotation(0.0F, 0.0F, 0.7679449F));
+        body.addOrReplaceChild("clothchest_l", CubeListBuilder.create().texOffs(108, 38).mirror().addBox(2.1F, 0.5F, -3.5F, 2, 8, 1), PartPose.ZERO);
+        body.addOrReplaceChild("clothchest_r", CubeListBuilder.create().texOffs(108, 38).addBox(-4.1F, 0.5F, -3.5F, 2, 8, 1), PartPose.ZERO);
         PartDefinition rightArm = root.getChild("right_arm");
-        rightArm.addOrReplaceChild(
-                "shoulder_r",
-                CubeListBuilder.create().texOffs(16, 45).mirror().addBox(-3.5F, -2.5F, -2.5F, 5, 5, 5),
-                PartPose.ZERO);
-        rightArm.addOrReplaceChild(
-                "r_arm1", CubeListBuilder.create().texOffs(88, 39).addBox(-3.5F, 2.5F, -2.5F, 5, 7, 5), PartPose.ZERO);
-        rightArm.addOrReplaceChild(
-                "r_arm2", CubeListBuilder.create().texOffs(76, 32).addBox(-3.0F, 5.5F, 2.5F, 4, 4, 2), PartPose.ZERO);
-        rightArm.addOrReplaceChild(
-                "r_arm3", CubeListBuilder.create().texOffs(88, 32).addBox(-2.5F, 3.5F, 2.5F, 3, 2, 1), PartPose.ZERO);
-        rightArm.addOrReplaceChild(
-                "shoulderplate_top_r",
-                CubeListBuilder.create().texOffs(56, 25).addBox(-5.5F, -2.5F, -3.5F, 2, 1, 7),
-                PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
-        rightArm.addOrReplaceChild(
-                "shoulderplate_r1",
-                CubeListBuilder.create().texOffs(56, 33).addBox(-4.5F, -1.5F, -3.5F, 1, 4, 7),
-                PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
-        rightArm.addOrReplaceChild(
-                "shoulderplate_r2",
-                CubeListBuilder.create().texOffs(40, 33).addBox(-3.5F, 1.5F, -3.5F, 1, 3, 7),
-                PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
-        rightArm.addOrReplaceChild(
-                "shoulderplate_r3",
-                CubeListBuilder.create().texOffs(40, 33).addBox(-2.5F, 3.5F, -3.5F, 1, 3, 7),
-                PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
+        rightArm.addOrReplaceChild("shoulder_r", CubeListBuilder.create().texOffs(16, 45).mirror().addBox(-3.5F, -2.5F, -2.5F, 5, 5, 5), PartPose.ZERO);
+        rightArm.addOrReplaceChild("r_arm1", CubeListBuilder.create().texOffs(88, 39).addBox(-3.5F, 2.5F, -2.5F, 5, 7, 5), PartPose.ZERO);
+        rightArm.addOrReplaceChild("r_arm2", CubeListBuilder.create().texOffs(76, 32).addBox(-3.0F, 5.5F, 2.5F, 4, 4, 2), PartPose.ZERO);
+        rightArm.addOrReplaceChild("r_arm3", CubeListBuilder.create().texOffs(88, 32).addBox(-2.5F, 3.5F, 2.5F, 3, 2, 1), PartPose.ZERO);
+        rightArm.addOrReplaceChild("shoulderplate_top_r", CubeListBuilder.create().texOffs(56, 25).addBox(-5.5F, -2.5F, -3.5F, 2, 1, 7), PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
+        rightArm.addOrReplaceChild("shoulderplate_r1", CubeListBuilder.create().texOffs(56, 33).addBox(-4.5F, -1.5F, -3.5F, 1, 4, 7), PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
+        rightArm.addOrReplaceChild("shoulderplate_r2", CubeListBuilder.create().texOffs(40, 33).addBox(-3.5F, 1.5F, -3.5F, 1, 3, 7), PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
+        rightArm.addOrReplaceChild("shoulderplate_r3", CubeListBuilder.create().texOffs(40, 33).addBox(-2.5F, 3.5F, -3.5F, 1, 3, 7), PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
         PartDefinition leftArm = root.getChild("left_arm");
-        leftArm.addOrReplaceChild(
-                "shoulder_l",
-                CubeListBuilder.create().texOffs(16, 45).addBox(-1.5F, -2.5F, -2.5F, 5, 5, 5),
-                PartPose.ZERO);
-        leftArm.addOrReplaceChild(
-                "l_arm1",
-                CubeListBuilder.create().texOffs(88, 39).mirror().addBox(-1.5F, 2.5F, -2.5F, 5, 7, 5),
-                PartPose.ZERO);
-        leftArm.addOrReplaceChild(
-                "l_arm2", CubeListBuilder.create().texOffs(76, 32).addBox(-1.0F, 5.5F, 2.5F, 4, 4, 2), PartPose.ZERO);
-        leftArm.addOrReplaceChild(
-                "l_arm3", CubeListBuilder.create().texOffs(88, 32).addBox(-0.5F, 3.5F, 2.5F, 3, 2, 1), PartPose.ZERO);
-        leftArm.addOrReplaceChild(
-                "shoulderplate_top_l",
-                CubeListBuilder.create().texOffs(56, 25).addBox(3.5F, -2.5F, -3.5F, 2, 1, 7),
-                PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
-        leftArm.addOrReplaceChild(
-                "shoulderplate_l1",
-                CubeListBuilder.create().texOffs(56, 33).addBox(3.5F, -1.5F, -3.5F, 1, 4, 7),
-                PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
-        leftArm.addOrReplaceChild(
-                "shoulderplate_l2",
-                CubeListBuilder.create().texOffs(40, 33).addBox(2.5F, 1.5F, -3.5F, 1, 3, 7),
-                PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
-        leftArm.addOrReplaceChild(
-                "shoulderplate_l3",
-                CubeListBuilder.create().texOffs(40, 33).addBox(1.5F, 3.5F, -3.5F, 1, 3, 7),
-                PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
+        leftArm.addOrReplaceChild("shoulder_l", CubeListBuilder.create().texOffs(16, 45).addBox(-1.5F, -2.5F, -2.5F, 5, 5, 5), PartPose.ZERO);
+        leftArm.addOrReplaceChild("l_arm1", CubeListBuilder.create().texOffs(88, 39).mirror().addBox(-1.5F, 2.5F, -2.5F, 5, 7, 5), PartPose.ZERO);
+        leftArm.addOrReplaceChild("l_arm2", CubeListBuilder.create().texOffs(76, 32).addBox(-1.0F, 5.5F, 2.5F, 4, 4, 2), PartPose.ZERO);
+        leftArm.addOrReplaceChild("l_arm3", CubeListBuilder.create().texOffs(88, 32).addBox(-0.5F, 3.5F, 2.5F, 3, 2, 1), PartPose.ZERO);
+        leftArm.addOrReplaceChild("shoulderplate_top_l", CubeListBuilder.create().texOffs(56, 25).addBox(3.5F, -2.5F, -3.5F, 2, 1, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
+        leftArm.addOrReplaceChild("shoulderplate_l1", CubeListBuilder.create().texOffs(56, 33).addBox(3.5F, -1.5F, -3.5F, 1, 4, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
+        leftArm.addOrReplaceChild("shoulderplate_l2", CubeListBuilder.create().texOffs(40, 33).addBox(2.5F, 1.5F, -3.5F, 1, 3, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
+        leftArm.addOrReplaceChild("shoulderplate_l3", CubeListBuilder.create().texOffs(40, 33).addBox(1.5F, 3.5F, -3.5F, 1, 3, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
         return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
     }
 
@@ -163,122 +94,50 @@ public final class RobeArmorModel extends AbstractTCArmorModel {
         PartDefinition root = mesh.getRoot();
         PartDefinition body = root.getChild("body");
         addBelts(body);
-        body.addOrReplaceChild(
-                "frontcloth_r1",
-                CubeListBuilder.create().texOffs(108, 38).addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
+        body.addOrReplaceChild("frontcloth_r1", CubeListBuilder.create().texOffs(108, 38).addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
                 PartPose.offsetAndRotation(-3.0F, 11.0F, -2.9F, FRONTCLOTH_1_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "frontcloth_r2",
-                CubeListBuilder.create().texOffs(108, 47).addBox(0.0F, 7.5F, 1.7F, 3, 3, 1),
+        body.addOrReplaceChild("frontcloth_r2", CubeListBuilder.create().texOffs(108, 47).addBox(0.0F, 7.5F, 1.7F, 3, 3, 1),
                 PartPose.offsetAndRotation(-3.0F, 11.0F, -2.9F, FRONTCLOTH_2_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "frontcloth_l1",
-                CubeListBuilder.create().texOffs(108, 38).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
+        body.addOrReplaceChild("frontcloth_l1", CubeListBuilder.create().texOffs(108, 38).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -2.9F, FRONTCLOTH_1_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "frontcloth_l2",
-                CubeListBuilder.create().texOffs(108, 47).mirror().addBox(0.0F, 7.5F, 1.7F, 3, 3, 1),
+        body.addOrReplaceChild("frontcloth_l2", CubeListBuilder.create().texOffs(108, 47).mirror().addBox(0.0F, 7.5F, 1.7F, 3, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -2.9F, FRONTCLOTH_2_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_r1",
-                CubeListBuilder.create().texOffs(118, 16).mirror().addBox(0.0F, 0.0F, 0.0F, 4, 8, 1),
+        body.addOrReplaceChild("clothback_r1", CubeListBuilder.create().texOffs(118, 16).mirror().addBox(0.0F, 0.0F, 0.0F, 4, 8, 1),
                 PartPose.offsetAndRotation(-4.0F, 11.5F, 2.9F, BACKCLOTH_1_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_r2",
-                CubeListBuilder.create().texOffs(123, 9).addBox(0.0F, 7.8F, -0.9F, 1, 2, 1),
+        body.addOrReplaceChild("clothback_r2", CubeListBuilder.create().texOffs(123, 9).addBox(0.0F, 7.8F, -0.9F, 1, 2, 1),
                 PartPose.offsetAndRotation(-4.0F, 11.5F, 2.9F, BACKCLOTH_2_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_r3",
-                CubeListBuilder.create().texOffs(120, 12).mirror().addBox(1.0F, 7.8F, -0.9F, 3, 3, 1),
+        body.addOrReplaceChild("clothback_r3", CubeListBuilder.create().texOffs(120, 12).mirror().addBox(1.0F, 7.8F, -0.9F, 3, 3, 1),
                 PartPose.offsetAndRotation(-4.0F, 11.5F, 2.9F, BACKCLOTH_2_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_l1",
-                CubeListBuilder.create().texOffs(118, 16).addBox(0.0F, 0.0F, 0.0F, 4, 8, 1),
-                PartPose.offsetAndRotation(0.0F, 11.5F, 2.9F, BACKCLOTH_1_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_l2",
-                CubeListBuilder.create().texOffs(123, 9).mirror().addBox(3.0F, 7.8F, -0.9F, 1, 2, 1),
+        body.addOrReplaceChild("clothback_l1", CubeListBuilder.create().texOffs(118, 16).addBox(0.0F, 0.0F, 0.0F, 4, 8, 1), PartPose.offsetAndRotation(0.0F, 11.5F, 2.9F, BACKCLOTH_1_ROT, 0.0F, 0.0F));
+        body.addOrReplaceChild("clothback_l2", CubeListBuilder.create().texOffs(123, 9).mirror().addBox(3.0F, 7.8F, -0.9F, 1, 2, 1),
                 PartPose.offsetAndRotation(0.0F, 11.5F, 2.9F, BACKCLOTH_2_ROT, 0.0F, 0.0F));
-        body.addOrReplaceChild(
-                "clothback_l3",
-                CubeListBuilder.create().texOffs(120, 12).addBox(0.0F, 7.8F, -0.9F, 3, 3, 1),
+        body.addOrReplaceChild("clothback_l3", CubeListBuilder.create().texOffs(120, 12).addBox(0.0F, 7.8F, -0.9F, 3, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 11.5F, 2.9F, BACKCLOTH_2_ROT, 0.0F, 0.0F));
         PartDefinition rightLeg = root.getChild("right_leg");
-        rightLeg.addOrReplaceChild(
-                "legpanel_r4",
-                CubeListBuilder.create().texOffs(76, 38).addBox(-3.0F, 0.5F, -3.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        rightLeg.addOrReplaceChild(
-                "legpanel_r5",
-                CubeListBuilder.create().texOffs(76, 42).addBox(-3.0F, 2.5F, -2.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        rightLeg.addOrReplaceChild(
-                "legpanel_r6",
-                CubeListBuilder.create().texOffs(82, 38).addBox(-3.0F, 4.5F, -1.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        rightLeg.addOrReplaceChild(
-                "sidepanel_r1",
-                CubeListBuilder.create().texOffs(116, 25).addBox(-2.5F, 0.5F, -2.5F, 1, 4, 5),
-                PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
-        rightLeg.addOrReplaceChild(
-                "sidecloth_r1",
-                CubeListBuilder.create().texOffs(116, 42).addBox(-2.5F, 0.5F, -2.5F, 1, 5, 5),
-                PartPose.rotation(0.0F, 0.0F, SIDECLOTH_1_ROT));
-        rightLeg.addOrReplaceChild(
-                "sidecloth_r2",
-                CubeListBuilder.create().texOffs(116, 34).addBox(-1.5F, 5.5F, -2.5F, 1, 3, 5),
-                PartPose.rotation(0.0F, 0.0F, SIDECLOTH_2_ROT));
-        rightLeg.addOrReplaceChild(
-                "sidecloth_r3",
-                CubeListBuilder.create().texOffs(116, 1).addBox(0.4F, 8.4F, -2.5F, 1, 3, 5),
-                PartPose.rotation(0.0F, 0.0F, SIDECLOTH_3_ROT));
+        rightLeg.addOrReplaceChild("legpanel_r4", CubeListBuilder.create().texOffs(76, 38).addBox(-3.0F, 0.5F, -3.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        rightLeg.addOrReplaceChild("legpanel_r5", CubeListBuilder.create().texOffs(76, 42).addBox(-3.0F, 2.5F, -2.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        rightLeg.addOrReplaceChild("legpanel_r6", CubeListBuilder.create().texOffs(82, 38).addBox(-3.0F, 4.5F, -1.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        rightLeg.addOrReplaceChild("sidepanel_r1", CubeListBuilder.create().texOffs(116, 25).addBox(-2.5F, 0.5F, -2.5F, 1, 4, 5), PartPose.rotation(0.0F, 0.0F, SHOULDERPLATE_ROT));
+        rightLeg.addOrReplaceChild("sidecloth_r1", CubeListBuilder.create().texOffs(116, 42).addBox(-2.5F, 0.5F, -2.5F, 1, 5, 5), PartPose.rotation(0.0F, 0.0F, SIDECLOTH_1_ROT));
+        rightLeg.addOrReplaceChild("sidecloth_r2", CubeListBuilder.create().texOffs(116, 34).addBox(-1.5F, 5.5F, -2.5F, 1, 3, 5), PartPose.rotation(0.0F, 0.0F, SIDECLOTH_2_ROT));
+        rightLeg.addOrReplaceChild("sidecloth_r3", CubeListBuilder.create().texOffs(116, 1).addBox(0.4F, 8.4F, -2.5F, 1, 3, 5), PartPose.rotation(0.0F, 0.0F, SIDECLOTH_3_ROT));
         PartDefinition leftLeg = root.getChild("left_leg");
-        leftLeg.addOrReplaceChild(
-                "legpanel_l4",
-                CubeListBuilder.create().texOffs(76, 38).mirror().addBox(1.0F, 0.5F, -3.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        leftLeg.addOrReplaceChild(
-                "legpanel_l5",
-                CubeListBuilder.create().texOffs(76, 42).mirror().addBox(1.0F, 2.5F, -2.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        leftLeg.addOrReplaceChild(
-                "legpanel_l6",
-                CubeListBuilder.create().texOffs(82, 38).mirror().addBox(1.0F, 4.5F, -1.5F, 2, 3, 1),
-                PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
-        leftLeg.addOrReplaceChild(
-                "sidepanel_l1",
-                CubeListBuilder.create().texOffs(116, 25).addBox(1.5F, 0.5F, -2.5F, 1, 4, 5),
-                PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
-        leftLeg.addOrReplaceChild(
-                "sidecloth_l1",
-                CubeListBuilder.create().texOffs(116, 42).addBox(1.5F, 0.5F, -2.5F, 1, 5, 5),
-                PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_1_ROT));
-        leftLeg.addOrReplaceChild(
-                "sidecloth_l2",
-                CubeListBuilder.create().texOffs(116, 34).addBox(0.5F, 5.5F, -2.5F, 1, 3, 5),
-                PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_2_ROT));
-        leftLeg.addOrReplaceChild(
-                "sidecloth_l3",
-                CubeListBuilder.create().texOffs(116, 1).addBox(-1.4F, 8.4F, -2.5F, 1, 3, 5),
-                PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_3_ROT));
-        leftLeg.addOrReplaceChild(
-                "focipouch",
-                CubeListBuilder.create().texOffs(100, 20).addBox(3.5F, 0.5F, -2.5F, 3, 6, 5),
-                PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_1_ROT));
+        leftLeg.addOrReplaceChild("legpanel_l4", CubeListBuilder.create().texOffs(76, 38).mirror().addBox(1.0F, 0.5F, -3.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        leftLeg.addOrReplaceChild("legpanel_l5", CubeListBuilder.create().texOffs(76, 42).mirror().addBox(1.0F, 2.5F, -2.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        leftLeg.addOrReplaceChild("legpanel_l6", CubeListBuilder.create().texOffs(82, 38).mirror().addBox(1.0F, 4.5F, -1.5F, 2, 3, 1), PartPose.rotation(-SHOULDERPLATE_ROT, 0.0F, 0.0F));
+        leftLeg.addOrReplaceChild("sidepanel_l1", CubeListBuilder.create().texOffs(116, 25).addBox(1.5F, 0.5F, -2.5F, 1, 4, 5), PartPose.rotation(0.0F, 0.0F, -SHOULDERPLATE_ROT));
+        leftLeg.addOrReplaceChild("sidecloth_l1", CubeListBuilder.create().texOffs(116, 42).addBox(1.5F, 0.5F, -2.5F, 1, 5, 5), PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_1_ROT));
+        leftLeg.addOrReplaceChild("sidecloth_l2", CubeListBuilder.create().texOffs(116, 34).addBox(0.5F, 5.5F, -2.5F, 1, 3, 5), PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_2_ROT));
+        leftLeg.addOrReplaceChild("sidecloth_l3", CubeListBuilder.create().texOffs(116, 1).addBox(-1.4F, 8.4F, -2.5F, 1, 3, 5), PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_3_ROT));
+        leftLeg.addOrReplaceChild("focipouch", CubeListBuilder.create().texOffs(100, 20).addBox(3.5F, 0.5F, -2.5F, 3, 6, 5), PartPose.rotation(0.0F, 0.0F, -SIDECLOTH_1_ROT));
         return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
     }
 
     private static void addBelts(PartDefinition body) {
-        body.addOrReplaceChild(
-                "mbelt", CubeListBuilder.create().texOffs(16, 55).addBox(-4.0F, 7.0F, -3.0F, 8, 5, 1), PartPose.ZERO);
-        body.addOrReplaceChild(
-                "mbelt_b",
-                CubeListBuilder.create().texOffs(16, 55).addBox(-4.0F, 7.0F, -4.0F, 8, 5, 1),
-                PartPose.rotation(0.0F, (float) Math.PI, 0.0F));
-        body.addOrReplaceChild(
-                "mbelt_l", CubeListBuilder.create().texOffs(16, 36).addBox(4.0F, 8.0F, -3.0F, 1, 3, 6), PartPose.ZERO);
-        body.addOrReplaceChild(
-                "mbelt_r", CubeListBuilder.create().texOffs(16, 36).addBox(-5.0F, 8.0F, -3.0F, 1, 3, 6), PartPose.ZERO);
+        body.addOrReplaceChild("mbelt", CubeListBuilder.create().texOffs(16, 55).addBox(-4.0F, 7.0F, -3.0F, 8, 5, 1), PartPose.ZERO);
+        body.addOrReplaceChild("mbelt_b", CubeListBuilder.create().texOffs(16, 55).addBox(-4.0F, 7.0F, -4.0F, 8, 5, 1), PartPose.rotation(0.0F, (float) Math.PI, 0.0F));
+        body.addOrReplaceChild("mbelt_l", CubeListBuilder.create().texOffs(16, 36).addBox(4.0F, 8.0F, -3.0F, 1, 3, 6), PartPose.ZERO);
+        body.addOrReplaceChild("mbelt_r", CubeListBuilder.create().texOffs(16, 36).addBox(-5.0F, 8.0F, -3.0F, 1, 3, 6), PartPose.ZERO);
     }
 
     private static MeshDefinition emptyMesh() {

@@ -68,26 +68,13 @@ public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
         int x = leftPos;
         int y = topPos;
         boolean mix = spa.getMix();
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                x + MIX_X,
-                y + MIX_Y,
-                MIX_ON_U,
-                mix ? MIX_ON_V : MIX_OFF_V,
-                MIX_SIZE,
-                MIX_SIZE,
-                256,
-                256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + MIX_X, y + MIX_Y, MIX_ON_U, mix ? MIX_ON_V : MIX_OFF_V, MIX_SIZE, MIX_SIZE, 256, 256);
 
         FluidResource resource = spa.getTank().getResource(0);
         int amount = spa.getTank().getAmountAsInt(0);
         if (amount > 0 && !resource.isEmpty()) {
             Fluid fluid = resource.getFluid();
-            FluidModel model = Minecraft.getInstance()
-                    .getModelManager()
-                    .getFluidStateModelSet()
-                    .get(fluid.defaultFluidState());
+            FluidModel model = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluid.defaultFluidState());
             TextureAtlasSprite sprite = model.stillMaterial().sprite();
             int tint = -1;
             if (model.tintSource() != null) {
@@ -95,52 +82,20 @@ public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
                 tint = ARGB.opaque(model.tintSource().color(fluidBlock));
             }
             for (int a = 0; a < FLUID_SEGMENTS; a++) {
-                graphics.blitSprite(
-                        RenderPipelines.GUI_TEXTURED,
-                        sprite,
-                        x + FLUID_X,
-                        y + FLUID_Y + a * FLUID_WIDTH,
-                        FLUID_WIDTH,
-                        FLUID_WIDTH,
-                        tint);
+                graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x + FLUID_X, y + FLUID_Y + a * FLUID_WIDTH, FLUID_WIDTH, FLUID_WIDTH, tint);
             }
             float bar = (float) amount / BlockEntitySpa.TANK_CAPACITY;
             int coverHeight = (int) (FLUID_HEIGHT - FLUID_HEIGHT * bar);
             if (coverHeight > 0) {
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TEXTURE,
-                        x + FLUID_X,
-                        y + FLUID_Y,
-                        COVER_U,
-                        COVER_V,
-                        COVER_WIDTH,
-                        coverHeight,
-                        256,
-                        256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + FLUID_X, y + FLUID_Y, COVER_U, COVER_V, COVER_WIDTH, coverHeight, 256, 256);
             }
         }
 
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                x + GAUGE_X,
-                y + GAUGE_Y,
-                GAUGE_U,
-                GAUGE_V,
-                GAUGE_WIDTH,
-                GAUGE_HEIGHT,
-                256,
-                256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + GAUGE_X, y + GAUGE_Y, GAUGE_U, GAUGE_V, GAUGE_WIDTH, GAUGE_HEIGHT, 256, 256);
 
         int tankX = mouseX - (x + TANK_HOVER_X);
         int tankY = mouseY - (y + TANK_HOVER_Y);
-        if (tankX >= 0
-                && tankY >= 0
-                && tankX < TANK_HOVER_WIDTH
-                && tankY < TANK_HOVER_HEIGHT
-                && amount > 0
-                && !resource.isEmpty()) {
+        if (tankX >= 0 && tankY >= 0 && tankX < TANK_HOVER_WIDTH && tankY < TANK_HOVER_HEIGHT && amount > 0 && !resource.isEmpty()) {
             List<Component> lines = new ArrayList<>();
             lines.add(resource.getFluid().getFluidType().getDescription());
             lines.add(Component.literal(amount + " mb"));
@@ -150,11 +105,7 @@ public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
         int mixX = mouseX - (x + MIX_HOVER_X);
         int mixY = mouseY - (y + MIX_HOVER_Y);
         if (mixX >= 0 && mixY >= 0 && mixX < MIX_HOVER_SIZE && mixY < MIX_HOVER_SIZE) {
-            graphics.setTooltipForNextFrame(
-                    font,
-                    Component.translatable(mix ? "gui.thaumaturge.spa.mix.true" : "gui.thaumaturge.spa.mix.false"),
-                    mouseX,
-                    mouseY);
+            graphics.setTooltipForNextFrame(font, Component.translatable(mix ? "gui.thaumaturge.spa.mix.true" : "gui.thaumaturge.spa.mix.false"), mouseX, mouseY);
         }
     }
 

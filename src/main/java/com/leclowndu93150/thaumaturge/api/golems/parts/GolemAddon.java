@@ -15,8 +15,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class GolemAddon extends GolemPart {
     /** The registry key for golem addons. */
-    public static final ResourceKey<Registry<GolemAddon>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_addon"));
+    public static final ResourceKey<Registry<GolemAddon>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_addon"));
 
     private final IAddonFunction function;
 
@@ -28,13 +27,7 @@ public final class GolemAddon extends GolemPart {
      * @param function   the behavior ticked for this addon, or null when it has none
      * @param traits     traits granted by this addon
      */
-    public GolemAddon(
-            List<Identifier> research,
-            Identifier icon,
-            @Nullable GolemPartModel model,
-            List<GolemComponent> components,
-            @Nullable IAddonFunction function,
-            List<Holder<GolemTrait>> traits) {
+    public GolemAddon(List<Identifier> research, Identifier icon, @Nullable GolemPartModel model, List<GolemComponent> components, @Nullable IAddonFunction function, List<Holder<GolemTrait>> traits) {
         super(research, icon, components, traits, model);
         this.function = function;
     }

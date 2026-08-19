@@ -62,8 +62,7 @@ public final class FocusEffectPrimal implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
@@ -71,10 +70,7 @@ public final class FocusEffectPrimal implements FocusEffect {
         Effects.bamf(level, origin).withSound().fancy().send();
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
-            struck.hurtServer(
-                    level,
-                    level.damageSources().indirectMagic(struck, ctx.caster()),
-                    damageForDisplay(settings, ctx.power()));
+            struck.hurtServer(level, level.damageSources().indirectMagic(struck, ctx.caster()), damageForDisplay(settings, ctx.power()));
         }
         level.explode(ctx.caster(), origin.x, origin.y, origin.z, EXPLOSION_STRENGTH, Level.ExplosionInteraction.MOB);
         if (level.getRandom().nextInt(CHAOS_CHANCE) == 0) {
@@ -82,15 +78,7 @@ public final class FocusEffectPrimal implements FocusEffect {
             if (level.getRandom().nextBoolean()) {
                 AuraHelper.polluteAura(level, pos, CHAOS_FLUX, true);
             } else {
-                NodeGenerator.createRandomNodeAt(
-                        level,
-                        pos.above(),
-                        level.getRandom(),
-                        false,
-                        false,
-                        true,
-                        NodeGenerator.DEFAULT_SPECIAL_RARITY,
-                        NodeGenerator.DEFAULT_BASE_AURA);
+                NodeGenerator.createRandomNodeAt(level, pos.above(), level.getRandom(), false, false, true, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
             }
         }
         return true;

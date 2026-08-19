@@ -102,8 +102,7 @@ public final class DustTriggerTickHandler {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
             if (resultStack != null && !resultStack.isEmpty()) {
                 ItemStack copy = resultStack.copy();
-                EntitySpecialItem drop =
-                        new EntitySpecialItem(level, pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, copy);
+                EntitySpecialItem drop = new EntitySpecialItem(level, pos.getX() + 0.5, pos.getY() + 0.1, pos.getZ() + 0.5, copy);
                 drop.setDeltaMovement(0.0, 0.0, 0.0);
                 drop.setDefaultPickUpDelay();
                 level.addFreshEntity(drop);

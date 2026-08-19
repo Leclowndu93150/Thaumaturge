@@ -41,8 +41,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class WispEntity extends Monster implements IEntityAspectSource {
-    private static final EntityDataAccessor<String> DATA_ASPECT =
-            SynchedEntityData.defineId(WispEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DATA_ASPECT = SynchedEntityData.defineId(WispEntity.class, EntityDataSerializers.STRING);
 
     private static final int XP_REWARD = 5;
     private static final int COMPOUND_TYPE_ONE_IN = 10;
@@ -66,11 +65,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 22.0)
-                .add(Attributes.ATTACK_DAMAGE, 3.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.FLYING_SPEED, 0.1);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 22.0).add(Attributes.ATTACK_DAMAGE, 3.0).add(Attributes.FOLLOW_RANGE, 16.0).add(Attributes.FLYING_SPEED, 0.1);
     }
 
     @Override
@@ -79,8 +74,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
         this.goalSelector.addGoal(7, new Ghast.GhastLookGoal(this));
         this.goalSelector.addGoal(7, new WispZapGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(
-                2, new NearestAttackableTargetGoal<>(this, Player.class, RANDOM_AGGRO_INTERVAL, true, false, null));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, RANDOM_AGGRO_INTERVAL, true, false, null));
     }
 
     @Override
@@ -98,11 +92,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
         if (parsed == null) {
             return null;
         }
-        return this.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(ResourceKey.create(IAspect.REGISTRY_KEY, parsed))
-                .map(holder -> (Holder<IAspect>) holder)
-                .orElse(null);
+        return this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, parsed)).map(holder -> (Holder<IAspect>) holder).orElse(null);
     }
 
     public void setAspect(Identifier aspect) {
@@ -113,9 +103,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     public AspectList entityAspects() {
         Holder<IAspect> self = aspect();
         var registry = this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        AspectList aspects = AspectList.EMPTY
-                .add(registry.getOrThrow(TCAspects.AURAM), SELF_ASPECT_AMOUNT)
-                .add(registry.getOrThrow(TCAspects.VOLATUS), SELF_ASPECT_AMOUNT);
+        AspectList aspects = AspectList.EMPTY.add(registry.getOrThrow(TCAspects.AURAM), SELF_ASPECT_AMOUNT).add(registry.getOrThrow(TCAspects.VOLATUS), SELF_ASPECT_AMOUNT);
         if (self != null) {
             aspects = aspects.add(self, SELF_ASPECT_AMOUNT);
         }
@@ -147,32 +135,15 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
 
     private void clientAmbientFx() {
         if (this.tickCount <= 1) {
-            this.level()
-                    .addParticle(
-                            WispEffects.burst(SPAWN_BURST_SIZE), this.getX(), this.getY(), this.getZ(), 0.0, 0.0, 0.0);
+            this.level().addParticle(WispEffects.burst(SPAWN_BURST_SIZE), this.getX(), this.getY(), this.getZ(), 0.0, 0.0, 0.0);
         }
         if (this.isDeadOrDying() && this.deathTime == 1) {
-            this.level()
-                    .addParticle(
-                            WispEffects.burst(DEATH_BURST_SIZE),
-                            this.getX(),
-                            this.getY() + DEATH_BURST_Y_OFFSET,
-                            this.getZ(),
-                            0.0,
-                            0.0,
-                            0.0);
+            this.level().addParticle(WispEffects.burst(DEATH_BURST_SIZE), this.getX(), this.getY() + DEATH_BURST_Y_OFFSET, this.getZ(), 0.0, 0.0, 0.0);
         }
         Holder<IAspect> self = aspect();
         if (self != null && this.random.nextBoolean()) {
-            this.level()
-                    .addParticle(
-                            WispEffects.mote(this.random, self.value().color()),
-                            this.getX() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD,
-                            this.getY() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD,
-                            this.getZ() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD,
-                            0.0,
-                            0.0,
-                            0.0);
+            this.level().addParticle(WispEffects.mote(this.random, self.value().color()), this.getX() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD,
+                    this.getY() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD, this.getZ() + (this.random.nextFloat() - this.random.nextFloat()) * MOTE_SPREAD, 0.0, 0.0, 0.0);
         }
     }
 
@@ -187,9 +158,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
     private void pickRandomAspect() {
         var registry = this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         boolean compound = this.random.nextInt(COMPOUND_TYPE_ONE_IN) == 0;
-        List<Holder.Reference<IAspect>> pool = registry.listElements()
-                .filter(holder -> holder.value().isPrimal() != compound)
-                .toList();
+        List<Holder.Reference<IAspect>> pool = registry.listElements().filter(holder -> holder.value().isPrimal() != compound).toList();
         if (!pool.isEmpty()) {
             setAspect(pool.get(this.random.nextInt(pool.size())).key().identifier());
         }
@@ -229,14 +198,8 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
         return MAX_SPAWN_CLUSTER;
     }
 
-    public static boolean checkWispSpawnRules(
-            EntityType<WispEntity> type,
-            ServerLevelAccessor level,
-            EntitySpawnReason reason,
-            BlockPos pos,
-            RandomSource random) {
-        int nearby = level.getEntitiesOfClass(WispEntity.class, new AABB(pos).inflate(NEARBY_WISP_RANGE))
-                .size();
+    public static boolean checkWispSpawnRules(EntityType<WispEntity> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
+        int nearby = level.getEntitiesOfClass(WispEntity.class, new AABB(pos).inflate(NEARBY_WISP_RANGE)).size();
         return nearby < MAX_NEARBY_WISPS && Monster.checkMonsterSpawnRules(type, level, reason, pos, random);
     }
 

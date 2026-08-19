@@ -30,8 +30,7 @@ public class ScanBlockTag implements IScanThing {
 
     @Override
     public boolean checkThing(Player player, @Nullable Object target) {
-        return target instanceof BlockPos pos
-                && player.level().getBlockState(pos).is(tag);
+        return target instanceof BlockPos pos && player.level().getBlockState(pos).is(tag);
     }
 
     @Override

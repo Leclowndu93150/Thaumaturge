@@ -22,7 +22,8 @@ public final class RecipeDisplayCache {
     }
 
     public static void ensureRequested(Identifier id) {
-        if (CACHE.containsKey(id) || REQUESTED.contains(id)) return;
+        if (CACHE.containsKey(id) || REQUESTED.contains(id))
+            return;
         REQUESTED.add(id);
         ClientPacketDistributor.sendToServer(new ServerboundRequestRecipeDisplayPayload(id));
     }

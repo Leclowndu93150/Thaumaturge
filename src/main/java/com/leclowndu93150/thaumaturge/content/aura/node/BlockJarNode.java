@@ -45,24 +45,13 @@ public final class BlockJarNode extends Block implements EntityBlock {
     }
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.getItem() instanceof ICaster) {
             if (!(level instanceof ServerLevel serverLevel)) {
                 return InteractionResult.SUCCESS;
             }
             if (serverLevel.getBlockEntity(pos) instanceof BlockEntityJarNode jar) {
-                NodeData data = new NodeData(
-                        jar.getNodeType(),
-                        Optional.ofNullable(jar.getNodeModifier()),
-                        jar.getAspects(),
-                        jar.getAspectsBase());
+                NodeData data = new NodeData(jar.getNodeType(), Optional.ofNullable(jar.getNodeModifier()), jar.getAspects(), jar.getAspectsBase());
                 serverLevel.removeBlockEntity(pos);
                 serverLevel.setBlock(pos, TCBlocks.NODE.get().defaultBlockState(), Block.UPDATE_ALL);
                 if (serverLevel.getBlockEntity(pos) instanceof BlockEntityNode node) {
@@ -83,8 +72,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() || type != TCBlockEntities.JAR_NODE.get()) {
             return null;
         }

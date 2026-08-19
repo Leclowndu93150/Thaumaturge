@@ -26,8 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class DeconstructionTableRenderer
-        implements BlockEntityRenderer<BlockEntityDeconstructionTable, DeconstructionTableRenderState> {
+public final class DeconstructionTableRenderer implements BlockEntityRenderer<BlockEntityDeconstructionTable, DeconstructionTableRenderState> {
     private static final Identifier TABLE_TEXTURE = TCIds.rl("textures/entity/decontable.png");
 
     private static final float BOOK_Y = 1.02F;
@@ -54,21 +53,14 @@ public final class DeconstructionTableRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityDeconstructionTable table,
-            DeconstructionTableRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityDeconstructionTable table, DeconstructionTableRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(table, state, partialTicks, cameraPosition, breakProgress);
         if (table.getLevel() == null) {
             return;
         }
         state.ticks = (table.getLevel().getGameTime() % 360L) + partialTicks;
         state.book = itemState(table, new ItemStack(TCItems.THAUMOMETER.get()));
-        ItemStack input = table.items()
-                .getResource(BlockEntityDeconstructionTable.SLOT_INPUT)
-                .toStack(1);
+        ItemStack input = table.items().getResource(BlockEntityDeconstructionTable.SLOT_INPUT).toStack(1);
         state.input = input.isEmpty() ? null : itemState(table, input);
         state.aspect = resolveAspect(table);
     }
@@ -84,33 +76,16 @@ public final class DeconstructionTableRenderer
         if (id == null || table.getLevel() == null) {
             return null;
         }
-        return table.getLevel()
-                .registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(ResourceKey.create(IAspect.REGISTRY_KEY, id))
-                .map(holder -> (Holder<IAspect>) holder)
-                .orElse(null);
+        return table.getLevel().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, id)).map(holder -> (Holder<IAspect>) holder).orElse(null);
     }
 
     @Override
-    public void submit(
-            DeconstructionTableRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(DeconstructionTableRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         int light = state.lightCoords;
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.0F, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-        collector.submitModelPart(
-                model.root,
-                poseStack,
-                RenderTypes.entityCutout(TABLE_TEXTURE),
-                light,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(model.root, poseStack, RenderTypes.entityCutout(TABLE_TEXTURE), light, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
 
         if (state.book != null) {
@@ -142,11 +117,8 @@ public final class DeconstructionTableRenderer
             poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
             poseStack.mulPose(Axis.ZP.rotationDegrees(state.ticks % 360.0F));
             poseStack.scale(ASPECT_SCALE, ASPECT_SCALE, ASPECT_SCALE);
-            collector.submitCustomGeometry(
-                    poseStack,
-                    RenderTypes.entityTranslucent(aspect.value().texture()),
-                    (pose, buffer) ->
-                            AspectTagWorldRenderer.renderQuad(pose, buffer, aspect, ASPECT_ALPHA, false, light));
+            collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(aspect.value().texture()),
+                    (pose, buffer) -> AspectTagWorldRenderer.renderQuad(pose, buffer, aspect, ASPECT_ALPHA, false, light));
             poseStack.popPose();
         }
     }

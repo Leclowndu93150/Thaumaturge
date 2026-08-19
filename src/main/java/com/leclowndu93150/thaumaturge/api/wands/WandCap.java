@@ -15,8 +15,7 @@ import net.minecraft.resources.ResourceKey;
  */
 public final class WandCap {
     /** The registry key for wand caps. */
-    public static final ResourceKey<Registry<WandCap>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "wand_cap"));
+    public static final ResourceKey<Registry<WandCap>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "wand_cap"));
 
     private final float baseCostModifier;
     private final List<ResourceKey<IAspect>> specialCostAspects;
@@ -34,12 +33,7 @@ public final class WandCap {
      *                            rod's factor to price wand assembly
      * @param texture             the texture rendered on wand models built with this cap
      */
-    public WandCap(
-            float baseCostModifier,
-            List<ResourceKey<IAspect>> specialCostAspects,
-            float specialCostModifier,
-            int craftCost,
-            Identifier texture) {
+    public WandCap(float baseCostModifier, List<ResourceKey<IAspect>> specialCostAspects, float specialCostModifier, int craftCost, Identifier texture) {
         this.baseCostModifier = baseCostModifier;
         this.specialCostAspects = List.copyOf(specialCostAspects);
         this.specialCostModifier = specialCostModifier;

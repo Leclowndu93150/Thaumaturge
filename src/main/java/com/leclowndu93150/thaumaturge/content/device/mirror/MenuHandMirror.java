@@ -21,8 +21,9 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     private static final int SLOT_SIZE = 18;
 
     private final Player player;
-    private final SimpleContainer input = new SimpleContainer(1);
+    private final InputContainer input;
     public final int mirrorHotbarSlot;
+    private boolean transporting;
 
     public MenuHandMirror(int containerId, Inventory inventory, RegistryFriendlyByteBuf buf) {
         this(containerId, inventory);
@@ -31,15 +32,12 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     public MenuHandMirror(int containerId, Inventory inventory) {
         super(TCMenus.HAND_MIRROR.get(), containerId);
         this.player = inventory.player;
+        this.input = new InputContainer(this);
         this.mirrorHotbarSlot = inventory.getSelectedSlot();
         addSlot(new Slot(input, 0, INPUT_SLOT_X, INPUT_SLOT_Y));
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(
-                        inventory,
-                        column + row * 9 + 9,
-                        PLAYER_INV_X + column * SLOT_SIZE,
-                        PLAYER_INV_Y + row * SLOT_SIZE));
+                addSlot(new Slot(inventory, column + row * 9 + 9, PLAYER_INV_X + column * SLOT_SIZE, PLAYER_INV_Y + row * SLOT_SIZE));
             }
         }
         for (int column = 0; column < 9; column++) {
@@ -60,7 +58,7 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     }
 
     private void inputChanged(Container container) {
-        if (player.level().isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
+        if (transporting || player.level().isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
             return;
         }
         ItemStack inserted = container.getItem(0);
@@ -68,9 +66,14 @@ public final class MenuHandMirror extends AbstractContainerMenu {
             return;
         }
         ItemStack moved = inserted.copy();
-        container.setItem(0, ItemStack.EMPTY);
-        if (!ItemHandMirror.transport(mirror(), moved, serverPlayer)) {
-            container.setItem(0, moved);
+        transporting = true;
+        try {
+            container.setItem(0, ItemStack.EMPTY);
+            if (!ItemHandMirror.transport(mirror(), moved, serverPlayer)) {
+                container.setItem(0, moved);
+            }
+        } finally {
+            transporting = false;
         }
     }
 
@@ -117,5 +120,20 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player checkPlayer) {
         return checkPlayer.getMainHandItem().getItem() instanceof ItemHandMirror;
+    }
+
+    private static final class InputContainer extends SimpleContainer {
+        private final MenuHandMirror menu;
+
+        private InputContainer(MenuHandMirror menu) {
+            super(1);
+            this.menu = menu;
+        }
+
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            menu.slotsChanged(this);
+        }
     }
 }

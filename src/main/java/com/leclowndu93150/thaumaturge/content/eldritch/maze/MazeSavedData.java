@@ -16,16 +16,12 @@ import net.minecraft.world.level.saveddata.SavedDataType;
 import org.jspecify.annotations.Nullable;
 
 public final class MazeSavedData extends SavedData {
-    private static final Codec<Map<Long, Short>> CELLS_CODEC =
-            Codec.unboundedMap(Codec.STRING.xmap(Long::parseLong, String::valueOf), Codec.SHORT);
+    private static final Codec<Map<Long, Short>> CELLS_CODEC = Codec.unboundedMap(Codec.STRING.xmap(Long::parseLong, String::valueOf), Codec.SHORT);
 
-    public static final Codec<MazeSavedData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                    CELLS_CODEC.fieldOf("cells").forGetter(data -> data.cells),
-                    Codec.INT.fieldOf("boss_count").forGetter(data -> data.bossCount))
-            .apply(builder, MazeSavedData::new));
+    public static final Codec<MazeSavedData> CODEC = RecordCodecBuilder.create(
+            builder -> builder.group(CELLS_CODEC.fieldOf("cells").forGetter(data -> data.cells), Codec.INT.fieldOf("boss_count").forGetter(data -> data.bossCount)).apply(builder, MazeSavedData::new));
 
-    public static final SavedDataType<MazeSavedData> TYPE = new SavedDataType<>(
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "labyrinth"), MazeSavedData::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<MazeSavedData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "labyrinth"), MazeSavedData::new, CODEC, DataFixTypes.LEVEL);
 
     private final Map<Long, Short> cells;
     private int bossCount;

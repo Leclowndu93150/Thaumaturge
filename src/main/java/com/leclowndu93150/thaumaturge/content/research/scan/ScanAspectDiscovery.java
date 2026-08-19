@@ -27,10 +27,7 @@ public final class ScanAspectDiscovery implements IScanThing {
         if (target == null) {
             return false;
         }
-        Holder<IAspect> holder = player.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(aspect)
-                .orElse(null);
+        Holder<IAspect> holder = player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(aspect).orElse(null);
         if (holder == null) {
             return false;
         }

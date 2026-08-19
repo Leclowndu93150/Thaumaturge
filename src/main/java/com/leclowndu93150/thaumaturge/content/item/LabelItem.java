@@ -39,17 +39,20 @@ public final class LabelItem extends Item implements ILabel {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (level.isClientSide())
+            return InteractionResult.SUCCESS;
         BlockPos pos = context.getClickedPos();
         Direction side = context.getClickedFace();
         Player player = context.getPlayer();
-        if (player == null) return InteractionResult.PASS;
+        if (player == null)
+            return InteractionResult.PASS;
         ItemStack stack = context.getItemInHand();
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
         if (block instanceof ILabelable labelable) {
             if (labelable.applyLabel(player, pos, side, stack)) {
-                if (!player.getAbilities().instabuild) stack.shrink(1);
+                if (!player.getAbilities().instabuild)
+                    stack.shrink(1);
                 return InteractionResult.SUCCESS;
             }
             return InteractionResult.PASS;
@@ -57,7 +60,8 @@ public final class LabelItem extends Item implements ILabel {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof ILabelable labelable) {
             if (labelable.applyLabel(player, pos, side, stack)) {
-                if (!player.getAbilities().instabuild) stack.shrink(1);
+                if (!player.getAbilities().instabuild)
+                    stack.shrink(1);
                 return InteractionResult.SUCCESS;
             }
         }

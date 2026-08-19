@@ -26,9 +26,7 @@ public final class SunScornedEffect extends MobEffect {
     public boolean applyEffectTick(ServerLevel level, LivingEntity mob, int amplification) {
         float brightness = mob.getLightLevelDependentMagicValue();
         BlockPos pos = BlockPos.containing(mob.getX(), mob.getY(), mob.getZ());
-        if (brightness > BURN_BRIGHTNESS
-                && level.getRandom().nextFloat() * 30.0F < (brightness - 0.4F) * 2.0F
-                && level.canSeeSky(pos)) {
+        if (brightness > BURN_BRIGHTNESS && level.getRandom().nextFloat() * 30.0F < (brightness - 0.4F) * 2.0F && level.canSeeSky(pos)) {
             mob.igniteForSeconds(BURN_SECONDS);
         } else if (brightness < HEAL_BRIGHTNESS && level.getRandom().nextFloat() > brightness * 2.0F) {
             mob.heal(HEAL_AMOUNT);

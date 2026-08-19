@@ -51,90 +51,33 @@ public final class CrossbowModel extends EntityModel<TurretCrossbowRenderState> 
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        PartDefinition crossbow = root.addOrReplaceChild(
-                "crossbow",
-                CubeListBuilder.create().texOffs(28, 14).mirror().addBox(-2.0F, 0.0F, -7.0F, 4, 2, 14),
-                PartPose.offset(0.0F, 10.0F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "ammobox",
-                CubeListBuilder.create().texOffs(38, 0).mirror().addBox(-2.0F, -5.0F, -6.0F, 4, 5, 9),
-                PartPose.ZERO);
-        crossbow.addOrReplaceChild(
-                "barrel",
-                CubeListBuilder.create().texOffs(20, 28).mirror().addBox(-1.0F, -1.0F, -8.0F, 2, 2, 2),
-                PartPose.ZERO);
-        crossbow.addOrReplaceChild(
-                "basebarcross",
-                CubeListBuilder.create().texOffs(0, 13).mirror().addBox(-2.0F, 0.5F, 10.0F, 4, 1, 1),
-                PartPose.ZERO);
-        crossbow.addOrReplaceChild(
-                "basebarr",
-                CubeListBuilder.create().texOffs(40, 23).mirror().addBox(-1.0F, 0.0F, 7.0F, 1, 2, 5),
-                PartPose.rotation(0.0F, -0.1396263F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "basebarl",
-                CubeListBuilder.create().texOffs(40, 23).mirror().addBox(0.0F, 0.0F, 7.0F, 1, 2, 5),
-                PartPose.rotation(0.0F, 0.1396263F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "loadbarcross",
-                CubeListBuilder.create().texOffs(0, 13).mirror().addBox(-2.0F, -8.5F, -0.5F, 4, 1, 1),
-                PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "loadbarl",
-                CubeListBuilder.create().texOffs(0, 15).mirror().addBox(2.0F, -9.0F, -1.0F, 1, 11, 2),
-                PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "loadbarr",
-                CubeListBuilder.create().texOffs(0, 15).mirror().addBox(-3.0F, -9.0F, -1.0F, 1, 11, 2),
-                PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossl1",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, -6.0F, 5, 2, 1),
-                PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossl2",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(4.0F, 0.0F, -5.0F, 3, 2, 1),
-                PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossl3",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(6.0F, 0.0F, -4.0F, 2, 2, 1),
-                PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossr1",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-5.0F, 0.0F, -6.0F, 5, 2, 1),
-                PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossr2",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, 0.0F, -5.0F, 3, 2, 1),
-                PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
-        crossbow.addOrReplaceChild(
-                "crossr3",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-8.0F, 0.0F, -4.0F, 2, 2, 1),
-                PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
+        PartDefinition crossbow = root.addOrReplaceChild("crossbow", CubeListBuilder.create().texOffs(28, 14).mirror().addBox(-2.0F, 0.0F, -7.0F, 4, 2, 14), PartPose.offset(0.0F, 10.0F, 0.0F));
+        crossbow.addOrReplaceChild("ammobox", CubeListBuilder.create().texOffs(38, 0).mirror().addBox(-2.0F, -5.0F, -6.0F, 4, 5, 9), PartPose.ZERO);
+        crossbow.addOrReplaceChild("barrel", CubeListBuilder.create().texOffs(20, 28).mirror().addBox(-1.0F, -1.0F, -8.0F, 2, 2, 2), PartPose.ZERO);
+        crossbow.addOrReplaceChild("basebarcross", CubeListBuilder.create().texOffs(0, 13).mirror().addBox(-2.0F, 0.5F, 10.0F, 4, 1, 1), PartPose.ZERO);
+        crossbow.addOrReplaceChild("basebarr", CubeListBuilder.create().texOffs(40, 23).mirror().addBox(-1.0F, 0.0F, 7.0F, 1, 2, 5), PartPose.rotation(0.0F, -0.1396263F, 0.0F));
+        crossbow.addOrReplaceChild("basebarl", CubeListBuilder.create().texOffs(40, 23).mirror().addBox(0.0F, 0.0F, 7.0F, 1, 2, 5), PartPose.rotation(0.0F, 0.1396263F, 0.0F));
+        crossbow.addOrReplaceChild("loadbarcross", CubeListBuilder.create().texOffs(0, 13).mirror().addBox(-2.0F, -8.5F, -0.5F, 4, 1, 1), PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
+        crossbow.addOrReplaceChild("loadbarl", CubeListBuilder.create().texOffs(0, 15).mirror().addBox(2.0F, -9.0F, -1.0F, 1, 11, 2), PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
+        crossbow.addOrReplaceChild("loadbarr", CubeListBuilder.create().texOffs(0, 15).mirror().addBox(-3.0F, -9.0F, -1.0F, 1, 11, 2), PartPose.rotation(LOADBAR_ANGLE, 0.0F, 0.0F));
+        crossbow.addOrReplaceChild("crossl1", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, -6.0F, 5, 2, 1), PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
+        crossbow.addOrReplaceChild("crossl2", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(4.0F, 0.0F, -5.0F, 3, 2, 1), PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
+        crossbow.addOrReplaceChild("crossl3", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(6.0F, 0.0F, -4.0F, 2, 2, 1), PartPose.rotation(0.0F, -CROSS_ANGLE, 0.0F));
+        crossbow.addOrReplaceChild("crossr1", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-5.0F, 0.0F, -6.0F, 5, 2, 1), PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
+        crossbow.addOrReplaceChild("crossr2", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, 0.0F, -5.0F, 3, 2, 1), PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
+        crossbow.addOrReplaceChild("crossr3", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-8.0F, 0.0F, -4.0F, 2, 2, 1), PartPose.rotation(0.0F, CROSS_ANGLE, 0.0F));
         addTripod(root);
         return LayerDefinition.create(mesh, 64, 32);
     }
 
     static void addTripod(PartDefinition root) {
-        root.addOrReplaceChild(
-                "tripod",
-                CubeListBuilder.create().texOffs(13, 0).mirror().addBox(-1.5F, 0.0F, -1.5F, 3, 2, 3),
-                PartPose.offset(0.0F, 12.0F, 0.0F));
-        root.addOrReplaceChild(
-                "leg1",
-                CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
-                PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, LEG_SPREAD, 0.0F, 0.0F));
-        root.addOrReplaceChild(
-                "leg2",
-                CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
+        root.addOrReplaceChild("tripod", CubeListBuilder.create().texOffs(13, 0).mirror().addBox(-1.5F, 0.0F, -1.5F, 3, 2, 3), PartPose.offset(0.0F, 12.0F, 0.0F));
+        root.addOrReplaceChild("leg1", CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2), PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, LEG_SPREAD, 0.0F, 0.0F));
+        root.addOrReplaceChild("leg2", CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, LEG_SPREAD, 1.570796F, 0.0F));
-        root.addOrReplaceChild(
-                "leg3",
-                CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
+        root.addOrReplaceChild("leg3", CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, LEG_SPREAD, 3.141593F, 0.0F));
-        root.addOrReplaceChild(
-                "leg4",
-                CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
+        root.addOrReplaceChild("leg4", CubeListBuilder.create().texOffs(20, 10).mirror().addBox(-1.0F, 1.0F, -1.0F, 2, 13, 2),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, LEG_SPREAD, (float) (Math.PI * 3.0 / 2.0), 0.0F));
     }
 

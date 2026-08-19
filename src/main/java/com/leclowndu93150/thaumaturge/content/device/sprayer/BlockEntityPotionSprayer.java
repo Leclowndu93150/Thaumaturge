@@ -129,16 +129,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
             if (!activated && charges > 0) {
                 charges--;
                 spray(server, pos, facing);
-                server.playSound(
-                        null,
-                        pos,
-                        SoundEvents.LAVA_EXTINGUISH,
-                        SoundSource.BLOCKS,
-                        0.25F,
-                        2.6F
-                                + (server.getRandom().nextFloat()
-                                                - server.getRandom().nextFloat())
-                                        * 0.8F);
+                server.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.25F, 2.6F + (server.getRandom().nextFloat() - server.getRandom().nextFloat()) * 0.8F);
                 server.blockEvent(pos, state.getBlock(), VENT_EVENT, 0);
                 setChanged();
                 syncToClient();
@@ -151,19 +142,12 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
 
     private void spray(ServerLevel server, BlockPos pos, Direction facing) {
         List<MobEffectInstance> effects = new ArrayList<>();
-        potion.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-                .getAllEffects()
-                .forEach(effects::add);
+        potion.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getAllEffects().forEach(effects::add);
         if (effects.isEmpty()) {
             return;
         }
         BlockPos center = pos.relative(facing, SPRAY_REACH);
-        AABB box = new AABB(
-                center.getX() - SPRAY_AREA,
-                center.getY() - SPRAY_AREA,
-                center.getZ() - SPRAY_AREA,
-                center.getX() + 1 + SPRAY_AREA,
-                center.getY() + 1 + SPRAY_AREA,
+        AABB box = new AABB(center.getX() - SPRAY_AREA, center.getY() - SPRAY_AREA, center.getZ() - SPRAY_AREA, center.getX() + 1 + SPRAY_AREA, center.getY() + 1 + SPRAY_AREA,
                 center.getZ() + 1 + SPRAY_AREA);
         for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, box)) {
             if (!target.isAlive() || !target.isAffectedByPotions()) {
@@ -193,14 +177,8 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
             double mx = rand.nextGaussian() * 0.06 + facing.getStepX() * VENT_SPEED;
             double my = rand.nextGaussian() * 0.06 + facing.getStepY() * VENT_SPEED;
             double mz = rand.nextGaussian() * 0.06 + facing.getStepZ() * VENT_SPEED;
-            level.addParticle(
-                    new VentParticleOptions(mx, my, mz, color, 4.0F, false),
-                    pos.getX() + 0.5F + fx + facing.getStepX() / 2.0F,
-                    pos.getY() + 0.5F + fy + facing.getStepY() / 2.0F,
-                    pos.getZ() + 0.5F + fz + facing.getStepZ() / 2.0F,
-                    0.0,
-                    0.0,
-                    0.0);
+            level.addParticle(new VentParticleOptions(mx, my, mz, color, 4.0F, false), pos.getX() + 0.5F + fx + facing.getStepX() / 2.0F, pos.getY() + 0.5F + fy + facing.getStepY() / 2.0F,
+                    pos.getZ() + 0.5F + fz + facing.getStepZ() / 2.0F, 0.0, 0.0, 0.0);
         }
     }
 
@@ -222,8 +200,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
         color = DEFAULT_COLOR;
         if (!potion.isEmpty()) {
             recipe = PotionAspects.of((ServerLevel) level, potion);
-            color = potion.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-                    .getColor();
+            color = potion.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).getColor();
         } else {
             recipe = AspectList.EMPTY;
         }
@@ -244,9 +221,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
                 if (ic == null) {
                     continue;
                 }
-                if (ic.getEssentiaAmount(dir.getOpposite()) > 0
-                        && ic.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir)
-                        && getSuctionAmount(dir) >= ic.getMinimumSuction()) {
+                if (ic.getEssentiaAmount(dir.getOpposite()) > 0 && ic.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir) && getSuctionAmount(dir) >= ic.getMinimumSuction()) {
                     int taken = ic.takeEssentia(currentSuction, 1, dir.getOpposite());
                     if (taken > 0) {
                         acceptEssentia(currentSuction, taken);
@@ -310,8 +285,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

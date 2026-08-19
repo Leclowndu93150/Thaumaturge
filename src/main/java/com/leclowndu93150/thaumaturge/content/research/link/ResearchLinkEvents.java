@@ -68,19 +68,16 @@ public final class ResearchLinkEvents {
 
     private static void applyUnion(ServerPlayer player, ResearchLinkData.Link link) {
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
-        HolderLookup.RegistryLookup<IResearchEntry> entries =
-                player.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
+        HolderLookup.RegistryLookup<IResearchEntry> entries = player.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY);
         boolean changed = false;
         for (Identifier research : link.union()) {
             if (knowledge.isResearchKnown(research)) {
                 continue;
             }
-            Holder<IResearchEntry> entry = entries.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research))
-                    .orElse(null);
+            Holder<IResearchEntry> entry = entries.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research)).orElse(null);
             if (entry != null) {
                 if (ResearchManager.complete(player, research)) {
-                    ResearchManager.setStage(
-                            player, research, entry.value().stages().size());
+                    ResearchManager.setStage(player, research, entry.value().stages().size());
                     changed = true;
                 }
             } else if (ResearchManager.unlock(player, research)) {

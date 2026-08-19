@@ -9,14 +9,10 @@ import net.minecraft.world.phys.HitResult;
 
 public record ClientboundRaycastDebugPayload(HitResult result) implements CustomPacketPayload {
 
-    public static final Type<ClientboundRaycastDebugPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "debug/raycast_result"));
+    public static final Type<ClientboundRaycastDebugPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "debug/raycast_result"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundRaycastDebugPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    HitResultStreamCodecs.HIT_RESULT,
-                    ClientboundRaycastDebugPayload::result,
-                    ClientboundRaycastDebugPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundRaycastDebugPayload> STREAM_CODEC = StreamCodec.composite(HitResultStreamCodecs.HIT_RESULT,
+            ClientboundRaycastDebugPayload::result, ClientboundRaycastDebugPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

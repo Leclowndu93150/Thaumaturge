@@ -56,86 +56,26 @@ public final class WarpEvents {
         void apply(ServerPlayer player, Roll roll);
     }
 
-    private record Roll(int warp, int normalWarp, RandomSource rand) {}
+    private record Roll(int warp, int normalWarp, RandomSource rand) {
+    }
 
-    private record Event(IntPredicate matches, Action action) {}
+    private record Event(IntPredicate matches, Action action) {
+    }
 
-    private static final List<Event> EVENTS = List.of(
-            upTo(4, (player, roll) -> creeperHiss(player)),
-            upTo(8, (player, roll) -> distantExplosion(player, roll.rand())),
-            message(12, "warp.thaumaturge.text.11"),
-            upTo(
-                    16,
-                    (player, roll) -> applyEffect(
-                            player, TCMobEffects.VIS_EXHAUST, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
-            upTo(
-                    20,
-                    (player, roll) -> applyEffect(
-                            player,
-                            TCMobEffects.THAUMARHIA,
-                            Math.min(32000, 10 * roll.warp()),
-                            0,
-                            "warp.thaumaturge.text.15")),
-            upTo(
-                    24,
-                    (player, roll) -> applyEffect(
-                            player,
-                            TCMobEffects.UNNATURAL_HUNGER,
-                            5000,
-                            ampFor(roll.warp()),
-                            "warp.thaumaturge.text.2")),
-            message(28, "warp.thaumaturge.text.12"),
-            upTo(32, (player, roll) -> spawnMist(player, 1)),
-            upTo(
-                    36,
-                    (player, roll) -> applyEffect(
-                            player, TCMobEffects.BLURRED_VISION, Math.min(32000, 10 * roll.warp()), 0, null)),
-            upTo(
-                    40,
-                    (player, roll) -> applyEffect(
-                            player, TCMobEffects.SUN_SCORNED, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
-            upTo(
-                    44,
-                    (player, roll) -> applyEffect(
-                            player, MobEffects.MINING_FATIGUE, 1200, ampFor(roll.warp()), "warp.thaumaturge.text.9")),
-            upTo(
-                    48,
-                    (player, roll) -> applyEffect(
-                            player,
-                            TCMobEffects.INFECTIOUS_VIS_EXHAUST,
-                            6000,
-                            ampFor(roll.warp()),
-                            "warp.thaumaturge.text.1")),
-            upTo(
-                    52,
-                    (player, roll) -> applyEffect(
-                            player,
-                            MobEffects.NIGHT_VISION,
-                            Math.min(40 * roll.warp(), 6000),
-                            0,
-                            "warp.thaumaturge.text.10")),
-            upTo(
-                    56,
-                    (player, roll) -> applyEffect(
-                            player, TCMobEffects.DEATH_GAZE, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
-            upTo(60, (player, roll) -> suddenlySpiders(player, roll.warp(), false)),
-            message(64, "warp.thaumaturge.text.13"),
-            upTo(68, (player, roll) -> spawnMist(player, roll.warp() / 30)),
-            upTo(
-                    72,
-                    (player, roll) ->
-                            applyEffect(player, MobEffects.BLINDNESS, Math.min(32000, 5 * roll.warp()), 0, null)),
-            exactly(76, WarpEvents::easeNormalWarp),
-            upTo(
-                    80,
-                    (player, roll) -> applyEffect(
-                            player,
-                            TCMobEffects.UNNATURAL_HUNGER,
-                            6000,
-                            ampFor(roll.warp()),
-                            "warp.thaumaturge.text.2")),
-            upTo(88, (player, roll) -> GuardianSpawner.spawnPortal(player)),
-            upTo(92, (player, roll) -> suddenlySpiders(player, roll.warp(), true)),
+    private static final List<Event> EVENTS = List.of(upTo(4, (player, roll) -> creeperHiss(player)), upTo(8, (player, roll) -> distantExplosion(player, roll.rand())),
+            message(12, "warp.thaumaturge.text.11"), upTo(16, (player, roll) -> applyEffect(player, TCMobEffects.VIS_EXHAUST, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
+            upTo(20, (player, roll) -> applyEffect(player, TCMobEffects.THAUMARHIA, Math.min(32000, 10 * roll.warp()), 0, "warp.thaumaturge.text.15")),
+            upTo(24, (player, roll) -> applyEffect(player, TCMobEffects.UNNATURAL_HUNGER, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.2")), message(28, "warp.thaumaturge.text.12"),
+            upTo(32, (player, roll) -> spawnMist(player, 1)), upTo(36, (player, roll) -> applyEffect(player, TCMobEffects.BLURRED_VISION, Math.min(32000, 10 * roll.warp()), 0, null)),
+            upTo(40, (player, roll) -> applyEffect(player, TCMobEffects.SUN_SCORNED, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
+            upTo(44, (player, roll) -> applyEffect(player, MobEffects.MINING_FATIGUE, 1200, ampFor(roll.warp()), "warp.thaumaturge.text.9")),
+            upTo(48, (player, roll) -> applyEffect(player, TCMobEffects.INFECTIOUS_VIS_EXHAUST, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
+            upTo(52, (player, roll) -> applyEffect(player, MobEffects.NIGHT_VISION, Math.min(40 * roll.warp(), 6000), 0, "warp.thaumaturge.text.10")),
+            upTo(56, (player, roll) -> applyEffect(player, TCMobEffects.DEATH_GAZE, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
+            upTo(60, (player, roll) -> suddenlySpiders(player, roll.warp(), false)), message(64, "warp.thaumaturge.text.13"), upTo(68, (player, roll) -> spawnMist(player, roll.warp() / 30)),
+            upTo(72, (player, roll) -> applyEffect(player, MobEffects.BLINDNESS, Math.min(32000, 5 * roll.warp()), 0, null)), exactly(76, WarpEvents::easeNormalWarp),
+            upTo(80, (player, roll) -> applyEffect(player, TCMobEffects.UNNATURAL_HUNGER, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.2")),
+            upTo(88, (player, roll) -> GuardianSpawner.spawnPortal(player)), upTo(92, (player, roll) -> suddenlySpiders(player, roll.warp(), true)),
             new Event(eff -> true, (player, roll) -> spawnMist(player, roll.warp() / 15)));
 
     private WarpEvents() {}
@@ -193,9 +133,7 @@ public final class WarpEvents {
 
     private static void checkWarpMilestones(ServerPlayer player, int actualWarp) {
         IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
-        if (actualWarp > BATH_SALTS_WARP_THRESHOLD
-                && !knowledge.isResearchKnown(BATH_SALTS_ENTRY)
-                && !knowledge.isResearchKnown(BATHSALTS_FLAG)) {
+        if (actualWarp > BATH_SALTS_WARP_THRESHOLD && !knowledge.isResearchKnown(BATH_SALTS_ENTRY) && !knowledge.isResearchKnown(BATHSALTS_FLAG)) {
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.8");
             ResearchManager.complete(player, BATHSALTS_FLAG);
         }
@@ -209,31 +147,14 @@ public final class WarpEvents {
 
     private static void creeperHiss(ServerPlayer player) {
         if (!ThaumaturgeCommonConfig.NO_STRESS.get()) {
-            player.level()
-                    .playSound(
-                            null,
-                            player.getX(),
-                            player.getY(),
-                            player.getZ(),
-                            SoundEvents.CREEPER_PRIMED,
-                            SoundSource.AMBIENT,
-                            1.0F,
-                            0.5F);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.CREEPER_PRIMED, SoundSource.AMBIENT, 1.0F, 0.5F);
         }
     }
 
     private static void distantExplosion(ServerPlayer player, RandomSource rand) {
         if (!ThaumaturgeCommonConfig.NO_STRESS.get()) {
-            player.level()
-                    .playSound(
-                            null,
-                            player.getX() + rand.nextInt(10) - rand.nextInt(10),
-                            player.getY() + rand.nextInt(10) - rand.nextInt(10),
-                            player.getZ() + rand.nextInt(10) - rand.nextInt(10),
-                            SoundEvents.GENERIC_EXPLODE,
-                            SoundSource.AMBIENT,
-                            4.0F,
-                            (1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.2F) * 0.7F);
+            player.level().playSound(null, player.getX() + rand.nextInt(10) - rand.nextInt(10), player.getY() + rand.nextInt(10) - rand.nextInt(10),
+                    player.getZ() + rand.nextInt(10) - rand.nextInt(10), SoundEvents.GENERIC_EXPLODE, SoundSource.AMBIENT, 4.0F, (1.0F + (rand.nextFloat() - rand.nextFloat()) * 0.2F) * 0.7F);
         }
     }
 
@@ -248,8 +169,7 @@ public final class WarpEvents {
         return Math.min(MAX_EFFECT_AMP, warp / EFFECT_AMP_DIVISOR);
     }
 
-    private static void applyEffect(
-            ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier, @Nullable String messageKey) {
+    private static void applyEffect(ServerPlayer player, Holder<MobEffect> effect, int duration, int amplifier, @Nullable String messageKey) {
         player.addEffect(new MobEffectInstance(effect, duration, amplifier, true, true));
         if (messageKey != null) {
             WarpManager.sendActionBar(player, messageKey);
@@ -278,9 +198,7 @@ public final class WarpEvents {
                 double z = player.getZ() + rand.nextInt(15) - rand.nextInt(15);
                 spider.snapTo(x, y, z, rand.nextFloat() * 360.0F, 0.0F);
                 BlockPos below = spider.blockPosition().below();
-                if (!level.getBlockState(below).isCollisionShapeFullBlock(level, below)
-                        || !level.noCollision(spider)
-                        || level.containsAnyLiquid(spider.getBoundingBox())) {
+                if (!level.getBlockState(below).isCollisionShapeFullBlock(level, below) || !level.noCollision(spider) || level.containsAnyLiquid(spider.getBoundingBox())) {
                     spider.discard();
                     continue;
                 }
@@ -303,8 +221,7 @@ public final class WarpEvents {
         }
         ServerLevel level = player.level();
         int range = Math.min(8 + gaze.getAmplifier() * 3, 24);
-        for (LivingEntity entity : level.getEntitiesOfClass(
-                LivingEntity.class, player.getBoundingBox().inflate(range))) {
+        for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(range))) {
             if (entity == player || !entity.isAlive() || entity.hasEffect(MobEffects.WITHER)) {
                 continue;
             }

@@ -13,16 +13,7 @@ public final class BoreStreamInstance extends StreamInstance {
 
     private final int targetEntityId;
 
-    public BoreStreamInstance(
-            double sx,
-            double sy,
-            double sz,
-            int targetEntityId,
-            int color,
-            int count,
-            float scale,
-            int extend,
-            double my) {
+    public BoreStreamInstance(double sx, double sy, double sz, int targetEntityId, int color, int count, float scale, int extend, double my) {
         super(sx, sy, sz, color, count, scale);
         this.targetEntityId = targetEntityId;
         this.length = Math.max(MIN_LENGTH, extend);

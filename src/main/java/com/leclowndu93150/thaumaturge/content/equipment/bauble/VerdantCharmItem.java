@@ -40,9 +40,7 @@ public final class VerdantCharmItem extends Item implements IRechargable {
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
-        if (wearer.level().isClientSide()
-                || wearer.tickCount % TICK_INTERVAL != 0
-                || !(wearer instanceof Player player)) {
+        if (wearer.level().isClientSide() || wearer.tickCount % TICK_INTERVAL != 0 || !(wearer instanceof Player player)) {
             return;
         }
         if (player.getEffect(MobEffects.WITHER) != null && RechargeAccess.consumeCharge(stack, player, WITHER_COST)) {
@@ -53,15 +51,12 @@ public final class VerdantCharmItem extends Item implements IRechargable {
             player.removeEffect(MobEffects.POISON);
             return;
         }
-        if (player.getEffect(TCMobEffects.FLUX_TAINT) != null
-                && RechargeAccess.consumeCharge(stack, player, FLUX_TAINT_COST)) {
+        if (player.getEffect(TCMobEffects.FLUX_TAINT) != null && RechargeAccess.consumeCharge(stack, player, FLUX_TAINT_COST)) {
             player.removeEffect(TCMobEffects.FLUX_TAINT);
             return;
         }
         int type = type(stack);
-        if (type == TYPE_LIFE
-                && player.getHealth() < player.getMaxHealth()
-                && RechargeAccess.consumeCharge(stack, player, HEAL_COST)) {
+        if (type == TYPE_LIFE && player.getHealth() < player.getMaxHealth() && RechargeAccess.consumeCharge(stack, player, HEAL_COST)) {
             player.heal(1.0F);
             return;
         }
@@ -87,19 +82,12 @@ public final class VerdantCharmItem extends Item implements IRechargable {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         int type = type(stack);
         if (type == TYPE_LIFE) {
-            tooltip.accept(Component.translatable("item.thaumaturge.verdant_charm.life.text")
-                    .withStyle(ChatFormatting.GOLD));
+            tooltip.accept(Component.translatable("item.thaumaturge.verdant_charm.life.text").withStyle(ChatFormatting.GOLD));
         } else if (type == TYPE_SUSTAIN) {
-            tooltip.accept(Component.translatable("item.thaumaturge.verdant_charm.sustain.text")
-                    .withStyle(ChatFormatting.GOLD));
+            tooltip.accept(Component.translatable("item.thaumaturge.verdant_charm.sustain.text").withStyle(ChatFormatting.GOLD));
         }
         super.appendHoverText(stack, context, display, tooltip, flag);
     }

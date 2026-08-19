@@ -21,15 +21,7 @@ public class EntitySpecialItem extends ItemEntity {
         this.lifespan = itemStack.getItem() == null ? 6000 : itemStack.getEntityLifespan(level);
     }
 
-    public EntitySpecialItem(
-            Level level,
-            double x,
-            double y,
-            double z,
-            ItemStack itemStack,
-            double deltaX,
-            double deltaY,
-            double deltaZ) {
+    public EntitySpecialItem(Level level, double x, double y, double z, ItemStack itemStack, double deltaX, double deltaY, double deltaZ) {
         this(TCEntities.SPECIAL_ITEM.get(), level);
         this.setPos(x, y, z);
         this.setItem(itemStack);

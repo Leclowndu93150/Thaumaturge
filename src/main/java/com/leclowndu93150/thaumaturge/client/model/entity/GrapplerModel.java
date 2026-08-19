@@ -17,18 +17,10 @@ public final class GrapplerModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "core", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3, 3, 3), PartPose.ZERO);
-        root.addOrReplaceChild(
-                "prong1", CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5), PartPose.ZERO);
-        root.addOrReplaceChild(
-                "prong2",
-                CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5),
-                PartPose.rotation(0.0F, (float) (Math.PI / 2), 0.0F));
-        root.addOrReplaceChild(
-                "prong3",
-                CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5),
-                PartPose.rotation((float) (Math.PI / 2), (float) (Math.PI / 2), 0.0F));
+        root.addOrReplaceChild("core", CubeListBuilder.create().texOffs(0, 0).addBox(-1.5F, -1.5F, -1.5F, 3, 3, 3), PartPose.ZERO);
+        root.addOrReplaceChild("prong1", CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5), PartPose.ZERO);
+        root.addOrReplaceChild("prong2", CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5), PartPose.rotation(0.0F, (float) (Math.PI / 2), 0.0F));
+        root.addOrReplaceChild("prong3", CubeListBuilder.create().texOffs(0, 10).addBox(-0.5F, -0.5F, -2.5F, 1, 1, 5), PartPose.rotation((float) (Math.PI / 2), (float) (Math.PI / 2), 0.0F));
         return LayerDefinition.create(mesh, 64, 32);
     }
 }

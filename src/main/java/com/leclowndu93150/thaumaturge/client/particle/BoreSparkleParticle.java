@@ -15,18 +15,8 @@ public final class BoreSparkleParticle extends SeekerParticle {
     private static final float SCALE_RANGE = 0.5F;
     private static final float DRIFT = 0.01F;
 
-    private BoreSparkleParticle(
-            ClientLevel level, double x, double y, double z, BoreSparkleParticleOptions options, ParticleSheet sheet) {
-        super(
-                level,
-                x,
-                y,
-                z,
-                sheet,
-                options.targetEntityId(),
-                new Vec3(options.tx(), options.ty(), options.tz()),
-                Vec3.ZERO,
-                DRIFT);
+    private BoreSparkleParticle(ClientLevel level, double x, double y, double z, BoreSparkleParticleOptions options, ParticleSheet sheet) {
+        super(level, x, y, z, sheet, options.targetEntityId(), new Vec3(options.tx(), options.ty(), options.tz()), Vec3.ZERO, DRIFT);
         setColor(options.r(), options.g(), options.b());
         this.quadSize = MIN_SCALE + this.random.nextFloat() * SCALE_RANGE;
     }
@@ -51,16 +41,7 @@ public final class BoreSparkleParticle extends SeekerParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("bore_sparkle");
 
         @Override
-        public Particle createParticle(
-                BoreSparkleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(BoreSparkleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BoreSparkleParticle(level, x, y, z, options, SHEET);
         }
     }

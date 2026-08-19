@@ -26,8 +26,7 @@ public final class BlockGrassAmbient extends GrassBlock {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         int skyLight = level.getBrightness(LightLayer.SKY, pos.above()) - level.getSkyDarken();
-        float angle = level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, pos)
-                * (float) (Math.PI / 180.0);
+        float angle = level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, pos) * (float) (Math.PI / 180.0);
         float target = angle < (float) Math.PI ? 0.0F : (float) (Math.PI * 2);
         angle += (target - angle) * 0.2F;
         skyLight = Math.round(skyLight * Mth.cos(angle));
@@ -36,11 +35,7 @@ public final class BlockGrassAmbient extends GrassBlock {
             int dx = Mth.nextInt(random, -MOTE_SEARCH_RANGE, MOTE_SEARCH_RANGE);
             int dz = Mth.nextInt(random, -MOTE_SEARCH_RANGE, MOTE_SEARCH_RANGE);
             BlockPos target2 = pos.offset(dx, 5, dz);
-            for (int q = 0;
-                    q < 10
-                            && target2.getY() > MOTE_MIN_Y
-                            && !level.getBlockState(target2).is(Blocks.GRASS_BLOCK);
-                    q++) {
+            for (int q = 0; q < 10 && target2.getY() > MOTE_MIN_Y && !level.getBlockState(target2).is(Blocks.GRASS_BLOCK); q++) {
                 target2 = target2.below();
             }
             if (level.getBlockState(target2).is(Blocks.GRASS_BLOCK)) {
@@ -50,16 +45,8 @@ public final class BlockGrassAmbient extends GrassBlock {
     }
 
     private static void spawnMote(Level level, BlockPos pos, RandomSource random) {
-        WispyMoteParticleOptions data = new WispyMoteParticleOptions(
-                ARGB.colorFromFloat(
-                        1.0F,
-                        0.4F + random.nextFloat() * 0.6F,
-                        0.6F + random.nextFloat() * 0.4F,
-                        0.6F + random.nextFloat() * 0.4F),
-                MOTE_AGE,
-                MOTE_GRAVITY,
-                WispyMoteParticleOptions.NO_ENTITY);
-        level.addParticle(
-                data, pos.getX() + random.nextFloat(), pos.getY(), pos.getZ() + random.nextFloat(), 0.0, 0.0, 0.0);
+        WispyMoteParticleOptions data = new WispyMoteParticleOptions(ARGB.colorFromFloat(1.0F, 0.4F + random.nextFloat() * 0.6F, 0.6F + random.nextFloat() * 0.4F, 0.6F + random.nextFloat() * 0.4F),
+                MOTE_AGE, MOTE_GRAVITY, WispyMoteParticleOptions.NO_ENTITY);
+        level.addParticle(data, pos.getX() + random.nextFloat(), pos.getY(), pos.getZ() + random.nextFloat(), 0.0, 0.0, 0.0);
     }
 }

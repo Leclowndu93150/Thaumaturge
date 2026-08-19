@@ -39,9 +39,7 @@ public final class CloudRingClientHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null
-                || !ModList.get().isLoaded(TCIds.CURIOS)
-                || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
+        if (player == null || !ModList.get().isLoaded(TCIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
             airJumpUsed = false;
             jumpWasDown = false;
             airborneTicks = 0;
@@ -64,26 +62,11 @@ public final class CloudRingClientHandler {
 
     private static void airJump(LocalPlayer player) {
         for (int i = 0; i < POOF_COUNT; i++) {
-            player.level()
-                    .addParticle(
-                            ParticleTypes.POOF,
-                            player.getX() + (player.getRandom().nextFloat() - 0.5) * player.getBbWidth(),
-                            player.getY() + 0.5,
-                            player.getZ() + (player.getRandom().nextFloat() - 0.5) * player.getBbWidth(),
-                            0.0,
-                            0.0,
-                            0.0);
+            player.level().addParticle(ParticleTypes.POOF, player.getX() + (player.getRandom().nextFloat() - 0.5) * player.getBbWidth(), player.getY() + 0.5,
+                    player.getZ() + (player.getRandom().nextFloat() - 0.5) * player.getBbWidth(), 0.0, 0.0, 0.0);
         }
-        player.level()
-                .playLocalSound(
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        SoundEvents.PLAYER_ATTACK_SWEEP,
-                        SoundSource.PLAYERS,
-                        SOUND_VOLUME,
-                        1.0F + (float) player.getRandom().nextGaussian() * 0.05F,
-                        false);
+        player.level().playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, SOUND_VOLUME,
+                1.0F + (float) player.getRandom().nextGaussian() * 0.05F, false);
         double velocityY = JUMP_VELOCITY;
         if (player.hasEffect(MobEffects.JUMP_BOOST)) {
             velocityY += (player.getEffect(MobEffects.JUMP_BOOST).getAmplifier() + 1) * JUMP_BOOST_BONUS;

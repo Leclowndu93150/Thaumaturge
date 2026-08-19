@@ -15,25 +15,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jspecify.annotations.Nullable;
 
-public record ServerboundTableCombinePayload(
-        BlockPos pos, Identifier first, Identifier second, boolean bonusFirst, boolean bonusSecond)
-        implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundTableCombinePayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("table_combine"));
+public record ServerboundTableCombinePayload(BlockPos pos, Identifier first, Identifier second, boolean bonusFirst, boolean bonusSecond) implements CustomPacketPayload {
+    public static final CustomPacketPayload.Type<ServerboundTableCombinePayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("table_combine"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableCombinePayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
-                    ServerboundTableCombinePayload::pos,
-                    Identifier.STREAM_CODEC,
-                    ServerboundTableCombinePayload::first,
-                    Identifier.STREAM_CODEC,
-                    ServerboundTableCombinePayload::second,
-                    ByteBufCodecs.BOOL,
-                    ServerboundTableCombinePayload::bonusFirst,
-                    ByteBufCodecs.BOOL,
-                    ServerboundTableCombinePayload::bonusSecond,
-                    ServerboundTableCombinePayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableCombinePayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundTableCombinePayload::pos,
+            Identifier.STREAM_CODEC, ServerboundTableCombinePayload::first, Identifier.STREAM_CODEC, ServerboundTableCombinePayload::second, ByteBufCodecs.BOOL,
+            ServerboundTableCombinePayload::bonusFirst, ByteBufCodecs.BOOL, ServerboundTableCombinePayload::bonusSecond, ServerboundTableCombinePayload::new);
 
     public static void handle(ServerboundTableCombinePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
@@ -55,11 +42,7 @@ public record ServerboundTableCombinePayload(
     }
 
     private static @Nullable Holder<IAspect> resolve(ServerPlayer player, Identifier id) {
-        return player.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(ResourceKey.create(IAspect.REGISTRY_KEY, id))
-                .map(reference -> (Holder<IAspect>) reference)
-                .orElse(null);
+        return player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, id)).map(reference -> (Holder<IAspect>) reference).orElse(null);
     }
 
     @Override

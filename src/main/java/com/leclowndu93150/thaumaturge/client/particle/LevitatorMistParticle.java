@@ -12,8 +12,7 @@ public final class LevitatorMistParticle extends TCParticle {
     private static final float START_SIZE = 0.2F;
     private static final float END_SIZE = 0.5F;
 
-    private LevitatorMistParticle(
-            ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
+    private LevitatorMistParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(0.5F, 0.5F, 0.2F);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(100);
@@ -32,16 +31,7 @@ public final class LevitatorMistParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("levitator_mist");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new LevitatorMistParticle(level, x, y, z, vx, vy, vz, SHEET);
         }
     }

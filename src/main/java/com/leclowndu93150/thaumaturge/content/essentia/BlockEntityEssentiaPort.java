@@ -56,14 +56,11 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     private void pullFromTube(ServerLevel server) {
         Direction tubeSide = tubeSide();
-        IEssentiaTransport ic =
-                EssentiaFlowHandler.transport(server, getBlockPos().relative(tubeSide), facing());
+        IEssentiaTransport ic = EssentiaFlowHandler.transport(server, getBlockPos().relative(tubeSide), facing());
         if (ic == null || !ic.canOutputTo(facing())) {
             return;
         }
-        if (ic.getEssentiaAmount(facing()) > 0
-                && ic.getSuctionAmount(facing()) < getSuctionAmount(tubeSide)
-                && getSuctionAmount(tubeSide) >= ic.getMinimumSuction()) {
+        if (ic.getEssentiaAmount(facing()) > 0 && ic.getSuctionAmount(facing()) < getSuctionAmount(tubeSide) && getSuctionAmount(tubeSide) >= ic.getMinimumSuction()) {
             Holder<IAspect> aspect = ic.getEssentiaType(facing());
             if (aspect != null && sources.insert(server, aspect, WORK_INTERVAL)) {
                 ic.takeEssentia(aspect, 1, facing());
@@ -73,16 +70,13 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     private void pushToTube(ServerLevel server) {
         Direction tubeSide = tubeSide();
-        IEssentiaTransport ic =
-                EssentiaFlowHandler.transport(server, getBlockPos().relative(tubeSide), facing());
+        IEssentiaTransport ic = EssentiaFlowHandler.transport(server, getBlockPos().relative(tubeSide), facing());
         if (ic == null || !ic.canInputFrom(facing())) {
             return;
         }
         if (ic.getSuctionAmount(facing()) > 0) {
             Holder<IAspect> aspect = ic.getSuctionType(facing());
-            if (aspect != null
-                    && sources.drain(server, aspect, WORK_INTERVAL)
-                    && ic.addEssentia(aspect, 1, facing()) == 0) {
+            if (aspect != null && sources.drain(server, aspect, WORK_INTERVAL) && ic.addEssentia(aspect, 1, facing()) == 0) {
                 sources.insert(server, aspect, WORK_INTERVAL);
             }
         }
@@ -133,10 +127,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (input
-                && level instanceof ServerLevel server
-                && amount == 1
-                && sources.insert(server, aspect, WORK_INTERVAL)) {
+        if (input && level instanceof ServerLevel server && amount == 1 && sources.insert(server, aspect, WORK_INTERVAL)) {
             return 1;
         }
         return 0;

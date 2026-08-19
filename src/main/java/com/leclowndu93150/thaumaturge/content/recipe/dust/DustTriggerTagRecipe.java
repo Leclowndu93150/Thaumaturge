@@ -28,23 +28,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 public final class DustTriggerTagRecipe implements DustTrigger {
-    public static final MapCodec<DustTriggerTagRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    TagKey.codec(Registries.BLOCK).fieldOf("target_tag").forGetter(r -> r.targetTag),
-                    ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
-            .apply(i, DustTriggerTagRecipe::new));
+    public static final MapCodec<DustTriggerTagRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(TagKey.codec(Registries.BLOCK).fieldOf("target_tag").forGetter(r -> r.targetTag),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result), ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research)).apply(i, DustTriggerTagRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, DustTriggerTagRecipe> STREAM_CODEC = StreamCodec.composite(
-            Identifier.STREAM_CODEC.map(rl -> TagKey.create(Registries.BLOCK, rl), TagKey::location),
-            r -> r.targetTag,
-            ItemStackTemplate.STREAM_CODEC,
-            r -> r.result,
-            ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
-            r -> r.research,
-            DustTriggerTagRecipe::new);
+            Identifier.STREAM_CODEC.map(rl -> TagKey.create(Registries.BLOCK, rl), TagKey::location), r -> r.targetTag, ItemStackTemplate.STREAM_CODEC, r -> r.result,
+            ByteBufCodecs.optional(ResearchGate.STREAM_CODEC), r -> r.research, DustTriggerTagRecipe::new);
 
-    public static final RecipeSerializer<DustTriggerTagRecipe> SERIALIZER =
-            new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<DustTriggerTagRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     private final TagKey<Block> targetTag;
     private final ItemStackTemplate result;
@@ -80,11 +71,7 @@ public final class DustTriggerTagRecipe implements DustTrigger {
     }
 
     @Override
-    public void execute(
-            DustTriggerInput input,
-            Player player,
-            @org.jspecify.annotations.Nullable DustTriggerPlacement placement,
-            Direction useFace) {
+    public void execute(DustTriggerInput input, Player player, @org.jspecify.annotations.Nullable DustTriggerPlacement placement, Direction useFace) {
         if (!(input.level() instanceof ServerLevel serverLevel)) {
             return;
         }

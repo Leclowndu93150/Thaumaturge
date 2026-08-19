@@ -38,20 +38,16 @@ public final class BlockThaumatoriumTop extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         BlockState below = level.getBlockState(pos.below());
         if (below.is(TCBlocks.THAUMATORIUM.get())) {
-            return below.getBlock() instanceof BlockThaumatorium thaumatorium
-                    ? thaumatorium.useWithoutItem(below, level, pos.below(), player, hitResult)
-                    : InteractionResult.PASS;
+            return below.getBlock() instanceof BlockThaumatorium thaumatorium ? thaumatorium.useWithoutItem(below, level, pos.below(), player, hitResult) : InteractionResult.PASS;
         }
         return InteractionResult.PASS;
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
         if (level.getBlockState(pos.below()).is(TCBlocks.THAUMATORIUM.get())) {
             level.destroyBlock(pos.below(), true);

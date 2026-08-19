@@ -30,8 +30,7 @@ public final class InfusionEnchantmentRecipeBuilder {
     private AspectList aspects = AspectList.EMPTY;
     private ResearchGate gate;
 
-    public InfusionEnchantmentRecipeBuilder(
-            HolderGetter<IAspect> aspectsGetter, InfusionEnchantment enchantment, Ingredient displayCatalyst) {
+    public InfusionEnchantmentRecipeBuilder(HolderGetter<IAspect> aspectsGetter, InfusionEnchantment enchantment, Ingredient displayCatalyst) {
         this.aspectsGetter = aspectsGetter;
         this.enchantment = enchantment;
         this.displayCatalyst = displayCatalyst;
@@ -61,12 +60,8 @@ public final class InfusionEnchantmentRecipeBuilder {
 
     public void save(RecipeOutput output) {
         Preconditions.checkState(!components.isEmpty(), "Infusion enchantment recipe has no components");
-        ResourceKey<Recipe<?>> key = ResourceKey.create(
-                Registries.RECIPE,
-                Identifier.fromNamespaceAndPath(
-                        TCIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName()));
-        InfusionEnchantmentRecipe recipe = new InfusionEnchantmentRecipe(
-                enchantment, components, aspects, displayCatalyst, Optional.ofNullable(gate));
+        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(TCIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName()));
+        InfusionEnchantmentRecipe recipe = new InfusionEnchantmentRecipe(enchantment, components, aspects, displayCatalyst, Optional.ofNullable(gate));
         output.accept(key, recipe, null);
     }
 }

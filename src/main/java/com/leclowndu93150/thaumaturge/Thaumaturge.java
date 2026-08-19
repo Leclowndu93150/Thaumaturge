@@ -107,7 +107,8 @@ public final class Thaumaturge {
         GogglesAccess.bind(() -> TCAttributes.VIS_DISCOUNT);
         FocusEngine.bindRegistry(TCFocusElements.registry());
 
-        if (ModList.get().isLoaded(TCIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
+        if (ModList.get().isLoaded(TCIds.CURIOS))
+            ThaumaturgeCuriosCompat.init(modBus);
 
         wireGameTests(modBus);
     }

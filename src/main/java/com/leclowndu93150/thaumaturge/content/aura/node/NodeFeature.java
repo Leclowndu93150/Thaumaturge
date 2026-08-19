@@ -31,14 +31,6 @@ public final class NodeFeature extends Feature<NodeFeatureConfig> {
         if (pos.getY() > level.getMaxY()) {
             return false;
         }
-        return NodeGenerator.createRandomNodeAt(
-                level,
-                pos,
-                random,
-                config.silverwood(),
-                config.eerie(),
-                config.small(),
-                config.specialRarity(),
-                config.baseAura());
+        return NodeGenerator.createRandomNodeAt(level, pos, random, config.silverwood(), config.eerie(), config.small(), config.specialRarity(), config.baseAura());
     }
 }

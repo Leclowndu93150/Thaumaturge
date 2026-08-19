@@ -45,8 +45,7 @@ public final class BlockJarBrain extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -56,8 +55,7 @@ public final class BlockJarBrain extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityJarBrain jar)) {
             return InteractionResult.PASS;
         }
@@ -71,25 +69,13 @@ public final class BlockJarBrain extends BaseEntityBlock {
                 jar.syncToClient();
             }
         } else {
-            level.playSound(
-                    player,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    TCSounds.JAR.get(),
-                    SoundSource.BLOCKS,
-                    0.2F,
-                    1.0F);
+            level.playSound(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.2F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(
-                type,
-                TCBlockEntities.JAR_BRAIN.get(),
-                level.isClientSide() ? BlockEntityJarBrain::clientTick : BlockEntityJarBrain::serverTick);
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TCBlockEntities.JAR_BRAIN.get(), level.isClientSide() ? BlockEntityJarBrain::clientTick : BlockEntityJarBrain::serverTick);
     }
 }

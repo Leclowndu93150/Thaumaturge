@@ -53,15 +53,7 @@ public class ItemSanitySoap extends Item {
         }
         if (level.isClientSide()) {
             if (level.getRandom().nextFloat() < SCRUB_SOUND_CHANCE) {
-                level.playLocalSound(
-                        entity.getX(),
-                        entity.getY(),
-                        entity.getZ(),
-                        SoundEvents.CHORUS_FLOWER_DEATH,
-                        SoundSource.PLAYERS,
-                        0.1F,
-                        1.5F + level.getRandom().nextFloat() * 0.2F,
-                        false);
+                level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CHORUS_FLOWER_DEATH, SoundSource.PLAYERS, 0.1F, 1.5F + level.getRandom().nextFloat() * 0.2F, false);
             }
             spawnBubbles(level, entity, SCRUB_BUBBLES, 1.0F);
         }
@@ -90,15 +82,7 @@ public class ItemSanitySoap extends Item {
                 WarpHelper.addWarp(player, -warp.get(WarpType.TEMPORARY), WarpType.TEMPORARY);
             }
         } else if (level.isClientSide()) {
-            level.playLocalSound(
-                    entity.getX(),
-                    entity.getY(),
-                    entity.getZ(),
-                    TCSounds.CRAFTSTART.get(),
-                    SoundSource.PLAYERS,
-                    0.25F,
-                    1.0F,
-                    false);
+            level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), TCSounds.CRAFTSTART.get(), SoundSource.PLAYERS, 0.25F, 1.0F, false);
             spawnBubbles(level, entity, FINISH_BUBBLES, 1.5F);
         }
         return true;
@@ -106,14 +90,8 @@ public class ItemSanitySoap extends Item {
 
     private static void spawnBubbles(Level level, LivingEntity entity, int count, float spread) {
         for (int a = 0; a < count; a++) {
-            level.addParticle(
-                    ParticleTypes.BUBBLE_POP,
-                    entity.getX() - 0.5 + level.getRandom().nextFloat() * spread,
-                    entity.getBoundingBox().minY + level.getRandom().nextFloat() * entity.getBbHeight(),
-                    entity.getZ() - 0.5 + level.getRandom().nextFloat() * spread,
-                    0.0,
-                    0.02,
-                    0.0);
+            level.addParticle(ParticleTypes.BUBBLE_POP, entity.getX() - 0.5 + level.getRandom().nextFloat() * spread,
+                    entity.getBoundingBox().minY + level.getRandom().nextFloat() * entity.getBbHeight(), entity.getZ() - 0.5 + level.getRandom().nextFloat() * spread, 0.0, 0.02, 0.0);
         }
     }
 }

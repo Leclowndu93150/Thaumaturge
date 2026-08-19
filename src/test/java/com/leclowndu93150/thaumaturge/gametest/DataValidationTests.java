@@ -49,8 +49,7 @@ public final class DataValidationTests {
             }
             registry.listElements().forEach(aspect -> {
                 if (!aspect.value().isPrimal() && !terminatesAtPrimals(aspect, 0, new HashSet<>())) {
-                    helper.fail("Aspect " + aspect.key().identifier() + " does not decompose to primals within depth "
-                            + MAX_COMPONENT_DEPTH);
+                    helper.fail("Aspect " + aspect.key().identifier() + " does not decompose to primals within depth " + MAX_COMPONENT_DEPTH);
                 }
             });
             helper.succeed();
@@ -66,13 +65,8 @@ public final class DataValidationTests {
         });
     }
 
-    private static void requireRecipes(
-            net.minecraft.gametest.framework.GameTestHelper helper,
-            RecipeManager recipes,
-            RecipeType<?> type,
-            String label) {
-        boolean any =
-                recipes.getRecipes().stream().anyMatch(holder -> holder.value().getType() == type);
+    private static void requireRecipes(net.minecraft.gametest.framework.GameTestHelper helper, RecipeManager recipes, RecipeType<?> type, String label) {
+        boolean any = recipes.getRecipes().stream().anyMatch(holder -> holder.value().getType() == type);
         if (!any) {
             helper.fail("No " + label + " recipes loaded");
         }

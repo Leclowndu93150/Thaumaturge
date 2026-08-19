@@ -41,17 +41,16 @@ public final class BlockTubeFilter extends BlockTube {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
-        return createTickerHelper(
-                type, TCBlockEntities.TUBE_FILTER.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide())
+            return null;
+        return createTickerHelper(type, TCBlockEntities.TUBE_FILTER.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeFilter filter)) return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeFilter filter))
+            return InteractionResult.PASS;
         if (player.isSecondaryUseActive() && filter.aspectFilter() != null) {
             if (!level.isClientSide()) {
                 filter.setAspectFilter(null);
@@ -63,22 +62,20 @@ public final class BlockTubeFilter extends BlockTube {
     }
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeFilter filter)) return InteractionResult.PASS;
-        if (filter.aspectFilter() != null) return InteractionResult.PASS;
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeFilter filter))
+            return InteractionResult.PASS;
+        if (filter.aspectFilter() != null)
+            return InteractionResult.PASS;
         IEssentiaContainerItem container = stack.getCapability(EssentiaCapabilities.CONTAINER);
-        if (container == null) return InteractionResult.PASS;
-        if (container.getAspects(stack) == null || container.getAspects(stack).isEmpty()) return InteractionResult.PASS;
+        if (container == null)
+            return InteractionResult.PASS;
+        if (container.getAspects(stack) == null || container.getAspects(stack).isEmpty())
+            return InteractionResult.PASS;
         AspectInstance first = container.getAspects(stack).entries().get(0);
         ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
-        if (key == null) return InteractionResult.PASS;
+        if (key == null)
+            return InteractionResult.PASS;
         if (!level.isClientSide()) {
             filter.setAspectFilter(key);
             level.playSound(null, pos, TCSounds.KEY.get(), SoundSource.BLOCKS, 1.0F, 1.0F);

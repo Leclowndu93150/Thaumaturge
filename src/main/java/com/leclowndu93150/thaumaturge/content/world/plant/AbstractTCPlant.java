@@ -19,12 +19,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractTCPlant extends VegetationBlock {
-    protected static final VoxelShape SHAPE = Block.box(
-            0.30000001192092896D * 16.0D,
-            0.0D,
-            0.30000001192092896D * 16.0D,
-            0.699999988079071D * 16.0D,
-            0.6000000238418579D * 16.0D,
+    protected static final VoxelShape SHAPE = Block.box(0.30000001192092896D * 16.0D, 0.0D, 0.30000001192092896D * 16.0D, 0.699999988079071D * 16.0D, 0.6000000238418579D * 16.0D,
             0.699999988079071D * 16.0D);
 
     protected AbstractTCPlant(BlockBehaviour.Properties properties) {
@@ -43,25 +38,13 @@ public abstract class AbstractTCPlant extends VegetationBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
-        return !state.canSurvive(level, pos)
-                ? Blocks.AIR.defaultBlockState()
-                : super.updateShape(
-                        state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+        return !state.canSurvive(level, pos) ? Blocks.AIR.defaultBlockState() : super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
     }
 
     @Override

@@ -71,10 +71,7 @@ public final class BlockEntityLampFertility extends BlockEntity implements IEsse
             return;
         }
         BlockPos pos = getBlockPos();
-        List<Animal> animals = level.getEntitiesOfClass(
-                Animal.class,
-                new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                        .inflate(RANGE));
+        List<Animal> animals = level.getEntitiesOfClass(Animal.class, new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1).inflate(RANGE));
         for (Animal candidate : animals) {
             if (candidate.getAge() != 0 || candidate.isInLove()) {
                 continue;
@@ -109,8 +106,7 @@ public final class BlockEntityLampFertility extends BlockEntity implements IEsse
             return false;
         }
         Direction facing = getBlockState().getValue(BlockStateProperties.FACING);
-        IEssentiaTransport ic =
-                EssentiaFlowHandler.transport(level, getBlockPos().relative(facing), facing.getOpposite());
+        IEssentiaTransport ic = EssentiaFlowHandler.transport(level, getBlockPos().relative(facing), facing.getOpposite());
         if (ic == null || !ic.canOutputTo(facing.getOpposite())) {
             return false;
         }
@@ -195,8 +191,7 @@ public final class BlockEntityLampFertility extends BlockEntity implements IEsse
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

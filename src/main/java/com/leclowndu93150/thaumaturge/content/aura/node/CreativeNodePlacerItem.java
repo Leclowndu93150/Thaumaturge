@@ -26,26 +26,12 @@ public final class CreativeNodePlacerItem extends Item {
         if (!level.getBlockState(pos).canBeReplaced()) {
             return InteractionResult.FAIL;
         }
-        boolean placed = NodeGenerator.createRandomNodeAt(
-                level,
-                pos,
-                level.getRandom(),
-                false,
-                false,
-                false,
-                NodeGenerator.DEFAULT_SPECIAL_RARITY,
-                NodeGenerator.DEFAULT_BASE_AURA);
+        boolean placed = NodeGenerator.createRandomNodeAt(level, pos, level.getRandom(), false, false, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
         return placed ? InteractionResult.SUCCESS_SERVER : InteractionResult.FAIL;
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
-        builder.accept(
-                Component.translatable("tooltip.thaumaturge.creative_only").withStyle(ChatFormatting.DARK_PURPLE));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
+        builder.accept(Component.translatable("tooltip.thaumaturge.creative_only").withStyle(ChatFormatting.DARK_PURPLE));
     }
 }

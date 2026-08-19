@@ -68,9 +68,8 @@ public final class FocusMediumSpellBat implements FocusMedium {
 
     @Override
     public List<SettingDefinition> settings() {
-        int[] friend = new int[] {0, 1};
-        String[] friendDesc = new String[] {"focus.common.enemy", "focus.common.friend"};
-        return List.of(new SettingDefinition(
-                "target", "focus.common.target", new SettingDefinition.IntList(friend, friendDesc)));
+        int[] friend = new int[]{0, 1};
+        String[] friendDesc = new String[]{"focus.common.enemy", "focus.common.friend"};
+        return List.of(new SettingDefinition("target", "focus.common.target", new SettingDefinition.IntList(friend, friendDesc)));
     }
 }

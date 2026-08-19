@@ -32,40 +32,18 @@ public final class CentrifugeRenderer implements BlockEntityRenderer<BlockEntity
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityCentrifuge centrifuge,
-            CentrifugeRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityCentrifuge centrifuge, CentrifugeRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(centrifuge, state, partialTicks, cameraPosition, breakProgress);
         state.rotation = centrifuge.rotation + centrifuge.rotationSpeed * partialTicks;
     }
 
     @Override
-    public void submit(
-            CentrifugeRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(CentrifugeRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        collector.submitModelPart(
-                model.boxes,
-                poseStack,
-                RenderTypes.entityCutout(TEXTURE),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(model.boxes, poseStack, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
-        collector.submitModelPart(
-                model.spinner,
-                poseStack,
-                RenderTypes.entityCutout(TEXTURE),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                -1,
-                null);
+        collector.submitModelPart(model.spinner, poseStack, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
     }
 }

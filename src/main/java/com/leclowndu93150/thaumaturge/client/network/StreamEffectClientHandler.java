@@ -20,54 +20,13 @@ public final class StreamEffectClientHandler {
 
     private static void dispatch(ClientboundStreamEffectPayload p) {
         switch (p.kind()) {
-            case ARC ->
-                BeamManager.addArc(
-                        new ArcInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
-            case BOLT ->
-                BeamManager.addBolt(
-                        new BoltInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
-            case BEAM ->
-                BeamManager.addBeam(new BeamInstance(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
-                        p.tx(),
-                        p.ty(),
-                        p.tz(),
-                        p.color(),
-                        p.extraInt(),
-                        p.extraInt2(),
-                        p.extraFloat(),
-                        p.hasFlag(ClientboundStreamEffectPayload.FLAG_REVERSE),
-                        p.entityId(),
-                        p.hasFlag(ClientboundStreamEffectPayload.FLAG_WITH_SOURCE)));
-            case ESSENTIA ->
-                EssentiaStreamManager.spawn(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
-                        p.tx(),
-                        p.ty(),
-                        p.tz(),
-                        p.color(),
-                        p.extraInt(),
-                        p.extraFloat(),
-                        p.extraInt2(),
-                        p.extraFloat2());
-            case BORE ->
-                BoreVoidStreamManager.addBore(new BoreStreamInstance(
-                        p.sx(),
-                        p.sy(),
-                        p.sz(),
-                        p.entityId(),
-                        p.color(),
-                        p.extraInt(),
-                        p.extraFloat(),
-                        p.extraInt2(),
-                        p.extraFloat2()));
-            case VOID ->
-                BoreVoidStreamManager.addVoid(new VoidStreamInstance(
-                        p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.extraInt(), p.extraFloat()));
+            case ARC -> BeamManager.addArc(new ArcInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
+            case BOLT -> BeamManager.addBolt(new BoltInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraFloat()));
+            case BEAM -> BeamManager.addBeam(new BeamInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraInt(), p.extraInt2(), p.extraFloat(),
+                    p.hasFlag(ClientboundStreamEffectPayload.FLAG_REVERSE), p.entityId(), p.hasFlag(ClientboundStreamEffectPayload.FLAG_WITH_SOURCE)));
+            case ESSENTIA -> EssentiaStreamManager.spawn(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.color(), p.extraInt(), p.extraFloat(), p.extraInt2(), p.extraFloat2());
+            case BORE -> BoreVoidStreamManager.addBore(new BoreStreamInstance(p.sx(), p.sy(), p.sz(), p.entityId(), p.color(), p.extraInt(), p.extraFloat(), p.extraInt2(), p.extraFloat2()));
+            case VOID -> BoreVoidStreamManager.addVoid(new VoidStreamInstance(p.sx(), p.sy(), p.sz(), p.tx(), p.ty(), p.tz(), p.extraInt(), p.extraFloat()));
         }
     }
 }

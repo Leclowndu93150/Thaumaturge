@@ -19,6 +19,10 @@ import net.minecraft.server.network.Filterable;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.LlamaSpit;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
@@ -30,6 +34,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class ResearchProgressionEvents {
@@ -47,6 +52,10 @@ public final class ResearchProgressionEvents {
     private static final Identifier UNLOCK_AUROMANCY = TCIds.rl("unlock_auromancy");
     private static final Identifier BASE_AUROMANCY = TCIds.rl("base_auromancy");
     private static final Identifier F_ONFIRE = TCIds.rl("f_onfire");
+    private static final Identifier FOCUS_PROJECTILE = TCIds.rl("focus_projectile");
+    private static final Identifier F_ARROW = TCIds.rl("f_arrow");
+    private static final Identifier F_FIREBALL = TCIds.rl("f_fireball");
+    private static final Identifier F_SPIT = TCIds.rl("f_spit");
 
     private ResearchProgressionEvents() {}
 
@@ -65,17 +74,17 @@ public final class ResearchProgressionEvents {
     }
 
     public static void recordCrafted(ServerPlayer player, ItemStack crafted) {
-        if (crafted.isEmpty()) return;
-        Identifier itemId = crafted.getItem()
-                .builtInRegistryHolder()
-                .unwrapKey()
-                .map(ResourceKey::identifier)
-                .orElse(null);
-        if (itemId == null) return;
+        if (crafted.isEmpty())
+            return;
+        Identifier itemId = crafted.getItem().builtInRegistryHolder().unwrapKey().map(ResourceKey::identifier).orElse(null);
+        if (itemId == null)
+            return;
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
         Identifier craftedKey = ResearchManager.craftedKey(itemId);
-        if (knowledge.isResearchKnown(craftedKey)) return;
-        if (!isCraftReference(player, crafted)) return;
+        if (knowledge.isResearchKnown(craftedKey))
+            return;
+        if (!isCraftReference(player, crafted))
+            return;
         knowledge.addResearch(craftedKey);
         knowledge.sync(player);
     }
@@ -86,7 +95,8 @@ public final class ResearchProgressionEvents {
 
     @SubscribeEvent
     public static void onItemPickup(ItemEntityPickupEvent.Post event) {
-        if (!(event.getPlayer() instanceof ServerPlayer player)) return;
+        if (!(event.getPlayer() instanceof ServerPlayer player))
+            return;
         ItemStack stack = event.getOriginalStack();
         recordCrafted(player, stack);
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
@@ -108,7 +118,8 @@ public final class ResearchProgressionEvents {
 
     @SubscribeEvent
     public static void onWakeUp(PlayerWakeUpEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player))
+            return;
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
         if (knowledge.isResearchKnown(GOT_CRYSTALS) && !knowledge.isResearchKnown(GOT_DREAM)) {
             giveDreamJournal(player, knowledge);
@@ -120,16 +131,9 @@ public final class ResearchProgressionEvents {
         knowledge.markComplete(GOT_DREAM);
         knowledge.sync(player);
         ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
-        book.set(
-                DataComponents.WRITTEN_BOOK_CONTENT,
-                new WrittenBookContent(
-                        Filterable.passThrough(Component.translatable("book.thaumaturge.start.title")
-                                .getString()),
-                        player.getName().getString(),
-                        WrittenBookContent.MAX_GENERATION,
-                        List.of(
-                                Filterable.passThrough(Component.translatable("book.thaumaturge.start.1")),
-                                Filterable.passThrough(Component.translatable("book.thaumaturge.start.2")),
+        book.set(DataComponents.WRITTEN_BOOK_CONTENT,
+                new WrittenBookContent(Filterable.passThrough(Component.translatable("book.thaumaturge.start.title").getString()), player.getName().getString(), WrittenBookContent.MAX_GENERATION,
+                        List.of(Filterable.passThrough(Component.translatable("book.thaumaturge.start.1")), Filterable.passThrough(Component.translatable("book.thaumaturge.start.2")),
                                 Filterable.passThrough(Component.translatable("book.thaumaturge.start.3"))),
                         false));
         if (!player.getInventory().add(book)) {
@@ -140,11 +144,15 @@ public final class ResearchProgressionEvents {
 
     @SubscribeEvent
     public static void onFireDamage(LivingDamageEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!event.getSource().is(DamageTypeTags.IS_FIRE)) return;
+        if (!(event.getEntity() instanceof ServerPlayer player))
+            return;
+        if (!event.getSource().is(DamageTypeTags.IS_FIRE))
+            return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
-        if (!knowledge.isResearchKnown(BASE_AUROMANCY, 1) && !knowledge.isResearchComplete(BASE_AUROMANCY)) return;
-        if (knowledge.isResearchKnown(F_ONFIRE)) return;
+        if (!knowledge.isResearchKnown(BASE_AUROMANCY, 1) && !knowledge.isResearchComplete(BASE_AUROMANCY))
+            return;
+        if (knowledge.isResearchKnown(F_ONFIRE))
+            return;
         PlayerKnowledge pk = (PlayerKnowledge) knowledge;
         pk.addResearch(F_ONFIRE);
         pk.markComplete(F_ONFIRE);
@@ -153,60 +161,60 @@ public final class ResearchProgressionEvents {
     }
 
     @SubscribeEvent
+    public static void onProjectileDamage(LivingDamageEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player))
+            return;
+        Identifier research = projectileResearch(event.getSource().getDirectEntity());
+        if (research == null)
+            return;
+        IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
+        if (!knowledge.isResearchKnown(FOCUS_PROJECTILE, 1) && !knowledge.isResearchComplete(FOCUS_PROJECTILE))
+            return;
+        if (knowledge.isResearchKnown(research))
+            return;
+        PlayerKnowledge pk = (PlayerKnowledge) knowledge;
+        pk.addResearch(research);
+        pk.markComplete(research);
+        pk.sync(player);
+        sendActionBar(player, "got.projectile");
+    }
+
+    private static @Nullable Identifier projectileResearch(@Nullable Entity direct) {
+        if (direct instanceof AbstractArrow)
+            return F_ARROW;
+        if (direct instanceof AbstractHurtingProjectile)
+            return F_FIREBALL;
+        if (direct instanceof LlamaSpit)
+            return F_SPIT;
+        return null;
+    }
+
+    @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (player.tickCount == 0) return;
+        if (!(event.getEntity() instanceof ServerPlayer player))
+            return;
+        if (player.tickCount == 0)
+            return;
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
-        boolean auromancyInProgress = knowledge.isResearchKnown(UNLOCK_AUROMANCY)
-                && !knowledge.isResearchKnown(UNLOCK_AUROMANCY, 1)
-                && !knowledge.isResearchComplete(UNLOCK_AUROMANCY);
+        boolean auromancyInProgress = knowledge.isResearchKnown(UNLOCK_AUROMANCY) && !knowledge.isResearchKnown(UNLOCK_AUROMANCY, 1) && !knowledge.isResearchComplete(UNLOCK_AUROMANCY);
         if (auromancyInProgress) {
-            milestone(
-                    player,
-                    knowledge,
-                    TCIds.rl("m_deepdown"),
-                    "got.deepdown",
-                    player.getY() < player.level().getMinY() + DEEP_DOWN_DEPTH);
-            milestone(
-                    player,
-                    knowledge,
-                    TCIds.rl("m_uphigh"),
-                    "got.uphigh",
-                    player.getY() > player.level().getMaxY() * UP_HIGH_FRACTION);
+            milestone(player, knowledge, TCIds.rl("m_deepdown"), "got.deepdown", player.getY() < player.level().getMinY() + DEEP_DOWN_DEPTH);
+            milestone(player, knowledge, TCIds.rl("m_uphigh"), "got.uphigh", player.getY() > player.level().getMaxY() * UP_HIGH_FRACTION);
         }
-        if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0) return;
+        if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0)
+            return;
         Holder<Biome> biome = player.level().getBiome(player.blockPosition());
         milestone(player, knowledge, TCIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
         milestone(player, knowledge, TCIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
-        milestone(
-                player,
-                knowledge,
-                TCIds.rl("m_walker"),
-                null,
-                player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > WALK_MILESTONE_CM);
-        milestone(
-                player,
-                knowledge,
-                TCIds.rl("m_runner"),
-                null,
-                player.getStats().getValue(Stats.CUSTOM.get(Stats.SPRINT_ONE_CM)) > SPRINT_MILESTONE_CM);
-        milestone(
-                player,
-                knowledge,
-                TCIds.rl("m_jumper"),
-                null,
-                player.getStats().getValue(Stats.CUSTOM.get(Stats.JUMP)) > JUMP_MILESTONE);
-        milestone(
-                player,
-                knowledge,
-                TCIds.rl("m_swimmer"),
-                null,
-                player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > SWIM_MILESTONE_CM);
+        milestone(player, knowledge, TCIds.rl("m_walker"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > WALK_MILESTONE_CM);
+        milestone(player, knowledge, TCIds.rl("m_runner"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SPRINT_ONE_CM)) > SPRINT_MILESTONE_CM);
+        milestone(player, knowledge, TCIds.rl("m_jumper"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.JUMP)) > JUMP_MILESTONE);
+        milestone(player, knowledge, TCIds.rl("m_swimmer"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > SWIM_MILESTONE_CM);
     }
 
-    private static void milestone(
-            ServerPlayer player, PlayerKnowledge knowledge, Identifier id, String messageKey, boolean condition) {
-        if (!condition || knowledge.isResearchKnown(id)) return;
+    private static void milestone(ServerPlayer player, PlayerKnowledge knowledge, Identifier id, String messageKey, boolean condition) {
+        if (!condition || knowledge.isResearchKnown(id))
+            return;
         knowledge.addResearch(id);
         knowledge.markComplete(id);
         knowledge.sync(player);
@@ -216,7 +224,6 @@ public final class ResearchProgressionEvents {
     }
 
     private static void sendActionBar(ServerPlayer player, String key) {
-        player.connection.send(new ClientboundSetActionBarTextPacket(
-                Component.translatable(key).withStyle(ChatFormatting.DARK_PURPLE)));
+        player.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable(key).withStyle(ChatFormatting.DARK_PURPLE)));
     }
 }

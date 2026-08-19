@@ -12,8 +12,7 @@ public final class FlashParticle extends TCParticle {
 
     private final float startSize;
 
-    private FlashParticle(
-            ClientLevel level, double x, double y, double z, ColorParticleOption options, ParticleSheet sheet) {
+    private FlashParticle(ClientLevel level, double x, double y, double z, ColorParticleOption options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(5);
@@ -33,16 +32,7 @@ public final class FlashParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("flash");
 
         @Override
-        public Particle createParticle(
-                ColorParticleOption options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FlashParticle(level, x, y, z, options, SHEET);
         }
     }

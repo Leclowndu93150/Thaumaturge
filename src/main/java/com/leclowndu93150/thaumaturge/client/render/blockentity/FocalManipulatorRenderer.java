@@ -28,8 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
-public final class FocalManipulatorRenderer
-        implements BlockEntityRenderer<BlockEntityFocalManipulator, FocalManipulatorRenderState> {
+public final class FocalManipulatorRenderer implements BlockEntityRenderer<BlockEntityFocalManipulator, FocalManipulatorRenderState> {
     private static final float FOCUS_HEIGHT = 0.8F;
     private static final float FOCUS_BOB_PERIOD = 14.0F;
     private static final float FOCUS_BOB_SCALE = 0.2F;
@@ -48,15 +47,9 @@ public final class FocalManipulatorRenderer
     private static final long RAY_SEED = 187L;
     private static final float RAY_ALPHA = 0.66F;
 
-    private static final RenderType RAY_TYPE = RenderType.create(
-            "tc_manipulator_ray",
-            RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
-    private static final RenderType GLOW_TYPE = RenderType.create(
-            "tc_manipulator_glow",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE)
-                    .withTexture("Sampler0", ParticleTextures.PARTICLES)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType RAY_TYPE = RenderType.create("tc_manipulator_ray", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
+    private static final RenderType GLOW_TYPE = RenderType.create("tc_manipulator_glow",
+            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.PARTICLES).useLightmap().createRenderSetup());
 
     private final ItemModelResolver itemModelResolver;
     private final RandomSource rayRandom = RandomSource.create();
@@ -71,12 +64,7 @@ public final class FocalManipulatorRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityFocalManipulator table,
-            FocalManipulatorRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityFocalManipulator table, FocalManipulatorRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(table, state, partialTicks, cameraPosition, breakProgress);
         var viewEntity = Minecraft.getInstance().getCameraEntity();
         state.ticks = viewEntity == null ? partialTicks : viewEntity.tickCount + partialTicks;
@@ -94,13 +82,7 @@ public final class FocalManipulatorRenderer
         List<AspectInstance> entries = table.crystalsSync.entries();
         for (AspectInstance instance : entries) {
             ItemStackRenderState itemState = new ItemStackRenderState();
-            itemModelResolver.updateForTopItem(
-                    itemState,
-                    EssentiaCrystalFactory.of(instance.aspect()),
-                    ItemDisplayContext.GROUND,
-                    table.getLevel(),
-                    null,
-                    0);
+            itemModelResolver.updateForTopItem(itemState, EssentiaCrystalFactory.of(instance.aspect()), ItemDisplayContext.GROUND, table.getLevel(), null, 0);
             state.crystals.add(itemState);
             state.crystalColors.add(instance.aspect().value().color());
             state.crystalLift = LegacyItemLift.centerLift(itemState);
@@ -108,18 +90,11 @@ public final class FocalManipulatorRenderer
     }
 
     @Override
-    public void submit(
-            FocalManipulatorRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(FocalManipulatorRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         float ticks = state.ticks;
         if (state.focus != null) {
             poseStack.pushPose();
-            poseStack.translate(
-                    0.5F,
-                    FOCUS_HEIGHT + Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_BOB_SCALE * 0.5F + FOCUS_BOB_SCALE * 0.5F,
-                    0.5F);
+            poseStack.translate(0.5F, FOCUS_HEIGHT + Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_BOB_SCALE * 0.5F + FOCUS_BOB_SCALE * 0.5F, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(ticks % 360.0F));
             poseStack.translate(0.0F, state.focusLift, 0.0F);
             state.focus.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
@@ -158,8 +133,7 @@ public final class FocalManipulatorRenderer
         }
     }
 
-    private static void submitGlow(
-            SubmitNodeCollector collector, PoseStack poseStack, float ticks, float r, float g, float b) {
+    private static void submitGlow(SubmitNodeCollector collector, PoseStack poseStack, float ticks, float r, float g, float b) {
         int frame = GLOW_FRAME_START + (int) ticks % GLOW_FRAMES;
         float texFrame = 1.0F / GLOW_GRID;
         float u0 = (frame % GLOW_GRID) * texFrame;
@@ -169,34 +143,14 @@ public final class FocalManipulatorRenderer
         int tint = ARGB.colorFromFloat(GLOW_ALPHA, r, g, b);
         collector.submitCustomGeometry(poseStack, GLOW_TYPE, (pose, buffer) -> {
             Matrix4fc mat = pose.pose();
-            buffer.addVertex(mat, -GLOW_HALF, -GLOW_HALF, 0.0F)
-                    .setUv(u1, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, -GLOW_HALF, GLOW_HALF, 0.0F)
-                    .setUv(u1, v0)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, GLOW_HALF, GLOW_HALF, 0.0F)
-                    .setUv(u0, v0)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, GLOW_HALF, -GLOW_HALF, 0.0F)
-                    .setUv(u0, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -GLOW_HALF, -GLOW_HALF, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -GLOW_HALF, GLOW_HALF, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, GLOW_HALF, GLOW_HALF, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, GLOW_HALF, -GLOW_HALF, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
         });
     }
 
-    private void submitRay(
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            float angle,
-            int num,
-            float r,
-            float g,
-            float b,
-            float ticks) {
+    private void submitRay(PoseStack poseStack, SubmitNodeCollector collector, float angle, int num, float r, float g, float b, float ticks) {
         rayRandom.setSeed(RAY_SEED + (long) num * num);
         float pan = Mth.sin((ticks + num * 10) / 15.0F) * 15.0F;
         float aperture = Mth.sin((ticks + num * 10) / 14.0F) * 2.0F;

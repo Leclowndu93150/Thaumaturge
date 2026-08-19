@@ -25,43 +25,24 @@ public final class AspectIndex implements IAspectIndex {
     public static final AspectIndex EMPTY = new AspectIndex(Map.of());
 
     public record Variant(DataComponentMatchers matcher, AspectList aspects) {
-        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        DataComponentMatchers.CODEC.forGetter(Variant::matcher),
-                        AspectList.CODEC.fieldOf("aspects").forGetter(Variant::aspects))
-                .apply(builder, Variant::new));
+        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(
+                builder -> builder.group(DataComponentMatchers.CODEC.forGetter(Variant::matcher), AspectList.CODEC.fieldOf("aspects").forGetter(Variant::aspects)).apply(builder, Variant::new));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, Variant> STREAM_CODEC = StreamCodec.composite(
-                DataComponentMatchers.STREAM_CODEC,
-                Variant::matcher,
-                AspectList.STREAM_CODEC,
-                Variant::aspects,
-                Variant::new);
+        public static final StreamCodec<RegistryFriendlyByteBuf, Variant> STREAM_CODEC = StreamCodec.composite(DataComponentMatchers.STREAM_CODEC, Variant::matcher, AspectList.STREAM_CODEC,
+                Variant::aspects, Variant::new);
     }
 
     public record ItemEntry(AspectList base, List<Variant> variants) {
         public static final ItemEntry EMPTY = new ItemEntry(AspectList.EMPTY, List.of());
 
-        private static final Codec<ItemEntry> FULL_CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        AspectList.CODEC
-                                .optionalFieldOf("base", AspectList.EMPTY)
-                                .forGetter(ItemEntry::base),
-                        Variant.CODEC
-                                .listOf()
-                                .optionalFieldOf("variants", List.of())
-                                .forGetter(ItemEntry::variants))
-                .apply(builder, ItemEntry::new));
+        private static final Codec<ItemEntry> FULL_CODEC = RecordCodecBuilder.create(builder -> builder.group(AspectList.CODEC.optionalFieldOf("base", AspectList.EMPTY).forGetter(ItemEntry::base),
+                Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(ItemEntry::variants)).apply(builder, ItemEntry::new));
 
-        public static final Codec<ItemEntry> CODEC = Codec.either(AspectList.CODEC, FULL_CODEC)
-                .xmap(
-                        either -> either.map(base -> new ItemEntry(base, List.of()), full -> full),
-                        entry -> entry.variants().isEmpty() ? Either.left(entry.base()) : Either.right(entry));
+        public static final Codec<ItemEntry> CODEC = Codec.either(AspectList.CODEC, FULL_CODEC).xmap(either -> either.map(base -> new ItemEntry(base, List.of()), full -> full),
+                entry -> entry.variants().isEmpty() ? Either.left(entry.base()) : Either.right(entry));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, ItemEntry> STREAM_CODEC = StreamCodec.composite(
-                AspectList.STREAM_CODEC,
-                ItemEntry::base,
-                Variant.STREAM_CODEC.apply(ByteBufCodecs.list()),
-                ItemEntry::variants,
-                ItemEntry::new);
+        public static final StreamCodec<RegistryFriendlyByteBuf, ItemEntry> STREAM_CODEC = StreamCodec.composite(AspectList.STREAM_CODEC, ItemEntry::base,
+                Variant.STREAM_CODEC.apply(ByteBufCodecs.list()), ItemEntry::variants, ItemEntry::new);
 
         public boolean isEmpty() {
             return base.isEmpty() && variants.isEmpty();
@@ -72,11 +53,10 @@ public final class AspectIndex implements IAspectIndex {
         }
     }
 
-    public static final Codec<AspectIndex> CODEC =
-            Codec.unboundedMap(Identifier.CODEC, ItemEntry.CODEC).xmap(AspectIndex::fromIdMap, AspectIndex::toIdMap);
+    public static final Codec<AspectIndex> CODEC = Codec.unboundedMap(Identifier.CODEC, ItemEntry.CODEC).xmap(AspectIndex::fromIdMap, AspectIndex::toIdMap);
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AspectIndex> STREAM_CODEC = StreamCodec.composite(
-            Entry.STREAM_CODEC.apply(ByteBufCodecs.list()), AspectIndex::entries, AspectIndex::fromEntries);
+    public static final StreamCodec<RegistryFriendlyByteBuf, AspectIndex> STREAM_CODEC = StreamCodec.composite(Entry.STREAM_CODEC.apply(ByteBufCodecs.list()), AspectIndex::entries,
+            AspectIndex::fromEntries);
 
     private final Reference2ObjectMap<Item, ItemEntry> byItem;
 
@@ -100,10 +80,7 @@ public final class AspectIndex implements IAspectIndex {
         }
         Map<Item, ItemEntry> entries = new HashMap<>(source.size());
         source.forEach((item, aspects) -> entries.put(item, ItemEntry.of(aspects)));
-        variants.forEach((item, list) -> entries.merge(
-                item,
-                new ItemEntry(AspectList.EMPTY, List.copyOf(list)),
-                (existing, added) -> new ItemEntry(existing.base(), added.variants())));
+        variants.forEach((item, list) -> entries.merge(item, new ItemEntry(AspectList.EMPTY, List.copyOf(list)), (existing, added) -> new ItemEntry(existing.base(), added.variants())));
         return new AspectIndex(entries);
     }
 
@@ -182,7 +159,6 @@ public final class AspectIndex implements IAspectIndex {
     }
 
     private record Entry(Identifier itemId, ItemEntry entry) {
-        static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
-                Identifier.STREAM_CODEC, Entry::itemId, ItemEntry.STREAM_CODEC, Entry::entry, Entry::new);
+        static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC, Entry::itemId, ItemEntry.STREAM_CODEC, Entry::entry, Entry::new);
     }
 }

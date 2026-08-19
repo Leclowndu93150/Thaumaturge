@@ -56,8 +56,7 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine, Foc
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
-        float pulse =
-                state.armed ? Mth.sin(state.ticks / PULSE_PERIOD) * PULSE_AMPLITUDE + PULSE_BASE : UNARMED_BRIGHTNESS;
+        float pulse = state.armed ? Mth.sin(state.ticks / PULSE_PERIOD) * PULSE_AMPLITUDE + PULSE_BASE : UNARMED_BRIGHTNESS;
         float r = ((state.color >> 16) & 0xFF) / COLOR_DIVISOR * pulse;
         float g = ((state.color >> 8) & 0xFF) / COLOR_DIVISOR * pulse;
         float b = (state.color & 0xFF) / COLOR_DIVISOR * pulse;
@@ -66,15 +65,7 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine, Foc
         poseStack.translate(0.0F, GROUND_LIFT, 0.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(state.ticks * SPIN_DEGREES_PER_TICK));
         poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
-        collector.submitModelPart(
-                model.root,
-                poseStack,
-                RenderTypes.entityCutout(TEXTURE),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                tint,
-                null);
+        collector.submitModelPart(model.root, poseStack, RenderTypes.entityCutout(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, tint, null);
         poseStack.popPose();
     }
 }

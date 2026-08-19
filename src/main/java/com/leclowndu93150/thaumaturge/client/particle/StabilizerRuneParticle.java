@@ -11,16 +11,7 @@ public final class StabilizerRuneParticle extends TCParticle {
     private static final float START_ALPHA = 0.3F;
     private static final float FRICTION = 1.01F;
 
-    private StabilizerRuneParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            StabilizerRuneParticleOptions options,
-            ParticleSheet sheet) {
+    private StabilizerRuneParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, StabilizerRuneParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(0.5F, 0.2F, 0.5F);
         this.lifetime = options.life() + this.random.nextInt(Math.max(1, options.life()));
@@ -41,16 +32,7 @@ public final class StabilizerRuneParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("stabilizer_rune");
 
         @Override
-        public Particle createParticle(
-                StabilizerRuneParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(StabilizerRuneParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new StabilizerRuneParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

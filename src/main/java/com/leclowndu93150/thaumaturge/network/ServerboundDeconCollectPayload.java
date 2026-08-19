@@ -10,12 +10,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundDeconCollectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("decon_collect"));
+    public static final CustomPacketPayload.Type<ServerboundDeconCollectPayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("decon_collect"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDeconCollectPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC, ServerboundDeconCollectPayload::pos, ServerboundDeconCollectPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDeconCollectPayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundDeconCollectPayload::pos,
+            ServerboundDeconCollectPayload::new);
 
     public static void handle(ServerboundDeconCollectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {

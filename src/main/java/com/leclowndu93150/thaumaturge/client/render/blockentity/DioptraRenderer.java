@@ -27,12 +27,8 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     private static final Identifier GRID_TEXTURE = TCIds.rl("textures/misc/gridblock.png");
     private static final Identifier SIDE_TEXTURE = TCIds.rl("textures/entity/dioptra_side.png");
     private static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(TCIds.rl("pipeline/dioptra"));
-    private static final RenderType GRID_TYPE = RenderType.create(
-            "tc_dioptra_grid",
-            RenderSetup.builder(PIPELINE).withTexture("Sampler0", GRID_TEXTURE).createRenderSetup());
-    private static final RenderType SIDE_TYPE = RenderType.create(
-            "tc_dioptra_side",
-            RenderSetup.builder(PIPELINE).withTexture("Sampler0", SIDE_TEXTURE).createRenderSetup());
+    private static final RenderType GRID_TYPE = RenderType.create("tc_dioptra_grid", RenderSetup.builder(PIPELINE).withTexture("Sampler0", GRID_TEXTURE).createRenderSetup());
+    private static final RenderType SIDE_TYPE = RenderType.create("tc_dioptra_side", RenderSetup.builder(PIPELINE).withTexture("Sampler0", SIDE_TEXTURE).createRenderSetup());
 
     private static final int CELLS = 12;
     private static final float HEIGHT_SCALE = 96.0F;
@@ -51,22 +47,15 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityDioptra dioptra,
-            DioptraRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityDioptra dioptra, DioptraRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(dioptra, state, partialTicks, cameraPosition, breakProgress);
         System.arraycopy(dioptra.grid(), 0, state.grid, 0, state.grid.length);
         state.enabled = dioptra.getBlockState().getValue(BlockStateProperties.ENABLED);
-        state.time =
-                (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
+        state.time = (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
     }
 
     @Override
-    public void submit(
-            DioptraRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(DioptraRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         float t = state.time;
         float rc = Mth.sin(t / 12.0F) * 0.05F + 0.85F;
         float gc = Mth.sin(t / 11.0F) * 0.05F + (state.enabled ? 0.9F : 0.45F);
@@ -143,8 +132,7 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
         });
     }
 
-    private static void sideQuad(
-            VertexConsumer buffer, PoseStack.Pose pose, float x0, float z0, float x1, float z1, int color) {
+    private static void sideQuad(VertexConsumer buffer, PoseStack.Pose pose, float x0, float z0, float x1, float z1, int color) {
         float yBottom = 1.0F;
         float yTop = 2.0F;
         vertex(buffer, pose, x0, yBottom, z0, 0.0F, 0.0F, color);
@@ -154,12 +142,10 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     }
 
     private static int cellColor(float r, float g, float b, float lum, float alpha) {
-        return ARGB.colorFromFloat(
-                alpha, Math.min(1.0F, r * 0.8F * lum), Math.min(1.0F, g * lum), Math.min(1.0F, b * lum));
+        return ARGB.colorFromFloat(alpha, Math.min(1.0F, r * 0.8F * lum), Math.min(1.0F, g * lum), Math.min(1.0F, b * lum));
     }
 
-    private static void vertex(
-            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int color) {
+    private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int color) {
         buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(color);
     }
 
@@ -171,12 +157,6 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     @Override
     public AABB getRenderBoundingBox(BlockEntityDioptra blockEntity) {
         BlockPos pos = blockEntity.getBlockPos();
-        return new AABB(
-                pos.getX() - 0.3,
-                pos.getY() - 0.3,
-                pos.getZ() - 0.3,
-                pos.getX() + 1.3,
-                pos.getY() + 2.3,
-                pos.getZ() + 1.3);
+        return new AABB(pos.getX() - 0.3, pos.getY() - 0.3, pos.getZ() - 0.3, pos.getX() + 1.3, pos.getY() + 2.3, pos.getZ() + 1.3);
     }
 }

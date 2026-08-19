@@ -15,12 +15,9 @@ import org.lwjgl.glfw.GLFW;
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public final class TCKeybinds {
     public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(TCIds.rl("main"));
-    public static final KeyMapping OPEN_THAUMONOMICON =
-            new KeyMapping("key.thaumaturge.thaumonomicon", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY);
-    public static final KeyMapping CHANGE_FOCUS =
-            new KeyMapping("key.thaumaturge.change_focus", GLFW.GLFW_KEY_F, CATEGORY);
-    public static final KeyMapping MISC_TOGGLE =
-            new KeyMapping("key.thaumaturge.misc_toggle", GLFW.GLFW_KEY_G, CATEGORY);
+    public static final KeyMapping OPEN_THAUMONOMICON = new KeyMapping("key.thaumaturge.thaumonomicon", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_N, CATEGORY);
+    public static final KeyMapping CHANGE_FOCUS = new KeyMapping("key.thaumaturge.change_focus", GLFW.GLFW_KEY_F, CATEGORY);
+    public static final KeyMapping MISC_TOGGLE = new KeyMapping("key.thaumaturge.misc_toggle", GLFW.GLFW_KEY_G, CATEGORY);
 
     private TCKeybinds() {}
 
@@ -34,7 +31,8 @@ public final class TCKeybinds {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
-        if (Minecraft.getInstance().screen != null) return;
+        if (Minecraft.getInstance().screen != null)
+            return;
         while (OPEN_THAUMONOMICON.consumeClick()) {
             Minecraft.getInstance().setScreen(new ThaumonomiconBrowserScreen());
         }

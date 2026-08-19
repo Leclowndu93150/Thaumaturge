@@ -18,8 +18,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class GolemMaterial {
     /** The registry key for golem materials. */
-    public static final ResourceKey<Registry<GolemMaterial>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_material"));
+    public static final ResourceKey<Registry<GolemMaterial>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_material"));
 
     private final List<Identifier> research;
     private final Identifier texture;
@@ -43,16 +42,7 @@ public final class GolemMaterial {
      * @param componentMechanism supplies the material's mechanism crafting item
      * @param traits             traits granted by the material
      */
-    public GolemMaterial(
-            List<Identifier> research,
-            Identifier texture,
-            int itemColor,
-            int healthMod,
-            int armor,
-            int damage,
-            Supplier<ItemStack> componentBase,
-            Supplier<ItemStack> componentMechanism,
-            List<Holder<GolemTrait>> traits) {
+    public GolemMaterial(List<Identifier> research, Identifier texture, int itemColor, int healthMod, int armor, int damage, Supplier<ItemStack> componentBase, Supplier<ItemStack> componentMechanism, List<Holder<GolemTrait>> traits) {
         this.research = List.copyOf(research);
         this.texture = texture;
         this.itemColor = itemColor;

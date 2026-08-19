@@ -58,9 +58,7 @@ public final class RunicShielding {
             state.nextCycle = time + ThaumaturgeCommonConfig.SHIELD_WAIT.get();
             state.lastCharge = 0;
         }
-        if (charge < state.maxCharge
-                && time >= state.nextCycle
-                && !AuraHelper.shouldPreserveAura(level, player, player.blockPosition())) {
+        if (charge < state.maxCharge && time >= state.nextCycle && !AuraHelper.shouldPreserveAura(level, player, player.blockPosition())) {
             BlockPos pos = player.blockPosition();
             double cost = ThaumaturgeCommonConfig.SHIELD_COST.get();
             if (AuraHelper.getVis(level, pos) >= cost) {
@@ -83,8 +81,7 @@ public final class RunicShielding {
         }
         attribute.removeModifier(MODIFIER_ID);
         if (max > 0) {
-            attribute.addTransientModifier(
-                    new AttributeModifier(MODIFIER_ID, max, AttributeModifier.Operation.ADD_VALUE));
+            attribute.addTransientModifier(new AttributeModifier(MODIFIER_ID, max, AttributeModifier.Operation.ADD_VALUE));
         }
     }
 }

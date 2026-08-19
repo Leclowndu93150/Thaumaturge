@@ -13,8 +13,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
-public final class EldritchGuardianRenderer
-        extends MobRenderer<EntityEldritchGuardian, EldritchGuardianRenderState, EldritchGuardianModel> {
+public final class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGuardian, EldritchGuardianRenderState, EldritchGuardianModel> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/eldritch_guardian.png");
     private static final float SHADOW = 0.5F;
     private static final float NEAR_ALPHA = 0.6F;
@@ -32,8 +31,7 @@ public final class EldritchGuardianRenderer
     }
 
     @Override
-    public void extractRenderState(
-            EntityEldritchGuardian entity, EldritchGuardianRenderState state, float partialTicks) {
+    public void extractRenderState(EntityEldritchGuardian entity, EldritchGuardianRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.armLiftL = entity.armLiftL;
         state.armLiftR = entity.armLiftR;
@@ -47,14 +45,12 @@ public final class EldritchGuardianRenderer
         if (distSq < NEAR_RANGE_SQ) {
             state.alpha = NEAR_ALPHA;
         } else {
-            state.alpha = (float) (1.0 - Math.min(far - NEAR_RANGE_SQ, distSq - NEAR_RANGE_SQ) / (far - NEAR_RANGE_SQ))
-                    * NEAR_ALPHA;
+            state.alpha = (float) (1.0 - Math.min(far - NEAR_RANGE_SQ, distSq - NEAR_RANGE_SQ) / (far - NEAR_RANGE_SQ)) * NEAR_ALPHA;
         }
     }
 
     @Override
-    protected @Nullable RenderType getRenderType(
-            EldritchGuardianRenderState state, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
+    protected @Nullable RenderType getRenderType(EldritchGuardianRenderState state, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
         return super.getRenderType(state, isBodyVisible, true, appearGlowing);
     }
 

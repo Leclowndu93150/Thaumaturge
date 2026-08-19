@@ -65,9 +65,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityVoidSiphon siphon) {
         siphon.counter++;
-        if (!state.getValue(BlockStateProperties.ENABLED)
-                || siphon.counter % WORK_INTERVAL != 0
-                || siphon.progress >= PROGRESS_REQUIRED && !siphon.hasOutputRoom()) {
+        if (!state.getValue(BlockStateProperties.ENABLED) || siphon.counter % WORK_INTERVAL != 0 || siphon.progress >= PROGRESS_REQUIRED && !siphon.hasOutputRoom()) {
             return;
         }
         if (siphon.hasOutputRoom()) {
@@ -111,8 +109,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
             Vec3 from = new Vec3(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
             Vec3 to = rift.position();
             from = from.add(to.subtract(from).normalize());
-            HitResult hit = level.clip(new ClipContext(
-                    from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
+            HitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
             if (hit.getType() == HitResult.Type.MISS) {
                 found.add(rift);
             }
@@ -137,8 +134,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput out = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(out);
             nbt.merge(out.buildResult());

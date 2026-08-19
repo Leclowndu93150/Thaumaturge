@@ -16,7 +16,8 @@ public class TCDebugEvents {
 
     @SubscribeEvent
     public static void playerTick(PlayerTickEvent.Post event) {
-        if (event.getEntity().level().isClientSide()) return;
+        if (event.getEntity().level().isClientSide())
+            return;
         Player player = event.getEntity();
         HitResult hitResult = ScanRaycastHelper.performRaycast(player);
         PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundRaycastDebugPayload(hitResult));

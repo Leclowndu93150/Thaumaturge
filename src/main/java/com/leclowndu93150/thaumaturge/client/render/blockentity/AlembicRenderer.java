@@ -27,8 +27,7 @@ import org.jspecify.annotations.Nullable;
 
 public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, AlembicRenderState> {
 
-    private static final Identifier LABEL_TEXTURE =
-            Identifier.fromNamespaceAndPath("thaumaturge", "textures/entity/label.png");
+    private static final Identifier LABEL_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "textures/entity/label.png");
 
     public AlembicRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -38,27 +37,20 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, 
     }
 
     @Override
-    public void submit(
-            AlembicRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            CameraRenderState cameraRenderState) {
-        if (state.hasFilter) submitFilterLabel(state, poseStack, submitNodeCollector);
+    public void submit(AlembicRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        if (state.hasFilter)
+            submitFilterLabel(state, poseStack, submitNodeCollector);
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityAlembic blockEntity,
-            AlembicRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityAlembic blockEntity, AlembicRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.filterTexture = null;
         state.filterColor = -1;
         state.filterAspect = null;
         Level level = blockEntity.getLevel();
-        if (level == null) return;
+        if (level == null)
+            return;
         var registry = level.registryAccess();
         state.hasFilter = blockEntity.aspectFilterKey() != null;
         if (blockEntity.aspectFilterKey() != null) {
@@ -72,8 +64,7 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, 
         }
         List<Direction> dirs = new ArrayList<>();
         for (Direction dir : Direction.Plane.HORIZONTAL) {
-            IEssentiaTransport connected = level.getCapability(
-                    EssentiaCapabilities.TRANSPORT, blockEntity.getBlockPos().relative(dir), dir.getOpposite());
+            IEssentiaTransport connected = level.getCapability(EssentiaCapabilities.TRANSPORT, blockEntity.getBlockPos().relative(dir), dir.getOpposite());
             if (connected != null && connected.isConnectable(dir.getOpposite())) {
                 dirs.add(dir);
             }
@@ -81,24 +72,8 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, 
         state.connectedDirections = dirs.toArray(new Direction[0]);
     }
 
-    public static void addVertex(
-            VertexConsumer buffer,
-            PoseStack.Pose pose,
-            float x,
-            float y,
-            float z,
-            float u,
-            float v,
-            int color,
-            int light,
-            float nx,
-            float ny,
-            float nz) {
-        buffer.addVertex(pose, x, y, z)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, nx, ny, nz)
+    public static void addVertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int color, int light, float nx, float ny, float nz) {
+        buffer.addVertex(pose, x, y, z).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, nx, ny, nz)
                 // Let the .setColor at the end otherwise the vertex consumer is not the good one
                 .setColor(color);
     }
@@ -107,7 +82,8 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, 
         Direction facing = state.facing;
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
-        if (facing.getAxis() == Direction.Axis.Z) poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        if (facing.getAxis() == Direction.Axis.Z)
+            poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.mulPose(Axis.YP.rotationDegrees(facing.toYRot()));
         poseStack.translate(0.0, 0.0, -0.376f);
         int light = state.lightCoords;
@@ -121,8 +97,7 @@ public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, 
             int filterColor = state.filterColor;
             Identifier aspectTex = state.filterTexture;
             RenderType aspectType = RenderTypes.entityTranslucent(aspectTex);
-            collector.submitCustomGeometry(
-                    poseStack, aspectType, (pose, buffer) -> aspectIconQuad(buffer, pose, filterColor, light));
+            collector.submitCustomGeometry(poseStack, aspectType, (pose, buffer) -> aspectIconQuad(buffer, pose, filterColor, light));
             poseStack.popPose();
         }
         poseStack.popPose();

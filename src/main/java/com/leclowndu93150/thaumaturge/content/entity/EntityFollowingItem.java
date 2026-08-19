@@ -46,8 +46,7 @@ public class EntityFollowingItem extends EntitySpecialItem implements IEntityWit
         this.noPhysics = true;
     }
 
-    public EntityFollowingItem(
-            Level level, double x, double y, double z, ItemStack stack, double tx, double ty, double tz) {
+    public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack, double tx, double ty, double tz) {
         this(level, x, y, z, stack);
         this.targetX = tx;
         this.targetY = ty;
@@ -86,22 +85,12 @@ public class EntityFollowingItem extends EntitySpecialItem implements IEntityWit
             }
 
             if (this.level().isClientSide()) {
-                float h = (float) ((this.getBoundingBox().maxY - this.getBoundingBox().minY) / 2.0)
-                        + Mth.sin(this.getAge() / 10.0F + this.bobOffs) * 0.1F
-                        + 0.1F;
+                float h = (float) ((this.getBoundingBox().maxY - this.getBoundingBox().minY) / 2.0) + Mth.sin(this.getAge() / 10.0F + this.bobOffs) * 0.1F + 0.1F;
                 double fx = this.xo + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
                 double fy = this.yo + h + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
                 double fz = this.zo + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
                 if (this.type != BUBBLE_TYPE) {
-                    ClientEffects.nitorCore(
-                            this.level(),
-                            fx,
-                            fy,
-                            fz,
-                            this.random.nextGaussian() * 0.01,
-                            this.random.nextGaussian() * 0.01,
-                            this.random.nextGaussian() * 0.01,
-                            0xFFFFFF);
+                    ClientEffects.nitorCore(this.level(), fx, fy, fz, this.random.nextGaussian() * 0.01, this.random.nextGaussian() * 0.01, this.random.nextGaussian() * 0.01, 0xFFFFFF);
                 } else {
                     ClientEffects.followingBubble(this.level(), fx, fy, fz);
                 }

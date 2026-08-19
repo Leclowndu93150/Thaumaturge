@@ -36,26 +36,14 @@ public final class TaintacleModel extends EntityModel<TaintacleRenderState> {
 
     public static LayerDefinition createLayer(int length) {
         MeshDefinition mesh = new MeshDefinition();
-        PartDefinition base = mesh.getRoot()
-                .addOrReplaceChild(
-                        "base",
-                        CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
-                        PartPose.offset(0.0F, 12.0F, 0.0F));
+        PartDefinition base = mesh.getRoot().addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.offset(0.0F, 12.0F, 0.0F));
         PartDefinition parent = base;
         for (int k = 0; k < length - 1; k++) {
-            parent = parent.addOrReplaceChild(
-                    "seg" + k,
-                    CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
+            parent = parent.addOrReplaceChild("seg" + k, CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
                     PartPose.offset(0.0F, SEGMENT_OFFSET, 0.0F).withScale(SEGMENT_SCALE));
         }
-        parent.addOrReplaceChild(
-                "orb",
-                CubeListBuilder.create().texOffs(0, 56).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F),
-                PartPose.offset(0.0F, SEGMENT_OFFSET, 0.0F).withScale(SEGMENT_SCALE));
-        parent.addOrReplaceChild(
-                "end",
-                CubeListBuilder.create().texOffs(0, 32).addBox(-6.0F, -6.0F, -6.0F, 12.0F, 12.0F, 12.0F),
-                PartPose.offset(0.0F, SEGMENT_OFFSET, 0.0F).withScale(SEGMENT_SCALE));
+        parent.addOrReplaceChild("orb", CubeListBuilder.create().texOffs(0, 56).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(0.0F, SEGMENT_OFFSET, 0.0F).withScale(SEGMENT_SCALE));
+        parent.addOrReplaceChild("end", CubeListBuilder.create().texOffs(0, 32).addBox(-6.0F, -6.0F, -6.0F, 12.0F, 12.0F, 12.0F), PartPose.offset(0.0F, SEGMENT_OFFSET, 0.0F).withScale(SEGMENT_SCALE));
         return LayerDefinition.create(mesh, TEXTURE_SIZE, TEXTURE_SIZE);
     }
 

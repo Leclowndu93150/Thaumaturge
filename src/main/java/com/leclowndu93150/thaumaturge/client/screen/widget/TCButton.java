@@ -104,8 +104,7 @@ public abstract class TCButton extends AbstractButton {
             if (message != null && !message.getString().isEmpty()) {
                 combined.append(Component.literal("\n"));
             }
-            combined.append(
-                    description.copy().withStyle(Style.EMPTY.withItalic(true).withColor(0x5555FF)));
+            combined.append(description.copy().withStyle(Style.EMPTY.withItalic(true).withColor(0x5555FF)));
         }
         setTooltip(Tooltip.create(combined));
     }

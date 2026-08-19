@@ -43,9 +43,7 @@ public class BlockEntityJarNode extends BlockEntityNode {
     @Override
     public void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
-        components.set(
-                TCDataComponents.NODE_DATA.get(),
-                new NodeData(getNodeType(), Optional.ofNullable(getNodeModifier()), getAspects(), getAspectsBase()));
+        components.set(TCDataComponents.NODE_DATA.get(), new NodeData(getNodeType(), Optional.ofNullable(getNodeModifier()), getAspects(), getAspectsBase()));
     }
 
     @Override

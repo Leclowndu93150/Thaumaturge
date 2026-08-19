@@ -10,8 +10,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 
-public final class EldritchWardenRenderer
-        extends MobRenderer<EntityEldritchWarden, EldritchWardenRenderer.State, EldritchGuardianModel> {
+public final class EldritchWardenRenderer extends MobRenderer<EntityEldritchWarden, EldritchWardenRenderer.State, EldritchGuardianModel> {
     public static final class State extends EldritchGuardianRenderState {
         public float spawnFraction;
         public float height;

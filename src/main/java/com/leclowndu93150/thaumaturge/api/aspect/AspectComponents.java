@@ -116,8 +116,7 @@ public final class AspectComponents {
     }
 
     private static String translationKey(Holder<IAspect> holder, String suffix) {
-        String namespace =
-                holder.unwrapKey().map(key -> key.identifier().getNamespace()).orElse("thaumaturge");
+        String namespace = holder.unwrapKey().map(key -> key.identifier().getNamespace()).orElse("thaumaturge");
         return "aspect." + namespace + "." + holder.value().tag() + suffix;
     }
 }

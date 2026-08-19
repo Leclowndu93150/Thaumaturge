@@ -107,22 +107,18 @@ public final class GenContext {
             }
             case STAIR_A_INV -> state = legacyStair(dir == Direction.NORTH || dir == Direction.SOUTH ? 5 : 7);
             case STAIR_B_INV -> state = legacyStair(dir == Direction.NORTH || dir == Direction.SOUTH ? 4 : 6);
-            case STAIR_DIRECTIONAL ->
-                state = legacyStair(
-                        switch (dir) {
-                            case NORTH -> 3;
-                            case SOUTH -> 2;
-                            case EAST -> 0;
-                            default -> 1;
-                        });
-            case STAIR_DIRECTIONAL_INV ->
-                state = legacyStair(
-                        switch (dir) {
-                            case NORTH -> 7;
-                            case SOUTH -> 6;
-                            case EAST -> 4;
-                            default -> 5;
-                        });
+            case STAIR_DIRECTIONAL -> state = legacyStair(switch (dir) {
+                case NORTH -> 3;
+                case SOUTH -> 2;
+                case EAST -> 0;
+                default -> 1;
+            });
+            case STAIR_DIRECTIONAL_INV -> state = legacyStair(switch (dir) {
+                case NORTH -> 7;
+                case SOUTH -> 6;
+                case EAST -> 4;
+                default -> 5;
+            });
             case GLOW_TILE -> state = TCBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
             case VOID -> state = TCBlocks.ELDRITCH_NOTHING.get().defaultBlockState();
             case AIR_REPL -> {
@@ -144,12 +140,12 @@ public final class GenContext {
                 decoUrn.remove(pos);
             }
             case VOID_DOOR -> state = Blocks.BARRIER.defaultBlockState();
-            default -> {}
+            default -> {
+            }
         }
         if (state != null) {
             Block block = state.getBlock();
-            int flags =
-                    block != TCBlocks.ELDRITCH_NOTHING.get() && block != Blocks.BEDROCK && block != Blocks.AIR ? 3 : 2;
+            int flags = block != TCBlocks.ELDRITCH_NOTHING.get() && block != Blocks.BEDROCK && block != Blocks.AIR ? 3 : 2;
             level.setBlock(pos, state, flags);
             if (block instanceof StairBlock || block instanceof BlockEldritchInset) {
                 level.getChunk(pos).markPosForPostprocessing(pos);
@@ -165,9 +161,7 @@ public final class GenContext {
             return TCBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
         }
         if (random.nextInt(25) == 0) {
-            boolean crab = cell.feature == MazeCell.FEATURE_NEST
-                    || (cell.feature == 12 && random.nextBoolean())
-                    || random.nextInt(25) == 0;
+            boolean crab = cell.feature == MazeCell.FEATURE_NEST || (cell.feature == 12 && random.nextBoolean()) || random.nextInt(25) == 0;
             if (crab && (cell.feature == 0 || cell.feature == MazeCell.FEATURE_NEST || cell.feature == 12)) {
                 crabSpawner.add(pos);
             }

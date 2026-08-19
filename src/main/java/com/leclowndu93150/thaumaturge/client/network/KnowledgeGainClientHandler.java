@@ -20,10 +20,7 @@ public final class KnowledgeGainClientHandler {
                 return;
             }
             for (int point = 0; point < payload.count(); point++) {
-                KnowledgeGainOverlay.addTracker(
-                        payload.knowledgeType(),
-                        payload.category().orElse(null),
-                        BASE_DURATION_TICKS + mc.level.getRandom().nextInt(EXTRA_DURATION_SPREAD),
+                KnowledgeGainOverlay.addTracker(payload.knowledgeType(), payload.category().orElse(null), BASE_DURATION_TICKS + mc.level.getRandom().nextInt(EXTRA_DURATION_SPREAD),
                         mc.level.getRandom().nextLong());
             }
         });

@@ -11,9 +11,7 @@ public final class ThaumatoriumClientHandler {
     public static void handle(ClientboundThaumatoriumRecipesPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null
-                    && mc.player.containerMenu instanceof MenuThaumatorium menu
-                    && menu.containerId == payload.containerId()) {
+            if (mc.player != null && mc.player.containerMenu instanceof MenuThaumatorium menu && menu.containerId == payload.containerId()) {
                 menu.clientRecipes = payload.entries();
             }
         });

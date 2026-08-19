@@ -13,16 +13,7 @@ public final class FrostFlakeParticle extends TCParticle {
     private static final float DRIFT_XZ = 0.0025F;
     private static final float DRIFT_Y = 1.0E-4F;
 
-    private FrostFlakeParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            FrostFlakeParticleOptions options,
-            ParticleSheet sheet) {
+    private FrostFlakeParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, FrostFlakeParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(40);
         this.friction = FRICTION;
@@ -41,16 +32,7 @@ public final class FrostFlakeParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("frost_flake");
 
         @Override
-        public Particle createParticle(
-                FrostFlakeParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(FrostFlakeParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FrostFlakeParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

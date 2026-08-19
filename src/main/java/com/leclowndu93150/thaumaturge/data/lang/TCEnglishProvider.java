@@ -156,17 +156,25 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tc.table.slot.tools", "Place scribing tools here");
         add("tc.table.slot.note", "Place research notes here");
         add("research.thaumaturge.research_expertise.title", "Research Expertise");
-        add("research.thaumaturge.research_expertise.stage.1", "There must be a more efficient way to work through my research notes. If I complete another theory I am sure I can find ways to recover some of the research points I expend.");
-        add("research.thaumaturge.research_expertise.stage.2", "You have become more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 25%% chance that you will regain the research point.");
+        add("research.thaumaturge.research_expertise.stage.1",
+                "There must be a more efficient way to work through my research notes. If I complete another theory I am sure I can find ways to recover some of the research points I expend.");
+        add("research.thaumaturge.research_expertise.stage.2",
+                "You have become more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 25%% chance that you will regain the research point.");
         add("research.thaumaturge.research_mastery.title", "Research Mastery");
-        add("research.thaumaturge.research_mastery.stage.1", "My expertise has grown, but true mastery of the research process still eludes me. More theory work should get me there, though I fear what prolonged exposure to these mysteries is doing to my mind.");
-        add("research.thaumaturge.research_mastery.stage.2", "You have become even more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 50%% chance that you will regain the research point.<BR>Additionally there is a 10%% chance that whenever you place an aspect that it will not cost any research points to do so.<BR>Lastly you are able to combine aspects in the research table by shift-clicking on the aspect you wish to create. If you have enough of the component aspects they will automatically combine to create the clicked aspect.");
+        add("research.thaumaturge.research_mastery.stage.1",
+                "My expertise has grown, but true mastery of the research process still eludes me. More theory work should get me there, though I fear what prolonged exposure to these mysteries is doing to my mind.");
+        add("research.thaumaturge.research_mastery.stage.2",
+                "You have become even more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 50%% chance that you will regain the research point.<BR>Additionally there is a 10%% chance that whenever you place an aspect that it will not cost any research points to do so.<BR>Lastly you are able to combine aspects in the research table by shift-clicking on the aspect you wish to create. If you have enough of the component aspects they will automatically combine to create the clicked aspect.");
         add("research.thaumaturge.research_duplication.title", "Research Duplication");
-        add("research.thaumaturge.research_duplication.stage.1", "A completed discovery holds its pattern permanently. Surely I could copy one onto fresh paper for a colleague, given enough research points and one more theory to work out the method.");
-        add("research.thaumaturge.research_duplication.stage.2", "You have discovered a way to copy completed research notes.<BR>When you complete research or place a completed research note in the research table you will see a star icon. Clicking this will create a copy of this research as long as you are carrying paper and ink and have enough aspects available.<BR>The more copies are created of that research, the more expensive copying it will become.");
+        add("research.thaumaturge.research_duplication.stage.1",
+                "A completed discovery holds its pattern permanently. Surely I could copy one onto fresh paper for a colleague, given enough research points and one more theory to work out the method.");
+        add("research.thaumaturge.research_duplication.stage.2",
+                "You have discovered a way to copy completed research notes.<BR>When you complete research or place a completed research note in the research table you will see a star icon. Clicking this will create a copy of this research as long as you are carrying paper and ink and have enough aspects available.<BR>The more copies are created of that research, the more expensive copying it will become.");
         add("research.thaumaturge.deconstructor.title", "Deconstruction Table");
-        add("research.thaumaturge.deconstructor.stage.1", "Breaking things apart to see what makes them tick has always come naturally to me. A purpose-built table should let me reduce objects to their base essences and salvage research points from the wreckage.");
-        add("research.thaumaturge.deconstructor.stage.2", "There comes a point in any thaumaturge's career where he is unable to progress with research due to his lack of knowledge.<BR>One possible recourse is the Deconstruction Table. The table allows you to break down objects into their simplest parts which you can examine. There are limits however - the table breaks compound aspects into their component aspects until only primal aspects remain. During this process much knowledge is lost and at best the thaumaturge can hope for is a single piece of primal knowledge.<BR>For example iron (Metallum) <PAGE>will be simplified into §2Terra§0 and §7Ordo§0, only one of which will have a chance of being discovered.<BR>It is also fairly slow and the fewer aspects an object has, the lower the chance to discover something.");
+        add("research.thaumaturge.deconstructor.stage.1",
+                "Breaking things apart to see what makes them tick has always come naturally to me. A purpose-built table should let me reduce objects to their base essences and salvage research points from the wreckage.");
+        add("research.thaumaturge.deconstructor.stage.2",
+                "There comes a point in any thaumaturge's career where he is unable to progress with research due to his lack of knowledge.<BR>One possible recourse is the Deconstruction Table. The table allows you to break down objects into their simplest parts which you can examine. There are limits however - the table breaks compound aspects into their component aspects until only primal aspects remain. During this process much knowledge is lost and at best the thaumaturge can hope for is a single piece of primal knowledge.<BR>For example iron (Metallum) <PAGE>will be simplified into §2Terra§0 and §7Ordo§0, only one of which will have a chance of being discovered.<BR>It is also fairly slow and the fewer aspects an object has, the lower the chance to discover something.");
         add("gui.thaumaturge.research_table.inspiration", "Inspiration: %s");
         add("gui.thaumaturge.research_table.draw", "Draw");
         add("gui.thaumaturge.research_table.play", "Play");
@@ -533,9 +541,17 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("effect.thaumaturge.flux_taint", "Flux Taint");
 
         add("death.attack.thaumaturge.taint", "%1$s was tainted");
+        add("death.attack.thaumaturge.taint.player", "%1$s was tainted whilst fighting %2$s");
+        add("death.attack.thaumaturge.taint.item", "%1$s was tainted by %2$s using %3$s");
         add("death.attack.thaumaturge.tentacle", "%1$s was strangled by tentacles");
+        add("death.attack.thaumaturge.tentacle.player", "%1$s was strangled by tentacles whilst fighting %2$s");
+        add("death.attack.thaumaturge.tentacle.item", "%1$s was strangled by %2$s using %3$s");
         add("death.attack.thaumaturge.swarm", "%1$s was swarmed");
+        add("death.attack.thaumaturge.swarm.player", "%1$s was swarmed whilst fighting %2$s");
+        add("death.attack.thaumaturge.swarm.item", "%1$s was swarmed by %2$s using %3$s");
         add("death.attack.thaumaturge.dissolve", "%1$s dissolved");
+        add("death.attack.thaumaturge.dissolve.player", "%1$s dissolved whilst fighting %2$s");
+        add("death.attack.thaumaturge.dissolve.item", "%1$s was dissolved by %2$s using %3$s");
 
         add("item.thaumaturge.essentia_crystal", "%s Vis Crystal");
         add("item.thaumaturge.mana_bean", "Mana Bean");
@@ -586,7 +602,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tc.celestial.fail.1", "You have already studied that today.");
         add("tc.celestial.fail.2", "You are unable to take notes of your studies.");
         add("tc.celestial.studied", "You commit your celestial observations to memory.");
-        add("jei.thaumaturge.deconstruction.info", "Place any item that carries aspects on the Deconstruction Table and it will slowly break the item down. Each work cycle has a chance to shake loose a single research point of a random primal aspect; the richer the item's aspects, the better the odds. Click the floating aspect to collect it.");
+        add("jei.thaumaturge.deconstruction.info",
+                "Place any item that carries aspects on the Deconstruction Table and it will slowly break the item down. Each work cycle has a chance to shake loose a single research point of a random primal aspect; the richer the item's aspects, the better the odds. Click the floating aspect to collect it.");
 
         add("item.thaumaturge.celestial_notes", "Celestial Notes");
         add("item.thaumaturge.celestial_notes.sun.text", "Solar");
@@ -606,65 +623,87 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("card.thaumaturge.curio.name", "Study Curio");
         add("card.thaumaturge.curio.text", "While examining a curio often reveals some interesting information it is much better to study it as part of controlled research.");
         add("card.thaumaturge.enchantment.name", "Study Enchantment");
-        add("card.thaumaturge.enchantment.text", "You study normal enchantment to see how it functions at a fundamental level. You are sure that is shares a lot in common with the enchantment methods used in Infusion and Artifice. You lose 5 experience levels, but will gain 15 to 20 progress in both Infusion and Auromancy. ");
+        add("card.thaumaturge.enchantment.text",
+                "You study normal enchantment to see how it functions at a fundamental level. You are sure that is shares a lot in common with the enchantment methods used in Infusion and Artifice. You lose 5 experience levels, but will gain 15 to 20 progress in both Infusion and Auromancy. ");
         add("card.thaumaturge.beacon.name", "Aural Influence");
-        add("card.thaumaturge.beacon.text", "You believe that the beacon interacts in some way with the mystical aura. You carefully study this and while you cannot find anything concrete this time you have been inspired. You regain 2 inspiration, 1 bonus draw and an additional category will gain the full bonus upon completion. ");
+        add("card.thaumaturge.beacon.text",
+                "You believe that the beacon interacts in some way with the mystical aura. You carefully study this and while you cannot find anything concrete this time you have been inspired. You regain 2 inspiration, 1 bonus draw and an additional category will gain the full bonus upon completion. ");
         add("card.thaumaturge.dragonegg.name", "Draconic Studies");
         add("card.thaumaturge.dragonegg.text", "The aura around the egg swirls with strange and chaotic energies. Occasionally you glimpse strange order in the chaos. ");
         add("card.thaumaturge.concentrate.name", "Concentrate");
-        add("card.thaumaturge.concentrate.text", "Often much can be learned by concentrating a substance into its purest form. Attempt to concentrate some %1$s essentia. Gain 15 Alchemy and 1 bonus draw. There is also a chance you will gain 1 inspiration.");
+        add("card.thaumaturge.concentrate.text",
+                "Often much can be learned by concentrating a substance into its purest form. Attempt to concentrate some %1$s essentia. Gain 15 Alchemy and 1 bonus draw. There is also a chance you will gain 1 inspiration.");
         add("card.thaumaturge.reactions.name", "Reactions");
-        add("card.thaumaturge.reactions.text", "Studying the reactions between two different types of vis should prove beneficial. You should study what happens when %1$s essentia reacts with %2$s essentia. Gain 25 Alchemy. There is also a chance you will gain 1 inspiration.");
+        add("card.thaumaturge.reactions.text",
+                "Studying the reactions between two different types of vis should prove beneficial. You should study what happens when %1$s essentia reacts with %2$s essentia. Gain 25 Alchemy. There is also a chance you will gain 1 inspiration.");
         add("card.thaumaturge.synthesis.name", "Synthesis");
-        add("card.thaumaturge.synthesis.text", "When essentia combines to form more complex forms a number of interesting and intricate reactions take place. You will learn much by combining %1$s essentia with %2$s essentia and then studying the resulting combination. Gain 40 Alchemy. There is also a chance you will gain 1 inspiration.");
+        add("card.thaumaturge.synthesis.text",
+                "When essentia combines to form more complex forms a number of interesting and intricate reactions take place. You will learn much by combining %1$s essentia with %2$s essentia and then studying the resulting combination. Gain 40 Alchemy. There is also a chance you will gain 1 inspiration.");
         add("card.thaumaturge.measure.name", "Measure");
-        add("card.thaumaturge.measure.text", "You take some time to make detailed measurements of various types of essentia and the potential vis they contain. Gain 15 Infusion progress and 1 bonus draw.");
+        add("card.thaumaturge.measure.text",
+                "You take some time to make detailed measurements of various types of essentia and the potential vis they contain. Gain 15 Infusion progress and 1 bonus draw.");
         add("card.thaumaturge.channel.name", "Channel %1$s Essentia");
         add("card.thaumaturge.channel.text", "You set up a simple experiment to examine what happens when you channel %1$s during infusion. Gain 25 Infusion.");
         add("card.thaumaturge.infuse.name", "Experimental Infusion");
-        add("card.thaumaturge.infuse.text", "By making assumptions on the results of infusing certain objects with essentia, and then testing those results valuable insight may be gained. You will learn much by combining %1$s essentia with %2$s and then studying the result. Gain %3$s Infusion.");
+        add("card.thaumaturge.infuse.text",
+                "By making assumptions on the results of infusing certain objects with essentia, and then testing those results valuable insight may be gained. You will learn much by combining %1$s essentia with %2$s and then studying the result. Gain %3$s Infusion.");
         add("card.thaumaturge.calibrate.name", "Calibrate");
         add("card.thaumaturge.calibrate.text", "You take some time to properly calibrate your instruments and tools. Gain 15 Artifice and a bonus draw.");
         add("card.thaumaturge.mindmatter.name", "Mind over Matter");
-        add("card.thaumaturge.mindmatter.text", "You carefully examine and take apart some basic components in the hopes of finding new ways to assemble them into more complex creations. Gain %1$s Artifice. ");
+        add("card.thaumaturge.mindmatter.text",
+                "You carefully examine and take apart some basic components in the hopes of finding new ways to assemble them into more complex creations. Gain %1$s Artifice. ");
         add("card.thaumaturge.tinker.name", "Tinker");
         add("card.thaumaturge.tinker.text", "You start tinkering with some devices to find new ways of incorporating them into magical creations. Gain %1$s to %2$s Artifice.");
         add("card.thaumaturge.spellbinding.name", "Spellbinding");
-        add("card.thaumaturge.spellbinding.text", "You bind various test enchantments to small pieces of leftover crystal. They have no practical purpose, but grant you invaluable knowledge. Lose up to 5 experience levels, but gain 5 Auromancy per level lost.");
+        add("card.thaumaturge.spellbinding.text",
+                "You bind various test enchantments to small pieces of leftover crystal. They have no practical purpose, but grant you invaluable knowledge. Lose up to 5 experience levels, but gain 5 Auromancy per level lost.");
         add("card.thaumaturge.awareness.name", "Awareness");
-        add("card.thaumaturge.awareness.text", "You open yourself to the flows of vis around you. You gain a deeper understanding of how it works and the underlying nature of things, but this leaves you metaphysically vulnerable. Gain 20 Auromancy. There is a chance you gain Eldritch knowledge and Warp. ");
+        add("card.thaumaturge.awareness.text",
+                "You open yourself to the flows of vis around you. You gain a deeper understanding of how it works and the underlying nature of things, but this leaves you metaphysically vulnerable. Gain 20 Auromancy. There is a chance you gain Eldritch knowledge and Warp. ");
         add("card.thaumaturge.focus.name", "Spiritual Focus");
         add("card.thaumaturge.focus.text", "You focus your mind on the magical and spiritual energy around you, hoping to grow more attuned to its ebb and flow. Gain 15 Auromancy and a bonus draw.");
         add("card.thaumaturge.sculpting.name", "Sculpting");
         add("card.thaumaturge.sculpting.text", "You can hone your knowledge by creating simple and short-lived animated figurines. Gain 20 Golemancy and a bonus draw.");
         add("card.thaumaturge.scripting.name", "Scripting");
-        add("card.thaumaturge.scripting.text", "A large part of Golemancy is creating intricate arcane texts to control your creations. By creating some test scripts you can further your understanding. Gain 25 Golemancy. This consumes additional paper and ink from the research table. ");
+        add("card.thaumaturge.scripting.text",
+                "A large part of Golemancy is creating intricate arcane texts to control your creations. By creating some test scripts you can further your understanding. Gain 25 Golemancy. This consumes additional paper and ink from the research table. ");
         add("card.thaumaturge.synergy.name", "Synergy");
-        add("card.thaumaturge.synergy.text", "At its root, Golemancy is a blend of Alchemy, Artifice and Infusion. Only by fully understanding how these three disciplines interact with each other will you be able to master Golemancy. Lose 15 points divided evenly between Alchemy, Artifice and Infusion to gain 30 Golemancy. An additional category will gain the full bonus upon completion.");
+        add("card.thaumaturge.synergy.text",
+                "At its root, Golemancy is a blend of Alchemy, Artifice and Infusion. Only by fully understanding how these three disciplines interact with each other will you be able to master Golemancy. Lose 15 points divided evenly between Alchemy, Artifice and Infusion to gain 30 Golemancy. An additional category will gain the full bonus upon completion.");
         add("card.thaumaturge.darkwhisper.name", "Dark Whispers");
         add("card.thaumaturge.darkwhisper.text", "The brain in a jar has been very talkative lately. It promises you ancient secrets for all your experience. Can you trust it?");
         add("card.thaumaturge.glyph.name", "Study Glyphs");
-        add("card.thaumaturge.glyph.text", "You study the ancient glyphs. What Eldritch secrets do they hold? You find the ancient language difficult to understand, but now and again some nugget of truth reveals itself to you.");
+        add("card.thaumaturge.glyph.text",
+                "You study the ancient glyphs. What Eldritch secrets do they hold? You find the ancient language difficult to understand, but now and again some nugget of truth reveals itself to you.");
         add("card.thaumaturge.portal.name", "Voices from Beyond");
-        add("card.thaumaturge.portal.text", "Bathed in the light of this strange portal you find strange thoughts invading your mind. Most are incomprehensible, but some fill your mind with strange inspirations.");
+        add("card.thaumaturge.portal.text",
+                "Bathed in the light of this strange portal you find strange thoughts invading your mind. Most are incomprehensible, but some fill your mind with strange inspirations.");
         add("card.thaumaturge.revelation.name", "Revelation");
-        add("card.thaumaturge.revelation.text", "Studying the Eldritch is a dangerous pursuit, but the knowledge you can uncover is often worth it. You gain 30 Eldritch progress and 5 to 10 progress in a random category. You will also gain some temporary and normal Warp and an additional category will gain the full bonus upon completion. ");
+        add("card.thaumaturge.revelation.text",
+                "Studying the Eldritch is a dangerous pursuit, but the knowledge you can uncover is often worth it. You gain 30 Eldritch progress and 5 to 10 progress in a random category. You will also gain some temporary and normal Warp and an additional category will gain the full bonus upon completion. ");
         add("card.thaumaturge.realization.name", "Sudden Realization");
-        add("card.thaumaturge.realization.text", "While pondering the nature of the Eldritch you come to a sudden and shocking realization on the true nature of the universe. You gain 15 Eldritch progress and 5 to 10 progress in two random categories. You will also gain some temporary Warp. There is a chance you may gain some normal Warp as well.");
+        add("card.thaumaturge.realization.text",
+                "While pondering the nature of the Eldritch you come to a sudden and shocking realization on the true nature of the universe. You gain 15 Eldritch progress and 5 to 10 progress in two random categories. You will also gain some temporary Warp. There is a chance you may gain some normal Warp as well.");
         add("card.thaumaturge.truth.name", "Find Truth");
-        add("card.thaumaturge.truth.text", "You desperately try and find the truth behind the Eldritch and what it could mean for the world. You gain 10 to 25 Eldritch progress and a bonus draw. You will also gain some temporary Warp.");
+        add("card.thaumaturge.truth.text",
+                "You desperately try and find the truth behind the Eldritch and what it could mean for the world. You gain 10 to 25 Eldritch progress and a bonus draw. You will also gain some temporary Warp.");
         add("card.thaumaturge.celestial.name", "Celestial Studies");
-        add("card.thaumaturge.celestial.text", "You take some of the celestial notes you have made and compare them for possible correlations with your primary research category. You gain 25 to 50 inspiration toward %1$s. You may gain other things as well...");
+        add("card.thaumaturge.celestial.text",
+                "You take some of the celestial notes you have made and compare them for possible correlations with your primary research category. You gain 25 to 50 inspiration toward %1$s. You may gain other things as well...");
 
         add("research.thaumaturge.flux.warn", "Something seems to be building up in the aura. Something bad.");
         add("research.thaumaturge.warp.warn", "My mind reels from the knowledge I have gained");
         add("research.thaumaturge.oculus.title", "The Oculus");
-        add("research.thaumaturge.oculus.stage_0", "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
-        add("research.thaumaturge.oculus.stage_1", "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
+        add("research.thaumaturge.oculus.stage_0",
+                "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
+        add("research.thaumaturge.oculus.stage_1",
+                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
-        add("research.thaumaturge.enter_outer_lands.stage_0", "You are not quite sure what you were expecting when you stepped through the Oculus, but this strange structure of crumbling stone and twisted passageways was not it.<BR>Something is not quite right here - this structure was not designed for any practical purpose you can discern... unless that purpose was for it to be a deadly maze.<BR>Strange energies abound and your magic seems to act strangely in this alien environment. Even the other denizens you encounter seem out of place here.");
+        add("research.thaumaturge.enter_outer_lands.stage_0",
+                "You are not quite sure what you were expecting when you stepped through the Oculus, but this strange structure of crumbling stone and twisted passageways was not it.<BR>Something is not quite right here - this structure was not designed for any practical purpose you can discern... unless that purpose was for it to be a deadly maze.<BR>Strange energies abound and your magic seems to act strangely in this alien environment. Even the other denizens you encounter seem out of place here.");
         add("research.thaumaturge.outer_revelations.title", "Outer Revelations");
-        add("research.thaumaturge.outer_revelations.stage_0", "Your suspicions have been confirmed. This is not the home of the race you have come to call the Eldritch. This place is something else entirely and you do not believe it exists in what you understand as being \"reality\" - it is as much a mental construct as a physical one, but what mind can contain this?<BR>You have been able to decipher only a small number of the symbols, but you are sure this place is a trap - a place to test visitors and weed out the weak. For what purpose you are not sure.");
+        add("research.thaumaturge.outer_revelations.stage_0",
+                "Your suspicions have been confirmed. This is not the home of the race you have come to call the Eldritch. This place is something else entirely and you do not believe it exists in what you understand as being \"reality\" - it is as much a mental construct as a physical one, but what mind can contain this?<BR>You have been able to decipher only a small number of the symbols, but you are sure this place is a trap - a place to test visitors and weed out the weak. For what purpose you are not sure.");
         add("gui.thaumaturge.altar.ritual_unknown", "The keystone hums with power, but its purpose escapes you... for now.");
     }
 
@@ -971,13 +1010,17 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("focus.thaumaturge.curse.name", "Curse");
         add("focus.thaumaturge.curse.text", "Summons the powers of entropy to harm and disrupt the targeted creature.");
         add("focus.thaumaturge.flux.name", "Flux");
-        add("focus.thaumaturge.flux.text", "This effect conjures raw, unfocused vis that disrupts living (and dead) creatures. This energy cannot interact with inanimate objects, but it does bypass mundane armor.");
+        add("focus.thaumaturge.flux.text",
+                "This effect conjures raw, unfocused vis that disrupts living (and dead) creatures. This energy cannot interact with inanimate objects, but it does bypass mundane armor.");
         add("focus.thaumaturge.rift.name", "Rift");
         add("focus.thaumaturge.rift.text", "Shifts matter into an alternate reality, creating temporary 'holes' through which you can travel.");
         add("focus.thaumaturge.exchange.name", "Exchange");
         add("focus.thaumaturge.exchange.text", "Swap one type of block in the world for another.");
         add("focus.thaumaturge.heal.name", "Heal");
         add("focus.thaumaturge.heal.text", "This effect heals living creatures and harms undead.");
+        add("focus.thaumaturge.ward.name", "Ward");
+        add("focus.thaumaturge.ward.text",
+                "Binds a solid block in place without altering it. Warded blocks cannot be mined, burned, exploded, pushed by pistons or destroyed by creatures. Cast again on your own ward to lift it.");
 
         add("focus.thaumaturge.scatter.name", "Scatter");
         add("focus.thaumaturge.scatter.text", "Split a single trajectory into multiple random trajectories.");
@@ -1014,6 +1057,7 @@ public final class TCEnglishProvider extends LanguageProvider {
 
         add("death.attack.thaumaturge.focus_fire", "%1$s was burned to a crisp by magic");
         add("death.attack.thaumaturge.focus_fire.player", "%1$s was burned to a crisp by %2$s's magic");
+        add("death.attack.thaumaturge.focus_fire.item", "%1$s was burned to a crisp by %2$s using %3$s");
         add("block.thaumaturge.focal_manipulator", "Focal Manipulator");
         add("gui.thaumaturge.wandtable.craft", "Start Crafting");
         add("gui.thaumaturge.wandtable.complexity", "Total Complexity");
@@ -1031,6 +1075,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.wandtable.problem.no_effects", "The spell needs at least one effect");
         add("gui.thaumaturge.wandtable.problem.xp", "Requires %s experience levels");
         add("gui.thaumaturge.wandtable.problem.ready", "Ready to craft!");
+        add("gui.thaumaturge.golembuilder.stat.health", "Health");
+        add("gui.thaumaturge.golembuilder.stat.armor", "Armour");
+        add("gui.thaumaturge.golembuilder.stat.damage", "Damage");
+        add("gui.thaumaturge.golembuilder.craft", "Assemble Golem");
+        add("gui.thaumaturge.golembuilder.problem.in_progress", "Assembly in progress...");
+        add("gui.thaumaturge.golembuilder.problem.no_parts", "No golem parts are available");
+        add("gui.thaumaturge.golembuilder.problem.component", "Missing %sx %s");
+        add("gui.thaumaturge.golembuilder.problem.ready", "Ready to assemble!");
     }
 
     private void langEnchantments() {
@@ -1114,7 +1166,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         material("wood", "Greatwood", "The golem is crafted from greatwood. It is light and agile, but not particularly sturdy.");
         material("iron", "Iron", "The golem is crafted from iron. It is sturdy and fireproof, but heavy.");
         material("clay", "Clay", "The golem is crafted from baked clay. It is not a particularly sturdy material, but the resulting golem is fireproof and relatively light.");
-        material("brass", "Brass", "The golem is crafted from brass. It is not as sturdy as iron nor as resistant to fire. Normally brass is heavier than iron, but it allows for superior construction methods which results in a much lighter frame.");
+        material("brass", "Brass",
+                "The golem is crafted from brass. It is not as sturdy as iron nor as resistant to fire. Normally brass is heavier than iron, but it allows for superior construction methods which results in a much lighter frame.");
         material("thaumium", "Thaumium", "The golem is crafted from thaumium. It shares many characteristics with iron, though it is sturdier and more resistant to damage.");
         material("void", "Void Metal", "The golem is crafted from void metal. Slightly softer than iron, this metal makes up for it by being lighter and able to repair itself.");
         head("basic", "Clockwork Head", "The default golem head. No particular strengths or weaknesses.");

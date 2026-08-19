@@ -25,7 +25,8 @@ public final class StreamPathfinder {
 
     private StreamPathfinder() {}
 
-    public record Result(@Nullable List<Vec3> waypoints, boolean directSight, int expanded) {}
+    public record Result(@Nullable List<Vec3> waypoints, boolean directSight, int expanded) {
+    }
 
     public static @Nullable List<Vec3> findRoute(BlockGetter level, Vec3 from, Vec3 to) {
         return explore(level, from, to).waypoints();
@@ -46,11 +47,8 @@ public final class StreamPathfinder {
         return new Result(waypoints, false, search.expanded);
     }
 
-    private record Node(
-            BlockPos pos,
-            int walked,
-            double score,
-            @Nullable Node parent) {}
+    private record Node(BlockPos pos, int walked, double score, @Nullable Node parent) {
+    }
 
     private static final class Search {
         private final BlockGetter level;
@@ -197,10 +195,7 @@ public final class StreamPathfinder {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int i = 1; i < steps; i++) {
             double t = (double) i / steps;
-            cursor.set(
-                    Mth.floor(Mth.lerp(t, a.x, b.x)),
-                    Mth.floor(Mth.lerp(t, a.y, b.y)),
-                    Mth.floor(Mth.lerp(t, a.z, b.z)));
+            cursor.set(Mth.floor(Mth.lerp(t, a.x, b.x)), Mth.floor(Mth.lerp(t, a.y, b.y)), Mth.floor(Mth.lerp(t, a.z, b.z)));
             BlockState state = level.getBlockState(cursor);
             if (state.isCollisionShapeFullBlock(level, cursor)) {
                 return false;

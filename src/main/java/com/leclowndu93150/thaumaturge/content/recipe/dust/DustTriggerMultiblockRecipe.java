@@ -39,31 +39,19 @@ import org.jspecify.annotations.Nullable;
 
 public final class DustTriggerMultiblockRecipe implements DustTrigger {
 
-    public static final MapCodec<DustTriggerMultiblockRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Identifier.CODEC.fieldOf("blueprint").forGetter(r -> r.blueprintId),
-                    ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
-            .apply(i, DustTriggerMultiblockRecipe::new));
+    public static final MapCodec<DustTriggerMultiblockRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(Identifier.CODEC.fieldOf("blueprint").forGetter(r -> r.blueprintId),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(r -> r.result), ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research)).apply(i, DustTriggerMultiblockRecipe::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, DustTriggerMultiblockRecipe> STREAM_CODEC =
-            StreamCodec.composite(
-                    Identifier.STREAM_CODEC,
-                    r -> r.blueprintId,
-                    ItemStackTemplate.STREAM_CODEC,
-                    r -> r.result,
-                    ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
-                    r -> r.research,
-                    DustTriggerMultiblockRecipe::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, DustTriggerMultiblockRecipe> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC, r -> r.blueprintId,
+            ItemStackTemplate.STREAM_CODEC, r -> r.result, ByteBufCodecs.optional(ResearchGate.STREAM_CODEC), r -> r.research, DustTriggerMultiblockRecipe::new);
 
-    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER =
-            new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     private final Identifier blueprintId;
     private final ItemStackTemplate result;
     private final Optional<ResearchGate> research;
 
-    public DustTriggerMultiblockRecipe(
-            Identifier blueprintId, ItemStackTemplate result, Optional<ResearchGate> research) {
+    public DustTriggerMultiblockRecipe(Identifier blueprintId, ItemStackTemplate result, Optional<ResearchGate> research) {
         this.blueprintId = blueprintId;
         this.result = result;
         this.research = research;
@@ -138,8 +126,7 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
     }
 
     @Override
-    public void execute(
-            DustTriggerInput input, Player player, @Nullable DustTriggerPlacement placement, Direction useFace) {
+    public void execute(DustTriggerInput input, Player player, @Nullable DustTriggerPlacement placement, Direction useFace) {
         Level level = input.level();
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
@@ -172,15 +159,7 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         }
     }
 
-    private static void enqueueForPart(
-            ServerLevel level,
-            BlockPos pos,
-            BlockState original,
-            BlueprintPart part,
-            Direction placementFacing,
-            Direction useFace,
-            Player player,
-            int delay) {
+    private static void enqueueForPart(ServerLevel level, BlockPos pos, BlockState original, BlueprintPart part, Direction placementFacing, Direction useFace, Player player, int delay) {
         BlueprintTarget target = part.target();
         if (target instanceof BlueprintTarget.Keep) {
             return;
@@ -193,9 +172,7 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
             BlockState placed = blockTarget.block().defaultBlockState();
             Direction facing;
             if (blockTarget.applyPlayerFacing()) {
-                Direction side2 = useFace.getAxis().isHorizontal()
-                        ? useFace
-                        : player.getDirection().getOpposite();
+                Direction side2 = useFace.getAxis().isHorizontal() ? useFace : player.getDirection().getOpposite();
                 facing = side2;
             } else if (blockTarget.opposite()) {
                 facing = placementFacing.getOpposite();
@@ -221,8 +198,7 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
 
     private @Nullable Blueprint lookupBlueprint(Level level) {
         ResourceKey<Blueprint> key = ResourceKey.create(Blueprint.REGISTRY_KEY, this.blueprintId);
-        Registry<Blueprint> registry =
-                level.registryAccess().lookup(Blueprint.REGISTRY_KEY).orElse(null);
+        Registry<Blueprint> registry = level.registryAccess().lookup(Blueprint.REGISTRY_KEY).orElse(null);
         if (registry == null) {
             return null;
         }

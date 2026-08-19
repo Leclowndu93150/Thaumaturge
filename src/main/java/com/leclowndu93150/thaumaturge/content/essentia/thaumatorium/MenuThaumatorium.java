@@ -36,30 +36,21 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
         this(containerId, playerInventory, clientBlockEntity(playerInventory, buf));
     }
 
-    private static @Nullable BlockEntityThaumatorium clientBlockEntity(
-            Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        return playerInventory.player.level().getBlockEntity(buf.readBlockPos())
-                        instanceof BlockEntityThaumatorium machine
-                ? machine
-                : null;
+    private static @Nullable BlockEntityThaumatorium clientBlockEntity(Inventory playerInventory, RegistryFriendlyByteBuf buf) {
+        return playerInventory.player.level().getBlockEntity(buf.readBlockPos()) instanceof BlockEntityThaumatorium machine ? machine : null;
     }
 
     public MenuThaumatorium(int containerId, Inventory playerInventory, @Nullable BlockEntityThaumatorium blockEntity) {
         super(TCMenus.THAUMATORIUM.get(), containerId);
         this.blockEntity = blockEntity;
         this.player = playerInventory.player;
-        ItemStacksResourceHandler items =
-                blockEntity != null ? blockEntity.catalyst() : new ItemStacksResourceHandler(1);
+        ItemStacksResourceHandler items = blockEntity != null ? blockEntity.catalyst() : new ItemStacksResourceHandler(1);
 
         addSlot(new ResourceHandlerSlot(items, items::set, 0, CATALYST_X, CATALYST_Y));
 
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        8 + col * 18,
-                        PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS, 8 + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
@@ -70,9 +61,7 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (blockEntity == null
-                || !(player instanceof ServerPlayer serverPlayer)
-                || !(serverPlayer.level() instanceof ServerLevel server)) {
+        if (blockEntity == null || !(player instanceof ServerPlayer serverPlayer) || !(serverPlayer.level() instanceof ServerLevel server)) {
             return;
         }
         ItemStack catalyst = blockEntity.catalystStack();
@@ -85,11 +74,7 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
         var recipes = blockEntity.candidateRecipes(server, serverPlayer, ids);
         List<ClientboundThaumatoriumRecipesPayload.Entry> entries = new ArrayList<>();
         for (int i = 0; i < recipes.size(); i++) {
-            entries.add(new ClientboundThaumatoriumRecipesPayload.Entry(
-                    ids.get(i),
-                    recipes.get(i).rawResult().create(),
-                    blockEntity.queue().contains(ids.get(i)),
-                    recipes.get(i).aspects()));
+            entries.add(new ClientboundThaumatoriumRecipesPayload.Entry(ids.get(i), recipes.get(i).rawResult().create(), blockEntity.queue().contains(ids.get(i)), recipes.get(i).aspects()));
         }
         PacketDistributor.sendToPlayer(serverPlayer, new ClientboundThaumatoriumRecipesPayload(containerId, entries));
     }
@@ -119,7 +104,6 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return blockEntity == null
-                || blockEntity.getBlockPos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) <= 64.0;
+        return blockEntity == null || blockEntity.getBlockPos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) <= 64.0;
     }
 }

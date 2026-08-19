@@ -15,8 +15,7 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
     public static final int CONSUMER_RANGE = 8;
 
     @Override
-    public int drainCentivis(
-            ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
+    public int drainCentivis(ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
         BlockEntityNode source = findSource(level, consumerPos);
         if (source == null) {
             return 0;

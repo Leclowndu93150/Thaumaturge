@@ -48,8 +48,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldritchMob, RangedAttackMob {
-    private static final EntityDataAccessor<Boolean> DATA_HEADLESS =
-            SynchedEntityData.defineId(EntityEldritchGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_HEADLESS = SynchedEntityData.defineId(EntityEldritchGolem.class, EntityDataSerializers.BOOLEAN);
 
     private static final byte ATTACK_EVENT = 4;
     private static final byte ARC_EVENT = 19;
@@ -76,11 +75,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBossAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.ATTACK_DAMAGE, 10.0)
-                .add(Attributes.MAX_HEALTH, 400.0)
-                .add(Attributes.ARMOR, BONUS_ARMOR);
+        return createBossAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.ATTACK_DAMAGE, 10.0).add(Attributes.MAX_HEALTH, 400.0).add(Attributes.ARMOR, BONUS_ARMOR);
     }
 
     @Override
@@ -113,10 +108,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
     public void generateName() {
         int mod = ChampionHelper.championType(this);
         if (mod >= 0) {
-            this.setCustomName(Component.translatable(
-                    "entity.thaumaturge.eldritch_golem.name.custom",
-                    Component.translatable(
-                            "champion.mod." + ChampionModifier.MODS.get(mod).name())));
+            this.setCustomName(Component.translatable("entity.thaumaturge.eldritch_golem.name.custom", Component.translatable("champion.mod." + ChampionModifier.MODS.get(mod).name())));
         }
     }
 
@@ -151,11 +143,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData data) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         this.spawnTimer = SPAWN_INVULN_TICKS;
         ChampionHelper.makeChampion(this, true);
         return super.finalizeSpawn(level, difficulty, reason, data);
@@ -171,15 +159,8 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
         if (movement.x * movement.x + movement.z * movement.z > 2.5000003E-7F && this.random.nextInt(5) == 0) {
             BlockState state = this.level().getBlockState(this.blockPosition());
             if (!state.isAir()) {
-                this.level()
-                        .addParticle(
-                                new BlockParticleOption(ParticleTypes.BLOCK, state),
-                                this.getX() + (this.random.nextFloat() - 0.5) * this.getBbWidth(),
-                                this.getBoundingBox().minY + 0.1,
-                                this.getZ() + (this.random.nextFloat() - 0.5) * this.getBbWidth(),
-                                4.0 * (this.random.nextFloat() - 0.5),
-                                0.5,
-                                (this.random.nextFloat() - 0.5) * 4.0);
+                this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), this.getX() + (this.random.nextFloat() - 0.5) * this.getBbWidth(), this.getBoundingBox().minY + 0.1,
+                        this.getZ() + (this.random.nextFloat() - 0.5) * this.getBbWidth(), 4.0 * (this.random.nextFloat() - 0.5), 0.5, (this.random.nextFloat() - 0.5) * 4.0);
             }
             if (!this.level().isClientSide() && state.getBlock() instanceof BlockLoot) {
                 this.level().destroyBlock(this.blockPosition(), true);
@@ -201,14 +182,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
             this.spawnTimer = SPAWN_INVULN_TICKS;
             double xx = Mth.cos(this.getYRot() % 360.0F / 180.0F * Mth.PI) * 0.75F;
             double zz = Mth.sin(this.getYRot() % 360.0F / 180.0F * Mth.PI) * 0.75F;
-            level.explode(
-                    this,
-                    this.getX() + xx,
-                    this.getY() + this.getEyeHeight(),
-                    this.getZ() + zz,
-                    HEAD_EXPLOSION_POWER,
-                    false,
-                    Level.ExplosionInteraction.NONE);
+            level.explode(this, this.getX() + xx, this.getY() + this.getEyeHeight(), this.getZ() + zz, HEAD_EXPLOSION_POWER, false, Level.ExplosionInteraction.NONE);
             this.makeHeadless();
             return false;
         }
@@ -230,17 +204,11 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
         }
         this.attackTimer = ATTACK_COOLDOWN;
         this.level().broadcastEntityEvent(this, ATTACK_EVENT);
-        boolean hit = target.hurtServer(
-                level,
-                this.damageSources().mobAttack(this),
-                (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * MELEE_FACTOR);
+        boolean hit = target.hurtServer(level, this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * MELEE_FACTOR);
         if (hit) {
             target.setDeltaMovement(target.getDeltaMovement().add(0.0, MELEE_KNOCKUP, 0.0));
             if (this.isHeadless()) {
-                target.push(
-                        -Mth.sin(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING,
-                        0.1,
-                        Mth.cos(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING);
+                target.push(-Mth.sin(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING, 0.1, Mth.cos(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING);
             }
         }
         return hit;
@@ -252,13 +220,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
             return;
         }
         this.beamCharge -= 15 + this.random.nextInt(5);
-        this.getLookControl()
-                .setLookAt(
-                        target.getX(),
-                        target.getBoundingBox().minY + target.getBbHeight() / 2.0F,
-                        target.getZ(),
-                        30.0F,
-                        30.0F);
+        this.getLookControl().setLookAt(target.getX(), target.getBoundingBox().minY + target.getBbHeight() / 2.0F, target.getZ(), 30.0F, 30.0F);
         Vec3 look = this.getLookAngle();
         EntityGolemOrb blast = new EntityGolemOrb(this.level(), this, target, false);
         blast.setPos(blast.getX() + look.x, blast.getY(), blast.getZ() + look.z);
@@ -305,10 +267,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
     private void sendJacobsArc(ServerLevel level) {
         if (this.arcing > 0) {
             this.arcing--;
-            Effects.arcLightning(level, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0))
-                    .to(Vec3.atBottomCenterOf(this.arcTarget.above()))
-                    .color(ARC_COLOR)
-                    .send();
+            Effects.arcLightning(level, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0)).to(Vec3.atBottomCenterOf(this.arcTarget.above())).color(ARC_COLOR).send();
             return;
         }
         float radius = 2.0F + this.random.nextFloat() * 2.0F;
@@ -323,8 +282,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
         if (this.level().isEmptyBlock(pos.above()) && !this.level().isEmptyBlock(pos)) {
             this.arcTarget = pos;
             this.arcing = ARC_DURATION_BASE + this.random.nextInt(5);
-            this.playSound(
-                    TCSounds.JACOBS.get(), 0.8F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+            this.playSound(TCSounds.JACOBS.get(), 0.8F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
         }
     }
 }

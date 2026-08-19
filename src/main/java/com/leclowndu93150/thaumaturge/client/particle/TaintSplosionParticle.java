@@ -28,15 +28,7 @@ public final class TaintSplosionParticle extends SingleQuadParticle {
     private final float vo;
     private final float baseAlpha;
 
-    private TaintSplosionParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double xd,
-            double yd,
-            double zd,
-            TextureAtlasSprite sprite) {
+    private TaintSplosionParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd, TextureAtlasSprite sprite) {
         super(level, x, y, z, xd, yd, zd, sprite);
         this.sprite = sprite;
         this.layer = SingleQuadParticle.Layer.bySprite(sprite);
@@ -114,32 +106,10 @@ public final class TaintSplosionParticle extends SingleQuadParticle {
         private final ItemStackRenderState scratchRenderState = new ItemStackRenderState();
 
         @Override
-        public @Nullable Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double xd,
-                double yd,
-                double zd,
-                RandomSource random) {
-            Minecraft.getInstance()
-                    .getItemModelResolver()
-                    .updateForTopItem(
-                            scratchRenderState,
-                            new ItemStack(Items.SLIME_BALL),
-                            ItemDisplayContext.GROUND,
-                            level,
-                            null,
-                            0);
+        public @Nullable Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double xd, double yd, double zd, RandomSource random) {
+            Minecraft.getInstance().getItemModelResolver().updateForTopItem(scratchRenderState, new ItemStack(Items.SLIME_BALL), ItemDisplayContext.GROUND, level, null, 0);
             Material.Baked material = scratchRenderState.pickParticleMaterial(random);
-            TextureAtlasSprite sprite = material != null
-                    ? material.sprite()
-                    : Minecraft.getInstance()
-                            .getAtlasManager()
-                            .getAtlasOrThrow(AtlasIds.ITEMS)
-                            .missingSprite();
+            TextureAtlasSprite sprite = material != null ? material.sprite() : Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.ITEMS).missingSprite();
             return new TaintSplosionParticle(level, x, y, z, xd, yd, zd, sprite);
         }
     }

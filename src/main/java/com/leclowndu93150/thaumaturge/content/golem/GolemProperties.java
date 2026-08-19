@@ -26,29 +26,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public final class GolemProperties implements IGolemProperties {
-    public static final Codec<GolemProperties> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    TCGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::getMaterial),
-                    TCGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::getHead),
-                    TCGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::getArms),
-                    TCGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::getLegs),
-                    TCGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::getAddon),
-                    Codec.intRange(0, 10).optionalFieldOf("rank", 0).forGetter(GolemProperties::getRank))
-            .apply(instance, GolemProperties::new));
+    public static final Codec<GolemProperties> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(TCGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::getMaterial),
+                    TCGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::getHead), TCGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::getArms),
+                    TCGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::getLegs), TCGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::getAddon),
+                    Codec.intRange(0, 10).optionalFieldOf("rank", 0).forGetter(GolemProperties::getRank)).apply(instance, GolemProperties::new));
 
-    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(
-            registryStream(TCGolemParts::materials),
-            GolemProperties::getMaterial,
-            registryStream(TCGolemParts::heads),
-            GolemProperties::getHead,
-            registryStream(TCGolemParts::arms),
-            GolemProperties::getArms,
-            registryStream(TCGolemParts::legs),
-            GolemProperties::getLegs,
-            registryStream(TCGolemParts::addons),
-            GolemProperties::getAddon,
-            ByteBufCodecs.VAR_INT,
-            GolemProperties::getRank,
-            GolemProperties::new);
+    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(registryStream(TCGolemParts::materials), GolemProperties::getMaterial,
+            registryStream(TCGolemParts::heads), GolemProperties::getHead, registryStream(TCGolemParts::arms), GolemProperties::getArms, registryStream(TCGolemParts::legs), GolemProperties::getLegs,
+            registryStream(TCGolemParts::addons), GolemProperties::getAddon, ByteBufCodecs.VAR_INT, GolemProperties::getRank, GolemProperties::new);
 
     private GolemMaterial material;
     private GolemHead head;
@@ -58,8 +44,7 @@ public final class GolemProperties implements IGolemProperties {
     private int rank;
     private Set<GolemTrait> traitCache;
 
-    public GolemProperties(
-            GolemMaterial material, GolemHead head, GolemArm arms, GolemLeg legs, GolemAddon addon, int rank) {
+    public GolemProperties(GolemMaterial material, GolemHead head, GolemArm arms, GolemLeg legs, GolemAddon addon, int rank) {
         this.material = material;
         this.head = head;
         this.arms = arms;
@@ -69,13 +54,7 @@ public final class GolemProperties implements IGolemProperties {
     }
 
     public static GolemProperties createDefault() {
-        return new GolemProperties(
-                TCGolemParts.WOOD.get(),
-                TCGolemParts.HEAD_BASIC.get(),
-                TCGolemParts.ARMS_BASIC.get(),
-                TCGolemParts.LEGS_WALKER.get(),
-                TCGolemParts.ADDON_NONE.get(),
-                0);
+        return new GolemProperties(TCGolemParts.WOOD.get(), TCGolemParts.HEAD_BASIC.get(), TCGolemParts.ARMS_BASIC.get(), TCGolemParts.LEGS_WALKER.get(), TCGolemParts.ADDON_NONE.get(), 0);
     }
 
     public GolemProperties copy() {
@@ -83,8 +62,7 @@ public final class GolemProperties implements IGolemProperties {
     }
 
     private static <T> StreamCodec<ByteBuf, T> registryStream(Supplier<Registry<T>> registry) {
-        return Identifier.STREAM_CODEC.map(
-                id -> registry.get().getValue(id), value -> registry.get().getKey(value));
+        return Identifier.STREAM_CODEC.map(id -> registry.get().getValue(id), value -> registry.get().getKey(value));
     }
 
     @Override
@@ -102,8 +80,7 @@ public final class GolemProperties implements IGolemProperties {
 
     private void addTraitSmart(Holder<GolemTrait> trait) {
         GolemTrait value = trait.value();
-        GolemTrait opposite =
-                value.opposite() == null ? null : TCGolemTraits.registry().getValue(value.opposite());
+        GolemTrait opposite = value.opposite() == null ? null : TCGolemTraits.registry().getValue(value.opposite());
         if (opposite != null && traitCache.contains(opposite)) {
             traitCache.remove(opposite);
         } else {
@@ -213,13 +190,7 @@ public final class GolemProperties implements IGolemProperties {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof GolemProperties props
-                && props.material == material
-                && props.head == head
-                && props.arms == arms
-                && props.legs == legs
-                && props.addon == addon
-                && props.rank == rank;
+        return other instanceof GolemProperties props && props.material == material && props.head == head && props.arms == arms && props.legs == legs && props.addon == addon && props.rank == rank;
     }
 
     @Override

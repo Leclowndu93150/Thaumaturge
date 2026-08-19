@@ -36,8 +36,7 @@ public final class WorkbenchPayment {
         // Primal vis cost calculation
         Map<ResourceKey<IAspect>, Integer> wandCentivis = new LinkedHashMap<>();
         Map<ResourceKey<IAspect>, Integer> sourceCentivis = new LinkedHashMap<>();
-        AspectList crystalNeeds =
-                calculateCrystalNeeds(recipe, inventory, player, hasWand, wand, wandCentivis, sourceCentivis);
+        AspectList crystalNeeds = calculateCrystalNeeds(recipe, inventory, player, hasWand, wand, wandCentivis, sourceCentivis);
 
         // Vis cost calculation
         boolean fullWand = hasWand && crystalNeeds.isEmpty() && sourceCentivis.isEmpty();
@@ -55,19 +54,11 @@ public final class WorkbenchPayment {
         int auraVis = recipe.getBaseVis() <= 0 ? 0 : Math.max(1, Mth.ceil(recipe.getBaseVis() * modifier));
 
         // Plan making
-        Plan plan = new Plan(
-                fullWand, wandCentivis, sourceCentivis, crystalNeeds, auraVis, hasCrystals(inventory, crystalNeeds));
+        Plan plan = new Plan(fullWand, wandCentivis, sourceCentivis, crystalNeeds, auraVis, hasCrystals(inventory, crystalNeeds));
         return applyCostEvent(recipe, inventory, player, plan);
     }
 
-    private static AspectList calculateCrystalNeeds(
-            IArcaneRecipe recipe,
-            IArcaneWorkbench inventory,
-            Player player,
-            boolean hasWand,
-            ItemStack wand,
-            Map<ResourceKey<IAspect>, Integer> wandCentivis,
-            Map<ResourceKey<IAspect>, Integer> sourceCentivis) {
+    private static AspectList calculateCrystalNeeds(IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, boolean hasWand, ItemStack wand, Map<ResourceKey<IAspect>, Integer> wandCentivis, Map<ResourceKey<IAspect>, Integer> sourceCentivis) {
         AspectList crystalNeeds = AspectList.EMPTY;
         for (AspectInstance entry : recipe.getCrystals().entries()) {
             ResourceKey<IAspect> primal = entry.aspect().getKey();
@@ -76,8 +67,7 @@ public final class WorkbenchPayment {
             single.put(primal, centivis);
             if (hasWand && WandVisHelper.consumeAllVisRaw(wand, single, true)) { // Pay from the wand
                 wandCentivis.put(primal, centivis);
-            } else if (supplyFromSources(player, inventory, entry.aspect(), centivis, true)
-                    >= centivis) { // Pay from external sources
+            } else if (supplyFromSources(player, inventory, entry.aspect(), centivis, true) >= centivis) { // Pay from external sources
                 sourceCentivis.put(primal, centivis);
             } else {
                 crystalNeeds = crystalNeeds.add(entry.aspect(), entry.amount()); // Pay from the inventory
@@ -88,31 +78,20 @@ public final class WorkbenchPayment {
 
     private static Plan applyCostEvent(IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, Plan plan) {
         boolean affordable = plan.crystalsSatisfied();
-        ArcaneCraftCost initial = new ArcaneCraftCost(
-                plan.fullWand(), plan.wandCentivis(), plan.crystalsToConsume(), plan.auraVis(), affordable);
+        ArcaneCraftCost initial = new ArcaneCraftCost(plan.fullWand(), plan.wandCentivis(), plan.crystalsToConsume(), plan.auraVis(), affordable);
         ArcaneCraftCostEvent event = new ArcaneCraftCostEvent(recipe, inventory, player, initial);
         NeoForge.EVENT_BUS.post(event);
         ArcaneCraftCost result = event.getCost();
         if (result == initial) {
             return plan;
         }
-        return new Plan(
-                result.paidFromWand(),
-                result.wandCentivis(),
-                plan.sourceCentivis(),
-                result.crystalsNeeded(),
-                result.auraVis(),
+        return new Plan(result.paidFromWand(), result.wandCentivis(), plan.sourceCentivis(), result.crystalsNeeded(), result.auraVis(),
                 result.affordable() && hasCrystals(inventory, result.crystalsNeeded()));
     }
 
     public static ArcaneCraftCost cost(IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player) {
         Plan plan = plan(recipe, workbench, player);
-        return new ArcaneCraftCost(
-                plan.fullWand(),
-                plan.wandCentivis(),
-                plan.crystalsToConsume(),
-                plan.auraVis(),
-                plan.crystalsSatisfied());
+        return new ArcaneCraftCost(plan.fullWand(), plan.wandCentivis(), plan.crystalsToConsume(), plan.auraVis(), plan.crystalsSatisfied());
     }
 
     public static boolean canCraft(Plan plan, @Nullable BlockEntityArcaneWorkbench tile) {
@@ -122,13 +101,11 @@ public final class WorkbenchPayment {
         return plan.auraVis() <= 0 || (tile != null && tile.auraVis >= plan.auraVis());
     }
 
-    public static void pay(
-            Plan plan, @Nullable BlockEntityArcaneWorkbench tile, Player player, InventoryArcaneWorkbench inventory) {
+    public static void pay(Plan plan, @Nullable BlockEntityArcaneWorkbench tile, Player player, InventoryArcaneWorkbench inventory) {
         if (!plan.wandCentivis().isEmpty()) {
             WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), false);
         }
-        for (Map.Entry<ResourceKey<IAspect>, Integer> entry :
-                plan.sourceCentivis().entrySet()) {
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : plan.sourceCentivis().entrySet()) {
             Holder<IAspect> aspect = Aspects.resolve(player.level(), entry.getKey());
             if (aspect != null) {
                 supplyFromSources(player, inventory, aspect, entry.getValue(), false);
@@ -142,8 +119,7 @@ public final class WorkbenchPayment {
         }
     }
 
-    private static int supplyFromSources(
-            Player player, IArcaneWorkbench inventory, Holder<IAspect> aspect, int need, boolean simulate) {
+    private static int supplyFromSources(Player player, IArcaneWorkbench inventory, Holder<IAspect> aspect, int need, boolean simulate) {
         if (player == null) {
             return 0;
         }
@@ -178,8 +154,7 @@ public final class WorkbenchPayment {
             int found = 0;
             for (AspectInstance crystalEntry : inventory.availableCrystals().entries()) {
                 Holder<IAspect> holder = crystalEntry.aspect();
-                if (holder != null
-                        && holder.value().tag().equals(entry.aspect().value().tag())) {
+                if (holder != null && holder.value().tag().equals(entry.aspect().value().tag())) {
                     found += crystalEntry.amount();
                 }
             }
@@ -193,16 +168,11 @@ public final class WorkbenchPayment {
     private static void consumeCrystals(InventoryArcaneWorkbench inventory, AspectList crystals) {
         for (AspectInstance entry : crystals.entries()) {
             int needed = entry.amount();
-            for (int i = InventoryArcaneWorkbench.CRAFTING_SLOTS;
-                    i < InventoryArcaneWorkbench.WAND_SLOT && needed > 0;
-                    i++) {
+            for (int i = InventoryArcaneWorkbench.CRAFTING_SLOTS; i < InventoryArcaneWorkbench.WAND_SLOT && needed > 0; i++) {
                 ItemStack crystal = inventory.getItem(i);
                 if (!crystal.isEmpty() && crystal.getItem() instanceof ItemEssentiaCrystal) {
                     Holder<IAspect> holder = ItemEssentiaCrystal.aspectOf(crystal);
-                    if (holder != null
-                            && holder.value()
-                                    .tag()
-                                    .equals(entry.aspect().value().tag())) {
+                    if (holder != null && holder.value().tag().equals(entry.aspect().value().tag())) {
                         int remove = Math.min(needed, crystal.getCount());
                         inventory.removeItem(i, remove);
                         needed -= remove;
@@ -212,11 +182,7 @@ public final class WorkbenchPayment {
         }
     }
 
-    public record Plan(
-            boolean fullWand,
-            Map<ResourceKey<IAspect>, Integer> wandCentivis,
-            Map<ResourceKey<IAspect>, Integer> sourceCentivis,
-            AspectList crystalsToConsume,
-            int auraVis,
-            boolean crystalsSatisfied) {}
+    public record Plan(boolean fullWand, Map<ResourceKey<IAspect>, Integer> wandCentivis, Map<ResourceKey<IAspect>, Integer> sourceCentivis, AspectList crystalsToConsume, int auraVis,
+            boolean crystalsSatisfied) {
+    }
 }

@@ -30,7 +30,8 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
     private Map<Item, List<Candidate>> candidates = Map.of();
     private Holder<IAspect> magic;
 
-    private record Candidate(List<Ingredient> ingredients, int count, int vis) {}
+    private record Candidate(List<Ingredient> ingredients, int count, int vis) {
+    }
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
@@ -44,14 +45,12 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
                     ItemStack output = safeAssembleArcane(arcane);
                     if (!output.isEmpty()) {
                         int count = Math.max(1, output.getCount());
-                        map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
-                                .add(new Candidate(arcane.placementInfo().ingredients(), count, arcane.getBaseVis()));
+                        map.computeIfAbsent(output.getItem(), item -> new ArrayList<>()).add(new Candidate(arcane.placementInfo().ingredients(), count, arcane.getBaseVis()));
                     }
                 } else if (recipe instanceof CraftingRecipe crafting) {
                     ItemStack output = safeAssemble(crafting);
                     if (!output.isEmpty()) {
-                        map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
-                                .add(new Candidate(crafting.placementInfo().ingredients(), output.getCount(), -1));
+                        map.computeIfAbsent(output.getItem(), item -> new ArrayList<>()).add(new Candidate(crafting.placementInfo().ingredients(), output.getCount(), -1));
                     }
                 }
             } catch (Throwable t) {
@@ -59,15 +58,13 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
             }
         }
         if (skipped > 0) {
-            Thaumaturge.LOGGER.warn(
-                    "Skipped {} crafting recipes with broken placement info while indexing aspects", skipped);
+            Thaumaturge.LOGGER.warn("Skipped {} crafting recipes with broken placement info while indexing aspects", skipped);
         }
         candidates = map;
     }
 
     @Override
-    public Optional<AspectList> derive(
-            Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial) {
+    public Optional<AspectList> derive(Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial) {
         List<Candidate> list = candidates.get(item);
         if (list == null) {
             return Optional.empty();
@@ -75,8 +72,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
         AspectList best = null;
         int bestSize = Integer.MAX_VALUE;
         for (Candidate candidate : list) {
-            AspectList out =
-                    RecipeAspectDerivation.fromIngredients(candidate.ingredients(), candidate.count(), partial);
+            AspectList out = RecipeAspectDerivation.fromIngredients(candidate.ingredients(), candidate.count(), partial);
             if (candidate.vis() > 0) {
                 int bonus = (int) (Math.sqrt(1 + candidate.vis() / 2) / candidate.count());
                 if (bonus > 0) {

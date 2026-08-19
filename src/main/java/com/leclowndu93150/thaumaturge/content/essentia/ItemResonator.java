@@ -51,33 +51,20 @@ public final class ItemResonator extends Item {
             IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, pos, side);
             if (container != null) {
                 for (AspectInstance entry : container.getAspects().sortedByTag()) {
-                    player.sendSystemMessage(Component.translatable(
-                            "tc.resonator1", String.valueOf(entry.amount()), AspectComponents.name(entry.aspect())));
+                    player.sendSystemMessage(Component.translatable("tc.resonator1", String.valueOf(entry.amount()), AspectComponents.name(entry.aspect())));
                 }
             }
         } else if (transport.getEssentiaType(side) != null) {
             Holder<IAspect> type = transport.getEssentiaType(side);
-            player.sendSystemMessage(Component.translatable(
-                    "tc.resonator1", String.valueOf(transport.getEssentiaAmount(side)), AspectComponents.name(type)));
+            player.sendSystemMessage(Component.translatable("tc.resonator1", String.valueOf(transport.getEssentiaAmount(side)), AspectComponents.name(type)));
         }
         Holder<IAspect> suction = transport.getSuctionType(side);
-        Component suctionName =
-                suction != null ? AspectComponents.name(suction) : Component.translatable("tc.resonator3");
-        player.sendSystemMessage(
-                Component.translatable("tc.resonator2", String.valueOf(transport.getSuctionAmount(side)), suctionName));
-        level.playSound(
-                null,
-                pos,
-                SoundEvents.SHIELD_BLOCK.value(),
-                SoundSource.BLOCKS,
-                SOUND_VOLUME,
-                SOUND_PITCH_BASE + level.getRandom().nextFloat() * 0.1F);
+        Component suctionName = suction != null ? AspectComponents.name(suction) : Component.translatable("tc.resonator3");
+        player.sendSystemMessage(Component.translatable("tc.resonator2", String.valueOf(transport.getSuctionAmount(side)), suctionName));
+        level.playSound(null, pos, SoundEvents.SHIELD_BLOCK.value(), SoundSource.BLOCKS, SOUND_VOLUME, SOUND_PITCH_BASE + level.getRandom().nextFloat() * 0.1F);
         if (tile instanceof BlockEntityCondenser condenser) {
             player.sendSystemMessage(Component.translatable("tc.condenser1", String.valueOf(condenser.cost())));
-            player.sendSystemMessage(Component.translatable(
-                    "tc.condenser2",
-                    String.valueOf(condenser.interval()),
-                    String.valueOf(condenser.interval() / TICKS_PER_SECOND)));
+            player.sendSystemMessage(Component.translatable("tc.condenser2", String.valueOf(condenser.interval()), String.valueOf(condenser.interval() / TICKS_PER_SECOND)));
         }
         return InteractionResult.SUCCESS;
     }

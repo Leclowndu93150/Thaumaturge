@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockNodeStabilizer extends Block implements EntityBlock {
-    private static final MapCodec<BlockNodeStabilizer> CODEC =
-            simpleCodec(props -> new BlockNodeStabilizer(props, false));
+    private static final MapCodec<BlockNodeStabilizer> CODEC = simpleCodec(props -> new BlockNodeStabilizer(props, false));
 
     private final boolean advanced;
 
@@ -45,12 +44,10 @@ public final class BlockNodeStabilizer extends Block implements EntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (!level.isClientSide() || type != TCBlockEntities.NODE_STABILIZER.get()) {
             return null;
         }
-        return (tickLevel, pos, tickState, stabilizer) ->
-                ((BlockEntityNodeStabilizer) stabilizer).clientTick(tickLevel, pos);
+        return (tickLevel, pos, tickState, stabilizer) -> ((BlockEntityNodeStabilizer) stabilizer).clientTick(tickLevel, pos);
     }
 }

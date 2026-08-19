@@ -107,8 +107,7 @@ public final class GogglesAccess {
             return true;
         }
         if (curios != null) {
-            return curios.anyCurioMatches(
-                    entity, stack -> stack.getItem() instanceof IRevealer r && r.showNodes(stack, entity));
+            return curios.anyCurioMatches(entity, stack -> stack.getItem() instanceof IRevealer r && r.showNodes(stack, entity));
         }
         return false;
     }
@@ -125,7 +124,8 @@ public final class GogglesAccess {
             return 0;
         }
         AttributeInstance attribute = player.getAttribute(visDiscountAttribute());
-        if (attribute == null) return 0;
+        if (attribute == null)
+            return 0;
         return (int) (attribute.getValue() * 100);
     }
 }

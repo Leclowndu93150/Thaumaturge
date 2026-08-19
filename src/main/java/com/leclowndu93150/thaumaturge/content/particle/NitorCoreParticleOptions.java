@@ -11,21 +11,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 public record NitorCoreParticleOptions(float r, float g, float b) implements ParticleOptions {
-    public static final MapCodec<NitorCoreParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    Codec.FLOAT.fieldOf("r").forGetter(NitorCoreParticleOptions::r),
-                    Codec.FLOAT.fieldOf("g").forGetter(NitorCoreParticleOptions::g),
-                    Codec.FLOAT.fieldOf("b").forGetter(NitorCoreParticleOptions::b))
-            .apply(inst, NitorCoreParticleOptions::new));
+    public static final MapCodec<NitorCoreParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(Codec.FLOAT.fieldOf("r").forGetter(NitorCoreParticleOptions::r),
+            Codec.FLOAT.fieldOf("g").forGetter(NitorCoreParticleOptions::g), Codec.FLOAT.fieldOf("b").forGetter(NitorCoreParticleOptions::b)).apply(inst, NitorCoreParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, NitorCoreParticleOptions> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.FLOAT,
-                    NitorCoreParticleOptions::r,
-                    ByteBufCodecs.FLOAT,
-                    NitorCoreParticleOptions::g,
-                    ByteBufCodecs.FLOAT,
-                    NitorCoreParticleOptions::b,
-                    NitorCoreParticleOptions::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, NitorCoreParticleOptions> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.FLOAT, NitorCoreParticleOptions::r, ByteBufCodecs.FLOAT,
+            NitorCoreParticleOptions::g, ByteBufCodecs.FLOAT, NitorCoreParticleOptions::b, NitorCoreParticleOptions::new);
 
     @Override
     public ParticleType<?> getType() {

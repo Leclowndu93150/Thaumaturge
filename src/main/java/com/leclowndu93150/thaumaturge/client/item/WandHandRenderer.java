@@ -42,9 +42,7 @@ public final class WandHandRenderer {
         WandItemSpecialRenderer.WandArg arg = WandItemSpecialRenderer.extract(stack);
         PoseStack poseStack = event.getPoseStack();
         SubmitNodeCollector collector = event.getSubmitNodeCollector();
-        HumanoidArm arm = event.getHand() == InteractionHand.MAIN_HAND
-                ? player.getMainArm()
-                : player.getMainArm().getOpposite();
+        HumanoidArm arm = event.getHand() == InteractionHand.MAIN_HAND ? player.getMainArm() : player.getMainArm().getOpposite();
         float mirror = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
         float partial = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
         float equip = event.getEquipProgress();

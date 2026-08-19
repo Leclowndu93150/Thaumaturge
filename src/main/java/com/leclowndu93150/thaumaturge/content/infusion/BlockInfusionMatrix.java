@@ -35,11 +35,7 @@ public final class BlockInfusionMatrix extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(
-                type,
-                TCBlockEntities.INFUSION_MATRIX.get(),
-                level.isClientSide() ? BlockEntityInfusionMatrix::clientTick : BlockEntityInfusionMatrix::serverTick);
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TCBlockEntities.INFUSION_MATRIX.get(), level.isClientSide() ? BlockEntityInfusionMatrix::clientTick : BlockEntityInfusionMatrix::serverTick);
     }
 }

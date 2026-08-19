@@ -25,24 +25,9 @@ public final class ItemBottleTaint extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        level.playSound(
-                null,
-                player.getX(),
-                player.getY(),
-                player.getZ(),
-                SoundEvents.EGG_THROW,
-                SoundSource.PLAYERS,
-                0.5F,
-                0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EGG_THROW, SoundSource.PLAYERS, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
         if (level instanceof ServerLevel serverLevel) {
-            Projectile.spawnProjectileFromRotation(
-                    EntityBottleTaint::new,
-                    serverLevel,
-                    stack,
-                    player,
-                    THROW_PITCH_OFFSET,
-                    THROW_POWER,
-                    THROW_UNCERTAINTY);
+            Projectile.spawnProjectileFromRotation(EntityBottleTaint::new, serverLevel, stack, player, THROW_PITCH_OFFSET, THROW_POWER, THROW_UNCERTAINTY);
         }
         player.awardStat(Stats.ITEM_USED.get(this));
         if (!player.getAbilities().instabuild) {

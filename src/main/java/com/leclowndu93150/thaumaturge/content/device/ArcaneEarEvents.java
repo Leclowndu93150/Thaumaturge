@@ -26,8 +26,7 @@ public final class ArcaneEarEvents {
             if (earPos.distToCenterSqr(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) > MAX_RANGE_SQ) {
                 continue;
             }
-            if (level.getBlockEntity(earPos) instanceof BlockEntityArcaneEar ear
-                    && ear.matches(event.getInstrument(), event.getVanillaNoteId())) {
+            if (level.getBlockEntity(earPos) instanceof BlockEntityArcaneEar ear && ear.matches(event.getInstrument(), event.getVanillaNoteId())) {
                 ear.trigger();
             }
         }

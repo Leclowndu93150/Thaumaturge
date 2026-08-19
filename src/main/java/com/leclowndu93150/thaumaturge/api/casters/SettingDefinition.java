@@ -19,8 +19,7 @@ import org.jspecify.annotations.Nullable;
  * @param research the research required to change this setting, or null when ungated
  * @since 1.0.0
  */
-public record SettingDefinition(
-        String key, String nameKey, Values values, @Nullable ResearchGate research) {
+public record SettingDefinition(String key, String nameKey, Values values, @Nullable ResearchGate research) {
     /**
      * Creates an ungated definition.
      *

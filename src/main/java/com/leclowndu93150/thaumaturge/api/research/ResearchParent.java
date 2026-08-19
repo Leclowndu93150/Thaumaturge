@@ -21,8 +21,7 @@ import net.minecraft.resources.Identifier;
  */
 public record ResearchParent(Identifier id, int stage, boolean inherit) {
     /** String codec using the {@code ~}/{@code @stage} prefix and suffix conventions. */
-    public static final Codec<ResearchParent> CODEC =
-            Codec.STRING.comapFlatMap(ResearchParent::parse, ResearchParent::serialize);
+    public static final Codec<ResearchParent> CODEC = Codec.STRING.comapFlatMap(ResearchParent::parse, ResearchParent::serialize);
 
     /**
      * Creates a reference requiring full completion of the parent.

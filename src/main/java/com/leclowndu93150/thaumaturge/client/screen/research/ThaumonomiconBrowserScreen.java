@@ -194,15 +194,10 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     @Override
     protected void init() {
         super.init();
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft == null || minecraft.player == null)
+            return;
         loadRegistryData();
-        searchField = new EditBox(
-                font,
-                SEARCH_BOX_X,
-                SEARCH_BOX_Y,
-                SEARCH_BOX_WIDTH,
-                SEARCH_BOX_HEIGHT,
-                Component.translatable("tc.search"));
+        searchField = new EditBox(font, SEARCH_BOX_X, SEARCH_BOX_Y, SEARCH_BOX_WIDTH, SEARCH_BOX_HEIGHT, Component.translatable("tc.search"));
         searchField.setBordered(true);
         searchField.setMaxLength(15);
         searchField.setTextColor(0xFFFFFFFF);
@@ -212,13 +207,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         if (persistedCategoryId != null) {
             for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
                 ref.unwrapKey().ifPresent(key -> {
-                    if (key.identifier().equals(persistedCategoryId)) activeCategory = ref;
+                    if (key.identifier().equals(persistedCategoryId))
+                        activeCategory = ref;
                 });
             }
             if (activeCategory == null) {
                 for (Holder.Reference<IResearchCategory> ref : categoriesOther) {
                     ref.unwrapKey().ifPresent(key -> {
-                        if (key.identifier().equals(persistedCategoryId)) activeCategory = ref;
+                        if (key.identifier().equals(persistedCategoryId))
+                            activeCategory = ref;
                     });
                 }
             }
@@ -261,44 +258,33 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private void loadRegistryData() {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft == null || minecraft.player == null)
+            return;
         categoriesTC.clear();
         categoriesOther.clear();
         nodesByCategory.clear();
         allEntries.clear();
-        minecraft
-                .player
-                .registryAccess()
-                .lookup(IResearchCategory.REGISTRY_KEY)
-                .ifPresent(lookup -> lookup.listElements()
-                        .forEach(ref -> ref.unwrapKey().ifPresent(key -> {
-                            if (key.identifier().getNamespace().equals(TCIds.MODID)) {
-                                categoriesTC.add(ref);
-                            } else {
-                                categoriesOther.add(ref);
-                            }
-                        })));
+        minecraft.player.registryAccess().lookup(IResearchCategory.REGISTRY_KEY).ifPresent(lookup -> lookup.listElements().forEach(ref -> ref.unwrapKey().ifPresent(key -> {
+            if (key.identifier().getNamespace().equals(TCIds.MODID)) {
+                categoriesTC.add(ref);
+            } else {
+                categoriesOther.add(ref);
+            }
+        })));
         categoriesTC.sort(Comparator.comparing(ref -> ref.value().index()));
-        minecraft
-                .player
-                .registryAccess()
-                .lookup(IResearchEntry.REGISTRY_KEY)
-                .ifPresent(lookup -> lookup.listElements()
-                        .forEach(holder -> holder.unwrapKey().ifPresent(key -> {
-                            IResearchEntry entry = holder.value();
-                            @SuppressWarnings("unchecked")
-                            Holder.Reference<IResearchCategory> categoryRef =
-                                    (Holder.Reference<IResearchCategory>) entry.category();
-                            EntryNode node = new EntryNode(key.identifier(), entry, holder, categoryRef);
-                            nodesByCategory
-                                    .computeIfAbsent(categoryRef, k -> new ArrayList<>())
-                                    .add(node);
-                            allEntries.add(node);
-                        })));
+        minecraft.player.registryAccess().lookup(IResearchEntry.REGISTRY_KEY).ifPresent(lookup -> lookup.listElements().forEach(holder -> holder.unwrapKey().ifPresent(key -> {
+            IResearchEntry entry = holder.value();
+            @SuppressWarnings("unchecked")
+            Holder.Reference<IResearchCategory> categoryRef = (Holder.Reference<IResearchCategory>) entry.category();
+            EntryNode node = new EntryNode(key.identifier(), entry, holder, categoryRef);
+            nodesByCategory.computeIfAbsent(categoryRef, k -> new ArrayList<>()).add(node);
+            allEntries.add(node);
+        })));
     }
 
     private void updateResearch() {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft == null || minecraft.player == null)
+            return;
         screenX = width - 32;
         screenY = height - 32;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
@@ -307,7 +293,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         int limit = (int) Math.floor((screenY - CATEGORY_AVAILABLE_HEIGHT_PADDING) / (double) CATEGORY_BUTTON_STRIDE_Y);
         int count = 0;
         for (Holder.Reference<IResearchCategory> ref : categoriesOther) {
-            if (!isCategoryUnlocked(knowledge, ref)) continue;
+            if (!isCategoryUnlocked(knowledge, ref))
+                continue;
             count++;
             if (count <= limit + catScrollPos && count - 1 >= catScrollPos) {
                 categoriesOtherVisible.add(ref);
@@ -317,7 +304,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             addonShift = (screenY - CATEGORY_AVAILABLE_HEIGHT_PADDING) % CATEGORY_BUTTON_STRIDE_Y / 2;
         }
         catScrollMax = count - limit;
-        if (catScrollPos > catScrollMax) catScrollPos = Math.max(0, catScrollMax);
+        if (catScrollPos > catScrollMax)
+            catScrollPos = Math.max(0, catScrollMax);
         invisibleEntries.clear();
         guiBoundsLeft = 99999;
         guiBoundsTop = 99999;
@@ -325,7 +313,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         guiBoundsBottom = -99999;
         if (activeCategory != null) {
             for (EntryNode node : nodesByCategory.getOrDefault(activeCategory, List.of())) {
-                if (!isVisible(knowledge, node)) continue;
+                if (!isVisible(knowledge, node))
+                    continue;
                 int c = node.entry.column();
                 int r = node.entry.row();
                 if (c * CELL_SIZE - screenX + FRAME_INSET < guiBoundsLeft) {
@@ -342,10 +331,14 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 }
             }
         }
-        if (guiBoundsLeft == 99999) guiBoundsLeft = 0;
-        if (guiBoundsTop == 99999) guiBoundsTop = 0;
-        if (guiBoundsRight == -99999) guiBoundsRight = 0;
-        if (guiBoundsBottom == -99999) guiBoundsBottom = 0;
+        if (guiBoundsLeft == 99999)
+            guiBoundsLeft = 0;
+        if (guiBoundsTop == 99999)
+            guiBoundsTop = 0;
+        if (guiBoundsRight == -99999)
+            guiBoundsRight = 0;
+        if (guiBoundsBottom == -99999)
+            guiBoundsBottom = 0;
     }
 
     private boolean isCategoryUnlocked(IPlayerKnowledge knowledge, Holder.Reference<IResearchCategory> ref) {
@@ -354,11 +347,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private boolean isVisible(IPlayerKnowledge knowledge, EntryNode node) {
-        if (knowledge.isResearchKnown(node.id)) return true;
-        if (invisibleEntries.contains(node.id)) return false;
+        if (knowledge.isResearchKnown(node.id))
+            return true;
+        if (invisibleEntries.contains(node.id))
+            return false;
         boolean hidden = node.entry.hasMeta(ResearchEntryMeta.HIDDEN);
-        if (hidden && !canUnlockResearch(knowledge, node)) return false;
-        if (node.entry.parents().isEmpty() && hidden) return false;
+        if (hidden && !canUnlockResearch(knowledge, node))
+            return false;
+        if (node.entry.parents().isEmpty() && hidden)
+            return false;
         for (ResearchParent parent : node.entry.parents()) {
             EntryNode parentNode = findGlobalNode(parent.id());
             if (parentNode != null && !isVisible(knowledge, parentNode)) {
@@ -371,7 +368,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private boolean canUnlockResearch(IPlayerKnowledge knowledge, EntryNode node) {
         for (ResearchParent parent : node.entry.parents()) {
-            if (!parent.isSatisfiedBy(knowledge)) return false;
+            if (!parent.isSatisfiedBy(knowledge))
+                return false;
         }
         return true;
     }
@@ -379,19 +377,23 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private void onSearchChanged(String query) {
         searchResults.clear();
         invisibleEntries.clear();
-        if (query == null) return;
-        if (minecraft == null || minecraft.player == null) return;
+        if (query == null)
+            return;
+        if (minecraft == null || minecraft.player == null)
+            return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         String needle = query.toLowerCase(Locale.ROOT);
         for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
-            if (!isCategoryUnlocked(knowledge, ref)) continue;
+            if (!isCategoryUnlocked(knowledge, ref))
+                continue;
             String name = categoryDisplayName(ref).getString();
             if (name.toLowerCase(Locale.ROOT).contains(needle)) {
                 searchResults.add(SearchResult.category(name, ref));
             }
         }
         for (Holder.Reference<IResearchCategory> ref : categoriesOther) {
-            if (!isCategoryUnlocked(knowledge, ref)) continue;
+            if (!isCategoryUnlocked(knowledge, ref))
+                continue;
             String name = categoryDisplayName(ref).getString();
             if (name.toLowerCase(Locale.ROOT).contains(needle)) {
                 searchResults.add(SearchResult.category(name, ref));
@@ -399,22 +401,23 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         }
         for (Identifier known : knowledge.researchList()) {
             EntryNode node = findGlobalNode(known);
-            if (node == null) continue;
+            if (node == null)
+                continue;
             String entryName = Component.translatable(node.entry.nameKey()).getString();
             if (entryName.toLowerCase(Locale.ROOT).contains(needle)) {
                 searchResults.add(SearchResult.entry(entryName, node));
             }
             int stage = knowledge.researchStage(known);
-            int sIdx = node.entry.stages().size() - 1 < stage + 2
-                    ? node.entry.stages().size() - 1
-                    : stage + 2;
+            int sIdx = node.entry.stages().size() - 1 < stage + 2 ? node.entry.stages().size() - 1 : stage + 2;
             if (sIdx >= 0 && sIdx < node.entry.stages().size()) {
                 IResearchStage st = node.entry.stages().get(sIdx);
                 for (ResearchRequirement req : st.craft()) {
                     Optional<Holder<Item>> first = req.items().stream().findFirst();
-                    if (first.isEmpty()) continue;
+                    if (first.isEmpty())
+                        continue;
                     ItemStack stack = new ItemStack(first.get());
-                    if (stack.isEmpty()) continue;
+                    if (stack.isEmpty())
+                        continue;
                     String dn = stack.getHoverName().getString();
                     if (dn.toLowerCase(Locale.ROOT).contains(needle)) {
                         searchResults.add(SearchResult.recipe(dn, node));
@@ -426,11 +429,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private Component categoryDisplayName(Holder.Reference<IResearchCategory> ref) {
-        return ref.unwrapKey()
-                .<Component>map(key -> Component.translatable(
-                        "research_category." + key.identifier().getNamespace() + "."
-                                + key.identifier().getPath()))
-                .orElse(Component.empty());
+        return ref.unwrapKey().<Component>map(key -> Component.translatable("research_category." + key.identifier().getNamespace() + "." + key.identifier().getPath())).orElse(Component.empty());
     }
 
     @Override
@@ -475,8 +474,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         renderScrollButtons(graphics, mouseX, mouseY);
         if (currentHighlight != null && minecraft != null && minecraft.player != null) {
             IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
-            renderEntryTooltip(
-                    graphics, knowledge, currentHighlight, mouseX + TOOLTIP_OFFSET_X, mouseY + TOOLTIP_OFFSET_Y);
+            renderEntryTooltip(graphics, knowledge, currentHighlight, mouseX + TOOLTIP_OFFSET_X, mouseY + TOOLTIP_OFFSET_Y);
         }
     }
 
@@ -485,11 +483,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             isMouseButtonDown = 0;
             return;
         }
-        if ((isMouseButtonDown == 0 || isMouseButtonDown == 1)
-                && mx >= START_X
-                && mx < START_X + screenX
-                && my >= START_Y
-                && my < START_Y + screenY) {
+        if ((isMouseButtonDown == 0 || isMouseButtonDown == 1) && mx >= START_X && mx < START_X + screenX && my >= START_Y && my < START_Y + screenY) {
             if (isMouseButtonDown == 0) {
                 isMouseButtonDown = 1;
             } else {
@@ -504,19 +498,25 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private boolean isMouseLeftButtonDown() {
-        if (minecraft == null) return false;
+        if (minecraft == null)
+            return false;
         return GLFW.glfwGetMouseButton(minecraft.getWindow().handle(), 0) == 1;
     }
 
     private void clampTempMap() {
-        if (tempMapX < guiBoundsLeft * screenZoom) tempMapX = guiBoundsLeft * screenZoom;
-        if (tempMapY < guiBoundsTop * screenZoom) tempMapY = guiBoundsTop * screenZoom;
-        if (tempMapX >= guiBoundsRight * screenZoom) tempMapX = guiBoundsRight * screenZoom - 1.0F;
-        if (tempMapY >= guiBoundsBottom * screenZoom) tempMapY = guiBoundsBottom * screenZoom - 1.0F;
+        if (tempMapX < guiBoundsLeft * screenZoom)
+            tempMapX = guiBoundsLeft * screenZoom;
+        if (tempMapY < guiBoundsTop * screenZoom)
+            tempMapY = guiBoundsTop * screenZoom;
+        if (tempMapX >= guiBoundsRight * screenZoom)
+            tempMapX = guiBoundsRight * screenZoom - 1.0F;
+        if (tempMapY >= guiBoundsBottom * screenZoom)
+            tempMapY = guiBoundsBottom * screenZoom - 1.0F;
     }
 
     private int clampInt(int v, int min, int max) {
-        if (min > max) return v;
+        if (min > max)
+            return v;
         return Math.max(min, Math.min(max, v));
     }
 
@@ -538,118 +538,63 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private void renderBackgroundLayers(GuiGraphicsExtractor graphics, int locX, int locY) {
-        if (activeCategory == null) return;
+        if (activeCategory == null)
+            return;
         IResearchCategory cat = activeCategory.value();
         int x = (int) ((START_X - 2) * screenZoom);
         int y = (int) ((START_Y - 2) * screenZoom);
         int w = (int) ((screenX + 4) * screenZoom);
         int h = (int) ((screenY + 4) * screenZoom);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                cat.background(),
-                x,
-                y,
-                (float) (locX / 2.0),
-                (float) (locY / 2.0),
-                w,
-                h,
-                w,
-                h,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE);
-        cat.overlayBackground()
-                .ifPresent(overlay -> graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        overlay,
-                        x,
-                        y,
-                        (float) (locX / 1.5),
-                        (float) (locY / 1.5),
-                        w,
-                        h,
-                        w,
-                        h,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE));
+        graphics.blit(RenderPipelines.GUI_TEXTURED, cat.background(), x, y, (float) (locX / 2.0), (float) (locY / 2.0), w, h, w, h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        cat.overlayBackground().ifPresent(
+                overlay -> graphics.blit(RenderPipelines.GUI_TEXTURED, overlay, x, y, (float) (locX / 1.5), (float) (locY / 1.5), w, h, w, h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE));
     }
 
     private void renderConnectors(GuiGraphicsExtractor graphics, int locX, int locY) {
-        if (minecraft == null || minecraft.player == null || activeCategory == null) return;
+        if (minecraft == null || minecraft.player == null || activeCategory == null)
+            return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         List<EntryNode> nodes = nodesByCategory.getOrDefault(activeCategory, List.of());
         for (EntryNode source : nodes) {
             for (ResearchParent parent : source.entry.parents()) {
                 EntryNode parentNode = findGlobalNode(parent.id());
-                if (parentNode == null) continue;
-                if (!activeCategory.equals(parentNode.category)) continue;
-                if (parentNode.entry.siblings().contains(source.id)) continue;
+                if (parentNode == null)
+                    continue;
+                if (!activeCategory.equals(parentNode.category))
+                    continue;
+                if (parentNode.entry.siblings().contains(source.id))
+                    continue;
                 boolean b = isVisible(knowledge, source) && !parent.inherit();
-                if (!b) continue;
+                if (!b)
+                    continue;
                 boolean knowsParent = knowledge.isResearchComplete(parent.id());
                 int originX = START_X - locX;
                 int originY = START_Y - locY;
                 if (knowsParent) {
-                    ConnectorRenderer.draw(
-                            graphics,
-                            source.entry.column(),
-                            source.entry.row(),
-                            parentNode.entry.column(),
-                            parentNode.entry.row(),
-                            originX,
-                            originY,
-                            CONNECTOR_PARENT_KNOWN,
-                            CONNECTOR_Z_PARENT_KNOWN,
-                            true,
-                            source.entry.hasMeta(ResearchEntryMeta.REVERSE));
+                    ConnectorRenderer.draw(graphics, source.entry.column(), source.entry.row(), parentNode.entry.column(), parentNode.entry.row(), originX, originY, CONNECTOR_PARENT_KNOWN,
+                            CONNECTOR_Z_PARENT_KNOWN, true, source.entry.hasMeta(ResearchEntryMeta.REVERSE));
                 } else if (isVisible(knowledge, parentNode)) {
-                    ConnectorRenderer.draw(
-                            graphics,
-                            source.entry.column(),
-                            source.entry.row(),
-                            parentNode.entry.column(),
-                            parentNode.entry.row(),
-                            originX,
-                            originY,
-                            CONNECTOR_PARENT_UNKNOWN,
-                            CONNECTOR_Z_PARENT_UNKNOWN,
-                            true,
-                            source.entry.hasMeta(ResearchEntryMeta.REVERSE));
+                    ConnectorRenderer.draw(graphics, source.entry.column(), source.entry.row(), parentNode.entry.column(), parentNode.entry.row(), originX, originY, CONNECTOR_PARENT_UNKNOWN,
+                            CONNECTOR_Z_PARENT_UNKNOWN, true, source.entry.hasMeta(ResearchEntryMeta.REVERSE));
                 }
             }
             for (Identifier siblingRaw : source.entry.siblings()) {
                 EntryNode siblingNode = findGlobalNode(siblingRaw);
-                if (siblingNode == null) continue;
-                if (!activeCategory.equals(siblingNode.category)) continue;
-                if (!isVisible(knowledge, source)) continue;
+                if (siblingNode == null)
+                    continue;
+                if (!activeCategory.equals(siblingNode.category))
+                    continue;
+                if (!isVisible(knowledge, source))
+                    continue;
                 boolean knowsSibling = knowledge.isResearchComplete(siblingRaw);
                 int originX = START_X - locX;
                 int originY = START_Y - locY;
                 if (knowsSibling) {
-                    ConnectorRenderer.draw(
-                            graphics,
-                            siblingNode.entry.column(),
-                            siblingNode.entry.row(),
-                            source.entry.column(),
-                            source.entry.row(),
-                            originX,
-                            originY,
-                            CONNECTOR_SIBLING_KNOWN,
-                            CONNECTOR_Z_SIBLING_KNOWN,
-                            false,
-                            source.entry.hasMeta(ResearchEntryMeta.REVERSE));
+                    ConnectorRenderer.draw(graphics, siblingNode.entry.column(), siblingNode.entry.row(), source.entry.column(), source.entry.row(), originX, originY, CONNECTOR_SIBLING_KNOWN,
+                            CONNECTOR_Z_SIBLING_KNOWN, false, source.entry.hasMeta(ResearchEntryMeta.REVERSE));
                 } else if (isVisible(knowledge, siblingNode)) {
-                    ConnectorRenderer.draw(
-                            graphics,
-                            siblingNode.entry.column(),
-                            siblingNode.entry.row(),
-                            source.entry.column(),
-                            source.entry.row(),
-                            originX,
-                            originY,
-                            CONNECTOR_SIBLING_UNKNOWN,
-                            CONNECTOR_Z_SIBLING_UNKNOWN,
-                            false,
-                            source.entry.hasMeta(ResearchEntryMeta.REVERSE));
+                    ConnectorRenderer.draw(graphics, siblingNode.entry.column(), siblingNode.entry.row(), source.entry.column(), source.entry.row(), originX, originY, CONNECTOR_SIBLING_UNKNOWN,
+                            CONNECTOR_Z_SIBLING_UNKNOWN, false, source.entry.hasMeta(ResearchEntryMeta.REVERSE));
                 }
             }
         }
@@ -657,17 +602,17 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private void renderEntries(GuiGraphicsExtractor graphics, int mouseX, int mouseY, int locX, int locY) {
-        if (minecraft == null || minecraft.player == null || activeCategory == null) return;
+        if (minecraft == null || minecraft.player == null || activeCategory == null)
+            return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         List<EntryNode> nodes = nodesByCategory.getOrDefault(activeCategory, List.of());
         for (EntryNode node : nodes) {
             int relCol = node.entry.column() * CELL_SIZE - locX;
             int relRow = node.entry.row() * CELL_SIZE - locY;
-            if (relCol < -ENTRY_CULL_BORDER
-                    || relRow < -ENTRY_CULL_BORDER
-                    || relCol > screenX * screenZoom
-                    || relRow > screenY * screenZoom) continue;
-            if (!isVisible(knowledge, node)) continue;
+            if (relCol < -ENTRY_CULL_BORDER || relRow < -ENTRY_CULL_BORDER || relCol > screenX * screenZoom || relRow > screenY * screenZoom)
+                continue;
+            if (!isVisible(knowledge, node))
+                continue;
             int iconX = START_X + relCol;
             int iconY = START_Y + relRow;
             boolean canUnlock = canUnlockResearch(knowledge, node);
@@ -683,16 +628,9 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             boolean newResearch = knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH);
             boolean newPage = knowledge.hasResearchFlag(node.id, ResearchFlag.PAGE);
             Object icon = resolveDisplayIcon(node);
-            EntryIconRenderer.render(
-                    graphics, iconX, iconY, node.entry, iconStatus, icon, hasWarp, newResearch, newPage);
-            if (mouseX >= START_X
-                    && mouseY >= START_Y
-                    && mouseX < START_X + screenX
-                    && mouseY < START_Y + screenY
-                    && mouseX >= (iconX - ENTRY_HIT_NEG_PADDING) / screenZoom
-                    && mouseX <= (iconX + ENTRY_HIT_POS_PADDING) / screenZoom
-                    && mouseY >= (iconY - ENTRY_HIT_NEG_PADDING) / screenZoom
-                    && mouseY <= (iconY + ENTRY_HIT_POS_PADDING) / screenZoom) {
+            EntryIconRenderer.render(graphics, iconX, iconY, node.entry, iconStatus, icon, hasWarp, newResearch, newPage);
+            if (mouseX >= START_X && mouseY >= START_Y && mouseX < START_X + screenX && mouseY < START_Y + screenY && mouseX >= (iconX - ENTRY_HIT_NEG_PADDING) / screenZoom
+                    && mouseX <= (iconX + ENTRY_HIT_POS_PADDING) / screenZoom && mouseY >= (iconY - ENTRY_HIT_NEG_PADDING) / screenZoom && mouseY <= (iconY + ENTRY_HIT_POS_PADDING) / screenZoom) {
                 currentHighlight = node;
             }
         }
@@ -704,70 +642,41 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private boolean entryHasWarp(IResearchEntry entry) {
         for (IResearchStage stage : entry.stages()) {
-            if (stage.warp() > 0) return true;
+            if (stage.warp() > 0)
+                return true;
         }
         return false;
     }
 
     private void renderSearchResults(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        if (searchField != null) searchField.setVisible(true);
+        if (searchField != null)
+            searchField.setVisible(true);
         int q = 0;
         for (SearchResult sr : searchResults) {
             int textY = SEARCH_RESULT_TEXT_Y_START + q * SEARCH_RESULT_ROW_HEIGHT;
             int textRightBound = SEARCH_RESULT_HIT_RIGHT_OFFSET + screenX;
-            boolean hover = mouseX > SEARCH_RESULT_HIT_LEFT_X
-                    && mouseX < textRightBound
-                    && mouseY >= textY
-                    && mouseY < textY + 8;
+            boolean hover = mouseX > SEARCH_RESULT_HIT_LEFT_X && mouseX < textRightBound && mouseY >= textY && mouseY < textY + 8;
             int color = sr.color(hover);
             graphics.pose().pushMatrix();
             graphics.pose().scale(SEARCH_RESULT_ICON_SCALE);
             int iconScreenX = (SEARCH_RESULT_ICON_X * 2);
             int iconScreenY = textY * 2;
             if (sr.recipeIcon()) {
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TCScreenTextures.RESEARCH_BROWSER,
-                        iconScreenX,
-                        iconScreenY,
-                        (float) SEARCH_RESULT_ICON_U,
-                        (float) SEARCH_RESULT_ICON_V,
-                        SEARCH_RESULT_ICON_W,
-                        SEARCH_RESULT_ICON_W,
-                        SEARCH_RESULT_ICON_W,
-                        SEARCH_RESULT_ICON_W,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, iconScreenX, iconScreenY, (float) SEARCH_RESULT_ICON_U, (float) SEARCH_RESULT_ICON_V,
+                        SEARCH_RESULT_ICON_W, SEARCH_RESULT_ICON_W, SEARCH_RESULT_ICON_W, SEARCH_RESULT_ICON_W, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
             } else if (sr.entryNode != null) {
                 Object icon = resolveDisplayIcon(sr.entryNode);
                 EntryIconRenderer.drawResearchIcon(graphics, iconScreenX, iconScreenY, icon, false);
             } else if (sr.categoryRef != null && sr.categoryRef.isBound()) {
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        sr.categoryRef.value().icon(),
-                        iconScreenX,
-                        iconScreenY,
-                        0.0F,
-                        0.0F,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_ICON_SIZE,
-                        CATEGORY_TAB_INACTIVE_ICON_TINT);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, sr.categoryRef.value().icon(), iconScreenX, iconScreenY, 0.0F, 0.0F, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE,
+                        CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_TAB_INACTIVE_ICON_TINT);
             }
             graphics.pose().popMatrix();
             graphics.text(font, sr.displayName(), SEARCH_RESULT_TEXT_X, textY, color, false);
             q++;
             if (SEARCH_RESULT_TEXT_Y_START + (q + 1) * SEARCH_RESULT_ROW_HEIGHT > screenY) {
-                graphics.text(
-                        font,
-                        Component.translatable("tc.search.more"),
-                        SEARCH_RESULT_HIT_LEFT_X,
-                        SEARCH_RESULT_TEXT_Y_START + q * SEARCH_RESULT_ROW_HEIGHT + SEARCH_RESULT_OVERFLOW_Y_OFFSET,
-                        SEARCH_OVERFLOW_COLOR,
-                        false);
+                graphics.text(font, Component.translatable("tc.search.more"), SEARCH_RESULT_HIT_LEFT_X, SEARCH_RESULT_TEXT_Y_START + q * SEARCH_RESULT_ROW_HEIGHT + SEARCH_RESULT_OVERFLOW_Y_OFFSET,
+                        SEARCH_OVERFLOW_COLOR, false);
                 break;
             }
         }
@@ -776,63 +685,21 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private void drawBrassFrame(GuiGraphicsExtractor graphics) {
         for (int x = FRAME_MARGIN; x < width - FRAME_MARGIN; x += EDGE_TILE) {
             int len = Math.min(EDGE_TILE, width - FRAME_MARGIN - x);
-            if (len <= 0) continue;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TCScreenTextures.RESEARCH_BROWSER,
-                    x,
-                    BORDER_OFFSET,
-                    EDGE_UV,
-                    CORNER_UV,
-                    len,
-                    CORNER_SIZE,
-                    len,
-                    CORNER_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+            if (len <= 0)
+                continue;
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, BORDER_OFFSET, EDGE_UV, CORNER_UV, len, CORNER_SIZE, len, CORNER_SIZE, TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TCScreenTextures.RESEARCH_BROWSER,
-                    x,
-                    height - FRAME_EDGE_FROM_BOTTOM,
-                    EDGE_UV,
-                    CORNER_UV,
-                    len,
-                    CORNER_SIZE,
-                    len,
-                    CORNER_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, height - FRAME_EDGE_FROM_BOTTOM, EDGE_UV, CORNER_UV, len, CORNER_SIZE, len, CORNER_SIZE,
+                    TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
         }
         for (int y = FRAME_MARGIN; y < height - FRAME_MARGIN; y += EDGE_TILE) {
             int len = Math.min(EDGE_TILE, height - FRAME_MARGIN - y);
-            if (len <= 0) continue;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TCScreenTextures.RESEARCH_BROWSER,
-                    BORDER_OFFSET,
-                    y,
-                    CORNER_UV,
-                    EDGE_UV,
-                    CORNER_SIZE,
-                    len,
-                    CORNER_SIZE,
-                    len,
-                    TCScreenTextures.TEX_SIZE,
+            if (len <= 0)
+                continue;
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, BORDER_OFFSET, y, CORNER_UV, EDGE_UV, CORNER_SIZE, len, CORNER_SIZE, len, TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TCScreenTextures.RESEARCH_BROWSER,
-                    width - FRAME_EDGE_FROM_RIGHT,
-                    y,
-                    CORNER_UV,
-                    EDGE_UV,
-                    CORNER_SIZE,
-                    len,
-                    CORNER_SIZE,
-                    len,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, width - FRAME_EDGE_FROM_RIGHT, y, CORNER_UV, EDGE_UV, CORNER_SIZE, len, CORNER_SIZE, len,
+                    TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
         }
         drawCorner(graphics, BORDER_OFFSET, BORDER_OFFSET);
         drawCorner(graphics, BORDER_OFFSET, height - FRAME_EDGE_FROM_BOTTOM);
@@ -841,27 +708,18 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private void drawCorner(GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                x,
-                y,
-                CORNER_UV,
-                CORNER_UV,
-                CORNER_SIZE,
-                CORNER_SIZE,
-                CORNER_SIZE,
-                CORNER_SIZE,
-                TCScreenTextures.TEX_SIZE,
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, y, CORNER_UV, CORNER_UV, CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, CORNER_SIZE, TCScreenTextures.TEX_SIZE,
                 TCScreenTextures.TEX_SIZE);
     }
 
     private void renderCategoryButtons(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        if (minecraft == null || minecraft.player == null) return;
+        if (minecraft == null || minecraft.player == null)
+            return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         int tcYIndex = 0;
         for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
-            if (!isCategoryUnlocked(knowledge, ref)) continue;
+            if (!isCategoryUnlocked(knowledge, ref))
+                continue;
             int x = CATEGORY_BUTTON_X_LEFT;
             int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (tcYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
             drawCategoryButton(graphics, knowledge, ref, x, y, mouseX, mouseY, false, 0);
@@ -875,72 +733,32 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         }
     }
 
-    private void drawCategoryButton(
-            GuiGraphicsExtractor graphics,
-            IPlayerKnowledge knowledge,
-            Holder.Reference<IResearchCategory> ref,
-            int x,
-            int y,
-            int mouseX,
-            int mouseY,
-            boolean flip,
-            int yShift) {
+    private void drawCategoryButton(GuiGraphicsExtractor graphics, IPlayerKnowledge knowledge, Holder.Reference<IResearchCategory> ref, int x, int y, int mouseX, int mouseY, boolean flip, int yShift) {
         boolean active = ref.equals(activeCategory);
-        boolean hover = mouseX >= x
-                && mouseY >= y + yShift
-                && mouseX < x + CATEGORY_ICON_SIZE
-                && mouseY < y + CATEGORY_ICON_SIZE + yShift;
+        boolean hover = mouseX >= x && mouseY >= y + yShift && mouseX < x + CATEGORY_ICON_SIZE && mouseY < y + CATEGORY_ICON_SIZE + yShift;
         int frameTint = active ? CATEGORY_TAB_ACTIVE_TINT : CATEGORY_TAB_INACTIVE_TINT;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                x - CATEGORY_FRAME_OFFSET,
-                y - CATEGORY_FRAME_OFFSET + yShift,
-                CORNER_UV,
-                CORNER_UV,
-                CATEGORY_FRAME_SIZE,
-                CATEGORY_FRAME_SIZE,
-                CATEGORY_FRAME_SIZE,
-                CATEGORY_FRAME_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                frameTint);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x - CATEGORY_FRAME_OFFSET, y - CATEGORY_FRAME_OFFSET + yShift, CORNER_UV, CORNER_UV, CATEGORY_FRAME_SIZE,
+                CATEGORY_FRAME_SIZE, CATEGORY_FRAME_SIZE, CATEGORY_FRAME_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, frameTint);
         int iconTint = (active || hover) ? CATEGORY_TAB_ACTIVE_ICON_TINT : CATEGORY_TAB_INACTIVE_ICON_TINT;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                ref.value().icon(),
-                x,
-                y + yShift,
-                0.0F,
-                0.0F,
-                CATEGORY_ICON_SIZE,
-                CATEGORY_ICON_SIZE,
-                CATEGORY_ICON_SIZE,
-                CATEGORY_ICON_SIZE,
-                CATEGORY_ICON_SIZE,
-                CATEGORY_ICON_SIZE,
-                iconTint);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, ref.value().icon(), x, y + yShift, 0.0F, 0.0F, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE, CATEGORY_ICON_SIZE,
+                CATEGORY_ICON_SIZE, iconTint);
         boolean newResearch = false;
         boolean newPage = false;
         for (EntryNode node : nodesByCategory.getOrDefault(ref, List.of())) {
-            if (!knowledge.isResearchKnown(node.id)) continue;
-            if (!newResearch && knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH)) newResearch = true;
-            if (!newPage && knowledge.hasResearchFlag(node.id, ResearchFlag.PAGE)) newPage = true;
-            if (newResearch && newPage) break;
+            if (!knowledge.isResearchKnown(node.id))
+                continue;
+            if (!newResearch && knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH))
+                newResearch = true;
+            if (!newPage && knowledge.hasResearchFlag(node.id, ResearchFlag.PAGE))
+                newPage = true;
+            if (newResearch && newPage)
+                break;
         }
         if (newResearch) {
-            drawCategoryBadge(
-                    graphics,
-                    x + CATEGORY_BADGE_OFFSET_X,
-                    y + CATEGORY_BADGE_RESEARCH_OFFSET_Y + yShift,
-                    CATEGORY_BADGE_RESEARCH_U);
+            drawCategoryBadge(graphics, x + CATEGORY_BADGE_OFFSET_X, y + CATEGORY_BADGE_RESEARCH_OFFSET_Y + yShift, CATEGORY_BADGE_RESEARCH_U);
         }
         if (newPage) {
-            drawCategoryBadge(
-                    graphics,
-                    x + CATEGORY_BADGE_OFFSET_X,
-                    y + CATEGORY_BADGE_PAGE_OFFSET_Y + yShift,
-                    CATEGORY_BADGE_PAGE_U);
+            drawCategoryBadge(graphics, x + CATEGORY_BADGE_OFFSET_X, y + CATEGORY_BADGE_PAGE_OFFSET_Y + yShift, CATEGORY_BADGE_PAGE_U);
         }
         if (hover) {
             final boolean hasNewResearch = newResearch;
@@ -948,8 +766,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             int completion = categoryCompletionPercent(knowledge, ref);
             String name = categoryDisplayName(ref).getString();
             String full = name + " (" + completion + "%)";
-            int labelX =
-                    !flip ? x + CATEGORY_LABEL_GAP_X : screenX + CATEGORY_LABEL_FROM_RIGHT_OFFSET - font.width(full);
+            int labelX = !flip ? x + CATEGORY_LABEL_GAP_X : screenX + CATEGORY_LABEL_FROM_RIGHT_OFFSET - font.width(full);
             int labelY = y + CATEGORY_LABEL_Y_OFFSET + yShift;
             graphics.text(font, full, labelX, labelY, HOVER_LABEL_COLOR, false);
             int t = CATEGORY_LABEL_LINE_HEIGHT;
@@ -971,20 +788,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(CATEGORY_BADGE_SCALE, CATEGORY_BADGE_SCALE);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                0,
-                0,
-                (float) u,
-                (float) CATEGORY_BADGE_V,
-                CATEGORY_BADGE_SIZE,
-                CATEGORY_BADGE_SIZE,
-                CATEGORY_BADGE_SIZE,
-                CATEGORY_BADGE_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                CATEGORY_BADGE_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, 0, 0, (float) u, (float) CATEGORY_BADGE_V, CATEGORY_BADGE_SIZE, CATEGORY_BADGE_SIZE, CATEGORY_BADGE_SIZE,
+                CATEGORY_BADGE_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, CATEGORY_BADGE_TINT);
         graphics.pose().popMatrix();
     }
 
@@ -993,91 +798,45 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         int rt = 0;
         int rco = 0;
         for (EntryNode node : nodes) {
-            if (node.entry.hasMeta(ResearchEntryMeta.AUTOUNLOCK)) continue;
+            if (node.entry.hasMeta(ResearchEntryMeta.AUTOUNLOCK))
+                continue;
             rt++;
-            if (knowledge.isResearchKnown(node.id)) rco++;
+            if (knowledge.isResearchKnown(node.id))
+                rco++;
         }
-        if (rt == 0) return 0;
+        if (rt == 0)
+            return 0;
         return (int) ((float) rco / rt * 100.0F);
     }
 
     private void renderSearchButton(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int x = SEARCH_BUTTON_X;
         int y = height - SEARCH_BUTTON_Y_OFFSET_FROM_BOTTOM;
-        boolean hover =
-                mouseX >= x && mouseX < x + SEARCH_BUTTON_SIZE && mouseY >= y && mouseY < y + SEARCH_BUTTON_SIZE;
+        boolean hover = mouseX >= x && mouseX < x + SEARCH_BUTTON_SIZE && mouseY >= y && mouseY < y + SEARCH_BUTTON_SIZE;
         int tint = hover ? SEARCH_BUTTON_TINT_HOVER : SEARCH_BUTTON_TINT_IDLE;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                x,
-                y,
-                (float) SEARCH_BUTTON_U,
-                (float) SEARCH_BUTTON_V,
-                SEARCH_BUTTON_SIZE,
-                SEARCH_BUTTON_SIZE,
-                SEARCH_BUTTON_SIZE,
-                SEARCH_BUTTON_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                tint);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, y, (float) SEARCH_BUTTON_U, (float) SEARCH_BUTTON_V, SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE,
+                SEARCH_BUTTON_SIZE, SEARCH_BUTTON_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, tint);
         if (hover) {
-            graphics.text(
-                    font,
-                    Component.translatable("tc.search").getString(),
-                    x + SEARCH_BUTTON_LABEL_X_OFFSET,
-                    y + SEARCH_BUTTON_LABEL_Y_OFFSET,
-                    HOVER_LABEL_COLOR,
-                    false);
+            graphics.text(font, Component.translatable("tc.search").getString(), x + SEARCH_BUTTON_LABEL_X_OFFSET, y + SEARCH_BUTTON_LABEL_Y_OFFSET, HOVER_LABEL_COLOR, false);
         }
     }
 
     private void renderScrollButtons(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        if (catScrollMax <= 0 && catScrollPos == 0) return;
+        if (catScrollMax <= 0 && catScrollPos == 0)
+            return;
         int upX = width - SCROLL_BUTTON_X_FROM_RIGHT;
         int upY = SCROLL_BUTTON_UP_Y;
         int downX = upX;
         int downY = screenY + 1;
-        boolean upHover = mouseX >= upX
-                && mouseX < upX + SCROLL_BUTTON_WIDTH
-                && mouseY >= upY
-                && mouseY < upY + SCROLL_BUTTON_HEIGHT;
-        boolean downHover = mouseX >= downX
-                && mouseX < downX + SCROLL_BUTTON_WIDTH
-                && mouseY >= downY
-                && mouseY < downY + SCROLL_BUTTON_HEIGHT;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                upX,
-                upY,
-                (float) SCROLL_BUTTON_UV_U,
-                (float) SCROLL_BUTTON_UV_UP_V,
-                SCROLL_BUTTON_WIDTH,
-                SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_WIDTH,
-                SCROLL_BUTTON_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                upHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                downX,
-                downY,
-                (float) SCROLL_BUTTON_UV_U,
-                (float) SCROLL_BUTTON_UV_DOWN_V,
-                SCROLL_BUTTON_WIDTH,
-                SCROLL_BUTTON_HEIGHT,
-                SCROLL_BUTTON_WIDTH,
-                SCROLL_BUTTON_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                downHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
+        boolean upHover = mouseX >= upX && mouseX < upX + SCROLL_BUTTON_WIDTH && mouseY >= upY && mouseY < upY + SCROLL_BUTTON_HEIGHT;
+        boolean downHover = mouseX >= downX && mouseX < downX + SCROLL_BUTTON_WIDTH && mouseY >= downY && mouseY < downY + SCROLL_BUTTON_HEIGHT;
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, upX, upY, (float) SCROLL_BUTTON_UV_U, (float) SCROLL_BUTTON_UV_UP_V, SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT,
+                SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, upHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, downX, downY, (float) SCROLL_BUTTON_UV_U, (float) SCROLL_BUTTON_UV_DOWN_V, SCROLL_BUTTON_WIDTH,
+                SCROLL_BUTTON_HEIGHT, SCROLL_BUTTON_WIDTH, SCROLL_BUTTON_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, downHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
     }
 
-    private void renderEntryTooltip(
-            GuiGraphicsExtractor graphics, IPlayerKnowledge knowledge, EntryNode node, int mouseX, int mouseY) {
+    private void renderEntryTooltip(GuiGraphicsExtractor graphics, IPlayerKnowledge knowledge, EntryNode node, int mouseX, int mouseY) {
         List<Component> lines = new ArrayList<>();
         Component name = Component.translatable(node.entry.nameKey()).withStyle(ChatFormatting.GOLD);
         lines.add(name);
@@ -1086,26 +845,19 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             if (!knowledge.isResearchComplete(node.id) && !node.entry.stages().isEmpty()) {
                 int stage = knowledge.researchStage(node.id);
                 if (stage >= 0) {
-                    MutableComponent stageLine = Component.literal("@@")
-                            .append(Component.literal(ChatFormatting.AQUA
-                                    + Component.translatable("tc.research.stage")
-                                            .getString() + " " + (stage + 1) + "/"
-                                    + node.entry.stages().size() + ChatFormatting.RESET));
+                    MutableComponent stageLine = Component.literal("@@").append(Component
+                            .literal(ChatFormatting.AQUA + Component.translatable("tc.research.stage").getString() + " " + (stage + 1) + "/" + node.entry.stages().size() + ChatFormatting.RESET));
                     lines.add(stageLine);
                 } else {
-                    MutableComponent begin = Component.literal("@@")
-                            .append(Component.literal(ChatFormatting.GREEN
-                                    + Component.translatable("tc.research.begin")
-                                            .getString()
-                                    + ChatFormatting.RESET));
+                    MutableComponent begin = Component.literal("@@").append(Component.literal(ChatFormatting.GREEN + Component.translatable("tc.research.begin").getString() + ChatFormatting.RESET));
                     lines.add(begin);
                 }
             }
         } else {
-            lines.add(Component.literal("@@" + ChatFormatting.RED
-                    + Component.translatable("tc.researchmissing").getString()));
+            lines.add(Component.literal("@@" + ChatFormatting.RED + Component.translatable("tc.researchmissing").getString()));
             for (ResearchParent parent : node.entry.parents()) {
-                if (parent.isSatisfiedBy(knowledge)) continue;
+                if (parent.isSatisfiedBy(knowledge))
+                    continue;
                 String s = "?";
                 EntryNode parentNode = findGlobalNode(parent.id());
                 if (parentNode != null) {
@@ -1128,7 +880,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private @Nullable EntryNode findGlobalNode(Identifier id) {
         for (EntryNode node : allEntries) {
-            if (node.id.equals(id)) return node;
+            if (node.id.equals(id))
+                return node;
         }
         return null;
     }
@@ -1150,10 +903,12 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() != 0) return super.mouseClicked(event, doubleClick);
+        if (event.button() != 0)
+            return super.mouseClicked(event, doubleClick);
         int mx = (int) event.x();
         int my = (int) event.y();
-        if (minecraft == null || minecraft.player == null) return super.mouseClicked(event, doubleClick);
+        if (minecraft == null || minecraft.player == null)
+            return super.mouseClicked(event, doubleClick);
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         if (hitSearchButton(mx, my)) {
             playButtonClack();
@@ -1190,10 +945,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             guiMapY = tempMapY = (double) (guiBoundsTop + guiBoundsBottom) / 2.0;
             return true;
         }
-        if (!searching
-                && currentHighlight != null
-                && !knowledge.isResearchKnown(currentHighlight.id)
-                && canUnlockResearch(knowledge, currentHighlight)) {
+        if (!searching && currentHighlight != null && !knowledge.isResearchKnown(currentHighlight.id) && canUnlockResearch(knowledge, currentHighlight)) {
             EntryNode hl = currentHighlight;
             updateResearch();
             ClientPacketDistributor.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
@@ -1205,8 +957,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             EntryNode hl = currentHighlight;
             knowledge.clearResearchFlag(hl.id, ResearchFlag.RESEARCH);
             knowledge.clearResearchFlag(hl.id, ResearchFlag.PAGE);
-            ClientPacketDistributor.sendToServer(
-                    new ServerboundClearResearchFlagsPayload(hl.id, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
+            ClientPacketDistributor.sendToServer(new ServerboundClearResearchFlagsPayload(hl.id, List.of(ResearchFlag.RESEARCH, ResearchFlag.PAGE)));
             int stage = knowledge.researchStage(hl.id);
             if (stage > 0 && stage >= hl.entry.stages().size() - 1) {
                 ClientPacketDistributor.sendToServer(new ServerboundUnlockResearchPayload(hl.id));
@@ -1230,8 +981,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                     guiMapY = tempMapY = (double) (guiBoundsTop + guiBoundsBottom) / 2.0;
                     return true;
                 }
-                if ((sr.kind == SearchResult.Kind.ENTRY || sr.kind == SearchResult.Kind.RECIPE)
-                        && sr.entryNode != null) {
+                if ((sr.kind == SearchResult.Kind.ENTRY || sr.kind == SearchResult.Kind.RECIPE) && sr.entryNode != null) {
                     persistState();
                     playPageOpen();
                     minecraft.setScreen(new EntryDetailScreen(sr.entryNode.holder, sr.entryNode.id, this));
@@ -1264,14 +1014,16 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     private boolean hitScrollUp(int mx, int my) {
-        if (catScrollMax <= 0 && catScrollPos == 0) return false;
+        if (catScrollMax <= 0 && catScrollPos == 0)
+            return false;
         int x = width - SCROLL_BUTTON_X_FROM_RIGHT;
         int y = SCROLL_BUTTON_UP_Y;
         return mx >= x && mx < x + SCROLL_BUTTON_WIDTH && my >= y && my < y + SCROLL_BUTTON_HEIGHT;
     }
 
     private boolean hitScrollDown(int mx, int my) {
-        if (catScrollMax <= 0 && catScrollPos == 0) return false;
+        if (catScrollMax <= 0 && catScrollPos == 0)
+            return false;
         int x = width - SCROLL_BUTTON_X_FROM_RIGHT;
         int y = screenY + 1;
         return mx >= x && mx < x + SCROLL_BUTTON_WIDTH && my >= y && my < y + SCROLL_BUTTON_HEIGHT;
@@ -1279,10 +1031,12 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private Holder.@Nullable Reference<IResearchCategory> hitCategoryButton(int mx, int my) {
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
-        if (knowledge == null) return null;
+        if (knowledge == null)
+            return null;
         int tcYIndex = 0;
         for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
-            if (!isCategoryUnlocked(knowledge, ref)) continue;
+            if (!isCategoryUnlocked(knowledge, ref))
+                continue;
             int x = CATEGORY_BUTTON_X_LEFT;
             int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (tcYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
             if (mx >= x && mx < x + CATEGORY_ICON_SIZE && my >= y && my < y + CATEGORY_ICON_SIZE) {
@@ -1293,10 +1047,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         for (int i = 0; i < categoriesOtherVisible.size(); i++) {
             int x = width - CATEGORY_BUTTON_X_RIGHT_MARGIN;
             int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (i + 1) * CATEGORY_BUTTON_STRIDE_Y;
-            if (mx >= x
-                    && mx < x + CATEGORY_ICON_SIZE
-                    && my >= y + addonShift
-                    && my < y + CATEGORY_ICON_SIZE + addonShift) {
+            if (mx >= x && mx < x + CATEGORY_ICON_SIZE && my >= y + addonShift && my < y + CATEGORY_ICON_SIZE + addonShift) {
                 return categoriesOtherVisible.get(i);
             }
         }
@@ -1312,7 +1063,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 return sr;
             }
             q++;
-            if (SEARCH_RESULT_TEXT_Y_START + (q + 1) * SEARCH_RESULT_ROW_HEIGHT > screenY) break;
+            if (SEARCH_RESULT_TEXT_Y_START + (q + 1) * SEARCH_RESULT_ROW_HEIGHT > screenY)
+                break;
         }
         return null;
     }
@@ -1326,9 +1078,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             toggleSearch();
             return true;
         }
-        if (minecraft != null
-                && minecraft.options.keyInventory.matches(event)
-                && (searchField == null || !searchField.isFocused())) {
+        if (minecraft != null && minecraft.options.keyInventory.matches(event) && (searchField == null || !searchField.isFocused())) {
             onClose();
             return true;
         }
@@ -1337,7 +1087,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
-        if (event.button() == 0) isMouseButtonDown = 0;
+        if (event.button() == 0)
+            isMouseButtonDown = 0;
         return super.mouseReleased(event);
     }
 
@@ -1346,17 +1097,12 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         return false;
     }
 
-    private record EntryNode(
-            Identifier id,
-            IResearchEntry entry,
-            Holder<IResearchEntry> holder,
-            Holder.Reference<IResearchCategory> category) {}
+    private record EntryNode(Identifier id, IResearchEntry entry, Holder<IResearchEntry> holder, Holder.Reference<IResearchCategory> category) {
+    }
 
     private static final class SearchResult implements Comparable<SearchResult> {
         enum Kind {
-            CATEGORY,
-            ENTRY,
-            RECIPE
+            CATEGORY, ENTRY, RECIPE
         }
 
         private final String displayName;
@@ -1364,11 +1110,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         private final @Nullable EntryNode entryNode;
         private final Holder.@Nullable Reference<IResearchCategory> categoryRef;
 
-        private SearchResult(
-                String displayName,
-                Kind kind,
-                @Nullable EntryNode entryNode,
-                Holder.@Nullable Reference<IResearchCategory> categoryRef) {
+        private SearchResult(String displayName, Kind kind, @Nullable EntryNode entryNode, Holder.@Nullable Reference<IResearchCategory> categoryRef) {
             this.displayName = displayName;
             this.kind = kind;
             this.entryNode = entryNode;

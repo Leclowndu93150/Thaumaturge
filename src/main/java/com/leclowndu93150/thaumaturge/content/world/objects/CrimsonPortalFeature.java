@@ -34,8 +34,7 @@ public final class CrimsonPortalFeature extends Feature<NoneFeatureConfiguration
             }
         }
         BlockPos spawn = ground.above();
-        EntityCultistPortalLesser portal =
-                TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+        EntityCultistPortalLesser portal = TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel(), EntitySpawnReason.STRUCTURE);
         if (portal == null) {
             return false;
         }

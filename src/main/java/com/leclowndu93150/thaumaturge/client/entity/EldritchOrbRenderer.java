@@ -22,15 +22,9 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb,
         public float ticks;
     }
 
-    private static final RenderType RAY_TYPE = RenderType.create(
-            "tc_eldritch_orb_ray",
-            RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
-    private static final RenderType BILLBOARD_TYPE = RenderType.create(
-            "tc_eldritch_orb",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT)
-                    .withTexture("Sampler0", ParticleTextures.PARTICLES)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType RAY_TYPE = RenderType.create("tc_eldritch_orb_ray", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
+    private static final RenderType BILLBOARD_TYPE = RenderType.create("tc_eldritch_orb",
+            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", ParticleTextures.PARTICLES).useLightmap().createRenderSetup());
 
     private static final long RAY_SEED = 187L;
     private static final int RAY_COUNT = 12;
@@ -90,19 +84,10 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb,
         int tint = ARGB.colorFromFloat(1.0F, 1.0F, 1.0F, 1.0F);
         collector.submitCustomGeometry(poseStack, BILLBOARD_TYPE, (pose, buffer) -> {
             Matrix4fc mat = pose.pose();
-            buffer.addVertex(mat, -HALF, -HALF, 0.0F)
-                    .setUv(u1, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, -HALF, HALF, 0.0F)
-                    .setUv(u1, v0)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -HALF, -HALF, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, -HALF, HALF, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
             buffer.addVertex(mat, HALF, HALF, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-            buffer.addVertex(mat, HALF, -HALF, 0.0F)
-                    .setUv(u0, v1)
-                    .setColor(tint)
-                    .setLight(EMISSIVE_LIGHT);
+            buffer.addVertex(mat, HALF, -HALF, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
         });
         poseStack.popPose();
     }

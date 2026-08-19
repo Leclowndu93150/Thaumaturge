@@ -32,14 +32,7 @@ public final class BlockPlantShimmerleaf extends AbstractTCPlant {
             double xr = pos.getX() + 0.5D + random.nextGaussian() * 0.1D;
             double yr = pos.getY() + 0.4D + random.nextGaussian() * 0.1D;
             double zr = pos.getZ() + 0.5D + random.nextGaussian() * 0.1D;
-            level.addParticle(
-                    ParticleTypes.END_ROD,
-                    xr,
-                    yr,
-                    zr,
-                    random.nextGaussian() * 0.01D,
-                    random.nextGaussian() * 0.01D,
-                    random.nextGaussian() * 0.01D);
+            level.addParticle(ParticleTypes.END_ROD, xr, yr, zr, random.nextGaussian() * 0.01D, random.nextGaussian() * 0.01D, random.nextGaussian() * 0.01D);
         }
     }
 }

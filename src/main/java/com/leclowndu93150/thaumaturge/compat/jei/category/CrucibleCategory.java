@@ -32,29 +32,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<CrucibleRecipe>> {
-    public static final IRecipeHolderType<CrucibleRecipe> RECIPE_TYPE =
-            IRecipeHolderType.create(TCRecipeTypes.CRUCIBLE.get());
+    public static final IRecipeHolderType<CrucibleRecipe> RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.CRUCIBLE.get());
 
     public static final int ASPECT_Y = 66;
     public static final int ASPECT_X = 66;
     public static final int SPACE = 22;
-    private static final IDrawable background = new AlphaDrawable(
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
-            2,
-            5,
-            109,
-            129,
-            0,
-            0,
-            9,
-            10);
-    ;
-    private static final IDrawable arrow = new AlphaDrawable(
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
-            199,
-            168,
-            26,
-            26);
+    private static final IDrawable background = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 2, 5, 109, 129, 0, 0, 9, 10);;
+    private static final IDrawable arrow = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
 
     private final IDrawable icon;
 
@@ -97,24 +81,17 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
         int x = 0;
 
         for (AspectInstance instance : recipe.aspects().sortedByAmount()) {
-            builder.addInputSlot(ASPECT_X - center + x * SPACE, ASPECT_Y)
-                    .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
-                    .add(AspectIngredientType.INSTANCE, instance);
+            builder.addInputSlot(ASPECT_X - center + x * SPACE, ASPECT_Y).setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE).add(AspectIngredientType.INSTANCE,
+                    instance);
 
             builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).add(PhialItem.makeFilled(instance.aspect()));
-            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
-                    .add(EssentiaCrystalFactory.of(instance.aspect()));
+            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).add(EssentiaCrystalFactory.of(instance.aspect()));
             x += 1;
         }
     }
 
     @Override
-    public void getTooltip(
-            ITooltipBuilder tooltip,
-            RecipeHolder<CrucibleRecipe> recipe,
-            IRecipeSlotsView recipeSlotsView,
-            double mouseX,
-            double mouseY) {
+    public void getTooltip(ITooltipBuilder tooltip, RecipeHolder<CrucibleRecipe> recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         Optional<ResearchGate> gate = recipe.value().researchGate();
         boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate && mouseX > 22 && mouseX < 40 && mouseY > 14 && mouseY < 30) {
@@ -123,15 +100,11 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     }
 
     @Override
-    public void draw(
-            RecipeHolder<CrucibleRecipe> recipe,
-            IRecipeSlotsView recipeSlotsView,
-            GuiGraphicsExtractor guiGraphics,
-            double mouseX,
-            double mouseY) {
+    public void draw(RecipeHolder<CrucibleRecipe> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         background.draw(guiGraphics);
         arrow.draw(guiGraphics, 16, 6);
         boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
-        if (!doesPassGate) guiGraphics.item(Items.BARRIER.getDefaultInstance(), 22, 14);
+        if (!doesPassGate)
+            guiGraphics.item(Items.BARRIER.getDefaultInstance(), 22, 14);
     }
 }

@@ -16,12 +16,9 @@ import net.minecraft.network.codec.StreamCodec;
  */
 public record SealPos(BlockPos pos, Direction face) {
     /** Codec for seal placements. */
-    public static final Codec<SealPos> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    BlockPos.CODEC.fieldOf("pos").forGetter(SealPos::pos),
-                    Direction.CODEC.fieldOf("face").forGetter(SealPos::face))
-            .apply(instance, SealPos::new));
+    public static final Codec<SealPos> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(BlockPos.CODEC.fieldOf("pos").forGetter(SealPos::pos), Direction.CODEC.fieldOf("face").forGetter(SealPos::face)).apply(instance, SealPos::new));
 
     /** Stream codec for seal placements. */
-    public static final StreamCodec<ByteBuf, SealPos> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, SealPos::pos, Direction.STREAM_CODEC, SealPos::face, SealPos::new);
+    public static final StreamCodec<ByteBuf, SealPos> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, SealPos::pos, Direction.STREAM_CODEC, SealPos::face, SealPos::new);
 }

@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface RecipeProviderAccessor {
 
     @Invoker("generateCraftingRecipe")
-    void thaumaturge$generateCraftingRecipe(
-            BlockFamily family, BlockFamily.Variant variant, Block result, ItemLike base);
+    void thaumaturge$generateCraftingRecipe(BlockFamily family, BlockFamily.Variant variant, Block result, ItemLike base);
 
     @Invoker("generateStonecutterRecipe")
     void thaumaturge$generateStonecutterRecipe(BlockFamily family, BlockFamily.Variant variant, Block base);

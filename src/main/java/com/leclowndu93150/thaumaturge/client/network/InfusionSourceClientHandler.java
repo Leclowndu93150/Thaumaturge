@@ -25,9 +25,7 @@ public final class InfusionSourceClientHandler {
         if (!(level.getBlockEntity(payload.matrixPos()) instanceof BlockEntityInfusionMatrix matrix)) {
             return;
         }
-        int ticks = level.getBlockEntity(payload.sourcePos()) instanceof BlockEntityPedestal
-                ? PEDESTAL_FX_TICKS
-                : DEFAULT_FX_TICKS;
+        int ticks = level.getBlockEntity(payload.sourcePos()) instanceof BlockEntityPedestal ? PEDESTAL_FX_TICKS : DEFAULT_FX_TICKS;
         matrix.addClientSourceFX(payload.sourcePos(), ticks);
     }
 }

@@ -31,12 +31,7 @@ public final class PechWandItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         tooltip.accept(Component.translatable("item.curio.text"));
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
@@ -53,28 +48,15 @@ public final class PechWandItem extends Item {
             player.getItemInHand(hand).shrink(1);
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            level.playSound(
-                    null,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    TCSounds.LEARN.get(),
-                    SoundSource.NEUTRAL,
-                    0.5F,
-                    0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-            serverPlayer.sendSystemMessage(
-                    Component.translatable("got.pechwand").withStyle(ChatFormatting.DARK_PURPLE));
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+            serverPlayer.sendSystemMessage(Component.translatable("got.pechwand").withStyle(ChatFormatting.DARK_PURPLE));
             if (!KnowledgeAccess.of(serverPlayer).isResearchKnown(FOCUS_PECH)) {
                 ResearchManager.complete(serverPlayer, FOCUS_PECH);
             }
             int oProg = KnowledgeType.OBSERVATION.progression();
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer,
-                    KnowledgeType.OBSERVATION,
-                    Mth.nextInt(serverPlayer.getRandom(), oProg / 3, oProg / 2));
+            ResearchGrants.grantConvertedKnowledge(serverPlayer, KnowledgeType.OBSERVATION, Mth.nextInt(serverPlayer.getRandom(), oProg / 3, oProg / 2));
             int tProg = KnowledgeType.THEORY.progression();
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer, KnowledgeType.THEORY, Mth.nextInt(serverPlayer.getRandom(), tProg / 5, tProg / 4));
+            ResearchGrants.grantConvertedKnowledge(serverPlayer, KnowledgeType.THEORY, Mth.nextInt(serverPlayer.getRandom(), tProg / 5, tProg / 4));
         }
         return InteractionResult.SUCCESS;
     }

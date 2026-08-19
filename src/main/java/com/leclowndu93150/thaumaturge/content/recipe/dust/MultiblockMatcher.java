@@ -10,8 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public final class MultiblockMatcher {
-    private static final Direction[] HORIZONTALS =
-            new Direction[] {Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST};
+    private static final Direction[] HORIZONTALS = new Direction[]{Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST};
 
     private MultiblockMatcher() {}
 
@@ -36,8 +35,7 @@ public final class MultiblockMatcher {
     private static @Nullable Direction fitMultiblock(Level level, BlockPos origin, Blueprint blueprint) {
         int ys = blueprint.ySize();
         BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
-        outer:
-        for (Direction face : HORIZONTALS) {
+        outer : for (Direction face : HORIZONTALS) {
             int rotations = 3 - horizontalIndex(face);
             for (int y = 0; y < ys; y++) {
                 BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);

@@ -43,8 +43,7 @@ public final class BlockBarrier extends Block {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (!(context instanceof EntityCollisionContext entityContext)) {
             return Shapes.empty();
         }
@@ -68,13 +67,7 @@ public final class BlockBarrier extends Block {
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block neighborBlock,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
         BlockState below = level.getBlockState(pos.below());
         if (!below.is(TCBlocks.PAVING_STONE_BARRIER.get()) && !below.is(this)) {
             level.removeBlock(pos, false);

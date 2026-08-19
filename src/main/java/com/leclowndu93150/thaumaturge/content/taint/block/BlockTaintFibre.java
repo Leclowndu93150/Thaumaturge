@@ -67,17 +67,8 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     public BlockTaintFibre(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState()
-                .setValue(NORTH, false)
-                .setValue(EAST, false)
-                .setValue(SOUTH, false)
-                .setValue(WEST, false)
-                .setValue(UP, false)
-                .setValue(DOWN, false)
-                .setValue(GROWTH1, false)
-                .setValue(GROWTH2, false)
-                .setValue(GROWTH3, false)
-                .setValue(GROWTH4, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false).setValue(DOWN, false)
+                .setValue(GROWTH1, false).setValue(GROWTH2, false).setValue(GROWTH3, false).setValue(GROWTH4, false));
     }
 
     private static Map<Direction, BooleanProperty> createFaceMap() {
@@ -108,22 +99,31 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape shape = Shapes.empty();
-        if (state.getValue(UP)) shape = Shapes.or(shape, SHAPE_UP);
-        if (state.getValue(DOWN)) shape = Shapes.or(shape, SHAPE_DOWN);
-        if (state.getValue(NORTH)) shape = Shapes.or(shape, SHAPE_NORTH);
-        if (state.getValue(EAST)) shape = Shapes.or(shape, SHAPE_EAST);
-        if (state.getValue(SOUTH)) shape = Shapes.or(shape, SHAPE_SOUTH);
-        if (state.getValue(WEST)) shape = Shapes.or(shape, SHAPE_WEST);
-        if (state.getValue(GROWTH1)) shape = Shapes.or(shape, SHAPE_GROWTH1);
-        if (state.getValue(GROWTH2)) shape = Shapes.or(shape, SHAPE_GROWTH2);
-        if (state.getValue(GROWTH3)) shape = Shapes.or(shape, SHAPE_GROWTH3);
-        if (state.getValue(GROWTH4)) shape = Shapes.or(shape, SHAPE_GROWTH4);
+        if (state.getValue(UP))
+            shape = Shapes.or(shape, SHAPE_UP);
+        if (state.getValue(DOWN))
+            shape = Shapes.or(shape, SHAPE_DOWN);
+        if (state.getValue(NORTH))
+            shape = Shapes.or(shape, SHAPE_NORTH);
+        if (state.getValue(EAST))
+            shape = Shapes.or(shape, SHAPE_EAST);
+        if (state.getValue(SOUTH))
+            shape = Shapes.or(shape, SHAPE_SOUTH);
+        if (state.getValue(WEST))
+            shape = Shapes.or(shape, SHAPE_WEST);
+        if (state.getValue(GROWTH1))
+            shape = Shapes.or(shape, SHAPE_GROWTH1);
+        if (state.getValue(GROWTH2))
+            shape = Shapes.or(shape, SHAPE_GROWTH2);
+        if (state.getValue(GROWTH3))
+            shape = Shapes.or(shape, SHAPE_GROWTH3);
+        if (state.getValue(GROWTH4))
+            shape = Shapes.or(shape, SHAPE_GROWTH4);
         return shape;
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -133,15 +133,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            net.minecraft.world.level.ScheduledTickAccess scheduledAccess,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, net.minecraft.world.level.ScheduledTickAccess scheduledAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         return computeState(state, level, pos);
     }
 
@@ -157,16 +149,8 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         boolean growth2 = down && (q == GROWTH2_THRESHOLD_LO || q == GROWTH2_THRESHOLD_HI);
         boolean growth3 = down && q == GROWTH3_VALUE;
         boolean growth4 = up && q > GROWTH4_THRESHOLD;
-        return state.setValue(NORTH, north)
-                .setValue(EAST, east)
-                .setValue(SOUTH, south)
-                .setValue(WEST, west)
-                .setValue(UP, up)
-                .setValue(DOWN, down)
-                .setValue(GROWTH1, growth1)
-                .setValue(GROWTH2, growth2)
-                .setValue(GROWTH3, growth3)
-                .setValue(GROWTH4, growth4);
+        return state.setValue(NORTH, north).setValue(EAST, east).setValue(SOUTH, south).setValue(WEST, west).setValue(UP, up).setValue(DOWN, down).setValue(GROWTH1, growth1).setValue(GROWTH2, growth2)
+                .setValue(GROWTH3, growth3).setValue(GROWTH4, growth4);
     }
 
     private static boolean canAttachTo(LevelReader level, BlockPos pos, Direction facing) {
@@ -191,10 +175,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        boolean hasGrowth = state.getValue(GROWTH1)
-                || state.getValue(GROWTH2)
-                || state.getValue(GROWTH3)
-                || state.getValue(GROWTH4);
+        boolean hasGrowth = state.getValue(GROWTH1) || state.getValue(GROWTH2) || state.getValue(GROWTH3) || state.getValue(GROWTH4);
         if (!hasGrowth && isOnlyAdjacentToTaint(level, pos)) {
             die(level, pos, state);
             return;
@@ -226,17 +207,19 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
             return;
         }
         if (serverLevel.getRandom().nextInt(WALK_EFFECT_CHANCE) == 0) {
-            living.addEffect(
-                    new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
+            living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
         }
     }
 
     public static boolean isOnlyAdjacentToTaint(LevelAccessor level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             BlockState neighbor = level.getBlockState(pos.relative(direction));
-            if (neighbor.isAir()) continue;
-            if (neighbor.getBlock() instanceof ITaintBlock) continue;
-            if (!neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite())) continue;
+            if (neighbor.isAir())
+                continue;
+            if (neighbor.getBlock() instanceof ITaintBlock)
+                continue;
+            if (!neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite()))
+                continue;
             return false;
         }
         return true;
@@ -250,8 +233,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 c++;
             } else if (neighbor.isAir()) {
                 c--;
-            } else if (!neighbor.liquid()
-                    && !neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite())) {
+            } else if (!neighbor.liquid() && !neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite())) {
                 c--;
             }
         }

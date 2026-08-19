@@ -64,12 +64,7 @@ public class FocusMediumTouch implements FocusMedium {
 
     protected void onTrajectory(CastContext ctx, Trajectory trajectory) {
         if (ctx.level() instanceof ServerLevel level) {
-            FocusFX.burst(
-                    level,
-                    trajectory.source(),
-                    trajectory.direction().scale(1.0 / MOTION_HALF),
-                    ctx.effects(),
-                    ctx.caster());
+            FocusFX.burst(level, trajectory.source(), trajectory.direction().scale(1.0 / MOTION_HALF), ctx.effects(), ctx.caster());
         }
     }
 
@@ -86,14 +81,7 @@ public class FocusMediumTouch implements FocusMedium {
                 onTrajectory(ctx, sT);
                 trajectories.add(traceTrajectory(ctx, sT, range));
                 if (playerCaster) {
-                    HitResult ray = FocusRayTrace.pointedOrBlock(
-                            ctx.level(),
-                            caster,
-                            sT.source(),
-                            sT.direction().normalize(),
-                            RAY_MIN_RANGE,
-                            range,
-                            RAY_PADDING);
+                    HitResult ray = FocusRayTrace.pointedOrBlock(ctx.level(), caster, sT.source(), sT.direction().normalize(), RAY_MIN_RANGE, range, RAY_PADDING);
                     if (ray != null) {
                         targets.add(ray);
                     }
@@ -106,8 +94,7 @@ public class FocusMediumTouch implements FocusMedium {
     private Trajectory traceTrajectory(CastContext ctx, Trajectory sT, double range) {
         Vec3 direction = sT.direction().normalize();
         Vec3 end = direction;
-        HitResult ray = FocusRayTrace.pointedEntity(
-                ctx.level(), ctx.caster(), sT.source(), end, RAY_MIN_RANGE, range, RAY_PADDING, false);
+        HitResult ray = FocusRayTrace.pointedEntity(ctx.level(), ctx.caster(), sT.source(), end, RAY_MIN_RANGE, range, RAY_PADDING, false);
         if (ray == null) {
             end = end.scale(range).add(sT.source());
             HitResult blockRay = FocusRayTrace.clipBlocks(ctx.level(), ctx.caster(), sT.source(), end);

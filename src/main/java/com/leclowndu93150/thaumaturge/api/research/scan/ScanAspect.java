@@ -56,21 +56,9 @@ public class ScanAspect implements IScanThing {
 
     @Override
     public void onSuccess(Player player, @Nullable Object target) {
-        ScanningManager.addKnowledge(
-                player,
-                KnowledgeType.OBSERVATION,
-                TCResearchCategories.AUROMANCY.identifier(),
-                DISCOVERY_OBSERVATION_POINTS);
-        ScanningManager.addKnowledge(
-                player,
-                KnowledgeType.OBSERVATION,
-                TCResearchCategories.BASICS.identifier(),
-                DISCOVERY_OBSERVATION_POINTS);
-        ScanningManager.addKnowledge(
-                player,
-                KnowledgeType.OBSERVATION,
-                TCResearchCategories.ALCHEMY.identifier(),
-                DISCOVERY_OBSERVATION_POINTS);
+        ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.AUROMANCY.identifier(), DISCOVERY_OBSERVATION_POINTS);
+        ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.BASICS.identifier(), DISCOVERY_OBSERVATION_POINTS);
+        ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.ALCHEMY.identifier(), DISCOVERY_OBSERVATION_POINTS);
     }
 
     @Override

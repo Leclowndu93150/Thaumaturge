@@ -15,16 +15,7 @@ public final class FluxSwirlParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private FluxSwirlParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            FluxSwirlParticleOptions options,
-            ParticleSheet sheet) {
+    private FluxSwirlParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, FluxSwirlParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
@@ -51,16 +42,7 @@ public final class FluxSwirlParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("flux_swirl");
 
         @Override
-        public Particle createParticle(
-                FluxSwirlParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(FluxSwirlParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FluxSwirlParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

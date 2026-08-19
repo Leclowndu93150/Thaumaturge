@@ -5,38 +5,15 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public final class CrystalFaceTransforms {
-    private static final Matrix4f UP = applyRotation(
-            new Matrix4f(), (float) Math.PI, new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 1.0F, 1.0F));
+    private static final Matrix4f UP = applyRotation(new Matrix4f(), (float) Math.PI, new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 1.0F, 1.0F));
     private static final Matrix4f DOWN = new Matrix4f();
-    private static final Matrix4f EAST = applyRotation(
-            applyRotation(
-                    new Matrix4f(),
-                    (float) (Math.PI * 0.5),
-                    new Vector3f(1.0F, 0.0F, 0.0F),
-                    new Vector3f(0.0F, 0.0F, 0.0F)),
-            (float) (Math.PI * 1.5),
-            new Vector3f(0.0F, 1.0F, 0.0F),
-            new Vector3f(1.0F, 1.0F, 0.0F));
-    private static final Matrix4f WEST = applyRotation(
-            applyRotation(
-                    new Matrix4f(),
-                    (float) (Math.PI * 0.5),
-                    new Vector3f(1.0F, 0.0F, 0.0F),
-                    new Vector3f(0.0F, 0.0F, 0.0F)),
-            (float) (Math.PI * 0.5),
-            new Vector3f(0.0F, 1.0F, 0.0F),
-            new Vector3f(0.0F, 1.0F, 1.0F));
-    private static final Matrix4f NORTH = applyRotation(
-            new Matrix4f(), (float) (Math.PI * 0.5), new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 1.0F, 0.0F));
-    private static final Matrix4f SOUTH = applyRotation(
-            applyRotation(
-                    new Matrix4f(),
-                    (float) (Math.PI * 0.5),
-                    new Vector3f(1.0F, 0.0F, 0.0F),
-                    new Vector3f(0.0F, 0.0F, 0.0F)),
-            (float) Math.PI,
-            new Vector3f(0.0F, 1.0F, 0.0F),
-            new Vector3f(1.0F, 1.0F, 1.0F));
+    private static final Matrix4f EAST = applyRotation(applyRotation(new Matrix4f(), (float) (Math.PI * 0.5), new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 0.0F, 0.0F)), (float) (Math.PI * 1.5),
+            new Vector3f(0.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 0.0F));
+    private static final Matrix4f WEST = applyRotation(applyRotation(new Matrix4f(), (float) (Math.PI * 0.5), new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 0.0F, 0.0F)), (float) (Math.PI * 0.5),
+            new Vector3f(0.0F, 1.0F, 0.0F), new Vector3f(0.0F, 1.0F, 1.0F));
+    private static final Matrix4f NORTH = applyRotation(new Matrix4f(), (float) (Math.PI * 0.5), new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 1.0F, 0.0F));
+    private static final Matrix4f SOUTH = applyRotation(applyRotation(new Matrix4f(), (float) (Math.PI * 0.5), new Vector3f(1.0F, 0.0F, 0.0F), new Vector3f(0.0F, 0.0F, 0.0F)), (float) Math.PI,
+            new Vector3f(0.0F, 1.0F, 0.0F), new Vector3f(1.0F, 1.0F, 1.0F));
 
     private CrystalFaceTransforms() {}
 

@@ -25,8 +25,7 @@ public final class WandRodPrimalOnUpdate implements IWandRodOnUpdate {
     public void onUpdate(ItemStack wand, Player player) {
         int chargeCap = WandVisHelper.getMaxVis(wand) / WandEconomy.ROD_SELF_CHARGE_CAP_DIVISOR;
         if (aspect != null) {
-            if (player.tickCount % WandEconomy.ROD_SELF_CHARGE_INTERVAL_TICKS == 0
-                    && WandVisHelper.getVis(wand, aspect) < chargeCap) {
+            if (player.tickCount % WandEconomy.ROD_SELF_CHARGE_INTERVAL_TICKS == 0 && WandVisHelper.getVis(wand, aspect) < chargeCap) {
                 WandVisHelper.addVis(wand, aspect, 1, true);
             }
         } else if (player.tickCount % WandEconomy.PRIMAL_SELF_CHARGE_INTERVAL_TICKS == 0) {

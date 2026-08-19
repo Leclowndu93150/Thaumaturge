@@ -23,8 +23,7 @@ public final class SpecialItemRenderer extends ItemEntityRenderer {
 
     private static final float CONE_LIFT = 0.25F;
 
-    private static final RenderType SPARKLE_TYPE = RenderType.create(
-            "tc_sparkle", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
+    private static final RenderType SPARKLE_TYPE = RenderType.create("tc_sparkle", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
 
     private final RandomSource sparkleRandom = RandomSource.create();
 
@@ -33,11 +32,7 @@ public final class SpecialItemRenderer extends ItemEntityRenderer {
     }
 
     @Override
-    public void submit(
-            ItemEntityRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            CameraRenderState camera) {
+    public void submit(ItemEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         if (!state.item.isEmpty()) {
             float bob = state.shouldBob ? Mth.sin(state.ageInTicks / 10.0F + state.bobOffset) * 0.1F + 0.1F : 0.0F;
             float rotationProgress = state.ageInTicks * ROTATION_SPEED;

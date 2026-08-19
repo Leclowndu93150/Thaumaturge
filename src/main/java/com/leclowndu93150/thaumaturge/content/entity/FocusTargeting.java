@@ -30,23 +30,16 @@ public final class FocusTargeting {
         if (source.isAlliedTo(target)) {
             return true;
         }
-        if (target instanceof OwnableEntity ownable
-                && ownable.getOwner() != null
-                && ownable.getOwner().equals(source)) {
+        if (target instanceof OwnableEntity ownable && ownable.getOwner() != null && ownable.getOwner().equals(source)) {
             return true;
         }
-        return target instanceof Player
-                && target.level() instanceof ServerLevel serverLevel
-                && !serverLevel.isPvpAllowed();
+        return target instanceof Player && target.level() instanceof ServerLevel serverLevel && !serverLevel.isPvpAllowed();
     }
 
     public static boolean canEntityBeSeen(Entity looking, Entity target) {
         Vec3 from = new Vec3(looking.getX(), looking.getY() + looking.getBbHeight() / 2.0F, looking.getZ());
         Vec3 to = new Vec3(target.getX(), target.getY() + target.getBbHeight() / 2.0F, target.getZ());
-        return looking.level()
-                        .clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, looking))
-                        .getType()
-                == HitResult.Type.MISS;
+        return looking.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, looking)).getType() == HitResult.Type.MISS;
     }
 
     public static boolean isVisibleTo(float fov, Entity viewer, Vec3 look, Entity target, float range) {
@@ -57,21 +50,14 @@ public final class FocusTargeting {
     }
 
     public static List<LivingEntity> livingInRangeSorted(Level level, Entity around, double range) {
-        List<LivingEntity> list = level.getEntitiesOfClass(
-                LivingEntity.class,
-                new AABB(around.getX(), around.getY(), around.getZ(), around.getX(), around.getY(), around.getZ())
-                        .inflate(range),
+        List<LivingEntity> list = level.getEntitiesOfClass(LivingEntity.class, new AABB(around.getX(), around.getY(), around.getZ(), around.getX(), around.getY(), around.getZ()).inflate(range),
                 candidate -> candidate.getId() != around.getId());
         list.sort(Comparator.comparingDouble(around::distanceToSqr));
         return list;
     }
 
-    public static List<LivingEntity> livingInRange(
-            Level level, double x, double y, double z, @Nullable Entity exclude, double range) {
-        return level.getEntitiesOfClass(
-                LivingEntity.class,
-                new AABB(x, y, z, x, y, z).inflate(range),
-                candidate -> exclude == null || candidate.getId() != exclude.getId());
+    public static List<LivingEntity> livingInRange(Level level, double x, double y, double z, @Nullable Entity exclude, double range) {
+        return level.getEntitiesOfClass(LivingEntity.class, new AABB(x, y, z, x, y, z).inflate(range), candidate -> exclude == null || candidate.getId() != exclude.getId());
     }
 
     private static boolean isLyingInCone(Vec3 x, Vec3 t, Vec3 b, float aperture) {

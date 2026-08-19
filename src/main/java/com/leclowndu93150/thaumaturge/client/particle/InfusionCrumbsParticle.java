@@ -25,23 +25,8 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
     private final float patchU;
     private final float patchV;
 
-    private InfusionCrumbsParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            InfusionCrumbsParticleOptions options,
-            TextureAtlasSprite sprite) {
-        super(
-                level,
-                x,
-                y,
-                z,
-                sprite,
-                NO_ENTITY,
-                new Vec3(options.tx(), options.ty(), options.tz()),
-                new Vec3(options.sx(), options.sy(), options.sz()),
-                DRIFT);
+    private InfusionCrumbsParticle(ClientLevel level, double x, double y, double z, InfusionCrumbsParticleOptions options, TextureAtlasSprite sprite) {
+        super(level, x, y, z, sprite, NO_ENTITY, new Vec3(options.tx(), options.ty(), options.tz()), new Vec3(options.sx(), options.sy(), options.sz()), DRIFT);
         setColor(TINT, TINT, TINT);
         this.alpha = 0.3F;
         this.quadSize = (MIN_SCALE + this.random.nextFloat() * SCALE_RANGE) * 0.1F;
@@ -81,16 +66,7 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
         private final ItemStackRenderState scratchRenderState = new ItemStackRenderState();
 
         @Override
-        public @Nullable Particle createParticle(
-                InfusionCrumbsParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public @Nullable Particle createParticle(InfusionCrumbsParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             TextureAtlasSprite sprite = resolveSprite(options, level, random);
             if (sprite == null) {
                 return null;
@@ -98,29 +74,16 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
             return new InfusionCrumbsParticle(level, x, y, z, options, sprite);
         }
 
-        private @Nullable TextureAtlasSprite resolveSprite(
-                InfusionCrumbsParticleOptions options, ClientLevel level, RandomSource random) {
+        private @Nullable TextureAtlasSprite resolveSprite(InfusionCrumbsParticleOptions options, ClientLevel level, RandomSource random) {
             if (options.stack().item() instanceof BlockItem blockItem) {
                 BlockState state = blockItem.getBlock().defaultBlockState();
                 if (!state.isAir()) {
-                    return Minecraft.getInstance()
-                            .getModelManager()
-                            .getBlockStateModelSet()
-                            .getParticleMaterial(state)
-                            .sprite();
+                    return Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state).sprite();
                 }
             }
-            Minecraft.getInstance()
-                    .getItemModelResolver()
-                    .updateForTopItem(
-                            scratchRenderState, options.stack().create(), ItemDisplayContext.GROUND, level, null, 0);
+            Minecraft.getInstance().getItemModelResolver().updateForTopItem(scratchRenderState, options.stack().create(), ItemDisplayContext.GROUND, level, null, 0);
             Material.Baked material = scratchRenderState.pickParticleMaterial(random);
-            return material != null
-                    ? material.sprite()
-                    : Minecraft.getInstance()
-                            .getAtlasManager()
-                            .getAtlasOrThrow(AtlasIds.ITEMS)
-                            .missingSprite();
+            return material != null ? material.sprite() : Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.ITEMS).missingSprite();
         }
     }
 }

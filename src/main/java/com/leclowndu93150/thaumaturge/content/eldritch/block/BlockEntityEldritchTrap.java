@@ -30,8 +30,7 @@ public final class BlockEntityEldritchTrap extends BlockEntity {
             return;
         }
         count = COOLDOWN_BASE + level.getRandom().nextInt(COOLDOWN_SPREAD);
-        Player player =
-                level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TRIGGER_RANGE, false);
+        Player player = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TRIGGER_RANGE, false);
         if (player == null || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -39,8 +38,6 @@ public final class BlockEntityEldritchTrap extends BlockEntity {
         if (level.getRandom().nextBoolean() && player instanceof ServerPlayer serverPlayer) {
             WarpManager.addWarp(serverPlayer, 1 + level.getRandom().nextInt(2), WarpType.TEMPORARY);
         }
-        Effects.arcBolt(serverLevel, new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5))
-                .to(new Vec3(player.getX(), player.getEyeY(), player.getZ()))
-                .send();
+        Effects.arcBolt(serverLevel, new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)).to(new Vec3(player.getX(), player.getEyeY(), player.getZ())).send();
     }
 }

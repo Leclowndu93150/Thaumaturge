@@ -36,15 +36,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         count++;
         if (level.isClientSide()) {
             if (count % SOUND_INTERVAL == 0 || count == 1) {
-                level.playLocalSound(
-                        pos.getX() + 0.5,
-                        pos.getY() + 0.5,
-                        pos.getZ() + 0.5,
-                        TCSounds.EVILPORTAL.get(),
-                        SoundSource.BLOCKS,
-                        1.0F,
-                        1.0F,
-                        false);
+                level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.EVILPORTAL.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
             }
             if (opencount < 30) {
                 opencount++;
@@ -54,8 +46,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         if (count % CHECK_INTERVAL != 0 || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        List<ServerPlayer> players =
-                serverLevel.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(0.5, 1.0, 0.5));
+        List<ServerPlayer> players = serverLevel.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(0.5, 1.0, 0.5));
         for (ServerPlayer player : players) {
             if (player.isPassenger() || player.isVehicle()) {
                 continue;
@@ -81,8 +72,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         int chunkX = portalPos.getX() >> 4;
         int chunkZ = portalPos.getZ() >> 4;
         Vec3 target = new Vec3(chunkX * 16 + 8.5, OuterLands.MAZE_Y + 4, chunkZ * 16 + 8.5);
-        player.teleport(new TeleportTransition(
-                outer, target, Vec3.ZERO, player.getYRot(), player.getXRot(), TeleportTransition.PLAY_PORTAL_SOUND));
+        player.teleport(new TeleportTransition(outer, target, Vec3.ZERO, player.getYRot(), player.getXRot(), TeleportTransition.PLAY_PORTAL_SOUND));
         player.setPortalCooldown(PORTAL_COOLDOWN);
     }
 
@@ -91,21 +81,12 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         BlockPos found = findPortalColumn(overworld, portalPos);
         Vec3 target;
         if (found != null) {
-            target = new Vec3(
-                    found.getX() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1),
-                    found.getY(),
-                    found.getZ() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1));
+            target = new Vec3(found.getX() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1), found.getY(), found.getZ() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1));
         } else {
             int surface = overworld.getHeight(Heightmap.Types.MOTION_BLOCKING, portalPos.getX(), portalPos.getZ());
             target = new Vec3(portalPos.getX() + 0.5, surface + 1, portalPos.getZ() + 0.5);
         }
-        player.teleport(new TeleportTransition(
-                overworld,
-                target,
-                Vec3.ZERO,
-                player.getYRot(),
-                player.getXRot(),
-                TeleportTransition.PLAY_PORTAL_SOUND));
+        player.teleport(new TeleportTransition(overworld, target, Vec3.ZERO, player.getYRot(), player.getXRot(), TeleportTransition.PLAY_PORTAL_SOUND));
         player.setPortalCooldown(PORTAL_COOLDOWN);
     }
 

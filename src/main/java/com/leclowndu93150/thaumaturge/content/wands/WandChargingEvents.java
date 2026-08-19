@@ -42,13 +42,7 @@ public final class WandChargingEvents {
         RandomSource random = level.getRandom();
         for (Map.Entry<ResourceKey<IAspect>, Integer> entry : primals.entrySet()) {
             if (random.nextBoolean()) {
-                level.addFreshEntity(new EntityAspectOrb(
-                        level,
-                        living.getX(),
-                        living.getY(),
-                        living.getZ(),
-                        entry.getKey(),
-                        1 + random.nextInt(entry.getValue())));
+                level.addFreshEntity(new EntityAspectOrb(level, living.getX(), living.getY(), living.getZ(), entry.getKey(), 1 + random.nextInt(entry.getValue())));
             }
         }
     }
@@ -65,13 +59,7 @@ public final class WandChargingEvents {
         }
         BlockPos pos = event.getPos();
         RandomSource random = level.getRandom();
-        level.addFreshEntity(new EntityAspectOrb(
-                level,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                aspect,
-                1 + random.nextInt(PLANT_ORB_MAX_BONUS)));
+        level.addFreshEntity(new EntityAspectOrb(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, aspect, 1 + random.nextInt(PLANT_ORB_MAX_BONUS)));
     }
 
     private static ResourceKey<IAspect> plantAspect(Block block) {

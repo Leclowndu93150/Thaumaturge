@@ -93,5 +93,6 @@ public final class BoltInstance implements IFXInstance {
         return Mth.clamp(1.0F - (this.age + partialTick) / MAX_AGE, 0.1F, 1.0F);
     }
 
-    public record PathStep(double x, double y, double z, float width) {}
+    public record PathStep(double x, double y, double z, float width) {
+    }
 }

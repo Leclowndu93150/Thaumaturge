@@ -55,8 +55,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
     @Override
     protected void onTrajectory(CastContext ctx, Trajectory trajectory) {
         Vec3 end = trajectory.direction().normalize();
-        HitResult ray = FocusRayTrace.pointedEntity(
-                ctx.level(), ctx.caster(), trajectory.source(), end, RAY_MIN_RANGE, BOLT_RANGE, RAY_PADDING, false);
+        HitResult ray = FocusRayTrace.pointedEntity(ctx.level(), ctx.caster(), trajectory.source(), end, RAY_MIN_RANGE, BOLT_RANGE, RAY_PADDING, false);
         if (ray == null) {
             end = end.scale(BOLT_RANGE).add(trajectory.source());
             HitResult blockRay = FocusRayTrace.clipBlocks(ctx.level(), ctx.caster(), trajectory.source(), end);
@@ -81,11 +80,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
             r /= effects.size();
             g /= effects.size();
             b /= effects.size();
-            Effects.arcBolt(level, trajectory.source())
-                    .to(end)
-                    .color((r << 16) | (g << 8) | b)
-                    .width(ctx.power() * BOLT_WIDTH_FACTOR)
-                    .send();
+            Effects.arcBolt(level, trajectory.source()).to(end).color((r << 16) | (g << 8) | b).width(ctx.power() * BOLT_WIDTH_FACTOR).send();
         }
     }
 }

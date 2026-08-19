@@ -54,8 +54,7 @@ public abstract class GotoGoal extends Goal {
         targetBlock = null;
         boolean start = findDestination();
         if (start && golem.getTask() != null && golem.getTask().getSealPos() != null) {
-            ISealEntity seal =
-                    GolemHelper.getSealEntity(golem.level(), golem.getTask().getSealPos());
+            ISealEntity seal = GolemHelper.getSealEntity(golem.level(), golem.getTask().getSealPos());
             if (seal != null) {
                 seal.getSeal().onTaskStarted(golem.level(), golem, golem.getTask());
             }
@@ -75,11 +74,7 @@ public abstract class GotoGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return taskCounter >= 0
-                && taskCounter <= TASK_TIMEOUT
-                && golem.getTask() != null
-                && !golem.getTask().isSuspended()
-                && isValidDestination(golem.level(), golem.getTask().getPos());
+        return taskCounter >= 0 && taskCounter <= TASK_TIMEOUT && golem.getTask() != null && !golem.getTask().isSuspended() && isValidDestination(golem.level(), golem.getTask().getPos());
     }
 
     @Override
@@ -88,19 +83,15 @@ public abstract class GotoGoal extends Goal {
         if (task == null || pause-- > 0) {
             return;
         }
-        double dist = task.getType() == Task.TYPE_BLOCK
-                ? golem.distanceToSqr(Vec3.atCenterOf(targetBlock == null ? task.getPos() : targetBlock))
-                : golem.distanceToSqr(task.getEntity());
+        double dist = task.getType() == Task.TYPE_BLOCK ? golem.distanceToSqr(Vec3.atCenterOf(targetBlock == null ? task.getPos() : targetBlock)) : golem.distanceToSqr(task.getEntity());
         if (dist > minDist) {
             task.setCompletion(false);
             taskCounter++;
             if (taskCounter % RAMBLE_INTERVAL == 0) {
                 if (prevRamble != null && prevRamble.equals(golem.blockPosition())) {
-                    Vec3 ramble = DefaultRandomPos.getPosTowards(
-                            golem, 6, 4, Vec3.atLowerCornerOf(task.getPos()), Math.PI / 2.0);
+                    Vec3 ramble = DefaultRandomPos.getPosTowards(golem, 6, 4, Vec3.atLowerCornerOf(task.getPos()), Math.PI / 2.0);
                     if (ramble != null) {
-                        golem.getNavigation()
-                                .moveTo(ramble.x + 0.5, ramble.y + 0.5, ramble.z + 0.5, golem.getGolemMoveSpeed());
+                        golem.getNavigation().moveTo(ramble.x + 0.5, ramble.y + 0.5, ramble.z + 0.5, golem.getGolemMoveSpeed());
                     }
                 } else {
                     moveTo();
@@ -146,9 +137,7 @@ public abstract class GotoGoal extends Goal {
         if (seal == null || seal.getSeal() == null) {
             return true;
         }
-        if (seal.isLocked()
-                && (golem.getOwnerReference() == null
-                        || !golem.getOwnerReference().getUUID().equals(seal.getOwner()))) {
+        if (seal.isLocked() && (golem.getOwnerReference() == null || !golem.getOwnerReference().getUUID().equals(seal.getOwner()))) {
             return false;
         }
         GolemTrait[] required = seal.getSeal().getRequiredTags();

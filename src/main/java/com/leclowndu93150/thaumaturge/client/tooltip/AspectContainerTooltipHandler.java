@@ -39,9 +39,9 @@ public final class AspectContainerTooltipHandler {
 
         if (stack.is(TCItems.LABEL.get())) {
             ILabel label = (ILabel) stack.getItem();
-            if (label.getFilteredAspect(stack) == null) return;
-            Holder<IAspect> aspect =
-                    EssentiaTransportHelper.resolve(event.getContext().registries(), label.getFilteredAspect(stack));
+            if (label.getFilteredAspect(stack) == null)
+                return;
+            Holder<IAspect> aspect = EssentiaTransportHelper.resolve(event.getContext().registries(), label.getFilteredAspect(stack));
             renderAspectList(AspectList.of(new AspectInstance(aspect, 1)), event.getToolTip());
         }
     }
@@ -53,10 +53,7 @@ public final class AspectContainerTooltipHandler {
         if (aspects.isEmpty()) {
             return;
         }
-        tooltip.add(
-                1,
-                Component.translatable("tooltip.thaumaturge.aspects.header")
-                        .withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
+        tooltip.add(1, Component.translatable("tooltip.thaumaturge.aspects.header").withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
         for (AspectInstance entry : aspects.sortedByAmount().reversed()) {
             Holder<IAspect> aspect = entry.aspect();
             MutableComponent line = Component.literal("  ").append(AspectComponents.name(aspect));

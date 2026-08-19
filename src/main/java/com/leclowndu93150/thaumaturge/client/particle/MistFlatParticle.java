@@ -10,16 +10,7 @@ public final class MistFlatParticle extends TCParticle {
     private static final int BASE_LIFETIME = 400;
     private static final double WIND_SCALE = 0.001;
 
-    private MistFlatParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            ColorParticleOption options,
-            ParticleSheet sheet) {
+    private MistFlatParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ColorParticleOption options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(100);
@@ -39,16 +30,7 @@ public final class MistFlatParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("mist_flat");
 
         @Override
-        public Particle createParticle(
-                ColorParticleOption options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new MistFlatParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

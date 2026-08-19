@@ -12,18 +12,14 @@ import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundCloudJumpPayload() implements CustomPacketPayload {
-    public static final Type<ServerboundCloudJumpPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "cloud_jump"));
+    public static final Type<ServerboundCloudJumpPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "cloud_jump"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCloudJumpPayload> STREAM_CODEC =
-            StreamCodec.unit(new ServerboundCloudJumpPayload());
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCloudJumpPayload> STREAM_CODEC = StreamCodec.unit(new ServerboundCloudJumpPayload());
 
     public static void handle(ServerboundCloudJumpPayload payload, IPayloadContext ctx) {
-        if (ModList.get().isLoaded(TCIds.CURIOS)
-                && ThaumaturgeCuriosCompat.isCurioEquipped(ctx.player(), TCItems.CLOUD_RING.get())) {
+        if (ModList.get().isLoaded(TCIds.CURIOS) && ThaumaturgeCuriosCompat.isCurioEquipped(ctx.player(), TCItems.CLOUD_RING.get())) {
             ctx.player().resetFallDistance();
-            ctx.player()
-                    .setData(TCAttachments.CLOUD_JUMP_TIME, ctx.player().level().getGameTime());
+            ctx.player().setData(TCAttachments.CLOUD_JUMP_TIME, ctx.player().level().getGameTime());
         }
     }
 

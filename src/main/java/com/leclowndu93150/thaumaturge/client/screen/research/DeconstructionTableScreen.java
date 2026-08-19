@@ -52,31 +52,13 @@ public final class DeconstructionTableScreen extends AbstractTCContainerScreen<M
         int fill = BAR_MAX_H - table.breakTime() * BAR_MAX_H / BlockEntityDeconstructionTable.BREAK_TIME_TICKS;
         fill = Math.max(0, Math.min(BAR_MAX_H, fill));
         if (fill > 0) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    leftPos + BAR_X,
-                    topPos + BAR_Y + BAR_MAX_H - fill,
-                    (float) BAR_U,
-                    (float) (BAR_MAX_H - fill),
-                    BAR_W,
-                    fill,
-                    256,
-                    256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + BAR_X, topPos + BAR_Y + BAR_MAX_H - fill, (float) BAR_U, (float) (BAR_MAX_H - fill), BAR_W, fill, 256, 256);
         }
         Holder<IAspect> result = resultHolder(table);
         if (result != null) {
             AspectTagRenderer.render(graphics, font, leftPos + RESULT_X, topPos + RESULT_Y, result, 1);
-            if (mouseX >= leftPos + RESULT_X
-                    && mouseX < leftPos + RESULT_X + RESULT_SIZE
-                    && mouseY >= topPos + RESULT_Y
-                    && mouseY < topPos + RESULT_Y + RESULT_SIZE) {
-                graphics.setTooltipForNextFrame(
-                        font,
-                        List.of(AspectComponents.name(result), Component.translatable("tc.decon.collect")),
-                        Optional.empty(),
-                        mouseX,
-                        mouseY);
+            if (mouseX >= leftPos + RESULT_X && mouseX < leftPos + RESULT_X + RESULT_SIZE && mouseY >= topPos + RESULT_Y && mouseY < topPos + RESULT_Y + RESULT_SIZE) {
+                graphics.setTooltipForNextFrame(font, List.of(AspectComponents.name(result), Component.translatable("tc.decon.collect")), Optional.empty(), mouseX, mouseY);
             }
         }
     }
@@ -86,24 +68,14 @@ public final class DeconstructionTableScreen extends AbstractTCContainerScreen<M
         if (id == null || minecraft == null || minecraft.level == null) {
             return null;
         }
-        return minecraft
-                .level
-                .registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(ResourceKey.create(IAspect.REGISTRY_KEY, id))
-                .map(reference -> (Holder<IAspect>) reference)
-                .orElse(null);
+        return minecraft.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, id)).map(reference -> (Holder<IAspect>) reference).orElse(null);
     }
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         if (event.button() == 0) {
             BlockEntityDeconstructionTable table = menu.blockEntity();
-            if (table != null
-                    && table.resultAspect() != null
-                    && event.x() >= leftPos + RESULT_X
-                    && event.x() < leftPos + RESULT_X + RESULT_SIZE
-                    && event.y() >= topPos + RESULT_Y
+            if (table != null && table.resultAspect() != null && event.x() >= leftPos + RESULT_X && event.x() < leftPos + RESULT_X + RESULT_SIZE && event.y() >= topPos + RESULT_Y
                     && event.y() < topPos + RESULT_Y + RESULT_SIZE) {
                 ClientPacketDistributor.sendToServer(new ServerboundDeconCollectPayload(menu.pos()));
                 if (minecraft != null && minecraft.player != null) {

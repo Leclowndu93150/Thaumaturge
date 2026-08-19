@@ -24,16 +24,7 @@ public abstract class SeekerParticle extends TCParticle {
     private Vec3 target;
     private Entity targetEntity;
 
-    protected SeekerParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            ParticleSheet sheet,
-            int targetEntityId,
-            Vec3 target,
-            Vec3 spawnVelocity,
-            float driftStrength) {
+    protected SeekerParticle(ClientLevel level, double x, double y, double z, ParticleSheet sheet, int targetEntityId, Vec3 target, Vec3 spawnVelocity, float driftStrength) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         this.targetEntityId = targetEntityId;
         this.target = target;
@@ -41,16 +32,7 @@ public abstract class SeekerParticle extends TCParticle {
         initSeeker(x, y, z, spawnVelocity);
     }
 
-    protected SeekerParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            TextureAtlasSprite sprite,
-            int targetEntityId,
-            Vec3 target,
-            Vec3 spawnVelocity,
-            float driftStrength) {
+    protected SeekerParticle(ClientLevel level, double x, double y, double z, TextureAtlasSprite sprite, int targetEntityId, Vec3 target, Vec3 spawnVelocity, float driftStrength) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sprite);
         this.targetEntityId = targetEntityId;
         this.target = target;
@@ -97,8 +79,7 @@ public abstract class SeekerParticle extends TCParticle {
     }
 
     private boolean arrived() {
-        return BlockPos.containing(this.x, this.y, this.z)
-                .equals(BlockPos.containing(this.target.x, this.target.y, this.target.z));
+        return BlockPos.containing(this.x, this.y, this.z).equals(BlockPos.containing(this.target.x, this.target.y, this.target.z));
     }
 
     private void steer() {

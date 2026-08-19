@@ -69,9 +69,7 @@ public final class NodeJarRitual {
         }
         level.playSound(null, nodePos, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         List<BlockPos> structure = structurePositions(nodePos);
-        Vec3 hand = player instanceof ServerPlayer serverPlayer
-                ? DustTriggerFx.posToHand(serverPlayer, InteractionHand.MAIN_HAND)
-                : Vec3.atCenterOf(nodePos);
+        Vec3 hand = player instanceof ServerPlayer serverPlayer ? DustTriggerFx.posToHand(serverPlayer, InteractionHand.MAIN_HAND) : Vec3.atCenterOf(nodePos);
         if (player instanceof ServerPlayer) {
             for (BlockPos structurePos : structure) {
                 DustTriggerFx.emitBlockSparkles(level, structurePos, hand);
@@ -100,8 +98,7 @@ public final class NodeJarRitual {
                 modifier = NodeModifier.FADING;
             }
         }
-        NodeData data = new NodeData(
-                node.getNodeType(), Optional.ofNullable(modifier), node.getAspects(), node.getAspectsBase());
+        NodeData data = new NodeData(node.getNodeType(), Optional.ofNullable(modifier), node.getAspects(), node.getAspectsBase());
         level.removeBlockEntity(nodePos);
         level.setBlock(nodePos, TCBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL);
         if (level.getBlockEntity(nodePos) instanceof BlockEntityJarNode jar) {

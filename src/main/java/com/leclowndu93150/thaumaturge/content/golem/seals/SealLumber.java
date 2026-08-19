@@ -57,15 +57,9 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
-        if (cache.containsKey(task.getId())
-                && level.getBlockState(task.getPos()).is(BlockTags.LOGS)
-                && level instanceof ServerLevel serverLevel) {
+        if (cache.containsKey(task.getId()) && level.getBlockState(task.getPos()).is(BlockTags.LOGS) && level instanceof ServerLevel serverLevel) {
             golem.swingArm();
-            if (EnchantMining.breakFurthest(
-                    serverLevel,
-                    task.getPos(),
-                    level.getBlockState(task.getPos()),
-                    TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()))) {
+            if (EnchantMining.breakFurthest(serverLevel, task.getPos(), level.getBlockState(task.getPos()), TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()))) {
                 task.setLifespan((short) Math.max(task.getLifespan(), 10L));
                 golem.addRankXp(1);
                 return false;
@@ -78,8 +72,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
-        if (cache.containsKey(task.getId())
-                && golem.getGolemWorld().getBlockState(task.getPos()).is(BlockTags.LOGS)) {
+        if (cache.containsKey(task.getId()) && golem.getGolemWorld().getBlockState(task.getPos()).is(BlockTags.LOGS)) {
             return true;
         }
         task.setSuspended(true);
@@ -112,12 +105,12 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.BREAKER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[]{TCGolemTraits.BREAKER.get(), TCGolemTraits.SMART.get()};
     }
 
     @Override

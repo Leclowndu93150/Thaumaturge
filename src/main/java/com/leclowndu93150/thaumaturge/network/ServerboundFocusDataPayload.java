@@ -15,23 +15,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record ServerboundFocusDataPayload(BlockPos pos, String name, List<FocusElementNode> nodes)
-        implements CustomPacketPayload {
+public record ServerboundFocusDataPayload(BlockPos pos, String name, List<FocusElementNode> nodes) implements CustomPacketPayload {
     private static final double MAX_INTERACT_DISTANCE_SQ = 64.0;
     private static final int MAX_NAME_LENGTH = 50;
 
-    public static final Type<ServerboundFocusDataPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "focus_data"));
+    public static final Type<ServerboundFocusDataPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "focus_data"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusDataPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC,
-                    ServerboundFocusDataPayload::pos,
-                    ByteBufCodecs.stringUtf8(MAX_NAME_LENGTH),
-                    ServerboundFocusDataPayload::name,
-                    ByteBufCodecs.fromCodecWithRegistries(FocusElementNode.CODEC.listOf()),
-                    ServerboundFocusDataPayload::nodes,
-                    ServerboundFocusDataPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusDataPayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundFocusDataPayload::pos,
+            ByteBufCodecs.stringUtf8(MAX_NAME_LENGTH), ServerboundFocusDataPayload::name, ByteBufCodecs.fromCodecWithRegistries(FocusElementNode.CODEC.listOf()), ServerboundFocusDataPayload::nodes,
+            ServerboundFocusDataPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

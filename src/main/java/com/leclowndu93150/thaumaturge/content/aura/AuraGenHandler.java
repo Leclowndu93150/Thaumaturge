@@ -54,8 +54,7 @@ public final class AuraGenHandler {
         float life = sampleBiome(level, new BlockPos(cx * 16 + 8, 50, cz * 16 + 8));
         for (int a = 0; a < 4; a++) {
             Direction dir = Direction.from2DDataValue(a);
-            life += sampleBiome(
-                    level, new BlockPos((cx + dir.getStepX()) * 16 + 8, 50, (cz + dir.getStepZ()) * 16 + 8));
+            life += sampleBiome(level, new BlockPos((cx + dir.getStepX()) * 16 + 8, 50, (cz + dir.getStepZ()) * 16 + 8));
         }
         life /= 5.0F;
         Random rand = new Random(level.getSeed() ^ ChunkPos.pack(cx, cz));

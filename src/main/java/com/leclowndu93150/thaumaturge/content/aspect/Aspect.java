@@ -10,29 +10,14 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFixedCodec;
 
-public record Aspect(
-        String tag,
-        int color,
-        List<Holder<IAspect>> components,
-        Optional<String> chatColor,
-        Identifier texture,
-        int blend)
-        implements IAspect {
+public record Aspect(String tag, int color, List<Holder<IAspect>> components, Optional<String> chatColor, Identifier texture, int blend) implements IAspect {
     public static final int DEFAULT_BLEND = 1;
     public static final int CONTRAST_BLEND = 771;
 
-    public static final Codec<Aspect> DIRECT_CODEC = RecordCodecBuilder.<Aspect>create(builder -> builder.group(
-                            Codec.STRING.fieldOf("tag").forGetter(Aspect::tag),
-                            Codec.INT.fieldOf("color").forGetter(Aspect::color),
-                            RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
-                                    .listOf()
-                                    .optionalFieldOf("components", List.of())
-                                    .forGetter(Aspect::components),
-                            Codec.STRING.optionalFieldOf("chat_color").forGetter(Aspect::chatColor),
-                            Identifier.CODEC.optionalFieldOf("texture").forGetter(Aspect::optionalTexture),
-                            Codec.INT.optionalFieldOf("blend", DEFAULT_BLEND).forGetter(Aspect::blend))
-                    .apply(builder, Aspect::create))
-            .validate(Aspect::validate);
+    public static final Codec<Aspect> DIRECT_CODEC = RecordCodecBuilder.<Aspect>create(builder -> builder.group(Codec.STRING.fieldOf("tag").forGetter(Aspect::tag),
+            Codec.INT.fieldOf("color").forGetter(Aspect::color), RegistryFixedCodec.create(IAspect.REGISTRY_KEY).listOf().optionalFieldOf("components", List.of()).forGetter(Aspect::components),
+            Codec.STRING.optionalFieldOf("chat_color").forGetter(Aspect::chatColor), Identifier.CODEC.optionalFieldOf("texture").forGetter(Aspect::optionalTexture),
+            Codec.INT.optionalFieldOf("blend", DEFAULT_BLEND).forGetter(Aspect::blend)).apply(builder, Aspect::create)).validate(Aspect::validate);
 
     private Optional<Identifier> optionalTexture() {
         return texture.equals(defaultTexture(tag)) ? Optional.empty() : Optional.of(texture);
@@ -44,22 +29,10 @@ public record Aspect(
         if (aspect instanceof Aspect concrete) {
             return concrete;
         }
-        return new Aspect(
-                aspect.tag(),
-                aspect.color(),
-                aspect.components(),
-                aspect.chatColor(),
-                aspect.texture(),
-                aspect.blend());
+        return new Aspect(aspect.tag(), aspect.color(), aspect.components(), aspect.chatColor(), aspect.texture(), aspect.blend());
     }
 
-    private static Aspect create(
-            String tag,
-            int color,
-            List<Holder<IAspect>> components,
-            Optional<String> chatColor,
-            Optional<Identifier> texture,
-            int blend) {
+    private static Aspect create(String tag, int color, List<Holder<IAspect>> components, Optional<String> chatColor, Optional<Identifier> texture, int blend) {
         return new Aspect(tag, color, components, chatColor, texture.orElseGet(() -> defaultTexture(tag)), blend);
     }
 

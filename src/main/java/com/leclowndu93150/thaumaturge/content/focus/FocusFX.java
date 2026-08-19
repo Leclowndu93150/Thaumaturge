@@ -15,42 +15,15 @@ public final class FocusFX {
     private FocusFX() {}
 
     public static void impact(ServerLevel level, Vec3 hit, Identifier partKey) {
-        send(
-                level,
-                new ClientboundFocusImpactPayload(
-                        hit.x,
-                        hit.y,
-                        hit.z,
-                        0.0F,
-                        0.0F,
-                        0.0F,
-                        false,
-                        ClientboundFocusImpactPayload.NO_CASTER,
-                        List.of(partKey)));
+        send(level, new ClientboundFocusImpactPayload(hit.x, hit.y, hit.z, 0.0F, 0.0F, 0.0F, false, ClientboundFocusImpactPayload.NO_CASTER, List.of(partKey)));
     }
 
-    public static void burst(
-            ServerLevel level,
-            Vec3 source,
-            Vec3 halfDirection,
-            List<Identifier> effectIds,
-            @Nullable LivingEntity caster) {
+    public static void burst(ServerLevel level, Vec3 source, Vec3 halfDirection, List<Identifier> effectIds, @Nullable LivingEntity caster) {
         if (effectIds.isEmpty()) {
             return;
         }
         int casterId = caster != null ? caster.getId() : ClientboundFocusImpactPayload.NO_CASTER;
-        send(
-                level,
-                new ClientboundFocusImpactPayload(
-                        source.x,
-                        source.y,
-                        source.z,
-                        (float) halfDirection.x,
-                        (float) halfDirection.y,
-                        (float) halfDirection.z,
-                        true,
-                        casterId,
-                        effectIds));
+        send(level, new ClientboundFocusImpactPayload(source.x, source.y, source.z, (float) halfDirection.x, (float) halfDirection.y, (float) halfDirection.z, true, casterId, effectIds));
     }
 
     private static void send(ServerLevel level, ClientboundFocusImpactPayload payload) {

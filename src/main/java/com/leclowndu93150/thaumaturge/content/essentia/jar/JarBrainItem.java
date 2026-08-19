@@ -17,12 +17,7 @@ public final class JarBrainItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         Integer xp = stack.get(TCDataComponents.STORED_XP.get());
         if (xp != null && xp > 0) {
             tooltip.accept(Component.literal(xp + " xp").withStyle(ChatFormatting.GREEN));

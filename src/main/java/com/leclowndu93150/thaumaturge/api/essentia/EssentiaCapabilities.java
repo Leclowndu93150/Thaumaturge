@@ -18,16 +18,15 @@ import net.neoforged.neoforge.capabilities.ItemCapability;
  */
 public final class EssentiaCapabilities {
     /** Sided block capability for essentia transport. */
-    public static final BlockCapability<IEssentiaTransport, Direction> TRANSPORT = BlockCapability.createSided(
-            Identifier.fromNamespaceAndPath("thaumaturge", "essentia_transport"), IEssentiaTransport.class);
+    public static final BlockCapability<IEssentiaTransport, Direction> TRANSPORT = BlockCapability.createSided(Identifier.fromNamespaceAndPath("thaumaturge", "essentia_transport"),
+            IEssentiaTransport.class);
 
     /** Item capability for essentia containers. */
-    public static final ItemCapability<IEssentiaContainerItem, Void> CONTAINER = ItemCapability.createVoid(
-            Identifier.fromNamespaceAndPath("thaumaturge", "essentia_container"), IEssentiaContainerItem.class);
+    public static final ItemCapability<IEssentiaContainerItem, Void> CONTAINER = ItemCapability.createVoid(Identifier.fromNamespaceAndPath("thaumaturge", "essentia_container"),
+            IEssentiaContainerItem.class);
 
     /** Sided block capability for synthetic aspect queries (filters, routing intents). */
-    public static final BlockCapability<IAspectQuery, Direction> ASPECT_QUERY = BlockCapability.createSided(
-            Identifier.fromNamespaceAndPath("thaumaturge", "aspect_query"), IAspectQuery.class);
+    public static final BlockCapability<IAspectQuery, Direction> ASPECT_QUERY = BlockCapability.createSided(Identifier.fromNamespaceAndPath("thaumaturge", "aspect_query"), IAspectQuery.class);
 
     private EssentiaCapabilities() {}
 }

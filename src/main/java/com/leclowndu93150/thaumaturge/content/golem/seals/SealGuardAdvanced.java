@@ -29,11 +29,11 @@ public class SealGuardAdvanced extends SealGuard implements ISealConfigToggles {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.FIGHTER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[]{TCGolemTraits.FIGHTER.get(), TCGolemTraits.SMART.get()};
     }
 }

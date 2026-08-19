@@ -47,6 +47,5 @@ public interface IAspectRecipeContributor {
      * @param partial the partial index, already populated with base aspects and prior results
      * @return the derived aspects, or {@link Optional#empty()} when this contributor abstains
      */
-    Optional<AspectList> derive(
-            Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial);
+    Optional<AspectList> derive(Item item, RecipeManager recipes, HolderLookup.Provider registries, IAspectIndex partial);
 }

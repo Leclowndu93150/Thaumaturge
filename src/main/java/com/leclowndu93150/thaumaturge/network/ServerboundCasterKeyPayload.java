@@ -14,12 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayload {
-    public static final Type<ServerboundCasterKeyPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "caster_key"));
+    public static final Type<ServerboundCasterKeyPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "caster_key"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCasterKeyPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.VAR_INT, ServerboundCasterKeyPayload::mod, ServerboundCasterKeyPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCasterKeyPayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ServerboundCasterKeyPayload::mod,
+            ServerboundCasterKeyPayload::new);
 
     public static void handle(ServerboundCasterKeyPayload payload, IPayloadContext ctx) {
         Player player = ctx.player();

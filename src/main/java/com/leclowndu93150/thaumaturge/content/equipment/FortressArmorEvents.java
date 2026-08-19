@@ -107,9 +107,7 @@ public final class FortressArmorEvents {
             return;
         }
         ItemStack helm = victim.getItemBySlot(EquipmentSlot.HEAD);
-        if (helm.getItem() instanceof FortressArmorItem
-                && FortressArmorItem.mask(helm) == MASK_ANGRY_GHOST
-                && victim.getRandom().nextFloat() < event.getAmount() / WITHER_CHANCE_DIVISOR) {
+        if (helm.getItem() instanceof FortressArmorItem && FortressArmorItem.mask(helm) == MASK_ANGRY_GHOST && victim.getRandom().nextFloat() < event.getAmount() / WITHER_CHANCE_DIVISOR) {
             attacker.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS));
         }
     }
@@ -119,9 +117,7 @@ public final class FortressArmorEvents {
             return;
         }
         ItemStack helm = leecher.getItemBySlot(EquipmentSlot.HEAD);
-        if (helm.getItem() instanceof FortressArmorItem
-                && FortressArmorItem.mask(helm) == MASK_SIPPING_FIEND
-                && leecher.getRandom().nextFloat() < event.getAmount() / LIFESTEAL_CHANCE_DIVISOR) {
+        if (helm.getItem() instanceof FortressArmorItem && FortressArmorItem.mask(helm) == MASK_SIPPING_FIEND && leecher.getRandom().nextFloat() < event.getAmount() / LIFESTEAL_CHANCE_DIVISOR) {
             leecher.heal(1.0F);
         }
     }

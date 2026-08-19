@@ -23,8 +23,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 public final class EntityFallingTaint extends Entity implements IEntityWithComplexSpawn {
-    private static final EntityDataAccessor<Integer> SOURCE_BLOCK_ID =
-            SynchedEntityData.defineId(EntityFallingTaint.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> SOURCE_BLOCK_ID = SynchedEntityData.defineId(EntityFallingTaint.class, EntityDataSerializers.INT);
 
     private static final int MAX_HANG_TIME = 100;
     private static final int MAX_FALL_TIME = 600;
@@ -106,8 +105,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
                 return;
             }
         } else {
-            this.setDeltaMovement(this.getDeltaMovement()
-                    .multiply(LANDING_DAMP_HORIZONTAL, LANDING_DAMP_VERTICAL, LANDING_DAMP_HORIZONTAL));
+            this.setDeltaMovement(this.getDeltaMovement().multiply(LANDING_DAMP_HORIZONTAL, LANDING_DAMP_VERTICAL, LANDING_DAMP_HORIZONTAL));
             server.playSound(null, here, TCSounds.GORE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             this.discard();
             BlockState landingState = server.getBlockState(here);

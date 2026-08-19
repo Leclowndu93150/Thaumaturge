@@ -35,7 +35,8 @@ public final class BigMagicTreeFeature extends Feature<BigMagicTreeConfig> {
         return new Generator(context.level(), context.random(), context.config(), context.origin()).generate();
     }
 
-    private record FoliageNode(BlockPos pos, int branchBase) {}
+    private record FoliageNode(BlockPos pos, int branchBase) {
+    }
 
     private static final class Generator {
         private final WorldGenLevel level;
@@ -121,11 +122,7 @@ public final class BigMagicTreeFeature extends Feature<BigMagicTreeConfig> {
                             freshLeaves.add(pos);
                         } else if (state.is(BlockTags.LEAVES)) {
                             if (!state.is(config.leaves())) {
-                                level.setBlock(
-                                        pos,
-                                        TreeLeafUpdater.carryDistance(
-                                                config.leaves().defaultBlockState(), state),
-                                        PLACE_FLAGS);
+                                level.setBlock(pos, TreeLeafUpdater.carryDistance(config.leaves().defaultBlockState(), state), PLACE_FLAGS);
                             }
                             placedLeaves.add(pos);
                         }
@@ -169,8 +166,7 @@ public final class BigMagicTreeFeature extends Feature<BigMagicTreeConfig> {
             float stepY = (float) delta.getY() / steps;
             float stepZ = (float) delta.getZ() / steps;
             for (int j = 0; j <= steps; j++) {
-                BlockPos pos = from.offset(
-                        Mth.floor(0.5F + j * stepX), Mth.floor(0.5F + j * stepY), Mth.floor(0.5F + j * stepZ));
+                BlockPos pos = from.offset(Mth.floor(0.5F + j * stepX), Mth.floor(0.5F + j * stepY), Mth.floor(0.5F + j * stepZ));
                 Direction.Axis axis = getLogAxis(from, pos);
                 BlockState state = config.log().defaultBlockState();
                 if (state.hasProperty(RotatedPillarBlock.AXIS)) {
@@ -239,8 +235,7 @@ public final class BigMagicTreeFeature extends Feature<BigMagicTreeConfig> {
             float stepY = (float) delta.getY() / steps;
             float stepZ = (float) delta.getZ() / steps;
             for (int j = 0; j <= steps; j++) {
-                BlockPos pos = from.offset(
-                        Mth.floor(0.5F + j * stepX), Mth.floor(0.5F + j * stepY), Mth.floor(0.5F + j * stepZ));
+                BlockPos pos = from.offset(Mth.floor(0.5F + j * stepX), Mth.floor(0.5F + j * stepY), Mth.floor(0.5F + j * stepZ));
                 if (!isReplaceable(pos)) {
                     return j;
                 }

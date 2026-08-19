@@ -32,12 +32,8 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
     private static final int SCAN_INTERVAL = 5;
     private static final byte EVENT_EMOTE_TASK = 5;
 
-    protected final ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"),
-        new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
-        new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"),
-        new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod")
-    };
+    protected final ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"), new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
+            new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"), new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod")};
 
     private int delay = System.identityHashCode(this) % 100;
     private final Map<Integer, Integer> itemEntities = new HashMap<>();
@@ -55,12 +51,8 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
         AABB area = GolemHelper.getBoundsForArea(seal);
         List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, area);
         for (ItemEntity item : items) {
-            if (item.onGround()
-                    && !item.hasPickUpDelay()
-                    && !item.getItem().isEmpty()
-                    && !itemEntities.containsValue(item.getId())) {
-                ItemStack match = InvHelper.findFirstMatchFromFilter(
-                        filter, filterSize, isBlacklist(), List.of(item.getItem()), filterFlags(props));
+            if (item.onGround() && !item.hasPickUpDelay() && !item.getItem().isEmpty() && !itemEntities.containsValue(item.getId())) {
+                ItemStack match = InvHelper.findFirstMatchFromFilter(filter, filterSize, isBlacklist(), List.of(item.getItem()), filterFlags(props));
                 if (!match.isEmpty()) {
                     Task task = new Task(seal.getSealPos(), item);
                     task.setPriority(seal.getPriority());
@@ -83,8 +75,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         ItemEntity item = getItemEntity(level, task);
         if (item != null && !item.getItem().isEmpty()) {
-            ItemStack match = InvHelper.findFirstMatchFromFilter(
-                    filter, filterSize, isBlacklist(), List.of(item.getItem()), filterFlags(props));
+            ItemStack match = InvHelper.findFirstMatchFromFilter(filter, filterSize, isBlacklist(), List.of(item.getItem()), filterFlags(props));
             if (!match.isEmpty()) {
                 ItemStack remainder = golem.holdItem(item.getItem());
                 if (!remainder.isEmpty()) {
@@ -92,25 +83,14 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
                 } else {
                     item.discard();
                 }
-                golem.getGolemEntity()
-                        .playSound(
-                                SoundEvents.ITEM_PICKUP,
-                                0.125F,
-                                ((level.getRandom().nextFloat()
-                                                                - level.getRandom()
-                                                                        .nextFloat())
-                                                        * 0.7F
-                                                + 1.0F)
-                                        * 2.0F);
+                golem.getGolemEntity().playSound(SoundEvents.ITEM_PICKUP, 0.125F, ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
                 golem.swingArm();
             }
         }
         task.setSuspended(true);
         itemEntities.remove(task.getId());
         for (Task next : TaskHandler.getEntityTasksSorted(level, null, golem.getGolemEntity())) {
-            if (itemEntities.containsKey(next.getId())
-                    && next.canGolemPerformTask(golem)
-                    && golem.getGolemEntity() instanceof EntityThaumaturgeGolem golemEntity
+            if (itemEntities.containsKey(next.getId()) && next.canGolemPerformTask(golem) && golem.getGolemEntity() instanceof EntityThaumaturgeGolem golemEntity
                     && golemEntity.isWithinHome(next.getEntity().blockPosition())) {
                 golemEntity.setTask(next);
                 next.setReserved(true);
@@ -156,7 +136,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_FILTER, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_FILTER, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
@@ -166,7 +146,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[]{TCGolemTraits.CLUMSY.get()};
     }
 
     @Override

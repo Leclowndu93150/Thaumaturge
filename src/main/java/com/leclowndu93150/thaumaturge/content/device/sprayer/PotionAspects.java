@@ -34,8 +34,7 @@ final class PotionAspects {
     private PotionAspects() {}
 
     static AspectList of(ServerLevel level, ItemStack stack) {
-        Optional<Holder<Potion>> potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
-                .potion();
+        Optional<Holder<Potion>> potion = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).potion();
         AspectList result = AspectList.EMPTY;
         boolean anyReagent = false;
         if (potion.isPresent() && !potion.get().is(Potions.WATER)) {
@@ -57,8 +56,7 @@ final class PotionAspects {
             result = reduced;
         }
         if (!anyReagent) {
-            result = result.add(resolve(level, TCAspects.PRAECANTATIO.identifier()), FALLBACK_AMOUNT)
-                    .add(resolve(level, TCAspects.ALKIMIA.identifier()), FALLBACK_AMOUNT);
+            result = result.add(resolve(level, TCAspects.PRAECANTATIO.identifier()), FALLBACK_AMOUNT).add(resolve(level, TCAspects.ALKIMIA.identifier()), FALLBACK_AMOUNT);
         }
         return cull(result, ASPECT_CAP);
     }
@@ -75,14 +73,16 @@ final class PotionAspects {
         return reagents;
     }
 
-    private static void collectReagents(
-            List<?> mixes, Holder<Potion> target, List<ItemStack> reagents, Set<Identifier> visited, int depth) {
-        if (depth > MAX_REAGENT_DEPTH) return;
+    private static void collectReagents(List<?> mixes, Holder<Potion> target, List<ItemStack> reagents, Set<Identifier> visited, int depth) {
+        if (depth > MAX_REAGENT_DEPTH)
+            return;
         Identifier targetId = target.unwrapKey().map(k -> k.identifier()).orElse(null);
-        if (targetId == null || !visited.add(targetId)) return;
+        if (targetId == null || !visited.add(targetId))
+            return;
         for (Object raw : mixes) {
             PotionBrewingMixAccessor mix = (PotionBrewingMixAccessor) raw;
-            if (!mix.thaumaturge$getTo().equals(target)) continue;
+            if (!mix.thaumaturge$getTo().equals(target))
+                continue;
             Ingredient ingredient = mix.thaumaturge$getIngredient();
             ingredient.items().findFirst().ifPresent(holder -> {
                 ItemStack reagent = new ItemStack(holder);
@@ -108,7 +108,8 @@ final class PotionAspects {
                     lowest = entry;
                 }
             }
-            if (lowest == null) break;
+            if (lowest == null)
+                break;
             culled = culled.remove(lowest.aspect(), lowest.amount());
         }
         return culled;

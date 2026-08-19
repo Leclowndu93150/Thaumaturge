@@ -25,8 +25,7 @@ public final class BlockBrainBox extends Block {
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromDown(
-            Shapes.or(box(3.0, 3.0, 3.0, 13.0, 13.0, 13.0), box(5.0, 0.0, 5.0, 11.0, 3.0, 11.0)));
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromDown(Shapes.or(box(3.0, 3.0, 3.0, 13.0, 13.0, 13.0), box(5.0, 0.0, 5.0, 11.0, 3.0, 11.0)));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -45,7 +44,6 @@ public final class BlockBrainBox extends Block {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite());
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite());
     }
 }

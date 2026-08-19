@@ -37,8 +37,7 @@ public class CrimsonBladeItem extends Item implements IWarpingGear {
 
     @Override
     public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        if (target.level() instanceof ServerLevel server
-                && (!(target instanceof Player) || !(attacker instanceof Player) || server.isPvpAllowed())) {
+        if (target.level() instanceof ServerLevel server && (!(target instanceof Player) || !(attacker instanceof Player) || server.isPvpAllowed())) {
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS));
             target.addEffect(new MobEffectInstance(MobEffects.HUNGER, HUNGER_TICKS));
         }
@@ -46,12 +45,7 @@ public class CrimsonBladeItem extends Item implements IWarpingGear {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         tooltip.accept(Component.translatable("enchantment.special.sapgreat").withStyle(ChatFormatting.GOLD));
         super.appendHoverText(stack, context, display, tooltip, flag);
     }

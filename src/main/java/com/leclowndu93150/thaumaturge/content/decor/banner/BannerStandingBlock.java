@@ -43,14 +43,12 @@ public final class BannerStandingBlock extends AbstractBannerBlock {
 
     @Override
     protected BlockState rotate(BlockState state, Rotation rotation) {
-        return state.setValue(
-                ROTATION, rotation.rotate(state.getValue(ROTATION), RotationSegment.getMaxSegmentIndex() + 1));
+        return state.setValue(ROTATION, rotation.rotate(state.getValue(ROTATION), RotationSegment.getMaxSegmentIndex() + 1));
     }
 
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.setValue(
-                ROTATION, mirror.mirror(state.getValue(ROTATION), RotationSegment.getMaxSegmentIndex() + 1));
+        return state.setValue(ROTATION, mirror.mirror(state.getValue(ROTATION), RotationSegment.getMaxSegmentIndex() + 1));
     }
 
     @Override
@@ -59,8 +57,7 @@ public final class BannerStandingBlock extends AbstractBannerBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -70,15 +67,7 @@ public final class BannerStandingBlock extends AbstractBannerBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (direction == Direction.DOWN && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }

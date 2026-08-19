@@ -16,6 +16,5 @@ import net.minecraft.world.level.ItemLike;
  */
 public record SealType(Supplier<? extends ISeal> factory, Supplier<? extends ItemLike> placerItem) {
     /** The registry key for seal kinds. */
-    public static final ResourceKey<Registry<SealType>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "seal"));
+    public static final ResourceKey<Registry<SealType>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "seal"));
 }

@@ -21,23 +21,13 @@ import net.minecraft.resources.Identifier;
  * @param killCredit whether the golem's kills are credited to its owner
  * @since 1.0.0
  */
-public record GolemAccessory(
-        Identifier id,
-        Group group,
-        int healthBonus,
-        float rangeFactor,
-        float speedFactor,
-        float regenFactor,
-        int armorBonus,
-        boolean killCredit) {
+public record GolemAccessory(Identifier id, Group group, int healthBonus, float rangeFactor, float speedFactor, float regenFactor, int armorBonus, boolean killCredit) {
     /**
      * Exclusion groups for accessories occupying the same spot on a golem.
      *
      * @since 1.0.0
      */
     public enum Group {
-        NONE,
-        HAT,
-        EYES
+        NONE, HAT, EYES
     }
 }

@@ -66,8 +66,7 @@ public class BlockEntityPedestal extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());
@@ -84,9 +83,7 @@ public class BlockEntityPedestal extends BlockEntity {
         if (level == null) {
             return null;
         }
-        int charge = getBlockState().hasProperty(BlockPedestal.CHARGE)
-                ? getBlockState().getValue(BlockPedestal.CHARGE)
-                : 0;
+        int charge = getBlockState().hasProperty(BlockPedestal.CHARGE) ? getBlockState().getValue(BlockPedestal.CHARGE) : 0;
         if (charge <= 0) {
             return null;
         }

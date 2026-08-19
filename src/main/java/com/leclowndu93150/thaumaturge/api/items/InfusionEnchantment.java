@@ -49,8 +49,7 @@ public enum InfusionEnchantment implements StringRepresentable {
     public static final Codec<InfusionEnchantment> CODEC = StringRepresentable.fromEnum(InfusionEnchantment::values);
 
     /** Network codec for payload and component sync. */
-    public static final StreamCodec<ByteBuf, InfusionEnchantment> STREAM_CODEC =
-            ByteBufCodecs.idMapper(i -> values()[i], InfusionEnchantment::ordinal);
+    public static final StreamCodec<ByteBuf, InfusionEnchantment> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], InfusionEnchantment::ordinal);
 
     private final String name;
     private final Set<String> toolClasses;

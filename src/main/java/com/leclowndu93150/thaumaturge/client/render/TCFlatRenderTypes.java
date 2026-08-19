@@ -8,28 +8,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 public final class TCFlatRenderTypes {
-    private static final Function<Identifier, RenderType> CUTOUT_FLAT = Util.memoize(texture -> RenderType.create(
-            "tc_cutout_flat",
-            RenderSetup.builder(TCRenderPipelines.ENTITY_CUTOUT_FLAT)
-                    .withTexture("Sampler0", texture)
-                    .useLightmap()
-                    .createRenderSetup()));
+    private static final Function<Identifier, RenderType> CUTOUT_FLAT = Util
+            .memoize(texture -> RenderType.create("tc_cutout_flat", RenderSetup.builder(TCRenderPipelines.ENTITY_CUTOUT_FLAT).withTexture("Sampler0", texture).useLightmap().createRenderSetup()));
 
-    private static final Function<Identifier, RenderType> TRANSLUCENT_FLAT = Util.memoize(texture -> RenderType.create(
-            "tc_translucent_flat",
-            RenderSetup.builder(TCRenderPipelines.ENTITY_TRANSLUCENT_FLAT)
-                    .withTexture("Sampler0", texture)
-                    .useLightmap()
-                    .sortOnUpload()
-                    .createRenderSetup()));
+    private static final Function<Identifier, RenderType> TRANSLUCENT_FLAT = Util.memoize(texture -> RenderType.create("tc_translucent_flat",
+            RenderSetup.builder(TCRenderPipelines.ENTITY_TRANSLUCENT_FLAT).withTexture("Sampler0", texture).useLightmap().sortOnUpload().createRenderSetup()));
 
-    private static final Function<Identifier, RenderType> ADDITIVE_FLAT = Util.memoize(texture -> RenderType.create(
-            "tc_additive_flat",
-            RenderSetup.builder(TCRenderPipelines.ENTITY_ADDITIVE_EMISSIVE)
-                    .withTexture("Sampler0", texture)
-                    .useLightmap()
-                    .sortOnUpload()
-                    .createRenderSetup()));
+    private static final Function<Identifier, RenderType> ADDITIVE_FLAT = Util.memoize(texture -> RenderType.create("tc_additive_flat",
+            RenderSetup.builder(TCRenderPipelines.ENTITY_ADDITIVE_EMISSIVE).withTexture("Sampler0", texture).useLightmap().sortOnUpload().createRenderSetup()));
 
     private TCFlatRenderTypes() {}
 

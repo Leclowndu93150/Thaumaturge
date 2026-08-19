@@ -46,8 +46,7 @@ public class BlockSmelter extends BaseEntityBlock {
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     protected BlockState rotate(BlockState state, Rotation rotation) {
@@ -67,8 +66,7 @@ public class BlockSmelter extends BaseEntityBlock {
         return new BlockEntitySmelter(blockPos, blockState);
     }
 
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         Containers.updateNeighboursAfterDestroy(state, level, pos);
     }
 
@@ -82,13 +80,13 @@ public class BlockSmelter extends BaseEntityBlock {
 
     @Override
     public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntitySmelter smelter)) return;
+        if (!(level.getBlockEntity(pos) instanceof BlockEntitySmelter smelter))
+            return;
         smelter.checkNeighbours();
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState blockState, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
         return createTickerHelper(type, TCBlockEntities.SMELTER.get(), BlockEntitySmelter::staticTick);
     }
 
@@ -114,8 +112,7 @@ public class BlockSmelter extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("essentia_smelter"))) {
             return InteractionResult.SUCCESS_SERVER;
         }

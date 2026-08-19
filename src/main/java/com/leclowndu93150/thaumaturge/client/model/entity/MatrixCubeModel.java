@@ -22,14 +22,8 @@ public final class MatrixCubeModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "cube",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F),
-                PartPose.ZERO);
-        root.addOrReplaceChild(
-                "glow",
-                CubeListBuilder.create().texOffs(0, 32).mirror().addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F),
-                PartPose.ZERO);
+        root.addOrReplaceChild("cube", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F), PartPose.ZERO);
+        root.addOrReplaceChild("glow", CubeListBuilder.create().texOffs(0, 32).mirror().addBox(-8.0F, -8.0F, -8.0F, 16.0F, 16.0F, 16.0F), PartPose.ZERO);
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 }

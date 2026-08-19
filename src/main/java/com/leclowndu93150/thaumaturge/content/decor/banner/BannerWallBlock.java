@@ -24,11 +24,8 @@ import org.jspecify.annotations.Nullable;
 
 public final class BannerWallBlock extends AbstractBannerBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
-    private static final Map<Direction, VoxelShape> SHAPES = Map.of(
-            Direction.NORTH, Block.box(0.0, 0.0, 12.0, 16.0, 16.0, 16.0),
-            Direction.SOUTH, Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 4.0),
-            Direction.WEST, Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0),
-            Direction.EAST, Block.box(0.0, 0.0, 0.0, 4.0, 16.0, 16.0));
+    private static final Map<Direction, VoxelShape> SHAPES = Map.of(Direction.NORTH, Block.box(0.0, 0.0, 12.0, 16.0, 16.0, 16.0), Direction.SOUTH, Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 4.0),
+            Direction.WEST, Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0), Direction.EAST, Block.box(0.0, 0.0, 0.0, 4.0, 16.0, 16.0));
 
     public BannerWallBlock(@Nullable DyeColor dye, Properties properties) {
         super(dye, properties);
@@ -70,8 +67,7 @@ public final class BannerWallBlock extends AbstractBannerBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -83,15 +79,7 @@ public final class BannerWallBlock extends AbstractBannerBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (direction == state.getValue(FACING).getOpposite() && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }

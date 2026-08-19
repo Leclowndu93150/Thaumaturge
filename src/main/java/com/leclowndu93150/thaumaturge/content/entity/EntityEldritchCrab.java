@@ -43,8 +43,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchCrab extends Monster implements IEldritchMob {
-    private static final EntityDataAccessor<Boolean> DATA_HELM =
-            SynchedEntityData.defineId(EntityEldritchCrab.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_HELM = SynchedEntityData.defineId(EntityEldritchCrab.class, EntityDataSerializers.BOOLEAN);
 
     private static final double HELM_SPEED = 0.275;
     private static final double BARE_SPEED = 0.3;
@@ -65,10 +64,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)
-                .add(Attributes.ATTACK_DAMAGE, 4.0)
-                .add(Attributes.MOVEMENT_SPEED, BARE_SPEED);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 20.0).add(Attributes.ATTACK_DAMAGE, 4.0).add(Attributes.MOVEMENT_SPEED, BARE_SPEED);
     }
 
     @Override
@@ -105,19 +101,14 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData groupData) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData groupData) {
         if (level.getDifficulty() == Difficulty.HARD) {
             this.setHelm(true);
         } else {
             this.setHelm(this.random.nextFloat() < HELM_CHANCE);
         }
         RandomSource rand = level.getRandom();
-        if (level.getDifficulty() == Difficulty.HARD
-                && rand.nextFloat() < HARD_GROUP_EFFECT_CHANCE * difficulty.getSpecialMultiplier()) {
+        if (level.getDifficulty() == Difficulty.HARD && rand.nextFloat() < HARD_GROUP_EFFECT_CHANCE * difficulty.getSpecialMultiplier()) {
             var effect = randomGroupEffect(rand);
             this.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION));
         }
@@ -144,13 +135,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
             return;
         }
         var target = this.getTarget();
-        if (this.getVehicle() == null
-                && target != null
-                && !target.isVehicle()
-                && !this.onGround()
-                && !this.hasHelm()
-                && target.isAlive()
-                && this.getY() - target.getY() >= target.getBbHeight() / 2.0F
+        if (this.getVehicle() == null && target != null && !target.isVehicle() && !this.onGround() && !this.hasHelm() && target.isAlive() && this.getY() - target.getY() >= target.getBbHeight() / 2.0F
                 && this.distanceToSqr(target) < LATCH_RANGE_SQ) {
             this.startRiding(target);
         }
@@ -177,16 +162,8 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob {
         boolean result = super.hurtServer(level, source, damage);
         if (this.hasHelm() && this.getHealth() / this.getMaxHealth() <= HELM_BREAK_HEALTH_FRACTION) {
             this.setHelm(false);
-            level.sendParticles(
-                    new ItemParticleOption(ParticleTypes.ITEM, TCItems.CRIMSON_PLATE_CHEST.get()),
-                    this.getX(),
-                    this.getY() + this.getBbHeight() / 2.0,
-                    this.getZ(),
-                    BREAK_PARTICLES,
-                    0.1,
-                    0.1,
-                    0.1,
-                    0.05);
+            level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, TCItems.CRIMSON_PLATE_CHEST.get()), this.getX(), this.getY() + this.getBbHeight() / 2.0, this.getZ(), BREAK_PARTICLES, 0.1,
+                    0.1, 0.1, 0.05);
         }
         return result;
     }

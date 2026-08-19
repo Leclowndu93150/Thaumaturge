@@ -29,22 +29,12 @@ public final class TCClientFluidExtensions {
     @SubscribeEvent
     public static void onRegisterFluidModels(RegisterFluidModelsEvent event) {
         Material gooTexture = new Material(TCIds.rl("block/flux_goo"));
+        event.register(new FluidModel.Unbaked(gooTexture, gooTexture, null, null), TCFluids.FLUX_GOO_SOURCE.get(), TCFluids.FLUX_GOO_FLOWING.get());
         event.register(
-                new FluidModel.Unbaked(gooTexture, gooTexture, null, null),
-                TCFluids.FLUX_GOO_SOURCE.get(),
-                TCFluids.FLUX_GOO_FLOWING.get());
-        event.register(
-                new FluidModel.Unbaked(
-                        new Material(Identifier.withDefaultNamespace("block/water_still")),
-                        new Material(Identifier.withDefaultNamespace("block/water_flow")),
-                        new Material(Identifier.withDefaultNamespace("block/water_overlay")),
-                        BlockTintSources.constant(PURIFYING_TINT)),
-                TCFluids.PURIFYING_SOURCE.get(),
-                TCFluids.PURIFYING_FLOWING.get());
+                new FluidModel.Unbaked(new Material(Identifier.withDefaultNamespace("block/water_still")), new Material(Identifier.withDefaultNamespace("block/water_flow")),
+                        new Material(Identifier.withDefaultNamespace("block/water_overlay")), BlockTintSources.constant(PURIFYING_TINT)),
+                TCFluids.PURIFYING_SOURCE.get(), TCFluids.PURIFYING_FLOWING.get());
         Material deathTexture = new Material(TCIds.rl("block/animatedglow"));
-        event.register(
-                new FluidModel.Unbaked(deathTexture, deathTexture, null, BlockTintSources.constant(LIQUID_DEATH_TINT)),
-                TCFluids.LIQUID_DEATH_SOURCE.get(),
-                TCFluids.LIQUID_DEATH_FLOWING.get());
+        event.register(new FluidModel.Unbaked(deathTexture, deathTexture, null, BlockTintSources.constant(LIQUID_DEATH_TINT)), TCFluids.LIQUID_DEATH_SOURCE.get(), TCFluids.LIQUID_DEATH_FLOWING.get());
     }
 }

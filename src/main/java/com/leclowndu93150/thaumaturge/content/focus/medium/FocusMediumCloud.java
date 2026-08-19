@@ -44,9 +44,7 @@ public final class FocusMediumCloud implements FocusMedium {
 
     @Override
     public int complexity(FocusSettings settings) {
-        return BASE_COMPLEXITY
-                + settings.value("radius") * RADIUS_COMPLEXITY_FACTOR
-                + settings.value("duration") / DURATION_COMPLEXITY_DIVISOR;
+        return BASE_COMPLEXITY + settings.value("radius") * RADIUS_COMPLEXITY_FACTOR + settings.value("duration") / DURATION_COMPLEXITY_DIVISOR;
     }
 
     @Override
@@ -66,8 +64,7 @@ public final class FocusMediumCloud implements FocusMedium {
 
     @Override
     public List<SettingDefinition> settings() {
-        return List.of(
-                new SettingDefinition("radius", "focus.common.radius", new SettingDefinition.IntRange(1, 3)),
+        return List.of(new SettingDefinition("radius", "focus.common.radius", new SettingDefinition.IntRange(1, 3)),
                 new SettingDefinition("duration", "focus.common.duration", new SettingDefinition.IntRange(5, 30)));
     }
 

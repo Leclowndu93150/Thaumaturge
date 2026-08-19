@@ -92,18 +92,12 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
         if (level.getRandom().nextFloat() < CRAWLER_ON_BREAK_CHANCE) {
             EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(level, EntitySpawnReason.NATURAL);
             if (crawler != null) {
-                crawler.snapTo(
-                        pos.getX() + 0.5,
-                        pos.getY() + 0.5,
-                        pos.getZ() + 0.5,
-                        level.getRandom().nextInt(360),
-                        0.0F);
+                crawler.snapTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, level.getRandom().nextInt(360), 0.0F);
                 level.addFreshEntity(crawler);
             }
         } else {

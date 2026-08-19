@@ -10,15 +10,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class BlockLoot extends Block {
     public enum LootType {
-        COMMON,
-        UNCOMMON,
-        RARE
+        COMMON, UNCOMMON, RARE
     }
 
-    private static final VoxelShape URN_SHAPE = Shapes.or(
-            Block.box(3.0, 0.0, 3.0, 13.0, 1.0, 13.0),
-            Block.box(2.0, 1.0, 2.0, 14.0, 13.0, 14.0),
-            Block.box(4.0, 13.0, 4.0, 12.0, 16.0, 12.0));
+    private static final VoxelShape URN_SHAPE = Shapes.or(Block.box(3.0, 0.0, 3.0, 13.0, 1.0, 13.0), Block.box(2.0, 1.0, 2.0, 14.0, 13.0, 14.0), Block.box(4.0, 13.0, 4.0, 12.0, 16.0, 12.0));
     private static final VoxelShape CRATE_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 14.0, 15.0);
 
     private final LootType type;

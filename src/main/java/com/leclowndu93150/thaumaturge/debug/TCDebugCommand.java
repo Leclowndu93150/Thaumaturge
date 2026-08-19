@@ -21,8 +21,7 @@ public final class TCDebugCommand {
 
     @SubscribeEvent
     public static void onRegister(RegisterCommandsEvent event) {
-        LiteralArgumentBuilder<CommandSourceStack> tc =
-                Commands.literal("tc_debug").then(Commands.literal("raycast").executes(TCDebugCommand::toggleRaycast));
+        LiteralArgumentBuilder<CommandSourceStack> tc = Commands.literal("tc_debug").then(Commands.literal("raycast").executes(TCDebugCommand::toggleRaycast));
         event.getDispatcher().register(tc);
     }
 

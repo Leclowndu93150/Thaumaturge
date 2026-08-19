@@ -38,14 +38,8 @@ public final class ElementalSwordItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
-        builder.accept(Component.translatable("tooltip.thaumaturge.elemental_sword.toggle")
-                .withStyle(ChatFormatting.DARK_GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
+        builder.accept(Component.translatable("tooltip.thaumaturge.elemental_sword.toggle").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
@@ -65,17 +59,8 @@ public final class ElementalSwordItem extends Item {
             boolean disabled = !stack.getOrDefault(TCDataComponents.WHIRLWIND_DISABLED.get(), false);
             stack.set(TCDataComponents.WHIRLWIND_DISABLED.get(), disabled);
             if (!level.isClientSide()) {
-                TCActionBar.sendPurple(
-                        player, disabled ? "tc.elemental_sword.whirlwind_off" : "tc.elemental_sword.whirlwind_on");
-                level.playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        TCSounds.KEY.get(),
-                        SoundSource.PLAYERS,
-                        0.5F,
-                        disabled ? 0.8F : 1.2F);
+                TCActionBar.sendPurple(player, disabled ? "tc.elemental_sword.whirlwind_off" : "tc.elemental_sword.whirlwind_on");
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.KEY.get(), SoundSource.PLAYERS, 0.5F, disabled ? 0.8F : 1.2F);
             }
             return InteractionResult.SUCCESS;
         }
@@ -107,10 +92,7 @@ public final class ElementalSwordItem extends Item {
 
         List<Entity> targets = level.getEntities(player, player.getBoundingBox().inflate(PULL_RANGE));
         for (Entity entity : targets) {
-            if (entity instanceof Player
-                    || !(entity instanceof LivingEntity)
-                    || !entity.isAlive()
-                    || player.getVehicle() == entity) {
+            if (entity instanceof Player || !(entity instanceof LivingEntity) || !entity.isAlive() || player.getVehicle() == entity) {
                 continue;
             }
             Vec3 p = player.position();
@@ -126,48 +108,20 @@ public final class ElementalSwordItem extends Item {
                 miny = Mth.floor(player.getBoundingBox().minY);
             }
             for (int a = 0; a < 5; a++) {
-                ClientEffects.smokeSpiral(
-                        level,
-                        player.getX(),
-                        player.getBoundingBox().minY + player.getBbHeight() / 2.0F,
-                        player.getZ(),
-                        1.5F,
-                        level.getRandom().nextInt(360),
-                        miny,
-                        SMOKE_COLOR);
+                ClientEffects.smokeSpiral(level, player.getX(), player.getBoundingBox().minY + player.getBbHeight() / 2.0F, player.getZ(), 1.5F, level.getRandom().nextInt(360), miny, SMOKE_COLOR);
             }
             if (player.onGround()) {
                 float r1 = level.getRandom().nextFloat() * 360.0F;
                 float mx = -Mth.sin(r1 / 180.0F * (float) Math.PI) / 5.0F;
                 float mz = Mth.cos(r1 / 180.0F * (float) Math.PI) / 5.0F;
-                level.addParticle(
-                        ParticleTypes.SMOKE,
-                        player.getX(),
-                        player.getBoundingBox().minY + 0.1F,
-                        player.getZ(),
-                        mx,
-                        0.0,
-                        mz);
+                level.addParticle(ParticleTypes.SMOKE, player.getX(), player.getBoundingBox().minY + 0.1F, player.getZ(), mx, 0.0, mz);
             }
         } else if (ticks == 0 || ticks % PULSE_INTERVAL_TICKS == 0) {
-            level.playSound(
-                    null,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    TCSounds.WIND.get(),
-                    SoundSource.PLAYERS,
-                    0.5F,
-                    0.9F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.WIND.get(), SoundSource.PLAYERS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         }
 
         if (ticks % PULSE_INTERVAL_TICKS == 0) {
-            stack.hurtAndBreak(
-                    1,
-                    player,
-                    player.getUsedItemHand() == InteractionHand.OFF_HAND
-                            ? EquipmentSlot.OFFHAND
-                            : EquipmentSlot.MAINHAND);
+            stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
         }
     }
 }

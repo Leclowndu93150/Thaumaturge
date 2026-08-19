@@ -25,19 +25,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class SealEntity implements ISealEntity {
-    public static final Codec<SealEntity> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    SealPos.CODEC.fieldOf("pos").forGetter(SealEntity::sealPos),
-                    LegacyIds.IDENTIFIER_CODEC.fieldOf("type").forGetter(seal -> seal.typeId),
-                    Codec.BYTE.optionalFieldOf("priority", (byte) 0).forGetter(SealEntity::getPriority),
-                    Codec.BYTE.optionalFieldOf("color", (byte) 0).forGetter(SealEntity::getColor),
-                    Codec.BOOL.optionalFieldOf("locked", false).forGetter(SealEntity::isLocked),
-                    Codec.BOOL.optionalFieldOf("redstone", false).forGetter(SealEntity::isRedstoneSensitive),
-                    UUIDUtil.CODEC.optionalFieldOf("owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
-                    BlockPos.CODEC
-                            .optionalFieldOf("area", new BlockPos(1, 1, 1))
-                            .forGetter(SealEntity::getArea),
-                    CompoundTag.CODEC.optionalFieldOf("data", new CompoundTag()).forGetter(SealEntity::writeSealData))
-            .apply(instance, SealEntity::fromCodec));
+    public static final Codec<SealEntity> CODEC = RecordCodecBuilder.create(instance -> instance.group(SealPos.CODEC.fieldOf("pos").forGetter(SealEntity::sealPos),
+            LegacyIds.IDENTIFIER_CODEC.fieldOf("type").forGetter(seal -> seal.typeId), Codec.BYTE.optionalFieldOf("priority", (byte) 0).forGetter(SealEntity::getPriority),
+            Codec.BYTE.optionalFieldOf("color", (byte) 0).forGetter(SealEntity::getColor), Codec.BOOL.optionalFieldOf("locked", false).forGetter(SealEntity::isLocked),
+            Codec.BOOL.optionalFieldOf("redstone", false).forGetter(SealEntity::isRedstoneSensitive), UUIDUtil.CODEC.optionalFieldOf("owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
+            BlockPos.CODEC.optionalFieldOf("area", new BlockPos(1, 1, 1)).forGetter(SealEntity::getArea),
+            CompoundTag.CODEC.optionalFieldOf("data", new CompoundTag()).forGetter(SealEntity::writeSealData)).apply(instance, SealEntity::fromCodec));
 
     private final SealPos sealPos;
     private final Identifier typeId;
@@ -62,16 +55,7 @@ public final class SealEntity implements ISealEntity {
         }
     }
 
-    private static SealEntity fromCodec(
-            SealPos pos,
-            Identifier typeId,
-            byte priority,
-            byte color,
-            boolean locked,
-            boolean redstone,
-            Optional<UUID> owner,
-            BlockPos area,
-            CompoundTag data) {
+    private static SealEntity fromCodec(SealPos pos, Identifier typeId, byte priority, byte color, boolean locked, boolean redstone, Optional<UUID> owner, BlockPos area, CompoundTag data) {
         SealType type = TCSeals.registry().getValue(typeId);
         if (type == null) {
             throw new IllegalStateException("Unknown seal type " + typeId);
@@ -134,9 +118,7 @@ public final class SealEntity implements ISealEntity {
 
     @Override
     public boolean isStoppedByRedstone(Level level) {
-        return isRedstoneSensitive()
-                && (level.hasNeighborSignal(sealPos.pos())
-                        || level.hasNeighborSignal(sealPos.pos().relative(sealPos.face())));
+        return isRedstoneSensitive() && (level.hasNeighborSignal(sealPos.pos()) || level.hasNeighborSignal(sealPos.pos().relative(sealPos.face())));
     }
 
     @Override

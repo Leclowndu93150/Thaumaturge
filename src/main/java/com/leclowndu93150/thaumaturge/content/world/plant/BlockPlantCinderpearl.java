@@ -24,25 +24,10 @@ public final class BlockPlantCinderpearl extends AbstractTCPlant {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.SAND)
-                || state.is(Blocks.RED_SAND)
-                || state.is(Blocks.DIRT)
-                || state.is(Blocks.TERRACOTTA)
-                || state.is(Blocks.WHITE_TERRACOTTA)
-                || state.is(Blocks.ORANGE_TERRACOTTA)
-                || state.is(Blocks.MAGENTA_TERRACOTTA)
-                || state.is(Blocks.LIGHT_BLUE_TERRACOTTA)
-                || state.is(Blocks.YELLOW_TERRACOTTA)
-                || state.is(Blocks.LIME_TERRACOTTA)
-                || state.is(Blocks.PINK_TERRACOTTA)
-                || state.is(Blocks.GRAY_TERRACOTTA)
-                || state.is(Blocks.LIGHT_GRAY_TERRACOTTA)
-                || state.is(Blocks.CYAN_TERRACOTTA)
-                || state.is(Blocks.PURPLE_TERRACOTTA)
-                || state.is(Blocks.BLUE_TERRACOTTA)
-                || state.is(Blocks.BROWN_TERRACOTTA)
-                || state.is(Blocks.GREEN_TERRACOTTA)
-                || state.is(Blocks.RED_TERRACOTTA)
+        return state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.DIRT) || state.is(Blocks.TERRACOTTA) || state.is(Blocks.WHITE_TERRACOTTA) || state.is(Blocks.ORANGE_TERRACOTTA)
+                || state.is(Blocks.MAGENTA_TERRACOTTA) || state.is(Blocks.LIGHT_BLUE_TERRACOTTA) || state.is(Blocks.YELLOW_TERRACOTTA) || state.is(Blocks.LIME_TERRACOTTA)
+                || state.is(Blocks.PINK_TERRACOTTA) || state.is(Blocks.GRAY_TERRACOTTA) || state.is(Blocks.LIGHT_GRAY_TERRACOTTA) || state.is(Blocks.CYAN_TERRACOTTA)
+                || state.is(Blocks.PURPLE_TERRACOTTA) || state.is(Blocks.BLUE_TERRACOTTA) || state.is(Blocks.BROWN_TERRACOTTA) || state.is(Blocks.GREEN_TERRACOTTA) || state.is(Blocks.RED_TERRACOTTA)
                 || state.is(Blocks.BLACK_TERRACOTTA);
     }
 

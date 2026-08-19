@@ -24,11 +24,7 @@ public class CrucibleRecipeBuilder extends SimpleRecipeBuilder {
     private @Nullable ResearchGate gate;
     private AspectList aspects = AspectList.EMPTY;
 
-    public CrucibleRecipeBuilder(
-            HolderGetter<IAspect> aspectsGetter,
-            RecipeCategory category,
-            ItemStackTemplate result,
-            Ingredient catalyst) {
+    public CrucibleRecipeBuilder(HolderGetter<IAspect> aspectsGetter, RecipeCategory category, ItemStackTemplate result, Ingredient catalyst) {
         super(result, category);
         this.aspectsGetter = aspectsGetter;
         this.catalyst = catalyst;
@@ -71,8 +67,6 @@ public class CrucibleRecipeBuilder extends SimpleRecipeBuilder {
 
     @Override
     public ResourceKey<Recipe<?>> defaultId() {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("crucible/"));
+        return ResourceKey.create(Registries.RECIPE, result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("crucible/"));
     }
 }

@@ -51,9 +51,7 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
                 pos = pos.below();
             }
             BlockPos above = pos.above();
-            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
-                    && level.getBlockState(above).canBeReplaced()
-                    && isAdjacentToWood(level, above)) {
+            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK) && level.getBlockState(above).canBeReplaced() && isAdjacentToWood(level, above)) {
                 level.setBlock(above, config.vishroom().defaultBlockState(), PLACE_FLAGS);
                 any = true;
             }

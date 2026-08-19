@@ -52,16 +52,7 @@ public final class PechCurseParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("pech_curse");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new PechCurseParticle(level, x, y, z, SHEET);
         }
     }

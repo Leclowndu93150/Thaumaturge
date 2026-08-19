@@ -20,8 +20,7 @@ public final class TCTestRegistrar {
 
     public TCTestRegistrar(RegisterGameTestsEvent event) {
         this.event = event;
-        this.environment =
-                event.registerEnvironment(TCIds.rl("default"), new TestEnvironmentDefinition.AllOf(List.of()));
+        this.environment = event.registerEnvironment(TCIds.rl("default"), new TestEnvironmentDefinition.AllOf(List.of()));
     }
 
     public void add(String name, int maxTicks, Consumer<GameTestHelper> body) {
@@ -29,8 +28,7 @@ public final class TCTestRegistrar {
     }
 
     public void add(String name, int maxTicks, int setupTicks, Consumer<GameTestHelper> body) {
-        TestData<Holder<TestEnvironmentDefinition<?>>> info =
-                new TestData<>(environment, STRUCTURE, maxTicks, setupTicks, true, Rotation.NONE);
+        TestData<Holder<TestEnvironmentDefinition<?>>> info = new TestData<>(environment, STRUCTURE, maxTicks, setupTicks, true, Rotation.NONE);
         try {
             event.registerTest(TCIds.rl(name), new TCInlineTest(info, body));
         } catch (Throwable t) {

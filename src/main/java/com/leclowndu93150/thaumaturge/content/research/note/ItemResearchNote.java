@@ -44,19 +44,9 @@ public final class ItemResearchNote extends Item {
             AspectPools.data(serverPlayer).incrementCompletedNotes();
             AspectPools.sync(serverPlayer);
             stack.shrink(1);
-            level.playSound(
-                    null,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    TCSounds.LEARN.get(),
-                    SoundSource.PLAYERS,
-                    0.66F,
-                    1.0F);
-            serverPlayer.sendSystemMessage(Component.translatable(
-                            "tc.researchnote.learned",
-                            ResearchNotes.entryName(serverPlayer.registryAccess(), data.entry()))
-                    .withStyle(ChatFormatting.DARK_PURPLE));
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.PLAYERS, 0.66F, 1.0F);
+            serverPlayer
+                    .sendSystemMessage(Component.translatable("tc.researchnote.learned", ResearchNotes.entryName(serverPlayer.registryAccess(), data.entry())).withStyle(ChatFormatting.DARK_PURPLE));
             ResearchManager.advanceStage(serverPlayer, data.entry());
         }
         return InteractionResult.SUCCESS;
@@ -72,20 +62,13 @@ public final class ItemResearchNote extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         ResearchNoteData data = ResearchNotes.dataOf(stack);
         if (data == null) {
             return;
         }
         if (context.registries() != null) {
-            tooltip.accept(Component.translatable(
-                            "tc.researchtheory", ResearchNotes.entryName(context.registries(), data.entry()))
-                    .withStyle(ChatFormatting.DARK_PURPLE));
+            tooltip.accept(Component.translatable("tc.researchtheory", ResearchNotes.entryName(context.registries(), data.entry())).withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (data.complete()) {
             tooltip.accept(Component.translatable("tc.researchnote.use").withStyle(ChatFormatting.GOLD));

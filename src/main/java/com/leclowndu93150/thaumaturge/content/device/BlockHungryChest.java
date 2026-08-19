@@ -37,8 +37,7 @@ public final class BlockHungryChest extends ChestBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return createTickerHelper(type, TCBlockEntities.HUNGRY_CHEST.get(), ChestBlockEntity::lidAnimateTick);
         }

@@ -87,13 +87,7 @@ public class BlockPreviewRenderer extends PictureInPictureRenderer<BlockPreviewR
         }
     }
 
-    private void renderPartWithFaceCulling(
-            PoseStack poseStack,
-            BlockState state,
-            BlockStateModelPart part,
-            PreviewBlockGetter blockGetter,
-            BlockPos pos,
-            QuadInstance quadInstance) {
+    private void renderPartWithFaceCulling(PoseStack poseStack, BlockState state, BlockStateModelPart part, PreviewBlockGetter blockGetter, BlockPos pos, QuadInstance quadInstance) {
         for (Direction direction : Direction.values()) {
             BlockPos adjacentPos = pos.relative(direction);
             BlockState adjacentState = blockGetter.getBlockState(adjacentPos);
@@ -105,8 +99,7 @@ public class BlockPreviewRenderer extends PictureInPictureRenderer<BlockPreviewR
             for (BakedQuad quad : part.getQuads(direction)) {
                 quadInstance.setColor(-1);
                 quadInstance.setLightCoords(15728880);
-                VertexConsumer buffer = this.bufferSource.getBuffer(
-                        getRenderTypeForLayer(quad.materialInfo().layer()));
+                VertexConsumer buffer = this.bufferSource.getBuffer(getRenderTypeForLayer(quad.materialInfo().layer()));
                 buffer.putBakedQuad(poseStack.last(), quad, quadInstance);
             }
         }
@@ -114,8 +107,7 @@ public class BlockPreviewRenderer extends PictureInPictureRenderer<BlockPreviewR
         for (BakedQuad quad : part.getQuads(null)) {
             quadInstance.setColor(-1);
             quadInstance.setLightCoords(15728880);
-            VertexConsumer buffer = this.bufferSource.getBuffer(
-                    getRenderTypeForLayer(quad.materialInfo().layer()));
+            VertexConsumer buffer = this.bufferSource.getBuffer(getRenderTypeForLayer(quad.materialInfo().layer()));
             buffer.putBakedQuad(poseStack.last(), quad, quadInstance);
         }
     }

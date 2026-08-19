@@ -12,4 +12,5 @@ import net.minecraft.world.inventory.tooltip.TooltipComponent;
  * @param aspects the aspect list to display
  * @since 1.0.0
  */
-public record AspectChipsTooltip(AspectList aspects) implements TooltipComponent {}
+public record AspectChipsTooltip(AspectList aspects) implements TooltipComponent {
+}

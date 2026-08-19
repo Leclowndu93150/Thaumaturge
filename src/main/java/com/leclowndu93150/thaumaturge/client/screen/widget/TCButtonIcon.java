@@ -16,20 +16,7 @@ public sealed interface TCButtonIcon {
         public void draw(GuiGraphicsExtractor graphics, int x, int y, int size, int tintColor) {
             IAspect value = aspect.value();
             int color = (tintColor & 0xFF000000) | (value.color() & 0x00FFFFFF);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    value.texture(),
-                    x,
-                    y,
-                    0.0F,
-                    0.0F,
-                    size,
-                    size,
-                    size,
-                    size,
-                    size,
-                    size,
-                    color);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, value.texture(), x, y, 0.0F, 0.0F, size, size, size, size, size, size, color);
         }
     }
 
@@ -40,20 +27,7 @@ public sealed interface TCButtonIcon {
 
         @Override
         public void draw(GuiGraphicsExtractor graphics, int x, int y, int size, int tintColor) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    x,
-                    y,
-                    0.0F,
-                    0.0F,
-                    size,
-                    size,
-                    size,
-                    size,
-                    textureWidth,
-                    textureHeight,
-                    tintColor);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0.0F, 0.0F, size, size, size, size, textureWidth, textureHeight, tintColor);
         }
     }
 

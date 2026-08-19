@@ -20,30 +20,12 @@ public final class DeconTableModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "top",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 16.0F, 8.0F, 16.0F),
-                PartPose.offset(-8.0F, 0.0F, -8.0F));
-        root.addOrReplaceChild(
-                "base",
-                CubeListBuilder.create().texOffs(0, 32).mirror().addBox(0.0F, 0.0F, 0.0F, 16.0F, 4.0F, 16.0F),
-                PartPose.offset(-8.0F, 12.0F, -8.0F));
-        root.addOrReplaceChild(
-                "leg1",
-                CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F),
-                PartPose.offset(3.0F, 8.0F, -7.0F));
-        root.addOrReplaceChild(
-                "leg2",
-                CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F),
-                PartPose.offset(-7.0F, 8.0F, 3.0F));
-        root.addOrReplaceChild(
-                "leg3",
-                CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F),
-                PartPose.offset(3.0F, 8.0F, 3.0F));
-        root.addOrReplaceChild(
-                "leg4",
-                CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F),
-                PartPose.offset(-7.0F, 8.0F, -7.0F));
+        root.addOrReplaceChild("top", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 16.0F, 8.0F, 16.0F), PartPose.offset(-8.0F, 0.0F, -8.0F));
+        root.addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 32).mirror().addBox(0.0F, 0.0F, 0.0F, 16.0F, 4.0F, 16.0F), PartPose.offset(-8.0F, 12.0F, -8.0F));
+        root.addOrReplaceChild("leg1", CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(3.0F, 8.0F, -7.0F));
+        root.addOrReplaceChild("leg2", CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(-7.0F, 8.0F, 3.0F));
+        root.addOrReplaceChild("leg3", CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(3.0F, 8.0F, 3.0F));
+        root.addOrReplaceChild("leg4", CubeListBuilder.create().texOffs(72, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(-7.0F, 8.0F, -7.0F));
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 }

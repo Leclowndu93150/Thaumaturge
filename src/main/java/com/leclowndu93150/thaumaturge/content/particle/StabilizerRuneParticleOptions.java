@@ -11,12 +11,9 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record StabilizerRuneParticleOptions(int life) implements ParticleOptions {
 
-    public static final MapCodec<StabilizerRuneParticleOptions> CODEC = Codec.INT
-            .xmap(StabilizerRuneParticleOptions::new, StabilizerRuneParticleOptions::life)
-            .fieldOf("life");
+    public static final MapCodec<StabilizerRuneParticleOptions> CODEC = Codec.INT.xmap(StabilizerRuneParticleOptions::new, StabilizerRuneParticleOptions::life).fieldOf("life");
 
-    public static final StreamCodec<ByteBuf, StabilizerRuneParticleOptions> STREAM_CODEC =
-            ByteBufCodecs.VAR_INT.map(StabilizerRuneParticleOptions::new, StabilizerRuneParticleOptions::life);
+    public static final StreamCodec<ByteBuf, StabilizerRuneParticleOptions> STREAM_CODEC = ByteBufCodecs.VAR_INT.map(StabilizerRuneParticleOptions::new, StabilizerRuneParticleOptions::life);
 
     @Override
     public ParticleType<?> getType() {

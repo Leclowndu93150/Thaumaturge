@@ -157,11 +157,7 @@ public final class GolemHelper {
         int y = qy * (count / zz / xx) % yy + sealPos.face().getStepY();
         int x = qx * (count / zz) % xx + sealPos.face().getStepX();
         int z = qz * count % zz + sealPos.face().getStepZ();
-        return sealPos.pos()
-                .offset(
-                        x - (sealPos.face().getStepX() == 0 ? xx / 2 : 0),
-                        y - (sealPos.face().getStepY() == 0 ? yy / 2 : 0),
-                        z - (sealPos.face().getStepZ() == 0 ? zz / 2 : 0));
+        return sealPos.pos().offset(x - (sealPos.face().getStepX() == 0 ? xx / 2 : 0), y - (sealPos.face().getStepY() == 0 ? yy / 2 : 0), z - (sealPos.face().getStepZ() == 0 ? zz / 2 : 0));
     }
 
     /**
@@ -170,30 +166,12 @@ public final class GolemHelper {
      */
     public static AABB getBoundsForArea(ISealEntity seal) {
         SealPos sealPos = seal.getSealPos();
-        return new AABB(
-                        sealPos.pos().getX(),
-                        sealPos.pos().getY(),
-                        sealPos.pos().getZ(),
-                        sealPos.pos().getX() + 1,
-                        sealPos.pos().getY() + 1,
-                        sealPos.pos().getZ() + 1)
-                .move(
-                        sealPos.face().getStepX(),
-                        sealPos.face().getStepY(),
-                        sealPos.face().getStepZ())
-                .expandTowards(
-                        sealPos.face().getStepX() != 0
-                                ? (seal.getArea().getX() - 1) * sealPos.face().getStepX()
-                                : 0.0,
-                        sealPos.face().getStepY() != 0
-                                ? (seal.getArea().getY() - 1) * sealPos.face().getStepY()
-                                : 0.0,
-                        sealPos.face().getStepZ() != 0
-                                ? (seal.getArea().getZ() - 1) * sealPos.face().getStepZ()
-                                : 0.0)
-                .inflate(
-                        sealPos.face().getStepX() == 0 ? seal.getArea().getX() - 1 : 0.0,
-                        sealPos.face().getStepY() == 0 ? seal.getArea().getY() - 1 : 0.0,
+        return new AABB(sealPos.pos().getX(), sealPos.pos().getY(), sealPos.pos().getZ(), sealPos.pos().getX() + 1, sealPos.pos().getY() + 1, sealPos.pos().getZ() + 1)
+                .move(sealPos.face().getStepX(), sealPos.face().getStepY(), sealPos.face().getStepZ())
+                .expandTowards(sealPos.face().getStepX() != 0 ? (seal.getArea().getX() - 1) * sealPos.face().getStepX() : 0.0,
+                        sealPos.face().getStepY() != 0 ? (seal.getArea().getY() - 1) * sealPos.face().getStepY() : 0.0,
+                        sealPos.face().getStepZ() != 0 ? (seal.getArea().getZ() - 1) * sealPos.face().getStepZ() : 0.0)
+                .inflate(sealPos.face().getStepX() == 0 ? seal.getArea().getX() - 1 : 0.0, sealPos.face().getStepY() == 0 ? seal.getArea().getY() - 1 : 0.0,
                         sealPos.face().getStepZ() == 0 ? seal.getArea().getZ() - 1 : 0.0);
     }
 

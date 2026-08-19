@@ -21,22 +21,22 @@ public final class CraftReferenceHolder {
 
     @SubscribeEvent
     public static void onDatapackSync(OnDatapackSyncEvent event) {
-        if (event.getPlayer() != null) return;
+        if (event.getPlayer() != null)
+            return;
         rebuild(event.getPlayerList().getServer().registryAccess());
     }
 
     public static void rebuild(RegistryAccess access) {
         Set<Item> found = new HashSet<>();
-        access.lookup(IResearchEntry.REGISTRY_KEY)
-                .ifPresent(lookup -> lookup.listElements().forEach(entry -> {
-                    for (IResearchStage stage : entry.value().stages()) {
-                        for (ResearchRequirement req : stage.craft()) {
-                            for (Holder<Item> holder : req.items()) {
-                                found.add(holder.value());
-                            }
-                        }
+        access.lookup(IResearchEntry.REGISTRY_KEY).ifPresent(lookup -> lookup.listElements().forEach(entry -> {
+            for (IResearchStage stage : entry.value().stages()) {
+                for (ResearchRequirement req : stage.craft()) {
+                    for (Holder<Item> holder : req.items()) {
+                        found.add(holder.value());
                     }
-                }));
+                }
+            }
+        }));
         items = Set.copyOf(found);
     }
 

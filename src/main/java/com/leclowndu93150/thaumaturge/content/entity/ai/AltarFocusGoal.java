@@ -38,8 +38,7 @@ public final class AltarFocusGoal extends Goal {
             return;
         }
         BlockPos home = cleric.getHomePosition();
-        if (home.distSqr(cleric.blockPosition()) > MAX_DISTANCE_SQ
-                || !cleric.level().getBlockState(home).is(TCBlocks.ELDRITCH_ALTAR.get())) {
+        if (home.distSqr(cleric.blockPosition()) > MAX_DISTANCE_SQ || !cleric.level().getBlockState(home).is(TCBlocks.ELDRITCH_ALTAR.get())) {
             cleric.setRitualist(false);
         }
     }

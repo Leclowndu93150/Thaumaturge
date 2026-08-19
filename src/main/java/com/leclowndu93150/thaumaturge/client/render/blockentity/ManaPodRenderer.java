@@ -48,12 +48,7 @@ public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityMan
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityManaPod pod,
-            ManaPodRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityManaPod pod, ManaPodRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(pod, state, partialTicks, cameraPosition, breakProgress);
         state.age = pod.getBlockState().getValue(BlockManaPod.AGE);
         Holder<IAspect> aspect = pod.aspect();
@@ -62,8 +57,7 @@ public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityMan
     }
 
     @Override
-    public void submit(
-            ManaPodRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(ManaPodRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.age < SHELL_MIN_AGE) {
             return;
         }
@@ -71,8 +65,7 @@ public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityMan
         float g = HERBA_G;
         float b = HERBA_B;
         if (state.hasAspect) {
-            float progress = Mth.clamp(
-                    (state.age - SHELL_MIN_AGE) / (float) (BlockEntityManaPod.MAX_AGE - SHELL_MIN_AGE), 0.0F, 1.0F);
+            float progress = Mth.clamp((state.age - SHELL_MIN_AGE) / (float) (BlockEntityManaPod.MAX_AGE - SHELL_MIN_AGE), 0.0F, 1.0F);
             r = Mth.lerp(progress, HERBA_R, ARGB.red(state.aspectColor) / 255.0F);
             g = Mth.lerp(progress, HERBA_G, ARGB.green(state.aspectColor) / 255.0F);
             b = Mth.lerp(progress, HERBA_B, ARGB.blue(state.aspectColor) / 255.0F);
@@ -83,27 +76,11 @@ public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityMan
         if (state.age > CORE_MIN_AGE - 1) {
             poseStack.pushPose();
             poseStack.translate(0.0F, CORE_LIFT, 0.0F);
-            collector.submitModelPart(
-                    model.core,
-                    poseStack,
-                    RenderTypes.entityCutout(CORE_TEXTURE),
-                    FULLBRIGHT,
-                    OverlayTexture.NO_OVERLAY,
-                    null,
-                    -1,
-                    null);
+            collector.submitModelPart(model.core, poseStack, RenderTypes.entityCutout(CORE_TEXTURE), FULLBRIGHT, OverlayTexture.NO_OVERLAY, null, -1, null);
             poseStack.popPose();
         }
         int shellColor = ARGB.colorFromFloat(SHELL_ALPHA, r, g, b);
-        collector.submitModelPart(
-                model.shell,
-                poseStack,
-                RenderTypes.entityTranslucent(SHELL_TEXTURE),
-                state.lightCoords,
-                OverlayTexture.NO_OVERLAY,
-                null,
-                shellColor,
-                null);
+        collector.submitModelPart(model.shell, poseStack, RenderTypes.entityTranslucent(SHELL_TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, shellColor, null);
         poseStack.popPose();
     }
 }

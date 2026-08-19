@@ -31,17 +31,7 @@ public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
     @Override
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         if (menu.canTrade()) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    leftPos + TRADE_BUTTON_X,
-                    topPos + TRADE_BUTTON_Y,
-                    TRADE_BUTTON_U,
-                    TRADE_BUTTON_V,
-                    TRADE_BUTTON_SIZE,
-                    TRADE_BUTTON_SIZE,
-                    256,
-                    256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + TRADE_BUTTON_X, topPos + TRADE_BUTTON_Y, TRADE_BUTTON_U, TRADE_BUTTON_V, TRADE_BUTTON_SIZE, TRADE_BUTTON_SIZE, 256, 256);
         }
     }
 
@@ -52,10 +42,7 @@ public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
         if (mx >= 0 && my >= 0 && mx < TRADE_BUTTON_SIZE && my < TRADE_BUTTON_SIZE && menu.canTrade()) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuPech.TRADE_BUTTON_ID);
             if (minecraft.player != null) {
-                minecraft.player.playSound(
-                        TCSounds.PECH_DICE.get(),
-                        DICE_VOLUME,
-                        0.95F + minecraft.player.getRandom().nextFloat() * 0.1F);
+                minecraft.player.playSound(TCSounds.PECH_DICE.get(), DICE_VOLUME, 0.95F + minecraft.player.getRandom().nextFloat() * 0.1F);
             }
             return true;
         }

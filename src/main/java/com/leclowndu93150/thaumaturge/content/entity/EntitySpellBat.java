@@ -40,8 +40,7 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jspecify.annotations.Nullable;
 
 public final class EntitySpellBat extends Monster implements TraceableEntity, IEntityWithComplexSpawn {
-    private static final EntityDataAccessor<Boolean> DATA_FRIENDLY =
-            SynchedEntityData.defineId(EntitySpellBat.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_FRIENDLY = SynchedEntityData.defineId(EntitySpellBat.class, EntityDataSerializers.BOOLEAN);
 
     private static final int LIFESPAN_TICKS = 600;
     private static final int ATTACK_COOLDOWN_TICKS = 40;
@@ -232,13 +231,8 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
         }
         Identifier effectId = this.effects.get(this.random.nextInt(this.effects.size()));
         if (FocusEngine.element(effectId) instanceof FocusEffect effect) {
-            effect.impactParticles(
-                    this.level(),
-                    new Vec3(
-                            this.getX() + this.random.nextGaussian() * EFFECT_FX_SPREAD,
-                            this.getY() + this.getBbHeight() / 2.0F + this.random.nextGaussian() * EFFECT_FX_SPREAD,
-                            this.getZ() + this.random.nextGaussian() * EFFECT_FX_SPREAD),
-                    Vec3.ZERO);
+            effect.impactParticles(this.level(), new Vec3(this.getX() + this.random.nextGaussian() * EFFECT_FX_SPREAD,
+                    this.getY() + this.getBbHeight() / 2.0F + this.random.nextGaussian() * EFFECT_FX_SPREAD, this.getZ() + this.random.nextGaussian() * EFFECT_FX_SPREAD), Vec3.ZERO);
         }
     }
 
@@ -271,10 +265,7 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
         if (attackTarget == null) {
             this.wanderFlight(level);
         } else {
-            this.flyTowards(
-                    attackTarget.getX(),
-                    attackTarget.getY() + attackTarget.getEyeHeight() * TARGET_EYE_FACTOR,
-                    attackTarget.getZ());
+            this.flyTowards(attackTarget.getX(), attackTarget.getY() + attackTarget.getEyeHeight() * TARGET_EYE_FACTOR, attackTarget.getZ());
         }
         attackTarget = this.getTarget();
         if (attackTarget == null) {
@@ -293,23 +284,14 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
     }
 
     private void wanderFlight(ServerLevel level) {
-        if (this.currentFlightTarget != null
-                && (!level.isEmptyBlock(this.currentFlightTarget)
-                        || this.currentFlightTarget.getY() <= level.getMinY())) {
+        if (this.currentFlightTarget != null && (!level.isEmptyBlock(this.currentFlightTarget) || this.currentFlightTarget.getY() <= level.getMinY())) {
             this.currentFlightTarget = null;
         }
-        if (this.currentFlightTarget == null
-                || this.random.nextInt(RETARGET_ONE_IN) == 0
-                || this.currentFlightTarget.closerToCenterThan(this.position(), FLIGHT_TARGET_REACHED)) {
-            this.currentFlightTarget = BlockPos.containing(
-                    this.getX() + this.random.nextInt(7) - this.random.nextInt(7),
-                    this.getY() + this.random.nextInt(6) - 2.0,
+        if (this.currentFlightTarget == null || this.random.nextInt(RETARGET_ONE_IN) == 0 || this.currentFlightTarget.closerToCenterThan(this.position(), FLIGHT_TARGET_REACHED)) {
+            this.currentFlightTarget = BlockPos.containing(this.getX() + this.random.nextInt(7) - this.random.nextInt(7), this.getY() + this.random.nextInt(6) - 2.0,
                     this.getZ() + this.random.nextInt(7) - this.random.nextInt(7));
         }
-        this.flyTowards(
-                this.currentFlightTarget.getX() + 0.5,
-                this.currentFlightTarget.getY() + 0.1,
-                this.currentFlightTarget.getZ() + 0.5);
+        this.flyTowards(this.currentFlightTarget.getX() + 0.5, this.currentFlightTarget.getY() + 0.1, this.currentFlightTarget.getZ() + 0.5);
     }
 
     private void flyTowards(double x, double y, double z) {
@@ -317,9 +299,7 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
         double dy = y - this.getY();
         double dz = z - this.getZ();
         Vec3 movement = this.getDeltaMovement();
-        Vec3 steered = movement.add(
-                (Math.signum(dx) * WANDER_SPEED_XZ - movement.x) * WANDER_STEER,
-                (Math.signum(dy) * WANDER_SPEED_Y - movement.y) * WANDER_STEER,
+        Vec3 steered = movement.add((Math.signum(dx) * WANDER_SPEED_XZ - movement.x) * WANDER_STEER, (Math.signum(dy) * WANDER_SPEED_Y - movement.y) * WANDER_STEER,
                 (Math.signum(dz) * WANDER_SPEED_XZ - movement.z) * WANDER_STEER);
         this.setDeltaMovement(steered);
         float yRotD = (float) (Mth.atan2(steered.z, steered.x) * 180.0F / (float) Math.PI) - 90.0F;
@@ -329,9 +309,7 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
     }
 
     private void attackEntity(Entity target, float distance) {
-        if (this.attackTime > 0
-                || distance >= Math.max(ATTACK_REACH_MIN, target.getBbWidth() * ATTACK_REACH_WIDTH_FACTOR)
-                || target.getBoundingBox().maxY <= this.getBoundingBox().minY
+        if (this.attackTime > 0 || distance >= Math.max(ATTACK_REACH_MIN, target.getBbWidth() * ATTACK_REACH_WIDTH_FACTOR) || target.getBoundingBox().maxY <= this.getBoundingBox().minY
                 || target.getBoundingBox().minY >= this.getBoundingBox().maxY) {
             return;
         }
@@ -339,30 +317,20 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
         if (!this.level().isClientSide()) {
             LivingEntity currentOwner = this.getOwner();
             if (this.focusPackage != null && currentOwner != null) {
-                EntityHitResult ray =
-                        new EntityHitResult(target, target.position().add(0.0, target.getBbHeight() / 2.0F, 0.0));
-                Trajectory trajectory =
-                        new Trajectory(this.position(), ray.getLocation().subtract(this.position()));
-                FocusEngine.run(
-                        this.level(),
-                        this.focusPackage,
-                        currentOwner,
-                        new CastStreams(new Trajectory[] {trajectory}, new HitResult[] {ray}));
+                EntityHitResult ray = new EntityHitResult(target, target.position().add(0.0, target.getBbHeight() / 2.0F, 0.0));
+                Trajectory trajectory = new Trajectory(this.position(), ray.getLocation().subtract(this.position()));
+                FocusEngine.run(this.level(), this.focusPackage, currentOwner, new CastStreams(new Trajectory[]{trajectory}, new HitResult[]{ray}));
             }
             this.setHealth(this.getHealth() - ATTACK_SELF_DAMAGE);
         }
-        this.playSound(
-                SoundEvents.BAT_HURT,
-                ATTACK_SOUND_VOLUME,
-                ATTACK_SOUND_PITCH_BASE + this.random.nextFloat() * ATTACK_SOUND_PITCH_SPREAD);
+        this.playSound(SoundEvents.BAT_HURT, ATTACK_SOUND_VOLUME, ATTACK_SOUND_PITCH_BASE + this.random.nextFloat() * ATTACK_SOUND_PITCH_SPREAD);
     }
 
     private @Nullable LivingEntity findTargetToAttack() {
         LivingEntity currentOwner = this.getOwner();
         double best = Double.MAX_VALUE;
         LivingEntity result = null;
-        for (LivingEntity candidate :
-                FocusTargeting.livingInRange(this.level(), this.getX(), this.getY(), this.getZ(), this, TARGET_RANGE)) {
+        for (LivingEntity candidate : FocusTargeting.livingInRange(this.level(), this.getX(), this.getY(), this.getZ(), this, TARGET_RANGE)) {
             if (!candidate.isAlive()) {
                 continue;
             }

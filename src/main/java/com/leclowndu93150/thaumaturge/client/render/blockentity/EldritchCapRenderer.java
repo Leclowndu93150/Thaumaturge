@@ -23,8 +23,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class EldritchCapRenderer<T extends BlockEntity>
-        implements BlockEntityRenderer<T, EldritchCapRenderState> {
+public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEntityRenderer<T, EldritchCapRenderState> {
     public static final Identifier CAP_TEXTURE = TCIds.rl("textures/entity/obelisk_cap.png");
     public static final Identifier CAP_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_cap_2.png");
     public static final Identifier ALTAR_TEXTURE = TCIds.rl("textures/entity/obelisk_cap_altar.png");
@@ -42,11 +41,7 @@ public final class EldritchCapRenderer<T extends BlockEntity>
     private final ItemModelResolver itemModelResolver;
     private ItemStack eyeStack = ItemStack.EMPTY;
 
-    public EldritchCapRenderer(
-            BlockEntityRendererProvider.Context context,
-            Identifier texture,
-            Identifier textureOuter,
-            ToIntFunction<T> eyeCount) {
+    public EldritchCapRenderer(BlockEntityRendererProvider.Context context, Identifier texture, Identifier textureOuter, ToIntFunction<T> eyeCount) {
         this.texture = texture;
         this.textureOuter = textureOuter;
         this.eyeCount = eyeCount;
@@ -59,12 +54,7 @@ public final class EldritchCapRenderer<T extends BlockEntity>
     }
 
     @Override
-    public void extractRenderState(
-            T cap,
-            EldritchCapRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(T cap, EldritchCapRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(cap, state, partialTicks, cameraPosition, breakProgress);
         state.eyes = eyeCount.applyAsInt(cap);
         state.outerLands = cap.getLevel() != null && cap.getLevel().dimension() == OuterLands.DIMENSION;
@@ -81,11 +71,7 @@ public final class EldritchCapRenderer<T extends BlockEntity>
     }
 
     @Override
-    public void submit(
-            EldritchCapRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(EldritchCapRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         RenderType type = RenderTypes.entityTranslucent(state.outerLands ? textureOuter : texture);
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);

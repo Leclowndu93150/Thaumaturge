@@ -32,46 +32,29 @@ public final class TCTooltipEvents {
         if (event.getEntity() == null) {
             return;
         }
-        for (Map.Entry<InfusionEnchantment, Integer> entry :
-                InfusionEnchantmentHelper.get(event.getItemStack()).levels().entrySet()) {
+        for (Map.Entry<InfusionEnchantment, Integer> entry : InfusionEnchantmentHelper.get(event.getItemStack()).levels().entrySet()) {
             InfusionEnchantment enchantment = entry.getKey();
             Component line = Component.translatable("enchantment.thaumaturge." + enchantment.getSerializedName());
             if (enchantment.maxLevel() > 1) {
-                line = Component.translatable("enchantment.thaumaturge." + enchantment.getSerializedName())
-                        .append(" ")
-                        .append(Component.translatable("enchantment.level." + entry.getValue()));
+                line = Component.translatable("enchantment.thaumaturge." + enchantment.getSerializedName()).append(" ").append(Component.translatable("enchantment.level." + entry.getValue()));
             }
             event.getToolTip().add(1, line.copy().withStyle(ChatFormatting.GOLD));
         }
         int runic = InfusionRunicAugmentRecipe.charge(event.getItemStack());
         if (runic > 0) {
-            event.getToolTip()
-                    .add(
-                            1,
-                            Component.translatable("tooltip.thaumaturge.runic_charge", runic)
-                                    .withStyle(ChatFormatting.GOLD));
+            event.getToolTip().add(1, Component.translatable("tooltip.thaumaturge.runic_charge", runic).withStyle(ChatFormatting.GOLD));
         }
         int warp = WarpHelper.getFinalWarp(event.getItemStack(), event.getEntity());
         if (warp > 0) {
-            event.getToolTip()
-                    .add(1, Component.translatable("item.thaumaturge.warping").withStyle(ChatFormatting.DARK_PURPLE));
+            event.getToolTip().add(1, Component.translatable("item.thaumaturge.warping").withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (event.getItemStack().getItem() instanceof IRechargable rechargable) {
-            event.getToolTip()
-                    .add(
-                            1,
-                            Component.translatable(
-                                            "tooltip.thaumaturge.charge",
-                                            RechargeAccess.getCharge(event.getItemStack()),
-                                            rechargable.getMaxCharge(event.getItemStack(), event.getEntity()))
-                                    .withStyle(ChatFormatting.AQUA));
+            event.getToolTip().add(1,
+                    Component.translatable("tooltip.thaumaturge.charge", RechargeAccess.getCharge(event.getItemStack()), rechargable.getMaxCharge(event.getItemStack(), event.getEntity()))
+                            .withStyle(ChatFormatting.AQUA));
         }
-        if (event.getItemStack().getItem() instanceof BlockItem blockItem
-                && isStabiliser(blockItem.getBlock())
-                && KnowledgeAccess.of(event.getEntity()).isResearchComplete(INFUSION_RESEARCH)) {
-            event.getToolTip()
-                    .add(Component.translatable("tooltip.thaumaturge.infusion_stabiliser")
-                            .withStyle(ChatFormatting.DARK_PURPLE));
+        if (event.getItemStack().getItem() instanceof BlockItem blockItem && isStabiliser(blockItem.getBlock()) && KnowledgeAccess.of(event.getEntity()).isResearchComplete(INFUSION_RESEARCH)) {
+            event.getToolTip().add(Component.translatable("tooltip.thaumaturge.infusion_stabiliser").withStyle(ChatFormatting.DARK_PURPLE));
         }
     }
 

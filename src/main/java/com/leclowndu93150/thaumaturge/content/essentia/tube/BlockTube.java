@@ -47,16 +47,14 @@ public class BlockTube extends BlockEssentiaTransport {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
-        return createTickerHelper(
-                type, TCBlockEntities.TUBE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide())
+            return null;
+        return createTickerHelper(type, TCBlockEntities.TUBE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 
     @Override
-    public void setPlacedBy(
-            Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof BlockEntityTube tube) {
             tube.setFacingForPlacement(placer);
@@ -64,11 +62,13 @@ public class BlockTube extends BlockEssentiaTransport {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!player.isSecondaryUseActive()) return InteractionResult.PASS;
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityTube tube)) return InteractionResult.PASS;
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.isSecondaryUseActive())
+            return InteractionResult.PASS;
+        if (level.isClientSide())
+            return InteractionResult.SUCCESS;
+        if (!(level.getBlockEntity(pos) instanceof BlockEntityTube tube))
+            return InteractionResult.PASS;
         int subHit = resolveSubHit(hit, pos);
         if (tube.handleCasterClick(subHit)) {
             tube.playToolSound(level, pos);
@@ -86,12 +86,18 @@ public class BlockTube extends BlockEssentiaTransport {
         if (Math.abs(dx) < CENTRE_TOLERANCE && Math.abs(dy) < CENTRE_TOLERANCE && Math.abs(dz) < CENTRE_TOLERANCE) {
             return 6;
         }
-        if (local.y <= CORE_MIN) return Direction.DOWN.ordinal();
-        if (local.y >= CORE_MAX) return Direction.UP.ordinal();
-        if (local.z <= CORE_MIN) return Direction.NORTH.ordinal();
-        if (local.z >= CORE_MAX) return Direction.SOUTH.ordinal();
-        if (local.x <= CORE_MIN) return Direction.WEST.ordinal();
-        if (local.x >= CORE_MAX) return Direction.EAST.ordinal();
+        if (local.y <= CORE_MIN)
+            return Direction.DOWN.ordinal();
+        if (local.y >= CORE_MAX)
+            return Direction.UP.ordinal();
+        if (local.z <= CORE_MIN)
+            return Direction.NORTH.ordinal();
+        if (local.z >= CORE_MAX)
+            return Direction.SOUTH.ordinal();
+        if (local.x <= CORE_MIN)
+            return Direction.WEST.ordinal();
+        if (local.x >= CORE_MAX)
+            return Direction.EAST.ordinal();
         return hit.getDirection().ordinal();
     }
 }

@@ -39,21 +39,12 @@ public final class TurretPlacerItem extends Item {
             return InteractionResult.PASS;
         }
         BlockPos above = base.above();
-        boolean blocked =
-                !level.isEmptyBlock(base) && !level.getBlockState(base).canBeReplaced();
+        boolean blocked = !level.isEmptyBlock(base) && !level.getBlockState(base).canBeReplaced();
         blocked |= !level.isEmptyBlock(above) && !level.getBlockState(above).canBeReplaced();
         if (blocked) {
             return InteractionResult.PASS;
         }
-        List<Entity> entities = level.getEntities(
-                null,
-                new AABB(
-                        base.getX(),
-                        base.getY(),
-                        base.getZ(),
-                        base.getX() + 1.0,
-                        base.getY() + 2.0,
-                        base.getZ() + 1.0));
+        List<Entity> entities = level.getEntities(null, new AABB(base.getX(), base.getY(), base.getZ(), base.getX() + 1.0, base.getY() + 2.0, base.getZ() + 1.0));
         if (!entities.isEmpty()) {
             return InteractionResult.PASS;
         }
@@ -71,15 +62,7 @@ public final class TurretPlacerItem extends Item {
         construct.setOwned(true);
         construct.setValidSpawn();
         construct.setOwner(player);
-        level.playSound(
-                null,
-                construct.getX(),
-                construct.getY(),
-                construct.getZ(),
-                SoundEvents.ARMOR_STAND_PLACE,
-                SoundSource.BLOCKS,
-                0.75F,
-                0.8F);
+        level.playSound(null, construct.getX(), construct.getY(), construct.getZ(), SoundEvents.ARMOR_STAND_PLACE, SoundSource.BLOCKS, 0.75F, 0.8F);
         context.getItemInHand().shrink(1);
         return InteractionResult.SUCCESS;
     }

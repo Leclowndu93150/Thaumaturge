@@ -20,11 +20,8 @@ import net.minecraft.resources.RegistryFixedCodec;
  */
 public record KnowledgeReward(KnowledgeType type, Holder<IResearchCategory> category, int amount) {
     /** Codec for datapack serialization. */
-    public static final Codec<KnowledgeReward> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    KnowledgeType.CODEC.fieldOf("type").forGetter(KnowledgeReward::type),
-                    RegistryFixedCodec.create(IResearchCategory.REGISTRY_KEY)
-                            .fieldOf("category")
-                            .forGetter(KnowledgeReward::category),
-                    Codec.INT.fieldOf("amount").forGetter(KnowledgeReward::amount))
+    public static final Codec<KnowledgeReward> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(KnowledgeType.CODEC.fieldOf("type").forGetter(KnowledgeReward::type),
+                    RegistryFixedCodec.create(IResearchCategory.REGISTRY_KEY).fieldOf("category").forGetter(KnowledgeReward::category), Codec.INT.fieldOf("amount").forGetter(KnowledgeReward::amount))
             .apply(instance, KnowledgeReward::new));
 }

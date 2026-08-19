@@ -39,22 +39,14 @@ public final class ResearchToastEvents {
             if (!knowledge.hasResearchFlag(research, ResearchFlag.POPUP)) {
                 continue;
             }
-            mc.player
-                    .registryAccess()
-                    .lookup(IResearchEntry.REGISTRY_KEY)
-                    .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research)))
-                    .ifPresent(holder -> mc.getToastManager()
-                            .addToast(new ResearchToast(
-                                    research,
-                                    Component.translatable("tc.research.complete"),
-                                    Component.translatable(holder.value().nameKey()),
-                                    EntryIconRenderer.resolveIcon(holder.value(), mc.player.tickCount))));
+            mc.player.registryAccess().lookup(IResearchEntry.REGISTRY_KEY).flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research)))
+                    .ifPresent(holder -> mc.getToastManager().addToast(new ResearchToast(research, Component.translatable("tc.research.complete"), Component.translatable(holder.value().nameKey()),
+                            EntryIconRenderer.resolveIcon(holder.value(), mc.player.tickCount))));
             knowledge.clearResearchFlag(research, ResearchFlag.POPUP);
             shown.add(research);
         }
         for (Identifier research : shown) {
-            ClientPacketDistributor.sendToServer(
-                    new ServerboundClearResearchFlagsPayload(research, List.of(ResearchFlag.POPUP)));
+            ClientPacketDistributor.sendToServer(new ServerboundClearResearchFlagsPayload(research, List.of(ResearchFlag.POPUP)));
         }
     }
 }

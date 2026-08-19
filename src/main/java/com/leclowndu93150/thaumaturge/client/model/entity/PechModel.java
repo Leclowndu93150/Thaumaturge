@@ -43,42 +43,16 @@ public final class PechModel extends EntityModel<PechRenderState> {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "body",
-                CubeListBuilder.create().texOffs(34, 12).addBox(-3.0F, 0.0F, 0.0F, 6, 10, 6),
-                PartPose.offsetAndRotation(0.0F, 9.0F, -3.0F, BODY_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild(
-                "right_leg",
-                CubeListBuilder.create().texOffs(35, 1).mirror().addBox(-2.9F, 0.0F, 0.0F, 3, 6, 3),
-                PartPose.offset(0.0F, 18.0F, 0.0F));
-        root.addOrReplaceChild(
-                "left_leg",
-                CubeListBuilder.create().texOffs(35, 1).addBox(-0.1F, 0.0F, 0.0F, 3, 6, 3),
-                PartPose.offset(0.0F, 18.0F, 0.0F));
-        root.addOrReplaceChild(
-                "head",
-                CubeListBuilder.create().texOffs(2, 11).addBox(-3.5F, -5.0F, -5.0F, 7, 5, 5),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
-        root.addOrReplaceChild(
-                "jowls",
-                CubeListBuilder.create().texOffs(1, 21).addBox(-4.0F, -1.0F, -6.0F, 8, 3, 5),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
-        root.addOrReplaceChild(
-                "lower_pack",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, 0.0F, 0.0F, 10, 5, 5),
-                PartPose.offsetAndRotation(0.0F, 10.0F, 3.5F, LOWER_PACK_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild(
-                "upper_pack",
-                CubeListBuilder.create().texOffs(64, 1).addBox(-7.5F, -14.0F, 0.0F, 15, 14, 11),
+        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(34, 12).addBox(-3.0F, 0.0F, 0.0F, 6, 10, 6), PartPose.offsetAndRotation(0.0F, 9.0F, -3.0F, BODY_TILT, 0.0F, 0.0F));
+        root.addOrReplaceChild("right_leg", CubeListBuilder.create().texOffs(35, 1).mirror().addBox(-2.9F, 0.0F, 0.0F, 3, 6, 3), PartPose.offset(0.0F, 18.0F, 0.0F));
+        root.addOrReplaceChild("left_leg", CubeListBuilder.create().texOffs(35, 1).addBox(-0.1F, 0.0F, 0.0F, 3, 6, 3), PartPose.offset(0.0F, 18.0F, 0.0F));
+        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(2, 11).addBox(-3.5F, -5.0F, -5.0F, 7, 5, 5), PartPose.offset(0.0F, 8.0F, 0.0F));
+        root.addOrReplaceChild("jowls", CubeListBuilder.create().texOffs(1, 21).addBox(-4.0F, -1.0F, -6.0F, 8, 3, 5), PartPose.offset(0.0F, 8.0F, 0.0F));
+        root.addOrReplaceChild("lower_pack", CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, 0.0F, 0.0F, 10, 5, 5), PartPose.offsetAndRotation(0.0F, 10.0F, 3.5F, LOWER_PACK_TILT, 0.0F, 0.0F));
+        root.addOrReplaceChild("upper_pack", CubeListBuilder.create().texOffs(64, 1).addBox(-7.5F, -14.0F, 0.0F, 15, 14, 11),
                 PartPose.offsetAndRotation(0.0F, 10.0F, 3.0F, UPPER_PACK_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild(
-                "right_arm",
-                CubeListBuilder.create().texOffs(52, 2).mirror().addBox(-2.0F, 0.0F, -1.0F, 2, 6, 2),
-                PartPose.offset(-3.0F, 10.0F, -1.0F));
-        root.addOrReplaceChild(
-                "left_arm",
-                CubeListBuilder.create().texOffs(52, 2).addBox(0.0F, 0.0F, -1.0F, 2, 6, 2),
-                PartPose.offset(3.0F, 10.0F, -1.0F));
+        root.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(52, 2).mirror().addBox(-2.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(-3.0F, 10.0F, -1.0F));
+        root.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(52, 2).addBox(0.0F, 0.0F, -1.0F, 2, 6, 2), PartPose.offset(3.0F, 10.0F, -1.0F));
         return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
     }
 
@@ -90,9 +64,7 @@ public final class PechModel extends EntityModel<PechRenderState> {
         this.head.yRot = state.yRot * (float) (Math.PI / 180.0);
         this.head.xRot = state.xRot * (float) (Math.PI / 180.0);
         this.jowls.yRot = this.head.yRot;
-        this.jowls.xRot = this.head.xRot
-                + (JOWL_BASE_TILT + Mth.cos(limbSwing * 0.6662F) * limbSwingAmount * 0.25F)
-                + JOWL_MUMBLE_SWING * Math.abs(Mth.sin(state.mumble / 8.0F));
+        this.jowls.xRot = this.head.xRot + (JOWL_BASE_TILT + Mth.cos(limbSwing * 0.6662F) * limbSwingAmount * 0.25F) + JOWL_MUMBLE_SWING * Math.abs(Mth.sin(state.mumble / 8.0F));
         this.rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
         this.leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
         this.rightArm.zRot = 0.0F;

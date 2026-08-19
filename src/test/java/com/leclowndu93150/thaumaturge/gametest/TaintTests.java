@@ -49,8 +49,7 @@ public final class TaintTests {
     private static int countFibres(GameTestHelper helper) {
         int found = 0;
         BlockPos center = helper.absolutePos(SEED_POS);
-        for (BlockPos pos : BlockPos.betweenClosed(
-                center.offset(-SCAN_RADIUS, -1, -SCAN_RADIUS), center.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-SCAN_RADIUS, -1, -SCAN_RADIUS), center.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
             if (helper.getLevel().getBlockState(pos).is(TCBlocks.TAINT_FIBRE.get())) {
                 found++;
             }

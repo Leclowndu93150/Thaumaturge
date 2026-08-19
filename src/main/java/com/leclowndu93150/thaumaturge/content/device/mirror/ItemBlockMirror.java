@@ -41,8 +41,7 @@ public final class ItemBlockMirror extends BlockItem {
         }
         if (level.getBlockEntity(pos) instanceof BlockEntityMirrorBase mirror) {
             if (mirror.isLinkValid()) {
-                player.sendSystemMessage(Component.translatable("tc.mirrorlinkedalready")
-                        .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+                player.sendSystemMessage(Component.translatable("tc.mirrorlinkedalready").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
                 return InteractionResult.SUCCESS;
             }
             ItemStack linkedStack = stack.copyWithCount(1);
@@ -59,21 +58,11 @@ public final class ItemBlockMirror extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
         GlobalPos link = stack.get(TCDataComponents.MIRROR_LINK.get());
         if (link != null) {
-            tooltip.accept(Component.translatable(
-                    "tc.handmirrorlinkedto.full",
-                    link.pos().getX(),
-                    link.pos().getY(),
-                    link.pos().getZ(),
-                    link.dimension().identifier().toString()));
+            tooltip.accept(Component.translatable("tc.handmirrorlinkedto.full", link.pos().getX(), link.pos().getY(), link.pos().getZ(), link.dimension().identifier().toString()));
         }
     }
 }

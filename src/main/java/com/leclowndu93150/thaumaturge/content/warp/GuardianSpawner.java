@@ -55,8 +55,7 @@ public final class GuardianSpawner {
             if (!level.getBlockState(pos.below()).isSolidRender()) {
                 continue;
             }
-            EntityCultistPortalLesser portal =
-                    TCEntities.CULTIST_PORTAL_LESSER.get().create(level, EntitySpawnReason.EVENT);
+            EntityCultistPortalLesser portal = TCEntities.CULTIST_PORTAL_LESSER.get().create(level, EntitySpawnReason.EVENT);
             if (portal == null) {
                 return;
             }
@@ -65,8 +64,7 @@ public final class GuardianSpawner {
                 portal.discard();
                 continue;
             }
-            portal.finalizeSpawn(
-                    level, level.getCurrentDifficultyAt(portal.blockPosition()), EntitySpawnReason.EVENT, null);
+            portal.finalizeSpawn(level, level.getCurrentDifficultyAt(portal.blockPosition()), EntitySpawnReason.EVENT, null);
             level.addFreshEntity(portal);
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.16");
             return;

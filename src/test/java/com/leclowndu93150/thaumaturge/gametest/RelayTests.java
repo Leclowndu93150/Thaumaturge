@@ -43,8 +43,7 @@ public final class RelayTests {
             }
             helper.runAfterDelay(ACCRUE_WAIT_TICKS, () -> {
                 int before = node.getAspects().totalAmount();
-                int drained = VisRelayHelper.drainCentivis(
-                        helper.getLevel(), helper.absolutePos(CONSUMER_POS), TCAspects.IGNIS, 100, false);
+                int drained = VisRelayHelper.drainCentivis(helper.getLevel(), helper.absolutePos(CONSUMER_POS), TCAspects.IGNIS, 100, false);
                 if (drained <= 0) {
                     helper.fail("Nothing drained through the relay after " + ACCRUE_WAIT_TICKS + " ticks of accrual");
                     return;
@@ -72,8 +71,7 @@ public final class RelayTests {
             helper.getLevel().removeBlock(helper.absolutePos(NODE_POS), false);
             second.refreshLink(helper.getLevel());
             if (second.depth() != 2 || !helper.absolutePos(RELAY_POS).equals(second.parentPos())) {
-                helper.fail("Second relay did not chain through the first (depth " + second.depth() + ", parent "
-                        + second.parentPos() + ")");
+                helper.fail("Second relay did not chain through the first (depth " + second.depth() + ", parent " + second.parentPos() + ")");
                 return;
             }
             helper.succeed();

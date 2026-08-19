@@ -32,20 +32,10 @@ public final class MenuPotionSprayer extends AbstractContainerMenu {
     }
 
     public MenuPotionSprayer(int containerId, Inventory playerInventory, BlockEntityPotionSprayer sprayer) {
-        this(
-                containerId,
-                playerInventory,
-                new SprayerContainer(sprayer),
-                ContainerLevelAccess.create(sprayer.getLevel(), sprayer.getBlockPos()),
-                sprayer.getBlockPos());
+        this(containerId, playerInventory, new SprayerContainer(sprayer), ContainerLevelAccess.create(sprayer.getLevel(), sprayer.getBlockPos()), sprayer.getBlockPos());
     }
 
-    private MenuPotionSprayer(
-            int containerId,
-            Inventory playerInventory,
-            Container container,
-            ContainerLevelAccess access,
-            BlockPos pos) {
+    private MenuPotionSprayer(int containerId, Inventory playerInventory, Container container, ContainerLevelAccess access, BlockPos pos) {
         super(TCMenus.POTION_SPRAYER.get(), containerId);
         this.container = container;
         this.access = access;
@@ -63,11 +53,7 @@ public final class MenuPotionSprayer extends AbstractContainerMenu {
         });
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int column = 0; column < PLAYER_COLUMNS; column++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        column + row * PLAYER_COLUMNS + PLAYER_COLUMNS,
-                        INVENTORY_X + column * SLOT_STRIDE,
-                        INVENTORY_Y + row * SLOT_STRIDE));
+                addSlot(new Slot(playerInventory, column + row * PLAYER_COLUMNS + PLAYER_COLUMNS, INVENTORY_X + column * SLOT_STRIDE, INVENTORY_Y + row * SLOT_STRIDE));
             }
         }
         for (int column = 0; column < PLAYER_COLUMNS; column++) {

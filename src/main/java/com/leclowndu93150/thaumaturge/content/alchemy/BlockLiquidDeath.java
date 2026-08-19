@@ -34,35 +34,15 @@ public class BlockLiquidDeath extends LiquidBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(BUBBLE_CHANCE) == 0) {
             int amount = level.getFluidState(pos).getAmount();
-            int color = ARGB.colorFromFloat(
-                    1.0F,
-                    RED_BASE - random.nextFloat() * RED_SPREAD,
-                    0.0F,
-                    BLUE_BASE + random.nextFloat() * BLUE_SPREAD);
-            SlimyBubbleParticleOptions bubble = new SlimyBubbleParticleOptions(
-                    color,
-                    BUBBLE_ALPHA,
-                    BUBBLE_SCALE_BASE + random.nextFloat() * BUBBLE_SCALE_BASE,
+            int color = ARGB.colorFromFloat(1.0F, RED_BASE - random.nextFloat() * RED_SPREAD, 0.0F, BLUE_BASE + random.nextFloat() * BLUE_SPREAD);
+            SlimyBubbleParticleOptions bubble = new SlimyBubbleParticleOptions(color, BUBBLE_ALPHA, BUBBLE_SCALE_BASE + random.nextFloat() * BUBBLE_SCALE_BASE,
                     BUBBLE_AGE_BASE + random.nextInt(BUBBLE_AGE_SPREAD));
-            level.addParticle(
-                    bubble,
-                    pos.getX() + random.nextFloat(),
-                    pos.getY() + SURFACE_BASE + SURFACE_PER_LEVEL * (amount / (float) LEVELS_PER_TC_LEVEL),
-                    pos.getZ() + random.nextFloat(),
-                    0.0,
-                    0.0,
-                    0.0);
+            level.addParticle(bubble, pos.getX() + random.nextFloat(), pos.getY() + SURFACE_BASE + SURFACE_PER_LEVEL * (amount / (float) LEVELS_PER_TC_LEVEL), pos.getZ() + random.nextFloat(), 0.0,
+                    0.0, 0.0);
         }
         if (random.nextInt(POP_CHANCE) == 0) {
-            level.playLocalSound(
-                    pos.getX() + random.nextFloat(),
-                    pos.getY() + 0.5,
-                    pos.getZ() + random.nextFloat(),
-                    SoundEvents.LAVA_POP,
-                    SoundSource.BLOCKS,
-                    0.1F + random.nextFloat() * 0.1F,
-                    0.9F + random.nextFloat() * 0.15F,
-                    false);
+            level.playLocalSound(pos.getX() + random.nextFloat(), pos.getY() + 0.5, pos.getZ() + random.nextFloat(), SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.1F + random.nextFloat() * 0.1F,
+                    0.9F + random.nextFloat() * 0.15F, false);
         }
     }
 }

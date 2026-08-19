@@ -70,8 +70,6 @@ public interface IArchitect {
      * @since 1.0.0
      */
     enum EnumAxis {
-        X,
-        Y,
-        Z
+        X, Y, Z
     }
 }

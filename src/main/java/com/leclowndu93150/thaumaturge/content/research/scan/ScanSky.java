@@ -47,10 +47,7 @@ public final class ScanSky implements IScanThing {
         SkyAngles angles = SkyAngles.of(player);
         int worldDay = (int) (player.level().getGameTime() / TICKS_PER_DAY);
         if (angles.onBody()) {
-            int moonPhase = player.level()
-                    .environmentAttributes()
-                    .getValue(EnvironmentAttributes.MOON_PHASE, player.position())
-                    .index();
+            int moonPhase = player.level().environmentAttributes().getValue(EnvironmentAttributes.MOON_PHASE, player.position()).index();
             String body = angles.night() ? "moon" + moonPhase : "sun";
             CelestialBody note = angles.night() ? CelestialBody.moon(moonPhase) : CelestialBody.SUN;
             observe(serverPlayer, worldDay, body, note);
@@ -102,9 +99,7 @@ public final class ScanSky implements IScanThing {
     }
 
     private static boolean isLookingSkyward(Player player) {
-        return !(player.getXRot() > 0.0F)
-                && player.level().canSeeSky(player.blockPosition().above())
-                && player.level().dimension() == Level.OVERWORLD
+        return !(player.getXRot() > 0.0F) && player.level().canSeeSky(player.blockPosition().above()) && player.level().dimension() == Level.OVERWORLD
                 && KnowledgeAccess.of(player).isResearchComplete(NODES_RESEARCH);
     }
 
@@ -132,8 +127,7 @@ public final class ScanSky implements IScanThing {
         static SkyAngles of(Player player) {
             int yaw = (int) (player.getYRot() + 90.0F) % 360;
             int pitch = (int) Math.abs(player.getXRot());
-            float sunAngle =
-                    player.level().environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, player.position());
+            float sunAngle = player.level().environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, player.position());
             int celestialAngle = (int) (sunAngle + 90.0F) % 360;
             boolean night = celestialAngle > 180;
             if (night) {

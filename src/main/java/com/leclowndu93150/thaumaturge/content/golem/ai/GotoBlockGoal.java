@@ -25,30 +25,20 @@ public final class GotoBlockGoal extends GotoGoal {
         super.tick();
         if (golem.getTask() != null) {
             BlockPos pos = golem.getTask().getPos();
-            golem.getLookControl()
-                    .setLookAt(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 10.0F, golem.getMaxHeadXRot());
+            golem.getLookControl().setLookAt(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 10.0F, golem.getMaxHeadXRot());
         }
     }
 
     @Override
     protected void moveTo() {
-        BlockPos destination =
-                targetBlock != null ? targetBlock : golem.getTask().getPos();
-        golem.getNavigation()
-                .moveTo(
-                        destination.getX() + 0.5,
-                        destination.getY() + 0.5,
-                        destination.getZ() + 0.5,
-                        golem.getGolemMoveSpeed());
+        BlockPos destination = targetBlock != null ? targetBlock : golem.getTask().getPos();
+        golem.getNavigation().moveTo(destination.getX() + 0.5, destination.getY() + 0.5, destination.getZ() + 0.5, golem.getGolemMoveSpeed());
     }
 
     @Override
     protected boolean findDestination() {
         for (Task task : TaskHandler.getBlockTasksSorted(golem.level(), golem.getUUID(), golem)) {
-            if (areGolemTagsValidForTask(task)
-                    && task.canGolemPerformTask(golem)
-                    && golem.isWithinHome(task.getPos())
-                    && isValidDestination(golem.level(), task.getPos())
+            if (areGolemTagsValidForTask(task) && task.canGolemPerformTask(golem) && golem.isWithinHome(task.getPos()) && isValidDestination(golem.level(), task.getPos())
                     && canEasilyReach(task.getPos())) {
                 targetBlock = getAdjacentSpace(task.getPos());
                 golem.setTask(task);
@@ -67,10 +57,7 @@ public final class GotoBlockGoal extends GotoGoal {
         BlockPos closest = null;
         for (Direction face : Direction.Plane.HORIZONTAL) {
             BlockPos adjacent = pos.relative(face);
-            if (golem.level()
-                    .getBlockState(adjacent)
-                    .getCollisionShape(golem.level(), adjacent)
-                    .isEmpty()) {
+            if (golem.level().getBlockState(adjacent).getCollisionShape(golem.level(), adjacent).isEmpty()) {
                 double dist = adjacent.distToCenterSqr(golem.getX(), golem.getY(), golem.getZ());
                 if (dist < best) {
                     closest = adjacent;

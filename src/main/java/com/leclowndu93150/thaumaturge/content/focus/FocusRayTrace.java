@@ -20,15 +20,7 @@ public final class FocusRayTrace {
 
     private FocusRayTrace() {}
 
-    public static @Nullable EntityHitResult pointedEntity(
-            Level level,
-            @Nullable Entity ignore,
-            Vec3 start,
-            Vec3 look,
-            double minRange,
-            double range,
-            float padding,
-            boolean nonCollide) {
+    public static @Nullable EntityHitResult pointedEntity(Level level, @Nullable Entity ignore, Vec3 start, Vec3 look, double minRange, double range, float padding, boolean nonCollide) {
         EntityHitResult pointed = null;
         Vec3 end = start.add(look.x * range, look.y * range, look.z * range);
         BlockHitResult blockClip = clipCollidingBlocks(level, ignore, start, end);
@@ -40,8 +32,7 @@ public final class FocusRayTrace {
         if (ignore != null && ignore.getBoundingBox().contains(start)) {
             bounds = bounds.minmax(ignore.getBoundingBox());
         }
-        List<Entity> candidates = level.getEntities(
-                ignore, bounds.expandTowards(segment.x, segment.y, segment.z).inflate(padding, padding, padding));
+        List<Entity> candidates = level.getEntities(ignore, bounds.expandTowards(segment.x, segment.y, segment.z).inflate(padding, padding, padding));
         double closest = 0.0;
         for (Entity entity : candidates) {
             if (!entity.isPickable() && !nonCollide) {
@@ -69,8 +60,7 @@ public final class FocusRayTrace {
         return pointed;
     }
 
-    public static @Nullable HitResult pointedOrBlock(
-            Level level, @Nullable Entity caster, Vec3 start, Vec3 look, double minRange, double range, float padding) {
+    public static @Nullable HitResult pointedOrBlock(Level level, @Nullable Entity caster, Vec3 start, Vec3 look, double minRange, double range, float padding) {
         HitResult ray = pointedEntity(level, caster, start, look, minRange, range, padding, false);
         if (ray == null) {
             Vec3 end = look.normalize().scale(range).add(start);

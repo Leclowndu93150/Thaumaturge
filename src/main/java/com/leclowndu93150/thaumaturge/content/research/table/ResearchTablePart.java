@@ -3,8 +3,7 @@ package com.leclowndu93150.thaumaturge.content.research.table;
 import net.minecraft.util.StringRepresentable;
 
 public enum ResearchTablePart implements StringRepresentable {
-    MAIN("main"),
-    EXT("ext");
+    MAIN("main"), EXT("ext");
 
     private final String name;
 

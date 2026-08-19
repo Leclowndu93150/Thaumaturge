@@ -10,8 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class FocusPouchScreen extends AbstractTCContainerScreen<MenuFocusPouch> {
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_focuspouch.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_focuspouch.png");
     private static final int WIDTH = 175;
     private static final int HEIGHT = 232;
     private static final int BLOCKED_X = 8;
@@ -31,16 +30,7 @@ public final class FocusPouchScreen extends AbstractTCContainerScreen<MenuFocusP
     @Override
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         if (menu.blockedHotbarSlot >= 0) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    leftPos + BLOCKED_X + menu.blockedHotbarSlot * SLOT_SIZE,
-                    topPos + BLOCKED_Y,
-                    BLOCKED_U,
-                    BLOCKED_V,
-                    BLOCKED_SIZE,
-                    BLOCKED_SIZE,
-                    256,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + BLOCKED_X + menu.blockedHotbarSlot * SLOT_SIZE, topPos + BLOCKED_Y, BLOCKED_U, BLOCKED_V, BLOCKED_SIZE, BLOCKED_SIZE, 256,
                     256);
         }
     }

@@ -23,13 +23,8 @@ public record ResearchNoteData(Identifier entry, int index, int color, boolean c
     public static final int TYPE_PLACED = 2;
 
     public record Cell(HexGrid.Hex hex, int type, Optional<Holder<IAspect>> aspect) {
-        public static final Codec<Cell> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        HexGrid.Hex.CODEC.fieldOf("hex").forGetter(Cell::hex),
-                        Codec.INT.fieldOf("type").forGetter(Cell::type),
-                        RegistryFixedCodec.create(IAspect.REGISTRY_KEY)
-                                .optionalFieldOf("aspect")
-                                .forGetter(Cell::aspect))
-                .apply(instance, Cell::new));
+        public static final Codec<Cell> CODEC = RecordCodecBuilder.create(instance -> instance.group(HexGrid.Hex.CODEC.fieldOf("hex").forGetter(Cell::hex),
+                Codec.INT.fieldOf("type").forGetter(Cell::type), RegistryFixedCodec.create(IAspect.REGISTRY_KEY).optionalFieldOf("aspect").forGetter(Cell::aspect)).apply(instance, Cell::new));
 
         public @Nullable Holder<IAspect> aspectOrNull() {
             return aspect.orElse(null);
@@ -40,17 +35,13 @@ public record ResearchNoteData(Identifier entry, int index, int color, boolean c
         }
     }
 
-    public static final Codec<ResearchNoteData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    LegacyIds.IDENTIFIER_CODEC.fieldOf("entry").forGetter(ResearchNoteData::entry),
-                    Codec.INT.fieldOf("index").forGetter(ResearchNoteData::index),
-                    Codec.INT.fieldOf("color").forGetter(ResearchNoteData::color),
-                    Codec.BOOL.optionalFieldOf("complete", false).forGetter(ResearchNoteData::complete),
-                    Codec.INT.optionalFieldOf("copies", 0).forGetter(ResearchNoteData::copies),
-                    Cell.CODEC.listOf().fieldOf("cells").forGetter(ResearchNoteData::cells))
+    public static final Codec<ResearchNoteData> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(LegacyIds.IDENTIFIER_CODEC.fieldOf("entry").forGetter(ResearchNoteData::entry), Codec.INT.fieldOf("index").forGetter(ResearchNoteData::index),
+                    Codec.INT.fieldOf("color").forGetter(ResearchNoteData::color), Codec.BOOL.optionalFieldOf("complete", false).forGetter(ResearchNoteData::complete),
+                    Codec.INT.optionalFieldOf("copies", 0).forGetter(ResearchNoteData::copies), Cell.CODEC.listOf().fieldOf("cells").forGetter(ResearchNoteData::cells))
             .apply(instance, ResearchNoteData::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ResearchNoteData> STREAM_CODEC =
-            ByteBufCodecs.fromCodecWithRegistries(CODEC);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ResearchNoteData> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
     public Map<HexGrid.Hex, Cell> cellMap() {
         Map<HexGrid.Hex, Cell> map = new LinkedHashMap<>();

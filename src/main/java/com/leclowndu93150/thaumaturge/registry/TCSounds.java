@@ -9,8 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCSounds {
-    public static final DeferredRegister<SoundEvent> SOUNDS =
-            DeferredRegister.create(Registries.SOUND_EVENT, TCIds.MODID);
+    public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, TCIds.MODID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> PAGE = register("page");
     public static final DeferredHolder<SoundEvent, SoundEvent> PAGETURN = register("pageturn");
@@ -84,8 +83,7 @@ public final class TCSounds {
     private TCSounds() {}
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
-        return SOUNDS.register(
-                name, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(TCIds.MODID, name)));
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(TCIds.MODID, name)));
     }
 
     public static void register(IEventBus modBus) {

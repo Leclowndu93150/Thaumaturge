@@ -38,11 +38,7 @@ public final class ProvisionRequest {
         this.seal = seal;
         this.entity = null;
         this.stack = stack.copy();
-        this.id = Objects.hash(
-                seal.getSealPos().pos(),
-                seal.getSealPos().face(),
-                ItemStack.hashItemAndComponents(stack),
-                stack.getCount());
+        this.id = Objects.hash(seal.getSealPos().pos(), seal.getSealPos().face(), ItemStack.hashItemAndComponents(stack), stack.getCount());
         this.timeout = level.getGameTime() + TIMEOUT_TICKS;
     }
 

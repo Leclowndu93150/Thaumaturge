@@ -56,14 +56,12 @@ public final class FocusEffectBreak implements FocusEffect {
 
     @Override
     public int complexity(FocusSettings settings) {
-        return settings.value("power") * POWER_COMPLEXITY_FACTOR
-                + settings.value("silk") * SILK_COMPLEXITY_FACTOR
+        return settings.value("power") * POWER_COMPLEXITY_FACTOR + settings.value("silk") * SILK_COMPLEXITY_FACTOR
                 + (settings.value("fortune") == 0 ? 0 : (settings.value("fortune") + 1) * FORTUNE_COMPLEXITY_FACTOR);
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return true;
         }
@@ -72,19 +70,11 @@ public final class FocusEffectBreak implements FocusEffect {
             boolean silk = settings.value("silk") > 0;
             int fortune = settings.value("fortune");
             float strength = settings.value("power") * ctx.power();
-            float dur = level.getBlockState(blockHit.getBlockPos()).getDestroySpeed(level, blockHit.getBlockPos())
-                    * HARDNESS_TO_DURABILITY;
+            float dur = level.getBlockState(blockHit.getBlockPos()).getDestroySpeed(level, blockHit.getBlockPos()) * HARDNESS_TO_DURABILITY;
             dur = (float) Math.sqrt(dur);
             if (ctx.caster() instanceof Player player) {
-                BlockBreakerEngine.breaker(blockHit.getBlockPos(), level.getBlockState(blockHit.getBlockPos()), player)
-                        .showFx()
-                        .silkTouch(silk)
-                        .fortune(fortune)
-                        .strength(strength)
-                        .durability(dur)
-                        .delay((int) (dur / strength / DELAY_DIVISOR * index))
-                        .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST)
-                        .queue(level);
+                BlockBreakerEngine.breaker(blockHit.getBlockPos(), level.getBlockState(blockHit.getBlockPos()), player).showFx().silkTouch(silk).fortune(fortune).strength(strength).durability(dur)
+                        .delay((int) (dur / strength / DELAY_DIVISOR * index)).visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST).queue(level);
             }
         }
         return true;
@@ -92,37 +82,24 @@ public final class FocusEffectBreak implements FocusEffect {
 
     @Override
     public List<SettingDefinition> settings() {
-        int[] silk = new int[] {0, 1};
-        String[] silkDesc = new String[] {"focus.common.no", "focus.common.yes"};
-        int[] fortune = new int[] {0, 1, 2, 3, 4};
-        String[] fortuneDesc = new String[] {"focus.common.no", "I", "II", "III", "IV"};
-        return List.of(
-                new SettingDefinition("power", "focus.break.power", new SettingDefinition.IntRange(1, 5)),
-                new SettingDefinition(
-                        "fortune", "focus.common.fortune", new SettingDefinition.IntList(fortune, fortuneDesc)),
+        int[] silk = new int[]{0, 1};
+        String[] silkDesc = new String[]{"focus.common.no", "focus.common.yes"};
+        int[] fortune = new int[]{0, 1, 2, 3, 4};
+        String[] fortuneDesc = new String[]{"focus.common.no", "I", "II", "III", "IV"};
+        return List.of(new SettingDefinition("power", "focus.break.power", new SettingDefinition.IntRange(1, 5)),
+                new SettingDefinition("fortune", "focus.common.fortune", new SettingDefinition.IntList(fortune, fortuneDesc)),
                 new SettingDefinition("silk", "focus.common.silk", new SettingDefinition.IntList(silk, silkDesc)));
     }
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
         int q = level.getRandom().nextInt(4);
-        CrackShardParticleOptions data = new CrackShardParticleOptions(
-                0xFFFFFF,
-                q,
-                (float) (1.7F + level.getRandom().nextGaussian() * 0.3F),
-                6 + level.getRandom().nextInt(6));
+        CrackShardParticleOptions data = new CrackShardParticleOptions(0xFFFFFF, q, (float) (1.7F + level.getRandom().nextGaussian() * 0.3F), 6 + level.getRandom().nextInt(6));
         level.addParticle(data, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.END_GATEWAY_SPAWN,
-                        SoundSource.PLAYERS,
-                        0.1F,
-                        2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.END_GATEWAY_SPAWN, SoundSource.PLAYERS, 0.1F, 2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.05F));
     }
 }

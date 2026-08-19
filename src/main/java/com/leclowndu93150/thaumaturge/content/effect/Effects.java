@@ -119,14 +119,7 @@ public final class Effects {
     }
 
     public static void boreDig(ServerLevel level, BlockPos target, Entity bore, int delay) {
-        PacketDistributor.sendToPlayersNear(
-                level,
-                null,
-                target.getX(),
-                target.getY(),
-                target.getZ(),
-                BORE_DIG_RADIUS,
-                new ClientboundBoreDigPayload(target, bore.getId(), delay));
+        PacketDistributor.sendToPlayersNear(level, null, target.getX(), target.getY(), target.getZ(), BORE_DIG_RADIUS, new ClientboundBoreDigPayload(target, bore.getId(), delay));
     }
 
     public static BoreStream boreStream(ServerLevel level, Vec3 source, Entity target) {
@@ -249,8 +242,7 @@ public final class Effects {
         return new FluxFume(level, Vec3.atCenterOf(pos));
     }
 
-    public static FireMoteParticleOptions fireMoteData(
-            RandomSource rand, double vx, double vy, double vz, float r, float g, float b, float alpha, float scale) {
+    public static FireMoteParticleOptions fireMoteData(RandomSource rand, double vx, double vy, double vz, float r, float g, float b, float alpha, float scale) {
         boolean translucent = rand.nextBoolean();
         return new FireMoteParticleOptions(vx, vy, vz, r, g, b, alpha, translucent ? scale / 3.0F : scale, translucent);
     }
@@ -259,16 +251,8 @@ public final class Effects {
         spawn(level, options, x, y, z, 0.0, 0.0, 0.0);
     }
 
-    public static void spawn(
-            ServerLevel level, ParticleOptions options, double x, double y, double z, double vx, double vy, double vz) {
-        PacketDistributor.sendToPlayersNear(
-                level,
-                null,
-                x,
-                y,
-                z,
-                DEFAULT_RADIUS,
-                new ClientboundSpawnParticlePayload(options, x, y, z, vx, vy, vz));
+    public static void spawn(ServerLevel level, ParticleOptions options, double x, double y, double z, double vx, double vy, double vz) {
+        PacketDistributor.sendToPlayersNear(level, null, x, y, z, DEFAULT_RADIUS, new ClientboundSpawnParticlePayload(options, x, y, z, vx, vy, vz));
     }
 
     public static void scanGlyph(ServerPlayer viewer, double x, double y, double z, int color, int delay) {
@@ -277,8 +261,7 @@ public final class Effects {
         PacketDistributor.sendToPlayer(viewer, new ClientboundSpawnParticlePayload(options, x, y, z));
     }
 
-    public static void slash(
-            ServerLevel level, double x, double y, double z, double x2, double y2, double z2, int duration) {
+    public static void slash(ServerLevel level, double x, double y, double z, double x2, double y2, double z2, int duration) {
         RandomSource rand = level.getRandom();
         double dx = x2 - x;
         double dy = y2 - y;
@@ -333,15 +316,7 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             if (sound) {
-                level.playSound(
-                        null,
-                        pos.x,
-                        pos.y,
-                        pos.z,
-                        TCSounds.POOF.get(),
-                        SoundSource.BLOCKS,
-                        0.4F,
-                        1.0F + (float) rand.nextGaussian() * 0.05F);
+                level.playSound(null, pos.x, pos.y, pos.z, TCSounds.POOF.get(), SoundSource.BLOCKS, 0.4F, 1.0F + (float) rand.nextGaussian() * 0.05F);
             }
             int puffs = 6 + rand.nextInt(3) + 2;
             for (int a = 0; a < puffs; a++) {
@@ -356,15 +331,7 @@ public final class Effects {
                 float pr = Mth.clamp(r * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
                 float pg = Mth.clamp(g * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
                 float pb = Mth.clamp(b * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
-                spawn(
-                        level,
-                        TCParticles.colorOf(TCParticles.PUFF, pr, pg, pb),
-                        pos.x + vx * 2.0,
-                        pos.y + vy * 2.0,
-                        pos.z + vz * 2.0,
-                        vx / 2.0,
-                        vy / 2.0,
-                        vz / 2.0);
+                spawn(level, TCParticles.colorOf(TCParticles.PUFF, pr, pg, pb), pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0, vx / 2.0, vy / 2.0, vz / 2.0);
             }
             if (fancy) {
                 int motes = 2 + rand.nextInt(3);
@@ -372,26 +339,13 @@ public final class Effects {
                     double vx = (0.025F + rand.nextFloat() * 0.025F) * (rand.nextBoolean() ? -1 : 1);
                     double vy = (0.025F + rand.nextFloat() * 0.025F) * (rand.nextBoolean() ? -1 : 1);
                     double vz = (0.025F + rand.nextFloat() * 0.025F) * (rand.nextBoolean() ? -1 : 1);
-                    wispyMotes(level, new Vec3(pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0))
-                            .motion(vx, vy, vz)
-                            .age(15 + rand.nextInt(10))
-                            .randomColor()
-                            .gravity(-0.01F)
-                            .send();
+                    wispyMotes(level, new Vec3(pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0)).motion(vx, vy, vz).age(15 + rand.nextInt(10)).randomColor().gravity(-0.01F).send();
                 }
                 spawn(level, TCParticles.colorOf(TCParticles.FLASH, 1.0F, 0.9F, 1.0F), pos.x, pos.y, pos.z);
             }
             int wisps = (fancy ? 2 : 0) + rand.nextInt(3);
             for (int a = 0; a < wisps; a++) {
-                curlyWisp(level, pos)
-                        .color(
-                                (0.9F + rand.nextFloat() * 0.1F + r) / 2.0F,
-                                (0.1F + g) / 2.0F,
-                                (0.5F + rand.nextFloat() * 0.1F + b) / 2.0F)
-                        .alpha(0.75F)
-                        .side(side)
-                        .seed(a)
-                        .send();
+                curlyWisp(level, pos).color((0.9F + rand.nextFloat() * 0.1F + r) / 2.0F, (0.1F + g) / 2.0F, (0.5F + rand.nextFloat() * 0.1F + b) / 2.0F).alpha(0.75F).side(side).seed(a).send();
             }
         }
     }
@@ -415,9 +369,9 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            if (rand.nextInt(6) >= 4) return;
-            SparkleParticleOptions options = new SparkleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, r, g, b), 0.6F + rand.nextFloat() * 0.2F, 0, 1.0F, 0.0F, 2, false);
+            if (rand.nextInt(6) >= 4)
+                return;
+            SparkleParticleOptions options = new SparkleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 0.6F + rand.nextFloat() * 0.2F, 0, 1.0F, 0.0F, 2, false);
             spawn(level, options, pos.x, pos.y, pos.z);
         }
     }
@@ -478,8 +432,7 @@ public final class Effects {
         }
 
         public void send() {
-            SparkleParticleOptions options = new SparkleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, r, g, b), scale, delay, decay, gravity, baseAge, true);
+            SparkleParticleOptions options = new SparkleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), scale, delay, decay, gravity, baseAge, true);
             spawn(level, options, pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
@@ -533,8 +486,7 @@ public final class Effects {
             float cr = randomColor ? 0.25F + rand.nextFloat() * 0.75F : r;
             float cg = randomColor ? 0.25F + rand.nextFloat() * 0.75F : g;
             float cb = randomColor ? 0.25F + rand.nextFloat() * 0.75F : b;
-            WispyMoteParticleOptions options = new WispyMoteParticleOptions(
-                    ARGB.colorFromFloat(1.0F, cr, cg, cb), age, gravity, WispyMoteParticleOptions.NO_ENTITY);
+            WispyMoteParticleOptions options = new WispyMoteParticleOptions(ARGB.colorFromFloat(1.0F, cr, cg, cb), age, gravity, WispyMoteParticleOptions.NO_ENTITY);
             spawn(level, options, pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
@@ -604,8 +556,7 @@ public final class Effects {
                 dy += side.getStepY() * 0.025F;
                 dz += side.getStepZ() * 0.025F;
             }
-            CurlyWispParticleOptions options =
-                    new CurlyWispParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, scale, delay, seed);
+            CurlyWispParticleOptions options = new CurlyWispParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, scale, delay, seed);
             spawn(level, options, pos.x + dx * 5.0, pos.y + dy * 5.0, pos.z + dz * 5.0, dx, dy, dz);
         }
     }
@@ -651,8 +602,7 @@ public final class Effects {
             spawn(level, new VentParticleOptions(vx, vy, vz, color, scale, variant), pos.x, pos.y, pos.z);
             RandomSource rand = level.getRandom();
             if (spawnFlame && rand.nextInt(6) < 2) {
-                WispFlameParticleOptions flame = new WispFlameParticleOptions(
-                        ARGB.colorFromFloat(1.0F, 1.0F, 0.7F, 0.2F), 0.9F, 0.25F + rand.nextFloat() * 0.1F, 0.25F, 0);
+                WispFlameParticleOptions flame = new WispFlameParticleOptions(ARGB.colorFromFloat(1.0F, 1.0F, 0.7F, 0.2F), 0.9F, 0.25F + rand.nextFloat() * 0.1F, 0.25F, 0);
                 spawn(level, flame, pos.x, pos.y, pos.z, vx / 2.0, vy / 2.0, vz / 2.0);
             }
         }
@@ -690,12 +640,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(
-                    level,
-                    new BlockRunesParticleOptions(r, g, b, duration, gravity, variant),
-                    pos.x + 0.5,
-                    pos.y + 0.5,
-                    pos.z + 0.5);
+            spawn(level, new BlockRunesParticleOptions(r, g, b, duration, gravity, variant), pos.x + 0.5, pos.y + 0.5, pos.z + 0.5);
         }
     }
 
@@ -786,23 +731,11 @@ public final class Effects {
         }
 
         public void send() {
-            if (target == null) return;
-            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.beam(
-                    source.getX(),
-                    source.getY(),
-                    source.getZ(),
-                    target.x,
-                    target.y,
-                    target.z,
-                    color,
-                    age,
-                    beamType,
-                    endMod,
-                    reverse,
-                    source.getId(),
-                    false);
-            PacketDistributor.sendToPlayersNear(
-                    level, null, source.getX(), source.getY(), source.getZ(), DEFAULT_RADIUS, payload);
+            if (target == null)
+                return;
+            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.beam(source.getX(), source.getY(), source.getZ(), target.x, target.y, target.z, color, age, beamType, endMod,
+                    reverse, source.getId(), false);
+            PacketDistributor.sendToPlayersNear(level, null, source.getX(), source.getY(), source.getZ(), DEFAULT_RADIUS, payload);
         }
     }
 
@@ -852,21 +785,10 @@ public final class Effects {
         }
 
         public void send() {
-            if (target == null) return;
-            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.beam(
-                    source.x,
-                    source.y,
-                    source.z,
-                    target.x,
-                    target.y,
-                    target.z,
-                    color,
-                    age,
-                    beamType,
-                    endMod,
-                    reverse,
-                    BeamPayloadIds.NO_ENTITY,
-                    true);
+            if (target == null)
+                return;
+            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.beam(source.x, source.y, source.z, target.x, target.y, target.z, color, age, beamType, endMod, reverse,
+                    BeamPayloadIds.NO_ENTITY, true);
             PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
@@ -899,7 +821,8 @@ public final class Effects {
         }
 
         public void send() {
-            if (to == null) return;
+            if (to == null)
+                return;
             EffectDispatch.spawnArc(level, from, to, color, gravity);
         }
     }
@@ -932,7 +855,8 @@ public final class Effects {
         }
 
         public void send() {
-            if (to == null) return;
+            if (to == null)
+                return;
             EffectDispatch.spawnBolt(level, from, to, color, width);
         }
     }
@@ -1045,15 +969,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(
-                    level,
-                    new TaintFumeParticleOptions(TaintFumeParticleOptions.RANDOM_COLOR, scale),
-                    pos.x,
-                    pos.y,
-                    pos.z,
-                    vx,
-                    vy,
-                    vz);
+            spawn(level, new TaintFumeParticleOptions(TaintFumeParticleOptions.RANDOM_COLOR, scale), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 
@@ -1087,12 +1003,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(
-                    level,
-                    new LightningFlashParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, scale),
-                    pos.x,
-                    pos.y,
-                    pos.z);
+            spawn(level, new LightningFlashParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, scale), pos.x, pos.y, pos.z);
         }
     }
 
@@ -1179,12 +1090,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            spawn(
-                    level,
-                    TCParticles.POLLUTION_FUME.get(),
-                    pos.getX() + 0.2F + rand.nextFloat() * 0.6F,
-                    pos.getY() + 0.2F + rand.nextFloat() * 0.6F,
-                    pos.getZ() + 0.2F + rand.nextFloat() * 0.6F);
+            spawn(level, TCParticles.POLLUTION_FUME.get(), pos.getX() + 0.2F + rand.nextFloat() * 0.6F, pos.getY() + 0.2F + rand.nextFloat() * 0.6F, pos.getZ() + 0.2F + rand.nextFloat() * 0.6F);
         }
     }
 
@@ -1238,15 +1144,7 @@ public final class Effects {
                 double x = pos.getX() + bs.minX + rand.nextFloat() * (bs.maxX - bs.minX);
                 double y = pos.getY() + bs.minY + rand.nextFloat() * (bs.maxY - bs.minY);
                 double z = pos.getZ() + bs.minZ + rand.nextFloat() * (bs.maxZ - bs.minZ);
-                spawn(
-                        level,
-                        TCParticles.colorOf(TCParticles.BLOCK_MIST, color),
-                        x,
-                        y,
-                        z,
-                        rand.nextGaussian() * 0.01,
-                        rand.nextFloat() * 0.075,
-                        rand.nextGaussian() * 0.01);
+                spawn(level, TCParticles.colorOf(TCParticles.BLOCK_MIST, color), x, y, z, rand.nextGaussian() * 0.01, rand.nextFloat() * 0.075, rand.nextGaussian() * 0.01);
             }
         }
     }
@@ -1269,15 +1167,8 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             for (int a = 0; a < 6; a++) {
-                spawn(
-                        level,
-                        TCParticles.colorOf(TCParticles.MIST_FLAT, color),
-                        pos.getX() + rand.nextFloat(),
-                        pos.getY() + rand.nextFloat() * 0.125F,
-                        pos.getZ() + rand.nextFloat(),
-                        (rand.nextFloat() - rand.nextFloat()) * 0.005,
-                        0.005,
-                        (rand.nextFloat() - rand.nextFloat()) * 0.005);
+                spawn(level, TCParticles.colorOf(TCParticles.MIST_FLAT, color), pos.getX() + rand.nextFloat(), pos.getY() + rand.nextFloat() * 0.125F, pos.getZ() + rand.nextFloat(),
+                        (rand.nextFloat() - rand.nextFloat()) * 0.005, 0.005, (rand.nextFloat() - rand.nextFloat()) * 0.005);
             }
         }
     }
@@ -1313,8 +1204,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            WispFlameParticleOptions options =
-                    new WispFlameParticleOptions(color, 0.5F, 1.0F + rand.nextFloat() * 0.25F, 0.05F, delay);
+            WispFlameParticleOptions options = new WispFlameParticleOptions(color, 0.5F, 1.0F + rand.nextFloat() * 0.25F, 0.05F, delay);
             spawn(level, options, pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
@@ -1342,14 +1232,8 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            wispyMotes(level, new Vec3(pos.getX() + rand.nextFloat(), pos.getY(), pos.getZ() + rand.nextFloat()))
-                    .age(age)
-                    .color(
-                            0.4F + rand.nextFloat() * 0.6F,
-                            0.6F + rand.nextFloat() * 0.4F,
-                            0.6F + rand.nextFloat() * 0.4F)
-                    .gravity(gravity)
-                    .send();
+            wispyMotes(level, new Vec3(pos.getX() + rand.nextFloat(), pos.getY(), pos.getZ() + rand.nextFloat())).age(age)
+                    .color(0.4F + rand.nextFloat() * 0.6F, 0.6F + rand.nextFloat() * 0.4F, 0.6F + rand.nextFloat() * 0.4F).gravity(gravity).send();
         }
     }
 
@@ -1372,13 +1256,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            BubbleParticleOptions options = new BubbleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, r, g, b),
-                    1.0F,
-                    rand.nextFloat() * 0.3F + 0.3F,
-                    15 + rand.nextInt(10),
-                    -0.001F,
-                    false);
+            BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 1.0F, rand.nextFloat() * 0.3F + 0.3F, 15 + rand.nextInt(10), -0.001F, false);
             spawn(level, options, pos.x, pos.y, pos.z);
         }
     }
@@ -1409,22 +1287,9 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             for (int a = 0; a < 2; a++) {
-                BubbleParticleOptions options = new BubbleParticleOptions(
-                        ARGB.colorFromFloat(1.0F, r, g, b),
-                        1.0F,
-                        rand.nextFloat() * 0.3F + 0.2F,
-                        (int) (7.0 + 8.0 / (rand.nextDouble() * 0.8 + 0.2)),
-                        -0.025F * heat,
-                        false);
-                spawn(
-                        level,
-                        options,
-                        pos.x + 0.2 + rand.nextFloat() * 0.6,
-                        pos.y,
-                        pos.z + 0.2 + rand.nextFloat() * 0.6,
-                        0.0,
-                        0.002,
-                        0.0);
+                BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 1.0F, rand.nextFloat() * 0.3F + 0.2F, (int) (7.0 + 8.0 / (rand.nextDouble() * 0.8 + 0.2)),
+                        -0.025F * heat, false);
+                spawn(level, options, pos.x + 0.2 + rand.nextFloat() * 0.6, pos.y, pos.z + 0.2 + rand.nextFloat() * 0.6, 0.0, 0.002, 0.0);
             }
         }
     }
@@ -1440,13 +1305,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            BubbleParticleOptions options = new BubbleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 0.7F),
-                    1.0F,
-                    rand.nextFloat() * 0.2F + 0.2F,
-                    4 + rand.nextInt(3),
-                    0.1F,
-                    false);
+            BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, 0.5F, 0.5F, 0.7F), 1.0F, rand.nextFloat() * 0.2F + 0.2F, 4 + rand.nextInt(3), 0.1F, false);
             spawn(level, options, pos.x, pos.y, pos.z);
         }
     }
@@ -1462,13 +1321,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            BubbleParticleOptions options = new BubbleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, 0.25F, 0.0F, 0.75F),
-                    0.8F,
-                    rand.nextFloat() * 0.2F + 0.4F,
-                    12 + rand.nextInt(12),
-                    0.05F,
-                    true);
+            BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, 0.25F, 0.0F, 0.75F), 0.8F, rand.nextFloat() * 0.2F + 0.4F, 12 + rand.nextInt(12), 0.05F, true);
             spawn(level, options, pos.x, pos.y, pos.z);
         }
     }
@@ -1503,12 +1356,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(
-                    level,
-                    new SparkParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, size),
-                    pos.x,
-                    pos.y,
-                    pos.z);
+            spawn(level, new SparkParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, size), pos.x, pos.y, pos.z);
         }
     }
 
@@ -1557,22 +1405,8 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            BubbleParticleOptions options = new BubbleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, r, g, b),
-                    alpha,
-                    0.4F + rand.nextFloat() * 0.2F,
-                    20 + rand.nextInt(10),
-                    0.01F,
-                    false);
-            spawn(
-                    level,
-                    options,
-                    pos.x,
-                    pos.y,
-                    pos.z,
-                    rand.nextGaussian() * 0.005,
-                    rand.nextGaussian() * 0.005,
-                    rand.nextGaussian() * 0.005);
+            BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, 0.4F + rand.nextFloat() * 0.2F, 20 + rand.nextInt(10), 0.01F, false);
+            spawn(level, options, pos.x, pos.y, pos.z, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005, rand.nextGaussian() * 0.005);
         }
     }
 
@@ -1588,16 +1422,8 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            BubbleParticleOptions options = new BubbleParticleOptions(
-                    JAR_COLOR, 0.5F, 0.4F + rand.nextFloat() * 0.3F, 20 + rand.nextInt(10), 0.3F, true);
-            spawn(
-                    level,
-                    options,
-                    pos.x + rand.nextGaussian() * 0.075,
-                    pos.y,
-                    pos.z + rand.nextGaussian() * 0.075,
-                    rand.nextGaussian() * 0.015,
-                    0.075 + rand.nextFloat() * 0.05,
+            BubbleParticleOptions options = new BubbleParticleOptions(JAR_COLOR, 0.5F, 0.4F + rand.nextFloat() * 0.3F, 20 + rand.nextInt(10), 0.3F, true);
+            spawn(level, options, pos.x + rand.nextGaussian() * 0.075, pos.y, pos.z + rand.nextGaussian() * 0.075, rand.nextGaussian() * 0.015, 0.075 + rand.nextFloat() * 0.05,
                     rand.nextGaussian() * 0.015);
         }
     }
@@ -1658,8 +1484,7 @@ public final class Effects {
         }
 
         public void send() {
-            SparkleParticleOptions options = new SparkleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, r, g, b), scale, delay, decay, gravity, baseAge, false);
+            SparkleParticleOptions options = new SparkleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), scale, delay, decay, gravity, baseAge, false);
             spawn(level, options, pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
@@ -1683,7 +1508,8 @@ public final class Effects {
             RandomSource rand = level.getRandom();
             AABB bs = level.getBlockState(pos).getShape(level, pos).bounds().inflate(0.1);
             int num = (int) (((bs.getXsize() + bs.getYsize() + bs.getZsize()) / 3.0) * 20.0);
-            if (num < 1) num = 1;
+            if (num < 1)
+                num = 1;
             Vec3 start = source != null ? source : new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             for (Direction face : Direction.values()) {
                 BlockPos neighbor = pos.relative(face);
@@ -1700,9 +1526,12 @@ public final class Effects {
                     double x = mx;
                     double y = my;
                     double z = mz;
-                    if (rx) x = mx + rand.nextGaussian() * 0.6;
-                    if (ry) y = my + rand.nextGaussian() * 0.6;
-                    if (rz) z = mz + rand.nextGaussian() * 0.6;
+                    if (rx)
+                        x = mx + rand.nextGaussian() * 0.6;
+                    if (ry)
+                        y = my + rand.nextGaussian() * 0.6;
+                    if (rz)
+                        z = mz + rand.nextGaussian() * 0.6;
                     x = Mth.clamp(x, bs.minX, bs.maxX);
                     y = Mth.clamp(y, bs.minY, bs.maxY);
                     z = Mth.clamp(z, bs.minZ, bs.maxZ);
@@ -1715,15 +1544,7 @@ public final class Effects {
                     double dist = start.distanceTo(new Vec3(wx, wy, wz));
                     int delay = rand.nextInt(5) + (int) (dist * 16.0);
                     float sparkScale = 0.4F + (float) rand.nextGaussian() * 0.1F;
-                    simpleSparkle(level, new Vec3(wx, wy, wz))
-                            .motion(0.0, 0.0025, 0.0)
-                            .scale(sparkScale)
-                            .color(r, g, b)
-                            .delay(delay)
-                            .decay(1.0F)
-                            .gravity(0.01F)
-                            .baseAge(16)
-                            .send();
+                    simpleSparkle(level, new Vec3(wx, wy, wz)).motion(0.0, 0.0025, 0.0).scale(sparkScale).color(r, g, b).delay(delay).decay(1.0F).gravity(0.01F).baseAge(16).send();
                 }
             }
         }
@@ -1741,11 +1562,7 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             spawn(level, TCParticles.PECH_CURSE.get(), pos.x, pos.y, pos.z);
-            wispyMotes(level, pos)
-                    .age(10 + rand.nextInt(10))
-                    .randomColor()
-                    .gravity(-0.01F)
-                    .send();
+            wispyMotes(level, pos).age(10 + rand.nextInt(10)).randomColor().gravity(-0.01F).send();
         }
     }
 
@@ -1791,8 +1608,7 @@ public final class Effects {
         }
 
         public void send() {
-            WispyMoteParticleOptions options =
-                    new WispyMoteParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 30, 0.2F, targetEntityId);
+            WispyMoteParticleOptions options = new WispyMoteParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 30, 0.2F, targetEntityId);
             spawn(level, options, origin.x, origin.y, origin.z);
         }
     }
@@ -1825,13 +1641,9 @@ public final class Effects {
         }
 
         public void send() {
-            if (target == null) return;
-            spawn(
-                    level,
-                    new BoreDebrisParticleOptions(state, target.x, target.y, target.z, sx, sy, sz),
-                    pos.x,
-                    pos.y,
-                    pos.z);
+            if (target == null)
+                return;
+            spawn(level, new BoreDebrisParticleOptions(state, target.x, target.y, target.z, sx, sy, sz), pos.x, pos.y, pos.z);
         }
     }
 
@@ -1868,7 +1680,8 @@ public final class Effects {
         }
 
         public void send() {
-            if (target == null) return;
+            if (target == null)
+                return;
             spawn(level, new BoreSparkleParticleOptions(target.x, target.y, target.z, r, g, b), pos.x, pos.y, pos.z);
         }
     }
@@ -1915,8 +1728,7 @@ public final class Effects {
         }
 
         public void send() {
-            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.bore(
-                    source.x, source.y, source.z, target.getId(), color, count, scale, extend, my);
+            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.bore(source.x, source.y, source.z, target.getId(), color, count, scale, extend, my);
             PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
@@ -1949,9 +1761,9 @@ public final class Effects {
         }
 
         public void send() {
-            if (target == null) return;
-            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.voidStream(
-                    source.x, source.y, source.z, target.x, target.y, target.z, seed, scale);
+            if (target == null)
+                return;
+            ClientboundStreamEffectPayload payload = ClientboundStreamEffectPayload.voidStream(source.x, source.y, source.z, target.x, target.y, target.z, seed, scale);
             PacketDistributor.sendToPlayersNear(level, null, source.x, source.y, source.z, DEFAULT_RADIUS, payload);
         }
     }
@@ -1993,8 +1805,7 @@ public final class Effects {
         }
 
         public void send() {
-            BubbleParticleOptions options =
-                    new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 0.25F, scale, maxAge, -0.01F, false);
+            BubbleParticleOptions options = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), 0.25F, scale, maxAge, -0.01F, false);
             spawn(level, options, pos.x, pos.y, pos.z);
         }
     }

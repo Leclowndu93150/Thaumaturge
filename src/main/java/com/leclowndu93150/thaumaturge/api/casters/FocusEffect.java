@@ -35,8 +35,7 @@ public non-sealed interface FocusEffect extends FocusElement {
      * @param index      the index of this target within the supplied batch
      * @return true when the effect did something
      */
-    boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index);
+    boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index);
 
     /**
      * The damage figure shown for this effect in the focal manipulator.

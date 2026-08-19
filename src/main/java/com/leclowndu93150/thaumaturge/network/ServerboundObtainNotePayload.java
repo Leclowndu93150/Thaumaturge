@@ -11,16 +11,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundObtainNotePayload(Identifier entry, int ordinal) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundObtainNotePayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("obtain_note"));
+    public static final CustomPacketPayload.Type<ServerboundObtainNotePayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("obtain_note"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundObtainNotePayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    Identifier.STREAM_CODEC,
-                    ServerboundObtainNotePayload::entry,
-                    ByteBufCodecs.VAR_INT,
-                    ServerboundObtainNotePayload::ordinal,
-                    ServerboundObtainNotePayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundObtainNotePayload> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC, ServerboundObtainNotePayload::entry,
+            ByteBufCodecs.VAR_INT, ServerboundObtainNotePayload::ordinal, ServerboundObtainNotePayload::new);
 
     public static void handle(ServerboundObtainNotePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {

@@ -21,10 +21,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
     private final @Nullable EntityArcaneBore bore;
 
     public MenuArcaneBore(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(
-                containerId,
-                playerInventory,
-                playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityArcaneBore b ? b : null);
+        this(containerId, playerInventory, playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityArcaneBore b ? b : null);
     }
 
     private MenuArcaneBore(int containerId, Inventory playerInventory, @Nullable EntityArcaneBore bore) {
@@ -38,8 +35,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
         });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
@@ -49,9 +45,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
 
     public static void open(Player player, EntityArcaneBore bore) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
-                    new SimpleMenuProvider((id, inv, p) -> new MenuArcaneBore(id, inv, bore), bore.getDisplayName()),
-                    buf -> buf.writeVarInt(bore.getId()));
+            serverPlayer.openMenu(new SimpleMenuProvider((id, inv, p) -> new MenuArcaneBore(id, inv, bore), bore.getDisplayName()), buf -> buf.writeVarInt(bore.getId()));
         }
     }
 

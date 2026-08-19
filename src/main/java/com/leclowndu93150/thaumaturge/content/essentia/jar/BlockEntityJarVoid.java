@@ -15,9 +15,11 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
 
     @Override
     protected int doAddToContainer(ResourceKey<IAspect> incoming, int requested) {
-        if (requested == 0) return 0;
+        if (requested == 0)
+            return 0;
         ResourceKey<IAspect> filter = aspectFilterKey();
-        if (filter != null && !filter.equals(incoming)) return requested;
+        if (filter != null && !filter.equals(incoming))
+            return requested;
         ResourceKey<IAspect> currentAspect = aspectKey();
         int currentAmount = amount();
         if (incoming.equals(currentAspect) || currentAmount == 0) {

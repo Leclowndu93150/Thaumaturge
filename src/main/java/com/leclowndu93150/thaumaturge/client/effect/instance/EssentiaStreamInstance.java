@@ -28,16 +28,7 @@ public final class EssentiaStreamInstance extends StreamInstance {
     private List<Vec3> route;
     private int leg;
 
-    public EssentiaStreamInstance(
-            Vec3 start,
-            List<Vec3> route,
-            @Nullable Vec3 launchDirection,
-            int fixedTail,
-            int color,
-            int count,
-            float scale,
-            int extend,
-            double my) {
+    public EssentiaStreamInstance(Vec3 start, List<Vec3> route, @Nullable Vec3 launchDirection, int fixedTail, int color, int count, float scale, int extend, double my) {
         super(start.x, start.y, start.z, color, count, scale);
         this.route = List.copyOf(route);
         this.fixedTail = Math.min(fixedTail, route.size());
@@ -101,15 +92,8 @@ public final class EssentiaStreamInstance extends StreamInstance {
     protected void onDissolve(ClientLevel level) {
         RandomSource random = level.getRandom();
         Vec3 destination = destination();
-        ClientEffects.essentiaDrop(
-                level,
-                destination.x + random.nextGaussian() * DROP_SPREAD,
-                destination.y + random.nextGaussian() * DROP_SPREAD,
-                destination.z + random.nextGaussian() * DROP_SPREAD,
-                this.colorR,
-                this.colorG,
-                this.colorB,
-                DROP_SCALE);
+        ClientEffects.essentiaDrop(level, destination.x + random.nextGaussian() * DROP_SPREAD, destination.y + random.nextGaussian() * DROP_SPREAD, destination.z + random.nextGaussian() * DROP_SPREAD,
+                this.colorR, this.colorG, this.colorB, DROP_SCALE);
     }
 
     @Override
@@ -124,15 +108,7 @@ public final class EssentiaStreamInstance extends StreamInstance {
                 pick = trailSize() - 2;
             }
             TrailPoint sample = trailPoint(pick);
-            ClientEffects.essentiaDrop(
-                    level,
-                    sample.x() + this.originX,
-                    sample.y() + this.originY,
-                    sample.z() + this.originZ,
-                    this.colorR,
-                    this.colorG,
-                    this.colorB,
-                    DROP_SCALE);
+            ClientEffects.essentiaDrop(level, sample.x() + this.originX, sample.y() + this.originY, sample.z() + this.originZ, this.colorR, this.colorG, this.colorB, DROP_SCALE);
         }
     }
 

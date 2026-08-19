@@ -92,8 +92,7 @@ public final class BlockCrystal extends Block {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -158,8 +157,7 @@ public final class BlockCrystal extends Block {
                         if (random.nextInt(6) == 0) {
                             childGeneration--;
                         }
-                        level.setBlockAndUpdate(
-                                spreadTo, defaultBlockState().setValue(GENERATION, childGeneration + 1));
+                        level.setBlockAndUpdate(spreadTo, defaultBlockState().setValue(GENERATION, childGeneration + 1));
                     }
                 }
             }
@@ -185,8 +183,7 @@ public final class BlockCrystal extends Block {
                         if (random.nextInt(6) == 0) {
                             childGeneration--;
                         }
-                        level.setBlockAndUpdate(
-                                spreadTo, defaultBlockState().setValue(GENERATION, childGeneration + 1));
+                        level.setBlockAndUpdate(spreadTo, defaultBlockState().setValue(GENERATION, childGeneration + 1));
                     }
                 }
             }

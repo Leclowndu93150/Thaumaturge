@@ -22,34 +22,16 @@ public final class TCGlobalLootModifierProvider extends GlobalLootModifierProvid
 
     @Override
     protected void start() {
-        LootItemCondition[] treasureTargets = {
-            anyOf(
-                    BuiltInLootTables.SIMPLE_DUNGEON,
-                    BuiltInLootTables.JUNGLE_TEMPLE,
-                    BuiltInLootTables.DESERT_PYRAMID,
-                    BuiltInLootTables.ABANDONED_MINESHAFT,
-                    BuiltInLootTables.STRONGHOLD_CORRIDOR,
-                    BuiltInLootTables.STRONGHOLD_CROSSING,
-                    BuiltInLootTables.STRONGHOLD_LIBRARY)
-        };
+        LootItemCondition[] treasureTargets = {anyOf(BuiltInLootTables.SIMPLE_DUNGEON, BuiltInLootTables.JUNGLE_TEMPLE, BuiltInLootTables.DESERT_PYRAMID, BuiltInLootTables.ABANDONED_MINESHAFT,
+                BuiltInLootTables.STRONGHOLD_CORRIDOR, BuiltInLootTables.STRONGHOLD_CROSSING, BuiltInLootTables.STRONGHOLD_LIBRARY)};
 
         add("treasure_common", modifier(treasureTargets, TCLootTables.TREASURE_COMMON));
         add("treasure_uncommon", modifier(treasureTargets, TCLootTables.TREASURE_UNCOMMON));
         add("treasure_rare", modifier(treasureTargets, TCLootTables.TREASURE_RARE));
 
-        add(
-                "library_knowledge",
-                modifier(
-                        new LootItemCondition[] {anyOf(BuiltInLootTables.STRONGHOLD_LIBRARY)},
-                        TCLootTables.TREASURE_LIBRARY));
+        add("library_knowledge", modifier(new LootItemCondition[]{anyOf(BuiltInLootTables.STRONGHOLD_LIBRARY)}, TCLootTables.TREASURE_LIBRARY));
 
-        add(
-                "village_smith_quicksilver",
-                modifier(
-                        new LootItemCondition[] {
-                            anyOf(BuiltInLootTables.VILLAGE_TOOLSMITH, BuiltInLootTables.VILLAGE_WEAPONSMITH)
-                        },
-                        TCLootTables.TREASURE_SMITH));
+        add("village_smith_quicksilver", modifier(new LootItemCondition[]{anyOf(BuiltInLootTables.VILLAGE_TOOLSMITH, BuiltInLootTables.VILLAGE_WEAPONSMITH)}, TCLootTables.TREASURE_SMITH));
     }
 
     private static AddTableLootModifier modifier(LootItemCondition[] conditions, ResourceKey<LootTable> table) {

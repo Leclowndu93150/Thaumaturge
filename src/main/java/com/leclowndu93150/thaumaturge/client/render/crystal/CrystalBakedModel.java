@@ -33,12 +33,7 @@ public final class CrystalBakedModel implements DynamicBlockStateModel {
     }
 
     @Override
-    public void collectParts(
-            BlockAndTintGetter level,
-            BlockPos pos,
-            BlockState state,
-            RandomSource random,
-            List<BlockStateModelPart> parts) {
+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> parts) {
         int growth = state.hasProperty(BlockCrystal.SIZE) ? state.getValue(BlockCrystal.SIZE) : 0;
         int partsPerFace = growth + 1;
         long seed = random.nextLong();

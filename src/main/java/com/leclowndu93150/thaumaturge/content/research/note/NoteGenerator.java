@@ -21,8 +21,7 @@ public final class NoteGenerator {
 
     private NoteGenerator() {}
 
-    public static ResearchNoteData generate(
-            Identifier entry, int index, AspectList anchors, int complexity, RandomSource random) {
+    public static ResearchNoteData generate(Identifier entry, int index, AspectList anchors, int complexity, RandomSource random) {
         int clamped = Mth.clamp(complexity, 1, 3);
         int radius = 1 + Math.min(MAX_RADIUS_BONUS, clamped);
         Map<HexGrid.Hex, ResearchNoteData.Cell> cells = new LinkedHashMap<>();
@@ -33,12 +32,7 @@ public final class NoteGenerator {
         List<HexGrid.Hex> ring = HexGrid.distributeRing(radius, tags.size(), random);
         for (int i = 0; i < tags.size() && i < ring.size(); i++) {
             HexGrid.Hex hex = ring.get(i);
-            cells.put(
-                    hex,
-                    new ResearchNoteData.Cell(
-                            hex,
-                            ResearchNoteData.TYPE_ROOT,
-                            Optional.of(tags.get(i).aspect())));
+            cells.put(hex, new ResearchNoteData.Cell(hex, ResearchNoteData.TYPE_ROOT, Optional.of(tags.get(i).aspect())));
         }
         if (clamped > 1) {
             punchHoles(cells, clamped * HOLES_PER_COMPLEXITY, random);

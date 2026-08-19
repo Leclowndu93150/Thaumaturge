@@ -9,8 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
 public final class TaintSeedRenderer extends MobRenderer<AbstractTaintSeed, TaintSeedRenderState, TaintSeedModel> {
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/taint_seed.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/taint_seed.png");
     private static final float MODEL_Y_OFFSET = 1.501F;
     private static final float LIFT = 1.2F;
     private static final float HEIGHT_SCALE_DIVISOR = 2.0F;

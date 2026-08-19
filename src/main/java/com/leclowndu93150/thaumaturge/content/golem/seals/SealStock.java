@@ -20,12 +20,8 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 public class SealStock extends SealFiltered implements ISealConfigToggles {
     private static final int SCAN_INTERVAL = 20;
 
-    protected final ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"),
-        new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
-        new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"),
-        new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod")
-    };
+    protected final ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"), new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
+            new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"), new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod")};
 
     private int delay = System.identityHashCode(this) % 50;
 
@@ -44,8 +40,7 @@ public class SealStock extends SealFiltered implements ISealConfigToggles {
         if (delay++ % SCAN_INTERVAL != 0) {
             return;
         }
-        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(
-                level, seal.getSealPos().pos(), seal.getSealPos().face());
+        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(level, seal.getSealPos().pos(), seal.getSealPos().face());
         if (inv == null) {
             return;
         }
@@ -57,11 +52,9 @@ public class SealStock extends SealFiltered implements ISealConfigToggles {
             if (amount < getFilterSlotSize(slot)) {
                 ItemStack wanted = getFilterSlot(slot).copy();
                 wanted.setCount(Math.min(wanted.getMaxStackSize(), getFilterSlotSize(slot) - amount));
-                wanted = InvHelper.hasRoomFor(
-                        level, seal.getSealPos().pos(), seal.getSealPos().face(), wanted);
+                wanted = InvHelper.hasRoomFor(level, seal.getSealPos().pos(), seal.getSealPos().face(), wanted);
                 if (!wanted.isEmpty()) {
-                    GolemHelper.requestProvisioning(
-                            level, seal.getSealPos().pos(), seal.getSealPos().face(), wanted);
+                    GolemHelper.requestProvisioning(level, seal.getSealPos().pos(), seal.getSealPos().face(), wanted);
                 }
             }
         }
@@ -92,7 +85,7 @@ public class SealStock extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
@@ -102,7 +95,7 @@ public class SealStock extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[]{TCGolemTraits.CLUMSY.get()};
     }
 
     @Override

@@ -48,12 +48,7 @@ public final class WandAspectVariants {
     }
 
     private static AspectIndex.Variant variant(WandCap cap, WandRod rod, boolean sceptre, AspectList aspects) {
-        return new AspectIndex.Variant(
-                new DataComponentMatchers(
-                        DataComponentExactPredicate.expect(
-                                TCDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre)),
-                        Map.of()),
-                aspects);
+        return new AspectIndex.Variant(new DataComponentMatchers(DataComponentExactPredicate.expect(TCDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre)), Map.of()), aspects);
     }
 
     private static AspectList addAll(AspectList into, AspectList from) {

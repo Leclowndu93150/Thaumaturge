@@ -32,14 +32,9 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
     private static final byte DATA_DELIVER_ENTITY = 1;
     private static final byte DATA_DELIVER_POS = 2;
 
-    protected final ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"),
-        new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
-        new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"),
-        new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod"),
-        new ISealConfigToggles.SealToggle(false, "psing", "golem.prop.single"),
-        new ISealConfigToggles.SealToggle(false, "pleave", "golem.prop.leave")
-    };
+    protected final ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"), new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
+            new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"), new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod"),
+            new ISealConfigToggles.SealToggle(false, "psing", "golem.prop.single"), new ISealConfigToggles.SealToggle(false, "pleave", "golem.prop.leave")};
 
     private int delay = System.identityHashCode(this) % 88;
 
@@ -57,17 +52,13 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
     public void tickSeal(Level level, ISealEntity seal) {
         List<ProvisionRequest> requests = GolemHelper.getProvisionRequests(level);
         if (delay % CLEAN_INTERVAL == 0) {
-            requests.removeIf(request -> request.isInvalid()
-                    || request.getLinkedTask() == null
-                    || request.getLinkedTask().isSuspended()
-                    || request.getLinkedTask().isCompleted()
+            requests.removeIf(request -> request.isInvalid() || request.getLinkedTask() == null || request.getLinkedTask().isSuspended() || request.getLinkedTask().isCompleted()
                     || request.getTimeout() < level.getGameTime());
         }
         if (delay++ % SCAN_INTERVAL != 0) {
             return;
         }
-        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(
-                level, seal.getSealPos().pos(), seal.getSealPos().face());
+        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(level, seal.getSealPos().pos(), seal.getSealPos().face());
         if (inv == null) {
             return;
         }
@@ -76,12 +67,8 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
             if (request.isInvalid() || request.getLinkedTask() != null || !isInRange(seal, request)) {
                 continue;
             }
-            boolean filterMatch = !InvHelper.findFirstMatchFromFilter(
-                            getInv(), getSizes(), blacklist, List.of(request.getStack()), filterFlags(props))
-                    .isEmpty();
-            if (filterMatch
-                    && InvHelper.countTotalItemsIn(inv, request.getStack(), InvHelper.InvFilter.STRICT)
-                            > (props[5].getValue() ? 1 : 0)) {
+            boolean filterMatch = !InvHelper.findFirstMatchFromFilter(getInv(), getSizes(), blacklist, List.of(request.getStack()), filterFlags(props)).isEmpty();
+            if (filterMatch && InvHelper.countTotalItemsIn(inv, request.getStack(), InvHelper.InvFilter.STRICT) > (props[5].getValue() ? 1 : 0)) {
                 Task task = new Task(seal.getSealPos(), seal.getSealPos().pos());
                 task.setPriority(request.getSeal() != null ? request.getSeal().getPriority() : 5);
                 task.setLifespan(request.getSeal() != null ? SEAL_TASK_LIFESPAN : DELIVERY_TASK_LIFESPAN);
@@ -99,11 +86,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
             return request.getSeal().getSealPos().pos().distSqr(sealPos) < PROVISION_RANGE_SQR;
         }
         if (request.getEntity() != null) {
-            return sealPos.distToCenterSqr(
-                            request.getEntity().getX(),
-                            request.getEntity().getY(),
-                            request.getEntity().getZ())
-                    < PROVISION_RANGE_SQR;
+            return sealPos.distToCenterSqr(request.getEntity().getX(), request.getEntity().getY(), request.getEntity().getZ()) < PROVISION_RANGE_SQR;
         }
         return request.getPos() != null && request.getPos().distSqr(sealPos) < PROVISION_RANGE_SQR;
     }
@@ -127,8 +110,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
     }
 
     private void collectForDelivery(Level level, IGolemAPI golem, Task task, ProvisionRequest request) {
-        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(
-                level, task.getSealPos().pos(), task.getSealPos().face());
+        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(level, task.getSealPos().pos(), task.getSealPos().face());
         if (inv == null) {
             return;
         }
@@ -149,26 +131,15 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         if (limit <= 0) {
             return;
         }
-        ItemStack remainder = golem.holdItem(InvHelper.removeStackFrom(
-                inv, InvHelper.copyLimitedStack(stack, limit), InvHelper.InvFilter.STRICT, false));
+        ItemStack remainder = golem.holdItem(InvHelper.removeStackFrom(inv, InvHelper.copyLimitedStack(stack, limit), InvHelper.InvFilter.STRICT, false));
         if (!remainder.isEmpty()) {
-            InvHelper.ejectStackAt(
-                    level,
-                    task.getSealPos().pos().relative(task.getSealPos().face()),
-                    task.getSealPos().face().getOpposite(),
-                    remainder);
+            InvHelper.ejectStackAt(level, task.getSealPos().pos().relative(task.getSealPos().face()), task.getSealPos().face().getOpposite(), remainder);
         }
-        golem.getGolemEntity()
-                .playSound(
-                        SoundEvents.ITEM_PICKUP,
-                        0.125F,
-                        ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+        golem.getGolemEntity().playSound(SoundEvents.ITEM_PICKUP, 0.125F, ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
         golem.addRankXp(1);
         golem.swingArm();
         if (request.getEntity() != null || request.getPos() != null) {
-            Task deliveryTask = request.getEntity() != null
-                    ? new Task(task.getSealPos(), request.getEntity())
-                    : new Task(task.getSealPos(), request.getPos());
+            Task deliveryTask = request.getEntity() != null ? new Task(task.getSealPos(), request.getEntity()) : new Task(task.getSealPos(), request.getPos());
             deliveryTask.setPriority(task.getPriority());
             deliveryTask.setData(request.getEntity() != null ? DATA_DELIVER_ENTITY : DATA_DELIVER_POS);
             deliveryTask.setLifespan(DELIVERY_TASK_LIFESPAN);
@@ -193,21 +164,12 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         if (task.getData() == DATA_DELIVER_ENTITY) {
             InvHelper.dropItemAtEntity(level, carried, request.getEntity());
         } else {
-            ItemStack rejected = InvHelper.ejectStackAt(
-                    level,
-                    request.getPos().relative(request.getSide()),
-                    request.getSide().getOpposite(),
-                    carried,
-                    true);
+            ItemStack rejected = InvHelper.ejectStackAt(level, request.getPos().relative(request.getSide()), request.getSide().getOpposite(), carried, true);
             if (!rejected.isEmpty()) {
                 golem.holdItem(rejected);
             }
         }
-        golem.getGolemEntity()
-                .playSound(
-                        SoundEvents.ITEM_PICKUP,
-                        0.125F,
-                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F);
+        golem.getGolemEntity().playSound(SoundEvents.ITEM_PICKUP, 0.125F, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F);
         golem.swingArm();
         request.setInvalid(true);
     }
@@ -218,12 +180,8 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         if (request == null || !(golem.getGolemEntity() instanceof EntityThaumaturgeGolem golemEntity)) {
             return false;
         }
-        boolean inHomeRange = request.getSeal() != null
-                        && golemEntity.isWithinHome(
-                                request.getSeal().getSealPos().pos())
-                || request.getEntity() != null
-                        && golemEntity.isWithinHome(request.getEntity().blockPosition())
-                || request.getPos() != null && golemEntity.isWithinHome(request.getPos());
+        boolean inHomeRange = request.getSeal() != null && golemEntity.isWithinHome(request.getSeal().getSealPos().pos())
+                || request.getEntity() != null && golemEntity.isWithinHome(request.getEntity().blockPosition()) || request.getPos() != null && golemEntity.isWithinHome(request.getPos());
         if (!inHomeRange || !areGolemTagsValidForTask(request.getSeal(), golem)) {
             return false;
         }
@@ -238,8 +196,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
             return true;
         }
         if (golem.getGolemEntity() instanceof EntityThaumaturgeGolem golemEntity && seal.isLocked()) {
-            if (golemEntity.getOwnerReference() == null
-                    || !golemEntity.getOwnerReference().getUUID().equals(seal.getOwner())) {
+            if (golemEntity.getOwnerReference() == null || !golemEntity.getOwnerReference().getUUID().equals(seal.getOwner())) {
                 return false;
             }
         }
@@ -278,7 +235,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_FILTER, CAT_TOGGLES, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
@@ -288,7 +245,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[]{TCGolemTraits.CLUMSY.get()};
     }
 
     @Override

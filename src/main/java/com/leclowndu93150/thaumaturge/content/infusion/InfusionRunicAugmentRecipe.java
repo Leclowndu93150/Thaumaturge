@@ -36,30 +36,16 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
     private static final int BASE_COST = 20;
     private static final int MAX_CHARGE = 120;
 
-    public static final MapCodec<InfusionRunicAugmentRecipe> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    Ingredient.CODEC.listOf(1, 64).fieldOf("components").forGetter(r -> r.baseComponents),
-                    Ingredient.CODEC.fieldOf("per_level").forGetter(r -> r.perLevel),
-                    AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.baseAspects),
-                    Ingredient.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
-                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research))
-            .apply(i, InfusionRunicAugmentRecipe::new));
+    public static final MapCodec<InfusionRunicAugmentRecipe> MAP_CODEC = RecordCodecBuilder
+            .mapCodec(i -> i.group(Ingredient.CODEC.listOf(1, 64).fieldOf("components").forGetter(r -> r.baseComponents), Ingredient.CODEC.fieldOf("per_level").forGetter(r -> r.perLevel),
+                    AspectList.NON_EMPTY_CODEC.fieldOf("aspects").forGetter(r -> r.baseAspects), Ingredient.CODEC.fieldOf("display_catalyst").forGetter(r -> r.displayCatalyst),
+                    ResearchGate.CODEC.optionalFieldOf("research").forGetter(r -> r.research)).apply(i, InfusionRunicAugmentRecipe::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, InfusionRunicAugmentRecipe> STREAM_CODEC =
-            StreamCodec.composite(
-                    Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
-                    r -> r.baseComponents,
-                    Ingredient.CONTENTS_STREAM_CODEC,
-                    r -> r.perLevel,
-                    AspectList.STREAM_CODEC,
-                    r -> r.baseAspects,
-                    Ingredient.CONTENTS_STREAM_CODEC,
-                    r -> r.displayCatalyst,
-                    ByteBufCodecs.optional(ResearchGate.STREAM_CODEC),
-                    r -> r.research,
-                    InfusionRunicAugmentRecipe::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, InfusionRunicAugmentRecipe> STREAM_CODEC = StreamCodec.composite(Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()),
+            r -> r.baseComponents, Ingredient.CONTENTS_STREAM_CODEC, r -> r.perLevel, AspectList.STREAM_CODEC, r -> r.baseAspects, Ingredient.CONTENTS_STREAM_CODEC, r -> r.displayCatalyst,
+            ByteBufCodecs.optional(ResearchGate.STREAM_CODEC), r -> r.research, InfusionRunicAugmentRecipe::new);
 
-    public static final RecipeSerializer<InfusionRunicAugmentRecipe> SERIALIZER =
-            new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<InfusionRunicAugmentRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
 
     private final List<Ingredient> baseComponents;
     private final Ingredient perLevel;
@@ -67,12 +53,7 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
     private final Ingredient displayCatalyst;
     private final Optional<ResearchGate> research;
 
-    public InfusionRunicAugmentRecipe(
-            List<Ingredient> baseComponents,
-            Ingredient perLevel,
-            AspectList baseAspects,
-            Ingredient displayCatalyst,
-            Optional<ResearchGate> research) {
+    public InfusionRunicAugmentRecipe(List<Ingredient> baseComponents, Ingredient perLevel, AspectList baseAspects, Ingredient displayCatalyst, Optional<ResearchGate> research) {
         this.baseComponents = List.copyOf(baseComponents);
         this.perLevel = perLevel;
         this.baseAspects = baseAspects;
@@ -176,11 +157,7 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
 
     @Override
     public ItemStack resultItem() {
-        ItemStack base = displayCatalyst
-                .items()
-                .findFirst()
-                .map(holder -> new ItemStack(holder.value()))
-                .orElse(ItemStack.EMPTY);
+        ItemStack base = displayCatalyst.items().findFirst().map(holder -> new ItemStack(holder.value())).orElse(ItemStack.EMPTY);
         if (!base.isEmpty()) {
             base.set(TCDataComponents.RUNIC_CHARGE.get(), 1);
         }
@@ -195,17 +172,8 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
     @Override
     public List<RecipeDisplay> display() {
         ItemStack out = resultItem();
-        SlotDisplay resultDisplay = out.isEmpty()
-                ? SlotDisplay.Empty.INSTANCE
-                : new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(out));
-        return List.of(new InfusionRecipeDisplay(
-                displayCatalyst.display(),
-                baseComponents.stream()
-                        .map(Ingredient::display)
-                        .map(d -> (SlotDisplay) d)
-                        .toList(),
-                baseAspects,
-                BASE_INSTABILITY,
+        SlotDisplay resultDisplay = out.isEmpty() ? SlotDisplay.Empty.INSTANCE : new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(out));
+        return List.of(new InfusionRecipeDisplay(displayCatalyst.display(), baseComponents.stream().map(Ingredient::display).map(d -> (SlotDisplay) d).toList(), baseAspects, BASE_INSTABILITY,
                 resultDisplay));
     }
 

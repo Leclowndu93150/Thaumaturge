@@ -124,15 +124,10 @@ public final class RadialFocusOverlay implements GuiLayer {
                             CasterKeyHandler.radialLock = true;
                         }
                         if (fociScale.get(key) < HOVER_SCALE_MAX) {
-                            fociScale.put(
-                                    key,
-                                    Math.min(
-                                            HOVER_SCALE_MAX,
-                                            fociScale.get(key) + radialChange(time, lastTime, SCALE_UP_MS)));
+                            fociScale.put(key, Math.min(HOVER_SCALE_MAX, fociScale.get(key) + radialChange(time, lastTime, SCALE_UP_MS)));
                         }
                     } else if (fociScale.get(key) > 1.0F) {
-                        fociScale.put(
-                                key, Math.max(1.0F, fociScale.get(key) - radialChange(time, lastTime, SCALE_DOWN_MS)));
+                        fociScale.put(key, Math.max(1.0F, fociScale.get(key) - radialChange(time, lastTime, SCALE_DOWN_MS)));
                     }
                 }
                 if (!CasterKeyHandler.radialActive) {
@@ -159,8 +154,7 @@ public final class RadialFocusOverlay implements GuiLayer {
         if (!(stack.getItem() instanceof ICaster)) {
             stack = mc.player.getOffhandItem();
         }
-        return stack.getItem() instanceof ICaster caster
-                && caster.getFocusStack(stack).getItem() instanceof ItemFocus;
+        return stack.getItem() instanceof ICaster caster && caster.getFocusStack(stack).getItem() instanceof ItemFocus;
     }
 
     private static float radialChange(long time, long lastTime, long total) {
@@ -175,8 +169,7 @@ public final class RadialFocusOverlay implements GuiLayer {
         centerHover = false;
         int pouchCount = 0;
         if (ModList.get().isLoaded(TCIds.CURIOS)) {
-            for (ThaumaturgeCuriosCompat.CurioPouchRef ref : ThaumaturgeCuriosCompat.equippedPouches(
-                    mc.player, stack -> stack.getItem() instanceof FocusPouchItem)) {
+            for (ThaumaturgeCuriosCompat.CurioPouchRef ref : ThaumaturgeCuriosCompat.equippedPouches(mc.player, stack -> stack.getItem() instanceof FocusPouchItem)) {
                 pouchCount++;
                 indexPouch(ref.stack(), pouchCount);
             }
@@ -251,8 +244,7 @@ public final class RadialFocusOverlay implements GuiLayer {
                     if (pendingClick) {
                         CasterKeyHandler.radialActive = false;
                         CasterKeyHandler.radialLock = true;
-                        ClientPacketDistributor.sendToServer(
-                                new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
+                        ClientPacketDistributor.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
                         if (mc.isWindowActive() && !mc.mouseHandler.isMouseGrabbed()) {
                             mc.mouseHandler.grabMouse();
                         }
@@ -303,27 +295,13 @@ public final class RadialFocusOverlay implements GuiLayer {
         }
 
         if (!tooltipStack.isEmpty()) {
-            List<ClientTooltipComponent> lines = tooltipStack
-                    .getTooltipLines(
-                            Item.TooltipContext.of(mc.level),
-                            mc.player,
-                            mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
-                    .stream()
-                    .map(Component::getVisualOrderText)
-                    .map(ClientTooltipComponent::create)
-                    .toList();
-            graphics.tooltip(
-                    mc.font,
-                    lines,
-                    cx + TOOLTIP_X_OFFSET,
-                    cy + TOOLTIP_Y_OFFSET,
-                    DefaultTooltipPositioner.INSTANCE,
-                    null);
+            List<ClientTooltipComponent> lines = tooltipStack.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, mc.options.advancedItemTooltips ? TooltipFlag.ADVANCED : TooltipFlag.NORMAL)
+                    .stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create).toList();
+            graphics.tooltip(mc.font, lines, cx + TOOLTIP_X_OFFSET, cy + TOOLTIP_Y_OFFSET, DefaultTooltipPositioner.INSTANCE, null);
         }
     }
 
-    private static void drawRing(
-            GuiGraphicsExtractor graphics, Identifier texture, int cx, int cy, float angleDeg, float size) {
+    private static void drawRing(GuiGraphicsExtractor graphics, Identifier texture, int cx, int cy, float angleDeg, float size) {
         if (size <= 0.0F) {
             return;
         }
@@ -332,20 +310,7 @@ public final class RadialFocusOverlay implements GuiLayer {
         graphics.pose().rotate((float) Math.toRadians(angleDeg - 90.0F));
         graphics.pose().translate(-size / 2.0F, -size / 2.0F);
         graphics.pose().scale(size / RADIAL_TEX_SIZE, size / RADIAL_TEX_SIZE);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                texture,
-                0,
-                0,
-                0.0F,
-                0.0F,
-                RADIAL_TEX_SIZE,
-                RADIAL_TEX_SIZE,
-                RADIAL_TEX_SIZE,
-                RADIAL_TEX_SIZE,
-                RADIAL_TEX_SIZE,
-                RADIAL_TEX_SIZE,
-                RING_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0.0F, 0.0F, RADIAL_TEX_SIZE, RADIAL_TEX_SIZE, RADIAL_TEX_SIZE, RADIAL_TEX_SIZE, RADIAL_TEX_SIZE, RADIAL_TEX_SIZE, RING_TINT);
         graphics.pose().popMatrix();
     }
 }

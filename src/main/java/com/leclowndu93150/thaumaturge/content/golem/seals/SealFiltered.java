@@ -21,8 +21,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
     protected boolean blacklist = true;
 
     protected InvHelper.InvFilter filterFlags(ISealConfigToggles.SealToggle[] props) {
-        return new InvHelper.InvFilter(
-                !props[0].getValue(), !props[1].getValue(), props[2].getValue(), props[3].getValue());
+        return new InvHelper.InvFilter(!props[0].getValue(), !props[1].getValue(), props[2].getValue(), props[3].getValue());
     }
 
     @Override
@@ -30,11 +29,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
         filter = NonNullList.withSize(getFilterSize(), ItemStack.EMPTY);
         Tag filterTag = nbt.get("filter");
         if (filterTag != null) {
-            List<ItemStack> loaded = ItemStack.OPTIONAL_CODEC
-                    .listOf()
-                    .parse(NbtOps.INSTANCE, filterTag)
-                    .result()
-                    .orElse(List.of());
+            List<ItemStack> loaded = ItemStack.OPTIONAL_CODEC.listOf().parse(NbtOps.INSTANCE, filterTag).result().orElse(List.of());
             for (int i = 0; i < loaded.size() && i < filter.size(); i++) {
                 ItemStack stack = loaded.get(i);
                 if (stack.getCount() > 1) {
@@ -54,11 +49,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
 
     @Override
     public void writeCustomNBT(CompoundTag nbt) {
-        Tag filterTag = ItemStack.OPTIONAL_CODEC
-                .listOf()
-                .encodeStart(NbtOps.INSTANCE, new ArrayList<>(filter))
-                .result()
-                .orElse(null);
+        Tag filterTag = ItemStack.OPTIONAL_CODEC.listOf().encodeStart(NbtOps.INSTANCE, new ArrayList<>(filter)).result().orElse(null);
         if (filterTag != null) {
             nbt.put("filter", filterTag);
         }
@@ -72,7 +63,7 @@ public abstract class SealFiltered implements ISeal, ISealGui, ISealConfigFilter
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_PRIORITY};
+        return new int[]{CAT_PRIORITY};
     }
 
     @Override

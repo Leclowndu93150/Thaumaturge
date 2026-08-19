@@ -98,13 +98,8 @@ public class ItemWand extends Item implements ICaster, IArchitect {
         if (rodName.endsWith(STAFF_ROD_SUFFIX)) {
             rodName = rodName.substring(0, rodName.length() - STAFF_ROD_SUFFIX.length());
         }
-        String objKey = parts.rod().staff()
-                ? "item.thaumaturge.wand.staff"
-                : parts.sceptre() ? "item.thaumaturge.wand.sceptre" : "item.thaumaturge.wand.named";
-        return Component.translatable(
-                objKey,
-                Component.translatable("wand.thaumaturge.cap." + capName),
-                Component.translatable("wand.thaumaturge.rod." + rodName));
+        String objKey = parts.rod().staff() ? "item.thaumaturge.wand.staff" : parts.sceptre() ? "item.thaumaturge.wand.sceptre" : "item.thaumaturge.wand.named";
+        return Component.translatable(objKey, Component.translatable("wand.thaumaturge.cap." + capName), Component.translatable("wand.thaumaturge.rod." + rodName));
     }
 
     @Override
@@ -179,8 +174,7 @@ public class ItemWand extends Item implements ICaster, IArchitect {
         if (amount <= 0.0F) {
             return true;
         }
-        Map<ResourceKey<IAspect>, Integer> split =
-                WandVisHelper.evenSplit(Math.round(amount * WandEconomy.CENTIVIS_PER_VIS));
+        Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.evenSplit(Math.round(amount * WandEconomy.CENTIVIS_PER_VIS));
         return WandVisHelper.consumeAllVis(stack, player, split, !simulate, crafting);
     }
 
@@ -213,19 +207,15 @@ public class ItemWand extends Item implements ICaster, IArchitect {
         Direction side = context.getClickedFace();
         InteractionHand hand = context.getHand();
         BlockState state = level.getBlockState(pos);
-        if (state.getBlock() instanceof IInteractWithCaster target
-                && target.onCasterRightClick(level, stack, player, pos, side, hand)) {
+        if (state.getBlock() instanceof IInteractWithCaster target && target.onCasterRightClick(level, stack, player, pos, side, hand)) {
             return InteractionResult.SUCCESS;
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof IInteractWithCaster target
-                && target.onCasterRightClick(level, stack, player, pos, side, hand)) {
+        if (blockEntity instanceof IInteractWithCaster target && target.onCasterRightClick(level, stack, player, pos, side, hand)) {
             return InteractionResult.SUCCESS;
         }
         if (CasterTriggerRegistry.hasTrigger(state)) {
-            return CasterTriggerRegistry.performTrigger(level, stack, player, pos, side, state)
-                    ? InteractionResult.SUCCESS
-                    : InteractionResult.FAIL;
+            return CasterTriggerRegistry.performTrigger(level, stack, player, pos, side, state) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
         ItemStack focusStack = getFocusStack(stack);
         if (!focusStack.isEmpty() && player.isShiftKeyDown() && blockEntity == null) {
@@ -269,8 +259,7 @@ public class ItemWand extends Item implements ICaster, IArchitect {
     }
 
     @Override
-    public List<BlockPos> getArchitectBlocks(
-            ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
+    public List<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
         IArchitect architect = architectElement(stack);
         return architect == null ? List.of() : architect.getArchitectBlocks(stack, level, pos, side, player);
     }
@@ -314,8 +303,7 @@ public class ItemWand extends Item implements ICaster, IArchitect {
             return;
         }
         HitResult nodeHit = player.pick(WandEconomy.CRUDE_REFINE_TARGET_RANGE, 0.0F, false);
-        if (nodeHit instanceof BlockHitResult nodeBlockHit
-                && level.getBlockEntity(nodeBlockHit.getBlockPos()) instanceof BlockEntityNode node) {
+        if (nodeHit instanceof BlockHitResult nodeBlockHit && level.getBlockEntity(nodeBlockHit.getBlockPos()) instanceof BlockEntityNode node) {
             node.drainToWand((ServerLevel) level, player, stack, ticksRemaining);
             return;
         }
@@ -337,8 +325,7 @@ public class ItemWand extends Item implements ICaster, IArchitect {
         if (gained > 0) {
             WandVisHelper.addRealVis(stack, target, gained, true);
             sendRefineSparkle((ServerLevel) level, player, target);
-        } else if (ticksRemaining % NO_AURA_MESSAGE_INTERVAL_TICKS == 0
-                && player instanceof ServerPlayer serverPlayer) {
+        } else if (ticksRemaining % NO_AURA_MESSAGE_INTERVAL_TICKS == 0 && player instanceof ServerPlayer serverPlayer) {
             sendWandActionBar(serverPlayer, "tc.wand.noaura");
         }
     }
@@ -348,27 +335,16 @@ public class ItemWand extends Item implements ICaster, IArchitect {
     }
 
     private static void sendRefineSparkle(ServerLevel level, Player player, ResourceKey<IAspect> aspect) {
-        int color = level.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(aspect)
-                .map(holder -> holder.value().color())
-                .orElse(0xFFFFFF);
-        Vec3 origin = player.getEyePosition()
-                .add(
-                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * REFINE_SPARKLE_SPREAD,
-                        level.getRandom().nextFloat() * REFINE_SPARKLE_SPREAD,
-                        (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * REFINE_SPARKLE_SPREAD);
-        Vec3 hand =
-                player.getEyePosition().add(player.getLookAngle().scale(0.5)).add(0.0, -0.3, 0.0);
+        int color = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(aspect).map(holder -> holder.value().color()).orElse(0xFFFFFF);
+        Vec3 origin = player.getEyePosition().add((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * REFINE_SPARKLE_SPREAD, level.getRandom().nextFloat() * REFINE_SPARKLE_SPREAD,
+                (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * REFINE_SPARKLE_SPREAD);
+        Vec3 hand = player.getEyePosition().add(player.getLookAngle().scale(0.5)).add(0.0, -0.3, 0.0);
         EffectDispatch.spawnVisSparkle(level, origin, hand, color);
     }
 
     private @Nullable ResourceKey<IAspect> refineTarget(Player player, ItemStack stack) {
         HitResult hit = player.pick(WandEconomy.CRUDE_REFINE_TARGET_RANGE, 0.0F, false);
-        if (hit instanceof BlockHitResult blockHit
-                && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockCrystal crystal
-                && !crystal.isFlux()
-                && crystal.aspect() != null
+        if (hit instanceof BlockHitResult blockHit && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockCrystal crystal && !crystal.isFlux() && crystal.aspect() != null
                 && TCAspects.PRIMALS.contains(crystal.aspect())) {
             return crystal.aspect();
         }
@@ -397,34 +373,23 @@ public class ItemWand extends Item implements ICaster, IArchitect {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
-        builder.accept(Component.translatable(
-                        "tooltip.thaumaturge.wand.capacity",
-                        WandVisHelper.getMaxVis(stack) / WandEconomy.CENTIVIS_PER_VIS)
-                .withStyle(ChatFormatting.GOLD));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
+        builder.accept(Component.translatable("tooltip.thaumaturge.wand.capacity", WandVisHelper.getMaxVis(stack) / WandEconomy.CENTIVIS_PER_VIS).withStyle(ChatFormatting.GOLD));
         WandVis vis = WandVisHelper.getAllVis(stack);
         HolderLookup.Provider registries = context.registries();
         MutableComponent amounts = null;
         Map<ResourceKey<IAspect>, Integer> pctByPrimal = new LinkedHashMap<>();
         for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
-            pctByPrimal.put(
-                    primal, Math.round(WandVisHelper.getConsumptionModifier(stack, null, primal, false) * 100.0F));
+            pctByPrimal.put(primal, Math.round(WandVisHelper.getConsumptionModifier(stack, null, primal, false) * 100.0F));
             int amount = vis.amount(primal);
             if (amount <= 0) {
                 continue;
             }
-            Component chunk = Component.literal(VIS_FORMAT.format(amount / (float) WandEconomy.CENTIVIS_PER_VIS))
-                    .withStyle(WandTooltips.primalColor(registries, primal));
+            Component chunk = Component.literal(VIS_FORMAT.format(amount / (float) WandEconomy.CENTIVIS_PER_VIS)).withStyle(WandTooltips.primalColor(registries, primal));
             if (amounts == null) {
                 amounts = Component.empty().append(chunk);
             } else {
-                amounts.append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
-                        .append(chunk);
+                amounts.append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY)).append(chunk);
             }
         }
         if (amounts != null) {
@@ -433,13 +398,8 @@ public class ItemWand extends Item implements ICaster, IArchitect {
         builder.accept(WandTooltips.costSummary(registries, pctByPrimal));
         ItemStack focusStack = getFocusStack(stack);
         if (focusStack.getItem() instanceof ItemFocus focus) {
-            builder.accept(Component.translatable(
-                            "tooltip.thaumaturge.caster.vis_cost", ItemFocus.formatVis(focus.getVisCost(focusStack)))
-                    .withStyle(ChatFormatting.ITALIC, ChatFormatting.AQUA));
-            builder.accept(focusStack
-                    .getHoverName()
-                    .copy()
-                    .withStyle(ChatFormatting.BOLD, ChatFormatting.ITALIC, ChatFormatting.GREEN));
+            builder.accept(Component.translatable("tooltip.thaumaturge.caster.vis_cost", ItemFocus.formatVis(focus.getVisCost(focusStack))).withStyle(ChatFormatting.ITALIC, ChatFormatting.AQUA));
+            builder.accept(focusStack.getHoverName().copy().withStyle(ChatFormatting.BOLD, ChatFormatting.ITALIC, ChatFormatting.GREEN));
             focus.addFocusInformation(focusStack, builder);
         }
     }

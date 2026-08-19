@@ -20,8 +20,7 @@ public abstract class AbstractTCScreen extends Screen {
         this(title, background, 256, 256);
     }
 
-    protected AbstractTCScreen(
-            Component title, @Nullable Identifier background, int backgroundTextureWidth, int backgroundTextureHeight) {
+    protected AbstractTCScreen(Component title, @Nullable Identifier background, int backgroundTextureWidth, int backgroundTextureHeight) {
         super(title);
         this.background = background;
         this.backgroundTextureWidth = backgroundTextureWidth;
@@ -32,19 +31,7 @@ public abstract class AbstractTCScreen extends Screen {
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         if (background != null) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    background,
-                    0,
-                    0,
-                    0.0F,
-                    0.0F,
-                    width,
-                    height,
-                    width,
-                    height,
-                    backgroundTextureWidth,
-                    backgroundTextureHeight);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, background, 0, 0, 0.0F, 0.0F, width, height, width, height, backgroundTextureWidth, backgroundTextureHeight);
         }
     }
 

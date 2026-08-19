@@ -24,29 +24,19 @@ public final class RaycastDebugOverlay implements GuiLayer {
     private static @Nullable HitResult clientHitResult = null;
 
     private static String formatResult(HitResult result) {
-        if (result == null) return "Null";
+        if (result == null)
+            return "Null";
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) {
             return "Level Null ?????";
         }
-        if (result.getType() == HitResult.Type.MISS) return "Miss";
+        if (result.getType() == HitResult.Type.MISS)
+            return "Miss";
         return switch (result) {
-            case BlockHitResult block ->
-                "Block : " + block.getBlockPos().toShortString() + " | "
-                        + mc.level
-                                .getBlockState(block.getBlockPos())
-                                .getBlock()
-                                .builtInRegistryHolder()
-                                .key()
-                                .identifier()
-                        + " | " + block.getDirection();
+            case BlockHitResult block -> "Block : " + block.getBlockPos().toShortString() + " | " + mc.level.getBlockState(block.getBlockPos()).getBlock().builtInRegistryHolder().key().identifier()
+                    + " | " + block.getDirection();
             case EntityHitResult entity ->
-                "Entity : " + entity.getEntity().getName().getString() + " | "
-                        + entity.getEntity()
-                                .getType()
-                                .builtInRegistryHolder()
-                                .key()
-                                .identifier() + " | " + entity.getLocation();
+                "Entity : " + entity.getEntity().getName().getString() + " | " + entity.getEntity().getType().builtInRegistryHolder().key().identifier() + " | " + entity.getLocation();
             default -> "Invalid : " + result.getType() + " | " + result.getLocation();
         };
     }
@@ -67,10 +57,9 @@ public final class RaycastDebugOverlay implements GuiLayer {
 
     @Override
     public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-        if (!enabled) return;
-        graphics.text(
-                Minecraft.getInstance().font, "Client Raycast : " + formatResult(clientHitResult), 2, 2, 0xFFFFFFFF);
-        graphics.text(
-                Minecraft.getInstance().font, "Server Raycast : " + formatResult(serverHitResult), 2, 12, 0xFFFFFFFF);
+        if (!enabled)
+            return;
+        graphics.text(Minecraft.getInstance().font, "Client Raycast : " + formatResult(clientHitResult), 2, 2, 0xFFFFFFFF);
+        graphics.text(Minecraft.getInstance().font, "Server Raycast : " + formatResult(serverHitResult), 2, 12, 0xFFFFFFFF);
     }
 }

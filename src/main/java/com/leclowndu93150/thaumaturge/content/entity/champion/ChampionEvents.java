@@ -55,9 +55,7 @@ public final class ChampionEvents {
         if (event.getLevel().isClientSide()) {
             return;
         }
-        if (event.getEntity() instanceof PathfinderMob creature
-                && !(creature instanceof EntityOwnedConstruct)
-                && ChampionHelper.championType(creature) == ChampionModifier.TAINTED) {
+        if (event.getEntity() instanceof PathfinderMob creature && !(creature instanceof EntityOwnedConstruct) && ChampionHelper.championType(creature) == ChampionModifier.TAINTED) {
             ChampionHelper.resetTaintedAIMarker(creature);
         }
         if (!(event.getEntity() instanceof Monster mob) || mob instanceof EntityCultistPortalLesser) {
@@ -98,15 +96,11 @@ public final class ChampionEvents {
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Post event) {
-        if (event.getEntity().level().isClientSide()
-                || !(event.getEntity() instanceof PathfinderMob mob)
-                || !mob.isAlive()) {
+        if (event.getEntity().level().isClientSide() || !(event.getEntity() instanceof PathfinderMob mob) || !mob.isAlive()) {
             return;
         }
         int type = ChampionHelper.championType(mob);
-        if (type >= 0
-                && type < ChampionModifier.MODS.size()
-                && ChampionModifier.MODS.get(type).trigger() == ChampionModifier.Trigger.TICK) {
+        if (type >= 0 && type < ChampionModifier.MODS.size() && ChampionModifier.MODS.get(type).trigger() == ChampionModifier.Trigger.TICK) {
             ChampionModifier.MODS.get(type).effect().perform(mob, null, null, 0.0F);
         }
     }
@@ -117,49 +111,24 @@ public final class ChampionEvents {
         if (victim.level().isClientSide()) {
             return;
         }
-        if (victim.getHealth() < TAINT_CONVERT_HEALTH
-                && !victim.isInvertedHealAndHarm()
-                && victim.isAlive()
-                && !(victim instanceof EntityOwnedConstruct)
-                && !(victim instanceof ITaintedMob)
-                && victim.hasEffect(TCMobEffects.FLUX_TAINT)
-                && victim.getRandom().nextBoolean()) {
+        if (victim.getHealth() < TAINT_CONVERT_HEALTH && !victim.isInvertedHealAndHarm() && victim.isAlive() && !(victim instanceof EntityOwnedConstruct) && !(victim instanceof ITaintedMob)
+                && victim.hasEffect(TCMobEffects.FLUX_TAINT) && victim.getRandom().nextBoolean()) {
             ChampionHelper.makeTainted(victim);
             return;
         }
         int victimType = ChampionHelper.championType(victim);
         if (victim instanceof Monster && (victimType >= 0 || victim instanceof IEldritchMob)) {
-            if ((victimType == ChampionModifier.WARDED || victim instanceof IEldritchMob)
-                    && victim.getAbsorptionAmount() > 0.0F) {
-                victim.level()
-                        .playSound(
-                                null,
-                                victim.getX(),
-                                victim.getY(),
-                                victim.getZ(),
-                                TCSounds.RUNICSHIELDCHARGE.get(),
-                                SoundSource.HOSTILE,
-                                0.66F,
-                                1.1F + victim.getRandom().nextFloat() * 0.1F);
+            if ((victimType == ChampionModifier.WARDED || victim instanceof IEldritchMob) && victim.getAbsorptionAmount() > 0.0F) {
+                victim.level().playSound(null, victim.getX(), victim.getY(), victim.getZ(), TCSounds.RUNICSHIELDCHARGE.get(), SoundSource.HOSTILE, 0.66F, 1.1F + victim.getRandom().nextFloat() * 0.1F);
             }
-            if (victimType >= 0
-                    && ChampionModifier.MODS.get(victimType).trigger() == ChampionModifier.Trigger.WHEN_HURT
-                    && event.getSource().getEntity() instanceof LivingEntity attacker) {
-                event.setAmount(ChampionModifier.MODS
-                        .get(victimType)
-                        .effect()
-                        .perform(victim, attacker, event.getSource(), event.getAmount()));
+            if (victimType >= 0 && ChampionModifier.MODS.get(victimType).trigger() == ChampionModifier.Trigger.WHEN_HURT && event.getSource().getEntity() instanceof LivingEntity attacker) {
+                event.setAmount(ChampionModifier.MODS.get(victimType).effect().perform(victim, attacker, event.getSource(), event.getAmount()));
             }
         }
-        if (event.getAmount() > 0.0F
-                && event.getSource().getEntity() instanceof Monster attacker
-                && ChampionHelper.isChampion(attacker)) {
+        if (event.getAmount() > 0.0F && event.getSource().getEntity() instanceof Monster attacker && ChampionHelper.isChampion(attacker)) {
             int attackerType = ChampionHelper.championType(attacker);
             if (ChampionModifier.MODS.get(attackerType).trigger() == ChampionModifier.Trigger.ON_ATTACK) {
-                event.setAmount(ChampionModifier.MODS
-                        .get(attackerType)
-                        .effect()
-                        .perform(attacker, victim, event.getSource(), event.getAmount()));
+                event.setAmount(ChampionModifier.MODS.get(attackerType).effect().perform(attacker, victim, event.getSource(), event.getAmount()));
             }
         }
     }
@@ -167,10 +136,7 @@ public final class ChampionEvents {
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
-        if (!(entity.level() instanceof ServerLevel server)
-                || !(entity instanceof Monster)
-                || !event.isRecentlyHit()
-                || !ChampionHelper.isChampion(entity)
+        if (!(entity.level() instanceof ServerLevel server) || !(entity instanceof Monster) || !event.isRecentlyHit() || !ChampionHelper.isChampion(entity)
                 || ChampionHelper.championType(entity) == ChampionModifier.TAINTED) {
             return;
         }
@@ -181,25 +147,20 @@ public final class ChampionEvents {
         int xp = XP_BASE + entity.getRandom().nextInt(XP_SPREAD);
         ExperienceOrb.award(server, entity.position(), xp);
         int looting = lootingLevel(server, killer);
-        int tier = Math.min(
-                MAX_BAG_TIER,
-                Mth.floor((entity.getRandom().nextInt(BAG_ROLL_BOUND) + looting) / (float) BAG_TIER_DIVISOR));
-        ItemStack bag = new ItemStack(
-                switch (tier) {
-                    case 1 -> TCItems.LOOT_BAG_UNCOMMON.get();
-                    case 2 -> TCItems.LOOT_BAG_RARE.get();
-                    default -> TCItems.LOOT_BAG_COMMON.get();
-                });
-        event.getDrops()
-                .add(new ItemEntity(server, entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(), bag));
+        int tier = Math.min(MAX_BAG_TIER, Mth.floor((entity.getRandom().nextInt(BAG_ROLL_BOUND) + looting) / (float) BAG_TIER_DIVISOR));
+        ItemStack bag = new ItemStack(switch (tier) {
+            case 1 -> TCItems.LOOT_BAG_UNCOMMON.get();
+            case 2 -> TCItems.LOOT_BAG_RARE.get();
+            default -> TCItems.LOOT_BAG_COMMON.get();
+        });
+        event.getDrops().add(new ItemEntity(server, entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(), bag));
     }
 
     private static int lootingLevel(ServerLevel level, Entity killer) {
         if (!(killer instanceof LivingEntity living)) {
             return 0;
         }
-        Holder<Enchantment> looting =
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING);
+        Holder<Enchantment> looting = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING);
         return EnchantmentHelper.getItemEnchantmentLevel(looting, living.getMainHandItem());
     }
 }

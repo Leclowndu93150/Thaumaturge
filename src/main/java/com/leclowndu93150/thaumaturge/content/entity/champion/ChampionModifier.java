@@ -10,10 +10,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class ChampionModifier {
     public enum Trigger {
-        PASSIVE,
-        TICK,
-        ON_ATTACK,
-        WHEN_HURT
+        PASSIVE, TICK, ON_ATTACK, WHEN_HURT
     }
 
     @FunctionalInterface
@@ -38,28 +35,19 @@ public final class ChampionModifier {
 
     private static final int MARKER_OFFSET = 2;
 
-    public static final List<ChampionModifier> MODS = List.of(
-            new ChampionModifier(BOLD, "bold", Trigger.PASSIVE, ChampionEffects::none),
-            new ChampionModifier(SPINED, "spine", Trigger.WHEN_HURT, ChampionEffects::spined),
-            new ChampionModifier(ARMORED, "armor", Trigger.WHEN_HURT, ChampionEffects::armored),
-            new ChampionModifier(MIGHTY, "mighty", Trigger.PASSIVE, ChampionEffects::none),
-            new ChampionModifier(GRIM, "grim", Trigger.ON_ATTACK, ChampionEffects::grim),
-            new ChampionModifier(WARDED, "warded", Trigger.TICK, ChampionEffects::warded),
-            new ChampionModifier(WARP, "warp", Trigger.ON_ATTACK, ChampionEffects::warp),
-            new ChampionModifier(UNDYING, "undying", Trigger.TICK, ChampionEffects::undying),
-            new ChampionModifier(FIERY, "fiery", Trigger.ON_ATTACK, ChampionEffects::fiery),
-            new ChampionModifier(SICKLY, "sickly", Trigger.ON_ATTACK, ChampionEffects::sickly),
-            new ChampionModifier(VENOMOUS, "venomous", Trigger.ON_ATTACK, ChampionEffects::venomous),
-            new ChampionModifier(VAMPIRIC, "vampiric", Trigger.ON_ATTACK, ChampionEffects::vampiric),
-            new ChampionModifier(INFESTED, "infested", Trigger.WHEN_HURT, ChampionEffects::infested),
+    public static final List<ChampionModifier> MODS = List.of(new ChampionModifier(BOLD, "bold", Trigger.PASSIVE, ChampionEffects::none),
+            new ChampionModifier(SPINED, "spine", Trigger.WHEN_HURT, ChampionEffects::spined), new ChampionModifier(ARMORED, "armor", Trigger.WHEN_HURT, ChampionEffects::armored),
+            new ChampionModifier(MIGHTY, "mighty", Trigger.PASSIVE, ChampionEffects::none), new ChampionModifier(GRIM, "grim", Trigger.ON_ATTACK, ChampionEffects::grim),
+            new ChampionModifier(WARDED, "warded", Trigger.TICK, ChampionEffects::warded), new ChampionModifier(WARP, "warp", Trigger.ON_ATTACK, ChampionEffects::warp),
+            new ChampionModifier(UNDYING, "undying", Trigger.TICK, ChampionEffects::undying), new ChampionModifier(FIERY, "fiery", Trigger.ON_ATTACK, ChampionEffects::fiery),
+            new ChampionModifier(SICKLY, "sickly", Trigger.ON_ATTACK, ChampionEffects::sickly), new ChampionModifier(VENOMOUS, "venomous", Trigger.ON_ATTACK, ChampionEffects::venomous),
+            new ChampionModifier(VAMPIRIC, "vampiric", Trigger.ON_ATTACK, ChampionEffects::vampiric), new ChampionModifier(INFESTED, "infested", Trigger.WHEN_HURT, ChampionEffects::infested),
             new ChampionModifier(TAINTED, "tainted", Trigger.TICK, ChampionEffects::tainted));
 
     public static final Identifier NONE_MARKER_ID = TCIds.rl("champion/none");
-    public static final AttributeModifier NONE_MARKER =
-            new AttributeModifier(NONE_MARKER_ID, 1.0, AttributeModifier.Operation.ADD_VALUE);
+    public static final AttributeModifier NONE_MARKER = new AttributeModifier(NONE_MARKER_ID, 1.0, AttributeModifier.Operation.ADD_VALUE);
     public static final Identifier MINUS_ONE_ID = TCIds.rl("champion/minus_one");
-    public static final AttributeModifier MINUS_ONE =
-            new AttributeModifier(MINUS_ONE_ID, -1.0, AttributeModifier.Operation.ADD_VALUE);
+    public static final AttributeModifier MINUS_ONE = new AttributeModifier(MINUS_ONE_ID, -1.0, AttributeModifier.Operation.ADD_VALUE);
 
     private final int id;
     private final String name;
@@ -72,8 +60,7 @@ public final class ChampionModifier {
         this.name = name;
         this.trigger = trigger;
         this.effect = effect;
-        this.attributeMod = new AttributeModifier(
-                TCIds.rl("champion/" + name), id + MARKER_OFFSET, AttributeModifier.Operation.ADD_VALUE);
+        this.attributeMod = new AttributeModifier(TCIds.rl("champion/" + name), id + MARKER_OFFSET, AttributeModifier.Operation.ADD_VALUE);
     }
 
     public int id() {

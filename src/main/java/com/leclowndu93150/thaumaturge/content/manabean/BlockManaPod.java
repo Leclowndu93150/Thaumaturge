@@ -35,16 +35,9 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     private static final int GROWTH_CHANCE = 30;
     private static final int MAX_HARDNESS_STEPS = 8;
-    private static final VoxelShape[] SHAPES = {
-        box(4.0, 12.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 10.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 8.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 6.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 5.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 4.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 3.0, 4.0, 12.0, 16.0, 12.0),
-        box(4.0, 2.0, 4.0, 12.0, 16.0, 12.0)
-    };
+    private static final VoxelShape[] SHAPES = {box(4.0, 12.0, 4.0, 12.0, 16.0, 12.0), box(4.0, 10.0, 4.0, 12.0, 16.0, 12.0), box(4.0, 8.0, 4.0, 12.0, 16.0, 12.0),
+            box(4.0, 6.0, 4.0, 12.0, 16.0, 12.0), box(4.0, 5.0, 4.0, 12.0, 16.0, 12.0), box(4.0, 4.0, 4.0, 12.0, 16.0, 12.0), box(4.0, 3.0, 4.0, 12.0, 16.0, 12.0),
+            box(4.0, 2.0, 4.0, 12.0, 16.0, 12.0)};
 
     public BlockManaPod(Properties properties) {
         super(properties);
@@ -72,8 +65,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     public static boolean canGrowAt(LevelReader level, BlockPos pos) {
-        return level.getBiome(pos).is(TCBiomeTags.IS_MAGICAL)
-                && level.getBlockState(pos.above()).is(BlockTags.LOGS);
+        return level.getBiome(pos).is(TCBiomeTags.IS_MAGICAL) && level.getBlockState(pos.above()).is(BlockTags.LOGS);
     }
 
     @Override
@@ -82,15 +74,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (direction == Direction.UP && !neighborState.is(BlockTags.LOGS)) {
             ticks.scheduleTick(pos, this, 1);
         }

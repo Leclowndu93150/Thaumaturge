@@ -16,17 +16,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 
-public final class InhabitedZombieRenderer
-        extends AbstractZombieRenderer<EntityInhabitedZombie, ZombieRenderState, ZombieModel<ZombieRenderState>> {
+public final class InhabitedZombieRenderer extends AbstractZombieRenderer<EntityInhabitedZombie, ZombieRenderState, ZombieModel<ZombieRenderState>> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/czombie.png");
 
     public InhabitedZombieRenderer(EntityRendererProvider.Context context) {
-        super(
-                context,
-                new ZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE)),
-                new BabyZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE_BABY)),
-                ArmorModelSet.bake(ModelLayers.ZOMBIE_ARMOR, context.getModelSet(), ZombieModel::new),
-                ArmorModelSet.bake(ModelLayers.ZOMBIE_BABY_ARMOR, context.getModelSet(), BabyZombieModel::new));
+        super(context, new ZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE)), new BabyZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE_BABY)),
+                ArmorModelSet.bake(ModelLayers.ZOMBIE_ARMOR, context.getModelSet(), ZombieModel::new), ArmorModelSet.bake(ModelLayers.ZOMBIE_BABY_ARMOR, context.getModelSet(), BabyZombieModel::new));
     }
 
     @Override
@@ -44,28 +39,13 @@ public final class InhabitedZombieRenderer
 
     private static ItemStack zombiePlate(ItemStack stack) {
         Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
-        if (equippable == null
-                || !equippable
-                        .assetId()
-                        .map(TCMaterials.ASSET_CULTIST_PLATE::equals)
-                        .orElse(false)) {
+        if (equippable == null || !equippable.assetId().map(TCMaterials.ASSET_CULTIST_PLATE::equals).orElse(false)) {
             return stack;
         }
         ItemStack copy = stack.copy();
-        copy.set(
-                DataComponents.EQUIPPABLE,
-                new Equippable(
-                        equippable.slot(),
-                        equippable.equipSound(),
-                        Optional.of(TCMaterials.ASSET_ZOMBIE_PLATE),
-                        equippable.cameraOverlay(),
-                        equippable.allowedEntities(),
-                        equippable.dispensable(),
-                        equippable.swappable(),
-                        equippable.damageOnHurt(),
-                        equippable.equipOnInteract(),
-                        equippable.canBeSheared(),
-                        equippable.shearingSound()));
+        copy.set(DataComponents.EQUIPPABLE,
+                new Equippable(equippable.slot(), equippable.equipSound(), Optional.of(TCMaterials.ASSET_ZOMBIE_PLATE), equippable.cameraOverlay(), equippable.allowedEntities(),
+                        equippable.dispensable(), equippable.swappable(), equippable.damageOnHurt(), equippable.equipOnInteract(), equippable.canBeSheared(), equippable.shearingSound()));
         return copy;
     }
 

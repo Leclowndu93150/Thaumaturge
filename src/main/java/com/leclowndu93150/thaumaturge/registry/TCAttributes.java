@@ -22,19 +22,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class TCAttributes {
     private static final double DEFAULT_TAINTED_ATTACK = 2.0;
 
-    public static final DeferredRegister<Attribute> ATTRIBUTES =
-            DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, TCIds.MODID);
+    public static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, TCIds.MODID);
 
-    public static final Holder<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
-            "vis_discount",
-            () -> new PercentageAttribute("attributes.thaumaturge.vis_discount", 0, 0, 1).setSyncable(true));
+    public static final Holder<Attribute> VIS_DISCOUNT = ATTRIBUTES.register("vis_discount", () -> new PercentageAttribute("attributes.thaumaturge.vis_discount", 0, 0, 1).setSyncable(true));
 
-    public static final Holder<Attribute> CHAMPION_MOD = ATTRIBUTES.register(
-            "champion_mod",
-            () -> new RangedAttribute("attributes.thaumaturge.champion_mod", -2.0, -2.0, 100.0).setSyncable(true));
+    public static final Holder<Attribute> CHAMPION_MOD = ATTRIBUTES.register("champion_mod", () -> new RangedAttribute("attributes.thaumaturge.champion_mod", -2.0, -2.0, 100.0).setSyncable(true));
 
-    public static final Holder<Attribute> TAINTED_MOD = ATTRIBUTES.register(
-            "tainted_mod", () -> new RangedAttribute("attributes.thaumaturge.tainted_mod", 0.0, 0.0, 1.0));
+    public static final Holder<Attribute> TAINTED_MOD = ATTRIBUTES.register("tainted_mod", () -> new RangedAttribute("attributes.thaumaturge.tainted_mod", 0.0, 0.0, 1.0));
 
     private TCAttributes() {}
 
@@ -47,13 +41,7 @@ public final class TCAttributes {
         if (event.getItemStack().getItem() instanceof IVisDiscountGear gear) {
             float contribution = (float) gear.getVisDiscount(event.getItemStack()) / 100;
             if (contribution != 0) {
-                event.addModifier(
-                        VIS_DISCOUNT,
-                        new AttributeModifier(
-                                BuiltInRegistries.ITEM.getKey(
-                                        event.getItemStack().getItem()),
-                                contribution,
-                                AttributeModifier.Operation.ADD_VALUE),
+                event.addModifier(VIS_DISCOUNT, new AttributeModifier(BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()), contribution, AttributeModifier.Operation.ADD_VALUE),
                         gear.getAppliedSlot(event.getItemStack()));
             }
         }

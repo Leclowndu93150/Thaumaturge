@@ -32,24 +32,14 @@ import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 @EventBusSubscriber(modid = TCIds.MODID)
 public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chance) {
 
-    private static final Codec<InfernalBonus> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ExtraCodecs.nonEmptyHolderSet(Ingredient.NON_AIR_HOLDER_SET_CODEC)
-                            .fieldOf("items")
-                            .forGetter(InfernalBonus::items),
-                    IntProviders.codec(1, 64)
-                            .optionalFieldOf("count", new ConstantInt(1))
-                            .forGetter(InfernalBonus::count),
-                    Codec.floatRange(0, 1).optionalFieldOf("chance", 1.0f).forGetter(InfernalBonus::chance))
-            .apply(instance, InfernalBonus::new));
+    private static final Codec<InfernalBonus> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(ExtraCodecs.nonEmptyHolderSet(Ingredient.NON_AIR_HOLDER_SET_CODEC).fieldOf("items").forGetter(InfernalBonus::items),
+                    IntProviders.codec(1, 64).optionalFieldOf("count", new ConstantInt(1)).forGetter(InfernalBonus::count),
+                    Codec.floatRange(0, 1).optionalFieldOf("chance", 1.0f).forGetter(InfernalBonus::chance)).apply(instance, InfernalBonus::new));
 
-    public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType.builder(
-                    Identifier.fromNamespaceAndPath(TCIds.MODID, "infernal_bonus"),
-                    Registries.ITEM,
-                    CODEC.listOf(1, 64))
-            .merger((_, _, fv, _, sv) -> Stream.concat(fv.stream(), sv.stream()).toList())
-            .remover(Remover.CODEC)
-            .synced(CODEC.listOf(1, 64), false)
-            .build();
+    public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType
+            .builder(Identifier.fromNamespaceAndPath(TCIds.MODID, "infernal_bonus"), Registries.ITEM, CODEC.listOf(1, 64)).merger((_, _, fv, _, sv) -> Stream.concat(fv.stream(), sv.stream()).toList())
+            .remover(Remover.CODEC).synced(CODEC.listOf(1, 64), false).build();
 
     @SubscribeEvent
     public static void onRegister(RegisterDataMapTypesEvent event) {
@@ -95,15 +85,10 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
     }
 
     public record Remover(Item key) implements DataMapValueRemover<Item, List<InfernalBonus>> {
-        public static final Codec<Remover> CODEC =
-                BuiltInRegistries.ITEM.byNameCodec().xmap(Remover::new, Remover::key);
+        public static final Codec<Remover> CODEC = BuiltInRegistries.ITEM.byNameCodec().xmap(Remover::new, Remover::key);
 
         @Override
-        public Optional<List<InfernalBonus>> remove(
-                List<InfernalBonus> value,
-                Registry<Item> registry,
-                Either<TagKey<Item>, ResourceKey<Item>> source,
-                Item object) {
+        public Optional<List<InfernalBonus>> remove(List<InfernalBonus> value, Registry<Item> registry, Either<TagKey<Item>, ResourceKey<Item>> source, Item object) {
             List<InfernalBonus> result = new ArrayList<>(value);
             result.removeIf(bonus -> bonus.items().contains(key.builtInRegistryHolder()));
             return result.isEmpty() ? Optional.empty() : Optional.of(result);

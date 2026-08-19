@@ -32,23 +32,14 @@ public final class MenuSpa extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
 
     public MenuSpa(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(
-                containerId,
-                playerInventory,
-                new ItemStacksResourceHandler(SLOT_COUNT),
-                ContainerLevelAccess.create(playerInventory.player.level(), buf.readBlockPos()));
+        this(containerId, playerInventory, new ItemStacksResourceHandler(SLOT_COUNT), ContainerLevelAccess.create(playerInventory.player.level(), buf.readBlockPos()));
     }
 
     public MenuSpa(int containerId, Inventory playerInventory, BlockEntitySpa blockEntity) {
-        this(
-                containerId,
-                playerInventory,
-                blockEntity.getItems(),
-                ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()));
+        this(containerId, playerInventory, blockEntity.getItems(), ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()));
     }
 
-    private MenuSpa(
-            int containerId, Inventory playerInventory, ItemStacksResourceHandler items, ContainerLevelAccess access) {
+    private MenuSpa(int containerId, Inventory playerInventory, ItemStacksResourceHandler items, ContainerLevelAccess access) {
         super(TCMenus.SPA.get(), containerId);
         this.items = items;
         this.access = access;
@@ -62,11 +53,7 @@ public final class MenuSpa extends AbstractContainerMenu {
 
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        PLAYER_GRID_X + col * 18,
-                        PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
@@ -75,9 +62,7 @@ public final class MenuSpa extends AbstractContainerMenu {
     }
 
     public @Nullable BlockEntitySpa blockEntity() {
-        return (BlockEntitySpa) access.evaluate(Level::getBlockEntity)
-                .filter(be -> be instanceof BlockEntitySpa)
-                .orElse(null);
+        return (BlockEntitySpa) access.evaluate(Level::getBlockEntity).filter(be -> be instanceof BlockEntitySpa).orElse(null);
     }
 
     @Override
@@ -107,8 +92,7 @@ public final class MenuSpa extends AbstractContainerMenu {
                 if (!moveItemStackTo(stackInSlot, SLOT_COUNT, TOTAL_INVENTORY_SLOTS, true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!stackInSlot.is(TCItems.BATH_SALTS.get())
-                    || !moveItemStackTo(stackInSlot, 0, SLOT_COUNT, false)) {
+            } else if (!stackInSlot.is(TCItems.BATH_SALTS.get()) || !moveItemStackTo(stackInSlot, 0, SLOT_COUNT, false)) {
                 return ItemStack.EMPTY;
             }
             if (stackInSlot.isEmpty()) {

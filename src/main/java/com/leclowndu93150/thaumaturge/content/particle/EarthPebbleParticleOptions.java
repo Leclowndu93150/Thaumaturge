@@ -11,12 +11,9 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record EarthPebbleParticleOptions(float scale) implements ParticleOptions {
 
-    public static final MapCodec<EarthPebbleParticleOptions> CODEC = Codec.FLOAT
-            .xmap(EarthPebbleParticleOptions::new, EarthPebbleParticleOptions::scale)
-            .fieldOf("scale");
+    public static final MapCodec<EarthPebbleParticleOptions> CODEC = Codec.FLOAT.xmap(EarthPebbleParticleOptions::new, EarthPebbleParticleOptions::scale).fieldOf("scale");
 
-    public static final StreamCodec<ByteBuf, EarthPebbleParticleOptions> STREAM_CODEC =
-            ByteBufCodecs.FLOAT.map(EarthPebbleParticleOptions::new, EarthPebbleParticleOptions::scale);
+    public static final StreamCodec<ByteBuf, EarthPebbleParticleOptions> STREAM_CODEC = ByteBufCodecs.FLOAT.map(EarthPebbleParticleOptions::new, EarthPebbleParticleOptions::scale);
 
     @Override
     public ParticleType<?> getType() {

@@ -22,12 +22,8 @@ import org.joml.Matrix4fc;
 public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreRenderState, ArcaneBoreModel> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/arcanebore.png");
     private static final Identifier BEAM_TEXTURE = TCIds.rl("textures/misc/beam1.png");
-    private static final RenderType BEAM_TYPE = RenderType.create(
-            "tc_bore_beam",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE)
-                    .withTexture("Sampler0", BEAM_TEXTURE)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType BEAM_TYPE = RenderType.create("tc_bore_beam",
+            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", BEAM_TEXTURE).useLightmap().createRenderSetup());
 
     private static final float SHADOW = 0.5F;
     private static final double BEAM_LENGTH = 5.0;
@@ -74,8 +70,7 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
     }
 
     @Override
-    public void submit(
-            ArcaneBoreRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(ArcaneBoreRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
         if (!state.digging) {
             return;
@@ -92,22 +87,10 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
             float v1 = (float) BEAM_LENGTH + v0;
             collector.submitCustomGeometry(poseStack, BEAM_TYPE, (pose, buffer) -> {
                 Matrix4fc mat = pose.pose();
-                buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                        .setUv(1.0F, v1)
-                        .setColor(BEAM_TINT)
-                        .setLight(BEAM_LIGHT);
-                buffer.addVertex(mat, -BEAM_RADIUS, 0.0F, 0.0F)
-                        .setUv(1.0F, v0)
-                        .setColor(BEAM_TINT)
-                        .setLight(BEAM_LIGHT);
-                buffer.addVertex(mat, BEAM_RADIUS, 0.0F, 0.0F)
-                        .setUv(0.0F, v0)
-                        .setColor(BEAM_TINT)
-                        .setLight(BEAM_LIGHT);
-                buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH)
-                        .setUv(0.0F, v1)
-                        .setColor(BEAM_TINT)
-                        .setLight(BEAM_LIGHT);
+                buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH).setUv(1.0F, v1).setColor(BEAM_TINT).setLight(BEAM_LIGHT);
+                buffer.addVertex(mat, -BEAM_RADIUS, 0.0F, 0.0F).setUv(1.0F, v0).setColor(BEAM_TINT).setLight(BEAM_LIGHT);
+                buffer.addVertex(mat, BEAM_RADIUS, 0.0F, 0.0F).setUv(0.0F, v0).setColor(BEAM_TINT).setLight(BEAM_LIGHT);
+                buffer.addVertex(mat, 0.0F, 0.0F, -(float) BEAM_LENGTH).setUv(0.0F, v1).setColor(BEAM_TINT).setLight(BEAM_LIGHT);
             });
         }
         poseStack.popPose();
@@ -118,33 +101,20 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
         poseStack.popPose();
     }
 
-    private static void submitTipFlare(
-            ArcaneBoreRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+    private static void submitTipFlare(ArcaneBoreRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
         float frameSize = 1.0F / TIP_FLARE_GRID;
         float u0 = state.tipFrame % TIP_FLARE_GRID * frameSize;
         float v0 = state.tipFrame / TIP_FLARE_GRID * frameSize;
         float u1 = u0 + frameSize;
         float v1 = v0 + frameSize;
-        collector.submitCustomGeometry(
-                poseStack,
-                BeamRenderType.NODE_TYPE,
-                (pose, buffer) -> addTipFlareVertices(buffer, pose.pose(), u0, v0, u1, v1));
+        collector.submitCustomGeometry(poseStack, BeamRenderType.NODE_TYPE, (pose, buffer) -> addTipFlareVertices(buffer, pose.pose(), u0, v0, u1, v1));
     }
 
-    private static void addTipFlareVertices(
-            VertexConsumer buffer, Matrix4fc matrix, float u0, float v0, float u1, float v1) {
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v1)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u1, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v0)
-                .setColor(TIP_FLARE_TINT);
-        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F)
-                .setUv(u0, v1)
-                .setColor(TIP_FLARE_TINT);
+    private static void addTipFlareVertices(VertexConsumer buffer, Matrix4fc matrix, float u0, float v0, float u1, float v1) {
+        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F).setUv(u1, v1).setColor(TIP_FLARE_TINT);
+        buffer.addVertex(matrix, -TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F).setUv(u1, v0).setColor(TIP_FLARE_TINT);
+        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, TIP_FLARE_HALF_SIZE, 0.0F).setUv(u0, v0).setColor(TIP_FLARE_TINT);
+        buffer.addVertex(matrix, TIP_FLARE_HALF_SIZE, -TIP_FLARE_HALF_SIZE, 0.0F).setUv(u0, v1).setColor(TIP_FLARE_TINT);
     }
 
     @Override

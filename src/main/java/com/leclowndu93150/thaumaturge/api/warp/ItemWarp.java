@@ -12,7 +12,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * @since 1.0
  */
 public record ItemWarp(int amount) {
-    public static final Codec<ItemWarp> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(Codec.intRange(1, 500).fieldOf("amount").forGetter(ItemWarp::amount))
-                    .apply(instance, ItemWarp::new));
+    public static final Codec<ItemWarp> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(Codec.intRange(1, 500).fieldOf("amount").forGetter(ItemWarp::amount)).apply(instance, ItemWarp::new));
 }

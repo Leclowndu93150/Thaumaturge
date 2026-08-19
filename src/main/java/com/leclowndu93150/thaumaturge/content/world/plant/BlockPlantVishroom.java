@@ -29,26 +29,13 @@ public final class BlockPlantVishroom extends AbstractTCPlant {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.GRASS_BLOCK)
-                || state.is(Blocks.DIRT)
-                || state.is(Blocks.PODZOL)
-                || state.is(Blocks.COARSE_DIRT)
-                || state.is(Blocks.MYCELIUM)
-                || state.is(Blocks.MOSS_BLOCK)
+        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT) || state.is(Blocks.PODZOL) || state.is(Blocks.COARSE_DIRT) || state.is(Blocks.MYCELIUM) || state.is(Blocks.MOSS_BLOCK)
                 || state.is(Blocks.STONE);
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
-        if (!level.isClientSide()
-                && entity instanceof LivingEntity living
-                && level.getRandom().nextInt(5) == 0) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!level.isClientSide() && entity instanceof LivingEntity living && level.getRandom().nextInt(5) == 0) {
             living.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
         }
     }

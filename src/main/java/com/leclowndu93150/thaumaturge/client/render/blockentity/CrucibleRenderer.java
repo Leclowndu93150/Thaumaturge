@@ -25,22 +25,11 @@ public final class CrucibleRenderer implements BlockEntityRenderer<BlockEntityCr
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityCrucible blockEntity,
-            CrucibleRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityCrucible blockEntity, CrucibleRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        state.fluid = blockEntity
-                .getTank()
-                .getResource(0)
-                .toStack(blockEntity.getTank().getAmountAsInt(0));
+        state.fluid = blockEntity.getTank().getResource(0).toStack(blockEntity.getTank().getAmountAsInt(0));
         state.fluidHeight = blockEntity.getFluidHeight();
-        var fluidModel = Minecraft.getInstance()
-                .getModelManager()
-                .getFluidStateModelSet()
-                .get(state.fluid.getFluid().defaultFluidState());
+        var fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(state.fluid.getFluid().defaultFluidState());
         state.sprite = fluidModel.stillMaterial().sprite();
         var tintSource = fluidModel.fluidTintSource();
         if (tintSource != null) {
@@ -54,7 +43,8 @@ public final class CrucibleRenderer implements BlockEntityRenderer<BlockEntityCr
             recolor = 0.5F + recolor / 2F;
         }
 
-        if (recolor > 1F) recolor = 1F;
+        if (recolor > 1F)
+            recolor = 1F;
 
         float r = Mth.lerp(recolor, ARGB.redFloat(state.color), 0.25F);
         float g = Mth.lerp(recolor, ARGB.greenFloat(state.color), 0.0F);
@@ -63,12 +53,9 @@ public final class CrucibleRenderer implements BlockEntityRenderer<BlockEntityCr
     }
 
     @Override
-    public void submit(
-            CrucibleRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            CameraRenderState camera) {
-        if (state.fluid.isEmpty()) return;
+    public void submit(CrucibleRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
+        if (state.fluid.isEmpty())
+            return;
         float height = state.fluidHeight;
         float min = 0 / 16F, max = 16 / 16F;
         submitNodeCollector.submitCustomGeometry(poseStack, Sheets.translucentBlockItemSheet(), (pose, buffer) -> {

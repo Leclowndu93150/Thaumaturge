@@ -19,16 +19,7 @@ public final class BubbleParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private BubbleParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            BubbleParticleOptions options,
-            ParticleSheet sheet) {
+    private BubbleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, BubbleParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         this.alpha = options.alpha();
@@ -64,16 +55,7 @@ public final class BubbleParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("bubble");
 
         @Override
-        public Particle createParticle(
-                BubbleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(BubbleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BubbleParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

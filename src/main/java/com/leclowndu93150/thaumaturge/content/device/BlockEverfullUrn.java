@@ -31,10 +31,7 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEverfullUrn extends BaseEntityBlock {
     public static final MapCodec<BlockEverfullUrn> CODEC = simpleCodec(BlockEverfullUrn::new);
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            box(3.0, 0.0, 3.0, 13.0, 10.0, 13.0),
-            box(5.0, 10.0, 5.0, 11.0, 14.0, 11.0),
-            box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0));
+    private static final VoxelShape SHAPE = Shapes.or(box(3.0, 0.0, 3.0, 13.0, 10.0, 13.0), box(5.0, 10.0, 5.0, 11.0, 14.0, 11.0), box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0));
     private static final int BOTTLE_COST = 333;
 
     public BlockEverfullUrn(BlockBehaviour.Properties properties) {
@@ -57,14 +54,7 @@ public final class BlockEverfullUrn extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -91,18 +81,11 @@ public final class BlockEverfullUrn extends BaseEntityBlock {
     }
 
     private static void playSplash(Level level, BlockPos pos) {
-        level.playSound(
-                null,
-                pos,
-                SoundEvents.BOTTLE_FILL,
-                SoundSource.BLOCKS,
-                0.33F,
-                1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F);
+        level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.33F, 1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F);
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

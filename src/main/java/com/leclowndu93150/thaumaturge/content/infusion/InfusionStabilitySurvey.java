@@ -16,7 +16,8 @@ public final class InfusionStabilitySurvey {
 
     private InfusionStabilitySurvey() {}
 
-    public record Result(float stabilityReplenish, List<BlockPos> problemBlocks) {}
+    public record Result(float stabilityReplenish, List<BlockPos> problemBlocks) {
+    }
 
     public static Result survey(Level level, BlockPos matrix) {
         Set<Long> stabilisers = new LinkedHashSet<>();
@@ -42,8 +43,7 @@ public final class InfusionStabilitySurvey {
             long first = stabilisers.iterator().next();
             stabilisers.remove(first);
             BlockPos pos = BlockPos.of(first);
-            BlockPos mirrored =
-                    new BlockPos(2 * matrix.getX() - pos.getX(), pos.getY(), 2 * matrix.getZ() - pos.getZ());
+            BlockPos mirrored = new BlockPos(2 * matrix.getX() - pos.getX(), pos.getY(), 2 * matrix.getZ() - pos.getZ());
             stabilisers.remove(mirrored.asLong());
 
             Block block = level.getBlockState(pos).getBlock();
@@ -51,8 +51,7 @@ public final class InfusionStabilitySurvey {
             float amount = stabilizationAmount(level, pos);
             float mirroredAmount = stabilizationAmount(level, mirrored);
             if (block == mirroredBlock && amount == mirroredAmount) {
-                if (block instanceof IInfusionStabiliser stabiliser
-                        && stabiliser.hasSymmetryPenalty(level, pos, mirrored)) {
+                if (block instanceof IInfusionStabiliser stabiliser && stabiliser.hasSymmetryPenalty(level, pos, mirrored)) {
                     replenish -= stabiliser.getSymmetryPenalty(level, pos);
                     problems.add(pos);
                 } else {
@@ -71,14 +70,11 @@ public final class InfusionStabilitySurvey {
         if (state.is(TCBlockTags.INFUSION_STABILISERS)) {
             return true;
         }
-        return state.getBlock() instanceof IInfusionStabiliser stabiliser
-                && stabiliser.canStabiliseInfusion(level, pos);
+        return state.getBlock() instanceof IInfusionStabiliser stabiliser && stabiliser.canStabiliseInfusion(level, pos);
     }
 
     private static float stabilizationAmount(Level level, BlockPos pos) {
-        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
-                ? stabiliser.getStabilizationAmount(level, pos)
-                : IInfusionStabiliser.DEFAULT_STABILIZATION;
+        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser ? stabiliser.getStabilizationAmount(level, pos) : IInfusionStabiliser.DEFAULT_STABILIZATION;
     }
 
     private static float diminishingReturns(Map<Block, Integer> countedByType, Block block, float base) {

@@ -47,22 +47,10 @@ public final class FocusImpactClientHandler {
             }
             for (int a = 0; a < amount; a++) {
                 if (payload.burst()) {
-                    effect.impactParticles(
-                            level,
-                            origin,
-                            new Vec3(
-                                    payload.mx() + rand.nextGaussian() / BURST_JITTER_DIVISOR,
-                                    payload.my() + rand.nextGaussian() / BURST_JITTER_DIVISOR,
-                                    payload.mz() + rand.nextGaussian() / BURST_JITTER_DIVISOR),
-                            casterVelocity);
+                    effect.impactParticles(level, origin, new Vec3(payload.mx() + rand.nextGaussian() / BURST_JITTER_DIVISOR, payload.my() + rand.nextGaussian() / BURST_JITTER_DIVISOR,
+                            payload.mz() + rand.nextGaussian() / BURST_JITTER_DIVISOR), casterVelocity);
                 } else {
-                    effect.impactParticles(
-                            level,
-                            origin,
-                            new Vec3(
-                                    rand.nextGaussian() * IMPACT_SPREAD,
-                                    rand.nextGaussian() * IMPACT_SPREAD,
-                                    rand.nextGaussian() * IMPACT_SPREAD));
+                    effect.impactParticles(level, origin, new Vec3(rand.nextGaussian() * IMPACT_SPREAD, rand.nextGaussian() * IMPACT_SPREAD, rand.nextGaussian() * IMPACT_SPREAD));
                 }
             }
         }

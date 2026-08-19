@@ -40,14 +40,7 @@ public final class EssentiaTransfer {
      *                 would move
      * @return the amount actually moved, or that would move when simulating
      */
-    public static int transfer(
-            IEssentiaTransport src,
-            Direction srcFace,
-            IEssentiaTransport dst,
-            Direction dstFace,
-            Holder<IAspect> aspect,
-            int max,
-            boolean simulate) {
+    public static int transfer(IEssentiaTransport src, Direction srcFace, IEssentiaTransport dst, Direction dstFace, Holder<IAspect> aspect, int max, boolean simulate) {
         if (max <= 0) {
             return 0;
         }
@@ -88,17 +81,11 @@ public final class EssentiaTransfer {
      * @return the amount moved, or that would move when simulating; zero when either endpoint
      *         exposes no transport
      */
-    public static int transfer(
-            Level level,
-            BlockPos srcPos,
-            Direction srcFace,
-            BlockPos dstPos,
-            Direction dstFace,
-            Holder<IAspect> aspect,
-            int max,
-            boolean simulate) {
-        @Nullable IEssentiaTransport src = EssentiaAccess.transport(level, srcPos, srcFace);
-        @Nullable IEssentiaTransport dst = EssentiaAccess.transport(level, dstPos, dstFace);
+    public static int transfer(Level level, BlockPos srcPos, Direction srcFace, BlockPos dstPos, Direction dstFace, Holder<IAspect> aspect, int max, boolean simulate) {
+        @Nullable
+        IEssentiaTransport src = EssentiaAccess.transport(level, srcPos, srcFace);
+        @Nullable
+        IEssentiaTransport dst = EssentiaAccess.transport(level, dstPos, dstFace);
         if (src == null || dst == null) {
             return 0;
         }

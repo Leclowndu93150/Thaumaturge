@@ -10,20 +10,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceKey;
 
-public record ClientboundKnowledgeGainPayload(
-        KnowledgeType knowledgeType, Optional<ResourceKey<IResearchCategory>> category, int count)
-        implements CustomPacketPayload {
+public record ClientboundKnowledgeGainPayload(KnowledgeType knowledgeType, Optional<ResourceKey<IResearchCategory>> category, int count) implements CustomPacketPayload {
     public static final Type<ClientboundKnowledgeGainPayload> TYPE = new Type<>(TCIds.rl("knowledge_gain"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundKnowledgeGainPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.idMapper(index -> KnowledgeType.values()[index], KnowledgeType::ordinal),
-                    ClientboundKnowledgeGainPayload::knowledgeType,
-                    ByteBufCodecs.optional(ResourceKey.streamCodec(IResearchCategory.REGISTRY_KEY)),
-                    ClientboundKnowledgeGainPayload::category,
-                    ByteBufCodecs.VAR_INT,
-                    ClientboundKnowledgeGainPayload::count,
-                    ClientboundKnowledgeGainPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundKnowledgeGainPayload> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.idMapper(index -> KnowledgeType.values()[index], KnowledgeType::ordinal), ClientboundKnowledgeGainPayload::knowledgeType,
+            ByteBufCodecs.optional(ResourceKey.streamCodec(IResearchCategory.REGISTRY_KEY)), ClientboundKnowledgeGainPayload::category, ByteBufCodecs.VAR_INT, ClientboundKnowledgeGainPayload::count,
+            ClientboundKnowledgeGainPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

@@ -45,26 +45,10 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
 public class EntityCultistLeader extends EntityThaumaturgeBoss implements RangedAttackMob {
-    private static final EntityDataAccessor<Byte> DATA_TITLE =
-            SynchedEntityData.defineId(EntityCultistLeader.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> DATA_TITLE = SynchedEntityData.defineId(EntityCultistLeader.class, EntityDataSerializers.BYTE);
 
-    private static final String[] TITLES = {
-        "Alberic",
-        "Anselm",
-        "Bastian",
-        "Beturian",
-        "Chabier",
-        "Chorache",
-        "Chuse",
-        "Dodorol",
-        "Ebardo",
-        "Ferrando",
-        "Fertus",
-        "Guillen",
-        "Larpe",
-        "Obano",
-        "Zelipe"
-    };
+    private static final String[] TITLES = {"Alberic", "Anselm", "Bastian", "Beturian", "Chabier", "Chorache", "Chuse", "Dodorol", "Ebardo", "Ferrando", "Fertus", "Guillen", "Larpe", "Obano",
+            "Zelipe"};
     private static final int LEADER_XP = 40;
     private static final float ORB_SPEED = 0.66F;
     private static final float ORB_SPREAD = 3.0F;
@@ -79,10 +63,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBossAttributes()
-                .add(Attributes.MOVEMENT_SPEED, 0.32)
-                .add(Attributes.MAX_HEALTH, 150.0)
-                .add(Attributes.ATTACK_DAMAGE, 5.0);
+        return createBossAttributes().add(Attributes.MOVEMENT_SPEED, 0.32).add(Attributes.MAX_HEALTH, 150.0).add(Attributes.ATTACK_DAMAGE, 5.0);
     }
 
     @Override
@@ -108,11 +89,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     public void generateName() {
         int mod = ChampionHelper.championType(this);
         if (mod >= 0) {
-            this.setCustomName(Component.translatable(
-                    "entity.thaumaturge.cultist_leader.name.custom",
-                    getTitle(),
-                    Component.translatable(
-                            "champion.mod." + ChampionModifier.MODS.get(mod).name())));
+            this.setCustomName(Component.translatable("entity.thaumaturge.cultist_leader.name.custom", getTitle(), Component.translatable("champion.mod." + ChampionModifier.MODS.get(mod).name())));
         }
     }
 
@@ -149,21 +126,12 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData data) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         this.equipPraetorGear();
         float clamped = difficulty.getSpecialMultiplier();
         ItemStack weapon = this.getMainHandItem();
         if (!weapon.isEmpty() && this.random.nextFloat() < WEAPON_ENCHANT_CHANCE * clamped) {
-            EnchantmentHelper.enchantItemFromProvider(
-                    weapon,
-                    level.registryAccess(),
-                    VanillaEnchantmentProviders.MOB_SPAWN_EQUIPMENT,
-                    difficulty,
-                    this.random);
+            EnchantmentHelper.enchantItemFromProvider(weapon, level.registryAccess(), VanillaEnchantmentProviders.MOB_SPAWN_EQUIPMENT, difficulty, this.random);
         }
         this.setTitle(this.random.nextInt(TITLES.length));
         ChampionHelper.makeChampion(this, true);
@@ -172,16 +140,12 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     public boolean considersEntityAsAlly(Entity other) {
-        return other instanceof EntityCultist
-                || other instanceof EntityCultistLeader
-                || super.considersEntityAsAlly(other);
+        return other instanceof EntityCultist || other instanceof EntityCultistLeader || super.considersEntityAsAlly(other);
     }
 
     @Override
     public boolean canAttack(LivingEntity target) {
-        return !(target instanceof EntityCultist)
-                && !(target instanceof EntityCultistLeader)
-                && super.canAttack(target);
+        return !(target instanceof EntityCultist) && !(target instanceof EntityCultistLeader) && super.canAttack(target);
     }
 
     @Override
@@ -192,11 +156,9 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     @Override
     protected void customServerAiStep(ServerLevel level) {
         super.customServerAiStep(level);
-        for (EntityCultist cultist : level.getEntitiesOfClass(
-                EntityCultist.class, this.getBoundingBox().inflate(AURA_RANGE))) {
+        for (EntityCultist cultist : level.getEntitiesOfClass(EntityCultist.class, this.getBoundingBox().inflate(AURA_RANGE))) {
             if (cultist.getEffect(MobEffects.REGENERATION) == null) {
-                cultist.addEffect(
-                        new MobEffectInstance(MobEffects.REGENERATION, AURA_REGEN_TICKS, AURA_REGEN_AMPLIFIER));
+                cultist.addEffect(new MobEffectInstance(MobEffects.REGENERATION, AURA_REGEN_TICKS, AURA_REGEN_AMPLIFIER));
             }
         }
     }
@@ -207,21 +169,11 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
             return;
         }
         this.swing(this.getUsedItemHand());
-        this.getLookControl()
-                .setLookAt(
-                        target.getX(),
-                        target.getBoundingBox().minY + target.getBbHeight() / 2.0F,
-                        target.getZ(),
-                        30.0F,
-                        30.0F);
+        this.getLookControl().setLookAt(target.getX(), target.getBoundingBox().minY + target.getBbHeight() / 2.0F, target.getZ(), 30.0F, 30.0F);
         EntityGolemOrb blast = new EntityGolemOrb(this.level(), this, target, true);
-        blast.setPos(
-                blast.getX() + blast.getDeltaMovement().x / 2.0,
-                blast.getY(),
-                blast.getZ() + blast.getDeltaMovement().z / 2.0);
+        blast.setPos(blast.getX() + blast.getDeltaMovement().x / 2.0, blast.getY(), blast.getZ() + blast.getDeltaMovement().z / 2.0);
         double dx = target.getX() - this.getX();
-        double dy =
-                target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
+        double dy = target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
         double dz = target.getZ() - this.getZ();
         blast.shoot(dx, dy + 2.0, dz, ORB_SPEED, ORB_SPREAD);
         this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);

@@ -52,36 +52,31 @@ public final class BlockThaumatorium extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("thaumatorium"))) {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (player instanceof ServerPlayer serverPlayer
-                && level.getBlockEntity(pos) instanceof BlockEntityThaumatorium thaumatorium) {
-            serverPlayer.openMenu(
-                    new MenuProvider() {
-                        @Override
-                        public Component getDisplayName() {
-                            return Component.translatable("block.thaumaturge.thaumatorium");
-                        }
+        if (player instanceof ServerPlayer serverPlayer && level.getBlockEntity(pos) instanceof BlockEntityThaumatorium thaumatorium) {
+            serverPlayer.openMenu(new MenuProvider() {
+                @Override
+                public Component getDisplayName() {
+                    return Component.translatable("block.thaumaturge.thaumatorium");
+                }
 
-                        @Override
-                        public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
-                            return new MenuThaumatorium(containerId, inventory, thaumatorium);
-                        }
-                    },
-                    buf -> buf.writeBlockPos(pos));
+                @Override
+                public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
+                    return new MenuThaumatorium(containerId, inventory, thaumatorium);
+                }
+            }, buf -> buf.writeBlockPos(pos));
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
         if (level.getBlockState(pos.above()).is(TCBlocks.THAUMATORIUM_TOP.get())) {
             level.destroyBlock(pos.above(), true);
@@ -89,8 +84,7 @@ public final class BlockThaumatorium extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

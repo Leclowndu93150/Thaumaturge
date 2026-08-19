@@ -11,9 +11,9 @@ public final class SpawnParticleClientHandler {
     public static void handle(ClientboundSpawnParticlePayload payload, IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             ClientLevel level = Minecraft.getInstance().level;
-            if (level == null) return;
-            level.addParticle(
-                    payload.options(), payload.x(), payload.y(), payload.z(), payload.vx(), payload.vy(), payload.vz());
+            if (level == null)
+                return;
+            level.addParticle(payload.options(), payload.x(), payload.y(), payload.z(), payload.vx(), payload.vy(), payload.vz());
         });
     }
 }

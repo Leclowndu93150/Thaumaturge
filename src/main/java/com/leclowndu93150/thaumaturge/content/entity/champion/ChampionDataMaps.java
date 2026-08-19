@@ -11,9 +11,7 @@ import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class ChampionDataMaps {
-    public static final DataMapType<EntityType<?>, Integer> CHAMPION_WHITELIST = DataMapType.builder(
-                    TCIds.rl("champion_whitelist"), Registries.ENTITY_TYPE, Codec.intRange(0, 100))
-            .build();
+    public static final DataMapType<EntityType<?>, Integer> CHAMPION_WHITELIST = DataMapType.builder(TCIds.rl("champion_whitelist"), Registries.ENTITY_TYPE, Codec.intRange(0, 100)).build();
 
     private ChampionDataMaps() {}
 

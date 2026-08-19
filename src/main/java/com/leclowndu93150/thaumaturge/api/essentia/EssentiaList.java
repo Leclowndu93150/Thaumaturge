@@ -24,8 +24,7 @@ public record EssentiaList(AspectList contents) {
     public static final Codec<EssentiaList> CODEC = AspectList.CODEC.xmap(EssentiaList::new, EssentiaList::contents);
 
     /** Network codec. Wraps {@link AspectList#STREAM_CODEC}. */
-    public static final StreamCodec<RegistryFriendlyByteBuf, EssentiaList> STREAM_CODEC =
-            AspectList.STREAM_CODEC.map(EssentiaList::new, EssentiaList::contents);
+    public static final StreamCodec<RegistryFriendlyByteBuf, EssentiaList> STREAM_CODEC = AspectList.STREAM_CODEC.map(EssentiaList::new, EssentiaList::contents);
 
     public EssentiaList {
         if (contents == null) {

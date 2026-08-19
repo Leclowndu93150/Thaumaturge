@@ -37,8 +37,8 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     private static final Codec<List<Boolean>> OPEN_CODEC = Codec.BOOL.listOf();
 
     private AspectList contents = AspectList.EMPTY;
-    private final int[] chokedSides = new int[] {0, 0, 0, 0, 0, 0};
-    private final boolean[] openSides = new boolean[] {true, true, true, true, true, true};
+    private final int[] chokedSides = new int[]{0, 0, 0, 0, 0, 0};
+    private final boolean[] openSides = new boolean[]{true, true, true, true, true, true};
     private Direction facing = Direction.NORTH;
     private int tickCount;
     private int bellows = -1;
@@ -80,7 +80,8 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     }
 
     public boolean toggleOpenSide(Direction face) {
-        if (face == null) return false;
+        if (face == null)
+            return false;
         int i = face.ordinal();
         openSides[i] = !openSides[i];
         if (level != null) {
@@ -115,29 +116,18 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     }
 
     public boolean handleCasterClick(int subHit, boolean sneaking) {
-        if (level == null || subHit < 0 || subHit >= 6) return false;
+        if (level == null || subHit < 0 || subHit >= 6)
+            return false;
         Direction dir = Direction.values()[subHit];
         if (sneaking) {
             cycleChokedSide(dir);
-            level.playSound(
-                    null,
-                    getBlockPos(),
-                    TCSounds.SQUEEK.get(),
-                    SoundSource.BLOCKS,
-                    0.6F,
-                    2.0F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, getBlockPos(), TCSounds.SQUEEK.get(), SoundSource.BLOCKS, 0.6F, 2.0F + level.getRandom().nextFloat() * 0.2F);
             return true;
         }
         toggleOpenSide(dir);
         BlockEssentiaTransport.refreshConnections(level, getBlockPos());
         BlockEssentiaTransport.refreshConnections(level, getBlockPos().relative(dir));
-        level.playSound(
-                null,
-                getBlockPos(),
-                TCSounds.TOOL.get(),
-                SoundSource.BLOCKS,
-                0.5F,
-                0.9F + level.getRandom().nextFloat() * 0.2F);
+        level.playSound(null, getBlockPos(), TCSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         return true;
     }
 
@@ -146,10 +136,12 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     }
 
     public int addToContainer(ResourceKey<IAspect> aspectKey, int amount) {
-        if (amount != 1) return amount;
+        if (amount != 1)
+            return amount;
         if (visSize() < MAX_AMOUNT) {
             Holder<IAspect> holder = EssentiaTransportHelper.resolve(level, aspectKey);
-            if (holder == null) return amount;
+            if (holder == null)
+                return amount;
             contents = contents.add(new AspectInstance(holder, amount));
             setChanged();
             sync();
@@ -205,8 +197,10 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     @Override
     public int getSuctionAmount(Direction face) {
         int choke = chokedSides[face.ordinal()];
-        if (choke == 2) return 0;
-        if (bellows > 0 && choke != 1) return bellows * 32;
+        if (choke == 2)
+            return 0;
+        if (bellows > 0 && choke != 1)
+            return bellows * 32;
         return 1;
     }
 
@@ -225,7 +219,8 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     @Override
     public Holder<IAspect> getEssentiaType(Direction face) {
         List<AspectInstance> entries = contents.entries();
-        if (entries.isEmpty()) return null;
+        if (entries.isEmpty())
+            return null;
         int idx = level == null ? 0 : level.getRandom().nextInt(entries.size());
         return entries.get(idx).aspect();
     }
@@ -237,34 +232,38 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face) || level == null) return 0;
+        if (!canOutputTo(face) || level == null)
+            return 0;
         BlockPos neighbourPos = getBlockPos().relative(face);
         IEssentiaTransport remote = EssentiaFlowHandler.transport(level, neighbourPos, face.getOpposite());
         int suction = remote == null ? 0 : remote.getSuctionAmount(face.getOpposite());
         for (Direction dir : Direction.values()) {
-            if (!canOutputTo(dir) || dir == face) continue;
+            if (!canOutputTo(dir) || dir == face)
+                continue;
             BlockPos otherPos = getBlockPos().relative(dir);
             IEssentiaTransport other = EssentiaFlowHandler.transport(level, otherPos, dir.getOpposite());
-            if (other == null) continue;
+            if (other == null)
+                continue;
             int otherSuck = other.getSuctionAmount(dir.getOpposite());
             Holder<IAspect> otherType = other.getSuctionType(dir.getOpposite());
-            if ((otherType == null || otherType.equals(aspect))
-                    && suction < otherSuck
-                    && getSuctionAmount(dir) < otherSuck) {
+            if ((otherType == null || otherType.equals(aspect)) && suction < otherSuck && getSuctionAmount(dir) < otherSuck) {
                 return 0;
             }
         }
         int available = contents.amountOf(aspect);
         int taken = Math.min(amount, available);
-        if (taken <= 0) return 0;
+        if (taken <= 0)
+            return 0;
         return takeFromContainer(aspect, taken) ? taken : 0;
     }
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canInputFrom(face)) return 0;
+        if (!canInputFrom(face))
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null) return 0;
+        if (key == null)
+            return 0;
         return amount - addToContainer(key, amount);
     }
 
@@ -280,17 +279,19 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
 
     private void fillBuffer(Level level, BlockPos pos) {
         for (Direction dir : Direction.values()) {
-            if (!canInputFrom(dir)) continue;
+            if (!canInputFrom(dir))
+                continue;
             BlockPos neighbourPos = pos.relative(dir);
             IEssentiaTransport remote = EssentiaFlowHandler.transport(level, neighbourPos, dir.getOpposite());
-            if (remote == null) continue;
-            if (remote.getEssentiaAmount(dir.getOpposite()) > 0
-                    && remote.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir)
-                    && getSuctionAmount(dir) >= remote.getMinimumSuction()) {
+            if (remote == null)
+                continue;
+            if (remote.getEssentiaAmount(dir.getOpposite()) > 0 && remote.getSuctionAmount(dir.getOpposite()) < getSuctionAmount(dir) && getSuctionAmount(dir) >= remote.getMinimumSuction()) {
                 Holder<IAspect> ta = remote.getEssentiaType(dir.getOpposite());
-                if (ta == null) continue;
+                if (ta == null)
+                    continue;
                 ResourceKey<IAspect> key = ta.unwrapKey().orElse(null);
-                if (key == null) continue;
+                if (key == null)
+                    continue;
                 int taken = remote.takeEssentia(ta, 1, dir.getOpposite());
                 if (taken > 0) {
                     addToContainer(key, taken);
@@ -324,11 +325,9 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.store("Contents", AspectList.CODEC, contents);
-        List<Integer> choked =
-                List.of(chokedSides[0], chokedSides[1], chokedSides[2], chokedSides[3], chokedSides[4], chokedSides[5]);
+        List<Integer> choked = List.of(chokedSides[0], chokedSides[1], chokedSides[2], chokedSides[3], chokedSides[4], chokedSides[5]);
         output.store("Choked", CHOKED_CODEC, choked);
-        List<Boolean> open =
-                List.of(openSides[0], openSides[1], openSides[2], openSides[3], openSides[4], openSides[5]);
+        List<Boolean> open = List.of(openSides[0], openSides[1], openSides[2], openSides[3], openSides[4], openSides[5]);
         output.store("Open", OPEN_CODEC, open);
         output.putInt("Facing", facing.ordinal());
     }
@@ -336,8 +335,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector collector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector collector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(collector, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

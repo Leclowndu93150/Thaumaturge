@@ -14,7 +14,8 @@ public abstract class AbstractFXManager<I extends IFXInstance> {
         while (it.hasNext()) {
             I inst = it.next();
             inst.tick();
-            if (inst.isExpired()) it.remove();
+            if (inst.isExpired())
+                it.remove();
         }
     }
 

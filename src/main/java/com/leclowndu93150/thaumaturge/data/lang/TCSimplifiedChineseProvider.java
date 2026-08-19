@@ -160,13 +160,15 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("research.thaumaturge.research_expertise.stage.2", "你做研究已更为得心应手。<BR>每当你移除放置于六边形中的要素时，有25%%的几率取回该研究点数。");
         add("research.thaumaturge.research_mastery.title", "研究精通");
         add("research.thaumaturge.research_mastery.stage.1", "我的造诣已经增长，但对研究过程的真正精通仍与我无缘。更多理论工作应当能带我抵达那里，尽管我担忧，长期浸淫于这些奥秘正对我的头脑产生何种影响。");
-        add("research.thaumaturge.research_mastery.stage.2", "你做研究已愈发高效。<BR>每当你移除放置于六边形中的要素时，有50%%的几率取回该研究点数。<BR>此外，每当你放置要素时，有10%%的几率不会消耗任何研究点数。<BR>最后，你可以在研究台中通过按住shift点击你想创造的要素来组合要素。若你拥有足够的组成要素，它们便会自动组合成所点击的要素。");
+        add("research.thaumaturge.research_mastery.stage.2",
+                "你做研究已愈发高效。<BR>每当你移除放置于六边形中的要素时，有50%%的几率取回该研究点数。<BR>此外，每当你放置要素时，有10%%的几率不会消耗任何研究点数。<BR>最后，你可以在研究台中通过按住shift点击你想创造的要素来组合要素。若你拥有足够的组成要素，它们便会自动组合成所点击的要素。");
         add("research.thaumaturge.research_duplication.title", "研究拷贝");
         add("research.thaumaturge.research_duplication.stage.1", "一份完成的研究笔记会永久保存其图案。只要有足够的研究点数和再一个理论来推演方法，我一定能把它誊抄到新纸上，赠予同僚。");
         add("research.thaumaturge.research_duplication.stage.2", "你发现了一种复制已完成研究笔记的方法。<BR>当你完成研究、或将完成的研究笔记放入研究台时，会看到一个星形图标。只要随身携带纸张和墨水，并拥有足够的要素，点击它就能创建一份该研究的副本。<BR>某项研究创建的副本越多，复制它的代价就越高。");
         add("research.thaumaturge.deconstructor.title", "解构工作台");
         add("research.thaumaturge.deconstructor.stage.1", "拆解事物、弄清其运转原理，向来是我的拿手好戏。一张专门制作的桌子应当能让我把物体还原为最基本的源质，并从残骸中回收研究点数。");
-        add("research.thaumaturge.deconstructor.stage.2", "任何神秘使的生涯中都会遇到这样的时刻——由于知识匮乏，研究无法继续推进。<BR>分解台便是可能的出路之一。这张桌子能把物体拆解成你可以检视的最简单部分。但它也有局限——分解台会把复合要素拆解为其组成要素，直到只剩下元始要素。在这一过程中大量知识会流失，神秘使充其量只能指望得到一丁点元始知识。<BR>以铁（金属）为例，<PAGE>它会被拆解为§2地§0与§7秩序§0，而其中只有一种有机会被发现。<BR>这个过程也相当缓慢，物体的要素越少，发现东西的几率就越低。");
+        add("research.thaumaturge.deconstructor.stage.2",
+                "任何神秘使的生涯中都会遇到这样的时刻——由于知识匮乏，研究无法继续推进。<BR>分解台便是可能的出路之一。这张桌子能把物体拆解成你可以检视的最简单部分。但它也有局限——分解台会把复合要素拆解为其组成要素，直到只剩下元始要素。在这一过程中大量知识会流失，神秘使充其量只能指望得到一丁点元始知识。<BR>以铁（金属）为例，<PAGE>它会被拆解为§2地§0与§7秩序§0，而其中只有一种有机会被发现。<BR>这个过程也相当缓慢，物体的要素越少，发现东西的几率就越低。");
         add("gui.thaumaturge.research_table.inspiration", "灵感：%s");
         add("gui.thaumaturge.research_table.draw", "抽取");
         add("gui.thaumaturge.research_table.play", "播放");
@@ -659,12 +661,15 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("research.thaumaturge.flux.warn", "灵气场中充满了一种力量，一种不太好的力量。");
         add("research.thaumaturge.warp.warn", "我所掌握的知识似乎让我有些神志不清");
         add("research.thaumaturge.oculus.title", "眼");
-        add("research.thaumaturge.oculus.stage_0", "低语已汇聚成合唱，我终于明白它们想让我做什么。散布于世界各处的方尖碑并非纪念碑——它们是门，而每扇门都有钥匙。<BR>我最初遭遇血腥邪徒的那些怪异祭坛上，有一块标有四个空凹槽的拱顶石。四只眼睛必须安放其中——或制作，或交易得来——拱顶石上方的凶险能量则必须保持完好。<BR>在尝试如此鲁莽之事前，我应当先理清自己的理论。");
+        add("research.thaumaturge.oculus.stage_0",
+                "低语已汇聚成合唱，我终于明白它们想让我做什么。散布于世界各处的方尖碑并非纪念碑——它们是门，而每扇门都有钥匙。<BR>我最初遭遇血腥邪徒的那些怪异祭坛上，有一块标有四个空凹槽的拱顶石。四只眼睛必须安放其中——或制作，或交易得来——拱顶石上方的凶险能量则必须保持完好。<BR>在尝试如此鲁莽之事前，我应当先理清自己的理论。");
         add("research.thaumaturge.oculus.stage_1", "一切都那么简单——我惊讶于血腥邪徒竟然从未发现这一点。<BR>把四只邪术之眼安放在拱顶石上，再以法杖将一股聚焦的魔力注入祭坛。当地灵气付出代价，所谓的\"眼\"便就此睁开。<BR>当然，我完全不知道那意味着什么。无妨——只有傻瓜才会畏惧未知！");
         add("research.thaumaturge.enter_outer_lands.title", "外域");
-        add("research.thaumaturge.enter_outer_lands.stage_0", "通过开眼仪式时你并不十分确定你究竟在期待什么,但肯定不是眼前这些碎裂石块建成的诡异建筑和这些七拐八弯的扭曲通道.<BR>这里有些不对劲 - 这些建筑物看上去除了构成巨大的致命迷宫外别无设计目的.<BR>四周涌动着诡异的能量波动,你的魔力在这异域的环境中似乎表现得有些异常.即使你遇到的其他生物看上去也给你一种格格不入的诡异感觉.");
+        add("research.thaumaturge.enter_outer_lands.stage_0",
+                "通过开眼仪式时你并不十分确定你究竟在期待什么,但肯定不是眼前这些碎裂石块建成的诡异建筑和这些七拐八弯的扭曲通道.<BR>这里有些不对劲 - 这些建筑物看上去除了构成巨大的致命迷宫外别无设计目的.<BR>四周涌动着诡异的能量波动,你的魔力在这异域的环境中似乎表现得有些异常.即使你遇到的其他生物看上去也给你一种格格不入的诡异感觉.");
         add("research.thaumaturge.outer_revelations.title", "外域启示");
-        add("research.thaumaturge.outer_revelations.stage_0", "你所疑虑的事情得到了证实.这里并非你打算命名为外域人的种族的家园.这完全是另一个地方.你并不相信它存在于你所理解的\"现实\"当中 - 相比实在的事物它更接近某种精神上的结构,但什么样的精神能够容纳它呢?<BR>你仅仅能破译出少量的符文,但你确信这地方是一个陷阱,一个用于考验来客并淘汰掉弱者的地方.出于何种目的你还不得而知.");
+        add("research.thaumaturge.outer_revelations.stage_0",
+                "你所疑虑的事情得到了证实.这里并非你打算命名为外域人的种族的家园.这完全是另一个地方.你并不相信它存在于你所理解的\"现实\"当中 - 相比实在的事物它更接近某种精神上的结构,但什么样的精神能够容纳它呢?<BR>你仅仅能破译出少量的符文,但你确信这地方是一个陷阱,一个用于考验来客并淘汰掉弱者的地方.出于何种目的你还不得而知.");
         add("gui.thaumaturge.altar.ritual_unknown", "拱顶石嗡鸣作响，但它的用途暂时超出了你的理解……");
     }
 

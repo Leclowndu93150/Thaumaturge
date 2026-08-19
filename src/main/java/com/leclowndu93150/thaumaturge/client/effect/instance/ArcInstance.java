@@ -82,23 +82,8 @@ public final class ArcInstance implements IFXInstance {
     }
 
     private void spawnCrackle(ClientLevel level, RandomSource random, double wx, double wy, double wz) {
-        ClientEffects.drawSimpleSparkle(
-                level,
-                random,
-                wx,
-                wy,
-                wz,
-                0.0,
-                0.0,
-                0.0,
-                0.5F,
-                Mth.clamp(this.colorR * 3.0F, 0.0F, 1.0F),
-                Mth.clamp(this.colorG * 3.0F, 0.0F, 1.0F),
-                Mth.clamp(this.colorB * 3.0F, 0.0F, 1.0F),
-                2 + random.nextInt(3),
-                0.995F,
-                0.1F,
-                8);
+        ClientEffects.drawSimpleSparkle(level, random, wx, wy, wz, 0.0, 0.0, 0.0, 0.5F, Mth.clamp(this.colorR * 3.0F, 0.0F, 1.0F), Mth.clamp(this.colorG * 3.0F, 0.0F, 1.0F),
+                Mth.clamp(this.colorB * 3.0F, 0.0F, 1.0F), 2 + random.nextInt(3), 0.995F, 0.1F, 8);
     }
 
     @Override

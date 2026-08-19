@@ -47,11 +47,7 @@ public final class AspectIngredientHelper implements IIngredientHelper<AspectIns
         if (ingredient == null) {
             return "null";
         }
-        return ingredient
-                .aspect()
-                .unwrapKey()
-                .map(key -> key.identifier().toString())
-                .orElse("unbound aspect holder");
+        return ingredient.aspect().unwrapKey().map(key -> key.identifier().toString()).orElse("unbound aspect holder");
     }
 
     @Override

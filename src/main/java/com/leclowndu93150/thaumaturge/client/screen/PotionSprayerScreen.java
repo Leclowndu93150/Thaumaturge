@@ -53,9 +53,7 @@ public final class PotionSprayerScreen extends AbstractTCContainerScreen<MenuPot
     }
 
     private BlockEntityPotionSprayer sprayer() {
-        if (minecraft != null
-                && minecraft.level != null
-                && minecraft.level.getBlockEntity(menu.sprayerPos()) instanceof BlockEntityPotionSprayer be) {
+        if (minecraft != null && minecraft.level != null && minecraft.level.getBlockEntity(menu.sprayerPos()) instanceof BlockEntityPotionSprayer be) {
             return be;
         }
         return null;
@@ -72,33 +70,12 @@ public final class PotionSprayerScreen extends AbstractTCContainerScreen<MenuPot
             int scroll = minecraft.player.tickCount % CHARGE_SCROLL_PERIOD;
             int tint = 0xFF000000 | (sprayer.color() & 0x00FFFFFF);
             int barHeight = charges * CHARGE_SEGMENT_HEIGHT;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    leftPos + CHARGE_BAR_X,
-                    topPos + CHARGE_BAR_Y + (BlockEntityPotionSprayer.MAX_CHARGES - charges) * CHARGE_SEGMENT_HEIGHT,
-                    (float) CHARGE_BAR_U,
-                    (float) scroll,
-                    CHARGE_BAR_WIDTH,
-                    barHeight,
-                    CHARGE_BAR_WIDTH,
-                    barHeight,
-                    256,
-                    256,
-                    tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CHARGE_BAR_X, topPos + CHARGE_BAR_Y + (BlockEntityPotionSprayer.MAX_CHARGES - charges) * CHARGE_SEGMENT_HEIGHT,
+                    (float) CHARGE_BAR_U, (float) scroll, CHARGE_BAR_WIDTH, barHeight, CHARGE_BAR_WIDTH, barHeight, 256, 256, tint);
         }
         drawAspects(graphics, sprayer);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                leftPos + CHARGE_OVERLAY_X,
-                topPos + CHARGE_OVERLAY_Y,
-                CHARGE_OVERLAY_U,
-                CHARGE_OVERLAY_V,
-                CHARGE_OVERLAY_WIDTH,
-                CHARGE_OVERLAY_HEIGHT,
-                256,
-                256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + CHARGE_OVERLAY_X, topPos + CHARGE_OVERLAY_Y, CHARGE_OVERLAY_U, CHARGE_OVERLAY_V, CHARGE_OVERLAY_WIDTH, CHARGE_OVERLAY_HEIGHT,
+                256, 256);
     }
 
     private void drawAspects(GuiGraphicsExtractor graphics, BlockEntityPotionSprayer sprayer) {
@@ -108,49 +85,18 @@ public final class PotionSprayerScreen extends AbstractTCContainerScreen<MenuPot
         for (AspectInstance entry : recipe.entries()) {
             int barX = leftPos + BAR_BASE_X + TAG_COLUMN_STRIDE * (pos % 2);
             int barBottom = topPos + BAR_BASE_Y + TAG_ROW_STRIDE * (pos / 2);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    barX,
-                    barBottom - BAR_HEIGHT,
-                    (float) BAR_U,
-                    (float) BAR_V,
-                    BAR_WIDTH,
-                    BAR_HEIGHT,
-                    BAR_WIDTH,
-                    BAR_HEIGHT,
-                    256,
-                    256,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, barX, barBottom - BAR_HEIGHT, (float) BAR_U, (float) BAR_V, BAR_WIDTH, BAR_HEIGHT, BAR_WIDTH, BAR_HEIGHT, 256, 256,
                     BAR_BACKGROUND_TINT);
             int filled = (int) ((float) progress.amountOf(entry.aspect()) / entry.amount() * BAR_HEIGHT);
             if (filled > 0) {
                 int tint = 0xFF000000 | (entry.aspect().value().color() & 0x00FFFFFF);
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TEXTURE,
-                        barX,
-                        barBottom - filled,
-                        (float) BAR_U,
-                        (float) BAR_V,
-                        BAR_WIDTH,
-                        filled,
-                        BAR_WIDTH,
-                        filled,
-                        256,
-                        256,
-                        tint);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, barX, barBottom - filled, (float) BAR_U, (float) BAR_V, BAR_WIDTH, filled, BAR_WIDTH, filled, 256, 256, tint);
             }
             pos++;
         }
         pos = 0;
         for (AspectInstance entry : recipe.entries()) {
-            AspectTagRenderer.render(
-                    graphics,
-                    font,
-                    leftPos + TAG_BASE_X + TAG_COLUMN_STRIDE * (pos % 2),
-                    topPos + TAG_BASE_Y + TAG_ROW_STRIDE * (pos / 2),
-                    entry.aspect(),
-                    entry.amount());
+            AspectTagRenderer.render(graphics, font, leftPos + TAG_BASE_X + TAG_COLUMN_STRIDE * (pos % 2), topPos + TAG_BASE_Y + TAG_ROW_STRIDE * (pos / 2), entry.aspect(), entry.amount());
             pos++;
         }
     }

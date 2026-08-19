@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
-import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -16,13 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
-@EventBusSubscriber(modid = TCIds.MODID)
 public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvider {
     public int auraVis = 0;
 
@@ -36,14 +29,6 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
 
     public BlockEntityArcaneWorkbench(BlockPos worldPosition, BlockState blockState) {
         super(TCBlockEntities.ARCANE_WORKBENCH.get(), worldPosition, blockState);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.Item.BLOCK,
-                TCBlockEntities.ARCANE_WORKBENCH.get(),
-                (be, side) -> VanillaContainerWrapper.of(be.getInventory()));
     }
 
     @Override
@@ -74,9 +59,7 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
                 for (int x = -1; x <= 1; x++) {
                     for (int z = -1; z <= 1; z++) {
                         ChunkPos current = new ChunkPos(chunkPos.x() + x, chunkPos.z() + z);
-                        auraVis += (int) AuraHelper.getVis(
-                                level,
-                                current.getMiddleBlockPosition(getBlockPos().getY()));
+                        auraVis += (int) AuraHelper.getVis(level, current.getMiddleBlockPosition(getBlockPos().getY()));
                     }
                 }
             }
@@ -98,14 +81,9 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
                     for (int x = -1; x <= 1; x++) {
                         for (int z = -1; z <= 1; z++) {
                             ChunkPos current = new ChunkPos(chunkPos.x() + x, chunkPos.z() + z);
-                            if (max > remaining) max = remaining;
-                            remaining = (int) (remaining
-                                    - AuraHelper.drainVis(
-                                            level,
-                                            current.getMiddleBlockPosition(
-                                                    getBlockPos().getY()),
-                                            max,
-                                            false));
+                            if (max > remaining)
+                                max = remaining;
+                            remaining = (int) (remaining - AuraHelper.drainVis(level, current.getMiddleBlockPosition(getBlockPos().getY()), max, false));
                             if (remaining <= 0 || attempts > 1000) {
                                 return;
                             }
@@ -119,7 +97,8 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
         Containers.dropContents(level, getBlockPos(), getInventory().getItems());
     }
 

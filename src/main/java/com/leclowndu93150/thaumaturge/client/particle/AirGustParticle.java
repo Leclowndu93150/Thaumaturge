@@ -16,16 +16,7 @@ public final class AirGustParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private AirGustParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            AirGustParticleOptions options,
-            ParticleSheet sheet) {
+    private AirGustParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, AirGustParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
         this.friction = FRICTION;
@@ -49,16 +40,7 @@ public final class AirGustParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("air_gust");
 
         @Override
-        public Particle createParticle(
-                AirGustParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(AirGustParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new AirGustParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

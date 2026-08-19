@@ -1,0 +1,14 @@
+# Bulk reformatting commits, skipped by git blame.
+# Locally: git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub picks this file up automatically.
+
+# switch to eclipse formatter and reformat
+0fe630373b8b62b506e13cb93ccce647ab883dfd
+
+# stop the formatter reflowing javadoc
+9a70c9bdb101c526435d20427b7fe7c235ffe951
+
+# formatting
+afff552a4e8f69d67aa9bc634ee7274d9438f1f1
+87fac625a238d80d57ba100fd1030e461f7d78f4
+bfab41cc7de5f4dd5a6f3a8da1fce88b7bfb1dc3

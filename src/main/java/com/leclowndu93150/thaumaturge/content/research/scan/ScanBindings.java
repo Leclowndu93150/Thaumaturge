@@ -23,11 +23,7 @@ public final class ScanBindings implements ScanningManager.Bindings {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return false;
         }
-        boolean hasEntry = serverPlayer
-                .registryAccess()
-                .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
-                .get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research))
-                .isPresent();
+        boolean hasEntry = serverPlayer.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY).get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, research)).isPresent();
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(serverPlayer);
         if (hasEntry) {
             if (!knowledge.isResearchKnown(research)) {

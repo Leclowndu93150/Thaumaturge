@@ -11,9 +11,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class GolemComponent {
     private enum Kind {
-        ITEM,
-        MATERIAL_BASE,
-        MATERIAL_MECHANISM
+        ITEM, MATERIAL_BASE, MATERIAL_MECHANISM
     }
 
     private static final GolemComponent BASE = new GolemComponent(Kind.MATERIAL_BASE, null);

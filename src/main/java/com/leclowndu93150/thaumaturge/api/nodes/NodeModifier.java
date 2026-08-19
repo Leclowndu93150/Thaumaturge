@@ -23,8 +23,7 @@ public enum NodeModifier implements StringRepresentable {
     /** Codec keyed by the lowercase name. */
     public static final Codec<NodeModifier> CODEC = StringRepresentable.fromEnum(NodeModifier::values);
     /** Network codec using the enum ordinal. */
-    public static final StreamCodec<ByteBuf, NodeModifier> STREAM_CODEC =
-            ByteBufCodecs.idMapper(id -> NodeModifier.values()[id], NodeModifier::ordinal);
+    public static final StreamCodec<ByteBuf, NodeModifier> STREAM_CODEC = ByteBufCodecs.idMapper(id -> NodeModifier.values()[id], NodeModifier::ordinal);
 
     private final String name;
 

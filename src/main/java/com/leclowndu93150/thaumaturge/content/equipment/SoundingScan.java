@@ -67,8 +67,7 @@ public final class SoundingScan {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos neighbour = current.offset(x, y, z);
-                        if (remaining.contains(neighbour)
-                                && level.getBlockState(neighbour).equals(match)) {
+                        if (remaining.contains(neighbour) && level.getBlockState(neighbour).equals(match)) {
                             remaining.remove(neighbour);
                             group.add(neighbour);
                             queue.add(neighbour);

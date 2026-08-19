@@ -11,16 +11,7 @@ public final class BlockMistParticle extends TCParticle {
     private static final float GRAVITY = 0.1F;
     private static final double WIND_SCALE = 0.001;
 
-    private BlockMistParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            ColorParticleOption options,
-            ParticleSheet sheet) {
+    private BlockMistParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ColorParticleOption options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.getRed(), options.getGreen(), options.getBlue());
         this.lifetime = BASE_LIFETIME + this.random.nextInt(25);
@@ -42,16 +33,7 @@ public final class BlockMistParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("block_mist");
 
         @Override
-        public Particle createParticle(
-                ColorParticleOption options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BlockMistParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

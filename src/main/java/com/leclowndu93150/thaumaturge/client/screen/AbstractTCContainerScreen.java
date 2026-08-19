@@ -15,20 +15,11 @@ public abstract class AbstractTCContainerScreen<T extends AbstractContainerMenu>
     private final int backgroundTextureWidth;
     private final int backgroundTextureHeight;
 
-    protected AbstractTCContainerScreen(
-            T menu, Inventory inventory, Component title, Identifier background, int imageWidth, int imageHeight) {
+    protected AbstractTCContainerScreen(T menu, Inventory inventory, Component title, Identifier background, int imageWidth, int imageHeight) {
         this(menu, inventory, title, background, imageWidth, imageHeight, 256, 256);
     }
 
-    protected AbstractTCContainerScreen(
-            T menu,
-            Inventory inventory,
-            Component title,
-            Identifier background,
-            int imageWidth,
-            int imageHeight,
-            int textureWidth,
-            int textureHeight) {
+    protected AbstractTCContainerScreen(T menu, Inventory inventory, Component title, Identifier background, int imageWidth, int imageHeight, int textureWidth, int textureHeight) {
         super(menu, inventory, title, imageWidth, imageHeight);
         this.background = background;
         this.backgroundWidth = imageWidth;
@@ -45,17 +36,7 @@ public abstract class AbstractTCContainerScreen<T extends AbstractContainerMenu>
     }
 
     protected void extractBackgroundTexture(GuiGraphicsExtractor graphics) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                background,
-                leftPos,
-                topPos,
-                0.0F,
-                0.0F,
-                backgroundWidth,
-                backgroundHeight,
-                backgroundTextureWidth,
-                backgroundTextureHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, leftPos, topPos, 0.0F, 0.0F, backgroundWidth, backgroundHeight, backgroundTextureWidth, backgroundTextureHeight);
     }
 
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {}

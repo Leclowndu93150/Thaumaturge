@@ -9,8 +9,7 @@ import net.minecraft.util.RandomSource;
 public final class BurstParticle extends TCParticle {
     private static final int FRAME_COUNT = 31;
 
-    private BurstParticle(
-            ClientLevel level, double x, double y, double z, BurstParticleOptions options, ParticleSheet sheet) {
+    private BurstParticle(ClientLevel level, double x, double y, double z, BurstParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         this.lifetime = FRAME_COUNT;
         this.quadSize = options.scale() * 0.1F;
@@ -25,16 +24,7 @@ public final class BurstParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("burst");
 
         @Override
-        public Particle createParticle(
-                BurstParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(BurstParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BurstParticle(level, x, y, z, options, SHEET);
         }
     }

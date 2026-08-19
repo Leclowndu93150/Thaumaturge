@@ -23,13 +23,9 @@ public class SealFill extends SealFiltered {
     private static final int SCAN_INTERVAL = 20;
     private static final double WORLD_COUNT_RANGE = 1.5;
 
-    protected final ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"),
-        new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
-        new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"),
-        new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod"),
-        new ISealConfigToggles.SealToggle(false, "pexist", "golem.prop.exist")
-    };
+    protected final ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"), new ISealConfigToggles.SealToggle(true, "pnbt", "golem.prop.nbt"),
+            new ISealConfigToggles.SealToggle(false, "pore", "golem.prop.ore"), new ISealConfigToggles.SealToggle(false, "pmod", "golem.prop.mod"),
+            new ISealConfigToggles.SealToggle(false, "pexist", "golem.prop.exist")};
 
     private int delay = System.identityHashCode(this) % 50;
     private int watchedTask = Integer.MIN_VALUE;
@@ -67,16 +63,13 @@ public class SealFill extends SealFiltered {
     @Override
     public boolean onTaskCompletion(Level level, IGolemAPI golem, Task task) {
         InvHelper.InvFilter flags = filterFlags(props);
-        InvHelper.FilterMatch match = InvHelper.findFirstMatchFromFilterWithSize(
-                getInv(), getSizes(), isBlacklist(), golem.getCarrying(), flags);
+        InvHelper.FilterMatch match = InvHelper.findFirstMatchFromFilterWithSize(getInv(), getSizes(), isBlacklist(), golem.getCarrying(), flags);
         if (!match.stack().isEmpty()) {
-            ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(
-                    level, task.getSealPos().pos(), task.getSealPos().face());
+            ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(level, task.getSealPos().pos(), task.getSealPos().face());
             int limit = match.stack().getCount();
             if (hasStacksizeLimiters() && match.sizeLimit() > 0) {
                 int present = inv == null
-                        ? InvHelper.countStackInWorld(
-                                level, task.getSealPos().pos(), match.stack(), WORLD_COUNT_RANGE, flags)
+                        ? InvHelper.countStackInWorld(level, task.getSealPos().pos(), match.stack(), WORLD_COUNT_RANGE, flags)
                         : InvHelper.countTotalItemsIn(inv, match.stack(), flags);
                 limit = present < match.sizeLimit() ? match.sizeLimit() - present : 0;
             }
@@ -85,31 +78,14 @@ public class SealFill extends SealFiltered {
                 toDrop.setCount(limit);
                 ItemStack dropped = golem.dropItem(toDrop);
                 if (inv == null) {
-                    ItemEntity item = new ItemEntity(
-                            level,
-                            task.getSealPos().pos().getX()
-                                    + 0.5
-                                    + task.getSealPos().face().getStepX(),
-                            task.getSealPos().pos().getY()
-                                    + 0.5
-                                    + task.getSealPos().face().getStepY(),
-                            task.getSealPos().pos().getZ()
-                                    + 0.5
-                                    + task.getSealPos().face().getStepZ(),
-                            dropped);
+                    ItemEntity item = new ItemEntity(level, task.getSealPos().pos().getX() + 0.5 + task.getSealPos().face().getStepX(),
+                            task.getSealPos().pos().getY() + 0.5 + task.getSealPos().face().getStepY(), task.getSealPos().pos().getZ() + 0.5 + task.getSealPos().face().getStepZ(), dropped);
                     item.setDeltaMovement(item.getDeltaMovement().multiply(0.2, 0.5, 0.2));
                     level.addFreshEntity(item);
                 } else {
                     golem.holdItem(InvHelper.insertStack(inv, dropped, false));
                 }
-                golem.getGolemEntity()
-                        .playSound(
-                                SoundEvents.ITEM_PICKUP,
-                                0.125F,
-                                (level.getRandom().nextFloat()
-                                                        - level.getRandom().nextFloat())
-                                                * 0.7F
-                                        + 1.0F);
+                golem.getGolemEntity().playSound(SoundEvents.ITEM_PICKUP, 0.125F, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.7F + 1.0F);
                 golem.addRankXp(1);
                 golem.swingArm();
             }
@@ -121,24 +97,16 @@ public class SealFill extends SealFiltered {
     @Override
     public boolean canGolemPerformTask(IGolemAPI golem, Task task) {
         InvHelper.InvFilter flags = filterFlags(props);
-        InvHelper.FilterMatch match = InvHelper.findFirstMatchFromFilterWithSize(
-                getInv(), getSizes(), isBlacklist(), golem.getCarrying(), flags);
+        InvHelper.FilterMatch match = InvHelper.findFirstMatchFromFilterWithSize(getInv(), getSizes(), isBlacklist(), golem.getCarrying(), flags);
         if (match.stack().isEmpty()) {
             return false;
         }
-        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(
-                golem.getGolemWorld(),
-                task.getSealPos().pos(),
-                task.getSealPos().face());
+        ResourceHandler<ItemResource> inv = InvHelper.getItemHandlerAt(golem.getGolemWorld(), task.getSealPos().pos(), task.getSealPos().face());
         if (inv != null) {
             if (props[4].getValue() && InvHelper.countTotalItemsIn(inv, match.stack(), flags) <= 0) {
                 return false;
             }
-            if (InvHelper.hasRoomForSome(
-                    golem.getGolemWorld(),
-                    task.getSealPos().pos(),
-                    task.getSealPos().face(),
-                    match.stack())) {
+            if (InvHelper.hasRoomForSome(golem.getGolemWorld(), task.getSealPos().pos(), task.getSealPos().face(), match.stack())) {
                 if (!hasStacksizeLimiters() || match.sizeLimit() <= 0) {
                     return true;
                 }
@@ -147,9 +115,7 @@ public class SealFill extends SealFiltered {
             return false;
         }
         if (hasStacksizeLimiters() && match.sizeLimit() > 0) {
-            return InvHelper.countStackInWorld(
-                            golem.getGolemWorld(), task.getSealPos().pos(), match.stack(), WORLD_COUNT_RANGE, flags)
-                    < match.sizeLimit();
+            return InvHelper.countStackInWorld(golem.getGolemWorld(), task.getSealPos().pos(), match.stack(), WORLD_COUNT_RANGE, flags) < match.sizeLimit();
         }
         return true;
     }
@@ -166,7 +132,7 @@ public class SealFill extends SealFiltered {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_FILTER, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_FILTER, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
@@ -176,7 +142,7 @@ public class SealFill extends SealFiltered {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[]{TCGolemTraits.CLUMSY.get()};
     }
 
     @Override

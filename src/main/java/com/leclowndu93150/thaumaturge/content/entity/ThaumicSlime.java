@@ -39,8 +39,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
     public static final int PARTICLE_COLOR = 0xB200FF;
     public static final float PARTICLE_ALPHA = 0.4F;
 
-    private static final EntityDataAccessor<Integer> DATA_LAUNCHED =
-            SynchedEntityData.defineId(ThaumicSlime.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_LAUNCHED = SynchedEntityData.defineId(ThaumicSlime.class, EntityDataSerializers.INT);
     private static final int LAUNCH_TICKS = 10;
     private static final int LAUNCHED_BONUS_REACH = 2;
     private static final float ATTACK_REACH_FACTOR = 0.6F;
@@ -50,10 +49,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 1.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.0)
-                .add(Attributes.ATTACK_DAMAGE, 0.0);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 1.0).add(Attributes.MOVEMENT_SPEED, 0.0).add(Attributes.ATTACK_DAMAGE, 0.0);
     }
 
     @Override
@@ -92,10 +88,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
             if (this.distanceToSqr(target) < reachSq && this.hasLineOfSight(target)) {
                 DamageSource source = this.damageSources().mobAttack(this);
                 if (target.hurtServer(server, source, this.getAttackDamage())) {
-                    this.playSound(
-                            SoundEvents.SLIME_ATTACK,
-                            1.0F,
-                            (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+                    this.playSound(SoundEvents.SLIME_ATTACK, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
                     EnchantmentHelper.doPostAttackEffects(server, target, source);
                 }
             }
@@ -115,10 +108,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
             if (this.level().isClientSide()) {
                 spawnGooParticles(size, size * 2);
             }
-            this.playSound(
-                    getJumpSound(),
-                    getSoundVolume(),
-                    ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) * 0.8F);
+            this.playSound(getJumpSound(), getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) * 0.8F);
             this.targetSquish = -0.5F;
         }
         int launched = this.entityData.get(DATA_LAUNCHED);
@@ -140,15 +130,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
             float ox = Mth.sin(angle) * size * 0.5F * radius;
             float oz = Mth.cos(angle) * size * 0.5F * radius;
             int lifetime = (int) (66.0F / (this.random.nextFloat() * 0.9F + 0.1F));
-            this.level()
-                    .addParticle(
-                            new FluxGooDropletParticleOptions(PARTICLE_COLOR, PARTICLE_ALPHA, lifetime),
-                            this.getX() + ox,
-                            midY,
-                            this.getZ() + oz,
-                            0.0,
-                            0.0,
-                            0.0);
+            this.level().addParticle(new FluxGooDropletParticleOptions(PARTICLE_COLOR, PARTICLE_ALPHA, lifetime), this.getX() + ox, midY, this.getZ() + oz, 0.0, 0.0, 0.0);
         }
     }
 
@@ -170,12 +152,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
                 ThaumicSlime child = TCEntities.THAUMIC_SLIME.get().create(server, EntitySpawnReason.TRIGGERED);
                 if (child != null) {
                     child.setSize(1, true);
-                    child.snapTo(
-                            this.getX() + xd,
-                            this.getY() + 0.5,
-                            this.getZ() + zd,
-                            this.random.nextFloat() * 360.0F,
-                            0.0F);
+                    child.snapTo(this.getX() + xd, this.getY() + 0.5, this.getZ() + zd, this.random.nextFloat() * 360.0F, 0.0F);
                     server.addFreshEntity(child);
                 }
             }
@@ -193,23 +170,14 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData groupData) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData groupData) {
         int sizeBits = 1 + level.getRandom().nextInt(3);
         int size = 1 << sizeBits;
         this.setSize(size, true);
         return groupData;
     }
 
-    public static boolean checkSpawnRules(
-            EntityType<ThaumicSlime> type,
-            LevelAccessor level,
-            EntitySpawnReason reason,
-            BlockPos pos,
-            RandomSource random) {
+    public static boolean checkSpawnRules(EntityType<ThaumicSlime> type, LevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         return false;
     }
 

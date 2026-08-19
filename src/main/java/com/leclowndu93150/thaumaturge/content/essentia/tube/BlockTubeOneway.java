@@ -25,15 +25,8 @@ public final class BlockTubeOneway extends BlockTube {
 
     public BlockTubeOneway(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition
-                .any()
-                .setValue(NORTH, false)
-                .setValue(EAST, false)
-                .setValue(SOUTH, false)
-                .setValue(WEST, false)
-                .setValue(UP, false)
-                .setValue(DOWN, false)
-                .setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false).setValue(DOWN, false).setValue(FACING,
+                Direction.NORTH));
     }
 
     @Override
@@ -49,8 +42,7 @@ public final class BlockTubeOneway extends BlockTube {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 
     @Override
@@ -69,10 +61,9 @@ public final class BlockTubeOneway extends BlockTube {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) return null;
-        return createTickerHelper(
-                type, TCBlockEntities.TUBE_ONEWAY.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        if (level.isClientSide())
+            return null;
+        return createTickerHelper(type, TCBlockEntities.TUBE_ONEWAY.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 }

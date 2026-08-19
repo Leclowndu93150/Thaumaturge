@@ -15,14 +15,13 @@ public final class WarpFXClientHandler {
             switch (payload.kind()) {
                 case ClientboundWarpFXPayload.KIND_HEARTBEAT -> {
                     if (!ThaumaturgeCommonConfig.NO_STRESS.get()) {
-                        Minecraft.getInstance()
-                                .getSoundManager()
-                                .play(SimpleSoundInstance.forUI(TCSounds.HEARTBEAT.get(), 1.0F, 1.0F));
+                        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.HEARTBEAT.get(), 1.0F, 1.0F));
                     }
                 }
                 case ClientboundWarpFXPayload.KIND_MIST -> WarpFogState.startMist();
                 case ClientboundWarpFXPayload.KIND_MIST_SHORT -> WarpFogState.startShortMist();
-                default -> {}
+                default -> {
+                }
             }
         });
     }

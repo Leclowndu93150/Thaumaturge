@@ -16,16 +16,7 @@ public final class SlimyBubbleParticle extends TCParticle {
     private static final int RISE_FRAME = 3;
     private static final int POP_END_FRAME = 6;
 
-    private SlimyBubbleParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            SlimyBubbleParticleOptions options,
-            ParticleSheet sheet) {
+    private SlimyBubbleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, SlimyBubbleParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         this.alpha = options.alpha();
@@ -59,16 +50,7 @@ public final class SlimyBubbleParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("slimy_bubble");
 
         @Override
-        public Particle createParticle(
-                SlimyBubbleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SlimyBubbleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new SlimyBubbleParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

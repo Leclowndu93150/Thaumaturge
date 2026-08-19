@@ -52,7 +52,7 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     protected int venting;
     protected int ventColor = DEFAULT_GREY;
     protected Direction facing = Direction.NORTH;
-    protected final boolean[] openSides = new boolean[] {true, true, true, true, true, true};
+    protected final boolean[] openSides = new boolean[]{true, true, true, true, true, true};
 
     public BlockEntityTube(BlockPos pos, BlockState state) {
         this(TCBlockEntities.TUBE.get(), pos, state);
@@ -70,8 +70,7 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
             return;
         }
         if ((tickCount & 1) == 0) {
-            EssentiaFlowHandler.recalculateSuction(
-                    level, pos, this, suctionFilter(), restrictiveSuction(), directionalSuction());
+            EssentiaFlowHandler.recalculateSuction(level, pos, this, suctionFilter(), restrictiveSuction(), directionalSuction());
             checkVenting(level, pos);
             if (essentiaType != null && essentiaAmount == 0) {
                 essentiaType = null;
@@ -85,20 +84,27 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
 
     protected void checkVenting(Level level, BlockPos pos) {
         for (Direction dir : Direction.values()) {
-            if (!isConnectable(dir)) continue;
+            if (!isConnectable(dir))
+                continue;
             IEssentiaTransport neighbour = EssentiaFlowHandler.transport(level, pos.relative(dir), dir.getOpposite());
-            if (neighbour == null) continue;
+            if (neighbour == null)
+                continue;
             int neighbourSuck = neighbour.getSuctionAmount(dir.getOpposite());
-            if (suction <= 0) continue;
-            if (neighbourSuck != suction && neighbourSuck != suction - 1) continue;
+            if (suction <= 0)
+                continue;
+            if (neighbourSuck != suction && neighbourSuck != suction - 1)
+                continue;
             Holder<IAspect> neighbourSuctionType = neighbour.getSuctionType(dir.getOpposite());
             Holder<IAspect> ourSuction = getSuctionType(dir);
-            if (sameHolder(ourSuction, neighbourSuctionType)) continue;
-            if (neighbour instanceof BlockEntityTubeFilter) continue;
+            if (sameHolder(ourSuction, neighbourSuctionType))
+                continue;
+            if (neighbour instanceof BlockEntityTubeFilter)
+                continue;
             int color = DEFAULT_GREY;
             if (suctionType != null) {
                 Holder<IAspect> resolved = EssentiaTransportHelper.resolve(level, suctionType);
-                if (resolved != null) color = resolved.value().color();
+                if (resolved != null)
+                    color = resolved.value().color();
             }
             triggerVent(color);
             broadcastVent(level, pos, color);
@@ -107,8 +113,10 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     }
 
     private static boolean sameHolder(@Nullable Holder<IAspect> a, @Nullable Holder<IAspect> b) {
-        if (a == null && b == null) return true;
-        if (a == null || b == null) return false;
+        if (a == null && b == null)
+            return true;
+        if (a == null || b == null)
+            return false;
         return a.equals(b);
     }
 
@@ -118,27 +126,15 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     }
 
     public void broadcastVent(Level level, BlockPos pos, int color) {
-        if (!(level instanceof ServerLevel server)) return;
-        PacketDistributor.sendToPlayersNear(
-                server,
-                null,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                PARTICLE_RADIUS,
-                new ClientboundTubeVentPayload(pos.immutable(), color));
+        if (!(level instanceof ServerLevel server))
+            return;
+        PacketDistributor.sendToPlayersNear(server, null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PARTICLE_RADIUS, new ClientboundTubeVentPayload(pos.immutable(), color));
     }
 
     public void broadcastCreak(Level level, BlockPos pos) {
-        if (!(level instanceof ServerLevel server)) return;
-        PacketDistributor.sendToPlayersNear(
-                server,
-                null,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                PARTICLE_RADIUS,
-                new ClientboundTubeCreakPayload(pos.immutable()));
+        if (!(level instanceof ServerLevel server))
+            return;
+        PacketDistributor.sendToPlayersNear(server, null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PARTICLE_RADIUS, new ClientboundTubeCreakPayload(pos.immutable()));
     }
 
     public int ventingTicks() {
@@ -194,7 +190,8 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     }
 
     public boolean toggleSide(Direction face) {
-        if (face == null) return false;
+        if (face == null)
+            return false;
         openSides[face.ordinal()] = !openSides[face.ordinal()];
         setChanged();
         pushUpdate(this);
@@ -227,13 +224,15 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     }
 
     protected boolean hasTransportNeighbour(Direction dir) {
-        if (level == null) return false;
+        if (level == null)
+            return false;
         BlockPos neighbour = getBlockPos().relative(dir);
         return level.getCapability(EssentiaCapabilities.TRANSPORT, neighbour, dir.getOpposite()) != null;
     }
 
     public boolean handleCasterClick(int subHit) {
-        if (level == null) return false;
+        if (level == null)
+            return false;
         if (subHit >= 0 && subHit < 6) {
             Direction dir = Direction.values()[subHit];
             boolean nowOpen = toggleSide(dir);
@@ -260,18 +259,13 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
 
     protected static void pushUpdate(BlockEntity be) {
         Level lvl = be.getLevel();
-        if (lvl == null || lvl.isClientSide()) return;
+        if (lvl == null || lvl.isClientSide())
+            return;
         lvl.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), Block.UPDATE_ALL);
     }
 
     public void playToolSound(Level level, BlockPos pos) {
-        level.playSound(
-                null,
-                pos,
-                TCSounds.TOOL.get(),
-                SoundSource.BLOCKS,
-                0.5F,
-                0.9F + level.getRandom().nextFloat() * 0.2F);
+        level.playSound(null, pos, TCSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
     }
 
     @Override
@@ -323,9 +317,11 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face) || amount <= 0 || essentiaAmount <= 0) return 0;
+        if (!canOutputTo(face) || amount <= 0 || essentiaAmount <= 0)
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null || !key.equals(essentiaType)) return 0;
+        if (key == null || !key.equals(essentiaType))
+            return 0;
         essentiaAmount--;
         if (essentiaAmount <= 0) {
             essentiaType = null;
@@ -336,9 +332,11 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canInputFrom(face) || essentiaAmount > 0 || amount <= 0) return 0;
+        if (!canInputFrom(face) || essentiaAmount > 0 || amount <= 0)
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null) return 0;
+        if (key == null)
+            return 0;
         essentiaType = key;
         essentiaAmount = 1;
         setChanged();
@@ -380,22 +378,22 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        if (essentiaType != null) output.store("EssentiaType", ASPECT_KEY_CODEC, essentiaType);
+        if (essentiaType != null)
+            output.store("EssentiaType", ASPECT_KEY_CODEC, essentiaType);
         output.putInt("EssentiaAmount", essentiaAmount);
-        if (suctionType != null) output.store("SuctionType", ASPECT_KEY_CODEC, suctionType);
+        if (suctionType != null)
+            output.store("SuctionType", ASPECT_KEY_CODEC, suctionType);
         output.putInt("Suction", suction);
         output.putInt("Facing", facing.ordinal());
         writeOpenSides(output);
     }
 
     protected void readOpenSides(ValueInput input) {
-        byte[] data = input.read("OpenSides", Codec.BYTE_BUFFER)
-                .map(buf -> {
-                    byte[] arr = new byte[buf.remaining()];
-                    buf.get(arr);
-                    return arr;
-                })
-                .orElse(null);
+        byte[] data = input.read("OpenSides", Codec.BYTE_BUFFER).map(buf -> {
+            byte[] arr = new byte[buf.remaining()];
+            buf.get(arr);
+            return arr;
+        }).orElse(null);
         if (data != null && data.length == 6) {
             for (int a = 0; a < 6; a++) {
                 openSides[a] = data[a] == 1;
@@ -418,8 +416,7 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector collector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector collector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(collector, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

@@ -28,12 +28,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEssentiaPort extends BaseEntityBlock implements IEssentiaStreamPort {
-    public static final MapCodec<BlockEssentiaPort> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(Codec.BOOL.fieldOf("input").forGetter(block -> block.input), propertiesCodec())
-                    .apply(instance, BlockEssentiaPort::new));
+    public static final MapCodec<BlockEssentiaPort> CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(Codec.BOOL.fieldOf("input").forGetter(block -> block.input), propertiesCodec()).apply(instance, BlockEssentiaPort::new));
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(
-            Shapes.or(box(4.0, 0.0, 4.0, 12.0, 6.0, 12.0), box(6.0, 6.0, 6.0, 10.0, 8.0, 10.0)));
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(box(4.0, 0.0, 4.0, 12.0, 6.0, 12.0), box(6.0, 6.0, 6.0, 10.0, 8.0, 10.0)));
 
     private static final double NOZZLE_TIP = 0.05;
     private static final double NOZZLE_CLEARANCE = 0.65;
@@ -66,8 +64,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
     }
 
     @Override
-    public StreamPort essentiaStreamPort(
-            BlockGetter level, BlockPos pos, BlockState state, Vec3 farEnd, boolean outgoing) {
+    public StreamPort essentiaStreamPort(BlockGetter level, BlockPos pos, BlockState state, Vec3 farEnd, boolean outgoing) {
         Direction facing = state.getValue(BlockStateProperties.FACING);
         Vec3 normal = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ());
         Vec3 center = Vec3.atCenterOf(pos);
@@ -85,8 +82,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

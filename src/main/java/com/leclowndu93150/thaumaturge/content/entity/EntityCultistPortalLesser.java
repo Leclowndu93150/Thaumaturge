@@ -24,8 +24,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityCultistPortalLesser extends Monster {
-    private static final EntityDataAccessor<Boolean> DATA_ACTIVE =
-            SynchedEntityData.defineId(EntityCultistPortalLesser.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ACTIVE = SynchedEntityData.defineId(EntityCultistPortalLesser.class, EntityDataSerializers.BOOLEAN);
 
     private static final byte PULSE_EVENT = 16;
     private static final double ACTIVATION_RANGE = 32.0;
@@ -46,11 +45,7 @@ public class EntityCultistPortalLesser extends Monster {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 100.0)
-                .add(Attributes.ATTACK_DAMAGE, 0.0)
-                .add(Attributes.ARMOR, 4.0)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 100.0).add(Attributes.ATTACK_DAMAGE, 0.0).add(Attributes.ARMOR, 4.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
     @Override
@@ -107,16 +102,12 @@ public class EntityCultistPortalLesser extends Monster {
         } else if (this.stageCounter-- <= 0) {
             Player player = this.level().getNearestPlayer(this, ACTIVATION_RANGE);
             if (player != null && this.hasLineOfSight(player)) {
-                int count =
-                        switch (this.level().getDifficulty()) {
-                            case HARD -> 6;
-                            case NORMAL -> 4;
-                            default -> 2;
-                        };
-                count -= this.level()
-                        .getEntitiesOfClass(
-                                EntityCultist.class, this.getBoundingBox().inflate(MINION_SCAN_RANGE))
-                        .size();
+                int count = switch (this.level().getDifficulty()) {
+                    case HARD -> 6;
+                    case NORMAL -> 4;
+                    default -> 2;
+                };
+                count -= this.level().getEntitiesOfClass(EntityCultist.class, this.getBoundingBox().inflate(MINION_SCAN_RANGE)).size();
                 if (count > 0) {
                     this.level().broadcastEntityEvent(this, PULSE_EVENT);
                     this.spawnMinion();
@@ -134,12 +125,8 @@ public class EntityCultistPortalLesser extends Monster {
         if (cultist == null) {
             return;
         }
-        cultist.setPos(
-                this.getX() + this.random.nextFloat() - this.random.nextFloat(),
-                this.getY() + 0.25,
-                this.getZ() + this.random.nextFloat() - this.random.nextFloat());
-        cultist.finalizeSpawn(
-                server, server.getCurrentDifficultyAt(cultist.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
+        cultist.setPos(this.getX() + this.random.nextFloat() - this.random.nextFloat(), this.getY() + 0.25, this.getZ() + this.random.nextFloat() - this.random.nextFloat());
+        cultist.finalizeSpawn(server, server.getCurrentDifficultyAt(cultist.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
         server.addFreshEntity(cultist);
         cultist.spawnCultistArrivalParticles();
         cultist.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);
@@ -148,9 +135,7 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     public void playerTouch(Player player) {
-        if (this.level() instanceof ServerLevel server
-                && this.distanceToSqr(player) < TOUCH_RANGE_SQ
-                && player.hurtServer(server, this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
+        if (this.level() instanceof ServerLevel server && this.distanceToSqr(player) < TOUCH_RANGE_SQ && player.hurtServer(server, this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
             this.playSound(TCSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
         }
     }
@@ -158,13 +143,7 @@ public class EntityCultistPortalLesser extends Monster {
     @Override
     public void die(DamageSource source) {
         if (this.level() instanceof ServerLevel server) {
-            server.explode(
-                    this,
-                    this.getX(),
-                    this.getY(),
-                    this.getZ(),
-                    DEATH_EXPLOSION_POWER,
-                    Level.ExplosionInteraction.NONE);
+            server.explode(this, this.getX(), this.getY(), this.getZ(), DEATH_EXPLOSION_POWER, Level.ExplosionInteraction.NONE);
         }
         super.die(source);
     }

@@ -33,17 +33,14 @@ import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandItemSpecialRenderer.WandArg> {
-    public record WandArg(WandCap cap, WandRod rod, boolean sceptre, boolean hasFocus, int focusColor) {}
+    public record WandArg(WandCap cap, WandRod rod, boolean sceptre, boolean hasFocus, int focusColor) {
+    }
 
     private static final Identifier WAND_TEXTURE = TCIds.rl("textures/models/wand.png");
     private static final Identifier SCRIPT_TEXTURE = TCIds.rl("textures/misc/script.png");
 
-    private static final RenderType RUNES = RenderType.create(
-            "tc_wand_runes",
-            RenderSetup.builder(TCRenderPipelines.ENTITY_ADDITIVE_EMISSIVE)
-                    .withTexture("Sampler0", SCRIPT_TEXTURE)
-                    .useLightmap()
-                    .createRenderSetup());
+    private static final RenderType RUNES = RenderType.create("tc_wand_runes",
+            RenderSetup.builder(TCRenderPipelines.ENTITY_ADDITIVE_EMISSIVE).withTexture("Sampler0", SCRIPT_TEXTURE).useLightmap().createRenderSetup());
 
     private static final float PX = 0.0625F;
     private static final int TEX_W = 32;
@@ -66,14 +63,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
     private static final float SCEPTRE_CAP_SCALE = 1.3F;
 
     @Override
-    public void submit(
-            @Nullable WandArg arg,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            int light,
-            int overlay,
-            boolean glint,
-            int seed) {
+    public void submit(@Nullable WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, int overlay, boolean glint, int seed) {
         if (arg == null) {
             return;
         }
@@ -84,9 +74,11 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
         poseStack.popPose();
     }
 
-    private record CapPlacement(float offsetY, float scaleXZ, float scaleY, float pivotPx) {}
+    private record CapPlacement(float offsetY, float scaleXZ, float scaleY, float pivotPx) {
+    }
 
-    private record RuneSpot(float yaw, float distance, float height, float depth, int glyph) {}
+    private record RuneSpot(float yaw, float distance, float height, float depth, int glyph) {
+    }
 
     private static final float SCEPTRE_RUNE_DISTANCE = 0.16F;
     private static final float SCEPTRE_RUNE_DEPTH = -0.125F;
@@ -117,8 +109,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
         poseStack.popPose();
     }
 
-    private static void submitRod(
-            WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff, float ticks) {
+    private static void submitRod(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff, float ticks) {
         int rodLight = arg.rod().glow() ? (int) (200.0F + Mth.sin((int) ticks) * 5.0F + 5.0F) : light;
         RenderType rodType = TCFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
         poseStack.pushPose();
@@ -127,10 +118,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
             poseStack.scale(1.2F, 2.0F, 1.2F);
         }
         PoseStack.Pose rodPose = poseStack.last().copy();
-        collector.submitCustomGeometry(
-                poseStack,
-                rodType,
-                (pose, buffer) -> box(rodPose, buffer, -1.0F, 1.0F, -1.0F, 2, 18, 2, 0, 8, 0xFFFFFFFF, rodLight));
+        collector.submitCustomGeometry(poseStack, rodType, (pose, buffer) -> box(rodPose, buffer, -1.0F, 1.0F, -1.0F, 2, 18, 2, 0, 8, 0xFFFFFFFF, rodLight));
         poseStack.popPose();
     }
 
@@ -151,8 +139,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
         return layout;
     }
 
-    private static void submitCaps(
-            WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff) {
+    private static void submitCaps(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff) {
         RenderType capType = TCFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
         poseStack.pushPose();
         if (staff) {
@@ -166,17 +153,13 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
             poseStack.scale(placement.scaleXZ(), placement.scaleY(), placement.scaleXZ());
             poseStack.translate(0.0F, placement.pivotPx() * PX, 0.0F);
             PoseStack.Pose pose = poseStack.last().copy();
-            collector.submitCustomGeometry(
-                    poseStack,
-                    capType,
-                    (p, buffer) -> box(pose, buffer, -1.0F, -1.0F, -1.0F, 2, 2, 2, 0, 0, 0xFFFFFFFF, light));
+            collector.submitCustomGeometry(poseStack, capType, (p, buffer) -> box(pose, buffer, -1.0F, -1.0F, -1.0F, 2, 2, 2, 0, 0, 0xFFFFFFFF, light));
             poseStack.popPose();
         }
         poseStack.popPose();
     }
 
-    private static void submitFocus(
-            WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, boolean staff, float ticks) {
+    private static void submitFocus(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, boolean staff, float ticks) {
         RenderType focusType = TCFlatRenderTypes.entityTranslucentFlat(WAND_TEXTURE);
         poseStack.pushPose();
         if (staff) {
@@ -188,10 +171,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
         int tint = ARGB.color((int) (FOCUS_ALPHA * 255.0F), arg.focusColor());
         int focusLight = (int) (195.0F + Mth.sin(ticks / 3.0F) * 10.0F + 10.0F);
         PoseStack.Pose focusPose = poseStack.last().copy();
-        collector.submitCustomGeometry(
-                poseStack,
-                focusType,
-                (pose, buffer) -> box(focusPose, buffer, -3.0F, -6.0F, -3.0F, 6, 6, 6, 0, 0, tint, focusLight));
+        collector.submitCustomGeometry(poseStack, focusType, (pose, buffer) -> box(focusPose, buffer, -3.0F, -6.0F, -3.0F, 6, 6, 6, 0, 0, tint, focusLight));
         poseStack.popPose();
     }
 
@@ -199,24 +179,14 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
         List<RuneSpot> spots = new ArrayList<>();
         if (arg.sceptre()) {
             for (int i = 0; i < SCEPTRE_RUNE_COUNT; i++) {
-                spots.add(new RuneSpot(
-                        360.0F / SCEPTRE_RUNE_COUNT * i + ticks,
-                        SCEPTRE_RUNE_DISTANCE,
-                        RUNE_HEIGHT,
-                        SCEPTRE_RUNE_DEPTH,
-                        i));
+                spots.add(new RuneSpot(360.0F / SCEPTRE_RUNE_COUNT * i + ticks, SCEPTRE_RUNE_DISTANCE, RUNE_HEIGHT, SCEPTRE_RUNE_DEPTH, i));
             }
         }
         if (arg.rod().runes()) {
             for (int side = 0; side < STAFF_RUNE_SIDES; side++) {
                 float yaw = 360.0F / STAFF_RUNE_SIDES * (side + 1);
                 for (int step = 0; step < STAFF_RUNE_LENGTH; step++) {
-                    spots.add(new RuneSpot(
-                            yaw,
-                            STAFF_RUNE_START + step * STAFF_RUNE_STEP,
-                            RUNE_HEIGHT,
-                            STAFF_RUNE_DEPTH,
-                            (step + side * 3) % SCRIPT_GLYPHS));
+                    spots.add(new RuneSpot(yaw, STAFF_RUNE_START + step * STAFF_RUNE_STEP, RUNE_HEIGHT, STAFF_RUNE_DEPTH, (step + side * 3) % SCRIPT_GLYPHS));
                 }
             }
         }
@@ -242,9 +212,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
 
     private static float clientTicks() {
         LocalPlayer player = Minecraft.getInstance().player;
-        return player == null
-                ? 0.0F
-                : player.tickCount + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        return player == null ? 0.0F : player.tickCount + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }
 
     private static final int[][] RUNE_QUAD_SIGNS = {{-1, 1}, {1, 1}, {1, -1}, {-1, -1}};
@@ -270,49 +238,15 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
             for (int[] corner : RUNE_QUAD_SIGNS) {
                 float u = corner[1] > 0 ? glyphU + glyphWidth : glyphU;
                 float v = corner[0] < 0 ? 1.0F : 0.0F;
-                buffer.addVertex(pose, corner[0] * half, corner[1] * half, 0.0F)
-                        .setColor(tint)
-                        .setUv(u, v)
-                        .setOverlay(OverlayTexture.NO_OVERLAY)
-                        .setLight(RUNE_LIGHT)
-                        .setNormal(pose, 0.0F, 0.0F, 1.0F);
+                buffer.addVertex(pose, corner[0] * half, corner[1] * half, 0.0F).setColor(tint).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(RUNE_LIGHT).setNormal(pose, 0.0F, 0.0F,
+                        1.0F);
             }
         });
         poseStack.popPose();
     }
 
-    private static void box(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            float x,
-            float y,
-            float z,
-            int dx,
-            int dy,
-            int dz,
-            int u,
-            int v,
-            int tint,
-            int light) {
-        BoxGeometry.box(
-                pose,
-                buffer,
-                x * PX,
-                y * PX,
-                z * PX,
-                (x + dx) * PX,
-                (y + dy) * PX,
-                (z + dz) * PX,
-                u,
-                v,
-                dx,
-                dy,
-                dz,
-                TEX_W,
-                TEX_H,
-                tint,
-                light,
-                true);
+    private static void box(PoseStack.Pose pose, VertexConsumer buffer, float x, float y, float z, int dx, int dy, int dz, int u, int v, int tint, int light) {
+        BoxGeometry.box(pose, buffer, x * PX, y * PX, z * PX, (x + dx) * PX, (y + dy) * PX, (z + dz) * PX, u, v, dx, dy, dz, TEX_W, TEX_H, tint, light, true);
     }
 
     @Override

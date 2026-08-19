@@ -93,37 +93,27 @@ public final class TCMeshLoader {
         for (int q = 0; q < quadCount; q++) {
             JsonArray values = GsonHelper.convertToJsonArray(quads.get(q), "quad");
             if (values.size() != floatsPerQuad) {
-                throw new IllegalStateException("Mesh part '" + name + "' quad " + q + " has " + values.size()
-                        + " floats, expected " + floatsPerQuad);
+                throw new IllegalStateException("Mesh part '" + name + "' quad " + q + " has " + values.size() + " floats, expected " + floatsPerQuad);
             }
             for (int corner = 0; corner < CORNERS_PER_QUAD; corner++) {
                 int vertex = q * CORNERS_PER_QUAD + corner;
                 int base = corner * stride;
                 for (int c = 0; c < POSITION_SIZE; c++) {
-                    positions[vertex * POSITION_SIZE + c] =
-                            values.get(base + positionOffset + c).getAsFloat();
+                    positions[vertex * POSITION_SIZE + c] = values.get(base + positionOffset + c).getAsFloat();
                 }
                 if (uvs != null) {
                     for (int c = 0; c < UV_SIZE; c++) {
-                        uvs[vertex * UV_SIZE + c] =
-                                values.get(base + uvOffset + c).getAsFloat();
+                        uvs[vertex * UV_SIZE + c] = values.get(base + uvOffset + c).getAsFloat();
                     }
                 }
                 if (normals != null) {
                     for (int c = 0; c < NORMAL_SIZE; c++) {
-                        normals[vertex * NORMAL_SIZE + c] =
-                                values.get(base + normalOffset + c).getAsFloat();
+                        normals[vertex * NORMAL_SIZE + c] = values.get(base + normalOffset + c).getAsFloat();
                     }
                 }
             }
         }
-        return new TCMeshPart(
-                name,
-                slot,
-                quadCount,
-                positions,
-                uvs,
-                normals != null ? normals : deriveFaceNormals(positions, quadCount));
+        return new TCMeshPart(name, slot, quadCount, positions, uvs, normals != null ? normals : deriveFaceNormals(positions, quadCount));
     }
 
     private static float[] deriveFaceNormals(float[] positions, int quadCount) {
@@ -135,14 +125,8 @@ public final class TCMeshLoader {
             int first = q * CORNERS_PER_QUAD * POSITION_SIZE;
             int second = first + POSITION_SIZE;
             int third = second + POSITION_SIZE;
-            edge1.set(
-                    positions[second] - positions[first],
-                    positions[second + 1] - positions[first + 1],
-                    positions[second + 2] - positions[first + 2]);
-            edge2.set(
-                    positions[third] - positions[first],
-                    positions[third + 1] - positions[first + 1],
-                    positions[third + 2] - positions[first + 2]);
+            edge1.set(positions[second] - positions[first], positions[second + 1] - positions[first + 1], positions[second + 2] - positions[first + 2]);
+            edge2.set(positions[third] - positions[first], positions[third + 1] - positions[first + 1], positions[third + 2] - positions[first + 2]);
             edge1.cross(edge2, normal);
             if (normal.lengthSquared() < DEGENERATE_QUAD_EPS) {
                 normal.set(0.0F, 1.0F, 0.0F);

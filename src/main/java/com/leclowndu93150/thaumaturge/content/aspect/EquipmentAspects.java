@@ -47,11 +47,7 @@ final class EquipmentAspects {
         } else if (item instanceof ProjectileWeaponItem) {
             bonus = with(bonus, registries, TCAspects.AVERSIO, BOW_AVERSIO);
             bonus = with(bonus, registries, TCAspects.VOLATUS, BOW_VOLATUS);
-        } else if (stack.is(ItemTags.PICKAXES)
-                || stack.is(ItemTags.AXES)
-                || stack.is(ItemTags.SHOVELS)
-                || stack.is(ItemTags.HOES)
-                || item instanceof ShearsItem) {
+        } else if (stack.is(ItemTags.PICKAXES) || stack.is(ItemTags.AXES) || stack.is(ItemTags.SHOVELS) || stack.is(ItemTags.HOES) || item instanceof ShearsItem) {
             int durability = stack.getMaxDamage();
             int amount;
             if (durability <= WOOD_TIER_DURABILITY) {
@@ -68,8 +64,7 @@ final class EquipmentAspects {
         return bonus;
     }
 
-    private static AspectList with(
-            AspectList list, HolderLookup.Provider registries, ResourceKey<IAspect> key, int amount) {
+    private static AspectList with(AspectList list, HolderLookup.Provider registries, ResourceKey<IAspect> key, int amount) {
         Holder<IAspect> aspect = Aspects.resolve(registries, key);
         if (aspect == null || amount <= 0) {
             return list;
@@ -84,8 +79,7 @@ final class EquipmentAspects {
         }
         double total = 0.0;
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            if (entry.attribute().equals(attribute)
-                    && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE) {
+            if (entry.attribute().equals(attribute) && entry.modifier().operation() == AttributeModifier.Operation.ADD_VALUE) {
                 total += entry.modifier().amount();
             }
         }

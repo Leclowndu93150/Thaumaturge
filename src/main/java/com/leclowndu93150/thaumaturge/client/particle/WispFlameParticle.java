@@ -14,16 +14,7 @@ public final class WispFlameParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private WispFlameParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            WispFlameParticleOptions options,
-            ParticleSheet sheet) {
+    private WispFlameParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, WispFlameParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         this.alpha = options.alpha();
@@ -45,16 +36,7 @@ public final class WispFlameParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("wisp_flame");
 
         @Override
-        public Particle createParticle(
-                WispFlameParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(WispFlameParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new WispFlameParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

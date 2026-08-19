@@ -11,12 +11,9 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record FrostFlakeParticleOptions(float scale) implements ParticleOptions {
 
-    public static final MapCodec<FrostFlakeParticleOptions> CODEC = Codec.FLOAT
-            .xmap(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale)
-            .fieldOf("scale");
+    public static final MapCodec<FrostFlakeParticleOptions> CODEC = Codec.FLOAT.xmap(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale).fieldOf("scale");
 
-    public static final StreamCodec<ByteBuf, FrostFlakeParticleOptions> STREAM_CODEC =
-            ByteBufCodecs.FLOAT.map(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale);
+    public static final StreamCodec<ByteBuf, FrostFlakeParticleOptions> STREAM_CODEC = ByteBufCodecs.FLOAT.map(FrostFlakeParticleOptions::new, FrostFlakeParticleOptions::scale);
 
     @Override
     public ParticleType<?> getType() {

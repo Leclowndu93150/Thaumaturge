@@ -40,11 +40,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 8.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.275)
-                .add(Attributes.ATTACK_DAMAGE, 2.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 8.0).add(Attributes.MOVEMENT_SPEED, 0.275).add(Attributes.ATTACK_DAMAGE, 2.0).add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
     @Override
@@ -96,8 +92,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
         boolean attacked = super.doHurtTarget(level, target);
         if (attacked && target instanceof LivingEntity living) {
             if (level.getRandom().nextFloat() < 0.3F) {
-                living.addEffect(
-                        new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, 0, true, false, false));
+                living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, 0, true, false, false));
             }
         }
         return attacked;

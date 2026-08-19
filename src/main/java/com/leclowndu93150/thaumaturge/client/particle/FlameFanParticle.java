@@ -11,16 +11,7 @@ public final class FlameFanParticle extends TCParticle {
     private static final int LIFETIME = 10;
     private static final float FRICTION = 0.75F;
 
-    private FlameFanParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            FlameFanParticleOptions options,
-            ParticleSheet sheet) {
+    private FlameFanParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, FlameFanParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.alpha = options.alpha();
         this.lifetime = LIFETIME;
@@ -39,16 +30,7 @@ public final class FlameFanParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("flame_fan");
 
         @Override
-        public Particle createParticle(
-                FlameFanParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(FlameFanParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new FlameFanParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

@@ -11,8 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
 
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
 
     protected SmelterScreen(MenuSmelter menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE, 176, 166);
@@ -29,43 +28,13 @@ public class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
             BlockEntitySmelter smelter = menu.blockEntity();
             int scaledBurnTime = smelter.getBurnTimeRemainingScaled(20);
             if (scaledBurnTime > 0) {
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TEXTURE,
-                        x + 80,
-                        y + 26 + 20 - scaledBurnTime,
-                        176,
-                        20 - scaledBurnTime,
-                        16,
-                        scaledBurnTime,
-                        256,
-                        256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 80, y + 26 + 20 - scaledBurnTime, 176, 20 - scaledBurnTime, 16, scaledBurnTime, 256, 256);
             }
 
             int scaledCookTime = smelter.getCookProgressScaled(46);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    x + 106,
-                    y + 13 + 46 - scaledCookTime,
-                    216,
-                    46 - scaledCookTime,
-                    9,
-                    scaledCookTime,
-                    256,
-                    256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 106, y + 13 + 46 - scaledCookTime, 216, 46 - scaledCookTime, 9, scaledCookTime, 256, 256);
             int visScaled = smelter.getVisScaled(46);
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    x + 61,
-                    y + 12 + 48 - visScaled,
-                    200,
-                    48 - visScaled,
-                    8,
-                    visScaled,
-                    256,
-                    256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 61, y + 12 + 48 - visScaled, 200, 48 - visScaled, 8, visScaled, 256, 256);
             graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 60, y + 8, 232, 0, 10, 55, 256, 256);
         }
     }

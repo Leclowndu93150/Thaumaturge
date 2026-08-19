@@ -38,16 +38,7 @@ public final class AspectFromStacksCategory implements IRecipeCategory<AspectFro
 
     private final IDrawable icon;
 
-    private final IDrawable resultSlot = new AlphaDrawable(
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
-            40,
-            6,
-            32,
-            32,
-            0,
-            18 * 4 + 5,
-            72,
-            72);
+    private final IDrawable resultSlot = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 40, 6, 32, 32, 0, 18 * 4 + 5, 72, 72);
 
     public AspectFromStacksCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.THAUMONOMICON.get()));
@@ -80,39 +71,23 @@ public final class AspectFromStacksCategory implements IRecipeCategory<AspectFro
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Wrapper recipe, IFocusGroup focuses) {
-        builder.addOutputSlot(8 + 81 - 9, 8)
-                .setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE)
-                .add(AspectIngredientType.INSTANCE, new AspectInstance(recipe.aspect(), 1));
+        builder.addOutputSlot(8 + 81 - 9, 8).setCustomRenderer(AspectIngredientType.INSTANCE, AspectIngredientRenderer.INSTANCE).add(AspectIngredientType.INSTANCE,
+                new AspectInstance(recipe.aspect(), 1));
 
         int slot = 0;
         int row = 9;
         for (ItemStack stack : recipe.stacks()) {
-            builder.addInputSlot((slot % row) * 18 - 18 * 3 - 21 + 81, (slot / row) * 18 + 32)
-                    .add(stack);
+            builder.addInputSlot((slot % row) * 18 - 18 * 3 - 21 + 81, (slot / row) * 18 + 32).add(stack);
             ++slot;
         }
     }
 
     @Override
-    public void draw(
-            Wrapper recipe,
-            IRecipeSlotsView recipeSlotsView,
-            GuiGraphicsExtractor guiGraphics,
-            double mouseX,
-            double mouseY) {
+    public void draw(Wrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         resultSlot.draw(guiGraphics);
-        guiGraphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_inner.png"),
-                5,
-                30,
-                0,
-                0,
-                163,
-                74,
-                256,
-                256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_inner.png"), 5, 30, 0, 0, 163, 74, 256, 256);
     }
 
-    public record Wrapper(Holder<IAspect> aspect, List<ItemStack> stacks) {}
+    public record Wrapper(Holder<IAspect> aspect, List<ItemStack> stacks) {
+    }
 }

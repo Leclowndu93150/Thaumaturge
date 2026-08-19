@@ -17,13 +17,7 @@ public final class GolemBuilderItemSpecialRenderer implements NoDataSpecialModel
     private static final float MESH_CENTER_Z = 0.5439F;
 
     @Override
-    public void submit(
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            int lightCoords,
-            int overlayCoords,
-            boolean hasFoil,
-            int outlineColor) {
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.scale(SCALE, SCALE, SCALE);

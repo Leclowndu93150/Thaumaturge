@@ -34,14 +34,10 @@ public abstract class PurifyingFluid extends BaseFlowingFluid {
         Vec3 motion = entity.getDeltaMovement();
         double damp = 1.0 - quanta / 2.0;
         entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
-        if (!level.isClientSide()
-                && fs.isSource()
-                && entity instanceof ServerPlayer player
-                && !player.hasEffect(TCMobEffects.WARP_WARD)) {
+        if (!level.isClientSide() && fs.isSource() && entity instanceof ServerPlayer player && !player.hasEffect(TCMobEffects.WARP_WARD)) {
             int permanent = WarpHelper.getWarp(player).get(WarpType.PERMANENT);
             int div = permanent > 0 ? Math.max(1, (int) Math.sqrt(permanent)) : 1;
-            player.addEffect(new MobEffectInstance(
-                    TCMobEffects.WARP_WARD, Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
+            player.addEffect(new MobEffectInstance(TCMobEffects.WARP_WARD, Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
     }

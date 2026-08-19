@@ -54,10 +54,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class EntityArcaneBore extends EntityOwnedConstruct {
-    private static final EntityDataAccessor<Direction> FACING =
-            SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.DIRECTION);
-    private static final EntityDataAccessor<Boolean> ACTIVE =
-            SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Direction> FACING = SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.DIRECTION);
+    private static final EntityDataAccessor<Boolean> ACTIVE = SynchedEntityData.defineId(EntityArcaneBore.class, EntityDataSerializers.BOOLEAN);
 
     private static final int HEAL_INTERVAL = 50;
     private static final int RECHARGE_INTERVAL = 10;
@@ -133,13 +131,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
                 Effects.boreDig((ServerLevel) level(), digTarget, this, digDelayMax);
             } else {
                 level().broadcastEntityEvent(this, EVENT_DIG_STOP);
-                getLookControl()
-                        .setLookAt(
-                                getX() + facing.getStepX() * 2,
-                                getY() + facing.getStepY() * 2 + getEyeHeight(),
-                                getZ() + facing.getStepZ() * 2,
-                                10.0F,
-                                33.0F);
+                getLookControl().setLookAt(getX() + facing.getStepX() * 2, getY() + facing.getStepY() * 2 + getEyeHeight(), getZ() + facing.getStepZ() * 2, 10.0F, 33.0F);
             }
         }
     }
@@ -173,10 +165,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             return false;
         }
         for (Tool.Rule rule : tool.rules()) {
-            if (rule.blocks()
-                    .unwrapKey()
-                    .map(key -> key.equals(BlockTags.MINEABLE_WITH_PICKAXE))
-                    .orElse(false)) {
+            if (rule.blocks().unwrapKey().map(key -> key.equals(BlockTags.MINEABLE_WITH_PICKAXE)).orElse(false)) {
                 return true;
             }
         }
@@ -203,8 +192,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     }
 
     public int getDigDepth() {
-        return getDigRadius() * 8
-                + InfusionEnchantmentHelper.level(getMainHandItem(), InfusionEnchantment.BURROWING) * 16;
+        return getDigRadius() * 8 + InfusionEnchantmentHelper.level(getMainHandItem(), InfusionEnchantment.BURROWING) * 16;
     }
 
     public int getFortune() {
@@ -212,8 +200,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             return 0;
         }
         ItemStack held = getMainHandItem();
-        int fortune = EnchantmentHelper.getItemEnchantmentLevel(
-                level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), held);
+        int fortune = EnchantmentHelper.getItemEnchantmentLevel(level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), held);
         return Math.max(fortune, InfusionEnchantmentHelper.level(held, InfusionEnchantment.SOUNDING));
     }
 
@@ -223,9 +210,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
         }
         ItemStack held = getMainHandItem();
         int speed = (int) (held.getDestroySpeed(state) / 2.0F);
-        speed += EnchantmentHelper.getItemEnchantmentLevel(
-                level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY),
-                held);
+        speed += EnchantmentHelper.getItemEnchantmentLevel(level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY), held);
         return speed;
     }
 
@@ -235,13 +220,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
 
     public boolean hasSilkTouch() {
         ItemStack held = getMainHandItem();
-        return !held.isEmpty()
-                && EnchantmentHelper.getItemEnchantmentLevel(
-                                level().registryAccess()
-                                        .lookupOrThrow(Registries.ENCHANTMENT)
-                                        .getOrThrow(Enchantments.SILK_TOUCH),
-                                held)
-                        > 0;
+        return !held.isEmpty() && EnchantmentHelper.getItemEnchantmentLevel(level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH), held) > 0;
     }
 
     private boolean dig() {
@@ -270,8 +249,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     }
 
     private void collectAndEjectDrops(ServerLevel serverLevel, BlockPos target, BlockState state) {
-        List<ItemEntity> nearby =
-                serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(target).inflate(1.5, 1.5, 1.5));
+        List<ItemEntity> nearby = serverLevel.getEntitiesOfClass(ItemEntity.class, new AABB(target).inflate(1.5, 1.5, 1.5));
         int refining = getRefining();
         boolean silk = hasSilkTouch();
         for (ItemEntity item : nearby) {
@@ -316,8 +294,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
             }
         }
         Direction back = getFacing().getOpposite();
-        ItemEntity entity = new ItemEntity(
-                serverLevel, getX() + back.getStepX() * 0.75, getY() + 0.5, getZ() + back.getStepZ() * 0.75, stack);
+        ItemEntity entity = new ItemEntity(serverLevel, getX() + back.getStepX() * 0.75, getY() + 0.5, getZ() + back.getStepZ() * 0.75, stack);
         serverLevel.addFreshEntity(entity);
     }
 
@@ -338,33 +315,21 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     private boolean acquireTargetThrough(BlockPos scanPoint) {
         Direction facing = getFacing();
         BlockPos end = scanPoint.relative(facing, getDigDepth());
-        BlockHitResult hit = level().clip(new ClipContext(
-                Vec3.atCenterOf(scanPoint),
-                Vec3.atCenterOf(end),
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.NONE,
-                this));
+        BlockHitResult hit = level().clip(new ClipContext(Vec3.atCenterOf(scanPoint), Vec3.atCenterOf(end), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
         if (hit.getType() == HitResult.Type.MISS) {
             return false;
         }
-        Vec3 digger = new Vec3(
-                getX() + facing.getStepX(), getY() + getEyeHeight() + facing.getStepY(), getZ() + facing.getStepZ());
-        hit = level().clip(new ClipContext(
-                digger, Vec3.atCenterOf(hit.getBlockPos()), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+        Vec3 digger = new Vec3(getX() + facing.getStepX(), getY() + getEyeHeight() + facing.getStepY(), getZ() + facing.getStepZ());
+        hit = level().clip(new ClipContext(digger, Vec3.atCenterOf(hit.getBlockPos()), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
         if (hit.getType() == HitResult.Type.MISS) {
             return false;
         }
         BlockPos target = hit.getBlockPos();
         BlockState state = level().getBlockState(target);
-        if (state.getDestroySpeed(level(), target) <= -1.0F
-                || state.getCollisionShape(level(), target).isEmpty()) {
+        if (state.getDestroySpeed(level(), target) <= -1.0F || state.getCollisionShape(level(), target).isEmpty()) {
             return false;
         }
-        digDelay = Math.max(
-                1,
-                Math.max(
-                        10 - getDigSpeed(state),
-                        (int) (state.getDestroySpeed(level(), target) * 2.0F) - getDigSpeed(state) * 2));
+        digDelay = Math.max(1, Math.max(10 - getDigSpeed(state), (int) (state.getDestroySpeed(level(), target) * 2.0F) - getDigSpeed(state) * 2));
         digDelayMax = digDelay;
         if (target.equals(blockPosition()) || target.equals(blockPosition().below())) {
             return false;
@@ -399,10 +364,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     }
 
     private Vec3 spiralScanPoint(Direction facing) {
-        Vec3 source = new Vec3(
-                (int) getX() + 0.5 + facing.getStepX(),
-                getY() + facing.getStepY() + getEyeHeight(),
-                (int) getZ() + 0.5 + facing.getStepZ());
+        Vec3 source = new Vec3((int) getX() + 0.5 + facing.getStepX(), getY() + facing.getStepY() + getEyeHeight(), (int) getZ() + 0.5 + facing.getStepZ());
         Vec3 offset = new Vec3(0.0, currentRadius, 0.0);
         offset = rotateAroundZ(offset, spiral / 180.0F * (float) Math.PI);
         offset = rotateAroundY(offset, (float) (Math.PI / 2) * facing.getStepX());
@@ -431,8 +393,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct {
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.getEntity() instanceof LivingEntity living && isOwner(living)) {
-            Direction face = Direction.getApproximateNearest(
-                    living.getX() - getX(), living.getY() - getY(), living.getZ() - getZ());
+            Direction face = Direction.getApproximateNearest(living.getX() - getX(), living.getY() - getY(), living.getZ() - getZ());
             if (face != Direction.DOWN) {
                 setFacing(face);
             }

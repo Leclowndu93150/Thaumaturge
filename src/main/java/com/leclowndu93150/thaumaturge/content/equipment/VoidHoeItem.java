@@ -11,8 +11,7 @@ import net.minecraft.world.item.ToolMaterial;
 import org.jspecify.annotations.Nullable;
 
 public final class VoidHoeItem extends HoeItem implements IWarpingGear {
-    public VoidHoeItem(
-            ToolMaterial material, float attackDamageBaseline, float attackSpeedBaseline, Properties properties) {
+    public VoidHoeItem(ToolMaterial material, float attackDamageBaseline, float attackSpeedBaseline, Properties properties) {
         super(material, attackDamageBaseline, attackSpeedBaseline, properties);
     }
 

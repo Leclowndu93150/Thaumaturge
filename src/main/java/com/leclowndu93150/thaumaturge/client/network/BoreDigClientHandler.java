@@ -23,8 +23,7 @@ public final class BoreDigClientHandler {
             if (bore == null || state.isAir()) {
                 return;
             }
-            BoreDigEffectManager.INSTANCE.add(
-                    new BoreDigEffect(level, payload.target(), payload.boreEntityId(), state, payload.delay()));
+            BoreDigEffectManager.INSTANCE.add(new BoreDigEffect(level, payload.target(), payload.boreEntityId(), state, payload.delay()));
         });
     }
 }

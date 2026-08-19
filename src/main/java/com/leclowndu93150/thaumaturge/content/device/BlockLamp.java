@@ -23,10 +23,7 @@ public abstract class BlockLamp extends BaseEntityBlock {
 
     protected BlockLamp(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(getStateDefinition()
-                .any()
-                .setValue(BlockStateProperties.FACING, Direction.DOWN)
-                .setValue(BlockStateProperties.ENABLED, false));
+        registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.DOWN).setValue(BlockStateProperties.ENABLED, false));
     }
 
     @Override
@@ -41,9 +38,7 @@ public abstract class BlockLamp extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite())
-                .setValue(BlockStateProperties.ENABLED, false);
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite()).setValue(BlockStateProperties.ENABLED, false);
     }
 
     @Override
@@ -53,15 +48,7 @@ public abstract class BlockLamp extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (!canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }

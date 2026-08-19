@@ -19,7 +19,8 @@ import org.jspecify.annotations.Nullable;
 
 public class JarItemSpecialRenderer implements SpecialModelRenderer<JarItemSpecialRenderer.JarFill> {
 
-    public record JarFill(AspectInstance contents, int capacity) {}
+    public record JarFill(AspectInstance contents, int capacity) {
+    }
 
     private final BakingContext context;
 
@@ -28,23 +29,11 @@ public class JarItemSpecialRenderer implements SpecialModelRenderer<JarItemSpeci
     }
 
     @Override
-    public void submit(
-            @Nullable JarFill fill,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            int lightCoords,
-            int i1,
-            boolean b,
-            int i2) {
-        if (fill == null) return;
+    public void submit(@Nullable JarFill fill, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int i1, boolean b, int i2) {
+        if (fill == null)
+            return;
         AspectInstance contents = fill.contents();
-        JarRenderer.submitFluid(
-                contents.amount(),
-                fill.capacity(),
-                contents.aspect().value().color(),
-                lightCoords,
-                context.sprites().get(JarRenderer.ANIMATED_GLOW_SPRITE),
-                poseStack,
+        JarRenderer.submitFluid(contents.amount(), fill.capacity(), contents.aspect().value().color(), lightCoords, context.sprites().get(JarRenderer.ANIMATED_GLOW_SPRITE), poseStack,
                 submitNodeCollector);
     }
 
@@ -56,11 +45,9 @@ public class JarItemSpecialRenderer implements SpecialModelRenderer<JarItemSpeci
     @Override
     public @Nullable JarFill extractArgument(ItemStack itemStack) {
         var essentiaList = itemStack.get(TCDataComponents.ESSENTIA_CONTENTS.get());
-        if (essentiaList == null || essentiaList.isEmpty()) return null;
-        int capacity =
-                itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IEssentiaJar jar
-                        ? jar.jarCapacity()
-                        : IEssentiaJar.DEFAULT_CAPACITY;
+        if (essentiaList == null || essentiaList.isEmpty())
+            return null;
+        int capacity = itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IEssentiaJar jar ? jar.jarCapacity() : IEssentiaJar.DEFAULT_CAPACITY;
         return new JarFill(essentiaList.contents().entries().getFirst(), capacity);
     }
 

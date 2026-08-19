@@ -32,19 +32,13 @@ public final class TaintSeedModel extends EntityModel<TaintSeedRenderState> {
 
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
-        PartDefinition parent = mesh.getRoot()
-                .addOrReplaceChild(
-                        "base",
-                        CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
-                        PartPose.offset(0.0F, 12.0F, 0.0F));
+        PartDefinition parent = mesh.getRoot().addOrReplaceChild("base", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F), PartPose.offset(0.0F, 12.0F, 0.0F));
         for (int k = 0; k < LENGTH - 1; k++) {
             CubeListBuilder cube;
             if (k < LENGTH - 4) {
                 cube = CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F);
             } else {
-                cube = CubeListBuilder.create()
-                        .texOffs(0, k == LENGTH - 4 ? 48 : 56)
-                        .addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F);
+                cube = CubeListBuilder.create().texOffs(0, k == LENGTH - 4 ? 48 : 56).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F);
             }
             parent = parent.addOrReplaceChild("seg" + k, cube, PartPose.offset(0.0F, SEGMENT_BASE_Y[k], 0.0F));
         }

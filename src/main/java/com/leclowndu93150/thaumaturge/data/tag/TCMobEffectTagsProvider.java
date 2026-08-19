@@ -16,29 +16,10 @@ public final class TCMobEffectTagsProvider extends KeyTagProvider<MobEffect> {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
-        tag(TCEffectTags.MANA_BEAN_EFFECTS)
-                .add(MobEffects.SPEED.getKey())
-                .add(MobEffects.SLOWNESS.getKey())
-                .add(MobEffects.HASTE.getKey())
-                .add(MobEffects.MINING_FATIGUE.getKey())
-                .add(MobEffects.STRENGTH.getKey())
-                .add(MobEffects.INSTANT_HEALTH.getKey())
-                .add(MobEffects.INSTANT_DAMAGE.getKey())
-                .add(MobEffects.JUMP_BOOST.getKey())
-                .add(MobEffects.NAUSEA.getKey())
-                .add(MobEffects.REGENERATION.getKey())
-                .add(MobEffects.RESISTANCE.getKey())
-                .add(MobEffects.FIRE_RESISTANCE.getKey())
-                .add(MobEffects.WATER_BREATHING.getKey())
-                .add(MobEffects.INVISIBILITY.getKey())
-                .add(MobEffects.BLINDNESS.getKey())
-                .add(MobEffects.NIGHT_VISION.getKey())
-                .add(MobEffects.HUNGER.getKey())
-                .add(MobEffects.WEAKNESS.getKey())
-                .add(MobEffects.POISON.getKey())
-                .add(MobEffects.WITHER.getKey())
-                .add(MobEffects.HEALTH_BOOST.getKey())
-                .add(MobEffects.ABSORPTION.getKey())
-                .add(MobEffects.SATURATION.getKey());
+        tag(TCEffectTags.MANA_BEAN_EFFECTS).add(MobEffects.SPEED.getKey()).add(MobEffects.SLOWNESS.getKey()).add(MobEffects.HASTE.getKey()).add(MobEffects.MINING_FATIGUE.getKey())
+                .add(MobEffects.STRENGTH.getKey()).add(MobEffects.INSTANT_HEALTH.getKey()).add(MobEffects.INSTANT_DAMAGE.getKey()).add(MobEffects.JUMP_BOOST.getKey()).add(MobEffects.NAUSEA.getKey())
+                .add(MobEffects.REGENERATION.getKey()).add(MobEffects.RESISTANCE.getKey()).add(MobEffects.FIRE_RESISTANCE.getKey()).add(MobEffects.WATER_BREATHING.getKey())
+                .add(MobEffects.INVISIBILITY.getKey()).add(MobEffects.BLINDNESS.getKey()).add(MobEffects.NIGHT_VISION.getKey()).add(MobEffects.HUNGER.getKey()).add(MobEffects.WEAKNESS.getKey())
+                .add(MobEffects.POISON.getKey()).add(MobEffects.WITHER.getKey()).add(MobEffects.HEALTH_BOOST.getKey()).add(MobEffects.ABSORPTION.getKey()).add(MobEffects.SATURATION.getKey());
     }
 }

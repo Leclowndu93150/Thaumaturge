@@ -14,15 +14,10 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
 public final class TaintSeedRegistry extends SavedData {
-    public static final Codec<TaintSeedRegistry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                    BlockPos.CODEC.listOf().fieldOf("seeds").forGetter(reg -> Collections.unmodifiableList(reg.seeds)))
-            .apply(builder, list -> new TaintSeedRegistry(new ArrayList<>(list))));
+    public static final Codec<TaintSeedRegistry> CODEC = RecordCodecBuilder.create(builder -> builder
+            .group(BlockPos.CODEC.listOf().fieldOf("seeds").forGetter(reg -> Collections.unmodifiableList(reg.seeds))).apply(builder, list -> new TaintSeedRegistry(new ArrayList<>(list))));
 
-    public static final SavedDataType<TaintSeedRegistry> TYPE = new SavedDataType<>(
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "taint_seeds"),
-            TaintSeedRegistry::new,
-            CODEC,
-            DataFixTypes.LEVEL);
+    public static final SavedDataType<TaintSeedRegistry> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "taint_seeds"), TaintSeedRegistry::new, CODEC, DataFixTypes.LEVEL);
 
     private final List<BlockPos> seeds;
 

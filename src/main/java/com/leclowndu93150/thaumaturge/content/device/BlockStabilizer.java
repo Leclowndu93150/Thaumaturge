@@ -24,10 +24,7 @@ public final class BlockStabilizer extends BaseEntityBlock {
         super(properties);
     }
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            box(1.0, 0.0, 1.0, 15.0, 4.0, 15.0),
-            box(3.0, 4.0, 3.0, 13.0, 13.0, 13.0),
-            box(5.0, 8.0, 5.0, 11.0, 16.0, 11.0));
+    private static final VoxelShape SHAPE = Shapes.or(box(1.0, 0.0, 1.0, 15.0, 4.0, 15.0), box(3.0, 4.0, 3.0, 13.0, 13.0, 13.0), box(5.0, 8.0, 5.0, 11.0, 16.0, 11.0));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -55,8 +52,7 @@ public final class BlockStabilizer extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

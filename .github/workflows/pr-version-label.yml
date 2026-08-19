@@ -1,0 +1,30 @@
+name: PR version label
+
+on:
+  pull_request_target:
+    types: [opened, reopened, edited]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply the version label matching the target branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          case "$BASE" in
+            main) keep=26.1.2; drop=1.21.1 ;;
+            1.21.1) keep=1.21.1; drop=26.1.2 ;;
+            *)
+              echo "PR #$NUMBER targets '$BASE' - no version label for that branch"
+              exit 0
+              ;;
+          esac
+          echo "PR #$NUMBER targets $BASE, labelling as $keep"
+          gh pr edit "$NUMBER" --repo "$REPO" --add-label "$keep" --remove-label "$drop"

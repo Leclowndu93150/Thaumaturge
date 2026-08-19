@@ -26,8 +26,7 @@ public enum ResearchFlag implements StringRepresentable {
     public static final Codec<ResearchFlag> CODEC = StringRepresentable.fromEnum(ResearchFlag::values);
 
     /** Network codec for payload sync. */
-    public static final StreamCodec<ByteBuf, ResearchFlag> STREAM_CODEC =
-            ByteBufCodecs.idMapper(i -> values()[i], ResearchFlag::ordinal);
+    public static final StreamCodec<ByteBuf, ResearchFlag> STREAM_CODEC = ByteBufCodecs.idMapper(i -> values()[i], ResearchFlag::ordinal);
 
     private final String name;
 

@@ -12,16 +12,7 @@ public final class PrimalFlareParticle extends TCParticle {
     private static final float FRICTION = 0.9F;
     private static final float PEAK_ALPHA = 0.8F;
 
-    private PrimalFlareParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            SimpleParticleType options,
-            ParticleSheet sheet) {
+    private PrimalFlareParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, SimpleParticleType options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.rCol = this.random.nextFloat();
         this.gCol = this.random.nextFloat();
@@ -42,16 +33,7 @@ public final class PrimalFlareParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("primal_flare");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new PrimalFlareParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

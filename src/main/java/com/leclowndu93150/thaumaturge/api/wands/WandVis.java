@@ -25,12 +25,9 @@ import net.minecraft.util.ExtraCodecs;
 public record WandVis(Map<ResourceKey<IAspect>, Integer> centivis) {
     public static final WandVis EMPTY = new WandVis(Map.of());
 
-    public static final Codec<WandVis> CODEC = Codec.unboundedMap(
-                    ResourceKey.codec(IAspect.REGISTRY_KEY), ExtraCodecs.NON_NEGATIVE_INT)
-            .xmap(WandVis::new, WandVis::centivis);
+    public static final Codec<WandVis> CODEC = Codec.unboundedMap(ResourceKey.codec(IAspect.REGISTRY_KEY), ExtraCodecs.NON_NEGATIVE_INT).xmap(WandVis::new, WandVis::centivis);
 
-    public static final StreamCodec<ByteBuf, WandVis> STREAM_CODEC = ByteBufCodecs.map(
-                    LinkedHashMap::new, ResourceKey.streamCodec(IAspect.REGISTRY_KEY), ByteBufCodecs.VAR_INT)
+    public static final StreamCodec<ByteBuf, WandVis> STREAM_CODEC = ByteBufCodecs.map(LinkedHashMap::new, ResourceKey.streamCodec(IAspect.REGISTRY_KEY), ByteBufCodecs.VAR_INT)
             .map(map -> new WandVis(Map.copyOf(map)), wandVis -> new LinkedHashMap<>(wandVis.centivis));
 
     public WandVis {

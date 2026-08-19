@@ -35,9 +35,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockMirror extends BaseEntityBlock implements IEssentiaStreamPort {
-    public static final MapCodec<BlockMirror> CODEC = RecordCodecBuilder.mapCodec(
-            inst -> inst.group(propertiesCodec(), Codec.BOOL.fieldOf("essentia").forGetter(BlockMirror::isEssentia))
-                    .apply(inst, BlockMirror::new));
+    public static final MapCodec<BlockMirror> CODEC = RecordCodecBuilder
+            .mapCodec(inst -> inst.group(propertiesCodec(), Codec.BOOL.fieldOf("essentia").forGetter(BlockMirror::isEssentia)).apply(inst, BlockMirror::new));
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     private static final double PANE_SURFACE = -0.34;
@@ -90,14 +89,12 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
     @Override
-    public StreamPort essentiaStreamPort(
-            BlockGetter level, BlockPos pos, BlockState state, Vec3 farEnd, boolean outgoing) {
+    public StreamPort essentiaStreamPort(BlockGetter level, BlockPos pos, BlockState state, Vec3 farEnd, boolean outgoing) {
         Direction facing = state.getValue(FACING);
         Vec3 normal = new Vec3(facing.getStepX(), facing.getStepY(), facing.getStepZ());
         Vec3 center = Vec3.atCenterOf(pos);
@@ -118,15 +115,7 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction direction,
-            BlockPos neighborPos,
-            BlockState neighborState,
-            RandomSource random) {
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
         if (!state.canSurvive(level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -134,18 +123,8 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
-        if (!level.isClientSide()
-                && !essentia
-                && entity instanceof ItemEntity itemEntity
-                && entity.isAlive()
-                && !entity.isOnPortalCooldown()
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!level.isClientSide() && !essentia && entity instanceof ItemEntity itemEntity && entity.isAlive() && !entity.isOnPortalCooldown()
                 && level.getBlockEntity(pos) instanceof BlockEntityMirror mirror) {
             mirror.transport(itemEntity);
         }
@@ -157,20 +136,13 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }
         if (essentia) {
-            return createTickerHelper(
-                    type,
-                    TCBlockEntities.MIRROR_ESSENTIA.get(),
-                    (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
+            return createTickerHelper(type, TCBlockEntities.MIRROR_ESSENTIA.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
         }
-        return createTickerHelper(
-                type,
-                TCBlockEntities.MIRROR.get(),
-                (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
+        return createTickerHelper(type, TCBlockEntities.MIRROR.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
     }
 }

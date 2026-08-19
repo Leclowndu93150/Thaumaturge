@@ -139,16 +139,13 @@ public final class ScanningManager {
             player.sendOverlayMessage(failure.copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
         } else if (!suppress) {
             if (found) {
-                player.sendOverlayMessage(Component.translatable("tc.knownobject")
-                        .withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC));
+                player.sendOverlayMessage(Component.translatable("tc.knownobject").withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC));
             } else {
-                player.sendOverlayMessage(Component.translatable("tc.unknownobject")
-                        .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+                player.sendOverlayMessage(Component.translatable("tc.unknownobject").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
             }
         }
         if (target instanceof BlockPos pos) {
-            ResourceHandler<ItemResource> handler =
-                    player.level().getCapability(Capabilities.Item.BLOCK, pos, Direction.UP);
+            ResourceHandler<ItemResource> handler = player.level().getCapability(Capabilities.Item.BLOCK, pos, Direction.UP);
             if (handler != null) {
                 int scanned = 0;
                 for (int index = 0; index < handler.size(); index++) {
@@ -158,8 +155,7 @@ public final class ScanningManager {
                         scanned++;
                     }
                     if (scanned >= MAX_CONTAINER_SCANS) {
-                        player.sendOverlayMessage(Component.translatable("tc.invtoolarge")
-                                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+                        player.sendOverlayMessage(Component.translatable("tc.invtoolarge").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
                         break;
                     }
                 }
@@ -194,12 +190,7 @@ public final class ScanningManager {
     }
 
     private static Iterable<ScanEntry> scanEntries(Player player) {
-        return player.level()
-                .registryAccess()
-                .lookup(ScanEntry.REGISTRY_KEY)
-                .<Iterable<ScanEntry>>map(registry ->
-                        registry.listElements().map(Holder.Reference::value).toList())
-                .orElse(List.of());
+        return player.level().registryAccess().lookup(ScanEntry.REGISTRY_KEY).<Iterable<ScanEntry>>map(registry -> registry.listElements().map(Holder.Reference::value).toList()).orElse(List.of());
     }
 
     /**

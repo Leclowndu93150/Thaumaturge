@@ -32,8 +32,7 @@ public final class EnchantMining {
         }
         BlockState state = level.getBlockState(pos);
         if (!skipEvent) {
-            BreakBlockEvent event = CommonHooks.fireBlockBreak(
-                    level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
+            BreakBlockEvent event = CommonHooks.fireBlockBreak(level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
             if (event.isCanceled()) {
                 return false;
             }
@@ -56,10 +55,7 @@ public final class EnchantMining {
                 for (int yy = -LOG_UPDATE_RADIUS; yy <= LOG_UPDATE_RADIUS; yy++) {
                     for (int zz = -LOG_UPDATE_RADIUS; zz <= LOG_UPDATE_RADIUS; zz++) {
                         BlockPos p = furthest.offset(xx, yy, zz);
-                        level.scheduleTick(
-                                p,
-                                level.getBlockState(p).getBlock(),
-                                LOG_UPDATE_DELAY_BASE + level.getRandom().nextInt(LOG_UPDATE_DELAY_RANGE));
+                        level.scheduleTick(p, level.getBlockState(p).getBlock(), LOG_UPDATE_DELAY_BASE + level.getRandom().nextInt(LOG_UPDATE_DELAY_RANGE));
                     }
                 }
             }
@@ -77,8 +73,7 @@ public final class EnchantMining {
                 for (int yy = reach; yy >= -reach && !advanced; yy--) {
                     for (int zz = -reach; zz <= reach && !advanced; zz++) {
                         BlockPos candidate = best.offset(xx, yy, zz);
-                        if (Math.abs(candidate.getX() - origin.getX()) > SEARCH_LIMIT_HORIZONTAL
-                                || Math.abs(candidate.getY() - origin.getY()) > SEARCH_LIMIT_VERTICAL
+                        if (Math.abs(candidate.getX() - origin.getX()) > SEARCH_LIMIT_HORIZONTAL || Math.abs(candidate.getY() - origin.getY()) > SEARCH_LIMIT_VERTICAL
                                 || Math.abs(candidate.getZ() - origin.getZ()) > SEARCH_LIMIT_HORIZONTAL) {
                             return best;
                         }

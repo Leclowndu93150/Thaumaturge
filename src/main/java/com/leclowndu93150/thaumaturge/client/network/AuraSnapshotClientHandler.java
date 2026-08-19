@@ -9,7 +9,6 @@ public final class AuraSnapshotClientHandler {
     private AuraSnapshotClientHandler() {}
 
     public static void handle(ClientboundAuraSnapshotPayload payload, IPayloadContext ctx) {
-        ctx.enqueueWork(() -> ClientAuraCache.put(
-                new ChunkPos(payload.chunkX(), payload.chunkZ()), payload.base(), payload.vis(), payload.flux()));
+        ctx.enqueueWork(() -> ClientAuraCache.put(new ChunkPos(payload.chunkX(), payload.chunkZ()), payload.base(), payload.vis(), payload.flux()));
     }
 }

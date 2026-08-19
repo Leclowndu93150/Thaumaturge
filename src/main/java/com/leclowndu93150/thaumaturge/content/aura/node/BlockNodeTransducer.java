@@ -37,12 +37,10 @@ public final class BlockNodeTransducer extends Block implements EntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() || type != TCBlockEntities.NODE_TRANSDUCER.get()) {
             return null;
         }
-        return (tickLevel, pos, tickState, transducer) ->
-                ((BlockEntityNodeTransducer) transducer).serverTick(tickLevel, pos);
+        return (tickLevel, pos, tickState, transducer) -> ((BlockEntityNodeTransducer) transducer).serverTick(tickLevel, pos);
     }
 }

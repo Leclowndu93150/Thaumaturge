@@ -14,18 +14,12 @@ public record TaintFumeParticleOptions(int color, float scale) implements Partic
 
     public static final int RANDOM_COLOR = -1;
 
-    public static final MapCodec<TaintFumeParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    Codec.INT.fieldOf("color").forGetter(TaintFumeParticleOptions::color),
-                    Codec.FLOAT.fieldOf("scale").forGetter(TaintFumeParticleOptions::scale))
-            .apply(inst, TaintFumeParticleOptions::new));
+    public static final MapCodec<TaintFumeParticleOptions> CODEC = RecordCodecBuilder
+            .mapCodec(inst -> inst.group(Codec.INT.fieldOf("color").forGetter(TaintFumeParticleOptions::color), Codec.FLOAT.fieldOf("scale").forGetter(TaintFumeParticleOptions::scale)).apply(inst,
+                    TaintFumeParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, TaintFumeParticleOptions> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.INT,
-                    TaintFumeParticleOptions::color,
-                    ByteBufCodecs.FLOAT,
-                    TaintFumeParticleOptions::scale,
-                    TaintFumeParticleOptions::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, TaintFumeParticleOptions> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT, TaintFumeParticleOptions::color, ByteBufCodecs.FLOAT,
+            TaintFumeParticleOptions::scale, TaintFumeParticleOptions::new);
 
     @Override
     public ParticleType<?> getType() {

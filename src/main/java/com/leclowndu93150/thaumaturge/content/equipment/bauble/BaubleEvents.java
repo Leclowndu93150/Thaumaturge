@@ -38,9 +38,7 @@ public final class BaubleEvents {
 
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)
-                || !ModList.get().isLoaded(TCIds.CURIOS)
-                || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TCIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
             return;
         }
         long lastJump = player.getData(TCAttachments.CLOUD_JUMP_TIME);
@@ -53,8 +51,7 @@ public final class BaubleEvents {
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)
-                || !ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TCIds.CURIOS)) {
             return;
         }
         ItemStack charm = ThaumaturgeCuriosCompat.extractCurio(player, TCItems.CHARM_UNDYING.get());
@@ -66,8 +63,7 @@ public final class BaubleEvents {
         player.setHealth(1.0F);
         player.removeAllEffects();
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, UNDYING_REGEN_TICKS, UNDYING_EFFECT_AMPLIFIER));
-        player.addEffect(
-                new MobEffectInstance(MobEffects.ABSORPTION, UNDYING_ABSORPTION_TICKS, UNDYING_EFFECT_AMPLIFIER));
+        player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, UNDYING_ABSORPTION_TICKS, UNDYING_EFFECT_AMPLIFIER));
         player.level().broadcastEntityEvent(player, TOTEM_EVENT);
         event.setCanceled(true);
     }
@@ -75,15 +71,12 @@ public final class BaubleEvents {
     @SubscribeEvent
     public static void onPickupXp(PlayerXpEvent.PickupXp event) {
         Player player = event.getEntity();
-        if (!(player instanceof ServerPlayer serverPlayer)
-                || event.getOrb().getValue() <= 1
-                || !ModList.get().isLoaded(TCIds.CURIOS)
+        if (!(player instanceof ServerPlayer serverPlayer) || event.getOrb().getValue() <= 1 || !ModList.get().isLoaded(TCIds.CURIOS)
                 || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CURIOSITY_BAND.get())) {
             return;
         }
         int drained = event.getOrb().getValue() / 2;
-        ((ExperienceOrbAccessor) event.getOrb())
-                .thaumaturge$setValue(event.getOrb().getValue() - drained);
+        ((ExperienceOrbAccessor) event.getOrb()).thaumaturge$setValue(event.getOrb().getValue() - drained);
         float roll = player.getRandom().nextFloat();
         if (roll < THEORY_CHANCE_PER_XP * drained) {
             ResearchGrants.grantConvertedKnowledge(serverPlayer, KnowledgeType.THEORY, 1);

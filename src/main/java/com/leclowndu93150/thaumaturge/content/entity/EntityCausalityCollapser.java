@@ -51,33 +51,14 @@ public final class EntityCausalityCollapser extends ThrowableItemProjectile {
         if (this.level().isClientSide()) {
             for (int i = 0; i < TRAIL_STEPS; i++) {
                 double coeff = (double) i / TRAIL_STEPS;
-                this.level()
-                        .addParticle(
-                                Effects.fireMoteData(
-                                        this.random,
-                                        TRAIL_JITTER * (this.random.nextFloat() - 0.5F),
-                                        TRAIL_JITTER * (this.random.nextFloat() - 0.5F),
-                                        TRAIL_JITTER * (this.random.nextFloat() - 0.5F),
-                                        0.8F + this.random.nextFloat() * 0.2F,
-                                        0.3F + this.random.nextFloat() * 0.1F,
-                                        this.random.nextFloat() * 0.1F,
-                                        MOTE_ALPHA,
-                                        MOTE_SCALE),
-                                this.xOld + (this.getX() - this.xOld) * coeff,
-                                this.yOld + (this.getY() - this.yOld) * coeff + this.getBbHeight() / 2.0F,
-                                this.zOld + (this.getZ() - this.zOld) * coeff,
-                                0.0,
-                                0.0,
-                                0.0);
-                this.level()
-                        .addParticle(
-                                new ShieldSparkParticleOptions(0xFFFFFF, SPARK_ALPHA, SPARK_SCALE, SPARK_AGE, false),
-                                this.getX() + this.random.nextGaussian() * SPARK_SPREAD,
-                                this.getY() + this.random.nextGaussian() * SPARK_SPREAD,
-                                this.getZ() + this.random.nextGaussian() * SPARK_SPREAD,
-                                0.0,
-                                0.0,
-                                0.0);
+                this.level().addParticle(
+                        Effects.fireMoteData(this.random, TRAIL_JITTER * (this.random.nextFloat() - 0.5F), TRAIL_JITTER * (this.random.nextFloat() - 0.5F),
+                                TRAIL_JITTER * (this.random.nextFloat() - 0.5F), 0.8F + this.random.nextFloat() * 0.2F, 0.3F + this.random.nextFloat() * 0.1F, this.random.nextFloat() * 0.1F,
+                                MOTE_ALPHA, MOTE_SCALE),
+                        this.xOld + (this.getX() - this.xOld) * coeff, this.yOld + (this.getY() - this.yOld) * coeff + this.getBbHeight() / 2.0F, this.zOld + (this.getZ() - this.zOld) * coeff, 0.0,
+                        0.0, 0.0);
+                this.level().addParticle(new ShieldSparkParticleOptions(0xFFFFFF, SPARK_ALPHA, SPARK_SCALE, SPARK_AGE, 0, false), this.getX() + this.random.nextGaussian() * SPARK_SPREAD,
+                        this.getY() + this.random.nextGaussian() * SPARK_SPREAD, this.getZ() + this.random.nextGaussian() * SPARK_SPREAD, 0.0, 0.0, 0.0);
             }
         }
     }
@@ -88,16 +69,8 @@ public final class EntityCausalityCollapser extends ThrowableItemProjectile {
         if (this.level().isClientSide()) {
             return;
         }
-        this.level()
-                .explode(
-                        this,
-                        this.getX(),
-                        this.getY(),
-                        this.getZ(),
-                        EXPLOSION_STRENGTH,
-                        Level.ExplosionInteraction.MOB);
-        for (EntityFluxRift rift : this.level()
-                .getEntitiesOfClass(EntityFluxRift.class, this.getBoundingBox().inflate(RIFT_COLLAPSE_RANGE))) {
+        this.level().explode(this, this.getX(), this.getY(), this.getZ(), EXPLOSION_STRENGTH, Level.ExplosionInteraction.MOB);
+        for (EntityFluxRift rift : this.level().getEntitiesOfClass(EntityFluxRift.class, this.getBoundingBox().inflate(RIFT_COLLAPSE_RANGE))) {
             rift.setCollapse(true);
         }
         this.discard();

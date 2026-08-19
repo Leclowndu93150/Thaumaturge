@@ -17,9 +17,7 @@ public final class BlockEntityThaumatoriumTop extends BlockEntity implements IEs
     }
 
     private @Nullable BlockEntityThaumatorium base() {
-        return level != null && level.getBlockEntity(getBlockPos().below()) instanceof BlockEntityThaumatorium machine
-                ? machine
-                : null;
+        return level != null && level.getBlockEntity(getBlockPos().below()) instanceof BlockEntityThaumatorium machine ? machine : null;
     }
 
     @Override

@@ -42,11 +42,7 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
             ground.move(Direction.DOWN);
             groundState = level.getBlockState(ground);
         }
-        if (!groundState.is(Blocks.GRASS_BLOCK)
-                && !groundState.is(Blocks.SAND)
-                && !groundState.is(Blocks.DIRT)
-                && !groundState.is(Blocks.STONE)
-                && !groundState.is(Blocks.NETHERRACK)) {
+        if (!groundState.is(Blocks.GRASS_BLOCK) && !groundState.is(Blocks.SAND) && !groundState.is(Blocks.DIRT) && !groundState.is(Blocks.STONE) && !groundState.is(Blocks.NETHERRACK)) {
             return false;
         }
         int clearance = 1;
@@ -93,14 +89,6 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
 
     private static void placeCapNode(WorldGenLevel level, BlockPos pos, RandomSource random) {
         level.setBlock(pos, TCBlocks.OBSIDIAN_TOTEM_CHARGED.get().defaultBlockState(), PLACE_FLAGS);
-        NodeGenerator.createRandomNodeAt(
-                level,
-                pos,
-                random,
-                false,
-                true,
-                false,
-                NodeGenerator.DEFAULT_SPECIAL_RARITY,
-                NodeGenerator.DEFAULT_BASE_AURA);
+        NodeGenerator.createRandomNodeAt(level, pos, random, false, true, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
     }
 }

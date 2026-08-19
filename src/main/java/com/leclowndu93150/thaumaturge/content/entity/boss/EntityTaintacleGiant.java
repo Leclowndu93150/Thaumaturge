@@ -30,8 +30,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jspecify.annotations.Nullable;
 
 public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritchMob {
-    private static final EntityDataAccessor<Integer> DATA_AGGRO =
-            SynchedEntityData.defineId(EntityTaintacleGiant.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_AGGRO = SynchedEntityData.defineId(EntityTaintacleGiant.class, EntityDataSerializers.INT);
 
     private static final int GIANT_XP = 20;
     private static final int HEAL_INTERVAL = 30;
@@ -40,11 +39,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
     private static final int ENRAGE_TICKS = 200;
     private static final double LONELY_RANGE = 48.0;
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(
-            Mth.createInsecureUUID(this.random),
-            getDisplayName(),
-            BossEvent.BossBarColor.PURPLE,
-            BossEvent.BossBarOverlay.PROGRESS);
+    private final ServerBossEvent bossEvent = new ServerBossEvent(Mth.createInsecureUUID(this.random), getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     public EntityTaintacleGiant(EntityType<? extends EntityTaintacleGiant> type, Level level) {
         super(type, level);
@@ -71,11 +66,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData data) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         ChampionHelper.makeChampion(this, true);
         return data;
     }
@@ -87,15 +78,9 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
             this.setAnger(this.getAnger() - 1);
         }
         if (this.level().isClientSide() && this.getAnger() > 0 && this.random.nextInt(ANGRY_PARTICLE_CHANCE) == 0) {
-            this.level()
-                    .addParticle(
-                            ParticleTypes.ANGRY_VILLAGER,
-                            this.getX() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
-                            this.getBoundingBox().minY + this.getBbHeight() + this.random.nextFloat() * 0.5,
-                            this.getZ() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
-                            this.random.nextGaussian() * 0.02,
-                            this.random.nextGaussian() * 0.02,
-                            this.random.nextGaussian() * 0.02);
+            this.level().addParticle(ParticleTypes.ANGRY_VILLAGER, this.getX() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
+                    this.getBoundingBox().minY + this.getBbHeight() + this.random.nextFloat() * 0.5, this.getZ() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
+                    this.random.nextGaussian() * 0.02, this.random.nextGaussian() * 0.02, this.random.nextGaussian() * 0.02);
         }
         if (!this.level().isClientSide() && this.tickCount % HEAL_INTERVAL == 0) {
             this.heal(1.0F);
@@ -129,10 +114,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
                 this.addEffect(new MobEffectInstance(MobEffects.HASTE, ENRAGE_TICKS, (int) (damage / 40.0F)));
                 this.setAnger(ENRAGE_TICKS);
                 if (source.getEntity() instanceof ServerPlayer player) {
-                    player.connection.send(new ClientboundSetActionBarTextPacket(Component.empty()
-                            .append(this.getDisplayName())
-                            .append(" ")
-                            .append(Component.translatable("tc.boss.enrage"))));
+                    player.connection.send(new ClientboundSetActionBarTextPacket(Component.empty().append(this.getDisplayName()).append(" ").append(Component.translatable("tc.boss.enrage"))));
                 }
             }
             damage = ENRAGE_THRESHOLD;
@@ -143,15 +125,8 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        if (level.getEntitiesOfClass(
-                        EntityTaintacleGiant.class, this.getBoundingBox().inflate(LONELY_RANGE), other -> other != this)
-                .isEmpty()) {
-            level.addFreshEntity(new EntitySpecialItem(
-                    level,
-                    this.getX(),
-                    this.getY() + this.getBbHeight() / 2.0F,
-                    this.getZ(),
-                    new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
+        if (level.getEntitiesOfClass(EntityTaintacleGiant.class, this.getBoundingBox().inflate(LONELY_RANGE), other -> other != this).isEmpty()) {
+            level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
         }
     }
 

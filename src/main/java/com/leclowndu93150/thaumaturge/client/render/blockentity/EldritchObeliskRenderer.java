@@ -24,8 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class EldritchObeliskRenderer
-        implements BlockEntityRenderer<BlockEntityEldritchObelisk, EldritchObeliskRenderState> {
+public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockEntityEldritchObelisk, EldritchObeliskRenderState> {
     public static final Identifier CAP_MODEL = TCIds.rl("models/mesh/obelisk_cap.tcmesh");
     public static final String CAP_PART = "Cap";
 
@@ -48,12 +47,7 @@ public final class EldritchObeliskRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityEldritchObelisk obelisk,
-            EldritchObeliskRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityEldritchObelisk obelisk, EldritchObeliskRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(obelisk, state, partialTicks, cameraPosition, breakProgress);
         var viewEntity = Minecraft.getInstance().getCameraEntity();
         state.animationTime = viewEntity == null ? partialTicks : viewEntity.tickCount + partialTicks;
@@ -61,79 +55,15 @@ public final class EldritchObeliskRenderer
     }
 
     @Override
-    public void submit(
-            EldritchObeliskRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(EldritchObeliskRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         float bob = Mth.sin(state.animationTime / BOB_PERIOD) * BOB_AMPLITUDE + BOB_AMPLITUDE;
         float base = COLUMN_BASE + bob;
         float top = base + COLUMN_HEIGHT;
         collector.submitCustomGeometry(poseStack, EldritchPortalSurface.SURFACE, (pose, buffer) -> {
-            EldritchPortalSurface.quad(
-                    pose,
-                    buffer,
-                    state.blockPos,
-                    0.0F,
-                    base,
-                    PLANE_INSET,
-                    0.0F,
-                    top,
-                    PLANE_INSET,
-                    1.0F,
-                    top,
-                    PLANE_INSET,
-                    1.0F,
-                    base,
-                    PLANE_INSET);
-            EldritchPortalSurface.quad(
-                    pose,
-                    buffer,
-                    state.blockPos,
-                    0.0F,
-                    base,
-                    1.0F - PLANE_INSET,
-                    0.0F,
-                    top,
-                    1.0F - PLANE_INSET,
-                    1.0F,
-                    top,
-                    1.0F - PLANE_INSET,
-                    1.0F,
-                    base,
-                    1.0F - PLANE_INSET);
-            EldritchPortalSurface.quad(
-                    pose,
-                    buffer,
-                    state.blockPos,
-                    PLANE_INSET,
-                    base,
-                    0.0F,
-                    PLANE_INSET,
-                    top,
-                    0.0F,
-                    PLANE_INSET,
-                    top,
-                    1.0F,
-                    PLANE_INSET,
-                    base,
-                    1.0F);
-            EldritchPortalSurface.quad(
-                    pose,
-                    buffer,
-                    state.blockPos,
-                    1.0F - PLANE_INSET,
-                    base,
-                    0.0F,
-                    1.0F - PLANE_INSET,
-                    top,
-                    0.0F,
-                    1.0F - PLANE_INSET,
-                    top,
-                    1.0F,
-                    1.0F - PLANE_INSET,
-                    base,
-                    1.0F);
+            EldritchPortalSurface.quad(pose, buffer, state.blockPos, 0.0F, base, PLANE_INSET, 0.0F, top, PLANE_INSET, 1.0F, top, PLANE_INSET, 1.0F, base, PLANE_INSET);
+            EldritchPortalSurface.quad(pose, buffer, state.blockPos, 0.0F, base, 1.0F - PLANE_INSET, 0.0F, top, 1.0F - PLANE_INSET, 1.0F, top, 1.0F - PLANE_INSET, 1.0F, base, 1.0F - PLANE_INSET);
+            EldritchPortalSurface.quad(pose, buffer, state.blockPos, PLANE_INSET, base, 0.0F, PLANE_INSET, top, 0.0F, PLANE_INSET, top, 1.0F, PLANE_INSET, base, 1.0F);
+            EldritchPortalSurface.quad(pose, buffer, state.blockPos, 1.0F - PLANE_INSET, base, 0.0F, 1.0F - PLANE_INSET, top, 0.0F, 1.0F - PLANE_INSET, top, 1.0F, 1.0F - PLANE_INSET, base, 1.0F);
         });
         RenderType sideType = RenderTypes.entityTranslucent(state.outerLands ? SIDE_TEXTURE_OUTER : SIDE_TEXTURE);
         for (int a = 0; a < 4; a++) {
@@ -141,8 +71,7 @@ public final class EldritchObeliskRenderer
             poseStack.translate(0.5F, base, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(a * 90.0F));
             poseStack.translate(0.0F, 0.0F, -0.5F);
-            collector.submitCustomGeometry(
-                    poseStack, sideType, (pose, buffer) -> sideQuad(pose, buffer, state.lightCoords));
+            collector.submitCustomGeometry(poseStack, sideType, (pose, buffer) -> sideQuad(pose, buffer, state.lightCoords));
             poseStack.popPose();
         }
         RenderType capType = RenderTypes.entityTranslucent(state.outerLands ? CAP_TEXTURE_OUTER : CAP_TEXTURE);
@@ -162,8 +91,7 @@ public final class EldritchObeliskRenderer
         TCMesh mesh = GolemMeshes.get(CAP_MODEL);
         for (TCMeshPart part : mesh.parts()) {
             if (CAP_PART.equals(part.name())) {
-                collector.submitCustomGeometry(
-                        poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
+                collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
             }
         }
     }
@@ -175,14 +103,8 @@ public final class EldritchObeliskRenderer
         sideVertex(buffer, pose, -0.5F, 0.0F, 0.0F, 0.0F, light);
     }
 
-    private static void sideVertex(
-            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light) {
-        buffer.addVertex(pose, x, y, 0.0F)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, -1.0F);
+    private static void sideVertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light) {
+        buffer.addVertex(pose, x, y, 0.0F).setColor(-1).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, 0.0F, 0.0F, -1.0F);
     }
 
     @Override

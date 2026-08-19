@@ -42,20 +42,14 @@ public final class FocusPouchItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
         int count = 0;
         for (ItemStack focus : getInventory(stack)) {
             if (focus.getItem() instanceof ItemFocus) {
                 count++;
             }
         }
-        builder.accept(Component.translatable("tooltip.thaumaturge.focus_pouch.count", count, SIZE)
-                .withStyle(ChatFormatting.DARK_PURPLE));
+        builder.accept(Component.translatable("tooltip.thaumaturge.focus_pouch.count", count, SIZE).withStyle(ChatFormatting.DARK_PURPLE));
     }
 
     @Override
@@ -64,20 +58,17 @@ public final class FocusPouchItem extends Item {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
-                    new MenuProvider() {
-                        @Override
-                        public Component getDisplayName() {
-                            return Component.translatable("item.thaumaturge.focus_pouch");
-                        }
+            serverPlayer.openMenu(new MenuProvider() {
+                @Override
+                public Component getDisplayName() {
+                    return Component.translatable("item.thaumaturge.focus_pouch");
+                }
 
-                        @Override
-                        public AbstractContainerMenu createMenu(
-                                int containerId, Inventory inventory, Player menuPlayer) {
-                            return new MenuFocusPouch(containerId, inventory, hand);
-                        }
-                    },
-                    buf -> buf.writeBoolean(hand == InteractionHand.MAIN_HAND));
+                @Override
+                public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player menuPlayer) {
+                    return new MenuFocusPouch(containerId, inventory, hand);
+                }
+            }, buf -> buf.writeBoolean(hand == InteractionHand.MAIN_HAND));
         }
         return InteractionResult.SUCCESS;
     }

@@ -25,16 +25,7 @@ public final class WispyMoteParticle extends TCParticle {
     private final int targetEntityId;
     private Entity target;
 
-    private WispyMoteParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            WispyMoteParticleOptions options,
-            ParticleSheet sheet) {
+    private WispyMoteParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, WispyMoteParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         this.lifetime = (int) (options.age() + options.age() / 2.0F * this.random.nextFloat());
@@ -88,16 +79,7 @@ public final class WispyMoteParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("wispy_mote");
 
         @Override
-        public Particle createParticle(
-                WispyMoteParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(WispyMoteParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new WispyMoteParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

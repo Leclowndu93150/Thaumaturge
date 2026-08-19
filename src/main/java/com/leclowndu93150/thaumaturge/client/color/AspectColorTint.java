@@ -14,11 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public record AspectColorTint(int fallback) implements ItemTintSource {
-    public static final MapCodec<AspectColorTint> MAP_CODEC =
-            RecordCodecBuilder.mapCodec(instance -> instance.group(ExtraCodecs.RGB_COLOR_CODEC
-                            .optionalFieldOf("fallback", 0xFFFFFF)
-                            .forGetter(AspectColorTint::fallback))
-                    .apply(instance, AspectColorTint::new));
+    public static final MapCodec<AspectColorTint> MAP_CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(ExtraCodecs.RGB_COLOR_CODEC.optionalFieldOf("fallback", 0xFFFFFF).forGetter(AspectColorTint::fallback)).apply(instance, AspectColorTint::new));
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {

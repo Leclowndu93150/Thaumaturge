@@ -29,8 +29,7 @@ public final class AspectPools {
     private static final int PRIMAL_SEED_BASE = 15;
     private static final int PRIMAL_SEED_SPREAD = 5;
 
-    private static final List<ResourceKey<IAspect>> PRIMALS = List.of(
-            TCAspects.AER, TCAspects.TERRA, TCAspects.IGNIS, TCAspects.AQUA, TCAspects.ORDO, TCAspects.PERDITIO);
+    private static final List<ResourceKey<IAspect>> PRIMALS = List.of(TCAspects.AER, TCAspects.TERRA, TCAspects.IGNIS, TCAspects.AQUA, TCAspects.ORDO, TCAspects.PERDITIO);
 
     private AspectPools() {}
 
@@ -81,8 +80,7 @@ public final class AspectPools {
         int granted = amount;
         if (discovery) {
             granted += DISCOVERY_BONUS;
-            player.sendSystemMessage(Component.translatable("tc.addaspectdiscovery", AspectComponents.trueName(aspect))
-                    .withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendSystemMessage(Component.translatable("tc.addaspectdiscovery", AspectComponents.trueName(aspect)).withStyle(ChatFormatting.DARK_PURPLE));
         }
         int current = data.amount(id);
         if (current >= SOFT_CAP) {
@@ -99,16 +97,7 @@ public final class AspectPools {
         sync(player);
         if (granted > 0) {
             if (data.tryClaimGrantSound(player.level().getGameTime())) {
-                player.level()
-                        .playSound(
-                                null,
-                                player.getX(),
-                                player.getY(),
-                                player.getZ(),
-                                SoundEvents.EXPERIENCE_ORB_PICKUP,
-                                SoundSource.PLAYERS,
-                                0.2F,
-                                0.9F + player.getRandom().nextFloat() * 0.2F);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.2F, 0.9F + player.getRandom().nextFloat() * 0.2F);
             }
             PacketDistributor.sendToPlayer(player, new ClientboundAspectGainPayload(id, granted));
         }
@@ -128,8 +117,7 @@ public final class AspectPools {
     public static void notifyMissingComponent(ServerPlayer player, Holder<IAspect> aspect) {
         for (Holder<IAspect> component : aspect.value().components()) {
             if (!isDiscovered(player, component)) {
-                player.sendSystemMessage(
-                        missingComponentMessage(player, component).withStyle(ChatFormatting.DARK_PURPLE));
+                player.sendSystemMessage(missingComponentMessage(player, component).withStyle(ChatFormatting.DARK_PURPLE));
                 return;
             }
         }
@@ -178,43 +166,20 @@ public final class AspectPools {
     public static void refund(ServerPlayer player, Holder<IAspect> aspect, int amount) {
         data(player).add(idOf(aspect), amount);
         sync(player);
-        player.level()
-                .playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        SoundEvents.EXPERIENCE_ORB_PICKUP,
-                        SoundSource.PLAYERS,
-                        0.2F,
-                        0.9F + player.getRandom().nextFloat() * 0.2F);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.2F, 0.9F + player.getRandom().nextFloat() * 0.2F);
     }
 
     public static int grantAllForCommand(ServerPlayer player, int amount) {
         AspectPoolData data = data(player);
-        List<Holder.Reference<IAspect>> aspects = player.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .listElements()
-                .toList();
+        List<Holder.Reference<IAspect>> aspects = player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().toList();
         for (Holder.Reference<IAspect> aspect : aspects) {
             Identifier id = aspect.key().identifier();
             data.add(id, amount);
             data.discover(id);
         }
         sync(player);
-        PacketDistributor.sendToPlayer(
-                player,
-                new ClientboundAspectGainPayload(aspects.getFirst().key().identifier(), 0));
-        player.level()
-                .playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        TCSounds.LEARN.get(),
-                        SoundSource.PLAYERS,
-                        0.5F,
-                        1.0F);
+        PacketDistributor.sendToPlayer(player, new ClientboundAspectGainPayload(aspects.getFirst().key().identifier(), 0));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
         return aspects.size();
     }
 
@@ -225,16 +190,7 @@ public final class AspectPools {
         data.discover(id);
         sync(player);
         PacketDistributor.sendToPlayer(player, new ClientboundAspectGainPayload(id, amount));
-        player.level()
-                .playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        TCSounds.LEARN.get(),
-                        SoundSource.PLAYERS,
-                        0.5F,
-                        1.0F);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
     }
 
     public static Identifier idOf(Holder<IAspect> aspect) {

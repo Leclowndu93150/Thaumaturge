@@ -38,21 +38,13 @@ public final class TCMeshGeometry implements ExtendedUnbakedGeometry {
     }
 
     @Override
-    public QuadCollection bake(
-            TextureSlots textureSlots,
-            ModelBaker modelBaker,
-            ModelState modelState,
-            ModelDebugName name,
-            ContextMap additionalProperties) {
-        Transformation rootTransform =
-                additionalProperties.getOrDefault(NeoForgeModelProperties.TRANSFORM, Transformation.IDENTITY);
+    public QuadCollection bake(TextureSlots textureSlots, ModelBaker modelBaker, ModelState modelState, ModelDebugName name, ContextMap additionalProperties) {
+        Transformation rootTransform = additionalProperties.getOrDefault(NeoForgeModelProperties.TRANSFORM, Transformation.IDENTITY);
         if (!rootTransform.isIdentity()) {
             modelState = UnbakedElementsHelper.composeRootTransformIntoModelState(modelState, rootTransform);
         }
         TCMesh mesh = loadMesh();
-        Matrix4f transform = new Matrix4f()
-                .translate(CENTER_OFFSET, CENTER_OFFSET, CENTER_OFFSET)
-                .mul(modelState.transformation().getMatrix());
+        Matrix4f transform = new Matrix4f().translate(CENTER_OFFSET, CENTER_OFFSET, CENTER_OFFSET).mul(modelState.transformation().getMatrix());
         if (cornerSpace) {
             transform.translate(-CENTER_OFFSET, -CENTER_OFFSET, -CENTER_OFFSET);
         }
@@ -61,8 +53,7 @@ public final class TCMeshGeometry implements ExtendedUnbakedGeometry {
             String slot = part.materialSlot();
             Material material = textureSlots.getMaterial(slot);
             if (material == null) {
-                throw new IllegalStateException(
-                        "Missing texture slot '" + slot + "' for mesh model " + model + " in " + name.debugName());
+                throw new IllegalStateException("Missing texture slot '" + slot + "' for mesh model " + model + " in " + name.debugName());
             }
             Material.Baked baked = modelBaker.materials().get(material, name);
             boolean itemsAtlas = baked.sprite().atlasLocation().equals(TextureAtlas.LOCATION_ITEMS);
@@ -73,13 +64,7 @@ public final class TCMeshGeometry implements ExtendedUnbakedGeometry {
             } else {
                 sheet = translucent ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockItemSheet();
             }
-            BakedQuad.MaterialInfo info = new BakedQuad.MaterialInfo(
-                    baked.sprite(),
-                    translucent ? ChunkSectionLayer.TRANSLUCENT : ChunkSectionLayer.CUTOUT,
-                    sheet,
-                    NO_TINT,
-                    false,
-                    0);
+            BakedQuad.MaterialInfo info = new BakedQuad.MaterialInfo(baked.sprite(), translucent ? ChunkSectionLayer.TRANSLUCENT : ChunkSectionLayer.CUTOUT, sheet, NO_TINT, false, 0);
             List<BakedQuad> quads = new ArrayList<>();
             TCMeshQuadBaker.bakePart(part, baked, NO_TINT, transform, info, flipV, quads);
             for (BakedQuad quad : quads) {

@@ -27,14 +27,14 @@ public final class NitorClientExtensions implements IClientBlockExtensions {
 
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        Block[] nitors =
-                TCBlocks.NITORS.values().stream().map(b -> (Block) b.get()).toArray(Block[]::new);
+        Block[] nitors = TCBlocks.NITORS.values().stream().map(b -> (Block) b.get()).toArray(Block[]::new);
         event.registerBlock(INSTANCE, nitors);
     }
 
     @Override
     public boolean addDestroyEffects(BlockState state, Level level, BlockPos pos, ParticleEngine manager) {
-        if (!(state.getBlock() instanceof BlockNitor nitor)) return true;
+        if (!(state.getBlock() instanceof BlockNitor nitor))
+            return true;
         int rgb = nitor.dyeColor();
         RandomSource rand = level.getRandom();
         for (int i = 0; i < 12; i++) {
@@ -52,12 +52,13 @@ public final class NitorClientExtensions implements IClientBlockExtensions {
 
     @Override
     public boolean addHitEffects(BlockState state, Level level, @Nullable HitResult target, ParticleEngine manager) {
-        if (target == null) return true;
-        if (!(state.getBlock() instanceof BlockNitor nitor)) return true;
+        if (target == null)
+            return true;
+        if (!(state.getBlock() instanceof BlockNitor nitor))
+            return true;
         int rgb = nitor.dyeColor();
         RandomSource rand = level.getRandom();
-        BlockPos pos =
-                target instanceof BlockHitResult bhr ? bhr.getBlockPos() : BlockPos.containing(target.getLocation());
+        BlockPos pos = target instanceof BlockHitResult bhr ? bhr.getBlockPos() : BlockPos.containing(target.getLocation());
         for (int i = 0; i < 3; i++) {
             double cx = pos.getX() + 0.5 + rand.nextGaussian() * 0.05;
             double cy = pos.getY() + 0.5 + rand.nextGaussian() * 0.05;

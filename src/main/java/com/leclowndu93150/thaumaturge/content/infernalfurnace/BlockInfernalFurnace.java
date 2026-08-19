@@ -36,15 +36,13 @@ import org.jspecify.annotations.Nullable;
 
 public class BlockInfernalFurnace extends BaseEntityBlock {
     @Override
-    protected void affectNeighborsAfterRemoval(
-            BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
         if (level.getBlockEntity(pos) instanceof BlockEntityInfernalFurnace furnace) {
             for (int i = 0; i < furnace.inventory().size(); i++) {
                 var resource = furnace.inventory().getResource(i);
                 int amount = furnace.inventory().getAmountAsInt(i);
                 if (!resource.isEmpty() && amount > 0) {
-                    Containers.dropItemStack(
-                            level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, resource.toStack(amount));
+                    Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, resource.toStack(amount));
                 }
             }
         }
@@ -69,8 +67,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.box(0, 0, 0, 1, 0.5, 1);
     }
 
@@ -150,19 +147,12 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState blockState, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
         return createTickerHelper(type, TCBlockEntities.INFERNAL_FURNACE.get(), BlockEntityInfernalFurnace::staticTick);
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (entity.getX() < pos.getX() + 0.3F)
             entity.setDeltaMovement(entity.getDeltaMovement().add(1.0E-4F, 0, 0));
         if (entity.getX() > pos.getX() + 0.7F)

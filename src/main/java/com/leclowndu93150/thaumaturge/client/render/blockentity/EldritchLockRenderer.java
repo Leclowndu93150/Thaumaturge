@@ -28,8 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
-public final class EldritchLockRenderer
-        implements BlockEntityRenderer<BlockEntityEldritchLock, EldritchLockRenderState> {
+public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEntityEldritchLock, EldritchLockRenderState> {
     private static final Identifier CUBE_TEXTURE = TCIds.rl("textures/entity/eldritch_cube.png");
 
     private static final int ARMS = 4;
@@ -63,12 +62,7 @@ public final class EldritchLockRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityEldritchLock lock,
-            EldritchLockRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityEldritchLock lock, EldritchLockRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(lock, state, partialTicks, cameraPosition, breakProgress);
         state.count = lock.getCount();
         state.facing = lock.getBlockState().getValue(BlockEldritchLock.FACING);
@@ -79,8 +73,7 @@ public final class EldritchLockRenderer
                 tabletStack = new ItemStack(TCItems.RUNED_TABLET.get());
             }
             ItemStackRenderState itemState = new ItemStackRenderState();
-            itemModelResolver.updateForTopItem(
-                    itemState, tabletStack, ItemDisplayContext.FIXED, lock.getLevel(), null, 0);
+            itemModelResolver.updateForTopItem(itemState, tabletStack, ItemDisplayContext.FIXED, lock.getLevel(), null, 0);
             state.tablet = itemState;
         } else {
             state.tablet = null;
@@ -88,11 +81,7 @@ public final class EldritchLockRenderer
     }
 
     @Override
-    public void submit(
-            EldritchLockRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(EldritchLockRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         submitArms(state, poseStack, collector);
         submitTablet(state, poseStack, collector);
         submitDoorFace(state, poseStack, collector);
@@ -115,8 +104,7 @@ public final class EldritchLockRenderer
                     w = w / 2.0F + END_CUBE_SWELL;
                 }
                 poseStack.scale(CUBE_SCALE + w, CUBE_SCALE, CUBE_SCALE + w);
-                collector.submitCustomGeometry(
-                        poseStack, type, (pose, buffer) -> cube(pose, buffer, state.lightCoords));
+                collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> cube(pose, buffer, state.lightCoords));
                 poseStack.popPose();
             }
             poseStack.popPose();
@@ -129,15 +117,13 @@ public final class EldritchLockRenderer
         }
         Direction dir = state.facing;
         poseStack.pushPose();
-        poseStack.translate(
-                0.5F + dir.getStepX() * TABLET_FACE_OFFSET, TABLET_HEIGHT, 0.5F + dir.getStepZ() * TABLET_FACE_OFFSET);
-        float yRot =
-                switch (dir) {
-                    case NORTH -> 180.0F;
-                    case WEST -> 270.0F;
-                    case EAST -> 90.0F;
-                    default -> 0.0F;
-                };
+        poseStack.translate(0.5F + dir.getStepX() * TABLET_FACE_OFFSET, TABLET_HEIGHT, 0.5F + dir.getStepZ() * TABLET_FACE_OFFSET);
+        float yRot = switch (dir) {
+            case NORTH -> 180.0F;
+            case WEST -> 270.0F;
+            case EAST -> 90.0F;
+            default -> 0.0F;
+        };
         poseStack.mulPose(Axis.YP.rotationDegrees(yRot));
         poseStack.translate(0.0F, FLAT_ITEM_LIFT, 0.0F);
         poseStack.scale(TABLET_SCALE, TABLET_SCALE, TABLET_SCALE);
@@ -146,43 +132,14 @@ public final class EldritchLockRenderer
         poseStack.popPose();
     }
 
-    private static void submitDoorFace(
-            EldritchLockRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+    private static void submitDoorFace(EldritchLockRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
         boolean zAxis = state.facing.getAxis() == Direction.Axis.Z;
         collector.submitCustomGeometry(poseStack, EldritchPortalSurface.SURFACE, (pose, buffer) -> {
             if (zAxis) {
-                EldritchPortalSurface.quad(
-                        pose,
-                        buffer,
-                        state.blockPos,
-                        DOOR_MIN,
-                        DOOR_MIN,
-                        DOOR_PLANE,
-                        DOOR_MIN,
-                        DOOR_MAX,
-                        DOOR_PLANE,
-                        DOOR_MAX,
-                        DOOR_MAX,
-                        DOOR_PLANE,
-                        DOOR_MAX,
-                        DOOR_MIN,
+                EldritchPortalSurface.quad(pose, buffer, state.blockPos, DOOR_MIN, DOOR_MIN, DOOR_PLANE, DOOR_MIN, DOOR_MAX, DOOR_PLANE, DOOR_MAX, DOOR_MAX, DOOR_PLANE, DOOR_MAX, DOOR_MIN,
                         DOOR_PLANE);
             } else {
-                EldritchPortalSurface.quad(
-                        pose,
-                        buffer,
-                        state.blockPos,
-                        DOOR_PLANE,
-                        DOOR_MIN,
-                        DOOR_MIN,
-                        DOOR_PLANE,
-                        DOOR_MAX,
-                        DOOR_MIN,
-                        DOOR_PLANE,
-                        DOOR_MAX,
-                        DOOR_MAX,
-                        DOOR_PLANE,
-                        DOOR_MIN,
+                EldritchPortalSurface.quad(pose, buffer, state.blockPos, DOOR_PLANE, DOOR_MIN, DOOR_MIN, DOOR_PLANE, DOOR_MAX, DOOR_MIN, DOOR_PLANE, DOOR_MAX, DOOR_MAX, DOOR_PLANE, DOOR_MIN,
                         DOOR_MAX);
             }
         });
@@ -196,8 +153,7 @@ public final class EldritchLockRenderer
 
     private static void cubeFace(PoseStack.Pose pose, VertexConsumer buffer, Direction dir, int light) {
         Vector3f normal = new Vector3f(dir.getStepX(), dir.getStepY(), dir.getStepZ());
-        Vector3f up =
-                dir.getAxis() == Direction.Axis.Y ? new Vector3f(0.0F, 0.0F, 1.0F) : new Vector3f(0.0F, 1.0F, 0.0F);
+        Vector3f up = dir.getAxis() == Direction.Axis.Y ? new Vector3f(0.0F, 0.0F, 1.0F) : new Vector3f(0.0F, 1.0F, 0.0F);
         Vector3f right = new Vector3f(up).cross(normal);
         float[] uv = faceUV(dir);
         cubeVertex(pose, buffer, normal, right, up, -1.0F, -1.0F, uv[0], uv[3], light);
@@ -208,39 +164,23 @@ public final class EldritchLockRenderer
 
     private static float[] faceUV(Direction dir) {
         float tex = 64.0F;
-        int[] px =
-                switch (dir) {
-                    case UP -> new int[] {16, 0, 32, 16};
-                    case DOWN -> new int[] {32, 0, 48, 16};
-                    case WEST -> new int[] {0, 16, 16, 32};
-                    case NORTH -> new int[] {16, 16, 32, 32};
-                    case EAST -> new int[] {32, 16, 48, 32};
-                    case SOUTH -> new int[] {48, 16, 64, 32};
-                };
-        return new float[] {px[0] / tex, px[1] / tex, px[2] / tex, px[3] / tex};
+        int[] px = switch (dir) {
+            case UP -> new int[]{16, 0, 32, 16};
+            case DOWN -> new int[]{32, 0, 48, 16};
+            case WEST -> new int[]{0, 16, 16, 32};
+            case NORTH -> new int[]{16, 16, 32, 32};
+            case EAST -> new int[]{32, 16, 48, 32};
+            case SOUTH -> new int[]{48, 16, 64, 32};
+        };
+        return new float[]{px[0] / tex, px[1] / tex, px[2] / tex, px[3] / tex};
     }
 
-    private static void cubeVertex(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            Vector3f normal,
-            Vector3f right,
-            Vector3f up,
-            float r,
-            float u,
-            float texU,
-            float texV,
-            int light) {
+    private static void cubeVertex(PoseStack.Pose pose, VertexConsumer buffer, Vector3f normal, Vector3f right, Vector3f up, float r, float u, float texU, float texV, int light) {
         float half = 0.5F;
         float x = (normal.x + right.x * r + up.x * u) * half;
         float y = (normal.y + right.y * r + up.y * u) * half;
         float z = (normal.z + right.z * r + up.z * u) * half;
-        buffer.addVertex(pose, x, y, z)
-                .setColor(-1)
-                .setUv(texU, texV)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, normal.x, normal.y, normal.z);
+        buffer.addVertex(pose, x, y, z).setColor(-1).setUv(texU, texV).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, normal.x, normal.y, normal.z);
     }
 
     @Override

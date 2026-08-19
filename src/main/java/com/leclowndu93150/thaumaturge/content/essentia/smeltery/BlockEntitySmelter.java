@@ -106,7 +106,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     private void syncToClient() {
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
         BlockState current = getBlockState();
         level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
@@ -114,10 +115,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
-            TagValueOutput tagvalueoutput =
-                    TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
+        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+            TagValueOutput tagvalueoutput = TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
             saveAdditional(tagvalueoutput);
             nbt.merge(tagvalueoutput.buildResult());
         }
@@ -132,7 +131,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
         Containers.dropContents(level, getBlockPos(), getInventory().copyToList());
         if (aspects.totalAmount() > 0) {
             AuraHelper.polluteAura(level, getBlockPos(), aspects.totalAmount(), true);
@@ -143,7 +143,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
     private void tick() {
 
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
 
         boolean wasBurning = this.furnaceBurnTime > 0;
         boolean dirty = false;
@@ -154,15 +155,16 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
         count++;
 
-        if (bellows < 0) checkNeighbours();
+        if (bellows < 0)
+            checkNeighbours();
 
         int speed = this.getSpeed();
-        if (this.speedBoost) speed = (int) (speed * 0.8);
+        if (this.speedBoost)
+            speed = (int) (speed * 0.8);
 
         if (this.count % speed == 0 && !this.aspects.isEmpty()) {
             for (AspectInstance instance : aspects.entries()) {
-                if (instance.amount() > 0
-                        && BlockEntityAlembic.processAlembics(level, getBlockPos(), instance.aspect())) {
+                if (instance.amount() > 0 && BlockEntityAlembic.processAlembics(level, getBlockPos(), instance.aspect())) {
                     takeAspect(instance.aspect(), 1);
                     break;
                 }
@@ -172,12 +174,9 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                 if (getBlockState().getValue(BlockSmelter.FACING) != dir) {
                     BlockPos pos = getBlockPos().relative(dir);
                     BlockState state = level.getBlockState(pos);
-                    if (state.getBlock() instanceof BlockSmelterAux
-                            && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir.getOpposite()) {
+                    if (state.getBlock() instanceof BlockSmelterAux && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir.getOpposite()) {
                         for (AspectInstance instance : aspects.entries()) {
-                            if (instance.amount() > 0
-                                    && BlockEntityAlembic.processAlembics(
-                                            level, getBlockPos().relative(dir), instance.aspect())) {
+                            if (instance.amount() > 0 && BlockEntityAlembic.processAlembics(level, getBlockPos().relative(dir), instance.aspect())) {
                                 takeAspect(instance.aspect(), 1);
                                 break;
                             }
@@ -189,8 +188,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
         if (furnaceBurnTime == 0) {
             if (canSmelt()) {
-                currentItemBurnTime =
-                        furnaceBurnTime = inventory.getResource(1).toStack().getBurnTime(null, level.fuelValues());
+                currentItemBurnTime = furnaceBurnTime = inventory.getResource(1).toStack().getBurnTime(null, level.fuelValues());
                 if (furnaceBurnTime > 0) {
                     level.setBlock(getBlockPos(), getBlockState().setValue(BlockSmelter.LIT, true), 3);
                     dirty = true;
@@ -198,7 +196,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                     ItemStack fuel = inventory.getResource(1).toStack(inventory.getAmountAsInt(1));
                     ItemStack copy = fuel.copy();
                     if (!fuel.isEmpty()) {
-                        if (fuel.is(TCItems.ALUMENTUM)) this.speedBoost = true;
+                        if (fuel.is(TCItems.ALUMENTUM))
+                            this.speedBoost = true;
 
                         Item item = fuel.getItem();
                         Transaction transaction = Transaction.openRoot();
@@ -230,9 +229,11 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                 smeltItem();
             }
             dirty = true;
-        } else furnaceCookTime = 0;
+        } else
+            furnaceCookTime = 0;
 
-        if (wasBurning != furnaceBurnTime > 0) dirty = true;
+        if (wasBurning != furnaceBurnTime > 0)
+            dirty = true;
 
         if (dirty) {
             setChanged();
@@ -241,19 +242,16 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     private void smeltItem() {
-        if (!this.canSmelt()) return;
+        if (!this.canSmelt())
+            return;
         int flux = 0;
-        AspectList aspects =
-                AspectIndexAccess.index().of(inventory.getResource(0).toStack());
+        AspectList aspects = AspectIndexAccess.index().of(inventory.getResource(0).toStack());
         for (AspectInstance instance : aspects.entries()) {
             if (getEfficiency() < 1.0F) {
                 int amount = instance.amount();
 
                 for (int q = 0; q < amount; q++) {
-                    if (level.getRandom().nextFloat()
-                            > (Objects.equals(instance.aspect().getKey(), TCAspects.VITIUM)
-                                    ? getEfficiency() * 0.66F
-                                    : getEfficiency())) {
+                    if (level.getRandom().nextFloat() > (Objects.equals(instance.aspect().getKey(), TCAspects.VITIUM) ? getEfficiency() * 0.66F : getEfficiency())) {
                         aspects = aspects.reduce(instance.aspect(), 1);
                         flux++;
                     }
@@ -265,27 +263,14 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
         if (flux > 0) {
             int pp = 0;
 
-            ventfor:
-            for (int c = 0; c < flux; c++) {
+            ventfor : for (int c = 0; c < flux; c++) {
                 for (Direction dir : Direction.Plane.HORIZONTAL) {
                     if (getBlockState().getValue(BlockSmelter.FACING) != dir) {
                         BlockPos pos = getBlockPos().relative(dir);
                         BlockState state = level.getBlockState(pos);
-                        if (state.getBlock() instanceof BlockSmelterVent
-                                && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir.getOpposite()
-                                && level.getRandom().nextFloat() < 1 / 3F) {
-                            level.playSound(
-                                    null,
-                                    getBlockPos().getX() + 0.5D + dir.getStepX(),
-                                    getBlockPos().getY() + 0.5D,
-                                    getBlockPos().getZ() + 0.5D + dir.getStepZ(),
-                                    SoundEvents.LAVA_EXTINGUISH,
-                                    SoundSource.BLOCKS,
-                                    0.25F,
-                                    2.6F
-                                            + (level.getRandom().nextFloat()
-                                                            - level.getRandom().nextFloat())
-                                                    * 0.8F);
+                        if (state.getBlock() instanceof BlockSmelterVent && state.getValue(BlockStateProperties.HORIZONTAL_FACING) == dir.getOpposite() && level.getRandom().nextFloat() < 1 / 3F) {
+                            level.playSound(null, getBlockPos().getX() + 0.5D + dir.getStepX(), getBlockPos().getY() + 0.5D, getBlockPos().getZ() + 0.5D + dir.getStepZ(), SoundEvents.LAVA_EXTINGUISH,
+                                    SoundSource.BLOCKS, 0.25F, 2.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.8F);
                             for (int i = 0; i < 4; i++) {
                                 float fx = 0.1F - this.level.getRandom().nextFloat() * 0.2F;
                                 float fz = 0.1F - this.level.getRandom().nextFloat() * 0.2F;
@@ -294,18 +279,9 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                                 float fz2 = 0.1F - this.level.getRandom().nextFloat() * 0.2F;
                                 float fy2 = 0.1F - this.level.getRandom().nextFloat() * 0.2F;
                                 int color = 11184810;
-                                Effects.vent(
-                                                (ServerLevel) level,
-                                                new Vec3(
-                                                        this.getBlockPos().getX() + 0.5F + fx + dir.getStepX(),
-                                                        this.getBlockPos().getY() + 0.5F + fy,
-                                                        this.getBlockPos().getZ() + 0.5F + fz + dir.getStepZ()))
-                                        .motion(
-                                                dir.getStepX() / 4F + fx2,
-                                                dir.getStepY() / 4F + fy2,
-                                                dir.getStepZ() / 4F + fz2)
-                                        .color(color)
-                                        .send();
+                                Effects.vent((ServerLevel) level,
+                                        new Vec3(this.getBlockPos().getX() + 0.5F + fx + dir.getStepX(), this.getBlockPos().getY() + 0.5F + fy, this.getBlockPos().getZ() + 0.5F + fz + dir.getStepZ()))
+                                        .motion(dir.getStepX() / 4F + fx2, dir.getStepY() / 4F + fy2, dir.getStepZ() / 4F + fz2).color(color).send();
                             }
                             continue ventfor;
                         }
@@ -334,13 +310,14 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     private boolean canSmelt() {
-        if (inventory.getAmountAsInt(0) <= 0) return false;
+        if (inventory.getAmountAsInt(0) <= 0)
+            return false;
         this.vis = aspects.totalAmount();
-        AspectList aspects =
-                AspectIndexAccess.index().of(inventory.getResource(0).toStack());
+        AspectList aspects = AspectIndexAccess.index().of(inventory.getResource(0).toStack());
         if (!aspects.isEmpty()) {
             int total = aspects.totalAmount();
-            if (total > MAX_VIS - vis) return false;
+            if (total > MAX_VIS - vis)
+                return false;
 
             this.smeltTime = (int) (total * 2 * (1.0F - 0.125F * this.bellows));
             return true;
@@ -349,8 +326,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     public void checkNeighbours() {
-        List<Direction> facesToCheck =
-                new ArrayList<>(Direction.Plane.HORIZONTAL.stream().toList());
+        List<Direction> facesToCheck = new ArrayList<>(Direction.Plane.HORIZONTAL.stream().toList());
         facesToCheck.remove(getBlockState().getValue(BlockSmelter.FACING));
         this.bellows = BellowsHelper.countBellows(level, getBlockPos(), facesToCheck.toArray(new Direction[0]));
     }
@@ -360,19 +336,24 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     public int getSmelterType() {
-        if (getBlockState().is(TCBlocks.SMELTER_VOID)) return 2;
-        if (getBlockState().is(TCBlocks.SMELTER_THAUMIUM)) return 1;
+        if (getBlockState().is(TCBlocks.SMELTER_VOID))
+            return 2;
+        if (getBlockState().is(TCBlocks.SMELTER_THAUMIUM))
+            return 1;
         return 0;
     }
 
     public float getEfficiency() {
-        if (getSmelterType() == 2) return 0.95F;
-        if (getSmelterType() == 1) return 0.9F;
+        if (getSmelterType() == 2)
+            return 0.95F;
+        if (getSmelterType() == 1)
+            return 0.9F;
         return 0.8F;
     }
 
     public int getCookProgressScaled(int scale) {
-        if (smeltTime <= 0) this.smeltTime = 1;
+        if (smeltTime <= 0)
+            this.smeltTime = 1;
         return this.furnaceCookTime * scale / this.smeltTime;
     }
 

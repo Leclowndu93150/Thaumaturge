@@ -53,12 +53,7 @@ public class ScanEntity implements IScanThing {
         this(research, null, entityClass, inheritedClasses, filter);
     }
 
-    private ScanEntity(
-            Identifier research,
-            @Nullable EntityType<?> entityType,
-            @Nullable Class<?> entityClass,
-            boolean inheritedClasses,
-            @Nullable Predicate<Entity> filter) {
+    private ScanEntity(Identifier research, @Nullable EntityType<?> entityType, @Nullable Class<?> entityClass, boolean inheritedClasses, @Nullable Predicate<Entity> filter) {
         this.research = research;
         this.entityType = entityType;
         this.entityClass = entityClass;

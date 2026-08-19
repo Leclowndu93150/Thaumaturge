@@ -79,8 +79,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(TCItems.SALIS_MUNDUS.get(), aspectsInterpreter);
         registration.registerSubtypeInterpreter(TCItems.ESSENTIA_CRYSTAL.get(), crystalAspectInterpreter);
         registration.registerSubtypeInterpreter(TCItems.PHIAL.get(), aspectsInterpreter);
-        registration.registerFromDataComponentTypes(
-                TCItems.CELESTIAL_NOTES.asItem(), TCDataComponents.CELESTIAL_BODY.get());
+        registration.registerFromDataComponentTypes(TCItems.CELESTIAL_NOTES.asItem(), TCDataComponents.CELESTIAL_BODY.get());
         registration.registerFromDataComponentTypes(TCItems.RESEARCH_NOTE.get(), TCDataComponents.RESEARCH_NOTE.get());
     }
 
@@ -91,13 +90,9 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             return;
         }
         List<ItemStack> notes = new ArrayList<>();
-        for (Holder.Reference<IResearchEntry> holder : registryAccess
-                .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
-                .listElements()
-                .toList()) {
+        for (Holder.Reference<IResearchEntry> holder : registryAccess.lookupOrThrow(IResearchEntry.REGISTRY_KEY).listElements().toList()) {
             IResearchEntry entry = holder.value();
-            int theoryRows =
-                    ResearchNotes.theoryRowsBefore(entry, entry.stages().size());
+            int theoryRows = ResearchNotes.theoryRowsBefore(entry, entry.stages().size());
             if (theoryRows == 0) {
                 continue;
             }
@@ -114,9 +109,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     private static ItemStack displayNote(Identifier entry, int ordinal, int color, boolean complete) {
         ItemStack stack = new ItemStack(TCItems.RESEARCH_NOTE.get());
-        stack.set(
-                TCDataComponents.RESEARCH_NOTE.get(),
-                new ResearchNoteData(entry, ordinal, color, complete, 0, List.of()));
+        stack.set(TCDataComponents.RESEARCH_NOTE.get(), new ResearchNoteData(entry, ordinal, color, complete, 0, List.of()));
         if (complete) {
             stack.set(TCDataComponents.NOTE_COMPLETE.get(), true);
         }
@@ -137,17 +130,9 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         List<Holder<IAspect>> all = new ArrayList<>(registry.size());
         registry.listElements().forEach(all::add);
         registration.register(
-                AspectIngredientType.INSTANCE,
-                all.stream()
-                        .sorted(Comparator.comparingInt(e -> clientRegistryAccess()
-                                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                                .getId(e.getKey())))
-                        .sorted(Comparator.comparing(h -> !h.value().isPrimal()))
-                        .map(aspect -> new AspectInstance(aspect, 1))
-                        .toList(),
-                AspectIngredientHelper.INSTANCE,
-                AspectIngredientRenderer.INSTANCE,
-                AspectInstance.CODEC);
+                AspectIngredientType.INSTANCE, all.stream().sorted(Comparator.comparingInt(e -> clientRegistryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getId(e.getKey())))
+                        .sorted(Comparator.comparing(h -> !h.value().isPrimal())).map(aspect -> new AspectInstance(aspect, 1)).toList(),
+                AspectIngredientHelper.INSTANCE, AspectIngredientRenderer.INSTANCE, AspectInstance.CODEC);
     }
 
     @Override
@@ -161,12 +146,9 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         List<IRecipeCategory<?>> categories = new ArrayList<>(2);
         categories.add(new ArcaneWorkbenchCategory(helpers.getGuiHelper()));
         categories.add(new CrucibleCategory(helpers.getGuiHelper()));
-        categories.add(
-                new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RECIPE_TYPE, "recipe.type.infusion"));
-        categories.add(new InfusionCategory<>(
-                helpers.getGuiHelper(), InfusionCategory.ENCHANTMENT_RECIPE_TYPE, "recipe.type.infusion_enchantment"));
-        categories.add(new InfusionCategory<>(
-                helpers.getGuiHelper(), InfusionCategory.RUNIC_RECIPE_TYPE, "recipe.type.runic_augment"));
+        categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RECIPE_TYPE, "recipe.type.infusion"));
+        categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.ENCHANTMENT_RECIPE_TYPE, "recipe.type.infusion_enchantment"));
+        categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RUNIC_RECIPE_TYPE, "recipe.type.runic_augment"));
         categories.add(new DustTriggerCategory(helpers.getGuiHelper()));
         categories.add(new AspectCompositionCategory(helpers.getGuiHelper(), pickIconAspect()));
         categories.add(new AspectFromStacksCategory(helpers.getGuiHelper()));
@@ -181,27 +163,16 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addIngredientInfo(
-                new ItemStack(TCItems.DECONSTRUCTION_TABLE.get()),
-                VanillaTypes.ITEM_STACK,
-                Component.translatable("jei.thaumaturge.deconstruction.info"));
+        registration.addIngredientInfo(new ItemStack(TCItems.DECONSTRUCTION_TABLE.get()), VanillaTypes.ITEM_STACK, Component.translatable("jei.thaumaturge.deconstruction.info"));
         addTypedRecipes(registration, ArcaneWorkbenchCategory.RECIPE_TYPE, TCRecipeTypes.ARCANE.get(), null);
         addTypedRecipes(registration, CrucibleCategory.RECIPE_TYPE, TCRecipeTypes.CRUCIBLE.get(), null);
         addTypedRecipes(registration, InfusionCategory.RECIPE_TYPE, TCRecipeTypes.INFUSION.get(), null);
-        addTypedRecipes(
-                registration, InfusionCategory.ENCHANTMENT_RECIPE_TYPE, TCRecipeTypes.INFUSION_ENCHANTMENT.get(), null);
+        addTypedRecipes(registration, InfusionCategory.ENCHANTMENT_RECIPE_TYPE, TCRecipeTypes.INFUSION_ENCHANTMENT.get(), null);
         addTypedRecipes(registration, InfusionCategory.RUNIC_RECIPE_TYPE, TCRecipeTypes.RUNIC_AUGMENT.get(), null);
         registerAspectCompositions(registration);
-        addTypedRecipes(
-                registration,
-                DustTriggerCategory.RECIPE_TYPE,
-                TCRecipeTypes.DUST_TRIGGER.get(),
+        addTypedRecipes(registration, DustTriggerCategory.RECIPE_TYPE, TCRecipeTypes.DUST_TRIGGER.get(),
                 r -> r.value() instanceof DustTriggerSimpleRecipe || r.value() instanceof DustTriggerTagRecipe);
-        addTypedRecipes(
-                registration,
-                MultiblockCategory.RECIPE_TYPE,
-                TCRecipeTypes.DUST_TRIGGER.get(),
-                r -> r.value() instanceof DustTriggerMultiblockRecipe);
+        addTypedRecipes(registration, MultiblockCategory.RECIPE_TYPE, TCRecipeTypes.DUST_TRIGGER.get(), r -> r.value() instanceof DustTriggerMultiblockRecipe);
         registerAspectInfoPages(registration);
         registerAspectFromStacksPages(registration);
     }
@@ -246,16 +217,8 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(
-                MenuArcaneWorkbench.class,
-                TCMenus.ARCANE_WORKBENCH.get(),
-                ArcaneWorkbenchCategory.RECIPE_TYPE,
-                1,
-                15,
-                16,
-                36);
-        registration.addRecipeTransferHandler(
-                MenuArcaneWorkbench.class, TCMenus.ARCANE_WORKBENCH.get(), RecipeTypes.CRAFTING, 1, 9, 16, 36);
+        registration.addRecipeTransferHandler(MenuArcaneWorkbench.class, TCMenus.ARCANE_WORKBENCH.get(), ArcaneWorkbenchCategory.RECIPE_TYPE, 1, 15, 16, 36);
+        registration.addRecipeTransferHandler(MenuArcaneWorkbench.class, TCMenus.ARCANE_WORKBENCH.get(), RecipeTypes.CRAFTING, 1, 9, 16, 36);
     }
 
     private static void registerAspectCompositions(IRecipeRegistration registration) {
@@ -268,8 +231,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             return;
         }
         Registry<IAspect> registry = registryOpt.get();
-        List<AspectCompositionCategory.Composition> compositions =
-                AspectCompositionCategory.collect(registry.listElements().toList());
+        List<AspectCompositionCategory.Composition> compositions = AspectCompositionCategory.collect(registry.listElements().toList());
         registration.addRecipes(AspectCompositionCategory.RECIPE_TYPE, compositions);
     }
 
@@ -294,41 +256,23 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         Map<ItemStack, AspectList> index = new HashMap<>();
         Map<Holder<IAspect>, List<ItemStack>> invertedIndex = new HashMap<>();
 
-        registration
-                .getIngredientManager()
-                .getAllIngredients(VanillaTypes.ITEM_STACK)
-                .forEach(stack -> {
-                    AspectList aspectList = AspectIndexAccess.index().of(stack);
-                    index.put(stack, aspectList);
-                    aspectList.entries().forEach(instance -> {
-                        invertedIndex
-                                .computeIfAbsent(instance.aspect(), k -> new ArrayList<>())
-                                .add(stack);
-                    });
-                });
+        registration.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).forEach(stack -> {
+            AspectList aspectList = AspectIndexAccess.index().of(stack);
+            index.put(stack, aspectList);
+            aspectList.entries().forEach(instance -> {
+                invertedIndex.computeIfAbsent(instance.aspect(), k -> new ArrayList<>()).add(stack);
+            });
+        });
 
-        invertedIndex.entrySet().stream()
-                .sorted(Comparator.comparingInt(e -> clientRegistryAccess()
-                        .lookupOrThrow(IAspect.REGISTRY_KEY)
-                        .getId(e.getKey().getKey())))
-                .sorted(Comparator.comparing(e -> !clientRegistryAccess()
-                        .lookupOrThrow(IAspect.REGISTRY_KEY)
-                        .getOrThrow(e.getKey().getKey())
-                        .value()
-                        .isPrimal()))
-                .forEach((e) -> {
+        invertedIndex.entrySet().stream().sorted(Comparator.comparingInt(e -> clientRegistryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getId(e.getKey().getKey())))
+                .sorted(Comparator.comparing(e -> !clientRegistryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(e.getKey().getKey()).value().isPrimal())).forEach((e) -> {
                     Holder<IAspect> aspect = e.getKey();
-                    List<ItemStack> stacks = e.getValue().stream()
-                            .map(it -> it.copyWithCount(index.get(it).amountOf(aspect)))
-                            .filter(Objects::nonNull)
-                            .filter(Predicate.not(ItemStack::isEmpty))
-                            .sorted(Comparator.comparing(ItemStack::getCount).reversed())
-                            .toList();
+                    List<ItemStack> stacks = e.getValue().stream().map(it -> it.copyWithCount(index.get(it).amountOf(aspect))).filter(Objects::nonNull).filter(Predicate.not(ItemStack::isEmpty))
+                            .sorted(Comparator.comparing(ItemStack::getCount).reversed()).toList();
 
                     int start = 0;
                     while (start < stacks.size()) {
-                        wrappers.add(new AspectFromStacksCategory.Wrapper(
-                                aspect, stacks.subList(start, Math.min(start + 36, stacks.size()))));
+                        wrappers.add(new AspectFromStacksCategory.Wrapper(aspect, stacks.subList(start, Math.min(start + 36, stacks.size()))));
                         start += 36;
                     }
                 });
@@ -346,8 +290,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 if (stable.isPresent()) {
                     return stable.get();
                 }
-                Optional<Holder.Reference<IAspect>> first =
-                        registry.listElements().findFirst();
+                Optional<Holder.Reference<IAspect>> first = registry.listElements().findFirst();
                 if (first.isPresent()) {
                     return first.get();
                 }
@@ -356,11 +299,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         return null;
     }
 
-    private <I extends RecipeInput, R extends Recipe<I>> void addTypedRecipes(
-            IRecipeRegistration registration,
-            IRecipeType<RecipeHolder<R>> type,
-            RecipeType<R> vanillaType,
-            @Nullable Predicate<RecipeHolder<R>> filter) {
+    private <I extends RecipeInput, R extends Recipe<I>> void addTypedRecipes(IRecipeRegistration registration, IRecipeType<RecipeHolder<R>> type, RecipeType<R> vanillaType, @Nullable Predicate<RecipeHolder<R>> filter) {
         RecipeMap recipes = TCClientRecipes.getRecipeMapForType(Minecraft.getInstance().level, vanillaType);
         List<RecipeHolder<R>> holders = List.copyOf(recipes.byType(vanillaType));
         if (filter != null) {

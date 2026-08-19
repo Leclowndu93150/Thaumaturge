@@ -21,10 +21,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
 public final class EntityMindSpider extends Spider implements IEldritchMob {
-    private static final EntityDataAccessor<Boolean> DATA_HARMLESS =
-            SynchedEntityData.defineId(EntityMindSpider.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<String> DATA_VIEWER =
-            SynchedEntityData.defineId(EntityMindSpider.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Boolean> DATA_HARMLESS = SynchedEntityData.defineId(EntityMindSpider.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<String> DATA_VIEWER = SynchedEntityData.defineId(EntityMindSpider.class, EntityDataSerializers.STRING);
 
     private static final int XP_REWARD = 1;
     private static final int HARMLESS_LIFESPAN_TICKS = 1200;
@@ -68,11 +66,7 @@ public final class EntityMindSpider extends Spider implements IEldritchMob {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData groupData) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData groupData) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, reason, groupData);
         for (Entity passenger : List.copyOf(this.getPassengers())) {
             passenger.stopRiding();

@@ -31,32 +31,15 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Mind
     }
 
     private static final class GhostSpiderEyesLayer extends RenderLayer<MindSpiderRenderState, SpiderModel> {
-        private static final RenderType SPIDER_EYES =
-                RenderTypes.eyes(Identifier.withDefaultNamespace("textures/entity/spider/spider_eyes.png"));
+        private static final RenderType SPIDER_EYES = RenderTypes.eyes(Identifier.withDefaultNamespace("textures/entity/spider/spider_eyes.png"));
 
         GhostSpiderEyesLayer(RenderLayerParent<MindSpiderRenderState, SpiderModel> renderer) {
             super(renderer);
         }
 
         @Override
-        public void submit(
-                PoseStack poseStack,
-                SubmitNodeCollector collector,
-                int lightCoords,
-                MindSpiderRenderState state,
-                float yRot,
-                float xRot) {
-            collector
-                    .order(1)
-                    .submitModel(
-                            this.getParentModel(),
-                            state,
-                            poseStack,
-                            SPIDER_EYES,
-                            lightCoords,
-                            OverlayTexture.NO_OVERLAY,
-                            state.outlineColor,
-                            null);
+        public void submit(PoseStack poseStack, SubmitNodeCollector collector, int lightCoords, MindSpiderRenderState state, float yRot, float xRot) {
+            collector.order(1).submitModel(this.getParentModel(), state, poseStack, SPIDER_EYES, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
         }
     }
 
@@ -69,15 +52,12 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Mind
     public void extractRenderState(EntityMindSpider entity, MindSpiderRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         String viewer = entity.getViewer();
-        String localName = Minecraft.getInstance().player == null
-                ? ""
-                : Minecraft.getInstance().player.getGameProfile().name();
+        String localName = Minecraft.getInstance().player == null ? "" : Minecraft.getInstance().player.getGameProfile().name();
         state.hiddenFromViewer = !viewer.isEmpty() && !viewer.equals(localName);
     }
 
     @Override
-    public void submit(
-            MindSpiderRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(MindSpiderRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.hiddenFromViewer) {
             return;
         }
@@ -90,8 +70,7 @@ public final class MindSpiderRenderer extends MobRenderer<EntityMindSpider, Mind
     }
 
     @Override
-    protected @Nullable RenderType getRenderType(
-            MindSpiderRenderState state, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
+    protected @Nullable RenderType getRenderType(MindSpiderRenderState state, boolean isBodyVisible, boolean forceTransparent, boolean appearGlowing) {
         return super.getRenderType(state, isBodyVisible, true, appearGlowing);
     }
 

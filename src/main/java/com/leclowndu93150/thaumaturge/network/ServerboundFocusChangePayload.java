@@ -13,14 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundFocusChangePayload(String focusKey) implements CustomPacketPayload {
-    public static final Type<ServerboundFocusChangePayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "focus_change"));
+    public static final Type<ServerboundFocusChangePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "focus_change"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusChangePayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.STRING_UTF8,
-                    ServerboundFocusChangePayload::focusKey,
-                    ServerboundFocusChangePayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusChangePayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ServerboundFocusChangePayload::focusKey,
+            ServerboundFocusChangePayload::new);
 
     public static void handle(ServerboundFocusChangePayload payload, IPayloadContext ctx) {
         Player player = ctx.player();

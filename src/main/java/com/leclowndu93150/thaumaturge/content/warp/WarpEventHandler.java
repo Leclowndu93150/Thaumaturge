@@ -29,14 +29,8 @@ public final class WarpEventHandler {
     private static final int DEATH_GAZE_INTERVAL = 20;
     private static final int HUNGER_CURE_DURATION_STEP = 600;
 
-    private static final Set<Identifier> MILK_PROOF_EFFECTS = Set.of(
-            TCIds.rl("vis_exhaust"),
-            TCIds.rl("infectious_vis_exhaust"),
-            TCIds.rl("thaumarhia"),
-            TCIds.rl("unnatural_hunger"),
-            TCIds.rl("sun_scorned"),
-            TCIds.rl("death_gaze"),
-            TCIds.rl("flux_taint"));
+    private static final Set<Identifier> MILK_PROOF_EFFECTS = Set.of(TCIds.rl("vis_exhaust"), TCIds.rl("infectious_vis_exhaust"), TCIds.rl("thaumarhia"), TCIds.rl("unnatural_hunger"),
+            TCIds.rl("sun_scorned"), TCIds.rl("death_gaze"), TCIds.rl("flux_taint"));
 
     private WarpEventHandler() {}
 
@@ -46,8 +40,7 @@ public final class WarpEventHandler {
         if (!entity.isUsingItem() || !entity.getUseItem().is(Items.MILK_BUCKET)) {
             return;
         }
-        Identifier id =
-                event.getEffect().unwrapKey().map(ResourceKey::identifier).orElse(null);
+        Identifier id = event.getEffect().unwrapKey().map(ResourceKey::identifier).orElse(null);
         if (id != null && MILK_PROOF_EFFECTS.contains(id)) {
             event.setCanceled(true);
         }
@@ -58,10 +51,7 @@ public final class WarpEventHandler {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
-                && player.tickCount > 0
-                && player.tickCount % WARP_CHECK_INTERVAL == 0
-                && !player.hasEffect(TCMobEffects.WARP_WARD)) {
+        if (!ThaumaturgeCommonConfig.WUSS_MODE.get() && player.tickCount > 0 && player.tickCount % WARP_CHECK_INTERVAL == 0 && !player.hasEffect(TCMobEffects.WARP_WARD)) {
             WarpEvents.checkWarpEvent(player);
         }
         if (player.tickCount % DEATH_GAZE_INTERVAL == 0 && player.hasEffect(TCMobEffects.DEATH_GAZE)) {

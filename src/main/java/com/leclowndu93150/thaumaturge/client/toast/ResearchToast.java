@@ -52,19 +52,7 @@ public final class ResearchToast implements Toast {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, Font font, long fullyVisibleForMs) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                HUD,
-                0,
-                0,
-                (float) BACKGROUND_U,
-                (float) BACKGROUND_V,
-                BACKGROUND_W,
-                BACKGROUND_H,
-                BACKGROUND_W,
-                BACKGROUND_H,
-                TEX_SIZE,
-                TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, 0, 0, (float) BACKGROUND_U, (float) BACKGROUND_V, BACKGROUND_W, BACKGROUND_H, BACKGROUND_W, BACKGROUND_H, TEX_SIZE, TEX_SIZE);
         EntryIconRenderer.drawResearchIcon(graphics, ICON_X, ICON_Y, icon, false);
         graphics.text(font, title, TEXT_X, TITLE_Y, TITLE_COLOR, false);
         float nameWidth = font.width(subtitle);

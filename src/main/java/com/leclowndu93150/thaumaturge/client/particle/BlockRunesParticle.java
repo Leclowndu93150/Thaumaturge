@@ -20,8 +20,7 @@ public final class BlockRunesParticle extends TCParticle {
     private final Quaternionf faceRotation;
     private final Vector3f faceOffset;
 
-    private BlockRunesParticle(
-            ClientLevel level, double x, double y, double z, BlockRunesParticleOptions options, ParticleSheet sheet) {
+    private BlockRunesParticle(ClientLevel level, double x, double y, double z, BlockRunesParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         this.rCol = options.r() == 0.0F ? 1.0F : options.r();
         this.gCol = options.g();
@@ -29,10 +28,7 @@ public final class BlockRunesParticle extends TCParticle {
         this.gravity = options.gravity();
         this.lifetime = 3 * Math.max(1, options.duration());
         this.alpha = 0.0F;
-        this.quadSize = QUAD_RADIUS
-                * (options.variant()
-                        ? (float) (0.5 + this.random.nextGaussian() * 0.1)
-                        : (float) (1.0 + this.random.nextGaussian() * 0.1));
+        this.quadSize = QUAD_RADIUS * (options.variant() ? (float) (0.5 + this.random.nextGaussian() * 0.1) : (float) (1.0 + this.random.nextGaussian() * 0.1));
         this.setSize(0.01F, 0.01F);
         frame(this.random.nextInt(RUNE_COUNT));
         this.faceRotation = new Quaternionf().rotateY((float) Math.toRadians(this.random.nextInt(4) * 90.0F));
@@ -53,20 +49,8 @@ public final class BlockRunesParticle extends TCParticle {
     }
 
     @Override
-    protected void extractRotatedQuad(
-            QuadParticleRenderState renderState,
-            Quaternionf rotation,
-            float x,
-            float y,
-            float z,
-            float partialTickTime) {
-        super.extractRotatedQuad(
-                renderState,
-                rotation,
-                x + this.faceOffset.x(),
-                y + this.faceOffset.y(),
-                z + this.faceOffset.z(),
-                partialTickTime);
+    protected void extractRotatedQuad(QuadParticleRenderState renderState, Quaternionf rotation, float x, float y, float z, float partialTickTime) {
+        super.extractRotatedQuad(renderState, rotation, x + this.faceOffset.x(), y + this.faceOffset.y(), z + this.faceOffset.z(), partialTickTime);
     }
 
     @Override
@@ -78,16 +62,7 @@ public final class BlockRunesParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("block_runes");
 
         @Override
-        public Particle createParticle(
-                BlockRunesParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(BlockRunesParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new BlockRunesParticle(level, x, y, z, options, SHEET);
         }
     }

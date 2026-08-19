@@ -12,21 +12,12 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record FluxSwirlParticleOptions(int color, float scale, float endScale) implements ParticleOptions {
 
-    public static final MapCodec<FluxSwirlParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    Codec.INT.fieldOf("color").forGetter(FluxSwirlParticleOptions::color),
-                    Codec.FLOAT.fieldOf("scale").forGetter(FluxSwirlParticleOptions::scale),
-                    Codec.FLOAT.fieldOf("end_scale").forGetter(FluxSwirlParticleOptions::endScale))
-            .apply(inst, FluxSwirlParticleOptions::new));
+    public static final MapCodec<FluxSwirlParticleOptions> CODEC = RecordCodecBuilder
+            .mapCodec(inst -> inst.group(Codec.INT.fieldOf("color").forGetter(FluxSwirlParticleOptions::color), Codec.FLOAT.fieldOf("scale").forGetter(FluxSwirlParticleOptions::scale),
+                    Codec.FLOAT.fieldOf("end_scale").forGetter(FluxSwirlParticleOptions::endScale)).apply(inst, FluxSwirlParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FluxSwirlParticleOptions> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.INT,
-                    FluxSwirlParticleOptions::color,
-                    ByteBufCodecs.FLOAT,
-                    FluxSwirlParticleOptions::scale,
-                    ByteBufCodecs.FLOAT,
-                    FluxSwirlParticleOptions::endScale,
-                    FluxSwirlParticleOptions::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, FluxSwirlParticleOptions> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT, FluxSwirlParticleOptions::color, ByteBufCodecs.FLOAT,
+            FluxSwirlParticleOptions::scale, ByteBufCodecs.FLOAT, FluxSwirlParticleOptions::endScale, FluxSwirlParticleOptions::new);
 
     @Override
     public ParticleType<?> getType() {

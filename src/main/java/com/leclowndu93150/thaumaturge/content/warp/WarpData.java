@@ -13,23 +13,15 @@ import net.minecraft.util.Mth;
 public final class WarpData implements IPlayerWarp {
     public static final int MAX_WARP = 500;
 
-    public static final MapCodec<WarpData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                    Codec.INT.fieldOf("permanent").forGetter(d -> d.get(WarpType.PERMANENT)),
-                    Codec.INT.fieldOf("normal").forGetter(d -> d.get(WarpType.NORMAL)),
-                    Codec.INT.fieldOf("temporary").forGetter(d -> d.get(WarpType.TEMPORARY)),
-                    Codec.INT.fieldOf("counter").forGetter(WarpData::getCounter))
-            .apply(instance, WarpData::of));
+    public static final MapCodec<WarpData> CODEC = RecordCodecBuilder
+            .mapCodec(
+                    instance -> instance
+                            .group(Codec.INT.fieldOf("permanent").forGetter(d -> d.get(WarpType.PERMANENT)), Codec.INT.fieldOf("normal").forGetter(d -> d.get(WarpType.NORMAL)),
+                                    Codec.INT.fieldOf("temporary").forGetter(d -> d.get(WarpType.TEMPORARY)), Codec.INT.fieldOf("counter").forGetter(WarpData::getCounter))
+                            .apply(instance, WarpData::of));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, WarpData> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT,
-            d -> d.get(WarpType.PERMANENT),
-            ByteBufCodecs.VAR_INT,
-            d -> d.get(WarpType.NORMAL),
-            ByteBufCodecs.VAR_INT,
-            d -> d.get(WarpType.TEMPORARY),
-            ByteBufCodecs.VAR_INT,
-            WarpData::getCounter,
-            WarpData::of);
+    public static final StreamCodec<RegistryFriendlyByteBuf, WarpData> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, d -> d.get(WarpType.PERMANENT), ByteBufCodecs.VAR_INT,
+            d -> d.get(WarpType.NORMAL), ByteBufCodecs.VAR_INT, d -> d.get(WarpType.TEMPORARY), ByteBufCodecs.VAR_INT, WarpData::getCounter, WarpData::of);
 
     private final int[] warp = new int[WarpType.values().length];
     private int counter;

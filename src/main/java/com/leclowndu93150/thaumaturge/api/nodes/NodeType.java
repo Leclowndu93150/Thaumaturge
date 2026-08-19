@@ -28,8 +28,7 @@ public enum NodeType implements StringRepresentable {
     /** Codec keyed by the lowercase name. */
     public static final Codec<NodeType> CODEC = StringRepresentable.fromEnum(NodeType::values);
     /** Network codec using the enum ordinal. */
-    public static final StreamCodec<ByteBuf, NodeType> STREAM_CODEC =
-            ByteBufCodecs.idMapper(id -> NodeType.values()[id], NodeType::ordinal);
+    public static final StreamCodec<ByteBuf, NodeType> STREAM_CODEC = ByteBufCodecs.idMapper(id -> NodeType.values()[id], NodeType::ordinal);
 
     private final String name;
 

@@ -32,12 +32,8 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     }
 
     public static AttributeSupplier.Builder createTaintacleAttributes(double maxHealth, double attackDamage) {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, maxHealth)
-                .add(Attributes.ATTACK_DAMAGE, attackDamage)
-                .add(Attributes.MOVEMENT_SPEED, 0.0)
-                .add(Attributes.FOLLOW_RANGE, 12.0)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, maxHealth).add(Attributes.ATTACK_DAMAGE, attackDamage).add(Attributes.MOVEMENT_SPEED, 0.0)
+                .add(Attributes.FOLLOW_RANGE, 12.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
     @Override

@@ -38,8 +38,7 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jspecify.annotations.Nullable;
 
 public final class EntityFocusCloud extends Entity implements TraceableEntity, IEntityWithComplexSpawn {
-    private static final EntityDataAccessor<Float> DATA_RADIUS =
-            SynchedEntityData.defineId(EntityFocusCloud.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(EntityFocusCloud.class, EntityDataSerializers.FLOAT);
 
     private static final float DEFAULT_RADIUS = 0.5F;
     private static final float CLOUD_HEIGHT = 0.5F;
@@ -59,8 +58,7 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
         super(type, level);
     }
 
-    public EntityFocusCloud(
-            FocusPackage pack, LivingEntity caster, Trajectory trajectory, float radius, int durationSeconds) {
+    public EntityFocusCloud(FocusPackage pack, LivingEntity caster, Trajectory trajectory, float radius, int durationSeconds) {
         super(TCEntities.FOCUS_CLOUD.get(), caster.level());
         this.focusPackage = pack;
         this.setPos(trajectory.source().x, trajectory.source().y, trajectory.source().z);
@@ -160,8 +158,7 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
     public void tick() {
         super.tick();
         float radius = this.getRadius();
-        if (!this.level().isClientSide()
-                && (this.tickCount > this.duration * TICKS_PER_SECOND || this.getOwner() == null)) {
+        if (!this.level().isClientSide() && (this.tickCount > this.duration * TICKS_PER_SECOND || this.getOwner() == null)) {
             this.discard();
         }
         if (!this.isAlive()) {
@@ -183,26 +180,14 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
         }
         for (int a = 0; a < radius; a++) {
             Identifier effectId = this.effects.get(this.random.nextInt(this.effects.size()));
-            this.level()
-                    .addParticle(
-                            TCParticles.colorOf(TCParticles.FOCUS_CLOUD, FocusEngine.color(effectId)),
-                            this.getX() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
-                            this.getY() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
-                            this.getZ() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
-                            this.random.nextGaussian() * PARTICLE_MOTION,
-                            this.random.nextGaussian() * PARTICLE_MOTION,
-                            this.random.nextGaussian() * PARTICLE_MOTION);
+            this.level().addParticle(TCParticles.colorOf(TCParticles.FOCUS_CLOUD, FocusEngine.color(effectId)), this.getX() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
+                    this.getY() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR, this.getZ() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
+                    this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION);
             if (FocusEngine.element(effectId) instanceof FocusEffect effect) {
-                effect.impactParticles(
-                        this.level(),
-                        new Vec3(
-                                this.getX() + this.random.nextGaussian() * radius / 2.0,
-                                this.getY() + this.random.nextGaussian() * radius / 2.0,
+                effect.impactParticles(this.level(),
+                        new Vec3(this.getX() + this.random.nextGaussian() * radius / 2.0, this.getY() + this.random.nextGaussian() * radius / 2.0,
                                 this.getZ() + this.random.nextGaussian() * radius / 2.0),
-                        new Vec3(
-                                this.random.nextGaussian() * PARTICLE_MOTION,
-                                this.random.nextGaussian() * PARTICLE_MOTION,
-                                this.random.nextGaussian() * PARTICLE_MOTION));
+                        new Vec3(this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION));
             }
         }
     }
@@ -212,12 +197,8 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
         FocusCloudCooldowns cooldowns = this.level().getData(TCAttachments.FOCUS_CLOUD_COOLDOWNS);
         List<Trajectory> trajectories = new ArrayList<>();
         List<HitResult> targets = new ArrayList<>();
-        for (Entity entity : this.level()
-                .getEntitiesOfClass(
-                        Entity.class,
-                        new AABB(this.getX(), this.getY(), this.getZ(), this.getX(), this.getY(), this.getZ())
-                                .inflate(radius),
-                        candidate -> candidate.getId() != this.getId())) {
+        for (Entity entity : this.level().getEntitiesOfClass(Entity.class, new AABB(this.getX(), this.getY(), this.getZ(), this.getX(), this.getY(), this.getZ()).inflate(radius),
+                candidate -> candidate.getId() != this.getId())) {
             if (!entity.isAlive()) {
                 continue;
             }
@@ -227,37 +208,22 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
                 otherCloud.moveTowardsClosestSpace(this.getX(), this.getY(), this.getZ());
             }
             if (entity instanceof LivingEntity && cooldowns.tryClaimEntity(entity.getId(), now, COOLDOWN_TICKS)) {
-                EntityHitResult ray =
-                        new EntityHitResult(entity, entity.position().add(0.0, entity.getBbHeight() / 2.0F, 0.0));
+                EntityHitResult ray = new EntityHitResult(entity, entity.position().add(0.0, entity.getBbHeight() / 2.0F, 0.0));
                 targets.add(ray);
-                trajectories.add(
-                        new Trajectory(this.position(), ray.getLocation().subtract(this.position())));
+                trajectories.add(new Trajectory(this.position(), ray.getLocation().subtract(this.position())));
             }
         }
         for (int a = 0; a < radius; a++) {
-            Vec3 direction = new Vec3(
-                            this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian())
-                    .normalize();
-            BlockHitResult blockHit = this.level()
-                    .clip(new ClipContext(
-                            this.position(),
-                            this.position().add(direction.scale(radius)),
-                            ClipContext.Block.OUTLINE,
-                            ClipContext.Fluid.NONE,
-                            this));
-            if (blockHit.getType() == HitResult.Type.BLOCK
-                    && cooldowns.tryClaimBlock(blockHit.getBlockPos().asLong(), now, COOLDOWN_TICKS)) {
+            Vec3 direction = new Vec3(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian()).normalize();
+            BlockHitResult blockHit = this.level().clip(new ClipContext(this.position(), this.position().add(direction.scale(radius)), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, this));
+            if (blockHit.getType() == HitResult.Type.BLOCK && cooldowns.tryClaimBlock(blockHit.getBlockPos().asLong(), now, COOLDOWN_TICKS)) {
                 targets.add(blockHit);
                 trajectories.add(new Trajectory(this.position(), direction));
             }
         }
         LivingEntity currentOwner = this.getOwner();
         if (!targets.isEmpty() && currentOwner != null && this.focusPackage != null) {
-            FocusEngine.run(
-                    this.level(),
-                    this.focusPackage,
-                    currentOwner,
-                    new CastStreams(trajectories.toArray(new Trajectory[0]), targets.toArray(new HitResult[0])));
+            FocusEngine.run(this.level(), this.focusPackage, currentOwner, new CastStreams(trajectories.toArray(new Trajectory[0]), targets.toArray(new HitResult[0])));
         }
     }
 }

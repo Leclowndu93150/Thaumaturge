@@ -39,19 +39,13 @@ public final class ArchitectOverlayRenderer {
     private static final Identifier FRAME_SIDE = TCIds.rl("textures/misc/frame_side.png");
     private static final Identifier ARROWS = TCIds.rl("textures/misc/architect_arrows.png");
 
-    private static final RenderPipeline PIPELINE =
-            TCFXPipelines.additiveTexturedNoDepth(TCIds.rl("pipeline/architect_overlay"));
+    private static final RenderPipeline PIPELINE = TCFXPipelines.additiveTexturedNoDepth(TCIds.rl("pipeline/architect_overlay"));
     private static final RenderType SIDE_TYPE = makeType("thaumaturge_architect_side", FRAME_SIDE);
     private static final RenderType CORNER_TYPE = makeType("thaumaturge_architect_corner", FRAME_CORNER);
     private static final RenderType ARROWS_TYPE = makeType("thaumaturge_architect_arrows", ARROWS);
 
-    private static final int[][] MOS = {
-        {4, 5, 6, 7}, {0, 1, 2, 3}, {0, 1, 4, 5}, {2, 3, 6, 7}, {0, 2, 4, 6}, {1, 3, 5, 7}
-    };
-    private static final int[][] ROTMAT = {
-        {0, 90, 270, 180}, {270, 180, 0, 90}, {180, 90, 270, 0},
-        {0, 270, 90, 180}, {270, 180, 0, 90}, {180, 270, 90, 0}
-    };
+    private static final int[][] MOS = {{4, 5, 6, 7}, {0, 1, 2, 3}, {0, 1, 4, 5}, {2, 3, 6, 7}, {0, 2, 4, 6}, {1, 3, 5, 7}};
+    private static final int[][] ROTMAT = {{0, 90, 270, 180}, {270, 180, 0, 90}, {180, 90, 270, 0}, {0, 270, 90, 180}, {270, 180, 0, 90}, {180, 270, 90, 0}};
 
     private static final int HASH_TICK_STEP = 5;
     private static final float HALF = 0.5F;
@@ -73,9 +67,7 @@ public final class ArchitectOverlayRenderer {
     private ArchitectOverlayRenderer() {}
 
     private static RenderType makeType(String name, Identifier texture) {
-        return RenderType.create(
-                name,
-                RenderSetup.builder(PIPELINE).withTexture("Sampler0", texture).createRenderSetup());
+        return RenderType.create(name, RenderSetup.builder(PIPELINE).withTexture("Sampler0", texture).createRenderSetup());
     }
 
     @SubscribeEvent
@@ -102,9 +94,7 @@ public final class ArchitectOverlayRenderer {
             return;
         }
         BlockPos anchor = hit.getBlockPos();
-        int hash = (anchor.getX() + "" + anchor.getY() + "" + anchor.getZ() + "" + hit.getDirection() + ""
-                        + player.tickCount / HASH_TICK_STEP)
-                .hashCode();
+        int hash = (anchor.getX() + "" + anchor.getY() + "" + anchor.getZ() + "" + hit.getDirection() + "" + player.tickCount / HASH_TICK_STEP).hashCode();
         if (hash != lastArcHash) {
             lastArcHash = hash;
             bmCache.clear();
@@ -118,15 +108,8 @@ public final class ArchitectOverlayRenderer {
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().position();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        drawArchitectAxis(
-                poseStack,
-                buffers,
-                player,
-                anchor,
-                cam,
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.X),
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Y),
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Z));
+        drawArchitectAxis(poseStack, buffers, player, anchor, cam, architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.X),
+                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Y), architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Z));
         for (BlockPos pos : architectBlocks) {
             drawOverlayBlock(poseStack, buffers, pos, cam);
         }
@@ -142,28 +125,14 @@ public final class ArchitectOverlayRenderer {
         if (cached != null) {
             return cached;
         }
-        boolean[] bitMatrix = {
-            !isConnected(pos.offset(-1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, -1))
-                    && !isConnected(pos.offset(0, 1, 0)),
-            !isConnected(pos.offset(1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, -1))
-                    && !isConnected(pos.offset(0, 1, 0)),
-            !isConnected(pos.offset(-1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, 1))
-                    && !isConnected(pos.offset(0, 1, 0)),
-            !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, 1, 0)),
-            !isConnected(pos.offset(-1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, -1))
-                    && !isConnected(pos.offset(0, -1, 0)),
-            !isConnected(pos.offset(1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, -1))
-                    && !isConnected(pos.offset(0, -1, 0)),
-            !isConnected(pos.offset(-1, 0, 0))
-                    && !isConnected(pos.offset(0, 0, 1))
-                    && !isConnected(pos.offset(0, -1, 0)),
-            !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, -1, 0))
-        };
+        boolean[] bitMatrix = {!isConnected(pos.offset(-1, 0, 0)) && !isConnected(pos.offset(0, 0, -1)) && !isConnected(pos.offset(0, 1, 0)),
+                !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, -1)) && !isConnected(pos.offset(0, 1, 0)),
+                !isConnected(pos.offset(-1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, 1, 0)),
+                !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, 1, 0)),
+                !isConnected(pos.offset(-1, 0, 0)) && !isConnected(pos.offset(0, 0, -1)) && !isConnected(pos.offset(0, -1, 0)),
+                !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, -1)) && !isConnected(pos.offset(0, -1, 0)),
+                !isConnected(pos.offset(-1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, -1, 0)),
+                !isConnected(pos.offset(1, 0, 0)) && !isConnected(pos.offset(0, 0, 1)) && !isConnected(pos.offset(0, -1, 0))};
         bmCache.put(pos.immutable(), bitMatrix);
         return bitMatrix;
     }
@@ -177,16 +146,14 @@ public final class ArchitectOverlayRenderer {
                 continue;
             }
             poseStack.pushPose();
-            poseStack.mulPose(new Quaternionf()
-                    .rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
+            poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(90.0), -face.getStepY(), face.getStepX(), -face.getStepZ()));
             poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -HALF : HALF);
             poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(90.0), 0.0F, 0.0F, -1.0F));
             drawQuad(poseStack, buffers.getBuffer(SIDE_TYPE), 1.0F, 1.0F, 1.0F, SIDE_ALPHA);
             for (int a = 0; a < 4; a++) {
                 if (bitMatrix[MOS[face.ordinal()][a]]) {
                     poseStack.pushPose();
-                    poseStack.mulPose(new Quaternionf()
-                            .rotationAxis((float) Math.toRadians(ROTMAT[face.ordinal()][a]), 0.0F, 0.0F, 1.0F));
+                    poseStack.mulPose(new Quaternionf().rotationAxis((float) Math.toRadians(ROTMAT[face.ordinal()][a]), 0.0F, 0.0F, 1.0F));
                     drawQuad(poseStack, buffers.getBuffer(CORNER_TYPE), 1.0F, 1.0F, 1.0F, CORNER_ALPHA);
                     poseStack.popPose();
                 }
@@ -196,15 +163,7 @@ public final class ArchitectOverlayRenderer {
         poseStack.popPose();
     }
 
-    private static void drawArchitectAxis(
-            PoseStack poseStack,
-            MultiBufferSource buffers,
-            LocalPlayer player,
-            BlockPos pos,
-            Vec3 cam,
-            boolean dx,
-            boolean dy,
-            boolean dz) {
+    private static void drawArchitectAxis(PoseStack poseStack, MultiBufferSource buffers, LocalPlayer player, BlockPos pos, Vec3 cam, boolean dx, boolean dy, boolean dz) {
         if (!dx && !dy && !dz) {
             return;
         }

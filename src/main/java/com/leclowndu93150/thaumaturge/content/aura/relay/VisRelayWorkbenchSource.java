@@ -14,7 +14,6 @@ public final class VisRelayWorkbenchSource implements IWorkbenchVisSource {
         if (!(player.level() instanceof ServerLevel level)) {
             return 0;
         }
-        return VisRelayHelper.drainCentivis(
-                level, player.blockPosition(), aspect.unwrapKey().orElseThrow(), need, simulate);
+        return VisRelayHelper.drainCentivis(level, player.blockPosition(), aspect.unwrapKey().orElseThrow(), need, simulate);
     }
 }

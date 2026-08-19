@@ -24,8 +24,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class GolemTrait {
     /** The registry key for golem traits. */
-    public static final ResourceKey<Registry<GolemTrait>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_trait"));
+    public static final ResourceKey<Registry<GolemTrait>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_trait"));
 
     private final Identifier icon;
     private final @Nullable ResourceKey<GolemTrait> opposite;
@@ -97,6 +96,5 @@ public final class GolemTrait {
     }
 
     /** Network codec serializing a trait by its registry id. */
-    public static final StreamCodec<RegistryFriendlyByteBuf, GolemTrait> STREAM_CODEC =
-            ByteBufCodecs.registry(REGISTRY_KEY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, GolemTrait> STREAM_CODEC = ByteBufCodecs.registry(REGISTRY_KEY);
 }

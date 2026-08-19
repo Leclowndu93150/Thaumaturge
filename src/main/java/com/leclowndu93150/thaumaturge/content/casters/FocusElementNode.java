@@ -14,20 +14,12 @@ import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusElementNode {
-    public static final Codec<FocusElementNode> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                    Codec.INT.fieldOf("x").forGetter(n -> n.x),
-                    Codec.INT.fieldOf("y").forGetter(n -> n.y),
-                    Codec.INT.fieldOf("id").forGetter(n -> n.id),
-                    Codec.BOOL.optionalFieldOf("target", false).forGetter(n -> n.target),
-                    Codec.BOOL.optionalFieldOf("trajectory", false).forGetter(n -> n.trajectory),
-                    Codec.INT.optionalFieldOf("parent", -1).forGetter(n -> n.parent),
-                    Codec.INT.listOf().optionalFieldOf("children", List.of()).forGetter(FocusElementNode::childList),
-                    Codec.FLOAT.optionalFieldOf("complexity", 1.0F).forGetter(n -> n.complexityMultiplier),
-                    Identifier.CODEC.optionalFieldOf("key").forGetter(n -> Optional.ofNullable(n.element)),
-                    Codec.unboundedMap(Codec.STRING, Codec.INT)
-                            .optionalFieldOf("settings", Map.of())
-                            .forGetter(n -> n.settings))
-            .apply(inst, FocusElementNode::decode));
+    public static final Codec<FocusElementNode> CODEC = RecordCodecBuilder
+            .create(inst -> inst.group(Codec.INT.fieldOf("x").forGetter(n -> n.x), Codec.INT.fieldOf("y").forGetter(n -> n.y), Codec.INT.fieldOf("id").forGetter(n -> n.id),
+                    Codec.BOOL.optionalFieldOf("target", false).forGetter(n -> n.target), Codec.BOOL.optionalFieldOf("trajectory", false).forGetter(n -> n.trajectory),
+                    Codec.INT.optionalFieldOf("parent", -1).forGetter(n -> n.parent), Codec.INT.listOf().optionalFieldOf("children", List.of()).forGetter(FocusElementNode::childList),
+                    Codec.FLOAT.optionalFieldOf("complexity", 1.0F).forGetter(n -> n.complexityMultiplier), Identifier.CODEC.optionalFieldOf("key").forGetter(n -> Optional.ofNullable(n.element)),
+                    Codec.unboundedMap(Codec.STRING, Codec.INT).optionalFieldOf("settings", Map.of()).forGetter(n -> n.settings)).apply(inst, FocusElementNode::decode));
 
     public int x;
     public int y;
@@ -70,17 +62,7 @@ public final class FocusElementNode {
         return list;
     }
 
-    private static FocusElementNode decode(
-            int x,
-            int y,
-            int id,
-            boolean target,
-            boolean trajectory,
-            int parent,
-            List<Integer> children,
-            float complexity,
-            Optional<Identifier> key,
-            Map<String, Integer> settings) {
+    private static FocusElementNode decode(int x, int y, int id, boolean target, boolean trajectory, int parent, List<Integer> children, float complexity, Optional<Identifier> key, Map<String, Integer> settings) {
         FocusElementNode result = new FocusElementNode();
         result.x = x;
         result.y = y;

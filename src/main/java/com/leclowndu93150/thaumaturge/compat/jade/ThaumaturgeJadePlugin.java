@@ -12,6 +12,7 @@ public final class ThaumaturgeJadePlugin implements IWailaPlugin {
     @Override
     public void register(IWailaCommonRegistration registration) {
         registration.registerBlockDataProvider(MachineDataProvider.INSTANCE, Block.class);
+        registration.registerEntityDataProvider(GolemDataProvider.INSTANCE, EntityThaumaturgeGolem.class);
     }
 
     @Override

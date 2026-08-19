@@ -62,8 +62,7 @@ public final class AspectIndexEvents {
 
     private static void buildAndBroadcast(MinecraftServer server) {
         String fingerprint = AspectIndexFile.fingerprint(server);
-        AspectIndex index =
-                AspectIndexFile.load(server.registryAccess(), fingerprint).orElse(null);
+        AspectIndex index = AspectIndexFile.load(server.registryAccess(), fingerprint).orElse(null);
         if (index == null) {
             int itemCount = BuiltInRegistries.ITEM.size();
             int recipeCount = server.getRecipeManager().getRecipes().size();

@@ -35,12 +35,11 @@ public final class SharingThaumonomiconItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         ShareBinding binding = stack.get(TCDataComponents.SHARE_BINDING.get());
         IPlayerKnowledge know = ResearchManager.of(serverPlayer);
-        if (!(know instanceof PlayerKnowledge knowledge)) return InteractionResult.SUCCESS_SERVER;
+        if (!(know instanceof PlayerKnowledge knowledge))
+            return InteractionResult.SUCCESS_SERVER;
         AspectPoolData discoveredAspects = AspectPools.data(player);
         if (binding == null) {
-            stack.set(
-                    TCDataComponents.SHARE_BINDING.get(),
-                    new ShareBinding(player.getUUID(), player.getGameProfile().name(), discoveredAspects, knowledge));
+            stack.set(TCDataComponents.SHARE_BINDING.get(), new ShareBinding(player.getUUID(), player.getGameProfile().name(), discoveredAspects, knowledge));
             player.playSound(TCSounds.WRITE.get(), 1.0F, 1.0F);
             TCActionBar.sendPurple(player, "tc.thaumonomicon.sharing.bound");
             return InteractionResult.SUCCESS_SERVER;
@@ -62,18 +61,11 @@ public final class SharingThaumonomiconItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
         ShareBinding binding = stack.get(TCDataComponents.SHARE_BINDING.get());
         if (binding != null) {
-            builder.accept(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())
-                    .withStyle(ChatFormatting.GRAY));
+            builder.accept(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name()).withStyle(ChatFormatting.GRAY));
         }
-        builder.accept(
-                Component.translatable("tooltip.thaumaturge.sharing.hint").withStyle(ChatFormatting.DARK_GRAY));
+        builder.accept(Component.translatable("tooltip.thaumaturge.sharing.hint").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

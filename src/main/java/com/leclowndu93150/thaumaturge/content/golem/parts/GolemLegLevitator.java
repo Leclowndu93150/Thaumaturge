@@ -20,13 +20,6 @@ public final class GolemLegLevitator implements GolemLeg.ILegFunction {
             return;
         }
         RandomSource rand = level.getRandom();
-        level.addParticle(
-                TCParticles.GOLEM_TRAIL.get(),
-                entity.getX(),
-                entity.getY() + 0.1,
-                entity.getZ(),
-                rand.nextGaussian() / 100.0,
-                -0.1,
-                rand.nextGaussian() / 100.0);
+        level.addParticle(TCParticles.GOLEM_TRAIL.get(), entity.getX(), entity.getY() + 0.1, entity.getZ(), rand.nextGaussian() / 100.0, -0.1, rand.nextGaussian() / 100.0);
     }
 }

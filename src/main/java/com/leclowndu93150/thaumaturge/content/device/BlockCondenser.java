@@ -29,13 +29,8 @@ public final class BlockCondenser extends BaseEntityBlock {
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.ENABLED, true));
     }
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            box(5.0, 0.0, 5.0, 11.0, 16.0, 11.0),
-            box(2.0, 5.0, 2.0, 14.0, 11.0, 14.0),
-            box(4.0, 3.0, 4.0, 12.0, 4.0, 12.0),
-            box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0),
-            box(6.0, 6.0, 0.0, 10.0, 10.0, 16.0),
-            box(0.0, 6.0, 6.0, 16.0, 10.0, 10.0));
+    private static final VoxelShape SHAPE = Shapes.or(box(5.0, 0.0, 5.0, 11.0, 16.0, 11.0), box(2.0, 5.0, 2.0, 14.0, 11.0, 14.0), box(4.0, 3.0, 4.0, 12.0, 4.0, 12.0),
+            box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0), box(6.0, 6.0, 0.0, 10.0, 10.0, 16.0), box(0.0, 6.0, 6.0, 16.0, 10.0, 10.0));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -54,18 +49,11 @@ public final class BlockCondenser extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
+        return defaultBlockState().setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block block,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
@@ -79,8 +67,7 @@ public final class BlockCondenser extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

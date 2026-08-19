@@ -84,31 +84,12 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     private void drawVent(Level level, BlockPos pos, BlockState state) {
         Direction dir = state.getValue(BlockEldritchCrabSpawner.FACING);
         RandomSource rand = level.getRandom();
-        float surface =
-                dir.getAxisDirection() == Direction.AxisDirection.POSITIVE ? PLATE_THICKNESS : 1.0F - PLATE_THICKNESS;
-        double x = dir.getAxis() == Direction.Axis.X
-                ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0
-                : rand.nextFloat() / 2.0 + 0.25;
-        double y = dir.getAxis() == Direction.Axis.Y
-                ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0
-                : rand.nextFloat() / 2.0 + 0.25;
-        double z = dir.getAxis() == Direction.Axis.Z
-                ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0
-                : rand.nextFloat() / 2.0 + 0.25;
-        level.addParticle(
-                new VentParticleOptions(
-                        dir.getStepX() * VENT_SPEED,
-                        dir.getStepY() * VENT_SPEED,
-                        dir.getStepZ() * VENT_SPEED,
-                        VENT_COLOR,
-                        2.0F,
-                        false),
-                pos.getX() + x,
-                pos.getY() + y,
-                pos.getZ() + z,
-                0.0,
-                0.0,
-                0.0);
+        float surface = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE ? PLATE_THICKNESS : 1.0F - PLATE_THICKNESS;
+        double x = dir.getAxis() == Direction.Axis.X ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+        double y = dir.getAxis() == Direction.Axis.Y ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+        double z = dir.getAxis() == Direction.Axis.Z ? surface + (rand.nextFloat() - rand.nextFloat()) / 4.0 : rand.nextFloat() / 2.0 + 0.25;
+        level.addParticle(new VentParticleOptions(dir.getStepX() * VENT_SPEED, dir.getStepY() * VENT_SPEED, dir.getStepZ() * VENT_SPEED, VENT_COLOR, 2.0F, false), pos.getX() + x, pos.getY() + y,
+                pos.getZ() + z, 0.0, 0.0, 0.0);
     }
 
     @Override
@@ -121,12 +102,10 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     }
 
     private static boolean canSpawnCrab(Level level, BlockPos pos) {
-        if (level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACTIVATION_RANGE, false)
-                == null) {
+        if (level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACTIVATION_RANGE, false) == null) {
             return false;
         }
-        List<EntityEldritchCrab> crabs =
-                level.getEntitiesOfClass(EntityEldritchCrab.class, new AABB(pos).inflate(CRAB_SCAN_RANGE));
+        List<EntityEldritchCrab> crabs = level.getEntitiesOfClass(EntityEldritchCrab.class, new AABB(pos).inflate(CRAB_SCAN_RANGE));
         return crabs.size() < MAX_CRABS;
     }
 
@@ -137,17 +116,12 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
         Direction dir = state.getValue(BlockEldritchCrabSpawner.FACING);
         EntityEldritchCrab crab = new EntityEldritchCrab(TCEntities.ELDRITCH_CRAB.get(), level);
         double offsetX = dir.getAxis() == Direction.Axis.X ? crab.getBbWidth() / 2.0 : 0.5;
-        double offsetY = dir.getAxis() == Direction.Axis.Y
-                ? (dir.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? 0.75 - crab.getBbHeight() : 0.25)
-                : 0.5 - crab.getBbHeight() / 2.0;
+        double offsetY = dir.getAxis() == Direction.Axis.Y ? (dir.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? 0.75 - crab.getBbHeight() : 0.25) : 0.5 - crab.getBbHeight() / 2.0;
         double offsetZ = dir.getAxis() == Direction.Axis.Z ? crab.getBbWidth() / 2.0 : 0.5;
         crab.snapTo(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ, dir.toYRot(), 0.0F);
         crab.setDeltaMovement(dir.getStepX() * 0.2F, dir.getStepY() * 0.2F, dir.getStepZ() * 0.2F);
         crab.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), EntitySpawnReason.SPAWNER, null);
-        int difficulty = Math.max(
-                (int) (level.getDifficulty().getId()
-                        + serverLevel.getCurrentDifficultyAt(pos).getEffectiveDifficulty()),
-                1);
+        int difficulty = Math.max((int) (level.getDifficulty().getId() + serverLevel.getCurrentDifficultyAt(pos).getEffectiveDifficulty()), 1);
         crab.setHelm(level.getRandom().nextInt(Math.max(HELM_ROLL / difficulty, 1)) == 0);
         if (level.getRandom().nextInt(Math.max(CHAMPION_ROLL / difficulty, 1)) == 0) {
             ChampionHelper.makeChampion(crab, false);

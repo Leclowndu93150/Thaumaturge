@@ -64,20 +64,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         int hh = graphics.guiHeight();
 
         int bookTint = ARGB.color(Math.round(bookFade / BOOK_FADE_MAX * 255.0F), 255, 255, 255);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                BOOK,
-                ww - BOOK_CORNER_OFFSET,
-                hh - BOOK_CORNER_OFFSET,
-                0.0F,
-                0.0F,
-                BOOK_SIZE,
-                BOOK_SIZE,
-                BOOK_SIZE,
-                BOOK_SIZE,
-                BOOK_SIZE,
-                BOOK_SIZE,
-                bookTint);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BOOK, ww - BOOK_CORNER_OFFSET, hh - BOOK_CORNER_OFFSET, 0.0F, 0.0F, BOOK_SIZE, BOOK_SIZE, BOOK_SIZE, BOOK_SIZE, BOOK_SIZE, BOOK_SIZE, bookTint);
 
         for (Tracker current : TRACKERS) {
             Random rand = new Random(current.seed);
@@ -110,12 +97,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
             graphics.pose().rotate((float) Math.toRadians(84 + rand.nextInt(12) - QUAD_INTRINSIC_ROTATION));
 
             if (current.aspect != null) {
-                drawCentered(
-                        graphics,
-                        current.aspect.value().texture(),
-                        s,
-                        ARGB.color(ICON_ALPHA, current.aspect.value().color()),
-                        false);
+                drawCentered(graphics, current.aspect.value().texture(), s, ARGB.color(ICON_ALPHA, current.aspect.value().color()), false);
             } else {
                 Identifier typeIcon = current.type == KnowledgeType.THEORY ? KNOW_THEORY : KNOW_OBSERVATION;
                 drawCentered(graphics, typeIcon, s, ARGB.color(ICON_ALPHA, 255, 255, 255), false);
@@ -136,9 +118,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
 
             graphics.pose().popMatrix();
 
-            if (mc.level != null
-                    && mc.level.getRandom().nextInt((int) (1.0F + (float) current.progress / current.max * 10.0F))
-                            == 0) {
+            if (mc.level != null && mc.level.getRandom().nextInt((int) (1.0F + (float) current.progress / current.max * 10.0F)) == 0) {
                 spawnSpark(mc, xx, yy);
             }
         }
@@ -150,16 +130,8 @@ public final class KnowledgeGainOverlay implements GuiLayer {
             return;
         }
         RandomSource rand = mc.level.getRandom();
-        SPARKS.add(new GuiSpark(
-                x + (float) rand.nextGaussian() * 5.0F,
-                y + (float) rand.nextGaussian() * 5.0F,
-                (float) rand.nextGaussian(),
-                (float) rand.nextGaussian(),
-                32 + rand.nextInt(8),
-                rand.nextInt(5),
-                rand.nextFloat() < 0.2F ? BURST_FRAME_START : 512,
-                Mth.nextInt(rand, 189, 255) / 255.0F,
-                Mth.nextInt(rand, 64, 255) / 255.0F));
+        SPARKS.add(new GuiSpark(x + (float) rand.nextGaussian() * 5.0F, y + (float) rand.nextGaussian() * 5.0F, (float) rand.nextGaussian(), (float) rand.nextGaussian(), 32 + rand.nextInt(8),
+                rand.nextInt(5), rand.nextFloat() < 0.2F ? BURST_FRAME_START : 512, Mth.nextInt(rand, 189, 255) / 255.0F, Mth.nextInt(rand, 64, 255) / 255.0F));
     }
 
     private static void renderSparks(GuiGraphicsExtractor graphics, float partial) {
@@ -183,20 +155,8 @@ public final class KnowledgeGainOverlay implements GuiLayer {
             graphics.pose().pushMatrix();
             graphics.pose().translate(x - size / 2.0F, y - size / 2.0F);
             graphics.pose().scale(size / texFrame, size / texFrame);
-            graphics.blit(
-                    TCRenderPipelines.GUI_TEXTURED_ADDITIVE,
-                    ParticleTextures.PARTICLES,
-                    0,
-                    0,
-                    frameU * texFrame,
-                    frameV * texFrame,
-                    (int) texFrame,
-                    (int) texFrame,
-                    (int) texFrame,
-                    (int) texFrame,
-                    1024,
-                    1024,
-                    tint);
+            graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, ParticleTextures.PARTICLES, 0, 0, frameU * texFrame, frameV * texFrame, (int) texFrame, (int) texFrame, (int) texFrame,
+                    (int) texFrame, 1024, 1024, tint);
             graphics.pose().popMatrix();
         }
     }
@@ -208,8 +168,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         return keys[index] + (keys[index + 1] - keys[index]) * t;
     }
 
-    private static void drawBurst(
-            GuiGraphicsExtractor graphics, Minecraft mc, Random rand, float phase, float baseSize) {
+    private static void drawBurst(GuiGraphicsExtractor graphics, Minecraft mc, Random rand, float phase, float baseSize) {
         float m = (float) Math.sin(phase * Math.PI * 2.0 - (Math.PI / 2)) * 0.25F + 0.25F;
         float size = baseSize * m;
         graphics.pose().rotate((float) Math.toRadians(-rand.nextInt(360)));
@@ -223,42 +182,17 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-size / 2.0F, -size / 2.0F);
         graphics.pose().scale(size / texFrame, size / texFrame);
-        graphics.blit(
-                TCRenderPipelines.GUI_TEXTURED_ADDITIVE,
-                ParticleTextures.PARTICLES,
-                0,
-                0,
-                frameU * texFrame,
-                frameV * texFrame,
-                (int) texFrame,
-                (int) texFrame,
-                (int) texFrame,
-                (int) texFrame,
-                1024,
-                1024,
-                tint);
+        graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, ParticleTextures.PARTICLES, 0, 0, frameU * texFrame, frameV * texFrame, (int) texFrame, (int) texFrame, (int) texFrame, (int) texFrame,
+                1024, 1024, tint);
         graphics.pose().popMatrix();
     }
 
-    private static void drawCentered(
-            GuiGraphicsExtractor graphics, Identifier texture, float size, int tint, boolean additive) {
+    private static void drawCentered(GuiGraphicsExtractor graphics, Identifier texture, float size, int tint, boolean additive) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-size / 2.0F, -size / 2.0F);
         graphics.pose().scale(size / ICON_TEX_SIZE, size / ICON_TEX_SIZE);
-        graphics.blit(
-                additive ? TCRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED,
-                texture,
-                0,
-                0,
-                0.0F,
-                0.0F,
-                ICON_TEX_SIZE,
-                ICON_TEX_SIZE,
-                ICON_TEX_SIZE,
-                ICON_TEX_SIZE,
-                ICON_TEX_SIZE,
-                ICON_TEX_SIZE,
-                tint);
+        graphics.blit(additive ? TCRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0.0F, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE,
+                ICON_TEX_SIZE, ICON_TEX_SIZE, tint);
         graphics.pose().popMatrix();
     }
 
@@ -266,20 +200,14 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         if (category == null || mc.level == null) {
             return null;
         }
-        return mc.level
-                .registryAccess()
-                .lookupOrThrow(IResearchCategory.REGISTRY_KEY)
-                .get(category)
-                .map(holder -> holder.value().icon())
-                .orElse(null);
+        return mc.level.registryAccess().lookupOrThrow(IResearchCategory.REGISTRY_KEY).get(category).map(holder -> holder.value().icon()).orElse(null);
     }
 
     public static void addAspectTracker(Holder<IAspect> aspect, int duration, long seed) {
         TRACKERS.add(new Tracker(KnowledgeType.OBSERVATION, null, aspect, duration, seed));
     }
 
-    public static void addTracker(
-            KnowledgeType type, @Nullable ResourceKey<IResearchCategory> category, int duration, long seed) {
+    public static void addTracker(KnowledgeType type, @Nullable ResourceKey<IResearchCategory> category, int duration, long seed) {
         int total = type == KnowledgeType.THEORY ? duration + THEORY_EXTRA_TICKS : duration;
         TRACKERS.add(new Tracker(type, category, total, seed));
     }
@@ -364,12 +292,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
             this(type, category, null, duration, seed);
         }
 
-        Tracker(
-                KnowledgeType type,
-                @Nullable ResourceKey<IResearchCategory> category,
-                @Nullable Holder<IAspect> aspect,
-                int duration,
-                long seed) {
+        Tracker(KnowledgeType type, @Nullable ResourceKey<IResearchCategory> category, @Nullable Holder<IAspect> aspect, int duration, long seed) {
             this.type = type;
             this.category = category;
             this.aspect = aspect;

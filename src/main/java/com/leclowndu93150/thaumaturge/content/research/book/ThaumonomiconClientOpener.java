@@ -8,7 +8,8 @@ public final class ThaumonomiconClientOpener {
 
     public static void open() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
+        if (mc.player == null)
+            return;
         mc.setScreen(new ThaumonomiconBrowserScreen());
     }
 }

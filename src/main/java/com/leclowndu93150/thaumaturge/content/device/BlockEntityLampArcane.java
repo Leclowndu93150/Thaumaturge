@@ -41,9 +41,7 @@ public final class BlockEntityLampArcane extends BlockEntity {
         if (target.getY() < level.getMinY() + SURFACE_CLEARANCE + 1) {
             target = new BlockPos(target.getX(), level.getMinY() + SURFACE_CLEARANCE + 1, target.getZ());
         }
-        if (level.getBlockState(target).isAir()
-                && !level.getBlockState(target).is(TCBlocks.EFFECT_GLIMMER.get())
-                && level.getBrightness(LightLayer.BLOCK, target) < MAX_BLOCK_LIGHT
+        if (level.getBlockState(target).isAir() && !level.getBlockState(target).is(TCBlocks.EFFECT_GLIMMER.get()) && level.getBrightness(LightLayer.BLOCK, target) < MAX_BLOCK_LIGHT
                 && hasLineOfSight(level, pos, target)) {
             level.setBlock(target, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
         }
@@ -52,10 +50,8 @@ public final class BlockEntityLampArcane extends BlockEntity {
     private static boolean hasLineOfSight(Level level, BlockPos from, BlockPos to) {
         Vec3 start = Vec3.atCenterOf(from);
         Vec3 end = Vec3.atCenterOf(to);
-        HitResult hit = level.clip(new ClipContext(
-                start, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.empty()));
-        return hit.getType() == HitResult.Type.MISS
-                || BlockPos.containing(hit.getLocation()).equals(to);
+        HitResult hit = level.clip(new ClipContext(start, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.empty()));
+        return hit.getType() == HitResult.Type.MISS || BlockPos.containing(hit.getLocation()).equals(to);
     }
 
     public void removeLights() {

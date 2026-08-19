@@ -15,16 +15,7 @@ public final class HealFlashParticle extends TCParticle {
     private final float startSize;
     private final float endSize;
 
-    private HealFlashParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            SimpleParticleType options,
-            ParticleSheet sheet) {
+    private HealFlashParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, SimpleParticleType options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
         this.friction = FRICTION;
@@ -49,16 +40,7 @@ public final class HealFlashParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("heal_flash");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new HealFlashParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

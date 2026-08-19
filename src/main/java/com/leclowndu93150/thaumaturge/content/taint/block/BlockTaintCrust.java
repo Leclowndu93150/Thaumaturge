@@ -61,8 +61,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
         if (!canFallBelow(level, target.below()) || target.getY() < level.getMinY()) {
             return false;
         }
-        EntityFallingTaint falling = new EntityFallingTaint(
-                level, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, level.getBlockState(pos), pos);
+        EntityFallingTaint falling = new EntityFallingTaint(level, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, level.getBlockState(pos), pos);
         level.addFreshEntity(falling);
         return true;
     }

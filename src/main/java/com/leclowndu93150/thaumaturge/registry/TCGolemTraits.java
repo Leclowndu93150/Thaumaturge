@@ -9,8 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCGolemTraits {
-    public static final DeferredRegister<GolemTrait> TRAITS =
-            DeferredRegister.create(GolemTrait.REGISTRY_KEY, TCIds.MODID);
+    public static final DeferredRegister<GolemTrait> TRAITS = DeferredRegister.create(GolemTrait.REGISTRY_KEY, TCIds.MODID);
 
     private static final Registry<GolemTrait> REGISTRY = TRAITS.makeRegistry(builder -> builder.sync(true));
 

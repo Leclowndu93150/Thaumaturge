@@ -19,10 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityGolemOrb extends ThrowableProjectile {
-    private static final EntityDataAccessor<Boolean> DATA_RED =
-            SynchedEntityData.defineId(EntityGolemOrb.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> DATA_TARGET =
-            SynchedEntityData.defineId(EntityGolemOrb.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_RED = SynchedEntityData.defineId(EntityGolemOrb.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_TARGET = SynchedEntityData.defineId(EntityGolemOrb.class, EntityDataSerializers.INT);
     private static final int RED_LIFE_TICKS = 240;
     private static final int WHITE_LIFE_TICKS = 160;
     private static final float RED_DAMAGE_FACTOR = 1.0F;
@@ -78,13 +76,10 @@ public class EntityGolemOrb extends ThrowableProjectile {
             double distSq = this.distanceToSqr(this.target);
             if (distSq > 0.0) {
                 double dx = (this.target.getX() - this.getX()) / distSq;
-                double dy =
-                        (this.target.getBoundingBox().minY + this.target.getBbHeight() * 0.6 - this.getY()) / distSq;
+                double dy = (this.target.getBoundingBox().minY + this.target.getBbHeight() * 0.6 - this.getY()) / distSq;
                 double dz = (this.target.getZ() - this.getZ()) / distSq;
                 Vec3 movement = this.getDeltaMovement().add(dx * HOMING_ACCEL, dy * HOMING_ACCEL, dz * HOMING_ACCEL);
-                this.setDeltaMovement(
-                        Mth.clamp((float) movement.x, -HOMING_CLAMP, HOMING_CLAMP),
-                        Mth.clamp((float) movement.y, -HOMING_CLAMP, HOMING_CLAMP),
+                this.setDeltaMovement(Mth.clamp((float) movement.x, -HOMING_CLAMP, HOMING_CLAMP), Mth.clamp((float) movement.y, -HOMING_CLAMP, HOMING_CLAMP),
                         Mth.clamp((float) movement.z, -HOMING_CLAMP, HOMING_CLAMP));
             }
         }
@@ -94,12 +89,10 @@ public class EntityGolemOrb extends ThrowableProjectile {
     protected void onHit(HitResult result) {
         if (this.level() instanceof ServerLevel server) {
             if (this.getOwner() instanceof LivingEntity owner && result instanceof EntityHitResult entityHit) {
-                float damage = (float) owner.getAttributeValue(Attributes.ATTACK_DAMAGE)
-                        * (this.isRed() ? RED_DAMAGE_FACTOR : WHITE_DAMAGE_FACTOR);
+                float damage = (float) owner.getAttributeValue(Attributes.ATTACK_DAMAGE) * (this.isRed() ? RED_DAMAGE_FACTOR : WHITE_DAMAGE_FACTOR);
                 entityHit.getEntity().hurtServer(server, this.damageSources().indirectMagic(this, owner), damage);
             }
-            this.playSound(
-                    TCSounds.SHOCK.get(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+            this.playSound(TCSounds.SHOCK.get(), 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
             this.discard();
         }
     }

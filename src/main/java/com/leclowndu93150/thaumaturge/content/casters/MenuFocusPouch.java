@@ -43,19 +43,11 @@ public final class MenuFocusPouch extends AbstractContainerMenu {
             pouchInventory.setItem(slot, stored.get(slot));
         }
         for (int slot = 0; slot < FocusPouchItem.SIZE; slot++) {
-            addSlot(new FocusSlot(
-                    pouchInventory,
-                    slot,
-                    POUCH_SLOT_X + slot % POUCH_COLUMNS * (SLOT_SIZE + SLOT_X_SPACING),
-                    POUCH_SLOT_Y + slot / POUCH_COLUMNS * (SLOT_SIZE + SLOT_Y_SPACING)));
+            addSlot(new FocusSlot(pouchInventory, slot, POUCH_SLOT_X + slot % POUCH_COLUMNS * (SLOT_SIZE + SLOT_X_SPACING), POUCH_SLOT_Y + slot / POUCH_COLUMNS * (SLOT_SIZE + SLOT_Y_SPACING)));
         }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(
-                        inventory,
-                        column + row * 9 + 9,
-                        PLAYER_INV_X + column * SLOT_SIZE,
-                        PLAYER_INV_Y + row * SLOT_SIZE));
+                addSlot(new Slot(inventory, column + row * 9 + 9, PLAYER_INV_X + column * SLOT_SIZE, PLAYER_INV_Y + row * SLOT_SIZE));
             }
         }
         for (int column = 0; column < 9; column++) {
@@ -81,10 +73,7 @@ public final class MenuFocusPouch extends AbstractContainerMenu {
     @Override
     public void clicked(int slotId, int button, ContainerInput containerInput, Player clickPlayer) {
         if (blockedHotbarSlot >= 0) {
-            if (slotId >= 0
-                    && slotId < slots.size()
-                    && slots.get(slotId).container == clickPlayer.getInventory()
-                    && slots.get(slotId).getContainerSlot() == blockedHotbarSlot) {
+            if (slotId >= 0 && slotId < slots.size() && slots.get(slotId).container == clickPlayer.getInventory() && slots.get(slotId).getContainerSlot() == blockedHotbarSlot) {
                 return;
             }
             if (containerInput == ContainerInput.SWAP && button == blockedHotbarSlot) {

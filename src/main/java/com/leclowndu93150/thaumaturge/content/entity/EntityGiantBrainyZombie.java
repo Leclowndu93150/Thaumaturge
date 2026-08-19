@@ -13,8 +13,7 @@ import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.world.level.Level;
 
 public final class EntityGiantBrainyZombie extends EntityBrainyZombie {
-    private static final EntityDataAccessor<Float> DATA_ANGER =
-            SynchedEntityData.defineId(EntityGiantBrainyZombie.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_ANGER = SynchedEntityData.defineId(EntityGiantBrainyZombie.class, EntityDataSerializers.FLOAT);
 
     private static final int XP_REWARD = 15;
     private static final float LEAP_STRENGTH = 0.4F;
@@ -30,9 +29,7 @@ public final class EntityGiantBrainyZombie extends EntityBrainyZombie {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return EntityBrainyZombie.createAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0)
-                .add(Attributes.ATTACK_DAMAGE, BASE_ATTACK);
+        return EntityBrainyZombie.createAttributes().add(Attributes.MAX_HEALTH, 60.0).add(Attributes.ATTACK_DAMAGE, BASE_ATTACK);
     }
 
     @Override

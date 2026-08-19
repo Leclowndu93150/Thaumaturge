@@ -23,19 +23,12 @@ public final class AspectGainClientHandler {
             if (mc.player == null || mc.level == null) {
                 return;
             }
-            mc.level
-                    .registryAccess()
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .get(ResourceKey.create(IAspect.REGISTRY_KEY, payload.aspect()))
-                    .ifPresent(holder -> {
-                        int icons = Math.min(MAX_ICONS_PER_GAIN, payload.amount());
-                        for (int i = 0; i < icons; i++) {
-                            KnowledgeGainOverlay.addAspectTracker(
-                                    holder,
-                                    BASE_DURATION_TICKS + mc.level.getRandom().nextInt(EXTRA_DURATION_SPREAD),
-                                    mc.level.getRandom().nextLong());
-                        }
-                    });
+            mc.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, payload.aspect())).ifPresent(holder -> {
+                int icons = Math.min(MAX_ICONS_PER_GAIN, payload.amount());
+                for (int i = 0; i < icons; i++) {
+                    KnowledgeGainOverlay.addAspectTracker(holder, BASE_DURATION_TICKS + mc.level.getRandom().nextInt(EXTRA_DURATION_SPREAD), mc.level.getRandom().nextLong());
+                }
+            });
             handleJEISync(ClientboundUpdateJEIAspectListPayload.INSTANCE, ctx);
         });
     }

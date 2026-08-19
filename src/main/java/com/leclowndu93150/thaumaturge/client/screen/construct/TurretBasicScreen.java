@@ -43,16 +43,6 @@ public class TurretBasicScreen<T extends MenuTurretBasic> extends AbstractTCCont
             return;
         }
         int fill = (int) (HEALTH_BAR_WIDTH * (turret.getHealth() / turret.getMaxHealth()));
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                texture,
-                leftPos + barX,
-                topPos + HEALTH_BAR_Y,
-                HEALTH_BAR_U,
-                HEALTH_BAR_V,
-                fill,
-                HEALTH_BAR_HEIGHT,
-                256,
-                256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + barX, topPos + HEALTH_BAR_Y, HEALTH_BAR_U, HEALTH_BAR_V, fill, HEALTH_BAR_HEIGHT, 256, 256);
     }
 }

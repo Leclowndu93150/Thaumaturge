@@ -13,8 +13,7 @@ import net.neoforged.neoforge.client.model.UnbakedModelLoader;
 public final class TCMeshUnbakedModel extends AbstractUnbakedModel {
     private final TCMeshGeometry geometry;
 
-    public TCMeshUnbakedModel(
-            StandardModelParameters parameters, Identifier model, boolean flipV, boolean cornerSpace) {
+    public TCMeshUnbakedModel(StandardModelParameters parameters, Identifier model, boolean flipV, boolean cornerSpace) {
         super(parameters);
         this.geometry = new TCMeshGeometry(model, flipV, cornerSpace);
     }
@@ -30,8 +29,7 @@ public final class TCMeshUnbakedModel extends AbstractUnbakedModel {
         private Loader() {}
 
         @Override
-        public TCMeshUnbakedModel read(JsonObject jsonObject, JsonDeserializationContext context)
-                throws JsonParseException {
+        public TCMeshUnbakedModel read(JsonObject jsonObject, JsonDeserializationContext context) throws JsonParseException {
             StandardModelParameters parameters = StandardModelParameters.parse(jsonObject, context);
             Identifier model = Identifier.parse(GsonHelper.getAsString(jsonObject, "model"));
             boolean flipV = GsonHelper.getAsBoolean(jsonObject, "flip_v", false);

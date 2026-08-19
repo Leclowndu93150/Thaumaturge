@@ -15,6 +15,5 @@ import net.minecraft.resources.ResourceKey;
  */
 public record FocusElementType(FocusElement element, Identifier icon, int color) {
     /** The registry key for focus element types. */
-    public static final ResourceKey<Registry<FocusElementType>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "focus_element"));
+    public static final ResourceKey<Registry<FocusElementType>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "focus_element"));
 }

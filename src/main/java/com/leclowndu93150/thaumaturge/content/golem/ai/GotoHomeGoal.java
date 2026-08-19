@@ -40,8 +40,7 @@ public final class GotoHomeGoal extends Goal {
             return false;
         }
         if (distSqr > FAR_HOME_DIST_SQR) {
-            Vec3 target = DefaultRandomPos.getPosTowards(
-                    golem, 16, 7, Vec3.atLowerCornerOf(golem.getHomePosition()), Math.PI / 2.0);
+            Vec3 target = DefaultRandomPos.getPosTowards(golem, 16, 7, Vec3.atLowerCornerOf(golem.getHomePosition()), Math.PI / 2.0);
             if (target == null) {
                 return false;
             }
@@ -63,9 +62,7 @@ public final class GotoHomeGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return golem.getTask() == null
-                && !golem.getNavigation().isDone()
-                && golem.distanceToSqr(Vec3.atCenterOf(golem.getHomePosition())) > CONTINUE_DIST_SQR;
+        return golem.getTask() == null && !golem.getNavigation().isDone() && golem.distanceToSqr(Vec3.atCenterOf(golem.getHomePosition())) > CONTINUE_DIST_SQR;
     }
 
     @Override

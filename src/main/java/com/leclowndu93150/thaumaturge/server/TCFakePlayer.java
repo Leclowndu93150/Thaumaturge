@@ -8,8 +8,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 
 public enum TCFakePlayer {
-    GOLEM("[ThaumaturgeGolem]"),
-    BORE("[ThaumaturgeBore]");
+    GOLEM("[ThaumaturgeGolem]"), BORE("[ThaumaturgeBore]");
 
     private final GameProfile profile;
 

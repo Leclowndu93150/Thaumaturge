@@ -31,8 +31,7 @@ public final class Aspects {
      * @return the aspect holder, or {@code null} when the registry or key is unavailable
      */
     public static @Nullable Holder<IAspect> resolve(HolderLookup.Provider registries, ResourceKey<IAspect> key) {
-        HolderLookup.RegistryLookup<IAspect> lookup =
-                registries.lookup(IAspect.REGISTRY_KEY).orElse(null);
+        HolderLookup.RegistryLookup<IAspect> lookup = registries.lookup(IAspect.REGISTRY_KEY).orElse(null);
         if (lookup == null) {
             return null;
         }

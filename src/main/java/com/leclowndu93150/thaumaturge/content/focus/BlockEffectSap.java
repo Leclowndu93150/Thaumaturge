@@ -51,8 +51,7 @@ public final class BlockEffectSap extends Block {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
     }
 
@@ -62,13 +61,7 @@ public final class BlockEffectSap extends Block {
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.isClientSide() || entity instanceof IEldritchMob) {
             return;
         }
@@ -76,8 +69,7 @@ public final class BlockEffectSap extends Block {
             return;
         }
         living.addEffect(new MobEffectInstance(MobEffects.WITHER, EFFECT_DURATION_TICKS, 0, true, true));
-        living.addEffect(
-                new MobEffectInstance(MobEffects.SLOWNESS, EFFECT_DURATION_TICKS, SLOWNESS_AMPLIFIER, true, true));
+        living.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, EFFECT_DURATION_TICKS, SLOWNESS_AMPLIFIER, true, true));
         living.addEffect(new MobEffectInstance(MobEffects.HUNGER, EFFECT_DURATION_TICKS, HUNGER_AMPLIFIER, true, true));
     }
 
@@ -89,33 +81,15 @@ public final class BlockEffectSap extends Block {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         float h = random.nextFloat() * 0.33F;
-        spawnSpark(
-                level,
-                pos.getX() + random.nextFloat(),
-                pos.getY() + SPARK_HEIGHT + h / 2.0F,
-                pos.getZ() + random.nextFloat(),
-                SPARK_BASE_SCALE + h * SPARK_SCALE_SPREAD,
-                0.3F - random.nextFloat() * 0.1F,
-                0.0F,
-                0.5F + random.nextFloat() * 0.2F,
-                1.0F);
+        spawnSpark(level, pos.getX() + random.nextFloat(), pos.getY() + SPARK_HEIGHT + h / 2.0F, pos.getZ() + random.nextFloat(), SPARK_BASE_SCALE + h * SPARK_SCALE_SPREAD,
+                0.3F - random.nextFloat() * 0.1F, 0.0F, 0.5F + random.nextFloat() * 0.2F, 1.0F);
         if (random.nextInt(SOUND_ONE_IN) == 0) {
-            level.playLocalSound(
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ(),
-                    TCSounds.JACOBS.get(),
-                    SoundSource.AMBIENT,
-                    SOUND_VOLUME,
-                    1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F,
-                    false);
+            level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), TCSounds.JACOBS.get(), SoundSource.AMBIENT, SOUND_VOLUME, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F, false);
         }
     }
 
-    private static void spawnSpark(
-            Level level, double x, double y, double z, float size, float r, float g, float b, float alpha) {
+    private static void spawnSpark(Level level, double x, double y, double z, float size, float r, float g, float b, float alpha) {
         RandomSource rand = level.getRandom();
-        level.addParticle(
-                new SparkParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, size), x, y, z, 0.0, 0.0, 0.0);
+        level.addParticle(new SparkParticleOptions(ARGB.colorFromFloat(1.0F, r, g, b), alpha, size), x, y, z, 0.0, 0.0, 0.0);
     }
 }

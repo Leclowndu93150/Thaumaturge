@@ -55,26 +55,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob, IEldritchMob {
-    private static final EntityDataAccessor<Byte> DATA_TITLE =
-            SynchedEntityData.defineId(EntityEldritchWarden.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> DATA_TITLE = SynchedEntityData.defineId(EntityEldritchWarden.class, EntityDataSerializers.BYTE);
 
-    private static final String[] TITLES = {
-        "Aphoom-Zhah",
-        "Basatan",
-        "Chaugnar Faugn",
-        "Mnomquah",
-        "Nyogtha",
-        "Oorn",
-        "Shaikorth",
-        "Rhan-Tegoth",
-        "Rhogog",
-        "Shudde M'ell",
-        "Vulthoom",
-        "Yag-Kosha",
-        "Yibb-Tstll",
-        "Zathog",
-        "Zushakon"
-    };
+    private static final String[] TITLES = {"Aphoom-Zhah", "Basatan", "Chaugnar Faugn", "Mnomquah", "Nyogtha", "Oorn", "Shaikorth", "Rhan-Tegoth", "Rhogog", "Shudde M'ell", "Vulthoom", "Yag-Kosha",
+            "Yibb-Tstll", "Zathog", "Zushakon"};
     private static final byte ARM_LEFT_EVENT = 15;
     private static final byte ARM_RIGHT_EVENT = 16;
     private static final byte FRENZY_EVENT = 17;
@@ -104,23 +88,15 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
     private int fieldFrenzyCounter;
     private boolean lastBlast;
 
-    private final ServerBossEvent shieldEvent = new ServerBossEvent(
-            Mth.createInsecureUUID(this.random),
-            Component.empty(),
-            BossEvent.BossBarColor.BLUE,
-            BossEvent.BossBarOverlay.NOTCHED_10);
+    private final ServerBossEvent shieldEvent = new ServerBossEvent(Mth.createInsecureUUID(this.random), Component.empty(), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.NOTCHED_10);
 
     public EntityEldritchWarden(EntityType<? extends EntityEldritchWarden> type, Level level) {
         super(type, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBossAttributes()
-                .add(Attributes.MAX_HEALTH, BASE_HEALTH)
-                .add(Attributes.MAX_ABSORPTION, BASE_HEALTH * SHIELD_FRACTION)
-                .add(Attributes.MOVEMENT_SPEED, 0.33)
-                .add(Attributes.ATTACK_DAMAGE, 10.0)
-                .add(Attributes.ARMOR, BONUS_ARMOR);
+        return createBossAttributes().add(Attributes.MAX_HEALTH, BASE_HEALTH).add(Attributes.MAX_ABSORPTION, BASE_HEALTH * SHIELD_FRACTION).add(Attributes.MOVEMENT_SPEED, 0.33)
+                .add(Attributes.ATTACK_DAMAGE, 10.0).add(Attributes.ARMOR, BONUS_ARMOR);
     }
 
     @Override
@@ -159,11 +135,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
     public void generateName() {
         int mod = ChampionHelper.championType(this);
         if (mod >= 0) {
-            this.setCustomName(Component.translatable(
-                    "entity.thaumaturge.eldritch_warden.name.custom",
-                    getTitle(),
-                    Component.translatable(
-                            "champion.mod." + ChampionModifier.MODS.get(mod).name())));
+            this.setCustomName(Component.translatable("entity.thaumaturge.eldritch_warden.name.custom", getTitle(), Component.translatable("champion.mod." + ChampionModifier.MODS.get(mod).name())));
         }
     }
 
@@ -199,9 +171,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         }
         int cap = shieldCap();
-        if (this.invulnerableTime <= 0
-                && this.tickCount % SHIELD_REGEN_INTERVAL == 0
-                && this.getAbsorptionAmount() < cap) {
+        if (this.invulnerableTime <= 0 && this.tickCount % SHIELD_REGEN_INTERVAL == 0 && this.getAbsorptionAmount() < cap) {
             this.setAbsorptionAmount(this.getAbsorptionAmount() + 1.0F);
         }
         this.shieldEvent.setProgress(Mth.clamp(this.getAbsorptionAmount() / cap, 0.0F, 1.0F));
@@ -231,24 +201,16 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         }
         ServerLevel server = (ServerLevel) this.level();
         for (int corner = 0; corner < 4; corner++) {
-            BlockPos pos = BlockPos.containing(
-                    this.getX() + (corner % 2 * 2 - 1) * 0.25F,
-                    this.getY(),
-                    this.getZ() + (corner / 2 % 2 * 2 - 1) * 0.25F);
+            BlockPos pos = BlockPos.containing(this.getX() + (corner % 2 * 2 - 1) * 0.25F, this.getY(), this.getZ() + (corner / 2 % 2 * 2 - 1) * 0.25F);
             if (server.isEmptyBlock(pos)) {
                 server.setBlockAndUpdate(pos, TCBlocks.EFFECT_SAP.get().defaultBlockState());
             }
         }
         if (this.getSpawnTimer() > 0 && this.tickCount % 4 == 0) {
-            float height =
-                    Math.max(1.0F, this.getBbHeight() * ((SPAWN_TICKS - this.getSpawnTimer()) / (float) SPAWN_TICKS));
+            float height = Math.max(1.0F, this.getBbHeight() * ((SPAWN_TICKS - this.getSpawnTimer()) / (float) SPAWN_TICKS));
             for (int spiral = 0; spiral < SMOKE_SPIRAL_COUNT; spiral++) {
-                Effects.smokeSpiral(server, this.position().add(0.0, height / 2.0F, 0.0))
-                        .radius(height)
-                        .start(this.random.nextInt(360))
-                        .minY(Mth.floor(this.getBoundingBox().minY) - 1)
-                        .color(SMOKE_COLOR)
-                        .send();
+                Effects.smokeSpiral(server, this.position().add(0.0, height / 2.0F, 0.0)).radius(height).start(this.random.nextInt(360)).minY(Mth.floor(this.getBoundingBox().minY) - 1)
+                        .color(SMOKE_COLOR).send();
             }
         }
         if (this.fieldFrenzyCounter > 0) {
@@ -266,20 +228,12 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             int step = 1 + this.fieldFrenzyCounter / 8;
             for (int q = 0; q < 180 / step; q++) {
                 double radians = Math.toRadians(q * 2 * step);
-                BlockPos pos = BlockPos.containing(
-                        Mth.floor(this.getX()) + radius * Math.cos(radians),
-                        this.getY(),
-                        Mth.floor(this.getZ()) + radius * Math.sin(radians));
-                if (server.isEmptyBlock(pos)
-                        && server.getBlockState(pos.below()).isSolidRender()) {
+                BlockPos pos = BlockPos.containing(Mth.floor(this.getX()) + radius * Math.cos(radians), this.getY(), Mth.floor(this.getZ()) + radius * Math.sin(radians));
+                if (server.isEmptyBlock(pos) && server.getBlockState(pos.below()).isSolidRender()) {
                     server.setBlockAndUpdate(pos, TCBlocks.EFFECT_SAP.get().defaultBlockState());
-                    server.scheduleTick(
-                            pos, TCBlocks.EFFECT_SAP.get(), SAP_TICK_MIN + this.random.nextInt(SAP_TICK_SPREAD));
+                    server.scheduleTick(pos, TCBlocks.EFFECT_SAP.get(), SAP_TICK_MIN + this.random.nextInt(SAP_TICK_SPREAD));
                     if (this.random.nextFloat() < 0.3F) {
-                        Effects.arcBolt(server, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0))
-                                .to(Vec3.atCenterOf(pos))
-                                .color(ARC_COLOR)
-                                .send();
+                        Effects.arcBolt(server, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0)).to(Vec3.atCenterOf(pos)).color(ARC_COLOR).send();
                     }
                 }
             }
@@ -299,8 +253,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         boolean placed = false;
         for (int attempt = 0; attempt < TELEPORT_TRIES; attempt++) {
             BlockPos pos = new BlockPos(x, y, z);
-            if (server.getBlockState(pos.below()).blocksMotion()
-                    && !server.getBlockState(pos).blocksMotion()) {
+            if (server.getBlockState(pos.below()).blocksMotion() && !server.getBlockState(pos).blocksMotion()) {
                 placed = true;
                 break;
             }
@@ -317,16 +270,9 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         }
         for (int i = 0; i < 128; i++) {
             double t = i / 127.0;
-            server.sendParticles(
-                    ParticleTypes.PORTAL,
-                    oldX + (this.getX() - oldX) * t + (this.random.nextDouble() - 0.5) * this.getBbWidth() * 2.0,
-                    oldY + (this.getY() - oldY) * t + this.random.nextDouble() * this.getBbHeight(),
-                    oldZ + (this.getZ() - oldZ) * t + (this.random.nextDouble() - 0.5) * this.getBbWidth() * 2.0,
-                    1,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0);
+            server.sendParticles(ParticleTypes.PORTAL, oldX + (this.getX() - oldX) * t + (this.random.nextDouble() - 0.5) * this.getBbWidth() * 2.0,
+                    oldY + (this.getY() - oldY) * t + this.random.nextDouble() * this.getBbHeight(), oldZ + (this.getZ() - oldZ) * t + (this.random.nextDouble() - 0.5) * this.getBbWidth() * 2.0, 1,
+                    0.0, 0.0, 0.0, 0.0);
         }
         this.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
     }
@@ -338,9 +284,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
-        if (source.is(DamageTypes.DROWN)
-                || source.is(DamageTypes.WITHER)
-                || source.is(DamageTypeTags.WITHER_IMMUNE_TO)) {
+        if (source.is(DamageTypes.DROWN) || source.is(DamageTypes.WITHER) || source.is(DamageTypeTags.WITHER_IMMUNE_TO)) {
             return false;
         }
         boolean hurt = super.hurtServer(level, source, damage);
@@ -352,11 +296,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData data) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         this.spawnTimer = SPAWN_TICKS;
         this.setTitle(this.random.nextInt(TITLES.length));
         this.setAbsorptionAmount(this.getAbsorptionAmount() + shieldCap());
@@ -381,10 +321,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             this.playSound(TCSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);
         } else if (this.hasLineOfSight(target)) {
-            target.push(
-                    -Mth.sin(this.getYRot() * Mth.PI / 180.0F) * SCREECH_FLING,
-                    0.1,
-                    Mth.cos(this.getYRot() * Mth.PI / 180.0F) * SCREECH_FLING);
+            target.push(-Mth.sin(this.getYRot() * Mth.PI / 180.0F) * SCREECH_FLING, 0.1, Mth.cos(this.getYRot() * Mth.PI / 180.0F) * SCREECH_FLING);
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, SCREECH_EFFECT_TICKS, 0));
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, SCREECH_EFFECT_TICKS, 0));
             if (target instanceof ServerPlayer player) {

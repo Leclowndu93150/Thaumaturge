@@ -18,8 +18,7 @@ import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockFluxGoo extends LiquidBlock {
-    public static final MapCodec<LiquidBlock> CODEC =
-            simpleCodec(p -> (LiquidBlock) new BlockFluxGoo(FluxGooRefs.sourceFluid(), p));
+    public static final MapCodec<LiquidBlock> CODEC = simpleCodec(p -> (LiquidBlock) new BlockFluxGoo(FluxGooRefs.sourceFluid(), p));
 
     private static final int REPLACEABLE_AMOUNT_THRESHOLD = 5;
     private static final int AMBIENT_FUME_DENOMINATOR = 44;
@@ -56,8 +55,7 @@ public final class BlockFluxGoo extends LiquidBlock {
             double z = pos.getZ() + random.nextFloat();
             float scale = 0.2F + random.nextFloat() * 0.3F;
             int maxAge = 2 + random.nextInt(3);
-            BubbleParticleOptions data = new BubbleParticleOptions(
-                    ARGB.colorFromFloat(1.0F, FUME_R, FUME_G, FUME_B), FUME_ALPHA, scale, maxAge, -0.01F, false);
+            BubbleParticleOptions data = new BubbleParticleOptions(ARGB.colorFromFloat(1.0F, FUME_R, FUME_G, FUME_B), FUME_ALPHA, scale, maxAge, -0.01F, false);
             level.addParticle(data, x, y, z, 0.0, 0.0, 0.0);
         }
     }

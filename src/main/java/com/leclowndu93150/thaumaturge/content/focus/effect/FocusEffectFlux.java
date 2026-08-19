@@ -59,18 +59,14 @@ public final class FocusEffectFlux implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
         FocusFX.impact(level, target.getLocation(), id());
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
-            struck.hurtServer(
-                    level,
-                    level.damageSources().indirectMagic(struck, ctx.caster()),
-                    damageForDisplay(settings, ctx.power()));
+            struck.hurtServer(level, level.damageSources().indirectMagic(struck, ctx.caster()), damageForDisplay(settings, ctx.power()));
         }
         return false;
     }
@@ -82,22 +78,13 @@ public final class FocusEffectFlux implements FocusEffect {
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.CHORUS_FLOWER_GROW,
-                        SoundSource.PLAYERS,
-                        2.0F,
-                        2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.1F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.CHORUS_FLOWER_GROW, SoundSource.PLAYERS, 2.0F, 2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.1F));
     }
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
         float purple = 0.25F + level.getRandom().nextFloat() * 0.25F;
-        FluxSwirlParticleOptions data = new FluxSwirlParticleOptions(
-                ARGB.colorFromFloat(1.0F, purple, 0.0F, purple),
-                2.0F + level.getRandom().nextFloat(),
+        FluxSwirlParticleOptions data = new FluxSwirlParticleOptions(ARGB.colorFromFloat(1.0F, purple, 0.0F, purple), 2.0F + level.getRandom().nextFloat(),
                 0.25F + level.getRandom().nextFloat() * 0.25F);
         level.addParticle(data, pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }

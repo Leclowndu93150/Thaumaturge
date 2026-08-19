@@ -28,8 +28,7 @@ public final class EntryIconRenderer {
     public static final int ICON_REFERENCE_SIZE = 16;
     public static final int HIT_PADDING = 2;
 
-    public static final Identifier NODE_TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+    public static final Identifier NODE_TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
     private static final int NODE_TEXTURE_SIZE = 2048;
     private static final int NODE_GRID = 32;
     private static final int NODE_FRAME_SIZE = NODE_TEXTURE_SIZE / NODE_GRID;
@@ -64,10 +63,8 @@ public final class EntryIconRenderer {
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
-    private static final Identifier FOCUS_EFFECT_BACK =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_effect.png");
-    private static final Identifier FOCUS_MEDIUM_BACK =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_medium.png");
+    private static final Identifier FOCUS_EFFECT_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_effect.png");
+    private static final Identifier FOCUS_MEDIUM_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
     private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;
@@ -78,9 +75,7 @@ public final class EntryIconRenderer {
     private static final float PULSE_OFFSET = 0.75F;
 
     public enum Status {
-        UNKNOWN,
-        IN_PROGRESS,
-        COMPLETE
+        UNKNOWN, IN_PROGRESS, COMPLETE
     }
 
     private EntryIconRenderer() {}
@@ -100,30 +95,11 @@ public final class EntryIconRenderer {
         return 0xFF000000 | (channel << 16) | (channel << 8) | channel;
     }
 
-    public static void render(
-            GuiGraphicsExtractor graphics,
-            int iconX,
-            int iconY,
-            IResearchEntry entry,
-            Status status,
-            ItemStack icon,
-            boolean hasWarp,
-            boolean hasNewResearchFlag,
-            boolean hasNewPageFlag,
-            int tickCount) {
+    public static void render(GuiGraphicsExtractor graphics, int iconX, int iconY, IResearchEntry entry, Status status, ItemStack icon, boolean hasWarp, boolean hasNewResearchFlag, boolean hasNewPageFlag, int tickCount) {
         render(graphics, iconX, iconY, entry, status, (Object) icon, hasWarp, hasNewResearchFlag, hasNewPageFlag);
     }
 
-    public static void render(
-            GuiGraphicsExtractor graphics,
-            int iconX,
-            int iconY,
-            IResearchEntry entry,
-            Status status,
-            Object icon,
-            boolean hasWarp,
-            boolean hasNewResearchFlag,
-            boolean hasNewPageFlag) {
+    public static void render(GuiGraphicsExtractor graphics, int iconX, int iconY, IResearchEntry entry, Status status, Object icon, boolean hasWarp, boolean hasNewResearchFlag, boolean hasNewPageFlag) {
         Set<ResearchEntryMeta> meta = entry.meta();
         if (hasWarp) {
             drawForbidden(graphics, iconX + 8, iconY + 8);
@@ -178,10 +154,10 @@ public final class EntryIconRenderer {
         return ItemStack.EMPTY;
     }
 
-    public static void drawResearchIcon(
-            GuiGraphicsExtractor graphics, int iconX, int iconY, Object icon, boolean locked) {
+    public static void drawResearchIcon(GuiGraphicsExtractor graphics, int iconX, int iconY, Object icon, boolean locked) {
         if (icon instanceof ItemStack stack) {
-            if (stack.isEmpty()) return;
+            if (stack.isEmpty())
+                return;
             graphics.item(stack, iconX, iconY);
             if (locked) {
                 graphics.fill(iconX, iconY, iconX + ICON_TEX_SIZE, iconY + ICON_TEX_SIZE, LOCKED_ICON_OVERLAY);
@@ -197,10 +173,10 @@ public final class EntryIconRenderer {
         }
     }
 
-    public record FocusIcon(Identifier elementId) {}
+    public record FocusIcon(Identifier elementId) {
+    }
 
-    public static void drawFocusIcon(
-            GuiGraphicsExtractor graphics, int centerX, int centerY, Identifier elementId, boolean locked) {
+    public static void drawFocusIcon(GuiGraphicsExtractor graphics, int centerX, int centerY, Identifier elementId, boolean locked) {
         FocusElement element = FocusEngine.element(elementId);
         if (element == null) {
             return;
@@ -214,37 +190,16 @@ public final class EntryIconRenderer {
         int glyphAlpha = locked ? FOCUS_GLYPH_LOCKED_ALPHA : FOCUS_GLYPH_ALPHA;
         Identifier glyph = FocusEngine.icon(elementId);
         if (glyph != null) {
-            blitCentered(
-                    graphics,
-                    glyph,
-                    centerX,
-                    centerY,
-                    Math.round(FOCUS_PART_SCALE / 2.0F),
-                    (glyphAlpha << 24) | 0x00FFFFFF);
+            blitCentered(graphics, glyph, centerX, centerY, Math.round(FOCUS_PART_SCALE / 2.0F), (glyphAlpha << 24) | 0x00FFFFFF);
         }
     }
 
-    private static void blitCentered(
-            GuiGraphicsExtractor graphics, Identifier texture, int cx, int cy, int size, int color) {
+    private static void blitCentered(GuiGraphicsExtractor graphics, Identifier texture, int cx, int cy, int size, int color) {
         int half = size / 2;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                texture,
-                cx - half,
-                cy - half,
-                0.0F,
-                0.0F,
-                size,
-                size,
-                32,
-                32,
-                32,
-                32,
-                color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, cx - half, cy - half, 0.0F, 0.0F, size, size, 32, 32, 32, 32, color);
     }
 
-    private static void drawTextureIcon(
-            GuiGraphicsExtractor graphics, int iconX, int iconY, Identifier texture, boolean locked) {
+    private static void drawTextureIcon(GuiGraphicsExtractor graphics, int iconX, int iconY, Identifier texture, boolean locked) {
         Minecraft mc = Minecraft.getInstance();
         AbstractTexture tex = mc.getTextureManager().getTexture(texture);
         int tint = locked ? COLOR_UNKNOWN_LOCKED_ICON : COLOR_COMPLETE;
@@ -254,73 +209,21 @@ public final class EntryIconRenderer {
             w = tex.getTexture().getWidth(0);
             h = tex.getTexture().getHeight(0);
         } catch (IllegalStateException unInit) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    iconX,
-                    iconY,
-                    0.0F,
-                    0.0F,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, iconX, iconY, 0.0F, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, tint);
             return;
         }
         if (h > w && h % w == 0) {
             int frames = h / w;
             int frameIdx = (int) (System.currentTimeMillis() / FLIPBOOK_FRAME_MS % frames);
             float v = (float) frameIdx * (float) w;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    iconX,
-                    iconY,
-                    0.0F,
-                    v,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    w,
-                    w,
-                    w,
-                    h,
-                    tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, iconX, iconY, 0.0F, v, ICON_TEX_SIZE, ICON_TEX_SIZE, w, w, w, h, tint);
         } else if (w > h && w % h == 0) {
             int frames = w / h;
             int frameIdx = (int) (System.currentTimeMillis() / FLIPBOOK_FRAME_MS % frames);
             float u = (float) frameIdx * (float) h;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    iconX,
-                    iconY,
-                    u,
-                    0.0F,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    h,
-                    h,
-                    w,
-                    h,
-                    tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, iconX, iconY, u, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, h, h, w, h, tint);
         } else {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    iconX,
-                    iconY,
-                    0.0F,
-                    0.0F,
-                    ICON_TEX_SIZE,
-                    ICON_TEX_SIZE,
-                    w,
-                    h,
-                    w,
-                    h,
-                    tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, iconX, iconY, 0.0F, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, w, h, w, h, tint);
         }
     }
 
@@ -328,25 +231,15 @@ public final class EntryIconRenderer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(FLAG_BADGE_SCALE, FLAG_BADGE_SCALE);
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                0,
-                0,
-                (float) u,
-                (float) FLAG_BADGE_V,
-                FLAG_BADGE_SIZE,
-                FLAG_BADGE_SIZE,
-                FLAG_BADGE_SIZE,
-                FLAG_BADGE_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, 0, 0, (float) u, (float) FLAG_BADGE_V, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE,
+                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
     public static void drawForbidden(GuiGraphicsExtractor graphics, int centerX, int centerY) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null) return;
+        if (mc.player == null)
+            return;
         int count = mc.player.tickCount;
         int frame = NODE_BASE_FRAME + count % NODE_FRAME_COUNT;
         int frameCol = frame % NODE_GRID;
@@ -356,37 +249,13 @@ public final class EntryIconRenderer {
         int half = Math.round(NODE_VISIBLE_SCALE * 0.5F);
         graphics.pose().pushMatrix();
         graphics.pose().translate(centerX, centerY);
-        graphics.blit(
-                TCRenderPipelines.GUI_TEXTURED_ADDITIVE,
-                NODE_TEXTURE,
-                -half,
-                -half,
-                (float) u,
-                (float) v,
-                Math.round(NODE_VISIBLE_SCALE),
-                Math.round(NODE_VISIBLE_SCALE),
-                NODE_FRAME_SIZE,
-                NODE_FRAME_SIZE,
-                NODE_TEXTURE_SIZE,
-                NODE_TEXTURE_SIZE,
-                NODE_TINT);
+        graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, NODE_TEXTURE, -half, -half, (float) u, (float) v, Math.round(NODE_VISIBLE_SCALE), Math.round(NODE_VISIBLE_SCALE), NODE_FRAME_SIZE,
+                NODE_FRAME_SIZE, NODE_TEXTURE_SIZE, NODE_TEXTURE_SIZE, NODE_TINT);
         graphics.pose().popMatrix();
     }
 
     private static void blitFrame(GuiGraphicsExtractor graphics, int x, int y, int u, int v, int color) {
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                TCScreenTextures.RESEARCH_BROWSER,
-                x,
-                y,
-                (float) u,
-                (float) v,
-                FRAME_SIZE,
-                FRAME_SIZE,
-                FRAME_SIZE,
-                FRAME_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, y, (float) u, (float) v, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, TCScreenTextures.TEX_SIZE,
+                TCScreenTextures.TEX_SIZE, color);
     }
 }

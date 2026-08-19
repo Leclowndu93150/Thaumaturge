@@ -22,22 +22,10 @@ public class MenuTurretBasic extends AbstractContainerMenu {
     protected final @Nullable EntityTurretCrossbow turret;
 
     public MenuTurretBasic(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(
-                TCMenus.TURRET_BASIC.get(),
-                containerId,
-                playerInventory,
-                playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityTurretCrossbow t ? t : null,
-                AMMO_X,
-                AMMO_Y);
+        this(TCMenus.TURRET_BASIC.get(), containerId, playerInventory, playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityTurretCrossbow t ? t : null, AMMO_X, AMMO_Y);
     }
 
-    protected MenuTurretBasic(
-            MenuType<?> type,
-            int containerId,
-            Inventory playerInventory,
-            @Nullable EntityTurretCrossbow turret,
-            int slotX,
-            int slotY) {
+    protected MenuTurretBasic(MenuType<?> type, int containerId, Inventory playerInventory, @Nullable EntityTurretCrossbow turret, int slotX, int slotY) {
         super(type, containerId);
         this.turret = turret;
         addSlot(new Slot(new MobEquipmentContainer(turret), 0, slotX, slotY) {
@@ -48,8 +36,7 @@ public class MenuTurretBasic extends AbstractContainerMenu {
         });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
@@ -59,11 +46,7 @@ public class MenuTurretBasic extends AbstractContainerMenu {
 
     public static void open(Player player, EntityTurretCrossbow turret) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(
-                    new SimpleMenuProvider(
-                            (id, inv, p) ->
-                                    new MenuTurretBasic(TCMenus.TURRET_BASIC.get(), id, inv, turret, AMMO_X, AMMO_Y),
-                            turret.getDisplayName()),
+            serverPlayer.openMenu(new SimpleMenuProvider((id, inv, p) -> new MenuTurretBasic(TCMenus.TURRET_BASIC.get(), id, inv, turret, AMMO_X, AMMO_Y), turret.getDisplayName()),
                     buf -> buf.writeVarInt(turret.getId()));
         }
     }

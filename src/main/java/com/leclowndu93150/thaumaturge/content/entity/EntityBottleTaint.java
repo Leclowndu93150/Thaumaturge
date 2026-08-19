@@ -52,39 +52,14 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
     public void handleEntityEvent(byte id) {
         if (id == 3) {
             for (int a = 0; a < SPLOSION_COUNT; a++) {
-                this.level()
-                        .addParticle(
-                                TCParticles.TAINT_SPLOSION.get(),
-                                this.getX(),
-                                this.getY() + this.random.nextFloat() * this.getBbHeight(),
-                                this.getZ(),
-                                this.random.nextDouble() * 2.0 - 1.0,
-                                this.random.nextDouble() * 2.0 - 1.0,
-                                this.random.nextDouble() * 2.0 - 1.0);
+                this.level().addParticle(TCParticles.TAINT_SPLOSION.get(), this.getX(), this.getY() + this.random.nextFloat() * this.getBbHeight(), this.getZ(), this.random.nextDouble() * 2.0 - 1.0,
+                        this.random.nextDouble() * 2.0 - 1.0, this.random.nextDouble() * 2.0 - 1.0);
             }
-            ItemParticleOption crack = new ItemParticleOption(
-                    ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(new ItemStack(TCItems.BOTTLE_TAINT.get())));
+            ItemParticleOption crack = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(new ItemStack(TCItems.BOTTLE_TAINT.get())));
             for (int k = 0; k < BOTTLE_CRACK_COUNT; k++) {
-                this.level()
-                        .addParticle(
-                                crack,
-                                this.getX(),
-                                this.getY(),
-                                this.getZ(),
-                                this.random.nextGaussian() * 0.15,
-                                this.random.nextDouble() * 0.2,
-                                this.random.nextGaussian() * 0.15);
+                this.level().addParticle(crack, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.15, this.random.nextDouble() * 0.2, this.random.nextGaussian() * 0.15);
             }
-            this.level()
-                    .playLocalSound(
-                            this.getX(),
-                            this.getY(),
-                            this.getZ(),
-                            SoundEvents.SPLASH_POTION_BREAK,
-                            SoundSource.NEUTRAL,
-                            1.0F,
-                            this.random.nextFloat() * 0.1F + 0.9F,
-                            false);
+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.SPLASH_POTION_BREAK, SoundSource.NEUTRAL, 1.0F, this.random.nextFloat() * 0.1F + 0.9F, false);
         } else {
             super.handleEntityEvent(id);
         }
@@ -104,8 +79,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
 
     private void applyAreaEffect(ServerLevel server) {
         AABB box = new AABB(this.position(), this.position()).inflate(SPLASH_RADIUS);
-        for (LivingEntity target : server.getEntitiesOfClass(
-                LivingEntity.class, box, e -> !(e instanceof ITaintedMob) && !e.is(EntityTypeTags.UNDEAD))) {
+        for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, box, e -> !(e instanceof ITaintedMob) && !e.is(EntityTypeTags.UNDEAD))) {
             target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
         }
     }

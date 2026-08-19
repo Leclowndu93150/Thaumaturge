@@ -57,27 +57,15 @@ public final class BlockEldritchLock extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-            return createTickerHelper(
-                    type, TCBlockEntities.ELDRITCH_LOCK.get(), (tickLevel, pos, tickState, lock) -> lock.clientTick());
+            return createTickerHelper(type, TCBlockEntities.ELDRITCH_LOCK.get(), (tickLevel, pos, tickState, lock) -> lock.clientTick());
         }
-        return createTickerHelper(
-                type,
-                TCBlockEntities.ELDRITCH_LOCK.get(),
-                (tickLevel, pos, tickState, lock) -> lock.serverTick(tickLevel, pos));
+        return createTickerHelper(type, TCBlockEntities.ELDRITCH_LOCK.get(), (tickLevel, pos, tickState, lock) -> lock.serverTick(tickLevel, pos));
     }
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(TCItems.RUNED_TABLET.get())) {
             return InteractionResult.PASS;
         }

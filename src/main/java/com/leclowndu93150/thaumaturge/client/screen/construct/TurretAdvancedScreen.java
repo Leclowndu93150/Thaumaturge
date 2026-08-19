@@ -24,9 +24,7 @@ public final class TurretAdvancedScreen extends TurretBasicScreen<MenuTurretAdva
     private static final int LABEL_OFFSET_X = 12;
     private static final int LABEL_COLOR = 0xFFFFFFFF;
     private static final float CLICK_VOLUME = 0.4F;
-    private static final String[] BUTTON_LABELS = {
-        "button.turretfocus.1", "button.turretfocus.2", "button.turretfocus.3", "button.turretfocus.4"
-    };
+    private static final String[] BUTTON_LABELS = {"button.turretfocus.1", "button.turretfocus.2", "button.turretfocus.3", "button.turretfocus.4"};
 
     public TurretAdvancedScreen(MenuTurretAdvanced menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE);
@@ -39,38 +37,15 @@ public final class TurretAdvancedScreen extends TurretBasicScreen<MenuTurretAdva
         if (turret == null) {
             return;
         }
-        boolean[] toggles = {
-            turret.getTargetAnimal(), turret.getTargetMob(), turret.getTargetPlayer(), turret.getTargetFriendly()
-        };
+        boolean[] toggles = {turret.getTargetAnimal(), turret.getTargetMob(), turret.getTargetPlayer(), turret.getTargetFriendly()};
         for (int index = 0; index < toggles.length; index++) {
             int x = leftPos + BUTTON_X;
             int y = topPos + BUTTON_FIRST_Y + index * BUTTON_SPACING;
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    x,
-                    y,
-                    BUTTON_U,
-                    BUTTON_V,
-                    BUTTON_SIZE,
-                    BUTTON_SIZE,
-                    256,
-                    256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, BUTTON_U, BUTTON_V, BUTTON_SIZE, BUTTON_SIZE, 256, 256);
             if (toggles[index]) {
-                graphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TEXTURE,
-                        x,
-                        y,
-                        BUTTON_U,
-                        BUTTON_TOGGLED_V,
-                        BUTTON_SIZE,
-                        BUTTON_SIZE,
-                        256,
-                        256);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, BUTTON_U, BUTTON_TOGGLED_V, BUTTON_SIZE, BUTTON_SIZE, 256, 256);
             }
-            graphics.text(
-                    font, Component.translatable(BUTTON_LABELS[index]), x + LABEL_OFFSET_X, y, LABEL_COLOR, false);
+            graphics.text(font, Component.translatable(BUTTON_LABELS[index]), x + LABEL_OFFSET_X, y, LABEL_COLOR, false);
         }
     }
 
@@ -85,8 +60,7 @@ public final class TurretAdvancedScreen extends TurretBasicScreen<MenuTurretAdva
         if (mx >= 0 && mx < BUTTON_SIZE && my >= 0) {
             int index = my / BUTTON_SPACING;
             if (index < 4 && my - index * BUTTON_SPACING < BUTTON_SIZE) {
-                minecraft.gameMode.handleInventoryButtonClick(
-                        menu.containerId, MenuTurretAdvanced.BUTTON_ANIMAL + index);
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuTurretAdvanced.BUTTON_ANIMAL + index);
                 if (minecraft.player != null) {
                     minecraft.player.playSound(TCSounds.CLACK.get(), CLICK_VOLUME, 1.0F);
                 }

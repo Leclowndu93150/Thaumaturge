@@ -76,13 +76,7 @@ public final class BlockVisBattery extends Block {
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block block,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         if (level.hasNeighborSignal(pos)) {
             level.scheduleTick(pos, this, 1);
         }

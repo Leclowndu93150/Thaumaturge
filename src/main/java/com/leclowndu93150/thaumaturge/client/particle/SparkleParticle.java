@@ -23,16 +23,7 @@ public final class SparkleParticle extends TCParticle {
     private float flickerFrom = 1.0F;
     private float flickerTo;
 
-    private SparkleParticle(
-            ClientLevel level,
-            double x,
-            double y,
-            double z,
-            double vx,
-            double vy,
-            double vz,
-            SparkleParticleOptions options,
-            ParticleSheet sheet) {
+    private SparkleParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, SparkleParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         setColor(options.color());
         boolean small = this.random.nextFloat() < SMALL_CHANCE;
@@ -71,16 +62,7 @@ public final class SparkleParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("sparkle");
 
         @Override
-        public Particle createParticle(
-                SparkleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SparkleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new SparkleParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

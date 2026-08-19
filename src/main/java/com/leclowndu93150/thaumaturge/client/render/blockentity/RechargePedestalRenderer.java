@@ -13,8 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class RechargePedestalRenderer
-        implements BlockEntityRenderer<BlockEntityRechargePedestal, RechargePedestalRenderState> {
+public final class RechargePedestalRenderer implements BlockEntityRenderer<BlockEntityRechargePedestal, RechargePedestalRenderState> {
     private static final float LINE_SPEED = -0.02F;
     private static final float LINE_WIDTH = 0.15F;
     private static final float PEDESTAL_TOP = 1.0F;
@@ -31,12 +30,7 @@ public final class RechargePedestalRenderer
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityRechargePedestal pedestal,
-            RechargePedestalRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityRechargePedestal pedestal, RechargePedestalRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         delegate.extractRenderState(pedestal, state, partialTicks, cameraPosition, breakProgress);
         state.draining = false;
         BlockPos drainPos = pedestal.getDrainPos();
@@ -54,21 +48,14 @@ public final class RechargePedestalRenderer
     }
 
     @Override
-    public void submit(
-            RechargePedestalRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            CameraRenderState camera) {
+    public void submit(RechargePedestalRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         delegate.submit(state, poseStack, collector, camera);
         if (state.draining) {
             Vec3 from = new Vec3(state.drainFromX, state.drainFromY, state.drainFromZ);
             float time = FloatyLineRenderer.time(state.time, state.partial);
             int color = state.drainColor;
             Vec3 origin = Vec3.atLowerCornerOf(state.blockPos).add(0.5, PEDESTAL_TOP, 0.5);
-            LateWorldRenderQueue.enqueue(
-                    origin,
-                    (latePose, buffers) -> FloatyLineRenderer.draw(
-                            latePose, buffers, from, time, color, LINE_SPEED, 1.0F, LINE_WIDTH));
+            LateWorldRenderQueue.enqueue(origin, (latePose, buffers) -> FloatyLineRenderer.draw(latePose, buffers, from, time, color, LINE_SPEED, 1.0F, LINE_WIDTH));
         }
     }
 

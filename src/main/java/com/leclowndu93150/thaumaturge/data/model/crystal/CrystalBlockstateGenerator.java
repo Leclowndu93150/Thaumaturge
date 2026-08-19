@@ -25,9 +25,7 @@ public final class CrystalBlockstateGenerator {
 
     private static void emit(BlockModelGenerators blockModels, Block block) {
         BlockStateModelDispatcher dispatcher = new BlockStateModelDispatcher(
-                Optional.of(new BlockStateModelDispatcher.SimpleModelSelectors(
-                        Map.of("", (BlockStateModel.Unbaked) CrystalUnbakedModel.INSTANCE))),
-                Optional.empty());
+                Optional.of(new BlockStateModelDispatcher.SimpleModelSelectors(Map.of("", (BlockStateModel.Unbaked) CrystalUnbakedModel.INSTANCE))), Optional.empty());
         blockModels.blockStateOutput.accept(new BlockModelDefinitionGenerator() {
             @Override
             public Block block() {

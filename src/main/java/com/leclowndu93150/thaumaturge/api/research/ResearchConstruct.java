@@ -23,16 +23,10 @@ import java.util.List;
  * @since 1.0.0
  */
 public record ResearchConstruct(int xSize, int ySize, int zSize, List<String> cells, AspectList cost) {
-    public static final Codec<ResearchConstruct> CODEC = RecordCodecBuilder.<ResearchConstruct>create(instance ->
-                    instance.group(
-                                    Codec.INT.fieldOf("x_size").forGetter(ResearchConstruct::xSize),
-                                    Codec.INT.fieldOf("y_size").forGetter(ResearchConstruct::ySize),
-                                    Codec.INT.fieldOf("z_size").forGetter(ResearchConstruct::zSize),
-                                    Codec.STRING.listOf().fieldOf("cells").forGetter(ResearchConstruct::cells),
-                                    AspectList.CODEC
-                                            .optionalFieldOf("cost", AspectList.EMPTY)
-                                            .forGetter(ResearchConstruct::cost))
-                            .apply(instance, ResearchConstruct::new))
+    public static final Codec<ResearchConstruct> CODEC = RecordCodecBuilder
+            .<ResearchConstruct>create(instance -> instance.group(Codec.INT.fieldOf("x_size").forGetter(ResearchConstruct::xSize), Codec.INT.fieldOf("y_size").forGetter(ResearchConstruct::ySize),
+                    Codec.INT.fieldOf("z_size").forGetter(ResearchConstruct::zSize), Codec.STRING.listOf().fieldOf("cells").forGetter(ResearchConstruct::cells),
+                    AspectList.CODEC.optionalFieldOf("cost", AspectList.EMPTY).forGetter(ResearchConstruct::cost)).apply(instance, ResearchConstruct::new))
             .validate(construct -> construct.cells().size() == construct.xSize() * construct.ySize() * construct.zSize()
                     ? DataResult.success(construct)
                     : DataResult.error(() -> "construct cells must contain exactly x_size * y_size * z_size entries"));

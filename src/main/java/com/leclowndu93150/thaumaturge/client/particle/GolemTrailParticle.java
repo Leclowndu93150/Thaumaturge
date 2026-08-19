@@ -11,8 +11,7 @@ public final class GolemTrailParticle extends TCParticle {
     private static final float START_ALPHA = 0.3F;
     private static final double WIND_SCALE = 0.001;
 
-    private GolemTrailParticle(
-            ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
+    private GolemTrailParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(5);
         this.quadSize = 0.15F;
@@ -31,16 +30,7 @@ public final class GolemTrailParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("golem_trail");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new GolemTrailParticle(level, x, y, z, vx, vy, vz, SHEET);
         }
     }

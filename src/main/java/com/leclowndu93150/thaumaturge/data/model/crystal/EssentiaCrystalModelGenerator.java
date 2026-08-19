@@ -12,16 +12,13 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
 
 public final class EssentiaCrystalModelGenerator {
-    private static final Identifier CRYSTAL_TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "item/essentia_crystal");
+    private static final Identifier CRYSTAL_TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/essentia_crystal");
 
     private EssentiaCrystalModelGenerator() {}
 
     public static void register(ItemModelGenerators itemModels) {
         Identifier model = ModelLocationUtils.getModelLocation(TCItems.ESSENTIA_CRYSTAL.get());
-        ModelTemplates.FLAT_ITEM.create(
-                model, TextureMapping.layer0(new Material(CRYSTAL_TEXTURE)), itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(
-                TCItems.ESSENTIA_CRYSTAL.get(), ItemModelUtils.tintedModel(model, new CrystalAspectTint(0xFFFFFF)));
+        ModelTemplates.FLAT_ITEM.create(model, TextureMapping.layer0(new Material(CRYSTAL_TEXTURE)), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(TCItems.ESSENTIA_CRYSTAL.get(), ItemModelUtils.tintedModel(model, new CrystalAspectTint(0xFFFFFF)));
     }
 }

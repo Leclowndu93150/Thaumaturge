@@ -24,13 +24,7 @@ public final class CastContext {
     private float power;
     private int cursor;
 
-    CastContext(
-            Level level,
-            UUID castId,
-            @Nullable UUID casterId,
-            @Nullable LivingEntity caster,
-            float power,
-            List<FocusUnit> program) {
+    CastContext(Level level, UUID castId, @Nullable UUID casterId, @Nullable LivingEntity caster, float power, List<FocusUnit> program) {
         this.level = level;
         this.castId = castId;
         this.casterId = casterId;

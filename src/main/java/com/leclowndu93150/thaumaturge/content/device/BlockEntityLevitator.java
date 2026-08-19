@@ -76,13 +76,8 @@ public final class BlockEntityLevitator extends BlockEntity {
         if (rangeActual <= 0 || vis <= 0 || !state.getValue(BlockStateProperties.ENABLED)) {
             return;
         }
-        AABB area = new AABB(
-                pos.getX() - (facing.getStepX() < 0 ? rangeActual : 0),
-                pos.getY() - (facing.getStepY() < 0 ? rangeActual : 0),
-                pos.getZ() - (facing.getStepZ() < 0 ? rangeActual : 0),
-                pos.getX() + 1 + (facing.getStepX() > 0 ? rangeActual : 0),
-                pos.getY() + 1 + (facing.getStepY() > 0 ? rangeActual : 0),
-                pos.getZ() + 1 + (facing.getStepZ() > 0 ? rangeActual : 0));
+        AABB area = new AABB(pos.getX() - (facing.getStepX() < 0 ? rangeActual : 0), pos.getY() - (facing.getStepY() < 0 ? rangeActual : 0), pos.getZ() - (facing.getStepZ() < 0 ? rangeActual : 0),
+                pos.getX() + 1 + (facing.getStepX() > 0 ? rangeActual : 0), pos.getY() + 1 + (facing.getStepY() > 0 ? rangeActual : 0), pos.getZ() + 1 + (facing.getStepZ() > 0 ? rangeActual : 0));
         List<Entity> targets = level.getEntitiesOfClass(Entity.class, area);
         boolean lifted = false;
         for (Entity entity : targets) {
@@ -103,10 +98,7 @@ public final class BlockEntityLevitator extends BlockEntity {
                     }
                     dy += AIRBORNE_GRAVITY_COMP;
                 }
-                entity.setDeltaMovement(
-                        Mth.clamp(dx, -SPEED_CAP, SPEED_CAP),
-                        Mth.clamp(dy, -SPEED_CAP, SPEED_CAP),
-                        Mth.clamp(dz, -SPEED_CAP, SPEED_CAP));
+                entity.setDeltaMovement(Mth.clamp(dx, -SPEED_CAP, SPEED_CAP), Mth.clamp(dy, -SPEED_CAP, SPEED_CAP), Mth.clamp(dz, -SPEED_CAP, SPEED_CAP));
             } else if (motion.y < 0.0) {
                 entity.setDeltaMovement(motion.x, motion.y * 0.9, motion.z);
             }
@@ -128,15 +120,8 @@ public final class BlockEntityLevitator extends BlockEntity {
             return;
         }
         RandomSource rand = level.getRandom();
-        spawnParticle(
-                level,
-                rand,
-                pos.getX() + 0.25F + rand.nextFloat() * 0.5F,
-                pos.getY() + 0.25F + rand.nextFloat() * 0.5F,
-                pos.getZ() + 0.25F + rand.nextFloat() * 0.5F,
-                facing.getStepX() / 50.0,
-                facing.getStepY() / 50.0,
-                facing.getStepZ() / 50.0);
+        spawnParticle(level, rand, pos.getX() + 0.25F + rand.nextFloat() * 0.5F, pos.getY() + 0.25F + rand.nextFloat() * 0.5F, pos.getZ() + 0.25F + rand.nextFloat() * 0.5F, facing.getStepX() / 50.0,
+                facing.getStepY() / 50.0, facing.getStepZ() / 50.0);
     }
 
     private static void drawFXAt(Level level, Entity entity) {
@@ -144,19 +129,12 @@ public final class BlockEntityLevitator extends BlockEntity {
             return;
         }
         RandomSource rand = level.getRandom();
-        spawnParticle(
-                level,
-                rand,
-                entity.getX() + (rand.nextFloat() - rand.nextFloat()) * entity.getBbWidth(),
-                entity.getY() + rand.nextFloat() * entity.getBbHeight(),
-                entity.getZ() + (rand.nextFloat() - rand.nextFloat()) * entity.getBbWidth(),
-                (rand.nextFloat() - rand.nextFloat()) * 0.01,
-                (rand.nextFloat() - rand.nextFloat()) * 0.01,
+        spawnParticle(level, rand, entity.getX() + (rand.nextFloat() - rand.nextFloat()) * entity.getBbWidth(), entity.getY() + rand.nextFloat() * entity.getBbHeight(),
+                entity.getZ() + (rand.nextFloat() - rand.nextFloat()) * entity.getBbWidth(), (rand.nextFloat() - rand.nextFloat()) * 0.01, (rand.nextFloat() - rand.nextFloat()) * 0.01,
                 (rand.nextFloat() - rand.nextFloat()) * 0.01);
     }
 
-    private static void spawnParticle(
-            Level level, RandomSource rand, double x, double y, double z, double vx, double vy, double vz) {
+    private static void spawnParticle(Level level, RandomSource rand, double x, double y, double z, double vx, double vy, double vz) {
         level.addParticle(TCParticles.LEVITATOR_MIST.get(), x, y, z, vx, vy, vz);
     }
 
@@ -202,8 +180,7 @@ public final class BlockEntityLevitator extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

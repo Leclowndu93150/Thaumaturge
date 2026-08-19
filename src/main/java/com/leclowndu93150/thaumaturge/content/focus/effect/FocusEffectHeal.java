@@ -57,18 +57,14 @@ public final class FocusEffectHeal implements FocusEffect {
     }
 
     @Override
-    public boolean apply(
-            CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
+    public boolean apply(CastContext ctx, FocusSettings settings, HitResult target, @Nullable Trajectory trajectory, int index) {
         if (!(ctx.level() instanceof ServerLevel level)) {
             return false;
         }
         FocusFX.impact(level, target.getLocation(), id());
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() instanceof LivingEntity living) {
             if (living.isInvertedHealAndHarm()) {
-                living.hurtServer(
-                        level,
-                        level.damageSources().indirectMagic(ctx.caster(), ctx.caster()),
-                        settings.value("power") * ctx.power() * UNDEAD_DAMAGE_FACTOR);
+                living.hurtServer(level, level.damageSources().indirectMagic(ctx.caster(), ctx.caster()), settings.value("power") * ctx.power() * UNDEAD_DAMAGE_FACTOR);
             } else {
                 living.heal(settings.value("power") * ctx.power());
             }
@@ -83,14 +79,7 @@ public final class FocusEffectHeal implements FocusEffect {
 
     @Override
     public void onCast(LivingEntity caster) {
-        caster.level()
-                .playSound(
-                        null,
-                        caster.blockPosition().above(),
-                        SoundEvents.CHORUS_FLOWER_GROW,
-                        SoundSource.PLAYERS,
-                        2.0F,
-                        2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.1F));
+        caster.level().playSound(null, caster.blockPosition().above(), SoundEvents.CHORUS_FLOWER_GROW, SoundSource.PLAYERS, 2.0F, 2.0F + (float) (caster.level().getRandom().nextGaussian() * 0.1F));
     }
 
     @Override

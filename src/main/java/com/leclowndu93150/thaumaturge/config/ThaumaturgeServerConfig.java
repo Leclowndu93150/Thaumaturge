@@ -10,9 +10,7 @@ public final class ThaumaturgeServerConfig {
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.push("infernal_furnace");
-        INFERNAL_FURNACE_TURN_TO_BLAZE = builder.comment(
-                        "Setting this to true will make the lava of the infernal furnace turn into a blaze when it is broken.")
-                .define("lavaTurnIntoBlaze", true);
+        INFERNAL_FURNACE_TURN_TO_BLAZE = builder.comment("Setting this to true will make the lava of the infernal furnace turn into a blaze when it is broken.").define("lavaTurnIntoBlaze", true);
         builder.pop();
         SPEC = builder.build();
     }

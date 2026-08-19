@@ -8,10 +8,7 @@ import net.minecraft.resources.Identifier;
 
 public class SealBreakerAdvanced extends SealBreaker {
     public SealBreakerAdvanced() {
-        props = new ISealConfigToggles.SealToggle[] {
-            new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"),
-            new ISealConfigToggles.SealToggle(false, "psilk", "golem.prop.silk")
-        };
+        props = new ISealConfigToggles.SealToggle[]{new ISealConfigToggles.SealToggle(true, "pmeta", "golem.prop.meta"), new ISealConfigToggles.SealToggle(false, "psilk", "golem.prop.silk")};
     }
 
     @Override
@@ -31,6 +28,6 @@ public class SealBreakerAdvanced extends SealBreaker {
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.BREAKER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[]{TCGolemTraits.BREAKER.get(), TCGolemTraits.SMART.get()};
     }
 }

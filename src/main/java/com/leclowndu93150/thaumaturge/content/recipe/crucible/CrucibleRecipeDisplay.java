@@ -10,23 +10,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 
-public record CrucibleRecipeDisplay(SlotDisplay catalyst, AspectList aspects, SlotDisplay result)
-        implements RecipeDisplay {
-    public static final MapCodec<CrucibleRecipeDisplay> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                    SlotDisplay.CODEC.fieldOf("catalyst").forGetter(CrucibleRecipeDisplay::catalyst),
-                    AspectList.CODEC.fieldOf("aspects").forGetter(CrucibleRecipeDisplay::aspects),
-                    SlotDisplay.CODEC.fieldOf("result").forGetter(CrucibleRecipeDisplay::result))
-            .apply(i, CrucibleRecipeDisplay::new));
+public record CrucibleRecipeDisplay(SlotDisplay catalyst, AspectList aspects, SlotDisplay result) implements RecipeDisplay {
+    public static final MapCodec<CrucibleRecipeDisplay> MAP_CODEC = RecordCodecBuilder
+            .mapCodec(i -> i.group(SlotDisplay.CODEC.fieldOf("catalyst").forGetter(CrucibleRecipeDisplay::catalyst), AspectList.CODEC.fieldOf("aspects").forGetter(CrucibleRecipeDisplay::aspects),
+                    SlotDisplay.CODEC.fieldOf("result").forGetter(CrucibleRecipeDisplay::result)).apply(i, CrucibleRecipeDisplay::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, CrucibleRecipeDisplay> STREAM_CODEC =
-            StreamCodec.composite(
-                    SlotDisplay.STREAM_CODEC,
-                    CrucibleRecipeDisplay::catalyst,
-                    AspectList.STREAM_CODEC,
-                    CrucibleRecipeDisplay::aspects,
-                    SlotDisplay.STREAM_CODEC,
-                    CrucibleRecipeDisplay::result,
-                    CrucibleRecipeDisplay::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, CrucibleRecipeDisplay> STREAM_CODEC = StreamCodec.composite(SlotDisplay.STREAM_CODEC, CrucibleRecipeDisplay::catalyst,
+            AspectList.STREAM_CODEC, CrucibleRecipeDisplay::aspects, SlotDisplay.STREAM_CODEC, CrucibleRecipeDisplay::result, CrucibleRecipeDisplay::new);
 
     @Override
     public SlotDisplay craftingStation() {

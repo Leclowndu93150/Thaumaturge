@@ -29,11 +29,7 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
     private @Nullable ResearchGate gate;
     private @Nullable DataComponentPatch catalystPatch;
 
-    public InfusionRecipeBuilder(
-            HolderGetter<IAspect> aspectsGetter,
-            RecipeCategory category,
-            ItemStackTemplate result,
-            Ingredient catalyst) {
+    public InfusionRecipeBuilder(HolderGetter<IAspect> aspectsGetter, RecipeCategory category, ItemStackTemplate result, Ingredient catalyst) {
         super(result, category);
         this.aspectsGetter = aspectsGetter;
         this.catalyst = catalyst;
@@ -70,22 +66,13 @@ public class InfusionRecipeBuilder extends SimpleRecipeBuilder {
     public void save(RecipeOutput output, ResourceKey<Recipe<?>> key) {
         Preconditions.checkState(!components.isEmpty(), "Infusion recipe has no components");
         InfusionRecipe recipe = catalystPatch != null
-                ? new InfusionRecipe(
-                        catalyst,
-                        components,
-                        aspects,
-                        instability,
-                        Optional.empty(),
-                        Optional.of(catalystPatch),
-                        Optional.ofNullable(gate))
+                ? new InfusionRecipe(catalyst, components, aspects, instability, Optional.empty(), Optional.of(catalystPatch), Optional.ofNullable(gate))
                 : new InfusionRecipe(catalyst, components, aspects, instability, result, Optional.ofNullable(gate));
         output.accept(key, recipe, this.advancementBuilder.build(output, key, this.category));
     }
 
     @Override
     public ResourceKey<Recipe<?>> defaultId() {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("infusion/"));
+        return ResourceKey.create(Registries.RECIPE, result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("infusion/"));
     }
 }

@@ -18,24 +18,13 @@ public record GolemEmoteParticleOptions(int color, int icon, int age, float scal
     public static final int ICON_CONFUSED = 3;
     public static final int ICON_TASK = 4;
 
-    public static final MapCodec<GolemEmoteParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-                    Codec.INT.fieldOf("color").forGetter(GolemEmoteParticleOptions::color),
-                    Codec.INT.fieldOf("icon").forGetter(GolemEmoteParticleOptions::icon),
-                    Codec.INT.fieldOf("age").forGetter(GolemEmoteParticleOptions::age),
-                    Codec.FLOAT.fieldOf("scale").forGetter(GolemEmoteParticleOptions::scale))
+    public static final MapCodec<GolemEmoteParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst
+            .group(Codec.INT.fieldOf("color").forGetter(GolemEmoteParticleOptions::color), Codec.INT.fieldOf("icon").forGetter(GolemEmoteParticleOptions::icon),
+                    Codec.INT.fieldOf("age").forGetter(GolemEmoteParticleOptions::age), Codec.FLOAT.fieldOf("scale").forGetter(GolemEmoteParticleOptions::scale))
             .apply(inst, GolemEmoteParticleOptions::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, GolemEmoteParticleOptions> STREAM_CODEC =
-            StreamCodec.composite(
-                    ByteBufCodecs.INT,
-                    GolemEmoteParticleOptions::color,
-                    ByteBufCodecs.VAR_INT,
-                    GolemEmoteParticleOptions::icon,
-                    ByteBufCodecs.VAR_INT,
-                    GolemEmoteParticleOptions::age,
-                    ByteBufCodecs.FLOAT,
-                    GolemEmoteParticleOptions::scale,
-                    GolemEmoteParticleOptions::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, GolemEmoteParticleOptions> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.INT, GolemEmoteParticleOptions::color, ByteBufCodecs.VAR_INT,
+            GolemEmoteParticleOptions::icon, ByteBufCodecs.VAR_INT, GolemEmoteParticleOptions::age, ByteBufCodecs.FLOAT, GolemEmoteParticleOptions::scale, GolemEmoteParticleOptions::new);
 
     @Override
     public ParticleType<?> getType() {

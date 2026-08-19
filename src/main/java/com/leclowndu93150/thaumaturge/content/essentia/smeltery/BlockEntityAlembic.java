@@ -63,7 +63,8 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     }
 
     public void setAspectFromLabel(@Nullable ResourceKey<IAspect> aspect) {
-        if (this.amount > 0) return;
+        if (this.amount > 0)
+            return;
         this.aspect = aspect;
         setChanged();
         syncToClient();
@@ -98,8 +99,7 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
                         return false;
                     }
                     BlockEntityAlembic alembic = (BlockEntityAlembic) be;
-                    if ((alembic.aspectFilter == null || Objects.equals(alembic.aspectFilter, aspectHolder.getKey()))
-                            && alembic.doAddToContainer(aspectHolder.getKey(), 1) == 0) {
+                    if ((alembic.aspectFilter == null || Objects.equals(alembic.aspectFilter, aspectHolder.getKey())) && alembic.doAddToContainer(aspectHolder.getKey(), 1) == 0) {
                         return true;
                     }
                     deep++;
@@ -107,9 +107,7 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
             }
 
             BlockEntityAlembic alembic = (BlockEntityAlembic) be;
-            if (alembic.amount > 0
-                    && Objects.equals(alembic.aspect, aspectHolder.getKey())
-                    && alembic.doAddToContainer(aspectHolder.getKey(), 1) == 0) {
+            if (alembic.amount > 0 && Objects.equals(alembic.aspect, aspectHolder.getKey()) && alembic.doAddToContainer(aspectHolder.getKey(), 1) == 0) {
                 return true;
             }
 
@@ -118,14 +116,17 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     }
 
     protected void syncToClient() {
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
         BlockState current = getBlockState();
         level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
 
     protected int doAddToContainer(ResourceKey<IAspect> incoming, int requested) {
-        if (requested == 0) return 0;
-        if (aspectFilter != null && !aspectFilter.equals(incoming)) return requested;
+        if (requested == 0)
+            return 0;
+        if (aspectFilter != null && !aspectFilter.equals(incoming))
+            return requested;
         if (amount < CAPACITY && incoming.equals(aspect) || amount == 0) {
             aspect = incoming;
             int added = Math.min(requested, CAPACITY - amount);
@@ -154,9 +155,11 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     }
 
     public AspectList getContents(HolderLookup.Provider registries) {
-        if (aspect == null || amount <= 0) return AspectList.EMPTY;
+        if (aspect == null || amount <= 0)
+            return AspectList.EMPTY;
         Holder<IAspect> holder = EssentiaTransportHelper.resolve(registries, aspect);
-        if (holder == null) return AspectList.EMPTY;
+        if (holder == null)
+            return AspectList.EMPTY;
         return AspectList.EMPTY.add(new AspectInstance(holder, amount));
     }
 
@@ -200,9 +203,11 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face)) return 0;
+        if (!canOutputTo(face))
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null) return 0;
+        if (key == null)
+            return 0;
         return doTakeFromContainer(key, amount) ? amount : 0;
     }
 
@@ -233,8 +238,10 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        if (aspect != null) output.store("Aspect", ASPECT_KEY_CODEC, aspect);
-        if (aspectFilter != null) output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
+        if (aspect != null)
+            output.store("Aspect", ASPECT_KEY_CODEC, aspect);
+        if (aspectFilter != null)
+            output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
         output.putInt("Amount", amount);
         output.store("Facing", Direction.CODEC, facing);
     }
@@ -242,10 +249,8 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
-            TagValueOutput tagvalueoutput =
-                    TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
+        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+            TagValueOutput tagvalueoutput = TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
             saveAdditional(tagvalueoutput);
             nbt.merge(tagvalueoutput.buildResult());
         }
@@ -286,19 +291,22 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
         ResourceKey<IAspect> filter = input.get(TCDataComponents.ASPECT_FILTER.get());
         if (filter != null) {
             aspectFilter = filter;
-            if (aspect == null) aspect = filter;
+            if (aspect == null)
+                aspect = filter;
         }
     }
 
     @Override
     public AspectList getAspects() {
-        if (amount() == 0) return AspectList.EMPTY;
+        if (amount() == 0)
+            return AspectList.EMPTY;
         return AspectList.of(new AspectInstance(EssentiaTransportHelper.resolve(getLevel(), aspectKey()), amount()));
     }
 
     @Override
     public void setAspects(AspectList aspects) {
-        if (aspects.isEmpty()) return;
+        if (aspects.isEmpty())
+            return;
         AspectInstance first = aspects.entries().getFirst();
         ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
         if (key != null) {
@@ -316,7 +324,8 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
 
     @Override
     public int addToContainer(Holder<IAspect> aspect, int amount) {
-        if (amount == 0) return amount;
+        if (amount == 0)
+            return amount;
         if ((this.amount < CAPACITY && Objects.equals(this.aspect, aspect.getKey())) || this.amount == 0) {
             this.aspect = aspect.getKey();
             int added = Math.min(amount, CAPACITY - this.amount);

@@ -14,8 +14,8 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
  */
 public final class AspectCapabilities {
     /** Sided block capability for aspect storing. */
-    public static final BlockCapability<IAspectContainer, Direction> CONTAINER = BlockCapability.createSided(
-            Identifier.fromNamespaceAndPath("thaumaturge", "aspect_container"), IAspectContainer.class);
+    public static final BlockCapability<IAspectContainer, Direction> CONTAINER = BlockCapability.createSided(Identifier.fromNamespaceAndPath("thaumaturge", "aspect_container"),
+            IAspectContainer.class);
 
     private AspectCapabilities() {}
 }

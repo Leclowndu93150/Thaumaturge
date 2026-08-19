@@ -31,15 +31,11 @@ public final class AmuletVisItem extends Item {
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
-        if (!(wearer instanceof Player player)
-                || player.level().isClientSide()
-                || player.tickCount % rechargeInterval != 0) {
+        if (!(wearer instanceof Player player) || player.level().isClientSide() || player.tickCount % rechargeInterval != 0) {
             return;
         }
         for (int slot = 0; slot < Inventory.SELECTION_SIZE; slot++) {
-            if (RechargeAccess.rechargeItem(
-                            player.level(), player.getInventory().getItem(slot), player.blockPosition(), player, 1)
-                    > 0.0F) {
+            if (RechargeAccess.rechargeItem(player.level(), player.getInventory().getItem(slot), player.blockPosition(), player, 1) > 0.0F) {
                 return;
             }
         }
@@ -50,10 +46,7 @@ public final class AmuletVisItem extends Item {
             return;
         }
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.isArmor()
-                    && RechargeAccess.rechargeItem(
-                                    player.level(), player.getItemBySlot(slot), player.blockPosition(), player, 1)
-                            > 0.0F) {
+            if (slot.isArmor() && RechargeAccess.rechargeItem(player.level(), player.getItemBySlot(slot), player.blockPosition(), player, 1) > 0.0F) {
                 return;
             }
         }
@@ -87,14 +80,8 @@ public final class AmuletVisItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
-        tooltip.accept(
-                Component.translatable("item.thaumaturge.amulet_vis.text").withStyle(ChatFormatting.AQUA));
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("item.thaumaturge.amulet_vis.text").withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 }

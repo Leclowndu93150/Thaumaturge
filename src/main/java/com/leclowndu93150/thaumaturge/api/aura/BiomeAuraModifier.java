@@ -17,7 +17,6 @@ public record BiomeAuraModifier(float value) {
     /**
      * The codec used to deserialize the data-map value from JSON.
      */
-    public static final Codec<BiomeAuraModifier> CODEC = RecordCodecBuilder.create(
-            instance -> instance.group(Codec.FLOAT.fieldOf("value").forGetter(BiomeAuraModifier::value))
-                    .apply(instance, BiomeAuraModifier::new));
+    public static final Codec<BiomeAuraModifier> CODEC = RecordCodecBuilder
+            .create(instance -> instance.group(Codec.FLOAT.fieldOf("value").forGetter(BiomeAuraModifier::value)).apply(instance, BiomeAuraModifier::new));
 }

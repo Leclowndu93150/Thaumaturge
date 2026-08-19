@@ -89,41 +89,16 @@ public final class InfusionEnchantmentEvents {
             }
             float damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
             if (living.hurtServer(level, level.damageSources().playerAttack(player), damage * ARCING_DAMAGE_FRACTION)) {
-                EnchantmentHelper.doPostAttackEffects(
-                        level, living, level.damageSources().playerAttack(player));
+                EnchantmentHelper.doPostAttackEffects(level, living, level.damageSources().playerAttack(player));
                 float yaw = player.getYRot() * ((float) Math.PI / 180.0F);
                 living.push(-Mth.sin(yaw) * 0.5F, 0.1, Mth.cos(yaw) * 0.5F);
-                Effects.slash(
-                        level,
-                        target.getX(),
-                        target.getY() + target.getBbHeight() / 2.0,
-                        target.getZ(),
-                        living.getX(),
-                        living.getY() + living.getBbHeight() / 2.0,
-                        living.getZ(),
-                        SLASH_LIFE);
+                Effects.slash(level, target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ(), living.getX(), living.getY() + living.getBbHeight() / 2.0, living.getZ(), SLASH_LIFE);
                 count++;
             }
         }
         if (count > 0) {
-            level.playSound(
-                    null,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    TCSounds.WIND.get(),
-                    SoundSource.PLAYERS,
-                    1.0F,
-                    0.9F + level.getRandom().nextFloat() * 0.2F);
-            Effects.slash(
-                    level,
-                    player.getX(),
-                    player.getY() + player.getBbHeight() / 2.0,
-                    player.getZ(),
-                    target.getX(),
-                    target.getY() + target.getBbHeight() / 2.0,
-                    target.getZ(),
-                    SLASH_LIFE);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.WIND.get(), SoundSource.PLAYERS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+            Effects.slash(level, player.getX(), player.getY() + player.getBbHeight() / 2.0, player.getZ(), target.getX(), target.getY() + target.getBbHeight() / 2.0, target.getZ(), SLASH_LIFE);
         }
     }
 
@@ -143,19 +118,9 @@ public final class InfusionEnchantmentEvents {
         ItemStack held = player.getItemInHand(event.getHand() == null ? InteractionHand.MAIN_HAND : event.getHand());
         int rank = InfusionEnchantmentHelper.level(held, InfusionEnchantment.SOUNDING);
         if (rank > 0 && player.isShiftKeyDown()) {
-            held.hurtAndBreak(
-                    SOUNDING_DAMAGE,
-                    player,
-                    event.getHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+            held.hurtAndBreak(SOUNDING_DAMAGE, player, event.getHand() == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
             ServerLevel level = (ServerLevel) event.getLevel();
-            level.playSound(
-                    null,
-                    event.getPos().getX() + 0.5,
-                    event.getPos().getY() + 0.5,
-                    event.getPos().getZ() + 0.5,
-                    TCSounds.WANDFAIL.get(),
-                    SoundSource.BLOCKS,
-                    0.2F,
+            level.playSound(null, event.getPos().getX() + 0.5, event.getPos().getY() + 0.5, event.getPos().getZ() + 0.5, TCSounds.WANDFAIL.get(), SoundSource.BLOCKS, 0.2F,
                     0.2F + level.getRandom().nextFloat() * 0.2F);
             if (player instanceof ServerPlayer serverPlayer) {
                 SoundingScan.perform(level, serverPlayer, event.getPos(), rank);
@@ -212,21 +177,12 @@ public final class InfusionEnchantmentEvents {
                     }
                 }
                 if (changed) {
-                    level.playSound(
-                            null,
-                            pos,
-                            SoundEvents.EXPERIENCE_ORB_PICKUP,
-                            SoundSource.PLAYERS,
-                            0.2F,
-                            0.7F + level.getRandom().nextFloat() * 0.2F);
+                    level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.2F, 0.7F + level.getRandom().nextFloat() * 0.2F);
                 }
             }
         }
 
-        if (!DESTRUCTIVE_RECURSION.get()
-                && InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
-                && !player.isShiftKeyDown()
-                && held.isCorrectToolForDrops(state)) {
+        if (!DESTRUCTIVE_RECURSION.get() && InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE) && !player.isShiftKeyDown() && held.isCorrectToolForDrops(state)) {
             DESTRUCTIVE_RECURSION.set(true);
             try {
                 Direction face = Direction.getApproximateNearest(player.getViewVector(1.0F));
@@ -251,8 +207,7 @@ public final class InfusionEnchantmentEvents {
                         }
                         BlockPos offset = pos.offset(xx, yy, zz);
                         BlockState neighbour = level.getBlockState(offset);
-                        if (neighbour.getDestroySpeed(level, offset) >= 0.0F
-                                && held.getDestroySpeed(neighbour) > 1.0F) {
+                        if (neighbour.getDestroySpeed(level, offset) >= 0.0F && held.getDestroySpeed(neighbour) > 1.0F) {
                             held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
                             EnchantMining.harvestBlock(level, player, offset, false);
                         }
@@ -265,14 +220,7 @@ public final class InfusionEnchantmentEvents {
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.COLLECTOR) && !player.isShiftKeyDown()) {
             for (ItemEntity drop : event.getDrops()) {
-                EntityFollowingItem follow = new EntityFollowingItem(
-                        level,
-                        drop.getX(),
-                        drop.getY(),
-                        drop.getZ(),
-                        drop.getItem().copy(),
-                        player,
-                        FOLLOW_TYPE);
+                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player, FOLLOW_TYPE);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 level.addFreshEntity(follow);
@@ -289,8 +237,7 @@ public final class InfusionEnchantmentEvents {
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        if (!(event.getSource().getEntity() instanceof Player player)
-                || player.level().isClientSide()) {
+        if (!(event.getSource().getEntity() instanceof Player player) || player.level().isClientSide()) {
             return;
         }
         ItemStack held = player.getMainHandItem();
@@ -302,14 +249,7 @@ public final class InfusionEnchantmentEvents {
             List<ItemEntity> drops = List.copyOf(event.getDrops());
             event.getDrops().clear();
             for (ItemEntity drop : drops) {
-                EntityFollowingItem follow = new EntityFollowingItem(
-                        level,
-                        drop.getX(),
-                        drop.getY(),
-                        drop.getZ(),
-                        drop.getItem().copy(),
-                        player,
-                        FOLLOW_TYPE);
+                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player, FOLLOW_TYPE);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 event.getDrops().add(follow);
@@ -320,20 +260,12 @@ public final class InfusionEnchantmentEvents {
             int rank = InfusionEnchantmentHelper.level(held, InfusionEnchantment.ESSENCE);
             AspectList aspects = EntityAspects.of(victim);
             if (!aspects.isEmpty()) {
-                distillEssence(
-                        level, player, victim, aspects, rank, list.contains(InfusionEnchantment.COLLECTOR), event);
+                distillEssence(level, player, victim, aspects, rank, list.contains(InfusionEnchantment.COLLECTOR), event);
             }
         }
     }
 
-    private static void distillEssence(
-            ServerLevel level,
-            Player player,
-            LivingEntity victim,
-            AspectList aspects,
-            int rank,
-            boolean collector,
-            LivingDropsEvent event) {
+    private static void distillEssence(ServerLevel level, Player player, LivingEntity victim, AspectList aspects, int rank, boolean collector, LivingDropsEvent event) {
         AspectList remaining = aspects;
         int produced = level.getRandom().nextInt(5) < rank ? 0 : 99;
         double x = victim.getX();
@@ -358,33 +290,17 @@ public final class InfusionEnchantmentEvents {
 
     private static void addRareNugget(BlockDropsEvent event, ServerLevel level, BlockState state) {
         boolean silk = event.getBreaker() instanceof Player p
-                && EnchantmentHelper.getItemEnchantmentLevel(
-                                level.registryAccess()
-                                        .lookupOrThrow(Registries.ENCHANTMENT)
-                                        .getOrThrow(Enchantments.SILK_TOUCH),
-                                p.getMainHandItem())
-                        > 0;
+                && EnchantmentHelper.getItemEnchantmentLevel(level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SILK_TOUCH), p.getMainHandItem()) > 0;
         if (silk) {
             return;
         }
         float roll = level.getRandom().nextFloat();
-        boolean rare = state.is(BlockTags.DIAMOND_ORES) && roll < 0.05F
-                || state.is(BlockTags.EMERALD_ORES) && roll < 0.075F
-                || state.is(BlockTags.LAPIS_ORES) && roll < 0.01F
-                || state.is(BlockTags.COAL_ORES) && roll < 0.001F
-                || state.is(BlockTags.REDSTONE_ORES) && roll < 0.01F
-                || state.is(TCBlocks.ORE_QUARTZ.get()) && roll < TC_QUARTZ_NUGGET_CHANCE
-                || state.is(Tags.Blocks.ORES_QUARTZ) && roll < 0.01F
-                || state.is(TCBlockTags.ORES_AMBER) && roll < 0.05F;
+        boolean rare = state.is(BlockTags.DIAMOND_ORES) && roll < 0.05F || state.is(BlockTags.EMERALD_ORES) && roll < 0.075F || state.is(BlockTags.LAPIS_ORES) && roll < 0.01F
+                || state.is(BlockTags.COAL_ORES) && roll < 0.001F || state.is(BlockTags.REDSTONE_ORES) && roll < 0.01F || state.is(TCBlocks.ORE_QUARTZ.get()) && roll < TC_QUARTZ_NUGGET_CHANCE
+                || state.is(Tags.Blocks.ORES_QUARTZ) && roll < 0.01F || state.is(TCBlockTags.ORES_AMBER) && roll < 0.05F;
         if (rare) {
             BlockPos pos = event.getPos();
-            event.getDrops()
-                    .add(new ItemEntity(
-                            level,
-                            pos.getX() + 0.5,
-                            pos.getY() + 0.5,
-                            pos.getZ() + 0.5,
-                            new ItemStack(TCItems.NUGGET_QUARTZ.get())));
+            event.getDrops().add(new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(TCItems.NUGGET_QUARTZ.get())));
         }
     }
 }

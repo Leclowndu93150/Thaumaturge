@@ -28,16 +28,11 @@ public final class BlockVisGenerator extends BaseEntityBlock {
 
     public BlockVisGenerator(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(getStateDefinition()
-                .any()
-                .setValue(BlockStateProperties.FACING, Direction.UP)
-                .setValue(BlockStateProperties.ENABLED, true));
+        registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.UP).setValue(BlockStateProperties.ENABLED, true));
     }
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(
-            box(6.0, 2.0, 6.0, 10.0, 16.0, 10.0),
-            box(4.0, 4.0, 4.0, 12.0, 8.0, 12.0),
-            box(3.0, 5.0, 3.0, 13.0, 7.0, 13.0)));
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes
+            .facingShapesFromUp(Shapes.or(box(6.0, 2.0, 6.0, 10.0, 16.0, 10.0), box(4.0, 4.0, 4.0, 12.0, 8.0, 12.0), box(3.0, 5.0, 3.0, 13.0, 7.0, 13.0)));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -56,19 +51,12 @@ public final class BlockVisGenerator extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(BlockStateProperties.FACING, context.getClickedFace())
-                .setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
+        return defaultBlockState().setValue(BlockStateProperties.FACING, context.getClickedFace()).setValue(BlockStateProperties.ENABLED,
+                !context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block block,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
         super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
@@ -82,8 +70,7 @@ public final class BlockVisGenerator extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

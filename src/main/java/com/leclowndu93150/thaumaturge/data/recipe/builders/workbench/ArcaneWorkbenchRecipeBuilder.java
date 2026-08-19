@@ -20,15 +20,13 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Recipe;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchRecipeBuilder<R>>
-        extends SimpleRecipeBuilder {
+public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchRecipeBuilder<R>> extends SimpleRecipeBuilder {
     private final HolderGetter<IAspect> aspectsGetter;
     private @Nullable ResearchGate gate;
     private AspectList aspects = AspectList.EMPTY;
     private final int vis;
 
-    public ArcaneWorkbenchRecipeBuilder(
-            RecipeCategory category, ItemStackTemplate result, HolderGetter<IAspect> aspectsGetter, int vis) {
+    public ArcaneWorkbenchRecipeBuilder(RecipeCategory category, ItemStackTemplate result, HolderGetter<IAspect> aspectsGetter, int vis) {
         super(result, category);
         this.aspectsGetter = aspectsGetter;
         Preconditions.checkArgument(vis > 0, "Vis cannot be <= 0");
@@ -36,12 +34,7 @@ public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchReci
     }
 
     public R allAspects() {
-        return aspect(TCAspects.AER)
-                .aspect(TCAspects.IGNIS)
-                .aspect(TCAspects.TERRA)
-                .aspect(TCAspects.AQUA)
-                .aspect(TCAspects.ORDO)
-                .aspect(TCAspects.PERDITIO);
+        return aspect(TCAspects.AER).aspect(TCAspects.IGNIS).aspect(TCAspects.TERRA).aspect(TCAspects.AQUA).aspect(TCAspects.ORDO).aspect(TCAspects.PERDITIO);
     }
 
     public R aspect(ResourceKey<IAspect> aspect) {
@@ -75,27 +68,15 @@ public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchReci
 
     @Override
     public void save(RecipeOutput output, ResourceKey<Recipe<?>> key) {
-        ArcaneCraftingRecipe recipe = makeRecipe(
-                RecipeBuilder.createCraftingCommonInfo(true),
-                this.result,
-                this.aspects,
-                Optional.ofNullable(gate),
-                vis);
+        ArcaneCraftingRecipe recipe = makeRecipe(RecipeBuilder.createCraftingCommonInfo(true), this.result, this.aspects, Optional.ofNullable(gate), vis);
 
         output.accept(key, recipe, this.advancementBuilder.build(output, key, this.category));
     }
 
-    protected abstract ArcaneCraftingRecipe makeRecipe(
-            Recipe.CommonInfo commonInfo,
-            ItemStackTemplate result,
-            AspectList aspects,
-            Optional<ResearchGate> gate,
-            int vis);
+    protected abstract ArcaneCraftingRecipe makeRecipe(Recipe.CommonInfo commonInfo, ItemStackTemplate result, AspectList aspects, Optional<ResearchGate> gate, int vis);
 
     @Override
     public ResourceKey<Recipe<?>> defaultId() {
-        return ResourceKey.create(
-                Registries.RECIPE,
-                result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("arcane_workbench/"));
+        return ResourceKey.create(Registries.RECIPE, result.typeHolder().unwrapKey().orElseThrow().identifier().withPrefix("arcane_workbench/"));
     }
 }

@@ -56,18 +56,13 @@ public final class MenuSealBase extends AbstractContainerMenu {
     private final DataSlot color = DataSlot.standalone();
 
     public MenuSealBase(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(
-                containerId,
-                playerInventory,
-                ClientSealHolder.get(new SealPos(buf.readBlockPos(), buf.readEnum(Direction.class))));
+        this(containerId, playerInventory, ClientSealHolder.get(new SealPos(buf.readBlockPos(), buf.readEnum(Direction.class))));
     }
 
     public MenuSealBase(int containerId, Inventory playerInventory, @Nullable ISealEntity seal) {
         super(TCMenus.SEAL.get(), containerId);
         this.seal = seal;
-        this.categories = seal != null && seal.getSeal() instanceof ISealGui gui
-                ? gui.getGuiCategories()
-                : new int[] {ISealGui.CAT_PRIORITY};
+        this.categories = seal != null && seal.getSeal() instanceof ISealGui gui ? gui.getGuiCategories() : new int[]{ISealGui.CAT_PRIORITY};
         this.category = categories[0];
         if (seal != null && seal.getSeal() instanceof ISealConfigFilter filter) {
             filterSlotCount = filter.getFilterSize();
@@ -77,16 +72,14 @@ public final class MenuSealBase extends AbstractContainerMenu {
             for (int i = 0; i < filterSlotCount; i++) {
                 int col = i % FILTER_COLUMNS;
                 int row = i / FILTER_COLUMNS;
-                addSlot(new GhostSlot(
-                        this, container, i, MIDDLE_X + col * 24 - offsetX + 8, MIDDLE_Y + row * 24 - offsetY + 8));
+                addSlot(new GhostSlot(this, container, i, MIDDLE_X + col * 24 - offsetX + 8, MIDDLE_Y + row * 24 - offsetY + 8));
             }
         } else {
             filterSlotCount = 0;
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
@@ -179,8 +172,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
             seal.setRedstoneSensitive(id == BUTTON_REDSTONE_ON);
             return true;
         }
-        if ((id == BUTTON_BLACKLIST_ON || id == BUTTON_BLACKLIST_OFF)
-                && seal.getSeal() instanceof ISealConfigFilter filter) {
+        if ((id == BUTTON_BLACKLIST_ON || id == BUTTON_BLACKLIST_OFF) && seal.getSeal() instanceof ISealConfigFilter filter) {
             filter.setBlacklist(id == BUTTON_BLACKLIST_ON);
             return true;
         }
@@ -239,7 +231,8 @@ public final class MenuSealBase extends AbstractContainerMenu {
                         return true;
                     }
                 }
-                default -> {}
+                default -> {
+                }
             }
         }
         return false;
@@ -247,11 +240,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
 
     @Override
     public void clicked(int slotId, int button, ContainerInput clickType, Player player) {
-        if (slotId >= 0
-                && slotId < slots.size()
-                && slots.get(slotId) instanceof GhostSlot ghost
-                && seal != null
-                && seal.getSeal() instanceof ISealConfigFilter filter) {
+        if (slotId >= 0 && slotId < slots.size() && slots.get(slotId) instanceof GhostSlot ghost && seal != null && seal.getSeal() instanceof ISealConfigFilter filter) {
             ghostClick(ghost, button, clickType, filter);
             if (!player.level().isClientSide() && player.level() instanceof ServerLevel serverLevel) {
                 SealHandler.markDirty(serverLevel, seal.getSealPos().pos());
@@ -271,8 +260,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
                 filter.setFilterSlotSize(index, 0);
             } else if (carried.isEmpty()) {
                 if (slot.hasItem()) {
-                    filter.setFilterSlotSize(
-                            index, filter.getFilterSlotSize(index) - (clickType == ContainerInput.QUICK_MOVE ? 10 : 1));
+                    filter.setFilterSlotSize(index, filter.getFilterSlotSize(index) - (clickType == ContainerInput.QUICK_MOVE ? 10 : 1));
                     if (filter.getFilterSlotSize(index) < 0) {
                         slot.set(ItemStack.EMPTY);
                         filter.setFilterSlotSize(index, 0);
@@ -287,8 +275,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
             }
         } else if (carried.isEmpty()) {
             if (limiters && slot.hasItem()) {
-                filter.setFilterSlotSize(
-                        index, filter.getFilterSlotSize(index) + (clickType == ContainerInput.QUICK_MOVE ? 10 : 1));
+                filter.setFilterSlotSize(index, filter.getFilterSlotSize(index) + (clickType == ContainerInput.QUICK_MOVE ? 10 : 1));
             }
         } else {
             if (!limiters) {

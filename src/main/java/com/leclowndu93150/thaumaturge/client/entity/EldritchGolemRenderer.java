@@ -8,8 +8,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
-public final class EldritchGolemRenderer
-        extends MobRenderer<EntityEldritchGolem, EldritchGolemRenderState, EldritchGolemModel> {
+public final class EldritchGolemRenderer extends MobRenderer<EntityEldritchGolem, EldritchGolemRenderState, EldritchGolemModel> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/eldritch_golem.png");
     private static final float SHADOW = 0.7F;
     private static final float SCALE = 1.8F;

@@ -20,16 +20,7 @@ public class AlphaDrawable implements IDrawableStatic {
         this(identifier, u, v, width, height, 0, 0, 0, 0);
     }
 
-    public AlphaDrawable(
-            Identifier identifier,
-            int u,
-            int v,
-            int width,
-            int height,
-            int paddingTop,
-            int paddingBottom,
-            int paddingLeft,
-            int paddingRight) {
+    public AlphaDrawable(Identifier identifier, int u, int v, int width, int height, int paddingTop, int paddingBottom, int paddingLeft, int paddingRight) {
         this.identifier = identifier;
 
         this.u = u;
@@ -64,14 +55,7 @@ public class AlphaDrawable implements IDrawableStatic {
     }
 
     @Override
-    public void draw(
-            GuiGraphicsExtractor guiGraphics,
-            int xOffset,
-            int yOffset,
-            int maskTop,
-            int maskBottom,
-            int maskLeft,
-            int maskRight) {
+    public void draw(GuiGraphicsExtractor guiGraphics, int xOffset, int yOffset, int maskTop, int maskBottom, int maskLeft, int maskRight) {
         int x = xOffset + this.paddingLeft + maskLeft;
         int y = yOffset + this.paddingTop + maskTop;
         int u = this.u + maskLeft;

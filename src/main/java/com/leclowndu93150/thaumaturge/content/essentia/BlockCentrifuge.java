@@ -36,11 +36,7 @@ public final class BlockCentrifuge extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(
-                type,
-                TCBlockEntities.CENTRIFUGE.get(),
-                level.isClientSide() ? BlockEntityCentrifuge::clientTick : BlockEntityCentrifuge::serverTick);
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TCBlockEntities.CENTRIFUGE.get(), level.isClientSide() ? BlockEntityCentrifuge::clientTick : BlockEntityCentrifuge::serverTick);
     }
 }

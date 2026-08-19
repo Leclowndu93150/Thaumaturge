@@ -36,16 +36,14 @@ public final class FocusModScatter implements FocusMod {
 
     @Override
     public int complexity(FocusSettings settings) {
-        return (int) Math.max(
-                MIN_COMPLEXITY, 2.0F * (settings.value("forks") - settings.value("cone") / CONE_COMPLEXITY_DIVISOR));
+        return (int) Math.max(MIN_COMPLEXITY, 2.0F * (settings.value("forks") - settings.value("cone") / CONE_COMPLEXITY_DIVISOR));
     }
 
     @Override
     public List<SettingDefinition> settings() {
-        int[] angles = new int[] {10, 30, 60, 90, 180, 270, 360};
-        String[] anglesDesc = new String[] {"10", "30", "60", "90", "180", "270", "360"};
-        return List.of(
-                new SettingDefinition("forks", "focus.scatter.forks", new SettingDefinition.IntRange(2, 10)),
+        int[] angles = new int[]{10, 30, 60, 90, 180, 270, 360};
+        String[] anglesDesc = new String[]{"10", "30", "60", "90", "180", "270", "360"};
+        return List.of(new SettingDefinition("forks", "focus.scatter.forks", new SettingDefinition.IntRange(2, 10)),
                 new SettingDefinition("cone", "focus.scatter.cone", new SettingDefinition.IntList(angles, anglesDesc)));
     }
 
@@ -69,12 +67,8 @@ public final class FocusModScatter implements FocusMod {
             RandomSource rand = ctx.level().getRandom();
             for (Trajectory sT : supplied) {
                 for (int a = 0; a < forks; a++) {
-                    Vec3 direction = sT.direction()
-                            .normalize()
-                            .add(
-                                    rand.nextGaussian() * JITTER_PER_DEGREE * angle,
-                                    rand.nextGaussian() * JITTER_PER_DEGREE * angle,
-                                    rand.nextGaussian() * JITTER_PER_DEGREE * angle);
+                    Vec3 direction = sT.direction().normalize().add(rand.nextGaussian() * JITTER_PER_DEGREE * angle, rand.nextGaussian() * JITTER_PER_DEGREE * angle,
+                            rand.nextGaussian() * JITTER_PER_DEGREE * angle);
                     out.add(new Trajectory(sT.source(), direction.normalize()));
                 }
             }

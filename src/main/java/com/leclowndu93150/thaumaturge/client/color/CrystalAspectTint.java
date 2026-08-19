@@ -13,11 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public record CrystalAspectTint(int fallback) implements ItemTintSource {
-    public static final MapCodec<CrystalAspectTint> MAP_CODEC =
-            RecordCodecBuilder.mapCodec(instance -> instance.group(ExtraCodecs.RGB_COLOR_CODEC
-                            .optionalFieldOf("fallback", 0xFFFFFF)
-                            .forGetter(CrystalAspectTint::fallback))
-                    .apply(instance, CrystalAspectTint::new));
+    public static final MapCodec<CrystalAspectTint> MAP_CODEC = RecordCodecBuilder
+            .mapCodec(instance -> instance.group(ExtraCodecs.RGB_COLOR_CODEC.optionalFieldOf("fallback", 0xFFFFFF).forGetter(CrystalAspectTint::fallback)).apply(instance, CrystalAspectTint::new));
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {

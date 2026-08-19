@@ -14,10 +14,7 @@ public final class TCScrollButton extends TCImageButton {
     private static final int ATLAS = 256;
 
     public enum Direction {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
+        LEFT, RIGHT, UP, DOWN
     }
 
     private TCScrollButton(int x, int y, int u, int v, Component message, Runnable onPress) {

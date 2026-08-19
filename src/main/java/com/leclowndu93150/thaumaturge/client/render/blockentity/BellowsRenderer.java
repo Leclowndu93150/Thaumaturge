@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 
 public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, BellowsRenderState> {
 
-    public static final String[] parts = new String[] {"bottom_plank", "top_plank", "bag"};
+    public static final String[] parts = new String[]{"bottom_plank", "top_plank", "bag"};
 
     public static final StandaloneModelKey<BlockStateModel>[] MODEL_KEYS = new StandaloneModelKey[3];
 
@@ -34,11 +34,7 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
     }
 
     @Override
-    public void submit(
-            BellowsRenderState state,
-            PoseStack poseStack,
-            SubmitNodeCollector submitNodeCollector,
-            CameraRenderState cameraRenderState) {
+    public void submit(BellowsRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         if (state.models != null) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.5, 0.5);
@@ -57,12 +53,10 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
                 poseStack.scale(1F, (state.scale + 0.1F), 1F);
                 // poseStack.translate(0F, -0.5F, 0F);
                 // poseStack.scale(1f,2F,1f);
-                submitNodeCollector.submitMultiLayerBlockModel(
-                        poseStack, state.parts[2], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                submitNodeCollector.submitMultiLayerBlockModel(poseStack, state.parts[2], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
                 if (state.breakProgress != null)
-                    submitNodeCollector.submitBreakingBlockModel(
-                            poseStack, state.models[2], state.seed, state.breakProgress.progress());
+                    submitNodeCollector.submitBreakingBlockModel(poseStack, state.models[2], state.seed, state.breakProgress.progress());
                 poseStack.popPose();
             }
 
@@ -70,12 +64,10 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
             {
                 poseStack.pushPose();
                 poseStack.translate(0F, (1 - state.scale) * -0.25F, 0F);
-                submitNodeCollector.submitMultiLayerBlockModel(
-                        poseStack, state.parts[1], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                submitNodeCollector.submitMultiLayerBlockModel(poseStack, state.parts[1], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
                 if (state.breakProgress != null)
-                    submitNodeCollector.submitBreakingBlockModel(
-                            poseStack, state.models[1], state.seed, state.breakProgress.progress());
+                    submitNodeCollector.submitBreakingBlockModel(poseStack, state.models[1], state.seed, state.breakProgress.progress());
                 poseStack.popPose();
             }
 
@@ -83,12 +75,10 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
             {
                 poseStack.pushPose();
                 poseStack.translate(0F, (1 - state.scale) * 0.25F, 0F);
-                submitNodeCollector.submitMultiLayerBlockModel(
-                        poseStack, state.parts[0], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                submitNodeCollector.submitMultiLayerBlockModel(poseStack, state.parts[0], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
                 if (state.breakProgress != null)
-                    submitNodeCollector.submitBreakingBlockModel(
-                            poseStack, state.models[0], state.seed, state.breakProgress.progress());
+                    submitNodeCollector.submitBreakingBlockModel(poseStack, state.models[0], state.seed, state.breakProgress.progress());
                 poseStack.popPose();
             }
 
@@ -97,29 +87,19 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityBellows blockEntity,
-            BellowsRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityBellows blockEntity, BellowsRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.facing = blockEntity.getBlockState().getValue(BlockBellows.FACING);
         state.scale = blockEntity.inflation;
         state.seed = blockEntity.getBlockState().getSeed(blockEntity.getBlockPos());
-        BlockEntity be =
-                blockEntity.getLevel().getBlockEntity(blockEntity.getBlockPos().relative(state.facing));
-        if (be != null && be instanceof BlockEntityTubeBuffer) state.extension = true;
+        BlockEntity be = blockEntity.getLevel().getBlockEntity(blockEntity.getBlockPos().relative(state.facing));
+        if (be != null && be instanceof BlockEntityTubeBuffer)
+            state.extension = true;
         for (int i = 0; i < parts.length; i++) {
             state.parts[i] = new ArrayList<>();
             state.models[i] = Minecraft.getInstance().getModelManager().getStandaloneModel(MODEL_KEYS[i]);
             if (state.models[i] != null) {
-                state.models[i].collectParts(
-                        (ClientLevel) blockEntity.getLevel(),
-                        blockEntity.getBlockPos(),
-                        blockEntity.getBlockState(),
-                        blockEntity.getLevel().getRandom(),
-                        state.parts[i]);
+                state.models[i].collectParts((ClientLevel) blockEntity.getLevel(), blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getLevel().getRandom(), state.parts[i]);
             }
         }
     }

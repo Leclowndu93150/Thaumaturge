@@ -36,7 +36,8 @@ public final class NoteRules {
         return false;
     }
 
-    public record Completion(boolean complete, List<ResearchNoteData.Cell> prunedCells) {}
+    public record Completion(boolean complete, List<ResearchNoteData.Cell> prunedCells) {
+    }
 
     public static Completion checkCompletion(ResearchNoteData data, Predicate<Holder<IAspect>> discovered) {
         Map<HexGrid.Hex, ResearchNoteData.Cell> map = data.cellMap();

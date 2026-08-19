@@ -30,11 +30,8 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea {
     private static final int SCAN_INTERVAL = 20;
     private static final short TASK_LIFESPAN = 10;
 
-    protected final ISealConfigToggles.SealToggle[] props = {
-        new ISealConfigToggles.SealToggle(true, "pmob", "golem.prop.mob"),
-        new ISealConfigToggles.SealToggle(false, "panimal", "golem.prop.animal"),
-        new ISealConfigToggles.SealToggle(false, "pplayer", "golem.prop.player")
-    };
+    protected final ISealConfigToggles.SealToggle[] props = {new ISealConfigToggles.SealToggle(true, "pmob", "golem.prop.mob"),
+            new ISealConfigToggles.SealToggle(false, "panimal", "golem.prop.animal"), new ISealConfigToggles.SealToggle(false, "pplayer", "golem.prop.player")};
 
     private int delay = System.identityHashCode(this) % 22;
 
@@ -66,17 +63,12 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea {
         if (props[1].getValue() && (target instanceof Animal || target instanceof WaterAnimal)) {
             return true;
         }
-        return props[2].getValue()
-                && level instanceof ServerLevel serverLevel
-                && serverLevel.isPvpAllowed()
-                && target instanceof Player;
+        return props[2].getValue() && level instanceof ServerLevel serverLevel && serverLevel.isPvpAllowed() && target instanceof Player;
     }
 
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
-        if (task.getEntity() instanceof LivingEntity target
-                && isValidTarget(level, target)
-                && golem.getGolemEntity() instanceof Mob mob) {
+        if (task.getEntity() instanceof LivingEntity target && isValidTarget(level, target) && golem.getGolemEntity() instanceof Mob mob) {
             mob.setTarget(target);
             golem.addRankXp(1);
         }
@@ -106,12 +98,12 @@ public class SealGuard implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.FIGHTER.get()};
+        return new GolemTrait[]{TCGolemTraits.FIGHTER.get()};
     }
 
     @Override

@@ -130,9 +130,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
 
     private boolean hasIngredients() {
         if (mix) {
-            return tank.getResource(0).is(Fluids.WATER)
-                    && tank.getAmountAsInt(0) >= FLUID_COST
-                    && items.getResource(0).is(TCItems.BATH_SALTS.get());
+            return tank.getResource(0).is(Fluids.WATER) && tank.getAmountAsInt(0) >= FLUID_COST && items.getResource(0).is(TCItems.BATH_SALTS.get());
         }
         return tank.getAmountAsInt(0) >= FLUID_COST && targetBlock() != null;
     }
@@ -154,9 +152,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
         }
         BlockState state = level.getBlockState(pos);
         BlockState below = level.getBlockState(pos.below());
-        if (!below.isFaceSturdy(level, pos.below(), Direction.UP)
-                || !state.canBeReplaced()
-                || (state.getBlock() == target && state.getFluidState().isSource())) {
+        if (!below.isFaceSturdy(level, pos.below(), Direction.UP) || !state.canBeReplaced() || (state.getBlock() == target && state.getFluidState().isSource())) {
             return false;
         }
         if (!mustBeAdjacent) {
@@ -201,8 +197,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput out = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(out);
             nbt.merge(out.buildResult());

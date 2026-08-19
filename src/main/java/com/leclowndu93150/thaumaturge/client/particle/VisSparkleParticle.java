@@ -24,8 +24,7 @@ public final class VisSparkleParticle extends TCParticle {
     private final Vec3 target;
     private final float growDivisor;
 
-    private VisSparkleParticle(
-            ClientLevel level, double x, double y, double z, VisSparkleParticleOptions options, ParticleSheet sheet) {
+    private VisSparkleParticle(ClientLevel level, double x, double y, double z, VisSparkleParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         if (options.color() >= 0) {
             setColor(options.color());
@@ -77,16 +76,7 @@ public final class VisSparkleParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("vis_sparkle");
 
         @Override
-        public Particle createParticle(
-                VisSparkleParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(VisSparkleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new VisSparkleParticle(level, x, y, z, options, SHEET);
         }
     }

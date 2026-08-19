@@ -18,23 +18,7 @@ public class TCToggleButton extends TCButton {
     private final int textureHeight;
     private final BooleanSupplier state;
 
-    public TCToggleButton(
-            int x,
-            int y,
-            int width,
-            int height,
-            Identifier texture,
-            int u,
-            int v,
-            int toggledU,
-            int toggledV,
-            int spriteWidth,
-            int spriteHeight,
-            int textureWidth,
-            int textureHeight,
-            BooleanSupplier state,
-            Component message,
-            Runnable onPress) {
+    public TCToggleButton(int x, int y, int width, int height, Identifier texture, int u, int v, int toggledU, int toggledV, int spriteWidth, int spriteHeight, int textureWidth, int textureHeight, BooleanSupplier state, Component message, Runnable onPress) {
         super(x, y, width, height, message, onPress);
         this.texture = texture;
         this.u = u;
@@ -53,34 +37,9 @@ public class TCToggleButton extends TCButton {
         int color = activeTintColor(tintColor(), isHovered(), active);
         int drawX = getX() + (getWidth() - spriteWidth) / 2;
         int drawY = getY() + (getHeight() - spriteHeight) / 2;
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                texture,
-                drawX,
-                drawY,
-                (float) u,
-                (float) v,
-                spriteWidth,
-                spriteHeight,
-                spriteWidth,
-                spriteHeight,
-                textureWidth,
-                textureHeight,
-                color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, drawX, drawY, (float) u, (float) v, spriteWidth, spriteHeight, spriteWidth, spriteHeight, textureWidth, textureHeight, color);
         if (state.getAsBoolean()) {
-            graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
-                    texture,
-                    drawX,
-                    drawY,
-                    (float) toggledU,
-                    (float) toggledV,
-                    spriteWidth,
-                    spriteHeight,
-                    spriteWidth,
-                    spriteHeight,
-                    textureWidth,
-                    textureHeight,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, texture, drawX, drawY, (float) toggledU, (float) toggledV, spriteWidth, spriteHeight, spriteWidth, spriteHeight, textureWidth, textureHeight,
                     color);
         }
     }

@@ -18,7 +18,8 @@ public final class LateWorldRenderQueue {
         void draw(PoseStack poseStack, MultiBufferSource buffers);
     }
 
-    private record Entry(Vec3 origin, LateDraw draw) {}
+    private record Entry(Vec3 origin, LateDraw draw) {
+    }
 
     private static final List<Entry> QUEUE = new ArrayList<>();
 

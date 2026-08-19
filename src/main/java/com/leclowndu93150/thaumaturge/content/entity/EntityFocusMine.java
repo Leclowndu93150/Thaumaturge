@@ -27,8 +27,7 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jspecify.annotations.Nullable;
 
 public final class EntityFocusMine extends ThrowableProjectile implements IEntityWithComplexSpawn {
-    private static final EntityDataAccessor<Boolean> DATA_ARMED =
-            SynchedEntityData.defineId(EntityFocusMine.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> DATA_ARMED = SynchedEntityData.defineId(EntityFocusMine.class, EntityDataSerializers.BOOLEAN);
 
     private static final int LIFESPAN_TICKS = 1200;
     private static final int ARM_DELAY_TICKS = 40;
@@ -166,27 +165,17 @@ public final class EntityFocusMine extends ThrowableProjectile implements IEntit
         }
         Identifier effectId = this.effects.get(this.random.nextInt(this.effects.size()));
         if (FocusEngine.element(effectId) instanceof FocusEffect effect) {
-            effect.impactParticles(
-                    this.level(),
-                    new Vec3(
-                            this.getX() + this.random.nextGaussian() * EFFECT_FX_SPREAD,
-                            this.getY() + this.random.nextGaussian() * EFFECT_FX_SPREAD,
+            effect.impactParticles(this.level(),
+                    new Vec3(this.getX() + this.random.nextGaussian() * EFFECT_FX_SPREAD, this.getY() + this.random.nextGaussian() * EFFECT_FX_SPREAD,
                             this.getZ() + this.random.nextGaussian() * EFFECT_FX_SPREAD),
-                    new Vec3(
-                            this.random.nextGaussian() * EFFECT_FX_MOTION,
-                            this.random.nextGaussian() * EFFECT_FX_MOTION,
-                            this.random.nextGaussian() * EFFECT_FX_MOTION));
+                    new Vec3(this.random.nextGaussian() * EFFECT_FX_MOTION, this.random.nextGaussian() * EFFECT_FX_MOTION, this.random.nextGaussian() * EFFECT_FX_MOTION));
         }
     }
 
     private void trigger() {
         LivingEntity caster = this.getOwner() instanceof LivingEntity living ? living : null;
-        for (LivingEntity candidate : FocusTargeting.livingInRange(
-                this.level(), this.getX(), this.getY(), this.getZ(), this, TRIGGER_RANGE)) {
-            if (candidate.isAlive()
-                    && (this.friendly
-                            ? FocusTargeting.isFriendly(caster, candidate)
-                            : !FocusTargeting.isFriendly(caster, candidate))) {
+        for (LivingEntity candidate : FocusTargeting.livingInRange(this.level(), this.getX(), this.getY(), this.getZ(), this, TRIGGER_RANGE)) {
+            if (candidate.isAlive() && (this.friendly ? FocusTargeting.isFriendly(caster, candidate) : !FocusTargeting.isFriendly(caster, candidate))) {
                 Vec3 point = candidate.position().add(0.0, candidate.getBbHeight() / 2.0F, 0.0);
                 this.pendingStrikes.add(new PendingStrike(candidate, point));
             }
@@ -204,21 +193,11 @@ public final class EntityFocusMine extends ThrowableProjectile implements IEntit
         if (this.focusPackage == null || !(this.getOwner() instanceof LivingEntity livingOwner)) {
             return;
         }
-        EntityHitResult ray = new EntityHitResult(
-                pending.target(),
-                pending.target().position().add(0.0, pending.target().getBbHeight() / 2.0F, 0.0));
-        FocusEngine.run(
-                this.level(),
-                this.focusPackage,
-                livingOwner,
-                new CastStreams(
-                        new Trajectory[] {
-                            new Trajectory(
-                                    this.position(),
-                                    pending.point().subtract(this.position()).normalize())
-                        },
-                        new HitResult[] {ray}));
+        EntityHitResult ray = new EntityHitResult(pending.target(), pending.target().position().add(0.0, pending.target().getBbHeight() / 2.0F, 0.0));
+        FocusEngine.run(this.level(), this.focusPackage, livingOwner,
+                new CastStreams(new Trajectory[]{new Trajectory(this.position(), pending.point().subtract(this.position()).normalize())}, new HitResult[]{ray}));
     }
 
-    private record PendingStrike(LivingEntity target, Vec3 point) {}
+    private record PendingStrike(LivingEntity target, Vec3 point) {
+    }
 }

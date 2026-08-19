@@ -17,17 +17,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 
-public class ArcaneWorkbenchShapelessRecipeBuilder
-        extends ArcaneWorkbenchRecipeBuilder<ArcaneWorkbenchShapelessRecipeBuilder> {
+public class ArcaneWorkbenchShapelessRecipeBuilder extends ArcaneWorkbenchRecipeBuilder<ArcaneWorkbenchShapelessRecipeBuilder> {
     private final List<Ingredient> ingredients = new ArrayList<>();
     private final HolderGetter<Item> items;
 
-    public ArcaneWorkbenchShapelessRecipeBuilder(
-            RecipeCategory category,
-            ItemStackTemplate result,
-            HolderGetter<IAspect> aspects,
-            int vis,
-            HolderGetter<Item> items) {
+    public ArcaneWorkbenchShapelessRecipeBuilder(RecipeCategory category, ItemStackTemplate result, HolderGetter<IAspect> aspects, int vis, HolderGetter<Item> items) {
         super(category, result, aspects, vis);
         this.items = items;
     }
@@ -60,12 +54,7 @@ public class ArcaneWorkbenchShapelessRecipeBuilder
     }
 
     @Override
-    protected ArcaneCraftingRecipe makeRecipe(
-            Recipe.CommonInfo commonInfo,
-            ItemStackTemplate result,
-            AspectList aspects,
-            Optional<ResearchGate> gate,
-            int vis) {
+    protected ArcaneCraftingRecipe makeRecipe(Recipe.CommonInfo commonInfo, ItemStackTemplate result, AspectList aspects, Optional<ResearchGate> gate, int vis) {
         return new ArcaneShapelessCraftingRecipe(commonInfo, vis, gate, aspects, result, ingredients);
     }
 }

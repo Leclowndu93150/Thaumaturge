@@ -32,8 +32,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class EntityTaintSwarm extends Monster implements ITaintedMob {
-    private static final EntityDataAccessor<Boolean> SUMMONED =
-            SynchedEntityData.defineId(EntityTaintSwarm.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SUMMONED = SynchedEntityData.defineId(EntityTaintSwarm.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ATTACK_RANGE = 3;
     private static final int ATTACK_COOLDOWN = 25;
@@ -55,11 +54,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0)
-                .add(Attributes.ATTACK_DAMAGE, 2.0)
-                .add(Attributes.FLYING_SPEED, 0.6)
-                .add(Attributes.MOVEMENT_SPEED, 0.3)
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 30.0).add(Attributes.ATTACK_DAMAGE, 2.0).add(Attributes.FLYING_SPEED, 0.6).add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.FOLLOW_RANGE, 32.0);
     }
 
@@ -108,18 +103,8 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
                 double x = box.minX + this.random.nextDouble() * (box.maxX - box.minX);
                 double y = box.minY + this.random.nextDouble() * (box.maxY - box.minY);
                 double z = box.minZ + this.random.nextDouble() * (box.maxZ - box.minZ);
-                TaintFumeParticleOptions data = new TaintFumeParticleOptions(
-                        ARGB.colorFromFloat(1.0F, SWARM_PARTICLE_R, SWARM_PARTICLE_G, SWARM_PARTICLE_B),
-                        SWARM_PARTICLE_SCALE);
-                this.level()
-                        .addParticle(
-                                data,
-                                x,
-                                y,
-                                z,
-                                this.getDeltaMovement().x,
-                                this.getDeltaMovement().y,
-                                this.getDeltaMovement().z);
+                TaintFumeParticleOptions data = new TaintFumeParticleOptions(ARGB.colorFromFloat(1.0F, SWARM_PARTICLE_R, SWARM_PARTICLE_G, SWARM_PARTICLE_B), SWARM_PARTICLE_SCALE);
+                this.level().addParticle(data, x, y, z, this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z);
             }
             return;
         }

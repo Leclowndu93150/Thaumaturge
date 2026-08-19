@@ -19,13 +19,7 @@ public final class WandTooltips {
 
     public static ChatFormatting primalColor(HolderLookup.@Nullable Provider registries, ResourceKey<IAspect> primal) {
         if (registries != null) {
-            ChatFormatting color = registries
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .getOrThrow(primal)
-                    .value()
-                    .chatColor()
-                    .map(code -> ChatFormatting.getByCode(code.charAt(0)))
-                    .orElse(null);
+            ChatFormatting color = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(primal).value().chatColor().map(code -> ChatFormatting.getByCode(code.charAt(0))).orElse(null);
             if (color != null) {
                 return color;
             }
@@ -34,13 +28,10 @@ public final class WandTooltips {
     }
 
     public static Component primalName(HolderLookup.@Nullable Provider registries, ResourceKey<IAspect> primal) {
-        return Component.translatable(
-                        "aspect.thaumaturge." + primal.identifier().getPath())
-                .withStyle(primalColor(registries, primal));
+        return Component.translatable("aspect.thaumaturge." + primal.identifier().getPath()).withStyle(primalColor(registries, primal));
     }
 
-    public static Component costSummary(
-            HolderLookup.@Nullable Provider registries, Map<ResourceKey<IAspect>, Integer> pctByPrimal) {
+    public static Component costSummary(HolderLookup.@Nullable Provider registries, Map<ResourceKey<IAspect>, Integer> pctByPrimal) {
         Map<Integer, List<ResourceKey<IAspect>>> groups = new LinkedHashMap<>();
         for (Map.Entry<ResourceKey<IAspect>, Integer> entry : pctByPrimal.entrySet()) {
             groups.computeIfAbsent(entry.getValue(), pct -> new ArrayList<>()).add(entry.getKey());
@@ -74,11 +65,9 @@ public final class WandTooltips {
             }
         }
         if (exceptions == null) {
-            return Component.translatable("tooltip.thaumaturge.wand.cost", basePct)
-                    .withStyle(ChatFormatting.GRAY);
+            return Component.translatable("tooltip.thaumaturge.wand.cost", basePct).withStyle(ChatFormatting.GRAY);
         }
-        return Component.translatable("tooltip.thaumaturge.wand.cost.except", basePct, exceptions)
-                .withStyle(ChatFormatting.GRAY);
+        return Component.translatable("tooltip.thaumaturge.wand.cost.except", basePct, exceptions).withStyle(ChatFormatting.GRAY);
     }
 
     public static Component capCostSummary(HolderLookup.@Nullable Provider registries, WandCap cap) {

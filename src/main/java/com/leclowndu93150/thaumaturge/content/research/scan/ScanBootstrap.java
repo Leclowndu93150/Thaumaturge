@@ -28,8 +28,7 @@ public final class ScanBootstrap {
             ScanningManager.addScannableThing(new ScanGeneric());
             ScanningManager.addScannableThing(new ScanNode());
             ScanningManager.addScannableThing(new ScanSky());
-            for (Holder.Reference<MobEffect> effect :
-                    BuiltInRegistries.MOB_EFFECT.listElements().toList()) {
+            for (Holder.Reference<MobEffect> effect : BuiltInRegistries.MOB_EFFECT.listElements().toList()) {
                 ScanningManager.addScannableThing(new ScanPotion(effect));
             }
         });
@@ -37,22 +36,15 @@ public final class ScanBootstrap {
 
     @SubscribeEvent
     public static void onTagsUpdated(TagsUpdatedEvent event) {
-        event.getLookupProvider()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .listElements()
-                .forEach(aspect -> {
-                    if (DYNAMIC_ASPECTS.add(aspect.key().identifier())) {
-                        ScanningManager.addScannableThing(new ScanAspectDiscovery(aspect.key()));
-                    }
-                });
-        event.getLookupProvider()
-                .lookupOrThrow(Registries.ENCHANTMENT)
-                .listElements()
-                .forEach(enchantment -> {
-                    if (DYNAMIC_ENCHANTMENTS.add(enchantment.key().identifier())) {
-                        ScanningManager.addScannableThing(
-                                new ScanEnchantment(enchantment.key().identifier()));
-                    }
-                });
+        event.getLookupProvider().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().forEach(aspect -> {
+            if (DYNAMIC_ASPECTS.add(aspect.key().identifier())) {
+                ScanningManager.addScannableThing(new ScanAspectDiscovery(aspect.key()));
+            }
+        });
+        event.getLookupProvider().lookupOrThrow(Registries.ENCHANTMENT).listElements().forEach(enchantment -> {
+            if (DYNAMIC_ENCHANTMENTS.add(enchantment.key().identifier())) {
+                ScanningManager.addScannableThing(new ScanEnchantment(enchantment.key().identifier()));
+            }
+        });
     }
 }

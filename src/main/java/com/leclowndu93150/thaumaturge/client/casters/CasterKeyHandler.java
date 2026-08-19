@@ -40,27 +40,22 @@ public final class CasterKeyHandler {
         if (player == null) {
             return;
         }
-        boolean holdingCaster = player.getMainHandItem().getItem() instanceof ICaster
-                || player.getOffhandItem().getItem() instanceof ICaster;
+        boolean holdingCaster = player.getMainHandItem().getItem() instanceof ICaster || player.getOffhandItem().getItem() instanceof ICaster;
         if (mc.screen == null && holdingCaster && TCKeybinds.CHANGE_FOCUS.same(mc.options.keySwapOffhand)) {
             boolean drained = mc.options.keySwapOffhand.consumeClick();
             while (drained) {
                 drained = mc.options.keySwapOffhand.consumeClick();
             }
         }
-        boolean inGame = mc.screen == null
-                && (mc.mouseHandler.isMouseGrabbed() || radialActive || RadialFocusOverlay.isAnimating());
+        boolean inGame = mc.screen == null && (mc.mouseHandler.isMouseGrabbed() || radialActive || RadialFocusOverlay.isAnimating());
         if (TCKeybinds.CHANGE_FOCUS.isDown()) {
             if (inGame) {
                 if (!keyPressedF) {
                     radialLock = false;
                 }
-                if (!radialLock
-                        && (player.getMainHandItem().getItem() instanceof ICaster
-                                || player.getOffhandItem().getItem() instanceof ICaster)) {
+                if (!radialLock && (player.getMainHandItem().getItem() instanceof ICaster || player.getOffhandItem().getItem() instanceof ICaster)) {
                     if (player.isShiftKeyDown()) {
-                        ClientPacketDistributor.sendToServer(
-                                new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
+                        ClientPacketDistributor.sendToServer(new ServerboundFocusChangePayload(CasterManager.REMOVE_FOCUS));
                     } else {
                         radialActive = true;
                     }

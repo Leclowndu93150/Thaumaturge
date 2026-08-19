@@ -30,12 +30,7 @@ public final class LootBagItem extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> tooltip,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, display, tooltip, flag);
         tooltip.accept(Component.translatable("tc.lootbag"));
     }
@@ -44,9 +39,7 @@ public final class LootBagItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (level instanceof ServerLevel server) {
             LootTable table = server.getServer().reloadableRegistries().getLootTable(lootTable);
-            LootParams params = new LootParams.Builder(server)
-                    .withParameter(LootContextParams.ORIGIN, player.position())
-                    .create(LootContextParamSets.CHEST);
+            LootParams params = new LootParams.Builder(server).withParameter(LootContextParams.ORIGIN, player.position()).create(LootContextParamSets.CHEST);
             for (ItemStack loot : table.getRandomItems(params)) {
                 server.addFreshEntity(new ItemEntity(server, player.getX(), player.getY(), player.getZ(), loot.copy()));
             }

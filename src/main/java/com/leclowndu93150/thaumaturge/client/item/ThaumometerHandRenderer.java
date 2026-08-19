@@ -47,8 +47,7 @@ public final class ThaumometerHandRenderer {
         if (player == null || !event.getItemStack().is(TCItems.THAUMOMETER.get())) {
             return;
         }
-        if (event.getHand() != InteractionHand.MAIN_HAND
-                || !player.getOffhandItem().isEmpty()) {
+        if (event.getHand() != InteractionHand.MAIN_HAND || !player.getOffhandItem().isEmpty()) {
             return;
         }
         event.setCanceled(true);
@@ -91,34 +90,14 @@ public final class ThaumometerHandRenderer {
         poseStack.popPose();
     }
 
-    private static void renderScanner(
-            Minecraft mc,
-            AbstractClientPlayer player,
-            ItemStack stack,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            int light) {
+    private static void renderScanner(Minecraft mc, AbstractClientPlayer player, ItemStack stack, PoseStack poseStack, SubmitNodeCollector collector, int light) {
         ItemStackRenderState renderState = new ItemStackRenderState();
-        mc.getItemModelResolver()
-                .updateForTopItem(
-                        renderState,
-                        stack,
-                        ItemDisplayContext.HEAD,
-                        player.level(),
-                        player,
-                        player.getId() + ItemDisplayContext.HEAD.ordinal());
+        mc.getItemModelResolver().updateForTopItem(renderState, stack, ItemDisplayContext.HEAD, player.level(), player, player.getId() + ItemDisplayContext.HEAD.ordinal());
         renderState.submit(poseStack, collector, light, OverlayTexture.NO_OVERLAY, 0);
     }
 
-    private static void renderMapHand(
-            Minecraft mc,
-            AbstractClientPlayer player,
-            PoseStack poseStack,
-            SubmitNodeCollector collector,
-            int light,
-            HumanoidArm arm) {
-        AvatarRenderer<AbstractClientPlayer> renderer =
-                mc.getEntityRenderDispatcher().getPlayerRenderer(player);
+    private static void renderMapHand(Minecraft mc, AbstractClientPlayer player, PoseStack poseStack, SubmitNodeCollector collector, int light, HumanoidArm arm) {
+        AvatarRenderer<AbstractClientPlayer> renderer = mc.getEntityRenderDispatcher().getPlayerRenderer(player);
         poseStack.pushPose();
         float invert = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
         poseStack.mulPose(Axis.YP.rotationDegrees(HAND_YAW));
@@ -127,11 +106,9 @@ public final class ThaumometerHandRenderer {
         poseStack.translate(invert * HAND_X, HAND_Y, HAND_Z);
         Identifier skinTexture = player.getSkin().body().texturePath();
         if (arm == HumanoidArm.RIGHT) {
-            renderer.renderRightHand(
-                    poseStack, collector, light, skinTexture, player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE));
+            renderer.renderRightHand(poseStack, collector, light, skinTexture, player.isModelPartShown(PlayerModelPart.RIGHT_SLEEVE));
         } else {
-            renderer.renderLeftHand(
-                    poseStack, collector, light, skinTexture, player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE));
+            renderer.renderLeftHand(poseStack, collector, light, skinTexture, player.isModelPartShown(PlayerModelPart.LEFT_SLEEVE));
         }
         poseStack.popPose();
     }

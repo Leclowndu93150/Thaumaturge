@@ -43,8 +43,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityThaumaturgeBoss extends Monster {
-    private static final EntityDataAccessor<Integer> DATA_AGGRO =
-            SynchedEntityData.defineId(EntityThaumaturgeBoss.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_AGGRO = SynchedEntityData.defineId(EntityThaumaturgeBoss.class, EntityDataSerializers.INT);
 
     private static final int BOSS_XP = 50;
     private static final int HOME_RADIUS = 24;
@@ -64,11 +63,7 @@ public class EntityThaumaturgeBoss extends Monster {
     private static final double PLAYER_DMG_BUFF = 0.5;
     private static final float PEARL_DROP_LIFT = 1.5F;
 
-    protected final ServerBossEvent bossEvent = new ServerBossEvent(
-            Mth.createInsecureUUID(this.random),
-            getDisplayName(),
-            BossEvent.BossBarColor.PURPLE,
-            BossEvent.BossBarOverlay.PROGRESS);
+    protected final ServerBossEvent bossEvent = new ServerBossEvent(Mth.createInsecureUUID(this.random), getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
     private final Map<Integer, Integer> aggro = new HashMap<>();
     protected int spawnTimer;
 
@@ -79,9 +74,7 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     public static AttributeSupplier.Builder createBossAttributes() {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.95)
-                .add(Attributes.FOLLOW_RANGE, 40.0);
+        return Monster.createMonsterAttributes().add(Attributes.KNOCKBACK_RESISTANCE, 0.95).add(Attributes.FOLLOW_RANGE, 40.0);
     }
 
     @Override
@@ -126,11 +119,7 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            EntitySpawnReason reason,
-            @Nullable SpawnGroupData data) {
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         this.setHomeTo(this.blockPosition(), HOME_RADIUS);
         this.generateName();
         this.bossEvent.setName(this.getDisplayName());
@@ -147,15 +136,9 @@ public class EntityThaumaturgeBoss extends Monster {
             this.setAnger(this.getAnger() - 1);
         }
         if (this.level().isClientSide() && this.getAnger() > 0 && this.random.nextInt(ANGRY_PARTICLE_CHANCE) == 0) {
-            this.level()
-                    .addParticle(
-                            ParticleTypes.ANGRY_VILLAGER,
-                            this.getX() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
-                            this.getBoundingBox().minY + this.getBbHeight() + this.random.nextFloat() * 0.5,
-                            this.getZ() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
-                            this.random.nextGaussian() * 0.02,
-                            this.random.nextGaussian() * 0.02,
-                            this.random.nextGaussian() * 0.02);
+            this.level().addParticle(ParticleTypes.ANGRY_VILLAGER, this.getX() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
+                    this.getBoundingBox().minY + this.getBbHeight() + this.random.nextFloat() * 0.5, this.getZ() + this.random.nextFloat() * this.getBbWidth() - this.getBbWidth() / 2.0,
+                    this.random.nextGaussian() * 0.02, this.random.nextGaussian() * 0.02, this.random.nextGaussian() * 0.02);
         }
         if (!this.level().isClientSide()) {
             if (this.tickCount % HEAL_INTERVAL == 0) {
@@ -184,10 +167,7 @@ public class EntityThaumaturgeBoss extends Monster {
             if (candidate instanceof Player) {
                 players++;
             }
-            if (candidate instanceof LivingEntity living
-                    && entry.getValue() > currentAggro + RETARGET_FLAT_MARGIN
-                    && entry.getValue() > currentAggro * RETARGET_RATIO
-                    && entry.getValue() > best) {
+            if (candidate instanceof LivingEntity living && entry.getValue() > currentAggro + RETARGET_FLAT_MARGIN && entry.getValue() > currentAggro * RETARGET_RATIO && entry.getValue() > best) {
                 newTarget = living;
                 best = entry.getValue();
             }
@@ -203,10 +183,8 @@ public class EntityThaumaturgeBoss extends Monster {
             damage.removeModifier(dmgBuffId(slot));
         }
         for (int slot = 0; slot < Math.min(MAX_PLAYER_BUFFS, players - 1); slot++) {
-            health.addTransientModifier(
-                    new AttributeModifier(hpBuffId(slot), PLAYER_HP_BUFF, AttributeModifier.Operation.ADD_VALUE));
-            damage.addTransientModifier(
-                    new AttributeModifier(dmgBuffId(slot), PLAYER_DMG_BUFF, AttributeModifier.Operation.ADD_VALUE));
+            health.addTransientModifier(new AttributeModifier(hpBuffId(slot), PLAYER_HP_BUFF, AttributeModifier.Operation.ADD_VALUE));
+            damage.addTransientModifier(new AttributeModifier(dmgBuffId(slot), PLAYER_DMG_BUFF, AttributeModifier.Operation.ADD_VALUE));
         }
         this.setHealth(this.getHealth() * this.getMaxHealth() / oldMax);
     }
@@ -226,18 +204,12 @@ public class EntityThaumaturgeBoss extends Monster {
         }
         if (damage > ENRAGE_THRESHOLD && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             if (this.getAnger() == 0) {
-                this.addEffect(new MobEffectInstance(
-                        MobEffects.REGENERATION, ENRAGE_TICKS, (int) (damage / ENRAGE_REGEN_DIVISOR)));
-                this.addEffect(new MobEffectInstance(
-                        MobEffects.STRENGTH, ENRAGE_TICKS, (int) (damage / ENRAGE_STRENGTH_DIVISOR)));
-                this.addEffect(
-                        new MobEffectInstance(MobEffects.HASTE, ENRAGE_TICKS, (int) (damage / ENRAGE_HASTE_DIVISOR)));
+                this.addEffect(new MobEffectInstance(MobEffects.REGENERATION, ENRAGE_TICKS, (int) (damage / ENRAGE_REGEN_DIVISOR)));
+                this.addEffect(new MobEffectInstance(MobEffects.STRENGTH, ENRAGE_TICKS, (int) (damage / ENRAGE_STRENGTH_DIVISOR)));
+                this.addEffect(new MobEffectInstance(MobEffects.HASTE, ENRAGE_TICKS, (int) (damage / ENRAGE_HASTE_DIVISOR)));
                 this.setAnger(ENRAGE_TICKS);
                 if (source.getEntity() instanceof ServerPlayer player) {
-                    player.connection.send(new ClientboundSetActionBarTextPacket(Component.empty()
-                            .append(this.getDisplayName())
-                            .append(" ")
-                            .append(Component.translatable("tc.boss.enrage"))));
+                    player.connection.send(new ClientboundSetActionBarTextPacket(Component.empty().append(this.getDisplayName()).append(" ").append(Component.translatable("tc.boss.enrage"))));
                 }
             }
             damage = ENRAGE_THRESHOLD;
@@ -247,8 +219,7 @@ public class EntityThaumaturgeBoss extends Monster {
 
     @Override
     public boolean isInvulnerableTo(ServerLevel level, DamageSource source) {
-        return super.isInvulnerableTo(level, source)
-                || (this.getSpawnTimer() > 0 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY));
+        return super.isInvulnerableTo(level, source) || (this.getSpawnTimer() > 0 && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY));
     }
 
     @Override
@@ -281,12 +252,7 @@ public class EntityThaumaturgeBoss extends Monster {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        level.addFreshEntity(new EntitySpecialItem(
-                level,
-                this.getX(),
-                this.getY() + this.getBbHeight() / 2.0F,
-                this.getZ(),
-                new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
+        level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
         this.spawnAtLocation(level, new ItemStack(TCItems.LOOT_BAG_RARE.get()), PEARL_DROP_LIFT);
     }
 

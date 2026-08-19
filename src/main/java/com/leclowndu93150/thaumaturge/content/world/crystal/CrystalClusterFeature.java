@@ -46,8 +46,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
             int y = minY + random.nextInt(Math.max(5, surface - 5 - minY));
             BlockPos center = new BlockPos(x, y, z);
 
-            CrystalClusterConfig.Entry entry =
-                    config.crystals().get(random.nextInt(config.crystals().size()));
+            CrystalClusterConfig.Entry entry = config.crystals().get(random.nextInt(config.crystals().size()));
             if (random.nextInt(config.biomeAspectChance()) == 0) {
                 CrystalClusterConfig.Entry biomeEntry = biomeEntry(level, center, random, config.crystals());
                 if (biomeEntry != null) {
@@ -61,9 +60,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
                         if (random.nextInt(3) != 0) {
                             BlockPos pos = center.offset(dx, dy, dz);
                             BlockState state = level.getBlockState(pos);
-                            if (!state.liquid()
-                                    && (state.isAir() || state.canBeReplaced())
-                                    && isTouchingRock(level, pos)) {
+                            if (!state.liquid() && (state.isAir() || state.canBeReplaced()) && isTouchingRock(level, pos)) {
                                 int size = MIN_SIZE + random.nextInt(MAX_EXTRA_SIZE);
                                 BlockState crystal = entry.block().defaultBlockState();
                                 if (crystal.hasProperty(BlockCrystal.SIZE)) {
@@ -84,15 +81,13 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
         return any;
     }
 
-    private static CrystalClusterConfig.@Nullable Entry biomeEntry(
-            WorldGenLevel level, BlockPos pos, RandomSource random, List<CrystalClusterConfig.Entry> entries) {
+    private static CrystalClusterConfig.@Nullable Entry biomeEntry(WorldGenLevel level, BlockPos pos, RandomSource random, List<CrystalClusterConfig.Entry> entries) {
         Holder<Biome> biome = level.getBiome(pos);
         BiomeAspects aspects = biome.getData(TCDataMaps.BIOME_ASPECTS);
         if (aspects == null || aspects.aspects().isEmpty()) {
             return null;
         }
-        ResourceKey<IAspect> aspect =
-                aspects.aspects().get(random.nextInt(aspects.aspects().size()));
+        ResourceKey<IAspect> aspect = aspects.aspects().get(random.nextInt(aspects.aspects().size()));
         for (CrystalClusterConfig.Entry entry : entries) {
             if (entry.aspect().equals(aspect)) {
                 return entry;
@@ -104,10 +99,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
     private static boolean isTouchingRock(WorldGenLevel level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             BlockState neighbor = level.getBlockState(pos.relative(direction));
-            if (neighbor.is(BlockTags.BASE_STONE_OVERWORLD)
-                    || neighbor.is(Tags.Blocks.STONES)
-                    || neighbor.is(Tags.Blocks.ORES)
-                    || neighbor.is(BlockTags.BASE_STONE_NETHER)) {
+            if (neighbor.is(BlockTags.BASE_STONE_OVERWORLD) || neighbor.is(Tags.Blocks.STONES) || neighbor.is(Tags.Blocks.ORES) || neighbor.is(BlockTags.BASE_STONE_NETHER)) {
                 return true;
             }
         }

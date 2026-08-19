@@ -11,12 +11,9 @@ import net.minecraft.network.codec.StreamCodec;
 
 public record AirGustParticleOptions(float scale) implements ParticleOptions {
 
-    public static final MapCodec<AirGustParticleOptions> CODEC = Codec.FLOAT
-            .xmap(AirGustParticleOptions::new, AirGustParticleOptions::scale)
-            .fieldOf("scale");
+    public static final MapCodec<AirGustParticleOptions> CODEC = Codec.FLOAT.xmap(AirGustParticleOptions::new, AirGustParticleOptions::scale).fieldOf("scale");
 
-    public static final StreamCodec<ByteBuf, AirGustParticleOptions> STREAM_CODEC =
-            ByteBufCodecs.FLOAT.map(AirGustParticleOptions::new, AirGustParticleOptions::scale);
+    public static final StreamCodec<ByteBuf, AirGustParticleOptions> STREAM_CODEC = ByteBufCodecs.FLOAT.map(AirGustParticleOptions::new, AirGustParticleOptions::scale);
 
     @Override
     public ParticleType<?> getType() {

@@ -14,6 +14,5 @@ import net.minecraft.resources.ResourceKey;
  * @since 1.0.0
  */
 public record BiomeAspects(List<ResourceKey<IAspect>> aspects) {
-    public static final Codec<BiomeAspects> CODEC =
-            ResourceKey.codec(IAspect.REGISTRY_KEY).listOf().xmap(BiomeAspects::new, BiomeAspects::aspects);
+    public static final Codec<BiomeAspects> CODEC = ResourceKey.codec(IAspect.REGISTRY_KEY).listOf().xmap(BiomeAspects::new, BiomeAspects::aspects);
 }

@@ -61,19 +61,13 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
         if (condenser.latticeCount < 0.0F || condenser.count % RECHECK_INTERVAL == 0) {
             condenser.triggerCheck();
         }
-        if (!state.getValue(BlockStateProperties.ENABLED)
-                || condenser.latticeCount <= 0.0F
-                || !(level instanceof ServerLevel server)) {
+        if (!state.getValue(BlockStateProperties.ENABLED) || condenser.latticeCount <= 0.0F || !(level instanceof ServerLevel server)) {
             return;
         }
         if (condenser.count % FILL_INTERVAL == 0 && condenser.essentia < MAX_BUFFER) {
             condenser.fill(server);
         }
-        if (condenser.interval > 0
-                && condenser.essentia >= condenser.cost
-                && condenser.flux < MAX_BUFFER
-                && condenser.count % condenser.interval == 0
-                && AuraHelper.getFlux(server, pos) >= 1.0F) {
+        if (condenser.interval > 0 && condenser.essentia >= condenser.cost && condenser.flux < MAX_BUFFER && condenser.count % condenser.interval == 0 && AuraHelper.getFlux(server, pos) >= 1.0F) {
             AuraHelper.drainFlux(server, pos, 1.0F, false);
             condenser.essentia -= condenser.cost;
             condenser.flux++;
@@ -101,8 +95,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
 
     private void fill(ServerLevel server) {
         for (Direction face : Direction.Plane.HORIZONTAL) {
-            IEssentiaTransport ic =
-                    EssentiaFlowHandler.transport(server, getBlockPos().relative(face), face.getOpposite());
+            IEssentiaTransport ic = EssentiaFlowHandler.transport(server, getBlockPos().relative(face), face.getOpposite());
             if (ic == null) {
                 continue;
             }
@@ -110,9 +103,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
                 return;
             }
             Holder<IAspect> aspect = null;
-            if (ic.getEssentiaAmount(face.getOpposite()) > 0
-                    && ic.getSuctionAmount(face.getOpposite()) < getSuctionAmount(face)
-                    && getSuctionAmount(face) >= ic.getMinimumSuction()) {
+            if (ic.getEssentiaAmount(face.getOpposite()) > 0 && ic.getSuctionAmount(face.getOpposite()) < getSuctionAmount(face) && getSuctionAmount(face) >= ic.getMinimumSuction()) {
                 aspect = ic.getEssentiaType(face.getOpposite());
             }
             if (aspect == null) {
@@ -179,9 +170,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
                 latticeCount = -99.0F;
                 return;
             }
-            if (getBlockPos().getY() < p2.getY()
-                    && getBlockPos().distSqr(p2) <= MAX_DIST_SQ
-                    && (lattice || latticeDirty)) {
+            if (getBlockPos().getY() < p2.getY() && getBlockPos().distSqr(p2) <= MAX_DIST_SQ && (lattice || latticeDirty)) {
                 latticeBlocks++;
                 if (lattice) {
                     unclogged.add(p2.immutable());
@@ -228,9 +217,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
 
     @Override
     public @Nullable Holder<IAspect> getEssentiaType(Direction face) {
-        return face == Direction.DOWN && flux > 0 && level != null
-                ? level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM)
-                : null;
+        return face == Direction.DOWN && flux > 0 && level != null ? level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM) : null;
     }
 
     @Override

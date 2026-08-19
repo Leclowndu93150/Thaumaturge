@@ -86,16 +86,7 @@ public final class BlockEntityArcaneEar extends BlockEntity {
         BlockPos pos = getBlockPos();
         float pitch = (float) Math.pow(2.0, (note - 12) / 12.0);
         server.playSound(null, pos, instrument().getSoundEvent().value(), SoundSource.BLOCKS, 3.0F, pitch);
-        server.sendParticles(
-                ParticleTypes.NOTE,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                0,
-                note / 24.0,
-                0.0,
-                0.0,
-                1.0);
+        server.sendParticles(ParticleTypes.NOTE, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0, note / 24.0, 0.0, 0.0, 1.0);
     }
 
     public boolean matches(NoteBlockInstrument playedInstrument, int playedNote) {
@@ -109,10 +100,7 @@ public final class BlockEntityArcaneEar extends BlockEntity {
         playNote();
         BlockState state = getBlockState();
         if (getBlockState().getBlock() instanceof BlockArcaneEar ear && ear.isToggle()) {
-            level.setBlock(
-                    getBlockPos(),
-                    state.setValue(BlockStateProperties.ENABLED, !state.getValue(BlockStateProperties.ENABLED)),
-                    Block.UPDATE_ALL);
+            level.setBlock(getBlockPos(), state.setValue(BlockStateProperties.ENABLED, !state.getValue(BlockStateProperties.ENABLED)), Block.UPDATE_ALL);
         } else {
             redstoneSignal = PULSE_TICKS;
             level.setBlock(getBlockPos(), state.setValue(BlockStateProperties.ENABLED, true), Block.UPDATE_ALL);

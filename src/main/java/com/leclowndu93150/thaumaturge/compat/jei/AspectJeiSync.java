@@ -34,14 +34,11 @@ public final class AspectJeiSync {
         discoveredAspects.clear();
         Player player = Minecraft.getInstance().player;
         if (player != null) {
-            player.registryAccess()
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .listElements()
-                    .forEach(ref -> {
-                        if (AspectPools.isDiscovered(player, ref)) {
-                            discoveredAspects.add(AspectPools.idOf(ref));
-                        }
-                    });
+            player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().forEach(ref -> {
+                if (AspectPools.isDiscovered(player, ref)) {
+                    discoveredAspects.add(AspectPools.idOf(ref));
+                }
+            });
             updateCompositionVisibility(jeiRuntime);
         }
         ClientPacketDistributor.sendToServer(ServerboundRequestSyncAspectPoolPayload.INSTANCE);
@@ -61,16 +58,13 @@ public final class AspectJeiSync {
         IRecipeManager recipes = runtime.getRecipeManager();
         List<AspectCompositionCategory.Composition> hidden = new ArrayList<>();
         List<AspectCompositionCategory.Composition> shown = new ArrayList<>();
-        recipes.createRecipeLookup(AspectCompositionCategory.RECIPE_TYPE)
-                .includeHidden()
-                .get()
-                .forEach(row -> {
-                    if (AspectKnowledgeAccess.of(row.result()).isCompositionRevealed()) {
-                        shown.add(row);
-                    } else {
-                        hidden.add(row);
-                    }
-                });
+        recipes.createRecipeLookup(AspectCompositionCategory.RECIPE_TYPE).includeHidden().get().forEach(row -> {
+            if (AspectKnowledgeAccess.of(row.result()).isCompositionRevealed()) {
+                shown.add(row);
+            } else {
+                hidden.add(row);
+            }
+        });
         if (!hidden.isEmpty()) {
             recipes.hideRecipes(AspectCompositionCategory.RECIPE_TYPE, hidden);
         }
@@ -103,23 +97,20 @@ public final class AspectJeiSync {
         }
         IIngredientManager ingredients = current.getIngredientManager();
         Set<Identifier> changedIds = new HashSet<>();
-        player.registryAccess()
-                .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .listElements()
-                .forEach(ref -> {
-                    Identifier id = ref.key().identifier();
-                    boolean discovered = AspectPools.isDiscovered(player, ref);
-                    boolean known = discoveredAspects.contains(id);
-                    if (discovered == known) {
-                        return;
-                    }
-                    if (discovered) {
-                        discoveredAspects.add(id);
-                    } else {
-                        discoveredAspects.remove(id);
-                    }
-                    changedIds.add(id);
-                });
+        player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().forEach(ref -> {
+            Identifier id = ref.key().identifier();
+            boolean discovered = AspectPools.isDiscovered(player, ref);
+            boolean known = discoveredAspects.contains(id);
+            if (discovered == known) {
+                return;
+            }
+            if (discovered) {
+                discoveredAspects.add(id);
+            } else {
+                discoveredAspects.remove(id);
+            }
+            changedIds.add(id);
+        });
         if (changedIds.isEmpty()) {
             return;
         }

@@ -10,17 +10,11 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 public abstract class StreamInstance implements IFXInstance {
-    public record TrailPoint(double radius, double x, double y, double z) {}
+    public record TrailPoint(double radius, double x, double y, double z) {
+    }
 
-    public record Snapshot(
-            double[][] points,
-            float[][] colours,
-            double[] radii,
-            double originX,
-            double originY,
-            double originZ,
-            float texSlice,
-            float start) {}
+    public record Snapshot(double[][] points, float[][] colours, double[] radii, double originX, double originY, double originZ, float texSlice, float start) {
+    }
 
     protected static final double MIN_RADIUS = 0.001;
     private static final double RISE_PER_TICK = 0.01 * 0.2;
@@ -146,8 +140,7 @@ public abstract class StreamInstance implements IFXInstance {
             this.radiusBase *= squeeze;
         }
         if (this.radiusBase > MIN_RADIUS) {
-            this.trail.add(new TrailPoint(
-                    radius, this.posX - this.originX, this.posY - this.originY, this.posZ - this.originZ));
+            this.trail.add(new TrailPoint(radius, this.posX - this.originX, this.posY - this.originY, this.posZ - this.originZ));
         } else {
             if (this.dissolveStart < 0) {
                 this.dissolveStart = this.age;

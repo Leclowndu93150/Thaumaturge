@@ -47,8 +47,7 @@ public final class BlockDioptra extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         boolean enabled = state.getValue(BlockStateProperties.ENABLED);
         level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, !enabled), Block.UPDATE_ALL);
         return InteractionResult.SUCCESS;
@@ -69,8 +68,7 @@ public final class BlockDioptra extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

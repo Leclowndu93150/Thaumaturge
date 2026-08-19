@@ -40,7 +40,8 @@ public class BlockEntityBellows extends BlockEntity implements IBellowsPower {
     }
 
     private void tick() {
-        if (level == null) return;
+        if (level == null)
+            return;
         if (level.isClientSide()) {
             if (getBlockState().getValue(BlockBellows.ENABLED)) {
                 if (this.firstRun) {
@@ -62,26 +63,15 @@ public class BlockEntityBellows extends BlockEntity implements IBellowsPower {
 
                 if (this.inflation >= 1.0F && this.direction) {
                     this.direction = false;
-                    this.level.playLocalSound(
-                            getBlockPos().getX(),
-                            getBlockPos().getY(),
-                            getBlockPos().getZ(),
-                            SoundEvents.GHAST_SHOOT,
-                            SoundSource.BLOCKS,
-                            0.01F,
-                            0.5F
-                                    + (level.getRandom().nextFloat()
-                                                    - level.getRandom().nextFloat())
-                                            * 0.2F,
-                            false);
+                    this.level.playLocalSound(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), SoundEvents.GHAST_SHOOT, SoundSource.BLOCKS, 0.01F,
+                            0.5F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.2F, false);
                 }
             }
         } else if (getBlockState().getValue(BlockBellows.ENABLED)) {
             this.delay++;
             if (this.delay >= 2) {
                 this.delay = 0;
-                BlockEntity tile = level.getBlockEntity(
-                        getBlockPos().relative(getBlockState().getValue(BlockBellows.FACING)));
+                BlockEntity tile = level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(BlockBellows.FACING)));
                 if (tile != null && tile instanceof AbstractFurnaceBlockEntity) {
                     AbstractFurnaceBlockEntity tf = (AbstractFurnaceBlockEntity) tile;
                     int ct = this.getCookTime(tf);

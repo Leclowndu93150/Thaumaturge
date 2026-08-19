@@ -20,12 +20,7 @@ public final class SlotArcaneResult extends Slot {
     private final @Nullable BlockEntityArcaneWorkbench tile;
     private int amountCrafted;
 
-    public SlotArcaneResult(
-            ResultContainer result,
-            InventoryArcaneWorkbench craftMatrix,
-            @Nullable BlockEntityArcaneWorkbench tile,
-            int x,
-            int y) {
+    public SlotArcaneResult(ResultContainer result, InventoryArcaneWorkbench craftMatrix, @Nullable BlockEntityArcaneWorkbench tile, int x, int y) {
         super(result, 0, x, y);
         this.craftMatrix = craftMatrix;
         this.tile = tile;
@@ -50,7 +45,8 @@ public final class SlotArcaneResult extends Slot {
     public void onTake(Player player, ItemStack stack) {
         amountCrafted = 0;
 
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
+        if (!(player.level() instanceof ServerLevel serverLevel))
+            return;
         if (player instanceof ServerPlayer serverPlayer) {
             ResearchProgressionEvents.recordCrafted(serverPlayer, stack);
         }

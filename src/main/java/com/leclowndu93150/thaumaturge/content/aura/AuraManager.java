@@ -122,8 +122,7 @@ public final class AuraManager {
         return ok ? take : 0.0F;
     }
 
-    public static boolean modifyVisInChunk(
-            Level level, BlockPos pos, @Nullable AuraData ac, float amount, boolean doit) {
+    public static boolean modifyVisInChunk(Level level, BlockPos pos, @Nullable AuraData ac, float amount, boolean doit) {
         if (ac == null) {
             return false;
         }
@@ -134,8 +133,7 @@ public final class AuraManager {
         return true;
     }
 
-    public static boolean modifyFluxInChunk(
-            Level level, BlockPos pos, @Nullable AuraData ac, float amount, boolean doit) {
+    public static boolean modifyFluxInChunk(Level level, BlockPos pos, @Nullable AuraData ac, float amount, boolean doit) {
         if (ac == null) {
             return false;
         }
@@ -164,9 +162,7 @@ public final class AuraManager {
     }
 
     public static void onChunkLoaded(ServerLevel level, ChunkPos pos) {
-        LOADED_CHUNKS
-                .computeIfAbsent(level.dimension(), k -> ConcurrentHashMap.newKeySet())
-                .add(pos);
+        LOADED_CHUNKS.computeIfAbsent(level.dimension(), k -> ConcurrentHashMap.newKeySet()).add(pos);
     }
 
     public static void onChunkUnloaded(ServerLevel level, ChunkPos pos) {

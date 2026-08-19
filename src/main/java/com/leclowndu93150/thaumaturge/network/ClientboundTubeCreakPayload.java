@@ -8,12 +8,10 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
 public record ClientboundTubeCreakPayload(BlockPos pos) implements CustomPacketPayload {
-    public static final Type<ClientboundTubeCreakPayload> TYPE =
-            new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "tube_creak"));
+    public static final Type<ClientboundTubeCreakPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "tube_creak"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundTubeCreakPayload> STREAM_CODEC =
-            StreamCodec.composite(
-                    BlockPos.STREAM_CODEC, ClientboundTubeCreakPayload::pos, ClientboundTubeCreakPayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundTubeCreakPayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ClientboundTubeCreakPayload::pos,
+            ClientboundTubeCreakPayload::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {

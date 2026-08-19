@@ -11,8 +11,7 @@ public final class CrimsonSmokeParticle extends TCParticle {
     private static final float ALPHA = 0.8F;
     private static final float END_R = 0.6F;
 
-    private CrimsonSmokeParticle(
-            ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
+    private CrimsonSmokeParticle(ClientLevel level, double x, double y, double z, double vx, double vy, double vz, ParticleSheet sheet) {
         super(level, x, y, z, vx, vy, vz, sheet);
         this.lifetime = BASE_LIFETIME + this.random.nextInt(10);
         this.alpha = ALPHA;
@@ -36,16 +35,7 @@ public final class CrimsonSmokeParticle extends TCParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("crimson_smoke");
 
         @Override
-        public Particle createParticle(
-                SimpleParticleType options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double vx,
-                double vy,
-                double vz,
-                RandomSource random) {
+        public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {
             return new CrimsonSmokeParticle(level, x, y, z, vx, vy, vz, SHEET);
         }
     }

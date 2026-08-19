@@ -57,16 +57,14 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
-            Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide()
                 ? createTickerHelper(type, TCBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::clientTick)
                 : createTickerHelper(type, TCBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::serverTick);
     }
 
     @Override
-    protected InteractionResult useWithoutItem(
-            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         return openBuilderGui(level, pos, player);
     }
 
@@ -74,11 +72,8 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (player instanceof ServerPlayer serverPlayer
-                && !KnowledgeAccess.of(serverPlayer).isResearchComplete(MIND_CLOCKWORK_RESEARCH)) {
-            serverPlayer.connection.send(
-                    new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown")
-                            .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
+        if (player instanceof ServerPlayer serverPlayer && !KnowledgeAccess.of(serverPlayer).isResearchComplete(MIND_CLOCKWORK_RESEARCH)) {
+            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
             return InteractionResult.SUCCESS_SERVER;
         }
         if (level.getBlockEntity(pos) instanceof BlockEntityGolemBuilder builder) {

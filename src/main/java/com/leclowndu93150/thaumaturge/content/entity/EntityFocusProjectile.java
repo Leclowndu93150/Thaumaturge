@@ -29,8 +29,7 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 import org.jspecify.annotations.Nullable;
 
 public final class EntityFocusProjectile extends ThrowableProjectile implements IEntityWithComplexSpawn {
-    private static final EntityDataAccessor<Integer> DATA_SPECIAL =
-            SynchedEntityData.defineId(EntityFocusProjectile.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_SPECIAL = SynchedEntityData.defineId(EntityFocusProjectile.class, EntityDataSerializers.INT);
 
     public static final int SPECIAL_NONE = 0;
     public static final int SPECIAL_BOUNCY = 1;
@@ -67,15 +66,12 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
         super(type, level);
     }
 
-    public EntityFocusProjectile(
-            FocusPackage pack, LivingEntity caster, float speed, Trajectory trajectory, int special) {
+    public EntityFocusProjectile(FocusPackage pack, LivingEntity caster, float speed, Trajectory trajectory, int special) {
         super(TCEntities.FOCUS_PROJECTILE.get(), caster.level());
         this.focusPackage = pack;
         this.setOwner(caster);
         double width = caster.getBbWidth();
-        this.setPos(
-                trajectory.source().x + trajectory.direction().x * width * SPAWN_OFFSET_FACTOR,
-                trajectory.source().y + trajectory.direction().y * width * SPAWN_OFFSET_FACTOR,
+        this.setPos(trajectory.source().x + trajectory.direction().x * width * SPAWN_OFFSET_FACTOR, trajectory.source().y + trajectory.direction().y * width * SPAWN_OFFSET_FACTOR,
                 trajectory.source().z + trajectory.direction().z * width * SPAWN_OFFSET_FACTOR);
         this.shoot(trajectory.direction().x, trajectory.direction().y, trajectory.direction().z, speed, 0.0F);
         this.setSpecial(special);
@@ -132,29 +128,18 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
         if (this.level().isClientSide()) {
             return;
         }
-        HitResult reported = hitResult instanceof EntityHitResult entityHit
-                ? new EntityHitResult(entityHit.getEntity(), this.position())
-                : hitResult;
+        HitResult reported = hitResult instanceof EntityHitResult entityHit ? new EntityHitResult(entityHit.getEntity(), this.position()) : hitResult;
         Vec3 previous = new Vec3(this.xOld, this.yOld, this.zOld);
         Vec3 motion = this.getDeltaMovement();
         if (this.focusPackage != null) {
             LivingEntity caster = this.getOwner() instanceof LivingEntity living ? living : null;
-            FocusEngine.run(
-                    this.level(),
-                    this.focusPackage,
-                    caster,
-                    new CastStreams(
-                            new Trajectory[] {new Trajectory(previous, motion.normalize())},
-                            new HitResult[] {reported}));
+            FocusEngine.run(this.level(), this.focusPackage, caster, new CastStreams(new Trajectory[]{new Trajectory(previous, motion.normalize())}, new HitResult[]{reported}));
         }
         this.discard();
     }
 
     private void bounce(BlockHitResult blockHit) {
-        if (this.level()
-                .getBlockState(blockHit.getBlockPos())
-                .getCollisionShape(this.level(), blockHit.getBlockPos())
-                .isEmpty()) {
+        if (this.level().getBlockState(blockHit.getBlockPos()).getCollisionShape(this.level(), blockHit.getBlockPos()).isEmpty()) {
             return;
         }
         Vec3 motion = this.getDeltaMovement();
@@ -177,10 +162,7 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
         this.setDeltaMovement(mx, my, mz);
         double speed = Math.sqrt(mx * mx + my * my + mz * mz);
         if (speed > 0.0) {
-            this.setPos(
-                    this.getX() - mx / speed * BOUNCE_BACKOFF,
-                    this.getY() - my / speed * BOUNCE_BACKOFF,
-                    this.getZ() - mz / speed * BOUNCE_BACKOFF);
+            this.setPos(this.getX() - mx / speed * BOUNCE_BACKOFF, this.getY() - my / speed * BOUNCE_BACKOFF, this.getZ() - mz / speed * BOUNCE_BACKOFF);
         }
         if (!this.level().isClientSide()) {
             this.playSound(SoundEvents.LEAD_TIED, BOUNCE_VOLUME, 1.0F);
@@ -208,9 +190,7 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
     private void acquireTarget() {
         Vec3 look = this.getDeltaMovement().normalize();
         for (LivingEntity candidate : FocusTargeting.livingInRangeSorted(this.level(), this, SEEK_RANGE)) {
-            if (candidate.isAlive()
-                    && FocusTargeting.isVisibleTo(SEEK_FOV, this, look, candidate, (float) SEEK_RANGE)
-                    && FocusTargeting.canEntityBeSeen(this, candidate)) {
+            if (candidate.isAlive() && FocusTargeting.isVisibleTo(SEEK_FOV, this, look, candidate, (float) SEEK_RANGE) && FocusTargeting.canEntityBeSeen(this, candidate)) {
                 boolean friendly = FocusTargeting.isFriendly(this.getOwner(), candidate);
                 if (friendly && this.getSpecial() == SPECIAL_SEEK_FRIENDLY) {
                     this.target = candidate;
@@ -231,14 +211,10 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
         Vec3 toTarget = new Vec3(dx, dy, dz).normalize();
         Vec3 motion = this.getDeltaMovement();
         double speed = motion.length();
-        Vec3 steered =
-                motion.normalize().add(toTarget.scale(SEEK_STEER)).normalize().scale(speed);
+        Vec3 steered = motion.normalize().add(toTarget.scale(SEEK_STEER)).normalize().scale(speed);
         this.setDeltaMovement(steered);
-        if (this.tickCount % SEEK_INTERVAL_TICKS == 0
-                && (!this.target.isAlive()
-                        || !FocusTargeting.isVisibleTo(
-                                SEEK_FOV, this, steered.normalize(), this.target, (float) SEEK_RANGE)
-                        || !FocusTargeting.canEntityBeSeen(this, this.target))) {
+        if (this.tickCount % SEEK_INTERVAL_TICKS == 0 && (!this.target.isAlive() || !FocusTargeting.isVisibleTo(SEEK_FOV, this, steered.normalize(), this.target, (float) SEEK_RANGE)
+                || !FocusTargeting.canEntityBeSeen(this, this.target))) {
             this.target = null;
         }
     }
@@ -266,36 +242,13 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
         double x = this.xOld + (this.getX() - this.xOld) * coeff;
         double y = this.yOld + (this.getY() - this.yOld) * coeff + this.getBbHeight() / 2.0F;
         double z = this.zOld + (this.getZ() - this.zOld) * coeff;
-        this.level()
-                .addParticle(
-                        Effects.fireMoteData(
-                                this.random,
-                                FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F),
-                                FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F),
-                                FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F),
-                                r,
-                                g,
-                                b,
-                                FIRE_MOTE_ALPHA,
-                                FIRE_MOTE_SCALE),
-                        x,
-                        y,
-                        z,
-                        0.0,
-                        0.0,
-                        0.0);
+        this.level().addParticle(Effects.fireMoteData(this.random, FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F), FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F),
+                FIRE_MOTE_JITTER * (this.random.nextFloat() - 0.5F), r, g, b, FIRE_MOTE_ALPHA, FIRE_MOTE_SCALE), x, y, z, 0.0, 0.0, 0.0);
         if (this.firstParticle && FocusEngine.element(effectId) instanceof FocusEffect effect) {
             this.firstParticle = false;
-            effect.impactParticles(
-                    this.level(),
-                    new Vec3(
-                            x + this.random.nextGaussian() * EFFECT_FX_SPREAD,
-                            y + this.random.nextGaussian() * EFFECT_FX_SPREAD,
-                            z + this.random.nextGaussian() * EFFECT_FX_SPREAD),
-                    new Vec3(
-                            this.random.nextGaussian() * EFFECT_FX_MOTION,
-                            this.random.nextGaussian() * EFFECT_FX_MOTION,
-                            this.random.nextGaussian() * EFFECT_FX_MOTION));
+            effect.impactParticles(this.level(),
+                    new Vec3(x + this.random.nextGaussian() * EFFECT_FX_SPREAD, y + this.random.nextGaussian() * EFFECT_FX_SPREAD, z + this.random.nextGaussian() * EFFECT_FX_SPREAD),
+                    new Vec3(this.random.nextGaussian() * EFFECT_FX_MOTION, this.random.nextGaussian() * EFFECT_FX_MOTION, this.random.nextGaussian() * EFFECT_FX_MOTION));
         }
     }
 }

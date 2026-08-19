@@ -54,8 +54,7 @@ public abstract class AbstractTaintBlock extends Block implements ITaintBlock {
             return;
         }
         if (serverLevel.getRandom().nextInt(WALK_EFFECT_CHANCE) == 0) {
-            living.addEffect(
-                    new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
+            living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
         }
     }
 }

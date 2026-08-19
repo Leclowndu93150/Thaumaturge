@@ -34,11 +34,8 @@ public final class GotoEntityGoal extends GotoGoal {
     @Override
     protected boolean findDestination() {
         for (Task task : TaskHandler.getEntityTasksSorted(golem.level(), golem.getUUID(), golem)) {
-            if (areGolemTagsValidForTask(task)
-                    && task.canGolemPerformTask(golem)
-                    && golem.isWithinHome(task.getEntity().blockPosition())
-                    && isValidDestination(golem.level(), task.getEntity().blockPosition())
-                    && canEasilyReach(task.getEntity())) {
+            if (areGolemTagsValidForTask(task) && task.canGolemPerformTask(golem) && golem.isWithinHome(task.getEntity().blockPosition())
+                    && isValidDestination(golem.level(), task.getEntity().blockPosition()) && canEasilyReach(task.getEntity())) {
                 golem.setTask(task);
                 task.setReserved(true);
                 float halfWidth = task.getEntity().getBbWidth() / 2.0F;

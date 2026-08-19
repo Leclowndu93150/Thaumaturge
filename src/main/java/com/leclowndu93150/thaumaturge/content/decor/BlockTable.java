@@ -29,12 +29,8 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 public final class BlockTable extends Block {
     public static final MapCodec<BlockTable> CODEC = simpleCodec(BlockTable::new);
 
-    private static final VoxelShape SHAPE = Shapes.or(
-            Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0),
-            Block.box(1.0, 0.0, 1.0, 5.0, 12.0, 5.0),
-            Block.box(11.0, 0.0, 1.0, 15.0, 12.0, 5.0),
-            Block.box(1.0, 0.0, 11.0, 5.0, 12.0, 15.0),
-            Block.box(11.0, 0.0, 11.0, 15.0, 12.0, 15.0));
+    private static final VoxelShape SHAPE = Shapes.or(Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0), Block.box(1.0, 0.0, 1.0, 5.0, 12.0, 5.0), Block.box(11.0, 0.0, 1.0, 15.0, 12.0, 5.0),
+            Block.box(1.0, 0.0, 11.0, 5.0, 12.0, 15.0), Block.box(11.0, 0.0, 11.0, 15.0, 12.0, 15.0));
 
     public BlockTable(BlockBehaviour.Properties properties) {
         super(properties);
@@ -50,18 +46,10 @@ public final class BlockTable extends Block {
         return SHAPE;
     }
 
-    private static final List<Direction> CONVERT_SCAN_ORDER =
-            List.of(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
+    private static final List<Direction> CONVERT_SCAN_ORDER = List.of(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
 
     @Override
-    protected InteractionResult useItemOn(
-            ItemStack stack,
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Player player,
-            InteractionHand hand,
-            BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (this != TCBlocks.TABLE_WOOD.get() || !(stack.getItem() instanceof IScribeTools)) {
             return InteractionResult.PASS;
         }
@@ -73,27 +61,12 @@ public final class BlockTable extends Block {
             if (!level.getBlockState(partnerPos).is(TCBlocks.TABLE_WOOD.get())) {
                 continue;
             }
-            level.setBlock(
-                    pos,
-                    TCBlocks.RESEARCH_TABLE
-                            .get()
-                            .defaultBlockState()
-                            .setValue(BlockResearchTable.FACING, dir)
-                            .setValue(BlockResearchTable.PART, ResearchTablePart.MAIN),
-                    3);
-            level.setBlock(
-                    partnerPos,
-                    TCBlocks.RESEARCH_TABLE
-                            .get()
-                            .defaultBlockState()
-                            .setValue(BlockResearchTable.FACING, dir.getOpposite())
-                            .setValue(BlockResearchTable.PART, ResearchTablePart.EXT),
-                    3);
+            level.setBlock(pos, TCBlocks.RESEARCH_TABLE.get().defaultBlockState().setValue(BlockResearchTable.FACING, dir).setValue(BlockResearchTable.PART, ResearchTablePart.MAIN), 3);
+            level.setBlock(partnerPos,
+                    TCBlocks.RESEARCH_TABLE.get().defaultBlockState().setValue(BlockResearchTable.FACING, dir.getOpposite()).setValue(BlockResearchTable.PART, ResearchTablePart.EXT), 3);
             if (level.getBlockEntity(pos) instanceof BlockEntityResearchTable researchTable) {
                 ItemStack tools = stack.copy();
-                researchTable
-                        .items()
-                        .set(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, ItemResource.of(tools), tools.getCount());
+                researchTable.items().set(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, ItemResource.of(tools), tools.getCount());
                 researchTable.setChanged();
             }
             player.setItemInHand(hand, ItemStack.EMPTY);

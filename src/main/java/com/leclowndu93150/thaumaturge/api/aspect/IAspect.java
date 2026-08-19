@@ -28,8 +28,7 @@ import net.minecraft.resources.ResourceKey;
  */
 public interface IAspect {
     /** The datapack registry key for aspects. */
-    ResourceKey<Registry<IAspect>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "aspect"));
+    ResourceKey<Registry<IAspect>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "aspect"));
 
     /**
      * The unique tag of this aspect. Stable identifier and the registry path of the aspect.

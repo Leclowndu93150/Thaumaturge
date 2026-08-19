@@ -11,17 +11,13 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 
-public final class CultistLeaderRenderer
-        extends HumanoidMobRenderer<EntityCultistLeader, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
+public final class CultistLeaderRenderer extends HumanoidMobRenderer<EntityCultistLeader, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
     private static final Identifier TEXTURE = TCIds.rl("textures/entity/cultist.png");
     private static final float SHADOW = 0.5F;
 
     public CultistLeaderRenderer(EntityRendererProvider.Context context) {
         super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), SHADOW);
-        this.addLayer(new HumanoidArmorLayer<>(
-                this,
-                ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new),
-                context.getEquipmentRenderer()));
+        this.addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new), context.getEquipmentRenderer()));
     }
 
     @Override

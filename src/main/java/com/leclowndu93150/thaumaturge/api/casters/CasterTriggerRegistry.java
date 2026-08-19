@@ -51,8 +51,7 @@ public final class CasterTriggerRegistry {
      * @param state   the exact block state that activates the trigger
      * @param modid   the mod id group to register under
      */
-    public static void registerCasterBlockTrigger(
-            ICasterTriggerManager manager, int event, BlockState state, String modid) {
+    public static void registerCasterBlockTrigger(ICasterTriggerManager manager, int event, BlockState state, String modid) {
         LinkedHashMap<BlockState, List<Trigger>> group = TRIGGERS.computeIfAbsent(modid, key -> new LinkedHashMap<>());
         group.computeIfAbsent(state, key -> new ArrayList<>()).add(new Trigger(manager, event));
     }
@@ -112,8 +111,7 @@ public final class CasterTriggerRegistry {
      * @param state       the clicked block state
      * @return true when a trigger handled the click
      */
-    public static boolean performTrigger(
-            Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, BlockState state) {
+    public static boolean performTrigger(Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, BlockState state) {
         for (LinkedHashMap<BlockState, List<Trigger>> group : TRIGGERS.values()) {
             if (run(group, level, casterStack, player, pos, side, state)) {
                 return true;
@@ -145,26 +143,12 @@ public final class CasterTriggerRegistry {
      * @param modid       the mod id group to run
      * @return true when a trigger in the group handled the click
      */
-    public static boolean performTrigger(
-            Level level,
-            ItemStack casterStack,
-            Player player,
-            BlockPos pos,
-            Direction side,
-            BlockState state,
-            String modid) {
+    public static boolean performTrigger(Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, BlockState state, String modid) {
         LinkedHashMap<BlockState, List<Trigger>> group = TRIGGERS.get(modid);
         return group != null && run(group, level, casterStack, player, pos, side, state);
     }
 
-    private static boolean run(
-            LinkedHashMap<BlockState, List<Trigger>> group,
-            Level level,
-            ItemStack casterStack,
-            Player player,
-            BlockPos pos,
-            Direction side,
-            BlockState state) {
+    private static boolean run(LinkedHashMap<BlockState, List<Trigger>> group, Level level, ItemStack casterStack, Player player, BlockPos pos, Direction side, BlockState state) {
         List<Trigger> list = group.get(state);
         if (list == null) {
             return false;
@@ -177,5 +161,6 @@ public final class CasterTriggerRegistry {
         return false;
     }
 
-    private record Trigger(ICasterTriggerManager manager, int event) {}
+    private record Trigger(ICasterTriggerManager manager, int event) {
+    }
 }

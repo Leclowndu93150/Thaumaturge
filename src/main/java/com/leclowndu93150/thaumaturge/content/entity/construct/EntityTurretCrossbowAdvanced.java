@@ -27,8 +27,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.scores.PlayerTeam;
 
 public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
-    private static final EntityDataAccessor<Byte> FLAGS =
-            SynchedEntityData.defineId(EntityTurretCrossbowAdvanced.class, EntityDataSerializers.BYTE);
+    private static final EntityDataAccessor<Byte> FLAGS = SynchedEntityData.defineId(EntityTurretCrossbowAdvanced.class, EntityDataSerializers.BYTE);
     private static final int BIT_ANIMAL = 1;
     private static final int BIT_MOB = 2;
     private static final int BIT_PLAYER = 4;
@@ -40,10 +39,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     }
 
     public static AttributeSupplier.Builder createAdvancedAttributes() {
-        return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0)
-                .add(Attributes.FOLLOW_RANGE, 24.0)
-                .add(Attributes.ARMOR, 8.0);
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0).add(Attributes.FOLLOW_RANGE, 24.0).add(Attributes.ARMOR, 8.0);
     }
 
     @Override
@@ -57,10 +53,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
         goalSelector.addGoal(1, new RangedAttackGoal(this, 0.0, 20, 40, 24.0F));
         goalSelector.addGoal(2, new WatchTargetGoal(this));
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        targetSelector.addGoal(
-                2,
-                new NearestAttackableTargetGoal<>(
-                        this, LivingEntity.class, 5, true, false, (entity, level) -> isValidTarget(entity)));
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, LivingEntity.class, 5, true, false, (entity, level) -> isValidTarget(entity)));
         setTargetMob(true);
     }
 
@@ -148,11 +141,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     }
 
     private boolean sameOwner(OwnableEntity ownable) {
-        return getOwnerReference() != null
-                && ownable.getOwnerReference() != null
-                && getOwnerReference()
-                        .getUUID()
-                        .equals(ownable.getOwnerReference().getUUID());
+        return getOwnerReference() != null && ownable.getOwnerReference() != null && getOwnerReference().getUUID().equals(ownable.getOwnerReference().getUUID());
     }
 
     public boolean getTargetFriendly() {
@@ -166,10 +155,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     @Override
     public void tick() {
         super.tick();
-        if (level() instanceof ServerLevel serverLevel
-                && !serverLevel.isPvpAllowed()
-                && getTarget() instanceof Player
-                && getTarget() != getOwner()) {
+        if (level() instanceof ServerLevel serverLevel && !serverLevel.isPvpAllowed() && getTarget() instanceof Player && getTarget() != getOwner()) {
             setTarget(null);
         }
     }

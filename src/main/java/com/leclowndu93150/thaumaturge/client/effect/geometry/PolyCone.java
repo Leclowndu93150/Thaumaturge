@@ -10,18 +10,12 @@ public final class PolyCone {
 
     private PolyCone() {}
 
-    public static void render(
-            PoseStack poseStack,
-            VertexConsumer consumer,
-            double[][] pointArray,
-            float[][] colourArray,
-            double[] radiusArray,
-            int light,
-            float texSlice,
-            float start) {
+    public static void render(PoseStack poseStack, VertexConsumer consumer, double[][] pointArray, float[][] colourArray, double[] radiusArray, int light, float texSlice, float start) {
         int npoints = pointArray.length;
-        if (npoints < 3) return;
-        if (radiusArray.length != npoints || colourArray.length != npoints) return;
+        if (npoints < 3)
+            return;
+        if (radiusArray.length != npoints || colourArray.length != npoints)
+            return;
 
         double[][][] xformArray = new double[npoints][2][3];
         for (int p = 0; p < npoints; p++) {
@@ -103,21 +97,11 @@ public final class PolyCone {
         }
     }
 
-    private static void vertex(
-            VertexConsumer consumer,
-            Matrix4f mat,
-            double[][] m,
-            double[] local,
-            float u,
-            float v,
-            float[] c,
-            int light) {
+    private static void vertex(VertexConsumer consumer, Matrix4f mat, double[][] m, double[] local, float u, float v, float[] c, int light) {
         double wx = m[0][0] * local[0] + m[1][0] * local[1] + m[2][0] * local[2] + m[3][0];
         double wy = m[0][1] * local[0] + m[1][1] * local[1] + m[2][1] * local[2] + m[3][1];
         double wz = m[0][2] * local[0] + m[1][2] * local[1] + m[2][2] * local[2] + m[3][2];
-        consumer.addVertex(mat, (float) wx, (float) wy, (float) wz)
-                .setColor(c[0], c[1], c[2], c[3])
-                .setUv(u, v);
+        consumer.addVertex(mat, (float) wx, (float) wy, (float) wz).setColor(c[0], c[1], c[2], c[3]).setUv(u, v);
     }
 
     private static double[] pickInitialUp(int npoints, double[][] pointArray) {
@@ -127,16 +111,17 @@ public final class PolyCone {
             for (int idx = 1; idx < npoints - 2; idx++) {
                 diff = vecDiff(pointArray[idx + 1], pointArray[idx]);
                 len = vecLen(diff);
-                if (len != 0.0) break;
+                if (len != 0.0)
+                    break;
             }
         }
-        if (len == 0.0) return new double[] {0.0, 1.0, 0.0};
+        if (len == 0.0)
+            return new double[]{0.0, 1.0, 0.0};
         double[] dirHat = vecScale(1.0 / len, diff);
-        double[] up = (Math.abs(dirHat[0]) < 1.0E-6 && Math.abs(dirHat[2]) < 1.0E-6)
-                ? new double[] {0.0, 0.0, 1.0}
-                : new double[] {0.0, 1.0, 0.0};
+        double[] up = (Math.abs(dirHat[0]) < 1.0E-6 && Math.abs(dirHat[2]) < 1.0E-6) ? new double[]{0.0, 0.0, 1.0} : new double[]{0.0, 1.0, 0.0};
         double[] perp = vecPerp(up, dirHat);
-        if (vecLen(perp) == 0.0) return dirHat;
+        if (vecLen(perp) == 0.0)
+            return dirHat;
         return perp;
     }
 
@@ -163,7 +148,7 @@ public final class PolyCone {
         double deno = (v1[0] - v2[0]) * n[0] + (v1[1] - v2[1]) * n[1] + (v1[2] - v2[2]) * n[2];
         double[] sect = new double[3];
         if (deno == 0.0) {
-            return new double[] {v1[0], v1[1], v1[2]};
+            return new double[]{v1[0], v1[1], v1[2]};
         }
         double numer = (p[0] - v2[0]) * n[0] + (p[1] - v2[1]) * n[1] + (p[2] - v2[2]) * n[2];
         double t = numer / deno;
@@ -180,7 +165,8 @@ public final class PolyCone {
         double len1 = vecLen(v4);
         double len2 = vecLen(v5);
         if (len1 <= DEGENERATE_TOLERANCE * len2) {
-            if (len2 == 0.0) return new double[] {0.0, 0.0, 0.0};
+            if (len2 == 0.0)
+                return new double[]{0.0, 0.0, 0.0};
             return vecScale(1.0 / len2, v5);
         }
         if (len2 <= DEGENERATE_TOLERANCE * len1) {
@@ -190,7 +176,7 @@ public final class PolyCone {
         v5 = vecScale(1.0 / len2, v5);
         double dot = vecDot(v5, v4);
         if (dot >= 0.999998 || dot <= -0.999998) {
-            return new double[] {v4[0], v4[1], v4[2]};
+            return new double[]{v4[0], v4[1], v4[2]};
         }
         double[] n = new double[3];
         n[0] = dot * (v5[0] + v4[0]) - v5[0] - v4[0];
@@ -210,7 +196,7 @@ public final class PolyCone {
     }
 
     private static double[][] uviewDirection(double[] v21, double[] up) {
-        double[] vHat21 = new double[] {v21[0], v21[1], v21[2]};
+        double[] vHat21 = new double[]{v21[0], v21[1], v21[2]};
         double len = vecLen(vHat21);
         double[][] amat;
         double[][] bmat;
@@ -222,7 +208,7 @@ public final class PolyCone {
         } else {
             amat = identity4x4();
         }
-        double[] vXy = new double[] {v21[0], v21[1], 0.0};
+        double[] vXy = new double[]{v21[0], v21[1], 0.0};
         len = vecLen(vXy);
         if (len != 0.0) {
             vXy = vecScale(1.0 / len, vXy);
@@ -247,43 +233,40 @@ public final class PolyCone {
     }
 
     private static double[] matDotVec3x3(double[][] m, double[] v) {
-        return new double[] {
-            m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
-            m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
-            m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]
-        };
+        return new double[]{m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2], m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2], m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2]};
     }
 
     private static double[] matDotVec2x3(double[][] m, double[] v) {
-        return new double[] {m[0][0] * v[0] + m[0][1] * v[1] + m[0][2], m[1][0] * v[0] + m[1][1] * v[1] + m[1][2], 0.0};
+        return new double[]{m[0][0] * v[0] + m[0][1] * v[1] + m[0][2], m[1][0] * v[0] + m[1][1] * v[1] + m[1][2], 0.0};
     }
 
     private static double[] vecDiff(double[] a, double[] b) {
-        return new double[] {a[0] - b[0], a[1] - b[1], a[2] - b[2]};
+        return new double[]{a[0] - b[0], a[1] - b[1], a[2] - b[2]};
     }
 
     private static double[] vecSum(double[] a, double[] b) {
-        return new double[] {a[0] + b[0], a[1] + b[1], a[2] + b[2]};
+        return new double[]{a[0] + b[0], a[1] + b[1], a[2] + b[2]};
     }
 
     private static double[] vecScale(double s, double[] v) {
-        return new double[] {s * v[0], s * v[1], s * v[2]};
+        return new double[]{s * v[0], s * v[1], s * v[2]};
     }
 
     private static double[] vecNormalize(double[] v) {
         double len = vecLen(v);
-        if (len == 0.0) return new double[] {0.0, 0.0, 0.0};
+        if (len == 0.0)
+            return new double[]{0.0, 0.0, 0.0};
         return vecScale(1.0 / len, v);
     }
 
     private static double[] vecReflect(double[] v, double[] n) {
         double dot = vecDot(v, n);
-        return new double[] {v[0] - 2.0 * dot * n[0], v[1] - 2.0 * dot * n[1], v[2] - 2.0 * dot * n[2]};
+        return new double[]{v[0] - 2.0 * dot * n[0], v[1] - 2.0 * dot * n[1], v[2] - 2.0 * dot * n[2]};
     }
 
     private static double[] vecPerp(double[] v, double[] n) {
         double dot = vecDot(v, n);
-        return new double[] {v[0] - dot * n[0], v[1] - dot * n[1], v[2] - dot * n[2]};
+        return new double[]{v[0] - dot * n[0], v[1] - dot * n[1], v[2] - dot * n[2]};
     }
 
     private static double vecLen(double[] v) {
@@ -302,7 +285,8 @@ public final class PolyCone {
 
     private static double[][] copy4x4(double[][] a) {
         double[][] b = new double[4][4];
-        for (int r = 0; r < 4; r++) System.arraycopy(a[r], 0, b[r], 0, 4);
+        for (int r = 0; r < 4; r++)
+            System.arraycopy(a[r], 0, b[r], 0, 4);
         return b;
     }
 
@@ -310,8 +294,7 @@ public final class PolyCone {
         double[][] c = new double[4][4];
         for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 4; col++) {
-                c[row][col] =
-                        a[row][0] * b[0][col] + a[row][1] * b[1][col] + a[row][2] * b[2][col] + a[row][3] * b[3][col];
+                c[row][col] = a[row][0] * b[0][col] + a[row][1] * b[1][col] + a[row][2] * b[2][col] + a[row][3] * b[3][col];
             }
         }
         return c;

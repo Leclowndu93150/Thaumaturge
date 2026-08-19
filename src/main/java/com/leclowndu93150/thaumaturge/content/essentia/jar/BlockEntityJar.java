@@ -83,7 +83,8 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     }
 
     public void setAspectFromLabel(@Nullable ResourceKey<IAspect> aspect) {
-        if (this.amount > 0) return;
+        if (this.amount > 0)
+            return;
         this.aspect = aspect;
         setChanged();
         syncToClient();
@@ -129,8 +130,10 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityJar jar) {
         jar.tickCount++;
-        if (jar.tickCount % 5 != 0) return;
-        if (!jar.shouldFillFromAbove()) return;
+        if (jar.tickCount % 5 != 0)
+            return;
+        if (!jar.shouldFillFromAbove())
+            return;
         jar.fillJar();
     }
 
@@ -139,39 +142,47 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     }
 
     private void fillJar() {
-        if (level == null) return;
+        if (level == null)
+            return;
         BlockPos above = getBlockPos().above();
         IEssentiaTransport ic = EssentiaFlowHandler.transport(level, above, Direction.DOWN);
-        if (ic == null) return;
-        if (!ic.canOutputTo(Direction.DOWN)) return;
+        if (ic == null)
+            return;
+        if (!ic.canOutputTo(Direction.DOWN))
+            return;
         Holder<IAspect> ta = null;
         if (aspectFilter != null) {
             ta = EssentiaTransportHelper.resolve(level, aspectFilter);
         } else if (aspect != null && amount > 0) {
             ta = EssentiaTransportHelper.resolve(level, aspect);
-        } else if (ic.getEssentiaAmount(Direction.DOWN) > 0
-                && ic.getSuctionAmount(Direction.DOWN) < getSuctionAmount(Direction.UP)
-                && getSuctionAmount(Direction.UP) >= ic.getMinimumSuction()) {
+        } else if (ic.getEssentiaAmount(Direction.DOWN) > 0 && ic.getSuctionAmount(Direction.DOWN) < getSuctionAmount(Direction.UP) && getSuctionAmount(Direction.UP) >= ic.getMinimumSuction()) {
             ta = ic.getEssentiaType(Direction.DOWN);
         }
-        if (ta == null) return;
-        if (ic.getSuctionAmount(Direction.DOWN) >= getSuctionAmount(Direction.UP)) return;
+        if (ta == null)
+            return;
+        if (ic.getSuctionAmount(Direction.DOWN) >= getSuctionAmount(Direction.UP))
+            return;
         int taken = ic.takeEssentia(ta, 1, Direction.DOWN);
-        if (taken <= 0) return;
+        if (taken <= 0)
+            return;
         ResourceKey<IAspect> key = ta.unwrapKey().orElse(null);
-        if (key == null) return;
+        if (key == null)
+            return;
         doAddToContainer(key, taken);
     }
 
     protected void syncToClient() {
-        if (level == null || level.isClientSide()) return;
+        if (level == null || level.isClientSide())
+            return;
         BlockState current = getBlockState();
         level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
 
     protected int doAddToContainer(ResourceKey<IAspect> incoming, int requested) {
-        if (requested == 0) return 0;
-        if (aspectFilter != null && !aspectFilter.equals(incoming)) return requested;
+        if (requested == 0)
+            return 0;
+        if (aspectFilter != null && !aspectFilter.equals(incoming))
+            return requested;
         if (amount < capacity() && incoming.equals(aspect) || amount == 0) {
             aspect = incoming;
             int added = Math.min(requested, capacity() - amount);
@@ -200,9 +211,11 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     }
 
     public AspectList getContents(HolderLookup.Provider registries) {
-        if (aspect == null || amount <= 0) return AspectList.EMPTY;
+        if (aspect == null || amount <= 0)
+            return AspectList.EMPTY;
         Holder<IAspect> holder = EssentiaTransportHelper.resolve(registries, aspect);
-        if (holder == null) return AspectList.EMPTY;
+        if (holder == null)
+            return AspectList.EMPTY;
         return AspectList.EMPTY.add(new AspectInstance(holder, amount));
     }
 
@@ -237,7 +250,8 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
 
     @Override
     public int getSuctionAmount(Direction face) {
-        if (amount >= capacity()) return 0;
+        if (amount >= capacity())
+            return 0;
         return aspectFilter != null ? 64 : 32;
     }
 
@@ -248,17 +262,21 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face)) return 0;
+        if (!canOutputTo(face))
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null) return 0;
+        if (key == null)
+            return 0;
         return doTakeFromContainer(key, amount) ? amount : 0;
     }
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canInputFrom(face)) return 0;
+        if (!canInputFrom(face))
+            return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
-        if (key == null) return 0;
+        if (key == null)
+            return 0;
         return amount - doAddToContainer(key, amount);
     }
 
@@ -285,8 +303,10 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        if (aspect != null) output.store("Aspect", ASPECT_KEY_CODEC, aspect);
-        if (aspectFilter != null) output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
+        if (aspect != null)
+            output.store("Aspect", ASPECT_KEY_CODEC, aspect);
+        if (aspectFilter != null)
+            output.store("AspectFilter", ASPECT_KEY_CODEC, aspectFilter);
         output.putInt("Amount", amount);
         output.store("Facing", Direction.CODEC, facing);
         output.putBoolean("Braced", braced);
@@ -295,10 +315,8 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
-            TagValueOutput tagvalueoutput =
-                    TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
+        try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+            TagValueOutput tagvalueoutput = TagValueOutput.createWithContext(problemreporter$scopedcollector, registries);
             saveAdditional(tagvalueoutput);
             nbt.merge(tagvalueoutput.buildResult());
         }
@@ -339,19 +357,22 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
         ResourceKey<IAspect> filter = input.get(TCDataComponents.ASPECT_FILTER.get());
         if (filter != null) {
             aspectFilter = filter;
-            if (aspect == null) aspect = filter;
+            if (aspect == null)
+                aspect = filter;
         }
     }
 
     @Override
     public AspectList getAspects() {
-        if (amount() == 0) return AspectList.EMPTY;
+        if (amount() == 0)
+            return AspectList.EMPTY;
         return AspectList.of(new AspectInstance(EssentiaTransportHelper.resolve(getLevel(), aspectKey()), amount()));
     }
 
     @Override
     public void setAspects(AspectList aspects) {
-        if (aspects.isEmpty()) return;
+        if (aspects.isEmpty())
+            return;
         AspectInstance first = aspects.entries().getFirst();
         ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
         if (key != null) {
@@ -369,7 +390,8 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
 
     @Override
     public int addToContainer(Holder<IAspect> aspect, int amount) {
-        if (amount == 0) return amount;
+        if (amount == 0)
+            return amount;
         if ((this.amount < capacity() && Objects.equals(this.aspect, aspect.getKey())) || this.amount == 0) {
             this.aspect = aspect.getKey();
             int added = Math.min(amount, capacity() - this.amount);

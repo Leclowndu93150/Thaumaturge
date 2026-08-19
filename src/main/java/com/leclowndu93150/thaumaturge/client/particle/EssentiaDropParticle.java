@@ -14,17 +14,8 @@ public final class EssentiaDropParticle extends SingleQuadParticle {
     private final float baseAlpha;
     private final float baseScale;
 
-    private EssentiaDropParticle(
-            ClientLevel level, double x, double y, double z, EssentiaDropParticleOptions data, ParticleSheet sheet) {
-        super(
-                level,
-                x,
-                y,
-                z,
-                level.getRandom().nextGaussian() * 0.005,
-                level.getRandom().nextGaussian() * 0.005,
-                level.getRandom().nextGaussian() * 0.005,
-                null);
+    private EssentiaDropParticle(ClientLevel level, double x, double y, double z, EssentiaDropParticleOptions data, ParticleSheet sheet) {
+        super(level, x, y, z, level.getRandom().nextGaussian() * 0.005, level.getRandom().nextGaussian() * 0.005, level.getRandom().nextGaussian() * 0.005, null);
         this.sheet = sheet;
         Vector3f rgb = ARGB.vector3fFromRGB24(data.color());
         this.rCol = rgb.x();
@@ -88,16 +79,7 @@ public final class EssentiaDropParticle extends SingleQuadParticle {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("essentia_drop");
 
         @Override
-        public Particle createParticle(
-                EssentiaDropParticleOptions options,
-                ClientLevel level,
-                double x,
-                double y,
-                double z,
-                double xAux,
-                double yAux,
-                double zAux,
-                RandomSource random) {
+        public Particle createParticle(EssentiaDropParticleOptions options, ClientLevel level, double x, double y, double z, double xAux, double yAux, double zAux, RandomSource random) {
             return new EssentiaDropParticle(level, x, y, z, options, SHEET);
         }
     }

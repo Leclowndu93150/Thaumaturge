@@ -80,9 +80,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public void onTaskStarted(Level level, IGolemAPI golem, Task task) {
-        if (task.getEntity() instanceof LivingEntity target
-                && isValidTarget(target)
-                && golem.getGolemEntity() instanceof Mob mob) {
+        if (task.getEntity() instanceof LivingEntity target && isValidTarget(target) && golem.getGolemEntity() instanceof Mob mob) {
             mob.setTarget(target);
             golem.addRankXp(1);
         }
@@ -114,12 +112,12 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public int[] getGuiCategories() {
-        return new int[] {CAT_AREA, CAT_PRIORITY, CAT_TAGS};
+        return new int[]{CAT_AREA, CAT_PRIORITY, CAT_TAGS};
     }
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.FIGHTER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[]{TCGolemTraits.FIGHTER.get(), TCGolemTraits.SMART.get()};
     }
 
     @Override

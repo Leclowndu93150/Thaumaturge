@@ -25,27 +25,12 @@ public class BlockPurifyingFluid extends LiquidBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(MOTE_CHANCE) == 0) {
             int amount = level.getFluidState(pos).getAmount();
-            BubbleParticleOptions data = new BubbleParticleOptions(
-                    0xFFFFFF, 0.25F, random.nextFloat() * 0.3F + 0.3F, 10 + random.nextInt(10), -0.01F, false);
-            level.addParticle(
-                    data,
-                    pos.getX() + random.nextFloat(),
-                    pos.getY() + LEVEL_HEIGHT * amount,
-                    pos.getZ() + random.nextFloat(),
-                    0.0,
-                    0.0,
-                    0.0);
+            BubbleParticleOptions data = new BubbleParticleOptions(0xFFFFFF, 0.25F, random.nextFloat() * 0.3F + 0.3F, 10 + random.nextInt(10), -0.01F, false);
+            level.addParticle(data, pos.getX() + random.nextFloat(), pos.getY() + LEVEL_HEIGHT * amount, pos.getZ() + random.nextFloat(), 0.0, 0.0, 0.0);
         }
         if (random.nextInt(POP_CHANCE) == 0) {
-            level.playLocalSound(
-                    pos.getX() + random.nextFloat(),
-                    pos.getY() + 0.5,
-                    pos.getZ() + random.nextFloat(),
-                    SoundEvents.LAVA_POP,
-                    SoundSource.BLOCKS,
-                    0.1F + random.nextFloat() * 0.1F,
-                    0.9F + random.nextFloat() * 0.15F,
-                    false);
+            level.playLocalSound(pos.getX() + random.nextFloat(), pos.getY() + 0.5, pos.getZ() + random.nextFloat(), SoundEvents.LAVA_POP, SoundSource.BLOCKS, 0.1F + random.nextFloat() * 0.1F,
+                    0.9F + random.nextFloat() * 0.15F, false);
         }
     }
 }

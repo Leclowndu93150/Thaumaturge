@@ -41,35 +41,23 @@ public final class MenuResearchTable extends AbstractContainerMenu {
     }
 
     private static @Nullable BlockEntityResearchTable clientBlockEntity(Inventory playerInventory, BlockPos pos) {
-        return playerInventory.player.level().getBlockEntity(pos) instanceof BlockEntityResearchTable table
-                ? table
-                : null;
+        return playerInventory.player.level().getBlockEntity(pos) instanceof BlockEntityResearchTable table ? table : null;
     }
 
-    public MenuResearchTable(
-            int containerId, Inventory playerInventory, @Nullable BlockEntityResearchTable blockEntity) {
+    public MenuResearchTable(int containerId, Inventory playerInventory, @Nullable BlockEntityResearchTable blockEntity) {
         super(TCMenus.RESEARCH_TABLE.get(), containerId);
         this.blockEntity = blockEntity;
-        this.items = blockEntity != null
-                ? blockEntity.items()
-                : new ItemStacksResourceHandler(BlockEntityResearchTable.SLOT_COUNT);
-        this.access = blockEntity != null
-                ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos())
-                : ContainerLevelAccess.NULL;
+        this.items = blockEntity != null ? blockEntity.items() : new ItemStacksResourceHandler(BlockEntityResearchTable.SLOT_COUNT);
+        this.access = blockEntity != null ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()) : ContainerLevelAccess.NULL;
         this.pos = blockEntity != null ? blockEntity.getBlockPos() : BlockPos.ZERO;
         ItemStacksResourceHandler items = this.items;
 
-        addSlot(new ResourceHandlerSlot(
-                items, items::set, BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, SCRIBE_TOOLS_X, SCRIBE_TOOLS_Y));
+        addSlot(new ResourceHandlerSlot(items, items::set, BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, SCRIBE_TOOLS_X, SCRIBE_TOOLS_Y));
         addSlot(new ResourceHandlerSlot(items, items::set, BlockEntityResearchTable.SLOT_NOTE, NOTE_X, NOTE_Y));
 
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        PLAYER_GRID_X + col * 18,
-                        PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
@@ -83,9 +71,7 @@ public final class MenuResearchTable extends AbstractContainerMenu {
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
-        if (blockEntity == null
-                || blockEntity.getLevel() == null
-                || blockEntity.getLevel().isClientSide()) {
+        if (blockEntity == null || blockEntity.getLevel() == null || blockEntity.getLevel().isClientSide()) {
             return;
         }
         ItemStack tools = slots.get(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS).getItem();
@@ -95,10 +81,7 @@ public final class MenuResearchTable extends AbstractContainerMenu {
             lastNote = note.copy();
             blockEntity.ensureNotePuzzle();
             blockEntity.setChanged();
-            blockEntity
-                    .getLevel()
-                    .sendBlockUpdated(
-                            blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
+            blockEntity.getLevel().sendBlockUpdated(blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity.getBlockState(), 3);
         }
     }
 
@@ -121,7 +104,8 @@ public final class MenuResearchTable extends AbstractContainerMenu {
     public boolean hasUsableScribeTools() {
         ItemResource resource = items.getResource(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS);
         int amount = items.getAmountAsInt(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS);
-        if (resource.isEmpty() || amount <= 0) return false;
+        if (resource.isEmpty() || amount <= 0)
+            return false;
         ItemStack stack = resource.toStack(amount);
         return stack.isDamageableItem() && stack.getDamageValue() < stack.getMaxDamage();
     }

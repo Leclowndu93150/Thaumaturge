@@ -26,16 +26,8 @@ public final class WandAssemblyPackEvents {
             return;
         }
         event.addRepositorySource(consumer -> {
-            PackLocationInfo location = new PackLocationInfo(
-                    TCIds.MODID + "_wand_assembly",
-                    Component.literal("Thaumaturge Wand Assembly"),
-                    PackSource.BUILT_IN,
-                    Optional.empty());
-            Pack.Metadata metadata = new Pack.Metadata(
-                    Component.literal("Wand assembly recipes derived from the cap and rod registries"),
-                    PackCompatibility.COMPATIBLE,
-                    FeatureFlagSet.of(),
-                    List.of(),
+            PackLocationInfo location = new PackLocationInfo(TCIds.MODID + "_wand_assembly", Component.literal("Thaumaturge Wand Assembly"), PackSource.BUILT_IN, Optional.empty());
+            Pack.Metadata metadata = new Pack.Metadata(Component.literal("Wand assembly recipes derived from the cap and rod registries"), PackCompatibility.COMPATIBLE, FeatureFlagSet.of(), List.of(),
                     true);
             PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
             consumer.accept(new Pack(location, new AssemblySupplier(), metadata, config));

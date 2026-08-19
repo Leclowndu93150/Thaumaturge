@@ -16,10 +16,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class EntityGrapple extends ThrowableProjectile {
-    private static final EntityDataAccessor<Boolean> PULLING =
-            SynchedEntityData.defineId(EntityGrapple.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> MAIN_HAND =
-            SynchedEntityData.defineId(EntityGrapple.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PULLING = SynchedEntityData.defineId(EntityGrapple.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> MAIN_HAND = SynchedEntityData.defineId(EntityGrapple.class, EntityDataSerializers.BOOLEAN);
 
     private static final int FLIGHT_TIMEOUT = 30;
     private static final double PULL_DIVISOR = 5.0;
@@ -36,8 +34,7 @@ public final class EntityGrapple extends ThrowableProjectile {
         super(type, level);
     }
 
-    public EntityGrapple(
-            EntityType<? extends EntityGrapple> type, Level level, LivingEntity thrower, InteractionHand hand) {
+    public EntityGrapple(EntityType<? extends EntityGrapple> type, Level level, LivingEntity thrower, InteractionHand hand) {
         super(type, thrower.getX(), thrower.getEyeY() - 0.1, thrower.getZ(), level);
         setOwner(thrower);
         entityData.set(MAIN_HAND, hand == InteractionHand.MAIN_HAND);
@@ -81,9 +78,7 @@ public final class EntityGrapple extends ThrowableProjectile {
         if (!level().isClientSide()) {
             if (!added) {
                 int tracked = thrower.getData(TCAttachments.GRAPPLE_ID.get());
-                if (tracked >= 0
-                        && tracked != getId()
-                        && level().getEntity(tracked) instanceof EntityGrapple previous) {
+                if (tracked >= 0 && tracked != getId() && level().getEntity(tracked) instanceof EntityGrapple previous) {
                     previous.discard();
                 }
                 thrower.setData(TCAttachments.GRAPPLE_ID.get(), getId());

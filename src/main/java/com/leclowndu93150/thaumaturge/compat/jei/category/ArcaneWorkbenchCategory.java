@@ -42,11 +42,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHolder<ArcaneCraftingRecipe>> {
-    public static final IRecipeHolderType<ArcaneCraftingRecipe> RECIPE_TYPE =
-            IRecipeHolderType.create(TCRecipeTypes.ARCANE.get());
+    public static final IRecipeHolderType<ArcaneCraftingRecipe> RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.ARCANE.get());
 
-    private static final Identifier TEXTURE =
-            Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
 
     private static final int WIDTH = 162;
     private static final int HEIGHT = 138;
@@ -114,8 +112,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     @Override
-    public void setRecipe(
-            IRecipeLayoutBuilder builder, RecipeHolder<ArcaneCraftingRecipe> holder, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<ArcaneCraftingRecipe> holder, IFocusGroup focuses) {
         ArcaneCraftingRecipe recipe = holder.value();
         ItemStackTemplate output;
 
@@ -140,9 +137,9 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 Optional<Ingredient> ingredient = ingredients.get(x + y * width);
-                IRecipeSlotBuilder slot =
-                        builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
-                if (ingredient.isPresent()) slot.add(ingredient.get());
+                IRecipeSlotBuilder slot = builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
+                if (ingredient.isPresent())
+                    slot.add(ingredient.get());
             }
         }
     }
@@ -152,8 +149,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         for (int i = 0; i < 9; i++) {
             int x = i % 3;
             int y = i / 3;
-            IRecipeSlotBuilder slot =
-                    builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
+            IRecipeSlotBuilder slot = builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
             try {
                 slot.add(ingredients.get(i));
             } catch (Exception ignored) {
@@ -162,21 +158,19 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     private void layoutCrystals(IRecipeLayoutBuilder builder, AspectList crystals) {
-        if (crystals.isEmpty()) return;
+        if (crystals.isEmpty())
+            return;
         int index = 0;
-        List<AspectInstance> aspects = crystals.entries().stream()
-                .sorted(Comparator.comparingInt(
-                        k -> MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(k.aspect().getKey())))
-                .toList();
+        List<AspectInstance> aspects = crystals.entries().stream().sorted(Comparator.comparingInt(k -> MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(k.aspect().getKey()))).toList();
         for (int i = 0; i < 6; i++) {
-            boolean isAdded =
-                    Objects.equals(aspects.get(index).aspect().getKey(), MenuArcaneWorkbench.PRIMAL_ORDER.get(i));
+            boolean isAdded = Objects.equals(aspects.get(index).aspect().getKey(), MenuArcaneWorkbench.PRIMAL_ORDER.get(i));
             if (isAdded) {
                 IRecipeSlotBuilder slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + index * CRYSTAL_SPACING);
                 AspectInstance instance = aspects.get(index);
                 slot.add(EssentiaCrystalFactory.of(instance.aspect(), instance.amount()));
                 index++;
-                if (index >= aspects.size()) break;
+                if (index >= aspects.size())
+                    break;
             } else {
                 builder.addInputSlot(BARRIER_X, BARRIER_Y);
             }
@@ -184,25 +178,14 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     @Override
-    public void draw(
-            RecipeHolder<ArcaneCraftingRecipe> recipe,
-            IRecipeSlotsView recipeSlotsView,
-            GuiGraphicsExtractor guiGraphics,
-            double mouseX,
-            double mouseY) {
+    public void draw(RecipeHolder<ArcaneCraftingRecipe> recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         background.draw(guiGraphics);
         plate.draw(guiGraphics, PLATE_X, PLATE_Y);
         arrow.draw(guiGraphics, ARROW_X, ARROW_Y);
 
         Font font = Minecraft.getInstance().font;
         String vis = Integer.toString(recipe.value().getBaseVis());
-        guiGraphics.text(
-                font,
-                vis,
-                VIS_CENTER_X - font.width(vis) / 2,
-                VIS_Y,
-                0xFF000000 | ChatFormatting.DARK_GRAY.getColor(),
-                false);
+        guiGraphics.text(font, vis, VIS_CENTER_X - font.width(vis) / 2, VIS_Y, 0xFF000000 | ChatFormatting.DARK_GRAY.getColor(), false);
 
         if (!recipe.value().doesPassGate(Minecraft.getInstance().player)) {
             guiGraphics.item(Items.BARRIER.getDefaultInstance(), BARRIER_X, BARRIER_Y);
@@ -210,29 +193,18 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     @Override
-    public void getTooltip(
-            ITooltipBuilder tooltip,
-            RecipeHolder<ArcaneCraftingRecipe> recipe,
-            IRecipeSlotsView recipeSlotsView,
-            double mouseX,
-            double mouseY) {
+    public void getTooltip(ITooltipBuilder tooltip, RecipeHolder<ArcaneCraftingRecipe> recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         boolean inTopRow = mouseY > TOP_ZONE_MIN_Y && mouseY < TOP_ZONE_MAX_Y;
         if (inTopRow && mouseX > VIS_ZONE_MIN_X && mouseX < VIS_ZONE_MAX_X) {
             tooltip.add(Component.translatable("jei.thaumaturge.arcane_workbench.vis_cost"));
-            tooltip.add(Component.translatable(
-                    "jei.thaumaturge.arcane_workbench.vis_cost_wand", WandEconomy.CRYSTAL_SUBSTITUTE_VIS));
-            tooltip.add(Component.translatable(
-                    "jei.thaumaturge.arcane_workbench.vis_cost_aura", WorkbenchPayment.crudeCost(recipe.value())));
+            tooltip.add(Component.translatable("jei.thaumaturge.arcane_workbench.vis_cost_wand", WandEconomy.CRYSTAL_SUBSTITUTE_VIS));
+            tooltip.add(Component.translatable("jei.thaumaturge.arcane_workbench.vis_cost_aura", WorkbenchPayment.crudeCost(recipe.value())));
             return;
         }
 
         Optional<ResearchGate> gate = recipe.value().researchGate();
         boolean doesPassGate = recipe.value().doesPassGate(Minecraft.getInstance().player);
-        if (!doesPassGate
-                && gate.isPresent()
-                && inTopRow
-                && mouseX > RESEARCH_ZONE_MIN_X
-                && mouseX < RESEARCH_ZONE_MAX_X) {
+        if (!doesPassGate && gate.isPresent() && inTopRow && mouseX > RESEARCH_ZONE_MIN_X && mouseX < RESEARCH_ZONE_MAX_X) {
             tooltip.addAll(ResearchUtils.generateMissingResearchList(gate.get()));
         }
     }

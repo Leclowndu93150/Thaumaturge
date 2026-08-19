@@ -16,8 +16,7 @@ final class JadeComponents {
             if (!first) {
                 list.append(Component.translatable("jade.thaumaturge.aspect_separator"));
             }
-            list.append(Component.translatable(
-                    "jade.thaumaturge.aspect_amount", AspectComponents.name(entry.aspect()), entry.amount()));
+            list.append(Component.translatable("jade.thaumaturge.aspect_amount", AspectComponents.name(entry.aspect()), entry.amount()));
             first = false;
         }
         return Component.translatable(key, list);

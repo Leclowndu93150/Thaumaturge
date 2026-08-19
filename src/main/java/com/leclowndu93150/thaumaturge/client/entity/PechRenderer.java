@@ -19,11 +19,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.Items;
 
 public final class PechRenderer extends MobRenderer<EntityPech, PechRenderState, PechModel> {
-    private static final Identifier[] TEXTURES = {
-        TCIds.rl("textures/entity/pech_forage.png"),
-        TCIds.rl("textures/entity/pech_thaum.png"),
-        TCIds.rl("textures/entity/pech_stalker.png")
-    };
+    private static final Identifier[] TEXTURES = {TCIds.rl("textures/entity/pech_forage.png"), TCIds.rl("textures/entity/pech_thaum.png"), TCIds.rl("textures/entity/pech_stalker.png")};
     private static final float SHADOW = 0.5F;
     private static final float ITEM_LIFT = -0.1F;
     private static final float ITEM_FORWARD = 0.0625F;
@@ -55,35 +51,13 @@ public final class PechRenderer extends MobRenderer<EntityPech, PechRenderState,
     }
 
     @Override
-    public void submit(
-            PechRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(PechRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
-        submitHandItem(
-                state,
-                state.rightHandItemState,
-                HumanoidArm.RIGHT,
-                this.model.rightArm,
-                state.mainArm == HumanoidArm.RIGHT && state.holdingBow,
-                poseStack,
-                collector);
-        submitHandItem(
-                state,
-                state.leftHandItemState,
-                HumanoidArm.LEFT,
-                this.model.leftArm,
-                state.mainArm == HumanoidArm.LEFT && state.holdingBow,
-                poseStack,
-                collector);
+        submitHandItem(state, state.rightHandItemState, HumanoidArm.RIGHT, this.model.rightArm, state.mainArm == HumanoidArm.RIGHT && state.holdingBow, poseStack, collector);
+        submitHandItem(state, state.leftHandItemState, HumanoidArm.LEFT, this.model.leftArm, state.mainArm == HumanoidArm.LEFT && state.holdingBow, poseStack, collector);
     }
 
-    private void submitHandItem(
-            PechRenderState state,
-            ItemStackRenderState item,
-            HumanoidArm arm,
-            ModelPart armPart,
-            boolean bow,
-            PoseStack poseStack,
-            SubmitNodeCollector collector) {
+    private void submitHandItem(PechRenderState state, ItemStackRenderState item, HumanoidArm arm, ModelPart armPart, boolean bow, PoseStack poseStack, SubmitNodeCollector collector) {
         if (item.isEmpty()) {
             return;
         }
@@ -99,8 +73,7 @@ public final class PechRenderer extends MobRenderer<EntityPech, PechRenderState,
         }
         poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-        poseStack.translate(
-                arm == HumanoidArm.LEFT ? -HAND_SIDE_OFFSET : HAND_SIDE_OFFSET, HAND_DOWN_OFFSET, HAND_OUT_OFFSET);
+        poseStack.translate(arm == HumanoidArm.LEFT ? -HAND_SIDE_OFFSET : HAND_SIDE_OFFSET, HAND_DOWN_OFFSET, HAND_OUT_OFFSET);
         item.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         poseStack.popPose();
     }

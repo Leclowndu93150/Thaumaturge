@@ -76,29 +76,19 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
     }
 
     private void spawnGuards(ServerLevel level, BlockPos pos) {
-        List<EntityCultistCleric> clerics = level.getEntitiesOfClass(
-                EntityCultistCleric.class, new AABB(pos).inflate(SCAN_RANGE, 16.0, SCAN_RANGE));
+        List<EntityCultistCleric> clerics = level.getEntitiesOfClass(EntityCultistCleric.class, new AABB(pos).inflate(SCAN_RANGE, 16.0, SCAN_RANGE));
         if (clerics.isEmpty()) {
             setSpawner(false);
             return;
         }
-        List<Mob> cultists = level.getEntitiesOfClass(
-                Mob.class,
-                new AABB(pos).inflate(SCAN_RANGE, 16.0, SCAN_RANGE),
-                mob -> mob instanceof EntityCultistKnight || mob instanceof EntityCultistCleric);
+        List<Mob> cultists = level.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(SCAN_RANGE, 16.0, SCAN_RANGE), mob -> mob instanceof EntityCultistKnight || mob instanceof EntityCultistCleric);
         if (cultists.size() >= MAX_KNIGHTS) {
             return;
         }
         EntityCultistKnight knight = new EntityCultistKnight(TCEntities.CULTIST_KNIGHT.get(), level);
-        int x = pos.getX()
-                + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
-        int y = pos.getY()
-                + Mth.randomBetweenInclusive(level.getRandom(), 0, 3)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
-        int z = pos.getZ()
-                + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int x = pos.getX() + Mth.randomBetweenInclusive(level.getRandom(), 4, 10) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int y = pos.getY() + Mth.randomBetweenInclusive(level.getRandom(), 0, 3) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int z = pos.getZ() + Mth.randomBetweenInclusive(level.getRandom(), 4, 10) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
         BlockPos spawnPos = new BlockPos(x, y, z);
         if (!level.getBlockState(spawnPos.below()).isSolidRender()) {
             return;
@@ -113,21 +103,14 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
 
     private void spawnGuardian(ServerLevel level, BlockPos pos) {
         EntityEldritchGuardian guardian = new EntityEldritchGuardian(TCEntities.ELDRITCH_GUARDIAN.get(), level);
-        int x = pos.getX()
-                + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
-        int y = pos.getY()
-                + Mth.randomBetweenInclusive(level.getRandom(), 0, 3)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
-        int z = pos.getZ()
-                + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
-                        * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int x = pos.getX() + Mth.randomBetweenInclusive(level.getRandom(), 4, 10) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int y = pos.getY() + Mth.randomBetweenInclusive(level.getRandom(), 0, 3) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
+        int z = pos.getZ() + Mth.randomBetweenInclusive(level.getRandom(), 4, 10) * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
         BlockPos spawnPos = new BlockPos(x, y, z);
         if (!level.getBlockState(spawnPos.below()).isSolidRender()) {
             return;
         }
-        if (!level.getEntitiesOfClass(EntityEldritchGuardian.class, new AABB(spawnPos).inflate(32.0, 16.0, 32.0))
-                .isEmpty()) {
+        if (!level.getEntitiesOfClass(EntityEldritchGuardian.class, new AABB(spawnPos).inflate(32.0, 16.0, 32.0)).isEmpty()) {
             return;
         }
         guardian.snapTo(x + 0.5, y, z + 0.5, 0.0F, 0.0F);
@@ -245,8 +228,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
-        try (ProblemReporter.ScopedCollector reporter =
-                new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
+        try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
             saveAdditional(output);
             nbt.merge(output.buildResult());

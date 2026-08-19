@@ -26,12 +26,7 @@ import net.minecraft.world.entity.player.Player;
  * @param affordable      whether the workbench and player can currently satisfy the whole cost
  * @since 1.0.0
  */
-public record ArcaneCraftCost(
-        boolean paidFromWand,
-        Map<ResourceKey<IAspect>, Integer> wandCentivis,
-        AspectList crystalsNeeded,
-        int auraVis,
-        boolean affordable) {
+public record ArcaneCraftCost(boolean paidFromWand, Map<ResourceKey<IAspect>, Integer> wandCentivis, AspectList crystalsNeeded, int auraVis, boolean affordable) {
     private static Factory factory;
 
     public ArcaneCraftCost {

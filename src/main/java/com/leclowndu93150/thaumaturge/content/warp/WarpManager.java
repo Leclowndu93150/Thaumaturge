@@ -103,38 +103,26 @@ public final class WarpManager {
     }
 
     private static void notifyGain(ServerPlayer player, WarpType type) {
-        player.level()
-                .playSound(
-                        null,
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        TCSounds.WHISPERS.get(),
-                        SoundSource.AMBIENT,
-                        0.5F,
-                        1.0F);
-        String key =
-                switch (type) {
-                    case PERMANENT -> "warp.thaumaturge.gain.permanent";
-                    case NORMAL -> "warp.thaumaturge.gain.normal";
-                    case TEMPORARY -> "warp.thaumaturge.gain.temporary";
-                };
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.WHISPERS.get(), SoundSource.AMBIENT, 0.5F, 1.0F);
+        String key = switch (type) {
+            case PERMANENT -> "warp.thaumaturge.gain.permanent";
+            case NORMAL -> "warp.thaumaturge.gain.normal";
+            case TEMPORARY -> "warp.thaumaturge.gain.temporary";
+        };
         sendActionBar(player, key);
     }
 
     private static void notifyLoss(ServerPlayer player, WarpType type) {
-        String key =
-                switch (type) {
-                    case PERMANENT -> "warp.thaumaturge.lose.permanent";
-                    case NORMAL -> "warp.thaumaturge.lose.normal";
-                    case TEMPORARY -> "warp.thaumaturge.lose.temporary";
-                };
+        String key = switch (type) {
+            case PERMANENT -> "warp.thaumaturge.lose.permanent";
+            case NORMAL -> "warp.thaumaturge.lose.normal";
+            case TEMPORARY -> "warp.thaumaturge.lose.temporary";
+        };
         sendActionBar(player, key);
     }
 
     public static void sendActionBar(ServerPlayer player, String key) {
-        player.connection.send(new ClientboundSetActionBarTextPacket(
-                Component.translatable(key).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
+        player.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable(key).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
     }
 
     public static final class Bindings implements WarpHelper.Bindings {

@@ -13,8 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockJarVoid extends BlockJar {
-    private static final Identifier SIDE_TEXTURE =
-            Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_side_void");
+    private static final Identifier SIDE_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_side_void");
     private static final Identifier TOP_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_top_void");
 
     @Override
@@ -44,8 +43,7 @@ public final class BlockJarVoid extends BlockJar {
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-            Level level, BlockState blockState, BlockEntityType<T> type) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
         return createTickerHelper(type, TCBlockEntities.JAR_VOID.get(), BlockEntityJarVoid::serverTick);
     }
 }

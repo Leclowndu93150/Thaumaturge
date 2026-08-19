@@ -28,12 +28,7 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     }
 
     @Override
-    public void extractRenderState(
-            BlockEntityVisRelay relay,
-            VisRelayRenderState state,
-            float partialTicks,
-            Vec3 cameraPosition,
-            ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockEntityVisRelay relay, VisRelayRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(relay, state, partialTicks, cameraPosition, breakProgress);
         state.beamTarget = null;
         LocalPlayer player = Minecraft.getInstance().player;
@@ -48,17 +43,13 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     }
 
     @Override
-    public void submit(
-            VisRelayRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+    public void submit(VisRelayRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.beamTarget == null) {
             return;
         }
         Vec3 origin = Vec3.atCenterOf(state.blockPos).add(0.0, CRYSTAL_HEIGHT - 0.5, 0.0);
         Vec3 target = state.beamTarget;
         float time = FloatyLineRenderer.time(state.time, state.ticks % 1.0F);
-        LateWorldRenderQueue.enqueue(
-                origin,
-                (latePose, buffers) -> FloatyLineRenderer.draw(
-                        latePose, buffers, target, time, BEAM_COLOR, BEAM_SPEED, 1.0F, BEAM_WIDTH));
+        LateWorldRenderQueue.enqueue(origin, (latePose, buffers) -> FloatyLineRenderer.draw(latePose, buffers, target, time, BEAM_COLOR, BEAM_SPEED, 1.0F, BEAM_WIDTH));
     }
 }

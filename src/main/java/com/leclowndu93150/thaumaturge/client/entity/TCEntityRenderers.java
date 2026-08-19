@@ -44,13 +44,10 @@ public final class TCEntityRenderers {
 
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(
-                TCModelLayers.TAINTACLE, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_LENGTH));
-        event.registerLayerDefinition(
-                TCModelLayers.TAINTACLE_GIANT, () -> TaintacleModel.createLayer(TAINTACLE_GIANT_LENGTH));
+        event.registerLayerDefinition(TCModelLayers.TAINTACLE, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_LENGTH));
+        event.registerLayerDefinition(TCModelLayers.TAINTACLE_GIANT, () -> TaintacleModel.createLayer(TAINTACLE_GIANT_LENGTH));
         event.registerLayerDefinition(TCModelLayers.ELDRITCH_GOLEM, EldritchGolemModel::createLayer);
-        event.registerLayerDefinition(
-                TCModelLayers.TAINTACLE_SMALL, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_SMALL_LENGTH));
+        event.registerLayerDefinition(TCModelLayers.TAINTACLE_SMALL, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_SMALL_LENGTH));
         event.registerLayerDefinition(TCModelLayers.TAINT_SEED, TaintSeedModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.FIRE_BAT, BatModel::createBodyLayer);
         event.registerLayerDefinition(TCModelLayers.TC_BANNER, TCBannerModel::createLayer);
@@ -89,22 +86,12 @@ public final class TCEntityRenderers {
         event.registerEntityRenderer(TCEntities.MIND_SPIDER.get(), MindSpiderRenderer::new);
         event.registerEntityRenderer(TCEntities.THAUMIC_SLIME.get(), ThaumicSlimeRenderer::new);
         event.registerEntityRenderer(TCEntities.TAINT_CRAWLER.get(), TaintCrawlerRenderer::new);
-        event.registerEntityRenderer(
-                TCEntities.TAINT_SEED.get(), context -> new TaintSeedRenderer(context, TAINT_SEED_SHADOW));
-        event.registerEntityRenderer(
-                TCEntities.TAINT_SEED_PRIME.get(), context -> new TaintSeedRenderer(context, TAINT_SEED_PRIME_SHADOW));
+        event.registerEntityRenderer(TCEntities.TAINT_SEED.get(), context -> new TaintSeedRenderer(context, TAINT_SEED_SHADOW));
+        event.registerEntityRenderer(TCEntities.TAINT_SEED_PRIME.get(), context -> new TaintSeedRenderer(context, TAINT_SEED_PRIME_SHADOW));
         event.registerEntityRenderer(TCEntities.TAINT_SWARM.get(), TaintSwarmRenderer::new);
-        event.registerEntityRenderer(
-                TCEntities.TAINTACLE.get(),
-                context -> new TaintacleRenderer(
-                        context, TCModelLayers.TAINTACLE, TaintacleModel.TAINTACLE_LENGTH, TAINTACLE_SHADOW));
-        event.registerEntityRenderer(
-                TCEntities.TAINTACLE_SMALL.get(),
-                context -> new TaintacleRenderer(
-                        context,
-                        TCModelLayers.TAINTACLE_SMALL,
-                        TaintacleModel.TAINTACLE_SMALL_LENGTH,
-                        TAINTACLE_SMALL_SHADOW));
+        event.registerEntityRenderer(TCEntities.TAINTACLE.get(), context -> new TaintacleRenderer(context, TCModelLayers.TAINTACLE, TaintacleModel.TAINTACLE_LENGTH, TAINTACLE_SHADOW));
+        event.registerEntityRenderer(TCEntities.TAINTACLE_SMALL.get(),
+                context -> new TaintacleRenderer(context, TCModelLayers.TAINTACLE_SMALL, TaintacleModel.TAINTACLE_SMALL_LENGTH, TAINTACLE_SMALL_SHADOW));
         event.registerEntityRenderer(TCEntities.FOCUS_PROJECTILE.get(), FocusProjectileRenderer::new);
         event.registerEntityRenderer(TCEntities.FOCUS_CLOUD.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TCEntities.FOCUS_MINE.get(), FocusMineRenderer::new);
@@ -124,10 +111,7 @@ public final class TCEntityRenderers {
         event.registerEntityRenderer(TCEntities.CULTIST_PORTAL_GREATER.get(), CultistPortalGreaterRenderer::new);
         event.registerEntityRenderer(TCEntities.ELDRITCH_GOLEM.get(), EldritchGolemRenderer::new);
         event.registerEntityRenderer(TCEntities.ELDRITCH_WARDEN.get(), EldritchWardenRenderer::new);
-        event.registerEntityRenderer(
-                TCEntities.TAINTACLE_GIANT.get(),
-                context -> new TaintacleRenderer(
-                        context, TCModelLayers.TAINTACLE_GIANT, TAINTACLE_GIANT_LENGTH, TAINTACLE_GIANT_SHADOW));
+        event.registerEntityRenderer(TCEntities.TAINTACLE_GIANT.get(), context -> new TaintacleRenderer(context, TCModelLayers.TAINTACLE_GIANT, TAINTACLE_GIANT_LENGTH, TAINTACLE_GIANT_SHADOW));
         event.registerEntityRenderer(TCEntities.CULTIST_KNIGHT.get(), CultistRenderer::new);
         event.registerEntityRenderer(TCEntities.CULTIST_CLERIC.get(), CultistClericRenderer::new);
         event.registerEntityRenderer(TCEntities.CULTIST_PORTAL_LESSER.get(), CultistPortalRenderer::new);

@@ -62,19 +62,12 @@ public final class BlockEldritchNothing extends Block implements EntityBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return COLLISION;
     }
 
     @Override
-    protected void neighborChanged(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Block neighborBlock,
-            @Nullable Orientation orientation,
-            boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable Orientation orientation, boolean movedByPiston) {
         boolean exposed = isExposed(level, pos);
         if (state.getValue(EXPOSED) != exposed) {
             level.setBlock(pos, state.setValue(EXPOSED, exposed), 3);
@@ -94,13 +87,7 @@ public final class BlockEldritchNothing extends Block implements EntityBlock {
     }
 
     @Override
-    protected void entityInside(
-            BlockState state,
-            Level level,
-            BlockPos pos,
-            Entity entity,
-            InsideBlockEffectApplier effectApplier,
-            boolean isPrecise) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (level.isClientSide() || entity.tickCount <= GRACE_TICKS) {
             return;
         }

@@ -42,11 +42,7 @@ public final class MenuVoidSiphon extends AbstractContainerMenu {
 
         for (int row = 0; row < PLAYER_ROWS; row++) {
             for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        8 + col * 18,
-                        PLAYER_GRID_Y + row * 18));
+                addSlot(new Slot(playerInventory, col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS, 8 + col * 18, PLAYER_GRID_Y + row * 18));
             }
         }
         for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
@@ -92,7 +88,6 @@ public final class MenuVoidSiphon extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return blockEntity == null
-                || blockEntity.getBlockPos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) <= 64.0;
+        return blockEntity == null || blockEntity.getBlockPos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) <= 64.0;
     }
 }

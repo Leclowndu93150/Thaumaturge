@@ -38,8 +38,7 @@ public final class JeiSearchIndex {
             }
         }
         for (ITypedIngredient<?> typed : stale) {
-            IListElementInfo<?> rebuilt =
-                    ListElementInfo.create(typed, ingredients, accessor.thaumaturge$modIdHelper());
+            IListElementInfo<?> rebuilt = ListElementInfo.create(typed, ingredients, accessor.thaumaturge$modIdHelper());
             if (rebuilt != null) {
                 filter.addIngredient(rebuilt);
             }
@@ -53,9 +52,7 @@ public final class JeiSearchIndex {
         }
         if (!reported) {
             reported = true;
-            Thaumaturge.LOGGER.warn(
-                    "JEI ingredient filter is a {}; aspect names will stay masked in JEI search after discovery."
-                            + " The accessor mixin likely no longer matches this JEI version.",
+            Thaumaturge.LOGGER.warn("JEI ingredient filter is a {}; aspect names will stay masked in JEI search after discovery." + " The accessor mixin likely no longer matches this JEI version.",
                     api.getClass().getName());
         }
         return null;

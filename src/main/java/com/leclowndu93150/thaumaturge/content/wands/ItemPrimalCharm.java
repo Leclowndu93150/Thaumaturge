@@ -16,14 +16,8 @@ public class ItemPrimalCharm extends Item {
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Item.TooltipContext context,
-            TooltipDisplay display,
-            Consumer<Component> builder,
-            TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
         int line = Math.floorMod(System.identityHashCode(stack), FLAVOR_LINE_COUNT);
-        builder.accept(Component.translatable("tooltip.thaumaturge.primal_charm." + line)
-                .withStyle(ChatFormatting.GOLD));
+        builder.accept(Component.translatable("tooltip.thaumaturge.primal_charm." + line).withStyle(ChatFormatting.GOLD));
     }
 }

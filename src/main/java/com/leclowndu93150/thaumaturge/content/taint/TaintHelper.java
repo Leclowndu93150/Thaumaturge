@@ -131,16 +131,9 @@ public final class TaintHelper {
         }
 
         if (isLeaves) {
-            Direction logFace =
-                    random.nextFloat() < FEATURE_ON_LEAVES_CHANCE ? findAdjacentTaintLog(level, target) : null;
+            Direction logFace = random.nextFloat() < FEATURE_ON_LEAVES_CHANCE ? findAdjacentTaintLog(level, target) : null;
             if (logFace != null) {
-                level.setBlock(
-                        target,
-                        TCBlocks.TAINT_FEATURE
-                                .get()
-                                .defaultBlockState()
-                                .setValue(DirectionalBlock.FACING, logFace.getOpposite()),
-                        Block.UPDATE_ALL);
+                level.setBlock(target, TCBlocks.TAINT_FEATURE.get().defaultBlockState().setValue(DirectionalBlock.FACING, logFace.getOpposite()), Block.UPDATE_ALL);
             } else {
                 level.setBlock(target, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
                 AuraHelper.drainFlux(level, target, FLUX_PER_CONVERSION, false);
@@ -154,10 +147,7 @@ public final class TaintHelper {
                 if (targetState.hasProperty(RotatedPillarBlock.AXIS)) {
                     axis = targetState.getValue(RotatedPillarBlock.AXIS);
                 }
-                level.setBlock(
-                        target,
-                        TCBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis),
-                        Block.UPDATE_ALL);
+                level.setBlock(target, TCBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis), Block.UPDATE_ALL);
                 return;
             }
             if (isCrustConvertible(targetState)) {
@@ -180,8 +170,7 @@ public final class TaintHelper {
         trySpawnTaintSeed(level, target, targetState, random, rate);
     }
 
-    private static void trySpawnTaintSeed(
-            ServerLevel level, BlockPos target, BlockState targetState, RandomSource random, double rate) {
+    private static void trySpawnTaintSeed(ServerLevel level, BlockPos target, BlockState targetState, RandomSource random, double rate) {
         if (!targetState.is(TCBlocks.TAINT_SOIL.get()) && !targetState.is(TCBlocks.TAINT_ROCK.get())) {
             return;
         }
@@ -219,20 +208,14 @@ public final class TaintHelper {
         }
         double fringe = spreadArea() * 0.8;
         AABB box = seed.getBoundingBox().inflate(fringe);
-        return level.getEntitiesOfClass(AbstractTaintSeed.class, box, other -> other != seed)
-                .isEmpty();
+        return level.getEntitiesOfClass(AbstractTaintSeed.class, box, other -> other != seed).isEmpty();
     }
 
     private static boolean isCrustConvertible(BlockState state) {
-        if (state.is(Blocks.RED_MUSHROOM_BLOCK)
-                || state.is(Blocks.BROWN_MUSHROOM_BLOCK)
-                || state.is(Blocks.MUSHROOM_STEM)) {
+        if (state.is(Blocks.RED_MUSHROOM_BLOCK) || state.is(Blocks.BROWN_MUSHROOM_BLOCK) || state.is(Blocks.MUSHROOM_STEM)) {
             return true;
         }
-        if (state.is(Blocks.PUMPKIN)
-                || state.is(Blocks.CARVED_PUMPKIN)
-                || state.is(Blocks.JACK_O_LANTERN)
-                || state.is(Blocks.MELON)) {
+        if (state.is(Blocks.PUMPKIN) || state.is(Blocks.CARVED_PUMPKIN) || state.is(Blocks.JACK_O_LANTERN) || state.is(Blocks.MELON)) {
             return true;
         }
         if (state.is(Blocks.CACTUS) || state.is(Blocks.SPONGE) || state.is(Blocks.WET_SPONGE)) {
@@ -246,12 +229,8 @@ public final class TaintHelper {
     }
 
     private static boolean isRockConvertible(BlockState state) {
-        return state.is(BlockTags.BASE_STONE_OVERWORLD)
-                || state.is(BlockTags.STONE_ORE_REPLACEABLES)
-                || state.is(BlockTags.STONE_BRICKS)
-                || state.is(Tags.Blocks.STONES)
-                || state.is(Tags.Blocks.COBBLESTONES)
-                || state.is(Tags.Blocks.ORES);
+        return state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(BlockTags.STONE_ORE_REPLACEABLES) || state.is(BlockTags.STONE_BRICKS) || state.is(Tags.Blocks.STONES)
+                || state.is(Tags.Blocks.COBBLESTONES) || state.is(Tags.Blocks.ORES);
     }
 
     private static Direction findAdjacentTaintLog(ServerLevel level, BlockPos pos) {

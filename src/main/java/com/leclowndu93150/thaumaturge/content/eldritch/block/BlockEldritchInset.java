@@ -38,24 +38,13 @@ public class BlockEldritchInset extends DropExperienceBlock {
         for (Direction dir : Direction.values()) {
             BlockPos neighbourPos = context.getClickedPos().relative(dir);
             BlockState neighbour = context.getLevel().getBlockState(neighbourPos);
-            state = state.setValue(
-                    EXPOSED.get(dir), !neighbour.isFaceSturdy(context.getLevel(), neighbourPos, dir.getOpposite()));
+            state = state.setValue(EXPOSED.get(dir), !neighbour.isFaceSturdy(context.getLevel(), neighbourPos, dir.getOpposite()));
         }
         return state;
     }
 
     @Override
-    protected BlockState updateShape(
-            BlockState state,
-            LevelReader level,
-            ScheduledTickAccess ticks,
-            BlockPos pos,
-            Direction directionToNeighbour,
-            BlockPos neighbourPos,
-            BlockState neighbourState,
-            RandomSource random) {
-        return state.setValue(
-                EXPOSED.get(directionToNeighbour),
-                !neighbourState.isFaceSturdy(level, neighbourPos, directionToNeighbour.getOpposite()));
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
+        return state.setValue(EXPOSED.get(directionToNeighbour), !neighbourState.isFaceSturdy(level, neighbourPos, directionToNeighbour.getOpposite()));
     }
 }

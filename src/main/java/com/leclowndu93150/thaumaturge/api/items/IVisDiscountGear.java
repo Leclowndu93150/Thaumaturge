@@ -31,8 +31,7 @@ public interface IVisDiscountGear {
      */
     default EquipmentSlotGroup getAppliedSlot(ItemStack stack) {
         if (stack.has(DataComponents.EQUIPPABLE)) {
-            return EquipmentSlotGroup.bySlot(
-                    stack.get(DataComponents.EQUIPPABLE).slot());
+            return EquipmentSlotGroup.bySlot(stack.get(DataComponents.EQUIPPABLE).slot());
         }
         return EquipmentSlotGroup.ANY;
     }

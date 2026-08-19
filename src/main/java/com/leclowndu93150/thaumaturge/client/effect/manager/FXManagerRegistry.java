@@ -14,27 +14,27 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public final class FXManagerRegistry {
-    private static final List<AbstractFXManager<?>> MANAGERS = List.of(
-            BeamManager.INSTANCE,
-            EssentiaStreamManager.INSTANCE,
-            BoreVoidStreamManager.INSTANCE,
-            BoreDigEffectManager.INSTANCE);
+    private static final List<AbstractFXManager<?>> MANAGERS = List.of(BeamManager.INSTANCE, EssentiaStreamManager.INSTANCE, BoreVoidStreamManager.INSTANCE, BoreDigEffectManager.INSTANCE);
 
     private FXManagerRegistry() {}
 
     @SubscribeEvent
     public static void onTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ClientLevel cl)) return;
-        for (AbstractFXManager<?> m : MANAGERS) m.tickAll(cl);
+        if (!(event.getLevel() instanceof ClientLevel cl))
+            return;
+        for (AbstractFXManager<?> m : MANAGERS)
+            m.tickAll(cl);
     }
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent.AfterWeather event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null) return;
+        if (mc.level == null)
+            return;
         Camera camera = mc.gameRenderer.getMainCamera();
         PoseStack poseStack = event.getPoseStack();
         float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
-        for (AbstractFXManager<?> m : MANAGERS) m.renderAll(poseStack, camera, partialTick);
+        for (AbstractFXManager<?> m : MANAGERS)
+            m.renderAll(poseStack, camera, partialTick);
     }
 }

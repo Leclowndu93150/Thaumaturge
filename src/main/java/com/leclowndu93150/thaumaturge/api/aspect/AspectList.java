@@ -36,25 +36,19 @@ public final class AspectList {
     public static final AspectList EMPTY = new AspectList(Collections.emptyList());
 
     /** Codec; serializes as a JSON array of {@link AspectInstance}. */
-    public static final Codec<AspectList> CODEC = AspectInstance.CODEC
-            .listOf()
-            .flatXmap(
-                    entries -> {
-                        AspectList result = AspectList.EMPTY;
-                        for (AspectInstance entry : entries) {
-                            result = result.add(entry);
-                        }
-                        return DataResult.success(result);
-                    },
-                    list -> DataResult.success(list.entries()));
+    public static final Codec<AspectList> CODEC = AspectInstance.CODEC.listOf().flatXmap(entries -> {
+        AspectList result = AspectList.EMPTY;
+        for (AspectInstance entry : entries) {
+            result = result.add(entry);
+        }
+        return DataResult.success(result);
+    }, list -> DataResult.success(list.entries()));
 
     /** Non-Empty Codec; serializes as a non-empty JSON array of {@link AspectInstance}. */
-    public static final Codec<AspectList> NON_EMPTY_CODEC = CODEC.validate(list ->
-            list.isEmpty() ? DataResult.error(() -> "Aspect List must not be empty", EMPTY) : DataResult.success(list));
+    public static final Codec<AspectList> NON_EMPTY_CODEC = CODEC.validate(list -> list.isEmpty() ? DataResult.error(() -> "Aspect List must not be empty", EMPTY) : DataResult.success(list));
 
     /** Network codec; preserves order. */
-    public static final StreamCodec<RegistryFriendlyByteBuf, AspectList> STREAM_CODEC =
-            AspectInstance.STREAM_CODEC.apply(ByteBufCodecs.list()).map(AspectList::ofEntries, AspectList::entries);
+    public static final StreamCodec<RegistryFriendlyByteBuf, AspectList> STREAM_CODEC = AspectInstance.STREAM_CODEC.apply(ByteBufCodecs.list()).map(AspectList::ofEntries, AspectList::entries);
 
     private final List<AspectInstance> entries;
 

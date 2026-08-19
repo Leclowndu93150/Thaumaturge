@@ -39,32 +39,20 @@ import org.jspecify.annotations.Nullable;
  * @param entities entity types matched, empty to match no entities
  * @since 1.0.0
  */
-public record ScanEntry(
-        Identifier key,
-        Optional<HolderSet<Block>> blocks,
-        Optional<HolderSet<Item>> items,
-        Optional<HolderSet<EntityType<?>>> entities) {
+public record ScanEntry(Identifier key, Optional<HolderSet<Block>> blocks, Optional<HolderSet<Item>> items, Optional<HolderSet<EntityType<?>>> entities) {
 
     /**
      * The datapack registry housing scan entries, at {@code data/<ns>/thaumaturge/scan/}.
      */
-    public static final ResourceKey<Registry<ScanEntry>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "scan"));
+    public static final ResourceKey<Registry<ScanEntry>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "scan"));
 
     /**
      * Codec used for both datapack loading and network sync.
      */
-    public static final Codec<ScanEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Identifier.CODEC.fieldOf("key").forGetter(ScanEntry::key),
-                    RegistryCodecs.homogeneousList(Registries.BLOCK)
-                            .optionalFieldOf("blocks")
-                            .forGetter(ScanEntry::blocks),
-                    RegistryCodecs.homogeneousList(Registries.ITEM)
-                            .optionalFieldOf("items")
-                            .forGetter(ScanEntry::items),
-                    RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE)
-                            .optionalFieldOf("entities")
-                            .forGetter(ScanEntry::entities))
+    public static final Codec<ScanEntry> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(Identifier.CODEC.fieldOf("key").forGetter(ScanEntry::key), RegistryCodecs.homogeneousList(Registries.BLOCK).optionalFieldOf("blocks").forGetter(ScanEntry::blocks),
+                    RegistryCodecs.homogeneousList(Registries.ITEM).optionalFieldOf("items").forGetter(ScanEntry::items),
+                    RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).optionalFieldOf("entities").forGetter(ScanEntry::entities))
             .apply(instance, ScanEntry::new));
 
     /**
@@ -76,12 +64,10 @@ public record ScanEntry(
      */
     public boolean matches(Player player, @Nullable Object target) {
         if (target instanceof BlockPos pos) {
-            return blocks.isPresent()
-                    && blocks.get().contains(player.level().getBlockState(pos).typeHolder());
+            return blocks.isPresent() && blocks.get().contains(player.level().getBlockState(pos).typeHolder());
         }
         if (target instanceof Entity entity && !(entity instanceof ItemEntity)) {
-            return entities.isPresent()
-                    && entities.get().contains(entity.getType().builtInRegistryHolder());
+            return entities.isPresent() && entities.get().contains(entity.getType().builtInRegistryHolder());
         }
         ItemStack stack = ItemStack.EMPTY;
         if (target instanceof ItemStack targetStack) {
@@ -95,8 +81,6 @@ public record ScanEntry(
         if (items.isPresent() && items.get().contains(stack.typeHolder())) {
             return true;
         }
-        return blocks.isPresent()
-                && stack.getItem() instanceof BlockItem blockItem
-                && blocks.get().contains(blockItem.getBlock().builtInRegistryHolder());
+        return blocks.isPresent() && stack.getItem() instanceof BlockItem blockItem && blocks.get().contains(blockItem.getBlock().builtInRegistryHolder());
     }
 }
