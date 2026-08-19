@@ -34,9 +34,11 @@ public final class ThaumometerEntityInteractionEvents {
     private static boolean intercept(Player player, InteractionHand hand, Entity target) {
         boolean isInteracting =
                 !player.isShiftKeyDown() && player.getItemInHand(hand).getItem() instanceof ThaumometerItem;
+
         if (!isInteracting) {
             return false;
         }
+
         if (!player.level().isClientSide()) {
             ThaumometerItem.beginScanAt(player, hand, target);
         }
