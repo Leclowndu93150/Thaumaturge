@@ -27,6 +27,12 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.SLAB_ARCANE_STONE.get()).add(TCBlocks.SLAB_ARCANE_BRICK.get()).add(TCBlocks.SLAB_ANCIENT.get()).add(TCBlocks.SLAB_ELDRITCH.get())
                 .add(TCBlocks.TABLE_STONE.get()).add(TCBlocks.PAVING_STONE_TRAVEL.get()).add(TCBlocks.PAVING_STONE_BARRIER.get()).add(TCBlocks.AMBER_BRICK.get());
 
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.STONE_ARCANE.get()).add(TCBlocks.STONE_ARCANE_BRICK.get()).add(TCBlocks.STONE_ANCIENT.get()).add(TCBlocks.STONE_ANCIENT_TILE.get())
+                .add(TCBlocks.STONE_ANCIENT_GLYPHED.get()).add(TCBlocks.STONE_ELDRITCH_TILE.get()).add(TCBlocks.STONE_POROUS.get()).add(TCBlocks.STAIRS_ARCANE.get())
+                .add(TCBlocks.STAIRS_ARCANE_BRICK.get()).add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.PILLAR_ARCANE.get()).add(TCBlocks.PILLAR_ANCIENT.get()).add(TCBlocks.PILLAR_ELDRITCH.get())
+                .add(TCBlocks.PEDESTAL_ARCANE.get()).add(TCBlocks.PEDESTAL_ANCIENT.get()).add(TCBlocks.PEDESTAL_ELDRITCH.get()).add(TCBlocks.RECHARGE_PEDESTAL.get()).add(TCBlocks.MATRIX_SPEED.get())
+                .add(TCBlocks.MATRIX_COST.get()).add(TCBlocks.STABILIZER.get());
+
         tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.SLAB_GREATWOOD.get()).add(TCBlocks.SLAB_SILVERWOOD.get()).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get())
                 .add(TCBlocks.TABLE_WOOD.get());
 
@@ -35,7 +41,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.WOODEN_SLABS).add(TCBlocks.SLAB_GREATWOOD.get()).add(TCBlocks.SLAB_SILVERWOOD.get());
 
-        tag(BlockTags.STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
+        tag(BlockTags.STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get()).add(TCBlocks.STAIRS_ARCANE.get()).add(TCBlocks.STAIRS_ARCANE_BRICK.get())
+                .add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
 
