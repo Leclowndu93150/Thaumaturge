@@ -867,8 +867,6 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         PacketDistributor.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
         playSound(TCSounds.HHON.get(), 0.3F, 1.0F);
-        select1 = null;
-        select2 = null;
         return true;
     }
 
