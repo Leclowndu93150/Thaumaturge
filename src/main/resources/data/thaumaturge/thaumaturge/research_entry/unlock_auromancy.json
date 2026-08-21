@@ -13,7 +13,7 @@
   "icons": [
     "thaumaturge:textures/research/cat_auromancy.png"
   ],
-  "stages": [
+    "stages": [
     {
       "text": "research.thaumaturge.unlock_auromancy.stage_0",
       "required_research": [
@@ -24,28 +24,12 @@
     {
       "text": "research.thaumaturge.unlock_auromancy.stage_1",
       "recipes": [
-        "thaumaturge:arcane_workbench/vis_resonator",
         "thaumaturge:wand/assembly/iron_wood"
-      ],
-      "craft": [
-        {
-          "items": [
-            "thaumaturge:vis_resonator"
-          ],
-          "amount": 1
-        },
-        {
-          "items": [
-            "thaumaturge:wand"
-          ],
-          "amount": 1
-        }
       ]
     },
     {
       "text": "research.thaumaturge.unlock_auromancy.stage_2",
       "recipes": [
-        "thaumaturge:arcane_workbench/vis_resonator",
         "thaumaturge:wand/assembly/iron_wood"
       ]
     }
