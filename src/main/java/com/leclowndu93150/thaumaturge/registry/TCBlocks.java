@@ -620,7 +620,8 @@ public final class TCBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(2.0F, 20.0F)
                     .sound(SoundType.METAL)
-                    .noOcclusion());
+                    .noOcclusion()
+                    .isRedstoneConductor((state, level, pos) -> false));
 
     public static final DeferredBlock<BlockPotionSprayer> POTION_SPRAYER = BLOCKS.registerBlock(
             "potion_sprayer",
