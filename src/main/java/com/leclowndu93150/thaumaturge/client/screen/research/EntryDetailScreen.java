@@ -259,7 +259,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int INSERT_PAPER_SIZE = 255;
 
     private static final int CONSTRUCT_PAGE_Y = 26;
-    private static final int CONSTRUCT_TITLE_COLOR = 0x505050;
+    private static final int CONSTRUCT_TITLE_COLOR = 0xFF505050;
     private static final int CONSTRUCT_STRUCT_Y = 108;
     private static final int CONSTRUCT_LAYER_STRIDE = 50;
     private static final int CONSTRUCT_LAYER_HALF_STRIDE = 25;

@@ -51,7 +51,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
     private static final int FILTER_FRAME_U = 0;
     private static final int FILTER_FRAME_V = 56;
     private static final int FILTER_FRAME_SIZE = 32;
-    private static final int WHITE = 0xFFFFFF;
+    private static final int WHITE = 0xFFFFFFFF;
     private static final int LABEL_BLUE = 0xBBAAFF;
     private static final int LABEL_GREY = 0xDDDDDD;
     private static final int ATLAS = 256;
@@ -377,7 +377,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                                         text,
                                         leftPos + slot.x + 17 - font.width(text),
                                         topPos + slot.y + 9,
-                                        limit == 0 ? 0xFFAA00 : WHITE,
+                                         ARGB32.opaque(limit == 0 ? 0xFFAA00 : WHITE),
                                         true);
                             }
                         }
