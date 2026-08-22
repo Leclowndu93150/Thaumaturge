@@ -146,8 +146,8 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
 
     @Override
     public ItemStack getFocusStack(ItemStack stack) {
-        ItemStack template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
-        return template == null ? ItemStack.EMPTY : template.copy();
+        SocketedFocus template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
+        return template == null ? ItemStack.EMPTY : template.focus().copy();
     }
 
     @Override
@@ -155,7 +155,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
         if (focus == null || focus.isEmpty()) {
             stack.remove(TCDataComponents.SOCKETED_FOCUS.get());
         } else {
-            stack.set(TCDataComponents.SOCKETED_FOCUS.get(), focus.copy());
+            stack.set(TCDataComponents.SOCKETED_FOCUS.get(), new SocketedFocus(focus.copy()));
         }
     }
 

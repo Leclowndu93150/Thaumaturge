@@ -71,10 +71,10 @@ public final class TCDataComponents {
                     "focus_package",
                     builder -> builder.persistent(FocusPackage.CODEC).networkSynchronized(FocusPackage.STREAM_CODEC));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStack>> SOCKETED_FOCUS =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SocketedFocus>> SOCKETED_FOCUS =
             DATA_COMPONENTS.registerComponentType(
                     "socketed_focus",
-                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC));
+                    builder -> builder.persistent(SocketedFocus.CODEC).networkSynchronized(SocketedFocus.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CasterArea>> CASTER_AREA =
             DATA_COMPONENTS.registerComponentType(
