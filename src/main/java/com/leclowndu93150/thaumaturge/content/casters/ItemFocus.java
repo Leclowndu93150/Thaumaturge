@@ -48,9 +48,9 @@ public class ItemFocus extends Item {
     public static int getFocusColor(ItemStack focusStack) {
         FocusPackage core = getPackage(focusStack);
         if (core == null) {
-            ItemStack socketed = focusStack.get(TCDataComponents.SOCKETED_FOCUS.get());
+            SocketedFocus socketed = focusStack.get(TCDataComponents.SOCKETED_FOCUS.get());
             if (socketed != null) {
-                core = socketed.get(TCDataComponents.FOCUS_PACKAGE.get());
+                core = getPackage(socketed.focus());
             }
         }
         return getFocusColor(core);

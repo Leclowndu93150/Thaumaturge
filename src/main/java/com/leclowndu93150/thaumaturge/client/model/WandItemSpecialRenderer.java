@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
 import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;

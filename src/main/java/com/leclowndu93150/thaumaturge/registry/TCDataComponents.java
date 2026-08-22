@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
 import com.leclowndu93150.thaumaturge.content.casters.CasterArea;
+import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaContentsComponent;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
