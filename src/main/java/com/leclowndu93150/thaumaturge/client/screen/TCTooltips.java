@@ -1,17 +1,24 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.CategoryComponents;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
+import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public final class TCTooltips {
+    private static final String SCANNED_ASPECT_PREFIX = "scanned/aspect/";
+
     private TCTooltips() {}
 
     public static Component categoryName(ResourceKey<IResearchCategory> key) {
@@ -113,16 +120,22 @@ public final class TCTooltips {
 
     public static Component prereqEntryName(ResourceLocation id) {
         String path = id.getPath();
-        if (path.startsWith("scanned/aspect/")) {
-            String aspect = path.substring(path.lastIndexOf('/') + 1);
-            return Component.translatable("aspect.thaumaturge." + aspect);
+        if (path.startsWith(SCANNED_ASPECT_PREFIX)) {
+            String[] parts = path.substring(SCANNED_ASPECT_PREFIX.length()).split("/");
+            return parts.length < 2 ? Component.translatable("aspect." + TCIds.MODID + "." + parts[0]) : Component.translatable("aspect." + parts[0] + "." + parts[1]);
         }
-        return Component.translatableWithFallback("research.thaumaturge." + path + ".title", "?");
+        return entryNameKey(id).map(Component::translatable).orElseGet(() -> Component.translatableWithFallback("research." + id.getNamespace() + "." + path + ".title", "?"));
+    }
+
+    private static Optional<String> entryNameKey(ResourceLocation id) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return Optional.empty();
+        }
+        return player.registryAccess().lookup(IResearchEntry.REGISTRY_KEY).flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id))).map(holder -> holder.value().nameKey());
     }
 
     public enum EntryStatus {
-        CAN_UNLOCK,
-        MISSING_PREREQ,
-        COMPLETE
+        CAN_UNLOCK, MISSING_PREREQ, COMPLETE
     }
 }
