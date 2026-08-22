@@ -78,12 +78,17 @@ public final class FocusEffectHellbat implements FocusEffect {
             struck = null;
         }
         Vec3 origin = target.getLocation();
-        double spawnY = origin.y + 1.0;
+        double spawnY;
         if (target instanceof BlockHitResult blockHit) {
-            spawnY = blockHit.getBlockPos().getY() + 1.0;
+            spawnY = blockHit.getBlockPos().getY() + 1.0 + 0.5;
         } else if (target instanceof EntityHitResult entityHit) {
-            spawnY = entityHit.getEntity().getY() + entityHit.getEntity().getBbHeight() + 0.25;
+            LivingEntity entity = (LivingEntity) entityHit.getEntity();
+            spawnY = entity.getY() + entity.getEyeHeight() + 0.5;
+        } else {
+            spawnY = origin.y + 1.5;
         }
+        Vec3 forward = origin.subtract(caster.position()).normalize();
+        origin = origin.add(forward.scale(1.5));
         int bats = Math.min(settings.value("bats"), remainingBatBudget(level, caster, origin));
         if (bats <= 0) {
             return false;
