@@ -287,14 +287,14 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         if (optionCount <= 1) {
             return;
         }
-        addRenderableWidget(TCScrollButton.of(leftPos + baseX - 5 - 6, topPos - 5 + baseY + 8, TCScrollButton.Direction.LEFT, Component.empty(), () -> {
+        addRenderableWidget(TCScrollButton.of(leftPos + baseX - 5 - 6, topPos - 5 + baseY + 8, TCScrollButton.Direction.LEFT, Component.translatable("gui.thaumaturge.golem_builder.previous"), () -> {
             decrement.run();
             if (index.get() < 0) {
                 setter.set(size.size() - 1);
             }
             gatherInfo();
         }));
-        addRenderableWidget(TCScrollButton.of(leftPos + baseX - 5 + 22, topPos - 5 + baseY + 8, TCScrollButton.Direction.RIGHT, Component.empty(), () -> {
+        addRenderableWidget(TCScrollButton.of(leftPos + baseX - 5 + 22, topPos - 5 + baseY + 8, TCScrollButton.Direction.RIGHT, Component.translatable("gui.thaumaturge.golem_builder.next"), () -> {
             increment.run();
             if (index.get() >= size.size()) {
                 setter.set(0);

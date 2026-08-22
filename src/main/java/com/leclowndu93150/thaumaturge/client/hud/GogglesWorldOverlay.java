@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
@@ -62,15 +64,13 @@ public final class GogglesWorldOverlay {
             return;
         }
         IAspectContainer container = mc.level.getCapability(AspectCapabilities.CONTAINER, pos, null);
-        if (container == null) {
-            resetAnimation();
-            return;
-        }
-        AspectList aspects = container.getAspects();
+        IAspectQuery query = container == null ? mc.level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, null) : null;
+        AspectList aspects = container != null ? container.getAspects() : query != null ? query.queryAspects() : AspectList.EMPTY;
         if (aspects.isEmpty()) {
             resetAnimation();
             return;
         }
+        boolean showAmounts = container != null;
         if (!pos.equals(lastTarget)) {
             tagScale = 0.0F;
             lastTarget = pos.immutable();
@@ -82,7 +82,7 @@ public final class GogglesWorldOverlay {
         boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
         Direction dir = spaceAbove ? Direction.UP : mc.player.getDirection().getOpposite();
         double y = pos.getY() + (spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
-        drawTags(event.getPoseStack(), mc, pos.getX(), y, pos.getZ(), aspects, dir);
+        drawTags(event.getPoseStack(), mc, pos.getX(), y, pos.getZ(), aspects, dir, showAmounts);
     }
 
     private static boolean holdsThaumometer(Player player) {
@@ -94,7 +94,7 @@ public final class GogglesWorldOverlay {
         lastTarget = null;
     }
 
-    private static void drawTags(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
-        AspectTagWorldRenderer.renderTagCloud(poseStack, mc, x, y, z, aspects, dir, tagScale, TAG_ALPHA);
+    private static void drawTags(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir, boolean showAmounts) {
+        AspectTagWorldRenderer.renderTagCloud(poseStack, mc, x, y, z, aspects, dir, tagScale, TAG_ALPHA, aspect -> true, showAmounts);
     }
 }

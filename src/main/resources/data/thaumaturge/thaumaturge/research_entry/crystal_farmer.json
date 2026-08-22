@@ -28,36 +28,72 @@
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:aer",
+              "amount": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:terra",
+              "amount": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:ignis",
+              "amount": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:aqua",
+              "amount": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:ordo",
+              "amount": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:perditio",
+              "amount": 1
+            }
+          },
           "amount": 1
         }
       ],

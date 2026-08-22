@@ -338,7 +338,7 @@ public final class TCBlocks {
             props -> props.mapColor(MapColor.METAL).strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollision().lightLevel(state -> 1));
 
     public static final DeferredBlock<BlockPatternCrafter> PATTERN_CRAFTER = BLOCKS.registerBlock("pattern_crafter", BlockPatternCrafter::new,
-            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion());
+            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((state, level, pos) -> false));
 
     public static final DeferredBlock<BlockPotionSprayer> POTION_SPRAYER = BLOCKS.registerBlock("potion_sprayer", BlockPotionSprayer::new,
             props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL));

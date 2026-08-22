@@ -24,8 +24,6 @@ import com.leclowndu93150.thaumaturge.network.ClientboundKnowledgeGainPayload;
 import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentGetter;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -234,22 +232,11 @@ public final class ResearchManager {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty())
                 continue;
-            if (req.items().contains(stack.getItem().builtInRegistryHolder()) && testComponents(req.components(), stack)) {
+            if (req.matches(stack)) {
                 total += stack.getCount();
             }
         }
         return total;
-    }
-
-    private static boolean testComponents(DataComponentPatch components, DataComponentGetter getter) {
-        for (var entry : components.entrySet()) {
-            var type = entry.getKey();
-            var value = entry.getValue();
-            if (value.isEmpty() && getter.has(type) || value.isPresent() && !value.get().equals(getter.get(type))) {
-                return false; // One of the patch entries doesn't match
-            }
-        }
-        return true; // Empty patch always matches or all components match
     }
 
     private static void consumeStageRequirements(ServerPlayer player, PlayerKnowledge knowledge, IResearchEntry entry, IResearchStage stage) {
@@ -260,7 +247,7 @@ public final class ResearchManager {
                 ItemStack stack = inv.getItem(i);
                 if (stack.isEmpty())
                     continue;
-                if (req.items().contains(stack.getItem().builtInRegistryHolder()) && testComponents(req.components(), stack)) {
+                if (req.matches(stack)) {
                     int take = Math.min(remaining, stack.getCount());
                     stack.shrink(take);
                     remaining -= take;

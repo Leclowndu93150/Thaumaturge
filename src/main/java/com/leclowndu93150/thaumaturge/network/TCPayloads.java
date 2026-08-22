@@ -45,6 +45,8 @@ public final class TCPayloads {
         registrar.playToClient(ClientboundThaumatoriumRecipesPayload.TYPE, ClientboundThaumatoriumRecipesPayload.STREAM_CODEC, ThaumatoriumClientHandler::handle);
         registrar.playToServer(ServerboundThaumatoriumTogglePayload.TYPE, ServerboundThaumatoriumTogglePayload.STREAM_CODEC, ServerboundThaumatoriumTogglePayload::handle);
         registrar.playToServer(ServerboundGolemPressPayload.TYPE, ServerboundGolemPressPayload.STREAM_CODEC, ServerboundGolemPressPayload::handle);
+        registrar.playToServer(ServerboundLogisticsRequestPayload.TYPE, ServerboundLogisticsRequestPayload.STREAM_CODEC, ServerboundLogisticsRequestPayload::handle);
+        registrar.playToServer(ServerboundLogisticsSearchPayload.TYPE, ServerboundLogisticsSearchPayload.STREAM_CODEC, ServerboundLogisticsSearchPayload::handle);
         registrar.playToServer(ServerboundCloudJumpPayload.TYPE, ServerboundCloudJumpPayload.STREAM_CODEC, ServerboundCloudJumpPayload::handle);
         registrar.playToServer(ServerboundAdvanceStagePayload.TYPE, ServerboundAdvanceStagePayload.STREAM_CODEC, ServerboundAdvanceStagePayload::handle);
         registrar.playToClient(ClientboundAspectGainPayload.TYPE, ClientboundAspectGainPayload.STREAM_CODEC, (payload, context) -> AspectGainClientHandler.handle(payload, context));

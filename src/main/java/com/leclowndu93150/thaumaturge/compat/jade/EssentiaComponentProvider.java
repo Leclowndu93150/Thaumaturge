@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
+import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import net.minecraft.network.chat.Component;
@@ -45,6 +46,15 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
             if (!aspects.isEmpty()) {
                 tooltip.add(JadeComponents.aspectLine("jade.thaumaturge.essentia.contents", aspects));
             }
+            return;
+        }
+        if (accessor.getBlockEntity() instanceof IAspectQuery query) {
+            AspectList advertised = query.queryAspects();
+            if (advertised.isEmpty()) {
+                tooltip.add(Component.translatable("jade.thaumaturge.essentia.unfiltered"));
+                return;
+            }
+            tooltip.add(Component.translatable("jade.thaumaturge.essentia.filter", AspectComponents.name(advertised.entries().getFirst().aspect())));
         }
     }
 }

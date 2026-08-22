@@ -7,8 +7,10 @@ import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import java.util.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -56,7 +58,12 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        aspectFilter = input.read("AspectFilter", ASPECT_KEY_CODEC).orElse(null);
+        ResourceKey<IAspect> loaded = input.read("AspectFilter", ASPECT_KEY_CODEC).orElse(null);
+        boolean changed = !Objects.equals(loaded, aspectFilter);
+        aspectFilter = loaded;
+        if (changed && level != null && level.isClientSide()) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     @Override
