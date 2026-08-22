@@ -73,7 +73,13 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
             }
         }
         BlockPos corePos = origin.offset(anchor.getX(), anchor.getY(), anchor.getZ());
-        level.playSound(null, corePos, getBlock().defaultBlockState().getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(
+                null,
+                corePos,
+                getBlock().defaultBlockState().getSoundType().getPlaceSound(),
+                SoundSource.BLOCKS,
+                1.0F,
+                1.0F);
         if (player == null || !player.getAbilities().instabuild) {
             context.getItemInHand().shrink(1);
         }
@@ -96,7 +102,9 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
             for (int x = 0; x < matrix.rows(); x++) {
                 for (int z = 0; z < matrix.cols(); z++) {
                     BlueprintPart part = matrix.get(x, z);
-                    if (part != null && part.target() instanceof BlueprintTarget.BlockTarget blockTarget && blockTarget.block() == getBlock()) {
+                    if (part != null
+                            && part.target() instanceof BlueprintTarget.BlockTarget blockTarget
+                            && blockTarget.block() == getBlock()) {
                         return new Vec3i(x, -y + (ys - 1), z);
                     }
                 }
@@ -105,7 +113,13 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
         return null;
     }
 
-    private static void placeTarget(Level level, BlockPos pos, BlueprintTarget target, Direction placementFacing, BlockPlaceContext context, @Nullable Player player) {
+    private static void placeTarget(
+            Level level,
+            BlockPos pos,
+            BlueprintTarget target,
+            Direction placementFacing,
+            BlockPlaceContext context,
+            @Nullable Player player) {
         if (target instanceof BlueprintTarget.Air) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             return;
@@ -126,10 +140,16 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
         }
     }
 
-    private static Direction facingFor(BlueprintTarget.BlockTarget blockTarget, Direction placementFacing, BlockPlaceContext context, @Nullable Player player) {
+    private static Direction facingFor(
+            BlueprintTarget.BlockTarget blockTarget,
+            Direction placementFacing,
+            BlockPlaceContext context,
+            @Nullable Player player) {
         if (blockTarget.applyPlayerFacing() && player != null) {
             Direction useFace = context.getClickedFace();
-            return useFace.getAxis().isHorizontal() ? useFace : player.getDirection().getOpposite();
+            return useFace.getAxis().isHorizontal()
+                    ? useFace
+                    : player.getDirection().getOpposite();
         }
         return blockTarget.opposite() ? placementFacing.getOpposite() : placementFacing;
     }
