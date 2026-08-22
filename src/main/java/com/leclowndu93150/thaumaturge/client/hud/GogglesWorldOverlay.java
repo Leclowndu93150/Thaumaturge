@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
@@ -66,11 +68,8 @@ public final class GogglesWorldOverlay {
             return;
         }
         IAspectContainer container = mc.level.getCapability(AspectCapabilities.CONTAINER, pos, null);
-        if (container == null) {
-            resetAnimation();
-            return;
-        }
-        AspectList aspects = container.getAspects();
+        IAspectQuery query = container == null ? mc.level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, null) : null;
+        AspectList aspects = container != null ? container.getAspects() : query != null ? query.queryAspects() : AspectList.EMPTY;
         if (aspects.isEmpty()) {
             resetAnimation();
             return;

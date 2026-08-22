@@ -1589,6 +1589,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.essentia.empty", "Empty");
         add("jade.thaumaturge.essentia.fill", "%s: %s / %s");
         add("jade.thaumaturge.essentia.contents", "Essentia: %s");
+        add("jade.thaumaturge.essentia.filter", "Filtering: %s");
+        add("jade.thaumaturge.essentia.unfiltered", "No filter set");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
         add("jade.thaumaturge.transducer.status.0", "No node below");
