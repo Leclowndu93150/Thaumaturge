@@ -51,7 +51,7 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
             MultiBufferSource buffers,
             int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
-        if (!(entity.clientDigging && entity.isActive() && entity.validInventory())) {
+        if (!(entity.clientDiggingSmoothed() && entity.isActive() && entity.validInventory())) {
             return;
         }
         float headYaw = Mth.wrapDegrees(Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot));

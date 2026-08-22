@@ -66,6 +66,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
     private static final double MOVE_DAMPING = 5.0;
     private static final byte EVENT_DIG_START = 16;
     private static final byte EVENT_DIG_STOP = 17;
+    private static final int DIG_VISUAL_GRACE_TICKS = 4;
     private static final long SOUND_DELAY_TICKS = 24;
 
     private BlockPos digTarget;
@@ -79,6 +80,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
     private float currentRadius;
     private float charge;
     public boolean clientDigging;
+    private long clientDigStopTime;
 
     public EntityArcaneBore(EntityType<? extends EntityArcaneBore> type, Level level) {
         super(type, level);
@@ -579,8 +581,13 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
             clientDigging = true;
         } else if (event == EVENT_DIG_STOP) {
             clientDigging = false;
+            clientDigStopTime = level().getGameTime();
         } else {
             super.handleEntityEvent(event);
         }
+    }
+
+    public boolean clientDiggingSmoothed() {
+        return clientDigging || level().getGameTime() - clientDigStopTime <= DIG_VISUAL_GRACE_TICKS;
     }
 }
