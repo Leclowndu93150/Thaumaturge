@@ -67,7 +67,8 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        ResourceKey<IAspect> loaded = TCNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
+        ResourceKey<IAspect> loaded =
+                TCNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
         boolean changed = !Objects.equals(loaded, aspectFilter);
         aspectFilter = loaded;
         if (changed && level != null && level.isClientSide()) {

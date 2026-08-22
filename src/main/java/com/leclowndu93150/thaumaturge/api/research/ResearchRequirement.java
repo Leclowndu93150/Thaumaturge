@@ -81,7 +81,8 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
     }
 
     private static boolean hasAtLeast(ItemEnchantments required, Object present) {
-        ItemEnchantments held = present instanceof ItemEnchantments enchantments ? enchantments : ItemEnchantments.EMPTY;
+        ItemEnchantments held =
+                present instanceof ItemEnchantments enchantments ? enchantments : ItemEnchantments.EMPTY;
         for (Holder<Enchantment> enchantment : required.keySet()) {
             if (held.getLevel(enchantment) < required.getLevel(enchantment)) {
                 return false;

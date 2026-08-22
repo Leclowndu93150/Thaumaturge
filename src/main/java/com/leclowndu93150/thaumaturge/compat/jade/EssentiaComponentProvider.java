@@ -58,7 +58,9 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
                 tooltip.add(Component.translatable("jade.thaumaturge.essentia.unfiltered"));
                 return;
             }
-            tooltip.add(Component.translatable("jade.thaumaturge.essentia.filter", AspectComponents.name(advertised.entries().getFirst().aspect())));
+            tooltip.add(Component.translatable(
+                    "jade.thaumaturge.essentia.filter",
+                    AspectComponents.name(advertised.entries().getFirst().aspect())));
         }
     }
 }

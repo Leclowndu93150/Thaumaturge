@@ -21,7 +21,6 @@ import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ClientboundKnowledgeGainPayload;
-import java.util.Map;
 import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -226,7 +225,7 @@ public final class ResearchManager {
             for (int i = 0; i < inv.getContainerSize() && remaining > 0; i++) {
                 ItemStack stack = inv.getItem(i);
                 if (stack.isEmpty()) continue;
-            if (req.matches(stack)) {
+                if (req.matches(stack)) {
                     int take = Math.min(remaining, stack.getCount());
                     stack.shrink(take);
                     remaining -= take;

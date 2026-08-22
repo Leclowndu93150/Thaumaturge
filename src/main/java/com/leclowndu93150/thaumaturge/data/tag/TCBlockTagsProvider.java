@@ -68,8 +68,13 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.WOODEN_SLABS).add(TCBlocks.SLAB_GREATWOOD.get()).add(TCBlocks.SLAB_SILVERWOOD.get());
 
-        tag(BlockTags.STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get()).add(TCBlocks.STAIRS_ARCANE.get()).add(TCBlocks.STAIRS_ARCANE_BRICK.get())
-                .add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.STAIRS_ELDRITCH.get());
+        tag(BlockTags.STAIRS)
+                .add(TCBlocks.STAIRS_GREATWOOD.get())
+                .add(TCBlocks.STAIRS_SILVERWOOD.get())
+                .add(TCBlocks.STAIRS_ARCANE.get())
+                .add(TCBlocks.STAIRS_ARCANE_BRICK.get())
+                .add(TCBlocks.STAIRS_ANCIENT.get())
+                .add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
 

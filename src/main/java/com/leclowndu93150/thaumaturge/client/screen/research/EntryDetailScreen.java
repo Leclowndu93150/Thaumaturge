@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import net.minecraft.ChatFormatting;
@@ -842,7 +841,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private int[] knowledgeSlotXs(List<KnowledgeReward> rewards, int innerX, int spacing) {
         int[] slotXs = new int[rewards.size()];
         int observationChips = ResearchNotes.stageObservationCost(
-                entry.value(), entry.value().stages().get(currentStageIndex())).entries().size();
+                        entry.value(), entry.value().stages().get(currentStageIndex()))
+                .entries()
+                .size();
         int shift = SLOT_BASE_SHIFT;
         boolean observationCounted = false;
         for (int i = 0; i < rewards.size(); i++) {

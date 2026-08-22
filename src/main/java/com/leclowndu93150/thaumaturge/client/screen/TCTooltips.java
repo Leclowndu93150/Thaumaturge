@@ -122,9 +122,14 @@ public final class TCTooltips {
         String path = id.getPath();
         if (path.startsWith(SCANNED_ASPECT_PREFIX)) {
             String[] parts = path.substring(SCANNED_ASPECT_PREFIX.length()).split("/");
-            return parts.length < 2 ? Component.translatable("aspect." + TCIds.MODID + "." + parts[0]) : Component.translatable("aspect." + parts[0] + "." + parts[1]);
+            return parts.length < 2
+                    ? Component.translatable("aspect." + TCIds.MODID + "." + parts[0])
+                    : Component.translatable("aspect." + parts[0] + "." + parts[1]);
         }
-        return entryNameKey(id).map(Component::translatable).orElseGet(() -> Component.translatableWithFallback("research." + id.getNamespace() + "." + path + ".title", "?"));
+        return entryNameKey(id)
+                .map(Component::translatable)
+                .orElseGet(() -> Component.translatableWithFallback(
+                        "research." + id.getNamespace() + "." + path + ".title", "?"));
     }
 
     private static Optional<String> entryNameKey(ResourceLocation id) {
@@ -132,10 +137,15 @@ public final class TCTooltips {
         if (player == null) {
             return Optional.empty();
         }
-        return player.registryAccess().lookup(IResearchEntry.REGISTRY_KEY).flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id))).map(holder -> holder.value().nameKey());
+        return player.registryAccess()
+                .lookup(IResearchEntry.REGISTRY_KEY)
+                .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, id)))
+                .map(holder -> holder.value().nameKey());
     }
 
     public enum EntryStatus {
-        CAN_UNLOCK, MISSING_PREREQ, COMPLETE
+        CAN_UNLOCK,
+        MISSING_PREREQ,
+        COMPLETE
     }
 }
