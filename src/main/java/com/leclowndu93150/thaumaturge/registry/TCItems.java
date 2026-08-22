@@ -44,6 +44,7 @@ import com.leclowndu93150.thaumaturge.content.golem.ItemGolemAccessory;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemBell;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
+import com.leclowndu93150.thaumaturge.content.golem.press.ItemGolemPress;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.ItemInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.item.CausalityCollapserItem;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
@@ -421,7 +422,8 @@ public final class TCItems {
             ITEMS.registerSimpleBlockItem(TCBlocks.PATTERN_CRAFTER);
     public static final DeferredItem<BlockItem> INLAY = ITEMS.registerSimpleBlockItem(TCBlocks.INLAY);
 
-    public static final DeferredItem<BlockItem> GOLEM_BUILDER = ITEMS.registerSimpleBlockItem(TCBlocks.GOLEM_BUILDER);
+    public static final DeferredItem<BlockItem> GOLEM_BUILDER =
+            registerSimpleBlockItem(TCBlocks.GOLEM_BUILDER, ItemGolemPress::new);
 
     public static final DeferredItem<ItemGolemPlacer> GOLEM_PLACER = ITEMS.registerItem("golem", ItemGolemPlacer::new);
     public static final DeferredItem<ItemGolemBell> GOLEM_BELL =
