@@ -17,7 +17,14 @@
           "items": [
             "minecraft:enchanted_book"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "minecraft:stored_enchantments": {
+              "levels": {
+                "minecraft:protection": 1
+              }
+            }
+          }
         },
         {
           "items": [

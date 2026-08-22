@@ -49,8 +49,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -1801,23 +1799,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty()) continue;
-            if (req.items().contains(stack.getItem().builtInRegistryHolder())
-                    && testComponents(req.components(), stack)) {
+            if (req.matches(stack)) {
                 total += stack.getCount();
             }
         }
         return total;
-    }
-
-    private static boolean testComponents(DataComponentPatch components, ItemStack stack) {
-        for (Map.Entry<DataComponentType<?>, Optional<?>> entry : components.entrySet()) {
-            DataComponentType<?> type = entry.getKey();
-            Optional<?> value = entry.getValue();
-            if (value.isEmpty() ? stack.has(type) : !value.get().equals(stack.get(type))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
