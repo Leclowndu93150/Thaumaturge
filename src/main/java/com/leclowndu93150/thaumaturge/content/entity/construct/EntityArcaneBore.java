@@ -516,6 +516,14 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
 
     public void setFacing(Direction facing) {
         entityData.set(FACING, facing);
+        this.yHeadRot = switch (facing) {
+            case SOUTH -> 0.0F;
+            case WEST -> 90.0F;
+            case NORTH -> 180.0F;
+            case EAST -> -90.0F;
+            default -> 0.0F;
+        };
+        this.yBodyRot = this.yHeadRot;
     }
 
     public float getCharge() {
