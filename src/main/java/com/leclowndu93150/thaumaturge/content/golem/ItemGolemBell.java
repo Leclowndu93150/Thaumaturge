@@ -64,15 +64,6 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
-        return interactWithSeal(context);
-    }
-
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        return interactWithSeal(context);
-    }
-
-    private InteractionResult interactWithSeal(UseOnContext context) {
         Player player = context.getPlayer();
         if (player == null) {
             return InteractionResult.PASS;
@@ -80,27 +71,20 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         Level level = context.getLevel();
         ISealEntity seal =
                 SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
-        if (seal != null) {
-            player.swing(context.getHand(), true);
-            if (level.isClientSide()) {
-                return InteractionResult.SUCCESS;
-            }
-            if (player.isShiftKeyDown()) {
-                SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-                level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-            } else {
-                SealGuiOpener.open(player, seal);
-            }
-            return InteractionResult.CONSUME;
+        if (seal == null) {
+            return InteractionResult.PASS;
+        }
+        player.swing(context.getHand(), true);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
         if (player.isShiftKeyDown()) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                Direction face = context.getClickedFace();
-                openLogistics(serverPlayer, context.getClickedPos(), face);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide());
+            SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
+            level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        } else {
+            SealGuiOpener.open(player, seal);
         }
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
     private static void openLogistics(ServerPlayer player, @Nullable BlockPos destination, @Nullable Direction side) {
