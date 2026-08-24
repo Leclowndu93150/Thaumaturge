@@ -17,7 +17,7 @@ import org.joml.Matrix4f;
 
 public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLesser> {
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/misc/cultist_portal.png");
-    private static final RenderType PORTAL_TYPE = TCRenderTypes.fxTranslucent(TEXTURE);
+    private static final RenderType PORTAL_TYPE = TCRenderTypes.fxTranslucentDepth(TEXTURE);
 
     private static final int FRAMES = 16;
     private static final float FRAME_WIDTH = 0.0625F;
