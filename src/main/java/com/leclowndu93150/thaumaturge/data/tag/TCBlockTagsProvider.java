@@ -189,6 +189,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.SNAPS_GOAT_HORN).add(TCBlocks.LOG_GREATWOOD.get()).add(TCBlocks.LOG_SILVERWOOD.get());
 
+        tag(BlockTags.FLOWERS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get());
+
         tag(Tags.Blocks.STRIPPED_LOGS)
                 .add(TCBlocks.STRIPPED_LOG_GREATWOOD.get())
                 .add(TCBlocks.STRIPPED_LOG_SILVERWOOD.get());
