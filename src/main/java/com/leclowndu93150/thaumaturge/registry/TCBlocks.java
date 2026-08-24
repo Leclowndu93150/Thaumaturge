@@ -1088,7 +1088,6 @@ public final class TCBlocks {
                     .sound(SoundType.GRASS)
                     .lightLevel(state -> 6)
                     .pushReaction(PushReaction.DESTROY)
-                    .randomTicks()
                     .noOcclusion());
 
     public static final DeferredBlock<BlockPlantCinderpearl> PLANT_CINDERPEARL = BLOCKS.registerBlock(
@@ -1101,7 +1100,6 @@ public final class TCBlocks {
                     .sound(SoundType.GRASS)
                     .lightLevel(state -> 8)
                     .pushReaction(PushReaction.DESTROY)
-                    .randomTicks()
                     .noOcclusion());
 
     public static final DeferredBlock<BlockPlantVishroom> PLANT_VISHROOM = BLOCKS.registerBlock(
@@ -1114,7 +1112,6 @@ public final class TCBlocks {
                     .sound(SoundType.GRASS)
                     .lightLevel(state -> 6)
                     .pushReaction(PushReaction.DESTROY)
-                    .randomTicks()
                     .noOcclusion());
 
     public static final DeferredBlock<BlockGrassAmbient> GRASS_AMBIENT = BLOCKS.registerBlock(
