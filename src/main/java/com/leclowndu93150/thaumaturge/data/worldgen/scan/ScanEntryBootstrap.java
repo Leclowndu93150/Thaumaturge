@@ -73,13 +73,7 @@ public final class ScanEntryBootstrap {
                 null,
                 null);
         register(ctx, "orecrystal", "scanned/orecrystal", crystals, null, null);
-        register(
-                ctx,
-                "plants",
-                "plants",
-                blockReg.getOrThrow(TCBlockTags.MAGICAL_PLANTS),
-                null,
-                null);
+        register(ctx, "plants", "plants", blockReg.getOrThrow(TCBlockTags.MAGICAL_PLANTS), null, null);
         register(ctx, "plantwood", "scanned/plantwood", woods, null, null);
 
         register(

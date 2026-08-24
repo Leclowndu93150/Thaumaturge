@@ -175,7 +175,11 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
         if (isValidGround(ground)) {
             return true;
         }
-        return (ground.is(Blocks.SNOW) || ground.is(Blocks.SHORT_GRASS) || ground.is(BlockTags.SMALL_FLOWERS) || ground.is(TCBlockTags.MAGICAL_PLANTS)) && isValidGround(below);
+        return (ground.is(Blocks.SNOW)
+                        || ground.is(Blocks.SHORT_GRASS)
+                        || ground.is(BlockTags.SMALL_FLOWERS)
+                        || ground.is(TCBlockTags.MAGICAL_PLANTS))
+                && isValidGround(below);
     }
 
     private static boolean isValidGround(BlockState state) {
@@ -189,7 +193,10 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
             if (isValidGround(state)) {
                 return state;
             }
-            if (!state.isAir() && !state.is(Blocks.SNOW) && !state.is(Blocks.SHORT_GRASS) && !state.is(TCBlockTags.MAGICAL_PLANTS)) {
+            if (!state.isAir()
+                    && !state.is(Blocks.SNOW)
+                    && !state.is(Blocks.SHORT_GRASS)
+                    && !state.is(TCBlockTags.MAGICAL_PLANTS)) {
                 break;
             }
             cursor.move(Direction.DOWN);

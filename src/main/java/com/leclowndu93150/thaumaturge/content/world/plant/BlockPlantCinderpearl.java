@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.content.world.plant;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -24,26 +24,7 @@ public final class BlockPlantCinderpearl extends AbstractTCPlant {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.is(Blocks.SAND)
-                || state.is(Blocks.RED_SAND)
-                || state.is(Blocks.DIRT)
-                || state.is(Blocks.TERRACOTTA)
-                || state.is(Blocks.WHITE_TERRACOTTA)
-                || state.is(Blocks.ORANGE_TERRACOTTA)
-                || state.is(Blocks.MAGENTA_TERRACOTTA)
-                || state.is(Blocks.LIGHT_BLUE_TERRACOTTA)
-                || state.is(Blocks.YELLOW_TERRACOTTA)
-                || state.is(Blocks.LIME_TERRACOTTA)
-                || state.is(Blocks.PINK_TERRACOTTA)
-                || state.is(Blocks.GRAY_TERRACOTTA)
-                || state.is(Blocks.LIGHT_GRAY_TERRACOTTA)
-                || state.is(Blocks.CYAN_TERRACOTTA)
-                || state.is(Blocks.PURPLE_TERRACOTTA)
-                || state.is(Blocks.BLUE_TERRACOTTA)
-                || state.is(Blocks.BROWN_TERRACOTTA)
-                || state.is(Blocks.GREEN_TERRACOTTA)
-                || state.is(Blocks.RED_TERRACOTTA)
-                || state.is(Blocks.BLACK_TERRACOTTA);
+        return state.is(BlockTags.SAND) || state.is(BlockTags.DIRT) || state.is(BlockTags.TERRACOTTA);
     }
 
     @Override
