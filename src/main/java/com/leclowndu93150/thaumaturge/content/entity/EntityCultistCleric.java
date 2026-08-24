@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.content.entity.ai.AltarFocusGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
@@ -44,6 +45,9 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
 
     private static final float RITUAL_PITCH_STEP = 10.0F;
     private static final double RITUAL_ANCHOR_HEIGHT = 1.5;
+    private static final int RITUAL_RESTRICTION_RADIUS = 8;
+    private static final int RITUAL_ANCHOR_SEARCH_RADIUS = 4;
+    private static final int RITUAL_ANCHOR_SEARCH_HEIGHT = 2;
 
     private static final float BOOTS_CHANCE_HARD = 0.3F;
     private static final float BOOTS_CHANCE = 0.1F;
@@ -175,6 +179,31 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
         if (!this.level().isClientSide() && this.isRitualist() && this.rage >= 5) {
             this.setRitualist(false);
         }
+        if (!this.level().isClientSide() && this.isRitualist() && !this.hasRestriction()) {
+            recoverRitualAnchor();
+        }
+    }
+
+    private void recoverRitualAnchor() {
+        BlockPos origin = this.blockPosition();
+        BlockPos best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (BlockPos candidate : BlockPos.betweenClosed(
+                origin.offset(-RITUAL_ANCHOR_SEARCH_RADIUS, -RITUAL_ANCHOR_SEARCH_HEIGHT, -RITUAL_ANCHOR_SEARCH_RADIUS),
+                origin.offset(RITUAL_ANCHOR_SEARCH_RADIUS, RITUAL_ANCHOR_SEARCH_HEIGHT, RITUAL_ANCHOR_SEARCH_RADIUS))) {
+            if (!this.level().getBlockState(candidate).is(TCBlocks.ELDRITCH_ALTAR.get())) {
+                continue;
+            }
+            double distance = candidate.distSqr(origin);
+            if (distance < bestDistance) {
+                best = candidate.immutable();
+                bestDistance = distance;
+            }
+        }
+        if (best != null) {
+            this.restrictTo(best, RITUAL_RESTRICTION_RADIUS);
+            this.entityData.set(DATA_RITUAL_ANCHOR, best);
+        }
     }
 
     private void faceRitualAnchor() {
@@ -197,13 +226,22 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
         super.readAdditionalSaveData(input);
-        this.setRitualist(input.getBoolean("ritualist"));
+        boolean ritualist = input.getBoolean("ritualist");
+        if (ritualist && input.contains("ritualAnchor")) {
+            BlockPos anchor = BlockPos.of(input.getLong("ritualAnchor"));
+            this.restrictTo(anchor, RITUAL_RESTRICTION_RADIUS);
+            this.entityData.set(DATA_RITUAL_ANCHOR, anchor);
+        }
+        this.setRitualist(ritualist);
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
         super.addAdditionalSaveData(output);
         output.putBoolean("ritualist", this.isRitualist());
+        if (this.isRitualist()) {
+            output.putLong("ritualAnchor", this.ritualAnchor().asLong());
+        }
     }
 
     @Override

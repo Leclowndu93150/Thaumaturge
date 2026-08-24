@@ -57,17 +57,19 @@ public final class CultistClericRenderer
         float lineStartY = entity.getEyeHeight() * LINE_START_EYE_SCALE;
         BlockPos anchor = entity.ritualAnchor();
         Vec3 position = entity.getPosition(partialTicks);
-        Vec3 lineTo = new Vec3(
+        Vec3 altarFromEntity = new Vec3(
                 anchor.getX() + 0.5 - position.x,
-                anchor.getY() + LINE_END_HEIGHT - bob - (position.y + lineStartY),
+                anchor.getY() + LINE_END_HEIGHT - bob - position.y,
                 anchor.getZ() + 0.5 - position.z);
+        Vec3 clericFromAltar = new Vec3(-altarFromEntity.x, lineStartY - altarFromEntity.y, -altarFromEntity.z);
         float time = FloatyLineRenderer.time(entity.level().getGameTime(), partialTicks);
         float lineFade = Math.min(entity.tickCount, LINE_FADE_IN_TICKS) / LINE_FADE_IN_TICKS;
         poseStack.pushPose();
         poseStack.translate(0.0F, bob, 0.0F);
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, light);
-        poseStack.translate(0.0F, lineStartY, 0.0F);
-        FloatyLineRenderer.draw(poseStack, buffers, lineTo, time, LINE_COLOR, LINE_SPEED, lineFade, LINE_WIDTH);
+        poseStack.translate(altarFromEntity.x, altarFromEntity.y, altarFromEntity.z);
+        FloatyLineRenderer.draw(
+                poseStack, buffers, clericFromAltar, time, LINE_COLOR, LINE_SPEED, lineFade, LINE_WIDTH);
         poseStack.popPose();
     }
 
