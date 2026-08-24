@@ -47,6 +47,13 @@ public final class TCRenderTypes {
                     RenderStateShard.NO_DEPTH_TEST,
                     RenderStateShard.COLOR_WRITE,
                     true));
+    private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_DEPTH = Util.memoize(texture -> particle(
+            "tc_fx_translucent_depth",
+            texture,
+            RenderStateShard.TRANSLUCENT_TRANSPARENCY,
+            RenderStateShard.LEQUAL_DEPTH_TEST,
+            RenderStateShard.COLOR_DEPTH_WRITE,
+            false));
 
     private static final Function<ResourceLocation, RenderType> ADDITIVE_TEXTURED = Util.memoize(texture -> textured(
             "tc_additive_textured",
@@ -150,6 +157,10 @@ public final class TCRenderTypes {
 
     public static RenderType fxTranslucentNoDepth(ResourceLocation texture) {
         return FX_TRANSLUCENT_NO_DEPTH.apply(texture);
+    }
+
+    public static RenderType fxTranslucentDepth(ResourceLocation texture) {
+        return FX_TRANSLUCENT_DEPTH.apply(texture);
     }
 
     public static RenderType additiveTextured(ResourceLocation texture) {
