@@ -77,19 +77,7 @@ public final class ScanEntryBootstrap {
                 ctx,
                 "plants",
                 "plants",
-                blocks(
-                        blockReg,
-                        concat(
-                                List.of(
-                                        TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get(),
-                                        TCBlocks.WOOD_GREATWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get(),
-                                        TCBlocks.STRIPPED_LOG_GREATWOOD.get(), TCBlocks.STRIPPED_LOG_SILVERWOOD.get(),
-                                        TCBlocks.STRIPPED_WOOD_GREATWOOD.get(), TCBlocks.STRIPPED_WOOD_SILVERWOOD.get(),
-                                        TCBlocks.SAPLING_GREATWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get()),
-                                List.of(
-                                        TCBlocks.PLANT_CINDERPEARL.get(),
-                                        TCBlocks.PLANT_SHIMMERLEAF.get(),
-                                        TCBlocks.PLANT_VISHROOM.get()))),
+                blockReg.getOrThrow(TCBlockTags.MAGICAL_PLANTS),
                 null,
                 null);
         register(ctx, "plantwood", "scanned/plantwood", woods, null, null);

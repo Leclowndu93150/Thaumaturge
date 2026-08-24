@@ -6,12 +6,14 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
+import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -59,6 +61,9 @@ public final class WandChargingEvents {
             return;
         }
         ServerLevel level = event.getLevel();
+        if (!event.getState().is(TCBlockTags.MAGICAL_PLANTS)) {
+            return;
+        }
         ResourceKey<IAspect> aspect = plantAspect(event.getState().getBlock());
         if (aspect == null) {
             return;
@@ -75,13 +80,14 @@ public final class WandChargingEvents {
     }
 
     private static ResourceKey<IAspect> plantAspect(Block block) {
-        if (block == TCBlocks.PLANT_CINDERPEARL.get()) {
+        ResourceLocation id = block.builtInRegistryHolder().key().location();
+        if (id.equals(TCBlocks.PLANT_CINDERPEARL.getId())) {
             return TCAspects.IGNIS;
         }
-        if (block == TCBlocks.PLANT_SHIMMERLEAF.get()) {
+        if (id.equals(TCBlocks.PLANT_SHIMMERLEAF.getId())) {
             return TCAspects.ORDO;
         }
-        if (block == TCBlocks.PLANT_VISHROOM.get()) {
+        if (id.equals(TCBlocks.PLANT_VISHROOM.getId())) {
             return TCAspects.PERDITIO;
         }
         return null;

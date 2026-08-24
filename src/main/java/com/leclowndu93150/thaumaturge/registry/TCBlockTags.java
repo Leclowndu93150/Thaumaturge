@@ -29,6 +29,8 @@ public final class TCBlockTags {
 
     public static final TagKey<Block> LAMP_GROWTH_BLACKLIST = key("lamp_growth_blacklist");
 
+    public static final TagKey<Block> MAGICAL_PLANTS = key("magical_plants");
+
     private TCBlockTags() {}
 
     private static TagKey<Block> key(String path) {

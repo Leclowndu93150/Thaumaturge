@@ -60,6 +60,8 @@ public final class TCItemTags {
 
     public static final TagKey<Item> CANDLES = key("candles");
 
+    public static final TagKey<Item> MAGICAL_PLANTS = key("magical_plants");
+
     private TCItemTags() {}
 
     private static TagKey<Item> key(String path) {
