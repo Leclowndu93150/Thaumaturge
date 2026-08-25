@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -92,7 +90,10 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
             float pulse = Mth.sin(state.ticks / BUBBLE_PULSE_PERIOD) * BUBBLE_ALPHA_PULSE + BUBBLE_ALPHA_BASE;
             float alpha = state.count / (float) BlockEntityNodeStabilizer.MAX_COUNT * pulse;
             int tint = state.advanced ? BUBBLE_ADVANCED_TINT : 0xFFFFFF;
-            int color = ARGB.color((int) (alpha * 255.0F), tint);
+            int r = (int) (((tint >> 16) & 0xFF) * alpha);
+            int g = (int) (((tint >> 8) & 0xFF) * alpha);
+            int b = (int) ((tint & 0xFF) * alpha);
+            int color = 0xFF000000 | (r << 16) | (g << 8) | b;
             Vec3 origin = Vec3.atCenterOf(state.blockPos).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
             LateWorldRenderQueue.enqueue(origin, (latePose, buffers) -> drawBubble(latePose, buffers, color));
         }
