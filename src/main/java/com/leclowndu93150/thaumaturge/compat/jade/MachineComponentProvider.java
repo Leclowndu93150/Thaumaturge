@@ -11,6 +11,7 @@ import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.theme.IThemeHelper;
 
 public enum MachineComponentProvider implements IBlockComponentProvider {
     INSTANCE;
@@ -69,9 +70,13 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
         if (!show) return;
 
         if ("golem_builder".equals(area)) {
-            tooltip.replace(JadeIds.CORE_OBJECT_NAME, Component.translatable("block.thaumaturge.golem_builder"));
+            tooltip.replace(
+                    JadeIds.CORE_OBJECT_NAME,
+                    IThemeHelper.get().title(Component.translatable("block.thaumaturge.golem_builder")));
         } else if ("infernal_furnace".equals(area)) {
-            tooltip.replace(JadeIds.CORE_OBJECT_NAME, Component.translatable("block.thaumaturge.infernal_furnace"));
+            tooltip.replace(
+                    JadeIds.CORE_OBJECT_NAME,
+                    IThemeHelper.get().title(Component.translatable("block.thaumaturge.infernal_furnace")));
         }
 
         if (!"smelter".equals(area)) {
