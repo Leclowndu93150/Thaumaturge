@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -24,6 +25,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -169,5 +171,10 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
             }
         }
         return null;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityNodeStabilizer blockEntity) {
+        return BlockEntityRenderer.super.getRenderBoundingBox(blockEntity).expandTowards(0.0,1.1,0.0);
     }
 }
