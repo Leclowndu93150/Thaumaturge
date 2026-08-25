@@ -40,10 +40,13 @@ public final class TubeModels {
         MultiPartGenerator generator =
                 MultiPartGenerator.multiPart(block).with(Variant.variant().with(VariantProperties.MODEL, TUBE_CORE));
         for (Direction direction : Direction.values()) {
+            Direction intakeSide = direction.getOpposite();
             generator = generator
                     .with(
-                            Condition.condition().term(BlockStateProperties.FACING, direction),
-                            indicatorVariant(direction))
+                            Condition.condition()
+                                    .term(BlockStateProperties.FACING, direction)
+                                    .term(BlockEssentiaTransport.propertyFor(intakeSide), true),
+                            indicatorVariant(intakeSide))
                     .with(
                             Condition.condition().term(BlockEssentiaTransport.propertyFor(direction), true),
                             sideVariant(TUBE_SIDE, direction));
@@ -92,8 +95,8 @@ public final class TubeModels {
             case SOUTH -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180);
             case WEST -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270);
             case EAST -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
-            case UP -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90);
-            case DOWN -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R270);
+            case UP -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R270);
+            case DOWN -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90);
         };
     }
 }
