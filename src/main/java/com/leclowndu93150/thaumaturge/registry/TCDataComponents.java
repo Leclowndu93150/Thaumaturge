@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
 import com.leclowndu93150.thaumaturge.content.casters.CasterArea;
+import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaContentsComponent;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
@@ -27,7 +28,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Unit;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
@@ -71,10 +71,10 @@ public final class TCDataComponents {
                     "focus_package",
                     builder -> builder.persistent(FocusPackage.CODEC).networkSynchronized(FocusPackage.STREAM_CODEC));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStack>> SOCKETED_FOCUS =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SocketedFocus>> SOCKETED_FOCUS =
             DATA_COMPONENTS.registerComponentType(
                     "socketed_focus",
-                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC));
+                    builder -> builder.persistent(SocketedFocus.CODEC).networkSynchronized(SocketedFocus.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CasterArea>> CASTER_AREA =
             DATA_COMPONENTS.registerComponentType(

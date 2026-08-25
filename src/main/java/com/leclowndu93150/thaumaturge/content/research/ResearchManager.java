@@ -21,12 +21,9 @@ import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ClientboundKnowledgeGainPayload;
-import java.util.Map;
 import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -213,23 +210,11 @@ public final class ResearchManager {
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty()) continue;
-            if (req.items().contains(stack.getItem().builtInRegistryHolder())
-                    && testComponents(req.components(), stack)) {
+            if (req.matches(stack)) {
                 total += stack.getCount();
             }
         }
         return total;
-    }
-
-    private static boolean testComponents(DataComponentPatch components, ItemStack stack) {
-        for (Map.Entry<DataComponentType<?>, Optional<?>> entry : components.entrySet()) {
-            DataComponentType<?> type = entry.getKey();
-            Optional<?> value = entry.getValue();
-            if (value.isEmpty() ? stack.has(type) : !value.get().equals(stack.get(type))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static void consumeStageRequirements(
@@ -240,8 +225,7 @@ public final class ResearchManager {
             for (int i = 0; i < inv.getContainerSize() && remaining > 0; i++) {
                 ItemStack stack = inv.getItem(i);
                 if (stack.isEmpty()) continue;
-                if (req.items().contains(stack.getItem().builtInRegistryHolder())
-                        && testComponents(req.components(), stack)) {
+                if (req.matches(stack)) {
                     int take = Math.min(remaining, stack.getCount());
                     stack.shrink(take);
                     remaining -= take;

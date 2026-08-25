@@ -68,7 +68,13 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.WOODEN_SLABS).add(TCBlocks.SLAB_GREATWOOD.get()).add(TCBlocks.SLAB_SILVERWOOD.get());
 
-        tag(BlockTags.STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
+        tag(BlockTags.STAIRS)
+                .add(TCBlocks.STAIRS_GREATWOOD.get())
+                .add(TCBlocks.STAIRS_SILVERWOOD.get())
+                .add(TCBlocks.STAIRS_ARCANE.get())
+                .add(TCBlocks.STAIRS_ARCANE_BRICK.get())
+                .add(TCBlocks.STAIRS_ANCIENT.get())
+                .add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
 
@@ -155,6 +161,26 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.PEDESTAL_ELDRITCH.get())
                 .add(TCBlocks.ALCHEMICAL_CONSTRUCT.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(TCBlocks.INFUSION_MATRIX.get())
+                .add(TCBlocks.MATRIX_SPEED.get())
+                .add(TCBlocks.MATRIX_COST.get())
+                .add(TCBlocks.STABILIZER.get())
+                .add(TCBlocks.STONE_ARCANE.get())
+                .add(TCBlocks.STONE_ARCANE_BRICK.get())
+                .add(TCBlocks.STONE_ANCIENT.get())
+                .add(TCBlocks.STONE_ANCIENT_TILE.get())
+                .add(TCBlocks.STONE_ANCIENT_GLYPHED.get())
+                .add(TCBlocks.STONE_ELDRITCH_TILE.get())
+                .add(TCBlocks.STONE_POROUS.get())
+                .add(TCBlocks.STAIRS_ARCANE.get())
+                .add(TCBlocks.STAIRS_ARCANE_BRICK.get())
+                .add(TCBlocks.STAIRS_ANCIENT.get())
+                .add(TCBlocks.PILLAR_ARCANE.get())
+                .add(TCBlocks.PILLAR_ANCIENT.get())
+                .add(TCBlocks.PILLAR_ELDRITCH.get())
+                .add(TCBlocks.RECHARGE_PEDESTAL.get());
 
         tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get());
 

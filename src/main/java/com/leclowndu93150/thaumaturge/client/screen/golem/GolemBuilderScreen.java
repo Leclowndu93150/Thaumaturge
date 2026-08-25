@@ -71,7 +71,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
     private static final int CRAFT_U = 216;
     private static final int CRAFT_V = 64;
     private static final int CRAFT_DISABLED_V = 40;
-    private static final int WHITE = 0xFFFFFF;
+    private static final int WHITE = 0xFFFFFFFF;
 
     private static int headIndex;
     private static int matIndex;

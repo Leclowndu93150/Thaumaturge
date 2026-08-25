@@ -107,7 +107,13 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
         if (taken <= 0) {
             return super.useOn(context);
         }
-        setAspects(stack, aspects.add(aspect, taken));
+        ItemStack filled = stack.split(1);
+        setAspects(filled, aspects.add(aspect, taken));
+        if (stack.isEmpty()) {
+            player.setItemInHand(context.getHand(), filled);
+        } else if (!player.addItem(filled)) {
+            player.drop(filled, false);
+        }
         level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
         return InteractionResult.SUCCESS;
     }

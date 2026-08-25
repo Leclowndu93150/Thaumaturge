@@ -587,9 +587,18 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("effect.thaumaturge.flux_taint", "Flux Taint");
 
         add("death.attack.thaumaturge.taint", "%1$s was tainted");
+        add("death.attack.thaumaturge.taint.player", "%1$s was tainted by %2$s");
+        add("death.attack.thaumaturge.taint.item", "%1$s was tainted by %2$s using %3$s");
         add("death.attack.thaumaturge.tentacle", "%1$s was strangled by tentacles");
+        add("death.attack.thaumaturge.tentacle.player", "%1$s was strangled by %2$s's tentacles");
+        add("death.attack.thaumaturge.tentacle.item", "%1$s was strangled by %2$s using %3$s");
         add("death.attack.thaumaturge.swarm", "%1$s was swarmed");
+        add("death.attack.thaumaturge.swarm.player", "%1$s was swarmed by %2$s");
+        add("death.attack.thaumaturge.swarm.item", "%1$s was swarmed by %2$s using %3$s");
         add("death.attack.thaumaturge.dissolve", "%1$s dissolved");
+        add("death.attack.thaumaturge.dissolve.player", "%1$s was dissolved by %2$s");
+        add("death.attack.thaumaturge.dissolve.item", "%1$s was dissolved by %2$s using %3$s");
+        add("death.attack.thaumaturge.focus_fire.item", "%1$s was burned to death by %2$s using %3$s");
 
         add("item.thaumaturge.essentia_crystal", "%s Vis Crystal");
         add("item.thaumaturge.mana_bean", "Mana Bean");
@@ -1580,6 +1589,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.essentia.empty", "Empty");
         add("jade.thaumaturge.essentia.fill", "%s: %s / %s");
         add("jade.thaumaturge.essentia.contents", "Essentia: %s");
+        add("jade.thaumaturge.essentia.filter", "Filtering: %s");
+        add("jade.thaumaturge.essentia.unfiltered", "No filter set");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
         add("jade.thaumaturge.transducer.status.0", "No node below");

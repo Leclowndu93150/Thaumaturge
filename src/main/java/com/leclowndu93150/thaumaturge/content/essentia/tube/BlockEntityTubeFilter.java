@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -66,8 +67,13 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        aspectFilter =
+        ResourceKey<IAspect> loaded =
                 TCNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
+        boolean changed = !Objects.equals(loaded, aspectFilter);
+        aspectFilter = loaded;
+        if (changed && level != null && level.isClientSide()) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
     }
 
     @Override

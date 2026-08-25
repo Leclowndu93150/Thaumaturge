@@ -12,7 +12,6 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
 import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
-import java.util.Iterator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,17 +56,11 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
     public void tickSeal(Level level, ISealEntity seal) {
         List<ProvisionRequest> requests = GolemHelper.getProvisionRequests(level);
         if (delay % CLEAN_INTERVAL == 0) {
-            Iterator<ProvisionRequest> iterator = requests.iterator();
-            while (iterator.hasNext()) {
-                ProvisionRequest request = iterator.next();
-                if (request.isInvalid()
-                        || request.getLinkedTask() == null
-                        || request.getLinkedTask().isSuspended()
-                        || request.getLinkedTask().isCompleted()
-                        || request.getTimeout() < level.getGameTime()) {
-                    requests.remove(request);
-                }
-            }
+            requests.removeIf(request -> request.isInvalid()
+                    || request.getLinkedTask() == null
+                    || request.getLinkedTask().isSuspended()
+                    || request.getLinkedTask().isCompleted()
+                    || request.getTimeout() < level.getGameTime());
         }
         if (delay++ % SCAN_INTERVAL != 0) {
             return;
@@ -77,13 +70,8 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
         if (inv == null) {
             return;
         }
-        Iterator<ProvisionRequest> iterator = requests.iterator();
-        while (iterator.hasNext()) {
-            ProvisionRequest request = iterator.next();
-            if (request.isInvalid()) {
-                requests.remove(request);
-                continue;
-            }
+        requests.removeIf(ProvisionRequest::isInvalid);
+        for (ProvisionRequest request : requests) {
             if (request.getLinkedTask() != null || !isInRange(seal, request)) {
                 continue;
             }

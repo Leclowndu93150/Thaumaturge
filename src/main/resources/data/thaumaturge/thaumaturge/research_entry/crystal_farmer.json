@@ -31,7 +31,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:aer"
+              "aspect": "thaumaturge:aer",
+              "amount": 1
             }
           }
         },
@@ -42,7 +43,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:ignis"
+              "aspect": "thaumaturge:ignis",
+              "amount": 1
             }
           }
         },
@@ -53,7 +55,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:aqua"
+              "aspect": "thaumaturge:aqua",
+              "amount": 1
             }
           }
         },
@@ -64,7 +67,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:terra"
+              "aspect": "thaumaturge:terra",
+              "amount": 1
             }
           }
         },
@@ -75,7 +79,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:ordo"
+              "aspect": "thaumaturge:ordo",
+              "amount": 1
             }
           }
         },
@@ -86,7 +91,8 @@
           "amount": 1,
           "components": {
             "thaumaturge:crystal_aspect": {
-              "aspect": "thaumaturge:perditio"
+              "aspect": "thaumaturge:perditio",
+              "amount": 1
             }
           }
         }

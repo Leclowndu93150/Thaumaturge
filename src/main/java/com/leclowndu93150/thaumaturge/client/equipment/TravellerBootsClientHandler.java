@@ -18,7 +18,7 @@ public final class TravellerBootsClientHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !player.isAlive()) {
+        if (player == null || !player.isAlive() || Minecraft.getInstance().isPaused()) {
             return;
         }
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);

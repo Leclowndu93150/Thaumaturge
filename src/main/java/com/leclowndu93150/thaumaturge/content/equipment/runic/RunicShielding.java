@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
 
 public final class RunicShielding {
     public static final ResourceLocation MODIFIER_ID = TCIds.rl("runic_shielding");
@@ -29,8 +30,10 @@ public final class RunicShielding {
                 max += InfusionRunicAugmentRecipe.charge(player.getItemBySlot(slot));
             }
         }
-        for (ItemStack stack : ThaumaturgeCuriosCompat.equippedCurios(player)) {
-            max += InfusionRunicAugmentRecipe.charge(stack);
+        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+            for (ItemStack stack : ThaumaturgeCuriosCompat.equippedCurios(player)) {
+                max += InfusionRunicAugmentRecipe.charge(stack);
+            }
         }
         return max;
     }

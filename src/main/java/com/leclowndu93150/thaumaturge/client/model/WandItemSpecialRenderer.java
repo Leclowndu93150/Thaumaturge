@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
 import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -298,9 +299,9 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     public static WandArg extract(ItemStack stack) {
         WandParts parts = WandVisHelper.getParts(stack);
         ItemStack focusStack = ItemStack.EMPTY;
-        ItemStack template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
         if (template != null) {
-            focusStack = template;
+            focusStack = template.focus();
         }
         boolean hasFocus = focusStack.getItem() instanceof ItemFocus;
         int color = hasFocus ? ItemFocus.getFocusColor(focusStack) : 0xFFFFFF;
