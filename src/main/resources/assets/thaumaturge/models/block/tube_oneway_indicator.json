@@ -6,14 +6,39 @@
   },
   "elements": [
     {
-      "from": [6.25, 6.25, 5.75],
-      "to": [9.75, 9.75, 7.0],
+      "from": [5.75, 5.75, 4.75],
+      "to": [10.25, 10.25, 5.125],
       "faces": {
-        "up": { "uv": [6.25, 5.75, 9.75, 7.0], "texture": "#indicator" },
-        "down": { "uv": [6.25, 5.75, 9.75, 7.0], "texture": "#indicator" },
-        "west": { "uv": [5.75, 6.25, 7.0, 9.75], "texture": "#indicator" },
-        "east": { "uv": [5.75, 6.25, 7.0, 9.75], "texture": "#indicator" },
-        "north": { "uv": [6.25, 6.25, 9.75, 9.75], "texture": "#indicator" }
+        "up": { "uv": [5.75, 4.75, 10.25, 5.125], "texture": "#indicator" },
+        "down": { "uv": [5.75, 4.75, 10.25, 5.125], "texture": "#indicator" },
+        "west": { "uv": [4.75, 5.75, 5.125, 10.25], "texture": "#indicator" },
+        "east": { "uv": [4.75, 5.75, 5.125, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
+      }
+    },
+    {
+      "from": [5.75, 5.75, 5.5],
+      "to": [10.25, 10.25, 5.875],
+      "faces": {
+        "up": { "uv": [5.75, 5.5, 10.25, 5.875], "texture": "#indicator" },
+        "down": { "uv": [5.75, 5.5, 10.25, 5.875], "texture": "#indicator" },
+        "west": { "uv": [5.5, 5.75, 5.875, 10.25], "texture": "#indicator" },
+        "east": { "uv": [5.5, 5.75, 5.875, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
+      }
+    },
+    {
+      "from": [5.75, 5.75, 6.25],
+      "to": [10.25, 10.25, 6.625],
+      "faces": {
+        "up": { "uv": [5.75, 6.25, 10.25, 6.625], "texture": "#indicator" },
+        "down": { "uv": [5.75, 6.25, 10.25, 6.625], "texture": "#indicator" },
+        "west": { "uv": [6.25, 5.75, 6.625, 10.25], "texture": "#indicator" },
+        "east": { "uv": [6.25, 5.75, 6.625, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
       }
     }
   ]

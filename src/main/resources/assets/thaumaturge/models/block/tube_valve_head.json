@@ -1,0 +1,33 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "valve": "thaumaturge:block/tube",
+    "particle": "thaumaturge:block/tube"
+  },
+  "elements": [
+    {
+      "from": [7, 10, 7],
+      "to": [9, 12, 9],
+      "faces": {
+        "up": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" },
+        "down": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" },
+        "north": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" },
+        "south": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" },
+        "west": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" },
+        "east": { "uv": [9.5, 2, 11.5, 4], "texture": "#valve" }
+      }
+    },
+    {
+      "from": [6, 12, 6],
+      "to": [10, 13, 10],
+      "faces": {
+        "up": { "uv": [12, 11, 16, 15], "texture": "#valve" },
+        "down": { "uv": [12, 11, 16, 15], "texture": "#valve" },
+        "north": { "uv": [12, 15, 16, 16], "texture": "#valve" },
+        "south": { "uv": [12, 15, 16, 16], "texture": "#valve" },
+        "west": { "uv": [12, 15, 16, 16], "texture": "#valve" },
+        "east": { "uv": [12, 15, 16, 16], "texture": "#valve" }
+      }
+    }
+  ]
+}
