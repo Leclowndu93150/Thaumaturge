@@ -55,6 +55,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
     private static final int LABEL_BLUE = 0xBBAAFF;
     private static final int LABEL_GREY = 0xDDDDDD;
     private static final int ATLAS = 256;
+    private static final String[] AXIS_NAMES = {"X", "Y", "Z"};
 
     private final int middleX;
     private final int middleY;
@@ -116,22 +117,22 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                 addRenderableWidget(TCPlusMinusButton.minus(
                         leftPos + middleX - 5 - 14,
                         topPos + middleY - 17,
-                        Component.empty(),
+                        Component.translatable("gui.thaumaturge.seal.priority_down"),
                         () -> sendButton(MenuSealBase.BUTTON_PRIORITY_DOWN)));
                 addRenderableWidget(TCPlusMinusButton.plus(
                         leftPos + middleX - 5 + 14,
                         topPos + middleY - 17,
-                        Component.empty(),
+                        Component.translatable("gui.thaumaturge.seal.priority_up"),
                         () -> sendButton(MenuSealBase.BUTTON_PRIORITY_UP)));
                 addRenderableWidget(TCPlusMinusButton.minus(
                         leftPos + middleX + 18 - 12,
                         topPos + middleY + 4,
-                        Component.empty(),
+                        Component.translatable("gui.thaumaturge.seal.color_previous"),
                         () -> sendButton(MenuSealBase.BUTTON_COLOR_DOWN)));
                 addRenderableWidget(TCPlusMinusButton.plus(
                         leftPos + middleX + 18 + 11,
                         topPos + middleY + 4,
-                        Component.empty(),
+                        Component.translatable("gui.thaumaturge.seal.color_next"),
                         () -> sendButton(MenuSealBase.BUTTON_COLOR_UP)));
                 if (minecraft != null
                         && minecraft.player != null
@@ -167,14 +168,21 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                 }
             }
             case ISealGui.CAT_AREA -> {
-                for (int axis = 0; axis < 3; axis++) {
+                for (int axis = 0; axis < AXIS_NAMES.length; axis++) {
                     int y = topPos + middleY - 25 + axis * 25;
                     int down = MenuSealBase.BUTTON_AREA_BASE + axis * 2;
                     int up = down + 1;
+                    String axisName = AXIS_NAMES[axis];
                     addRenderableWidget(TCPlusMinusButton.minus(
-                            leftPos + middleX - 5 - 14, y, Component.empty(), () -> sendButton(down)));
+                            leftPos + middleX - 5 - 14,
+                            y,
+                            Component.translatable("gui.thaumaturge.seal.area_shrink", axisName),
+                            () -> sendButton(down)));
                     addRenderableWidget(TCPlusMinusButton.plus(
-                            leftPos + middleX - 5 + 14, y, Component.empty(), () -> sendButton(up)));
+                            leftPos + middleX - 5 + 14,
+                            y,
+                            Component.translatable("gui.thaumaturge.seal.area_grow", axisName),
+                            () -> sendButton(up)));
                 }
             }
             case ISealGui.CAT_TOGGLES -> {
