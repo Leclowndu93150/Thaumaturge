@@ -112,6 +112,18 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
     }
 
     @Override
+    public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
+        if (!allowFlow) return 0;
+        return super.addEssentia(aspect, amount, face);
+    }
+
+    @Override
+    public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
+        if (!allowFlow) return 0;
+        return super.takeEssentia(aspect, amount, face);
+    }
+
+    @Override
     public void setSuction(Holder<IAspect> aspect, int amount) {
         if (allowFlow) {
             super.setSuction(aspect, amount);
