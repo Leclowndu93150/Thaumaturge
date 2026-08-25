@@ -12,7 +12,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -28,17 +27,8 @@ public final class WardClientHandler {
     private WardClientHandler() {}
 
     public static void spawnHitEffect(ClientLevel level, BlockPos pos, Direction face, @Nullable HitResult hit) {
-        float hitX = CENTER;
-        float hitY = CENTER;
-        float hitZ = CENTER;
-        if (hit != null) {
-            Vec3 location = hit.getLocation();
-            hitX = (float) (location.x - pos.getX());
-            hitY = (float) (location.y - pos.getY());
-            hitZ = (float) (location.z - pos.getZ());
-        }
         level.addParticle(
-                new WardFlashParticleOptions(face, hitX, hitY, hitZ),
+                WardFlashParticleOptions.at(pos, face, hit == null ? null : hit.getLocation()),
                 pos.getX() + CENTER,
                 pos.getY() + CENTER,
                 pos.getZ() + CENTER,
