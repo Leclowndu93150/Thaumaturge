@@ -70,6 +70,7 @@ public final class CultistClericRenderer
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, light);
         poseStack.popPose();
         OccludingEffectRenderer.enqueueBeam(
+                position,
                 new Vec3(anchor.getX() + 0.5, anchor.getY() + LINE_END_HEIGHT, anchor.getZ() + 0.5),
                 clericFromAltar,
                 time,
