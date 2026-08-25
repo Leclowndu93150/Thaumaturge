@@ -1340,6 +1340,13 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("golem.prop.leave", "Always leave at least 1 item");
         add("golem.prop.silk", "Use Silk Touch");
         add("gui.thaumaturge.seal", "Seal");
+        add("gui.thaumaturge.logistics", "Golem Logistics");
+        add("gui.thaumaturge.logistics.request", "Request");
+        add("gui.thaumaturge.logistics.search", "Search");
+        add("gui.thaumaturge.logistics.scroll_up", "Scroll Up");
+        add("gui.thaumaturge.logistics.scroll_down", "Scroll Down");
+        add("gui.thaumaturge.logistics.count_down", "Fewer");
+        add("gui.thaumaturge.logistics.count_up", "More");
         add("golem.prop.blacklist", "Blacklist");
         add("golem.prop.whitelist", "Whitelist");
         add("button.category.0", "Priority/Locking");

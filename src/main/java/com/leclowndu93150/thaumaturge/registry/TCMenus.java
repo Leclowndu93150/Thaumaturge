@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvance
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumatorium;
-import com.leclowndu93150.thaumaturge.content.golem.MenuGolemLogistics;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import com.leclowndu93150.thaumaturge.content.golem.press.MenuGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
