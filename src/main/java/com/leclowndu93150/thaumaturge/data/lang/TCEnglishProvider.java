@@ -1142,6 +1142,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.wandtable.problem.no_effects", "The spell needs at least one effect");
         add("gui.thaumaturge.wandtable.problem.xp", "Requires %s experience levels");
         add("gui.thaumaturge.wandtable.problem.ready", "Ready to craft!");
+        add("gui.thaumaturge.golembuilder.stat.health", "Health");
+        add("gui.thaumaturge.golembuilder.stat.armor", "Armour");
+        add("gui.thaumaturge.golembuilder.stat.damage", "Damage");
+        add("gui.thaumaturge.golembuilder.craft", "Assemble Golem");
+        add("gui.thaumaturge.golembuilder.problem.in_progress", "Assembly in progress...");
+        add("gui.thaumaturge.golembuilder.problem.no_parts", "No golem parts are available");
+        add("gui.thaumaturge.golembuilder.problem.component", "Missing %sx %s");
+        add("gui.thaumaturge.golembuilder.problem.ready", "Ready to assemble!");
     }
 
     private void langEnchantments() {
