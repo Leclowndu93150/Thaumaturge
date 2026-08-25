@@ -387,7 +387,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                 leftPos + baseX - 5 - 6,
                 topPos - 5 + baseY + 8,
                 TCScrollButton.Direction.LEFT,
-                Component.empty(),
+                Component.translatable("gui.thaumaturge.golem_builder.previous"),
                 () -> {
                     decrement.run();
                     if (index.get() < 0) {
@@ -399,7 +399,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                 leftPos + baseX - 5 + 22,
                 topPos - 5 + baseY + 8,
                 TCScrollButton.Direction.RIGHT,
-                Component.empty(),
+                Component.translatable("gui.thaumaturge.golem_builder.next"),
                 () -> {
                     increment.run();
                     if (index.get() >= size.size()) {
