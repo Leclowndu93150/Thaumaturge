@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectWard;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
@@ -14,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -56,7 +54,7 @@ public final class WardOverlayRenderer {
     private static final float[] CORNER_U = {0.0F, HALF, 0.0F, HALF};
     private static final float[] CORNER_V = {0.0F, 0.0F, HALF, HALF};
 
-    private static final RenderType RUNES = TCRenderTypes.additiveTextured(TextureAtlas.LOCATION_BLOCKS);
+    private static final RenderType RUNES = WardRenderType.ADDITIVE;
 
     private WardOverlayRenderer() {}
 
