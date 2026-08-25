@@ -17,8 +17,13 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
     }
 
     @Override
-    protected boolean directionalEqualize() {
-        return true;
+    public boolean canInputFrom(Direction face) {
+        return face == facing().getOpposite() && super.canInputFrom(face);
+    }
+
+    @Override
+    public boolean canOutputTo(Direction face) {
+        return face != facing().getOpposite() && super.canOutputTo(face);
     }
 
     @Override
