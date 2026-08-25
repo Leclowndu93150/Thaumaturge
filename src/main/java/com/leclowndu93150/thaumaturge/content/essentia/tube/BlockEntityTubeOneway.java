@@ -18,12 +18,12 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
 
     @Override
     public boolean canInputFrom(Direction face) {
-        return face == facing().getOpposite() && super.canInputFrom(face);
+        return face != facing().getOpposite() && super.canInputFrom(face);
     }
 
     @Override
     public boolean canOutputTo(Direction face) {
-        return face != facing().getOpposite() && super.canOutputTo(face);
+        return face == facing().getOpposite() && super.canOutputTo(face);
     }
 
     @Override
@@ -38,22 +38,9 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
     @Override
     public boolean rotateFacing() {
         if (level == null) return false;
-        Direction current = facing();
-        Direction next = findNextFacing(current);
-        if (next == null) return false;
+        Direction[] directions = Direction.values();
+        Direction next = directions[(facing().ordinal() + 1) % directions.length];
         level.setBlock(getBlockPos(), getBlockState().setValue(BlockStateProperties.FACING, next), 3);
         return true;
-    }
-
-    private Direction findNextFacing(Direction current) {
-        int start = current.ordinal();
-        for (int offset = 1; offset < Direction.values().length; offset++) {
-            Direction candidate = Direction.values()[(start + offset) % Direction.values().length];
-            Direction connectionSide = candidate.getOpposite();
-            if (isSideOpen(connectionSide) && hasTransportNeighbour(connectionSide)) {
-                return candidate;
-            }
-        }
-        return null;
     }
 }
