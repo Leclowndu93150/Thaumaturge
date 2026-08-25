@@ -1,23 +1,19 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.effect.OccludingEffectRenderer;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
-import org.joml.Matrix4f;
+import net.minecraft.world.phys.Vec3;
 
 public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLesser> {
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/misc/cultist_portal.png");
-    private static final RenderType PORTAL_TYPE = TCRenderTypes.fxTranslucentDepth(TEXTURE);
 
     private static final int FRAMES = 16;
     private static final float FRAME_WIDTH = 0.0625F;
@@ -40,9 +36,8 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
             MultiBufferSource buffers,
             int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
-        renderPortal(
-                poseStack,
-                buffers,
+        queuePortal(
+                entity.getPosition(partialTicks),
                 entity.isActive(),
                 entity.activeCounter + partialTicks,
                 entity.hurtTime,
@@ -58,9 +53,8 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
         return TEXTURE;
     }
 
-    static void renderPortal(
-            PoseStack poseStack,
-            MultiBufferSource buffers,
+    static void queuePortal(
+            Vec3 position,
             boolean active,
             float activeCounter,
             int hurtTime,
@@ -95,17 +89,6 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
         float u0 = frame * FRAME_WIDTH;
         float u1 = u0 + FRAME_WIDTH;
         int tint = ARGB32.colorFromFloat(alpha, 1.0F, 1.0F, 1.0F);
-        float sx = scale;
-        float sy = scaleY;
-        poseStack.pushPose();
-        poseStack.translate(0.0F, halfHeight, 0.0F);
-        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
-        VertexConsumer buffer = buffers.getBuffer(PORTAL_TYPE);
-        Matrix4f mat = poseStack.last().pose();
-        buffer.addVertex(mat, -sx, -sy, 0.0F).setUv(u1, 0.0F).setColor(tint).setLight(LIGHT);
-        buffer.addVertex(mat, -sx, sy, 0.0F).setUv(u1, 1.0F).setColor(tint).setLight(LIGHT);
-        buffer.addVertex(mat, sx, sy, 0.0F).setUv(u0, 1.0F).setColor(tint).setLight(LIGHT);
-        buffer.addVertex(mat, sx, -sy, 0.0F).setUv(u0, 0.0F).setColor(tint).setLight(LIGHT);
-        poseStack.popPose();
+        OccludingEffectRenderer.enqueuePortal(position.add(0.0, halfHeight, 0.0), scale, scaleY, u0, u1, tint, LIGHT);
     }
 }

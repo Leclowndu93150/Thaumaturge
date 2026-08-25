@@ -51,7 +51,7 @@ public final class FloatyLineRenderer {
                 width);
     }
 
-    private static void write(
+    static void write(
             PoseStack.Pose pose,
             VertexConsumer buffer,
             Vec3 fromRelative,

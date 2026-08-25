@@ -30,7 +30,11 @@ public final class LateWorldRenderQueue {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER || QUEUE.isEmpty()) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
+            return;
+        }
+        OccludingEffectRenderer.render(event);
+        if (QUEUE.isEmpty()) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
