@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -97,10 +99,23 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
                                     ? Component.translatable("jade.thaumaturge.essentia.empty_capacity", capacity)
                                     : Component.translatable("jade.thaumaturge.essentia.empty"));
         } else {
-            JadeComponents.addAspectLines(tooltip, "jade.thaumaturge.essentia.contents", contents);
-            if (capacity > 0 && !singleCapacityStorage) {
+            if (contents.entries().size() == 1 && capacity > 0 && !singleCapacityStorage) {
+                AspectInstance entry = contents.entries().get(0);
                 tooltip.add(
-                        Component.translatable("jade.thaumaturge.essentia.amount", contents.totalAmount(), capacity));
+                        Component.translatable(
+                                "jade.thaumaturge.essentia.combined",
+                                AspectComponents.name(entry.aspect()),
+                                entry.amount(),
+                                capacity));
+            } else {
+                JadeComponents.addAspectLines(tooltip, "jade.thaumaturge.essentia.contents", contents);
+                if (capacity > 0 && !singleCapacityStorage) {
+                    tooltip.add(
+                            Component.translatable(
+                                    "jade.thaumaturge.essentia.amount",
+                                    contents.totalAmount(),
+                                    capacity));
+                }
             }
         }
     }
