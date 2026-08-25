@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -53,13 +54,10 @@ public final class BlockTubeOneway extends BlockTube {
         if (state == null) return null;
 
         Direction flowDirection = context.getNearestLookingDirection();
-        if (!state.getValue(propertyFor(flowDirection.getOpposite()))) {
-            for (Direction connectionSide : Direction.values()) {
-                if (state.getValue(propertyFor(connectionSide))) {
-                    flowDirection = connectionSide.getOpposite();
-                    break;
-                }
-            }
+        Direction clickedFace = context.getClickedFace();
+        BlockPos clickedNeighbour = context.getClickedPos().relative(clickedFace.getOpposite());
+        if (context.getLevel().getCapability(EssentiaCapabilities.TRANSPORT, clickedNeighbour, clickedFace) != null) {
+            flowDirection = clickedFace;
         }
         return state.setValue(FACING, flowDirection);
     }
