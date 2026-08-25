@@ -49,8 +49,19 @@ public final class BlockTubeOneway extends BlockTube {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState()
-                .setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        BlockState state = super.getStateForPlacement(context);
+        if (state == null) return null;
+
+        Direction flowDirection = context.getNearestLookingDirection();
+        if (!state.getValue(propertyFor(flowDirection.getOpposite()))) {
+            for (Direction connectionSide : Direction.values()) {
+                if (state.getValue(propertyFor(connectionSide))) {
+                    flowDirection = connectionSide.getOpposite();
+                    break;
+                }
+            }
+        }
+        return state.setValue(FACING, flowDirection);
     }
 
     @Override

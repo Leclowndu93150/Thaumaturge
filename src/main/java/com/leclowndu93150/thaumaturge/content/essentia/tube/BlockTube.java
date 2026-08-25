@@ -68,10 +68,7 @@ public class BlockTube extends BlockEssentiaTransport implements IInteractWithCa
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        return handleToolClick(level, pos, player, player.getUsedItemHand(), hit)
-                ? InteractionResult.SUCCESS
-                : InteractionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
