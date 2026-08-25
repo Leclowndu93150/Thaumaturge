@@ -72,8 +72,8 @@ public final class NodeLocationIndex extends SavedData {
 
     private static NodeLocationIndex load(CompoundTag tag, HolderLookup.Provider registries) {
         NodeLocationIndex index = new NodeLocationIndex();
-        if (!tag.getBoolean("LegacyMigrationComplete")) {
-            // Retire pending eager migration without doing any world or chunk IO.
+        if (tag.contains("LegacyMigrationComplete")) {
+            // Rewrite legacy index data without the retired migration marker.
             index.setDirty();
         }
         ListTag nodeList = tag.getList("Nodes", Tag.TAG_COMPOUND);
@@ -95,9 +95,6 @@ public final class NodeLocationIndex extends SavedData {
             nodeList.add(node);
         }));
         tag.put("Nodes", nodeList);
-
-        // Prevent affected older builds from restarting the removed eager migration.
-        tag.putBoolean("LegacyMigrationComplete", true);
 
         return tag;
     }
