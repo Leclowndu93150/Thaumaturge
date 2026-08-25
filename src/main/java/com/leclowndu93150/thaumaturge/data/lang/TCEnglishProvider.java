@@ -1089,6 +1089,10 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("focus.thaumaturge.exchange.text", "Swap one type of block in the world for another.");
         add("focus.thaumaturge.heal.name", "Heal");
         add("focus.thaumaturge.heal.text", "This effect heals living creatures and harms undead.");
+        add("focus.thaumaturge.ward.name", "Ward");
+        add(
+                "focus.thaumaturge.ward.text",
+                "Binds a solid block in place without altering it. Warded blocks cannot be mined, burned, exploded, pushed by pistons or destroyed by creatures. Cast again on your own ward to lift it.");
 
         add("focus.thaumaturge.scatter.name", "Scatter");
         add("focus.thaumaturge.scatter.text", "Split a single trajectory into multiple random trajectories.");

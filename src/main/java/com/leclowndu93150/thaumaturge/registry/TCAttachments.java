@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemTasks;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
+import com.leclowndu93150.thaumaturge.content.warding.WardChunkData;
 import com.leclowndu93150.thaumaturge.content.warp.WarpData;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,6 +93,12 @@ public final class TCAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<SealWorldIndex>> SEAL_INDEX = register(
             "seal_index", () -> AttachmentType.builder(SealWorldIndex::new).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<WardChunkData>> WARDS = register(
+            "wards",
+            () -> AttachmentType.builder(WardChunkData::new)
+                    .serialize(WardChunkData.CODEC.codec())
+                    .build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<GolemTasks>> GOLEM_TASKS = register(
             "golem_tasks", () -> AttachmentType.builder(GolemTasks::new).build());

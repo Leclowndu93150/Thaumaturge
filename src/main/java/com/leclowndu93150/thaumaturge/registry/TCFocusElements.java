@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectHeal;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectHellbat;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectPrimal;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectRift;
+import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectWard;
 import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumBolt;
 import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumCloud;
 import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumMine;
@@ -81,6 +82,8 @@ public final class TCFocusElements {
             element("curse", new FocusEffectCurse(), 6946821);
     public static final DeferredHolder<FocusElementType, FocusElementType> HEAL =
             element("heal", new FocusEffectHeal(), 14548997);
+    public static final DeferredHolder<FocusElementType, FocusElementType> WARD =
+            element("ward", new FocusEffectWard(), 16771535);
 
     public static final DeferredHolder<FocusElementType, FocusElementType> SCATTER =
             element("scatter", new FocusModScatter(), 10066329);

@@ -33,6 +33,7 @@ import com.leclowndu93150.thaumaturge.content.particle.StabilizerRuneParticleOpt
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.VisSparkleParticleOptions;
+import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispFlameParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
@@ -152,6 +153,9 @@ public final class TCParticles {
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<ShieldSparkParticleOptions>> SHIELD_SPARK =
             register("shield_spark", ShieldSparkParticleOptions.CODEC, ShieldSparkParticleOptions.STREAM_CODEC);
+
+    public static final DeferredHolder<ParticleType<?>, ParticleType<WardFlashParticleOptions>> WARD_FLASH =
+            register("ward_flash", WardFlashParticleOptions.CODEC, WardFlashParticleOptions.STREAM_CODEC);
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<FlameFanParticleOptions>> FLAME_FAN =
             register("flame_fan", FlameFanParticleOptions.CODEC, FlameFanParticleOptions.STREAM_CODEC);
