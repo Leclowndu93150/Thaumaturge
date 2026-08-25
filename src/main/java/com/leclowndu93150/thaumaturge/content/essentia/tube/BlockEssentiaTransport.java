@@ -75,13 +75,24 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape shape = CORE;
-        if (state.getValue(DOWN)) shape = Shapes.or(shape, STUB_DOWN);
-        if (state.getValue(UP)) shape = Shapes.or(shape, STUB_UP);
-        if (state.getValue(NORTH)) shape = Shapes.or(shape, STUB_NORTH);
-        if (state.getValue(SOUTH)) shape = Shapes.or(shape, STUB_SOUTH);
-        if (state.getValue(WEST)) shape = Shapes.or(shape, STUB_WEST);
-        if (state.getValue(EAST)) shape = Shapes.or(shape, STUB_EAST);
+        if (state.getValue(DOWN) || hasTransportNeighbour(level, pos, Direction.DOWN))
+            shape = Shapes.or(shape, STUB_DOWN);
+        if (state.getValue(UP) || hasTransportNeighbour(level, pos, Direction.UP)) shape = Shapes.or(shape, STUB_UP);
+        if (state.getValue(NORTH) || hasTransportNeighbour(level, pos, Direction.NORTH))
+            shape = Shapes.or(shape, STUB_NORTH);
+        if (state.getValue(SOUTH) || hasTransportNeighbour(level, pos, Direction.SOUTH))
+            shape = Shapes.or(shape, STUB_SOUTH);
+        if (state.getValue(WEST) || hasTransportNeighbour(level, pos, Direction.WEST))
+            shape = Shapes.or(shape, STUB_WEST);
+        if (state.getValue(EAST) || hasTransportNeighbour(level, pos, Direction.EAST))
+            shape = Shapes.or(shape, STUB_EAST);
         return shape;
+    }
+
+    private static boolean hasTransportNeighbour(BlockGetter level, BlockPos pos, Direction direction) {
+        if (!(level instanceof Level liveLevel)) return false;
+        return liveLevel.getCapability(EssentiaCapabilities.TRANSPORT, pos.relative(direction), direction.getOpposite())
+                != null;
     }
 
     @Override
