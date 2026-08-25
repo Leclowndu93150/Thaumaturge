@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
@@ -33,12 +34,31 @@ public final class OccludingEffectRenderer {
     private OccludingEffectRenderer() {}
 
     public static void enqueueBeam(
-            Vec3 origin, Vec3 fromRelative, float time, int color, float speed, float distanceFraction, float width) {
+            Vec3 cullOrigin,
+            Vec3 origin,
+            Vec3 fromRelative,
+            float time,
+            int color,
+            float speed,
+            float distanceFraction,
+            float width) {
+        if (!isWithinEntityRenderDistance(cullOrigin)) {
+            return;
+        }
         BEAMS.add(new Beam(origin, fromRelative, time, color, speed, distanceFraction, width));
     }
 
     public static void enqueuePortal(Vec3 origin, float scaleX, float scaleY, float u0, float u1, int tint, int light) {
+        if (!isWithinEntityRenderDistance(origin)) {
+            return;
+        }
         PORTALS.add(new Portal(origin, scaleX, scaleY, u0, u1, tint, light));
+    }
+
+    private static boolean isWithinEntityRenderDistance(Vec3 origin) {
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        double range = 64.0 * Entity.getViewScale();
+        return camera.distanceToSqr(origin) < range * range;
     }
 
     static void render(RenderLevelStageEvent event) {
