@@ -11,9 +11,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -26,10 +30,14 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockThaumatorium extends BaseEntityBlock {
     public static final MapCodec<BlockThaumatorium> CODEC = simpleCodec(BlockThaumatorium::new);
+    private static final VoxelShape SHAPE = Shapes.box(0.0, 0.0, 0.0, 1.0, 2.0, 1.0);
 
     public BlockThaumatorium(BlockBehaviour.Properties properties) {
         super(properties);
@@ -44,6 +52,32 @@ public final class BlockThaumatorium extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HorizontalDirectionalBlock.FACING);
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos pos = context.getClickedPos();
+        Level level = context.getLevel();
+        return pos.getY() < level.getMaxBuildHeight() - 1
+                        && level.getBlockState(pos.above()).canBeReplaced(context)
+                ? super.getStateForPlacement(context)
+                : null;
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        level.setBlock(pos.above(), TCBlocks.THAUMATORIUM_TOP.get().defaultBlockState(), Block.UPDATE_ALL);
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(
+            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     @Override
