@@ -5800,6 +5800,20 @@
         "amount": 5
       }
     ],
+    "thaumaturge:rare_earth": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:ordo",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 5
+      }
+    ],
     "thaumaturge:research_table": [
       {
         "aspect": "thaumaturge:instrumentum",
