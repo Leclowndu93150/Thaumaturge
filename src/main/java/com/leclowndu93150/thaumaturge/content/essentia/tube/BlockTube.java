@@ -68,10 +68,7 @@ public class BlockTube extends BlockEssentiaTransport implements IInteractWithCa
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        return handleToolClick(level, pos, player, player.getUsedItemHand(), hit)
-                ? InteractionResult.SUCCESS
-                : InteractionResult.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -86,7 +83,11 @@ public class BlockTube extends BlockEssentiaTransport implements IInteractWithCa
     private static boolean handleToolClick(
             Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTube tube)) return false;
-        if (!tube.handleCasterClick(resolveSubHit(hit, pos))) return false;
+        int subHit = resolveSubHit(hit, pos);
+        if (subHit == 6 && !tube.isSideOpen(hit.getDirection())) {
+            subHit = hit.getDirection().ordinal();
+        }
+        if (!tube.handleCasterClick(subHit)) return false;
         tube.playToolSound(level, pos);
         player.swing(hand);
         return true;
