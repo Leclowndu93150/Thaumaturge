@@ -184,6 +184,11 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityEldritchLock lock) {
         return new AABB(lock.getBlockPos()).inflate(2.5);
     }

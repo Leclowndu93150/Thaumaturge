@@ -25,6 +25,11 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     public VisRelayRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityVisRelay relay) {
         AABB self = new AABB(relay.getBlockPos());
         BlockPos parent = relay.parentPos();

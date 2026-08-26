@@ -49,6 +49,11 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityResearchTable table) {
         return new AABB(table.getBlockPos()).inflate(1.0);
     }

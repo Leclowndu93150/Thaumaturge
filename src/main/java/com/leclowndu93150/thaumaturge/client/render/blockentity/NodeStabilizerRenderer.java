@@ -39,7 +39,13 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final Identifier TRANSDUCER_OVERLAY_TEXTURE = TCIds.rl("textures/block/node_converter_over.png");
     private static final RenderType TRANSDUCER_BASE = RenderTypes.entityCutout(TRANSDUCER_TEXTURE);
     private static final RenderType TRANSDUCER_OVERLAY = RenderTypes.entityTranslucentEmissive(TRANSDUCER_OVERLAY_TEXTURE);
-    private static final float TRANSDUCER_EXTEND = 0.4F;
+    private static final int TRANSDUCER_EXTEND_CAP = 50;
+    private static final float TRANSDUCER_EXTEND_DIVISOR = 137.0F;
+    private static final int TRANSDUCER_TINT_IDLE = 0xFF80FF80;
+    private static final int TRANSDUCER_TINT_NODE = 0xFFFF991A;
+    private static final int TRANSDUCER_TINT_ENERGIZED = 0xFFFF004D;
+    private static final int TRANSDUCER_STATUS_NODE = 1;
+    private static final int TRANSDUCER_STATUS_ENERGIZED = 2;
     private static final float TRANSDUCER_GLOW_GAIN = 2.5F;
     private static final Identifier BUBBLE_TEXTURE = TCIds.rl("textures/misc/node_bubble.png");
     private static final RenderType BUBBLE = RenderType.create("tc_node_bubble",
@@ -140,31 +146,50 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
         }
     }
 
-    public static void submitTransducerParts(float chargeFraction, float ticks, PoseStack poseStack, SubmitNodeCollector collector, int light) {
+    public static void submitTransducerParts(int count, int status, float ticks, PoseStack poseStack, SubmitNodeCollector collector, int light) {
         TCMesh mesh = GolemMeshes.get(MODEL);
         TCMeshPart lock = findPart(mesh, PART_LOCK);
         TCMeshPart piston = findPart(mesh, PART_PISTON);
+        float extend = Math.min(TRANSDUCER_EXTEND_CAP, count) / TRANSDUCER_EXTEND_DIVISOR;
+        int tint = statusTint(status);
         if (lock != null) {
             PoseStack.Pose lockPose = poseStack.last().copy();
             collector.submitCustomGeometry(poseStack, TRANSDUCER_BASE, (pose, buffer) -> GolemMeshes.renderPart(lock, lockPose, buffer, light, WHITE));
-            float pulse = Mth.sin(ticks / 3.0F) * 0.1F + 0.9F;
-            int glow = OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * Math.min(1.0F, chargeFraction * TRANSDUCER_GLOW_GAIN * pulse));
-            int glowUnit = Mth.clamp(glow / 16, 0, 15);
-            int glowLight = (glowUnit << 4) | (glowUnit << 20);
-            collector.submitCustomGeometry(poseStack, TRANSDUCER_OVERLAY, (pose, buffer) -> GolemMeshes.renderPart(lock, lockPose, buffer, glowLight, WHITE));
+            int glowLight = statusGlow(extend, ticks, 0);
+            collector.submitCustomGeometry(poseStack, TRANSDUCER_OVERLAY, (pose, buffer) -> GolemMeshes.renderPart(lock, lockPose, buffer, glowLight, tint));
         }
         if (piston != null) {
             for (int arm = 0; arm < ARM_COUNT; arm++) {
                 poseStack.pushPose();
                 poseStack.mulPose(Axis.ZP.rotationDegrees(ARM_ANGLE_STEP * arm));
                 poseStack.mulPose(Axis.YP.rotationDegrees(ARM_TWIST));
-                float armPulse = Mth.sin((ticks + arm * 5) / 3.0F) * 0.1F + 0.9F;
-                poseStack.translate(0.0F, 0.0F, chargeFraction * armPulse * TRANSDUCER_EXTEND);
+                poseStack.translate(0.0F, 0.0F, extend);
                 PoseStack.Pose armPose = poseStack.last().copy();
                 collector.submitCustomGeometry(poseStack, TRANSDUCER_BASE, (pose, buffer) -> GolemMeshes.renderPart(piston, armPose, buffer, light, WHITE));
+                int glowLight = statusGlow(extend, ticks, arm);
+                collector.submitCustomGeometry(poseStack, TRANSDUCER_OVERLAY, (pose, buffer) -> GolemMeshes.renderPart(piston, armPose, buffer, glowLight, tint));
                 poseStack.popPose();
             }
         }
+    }
+
+    private static int statusTint(int status) {
+        if (status == TRANSDUCER_STATUS_ENERGIZED) {
+            return TRANSDUCER_TINT_ENERGIZED;
+        }
+        return status == TRANSDUCER_STATUS_NODE ? TRANSDUCER_TINT_NODE : TRANSDUCER_TINT_IDLE;
+    }
+
+    private static int statusGlow(float extend, float ticks, int arm) {
+        float pulse = Mth.sin((ticks + arm * 5) / 3.0F) * 0.1F + 0.9F;
+        int glow = OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * (extend * TRANSDUCER_GLOW_GAIN * pulse));
+        int glowUnit = Mth.clamp(glow / 16, 0, 15);
+        return (glowUnit << 4) | (glowUnit << 20);
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
     }
 
     @Override

@@ -81,6 +81,11 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode, 
     public NodeRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityNode node) {
         return new AABB(node.getBlockPos()).inflate(ORB_SWEEP);
     }
