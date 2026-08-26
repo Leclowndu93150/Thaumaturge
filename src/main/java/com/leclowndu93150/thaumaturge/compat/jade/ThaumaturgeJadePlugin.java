@@ -11,12 +11,14 @@ import snownee.jade.api.WailaPlugin;
 public final class ThaumaturgeJadePlugin implements IWailaPlugin {
     @Override
     public void register(IWailaCommonRegistration registration) {
+        registration.registerBlockDataProvider(EssentiaDataProvider.INSTANCE, Block.class);
         registration.registerBlockDataProvider(MachineDataProvider.INSTANCE, Block.class);
         registration.registerEntityDataProvider(GolemDataProvider.INSTANCE, EntityThaumaturgeGolem.class);
     }
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
+        JadeConfig.register(registration);
         registration.registerBlockComponent(NodeComponentProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(EssentiaComponentProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(MachineComponentProvider.INSTANCE, Block.class);

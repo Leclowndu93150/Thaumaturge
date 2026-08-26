@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import net.minecraft.ChatFormatting;
@@ -27,7 +28,13 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
     }
 
     @Override
+    public boolean isRequired() {
+        return true;
+    }
+
+    @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        if (!JadeConfig.shouldShow(config, JadeConfig.NODES, accessor)) return;
         if (!(accessor.getBlockEntity() instanceof BlockEntityNode node)) {
             return;
         }
@@ -37,7 +44,9 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
                 && !(player.getOffhandItem().getItem() instanceof ThaumometerItem)) {
             return;
         }
-        if (node.getNodeType() != NodeType.NORMAL || node.getNodeModifier() != null) {
+        if (node instanceof BlockEntityJarNode
+                || node.getNodeType() != NodeType.NORMAL
+                || node.getNodeModifier() != null) {
             MutableComponent type = Component.translatable(
                     "jade.thaumaturge.node.type." + node.getNodeType().getSerializedName());
             if (node.getNodeModifier() != null) {
@@ -51,18 +60,19 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
         }
         AspectList aspects = node.getAspects();
         if (!aspects.isEmpty()) {
-            tooltip.add(JadeComponents.aspectLine("jade.thaumaturge.node.aspects", aspects));
+            JadeComponents.addAspectLines(tooltip, "jade.thaumaturge.node.aspects", aspects);
         }
         if (node.isEnergized()) {
             tooltip.add(
                     Component.translatable("jade.thaumaturge.node.energized").withStyle(ChatFormatting.AQUA));
+            if (!accessor.showDetails()) return;
             tooltip.add(Component.translatable(
                     node.getNodeType() == NodeType.TAINTED
                             ? "jade.thaumaturge.node.feeds_flux"
                             : "jade.thaumaturge.node.feeds_aura"));
             AspectList original = node.getAspectsBaseOriginal();
             if (original != null && !original.isEmpty()) {
-                tooltip.add(JadeComponents.aspectLine("jade.thaumaturge.node.reverts_to", original));
+                JadeComponents.addAspectLines(tooltip, "jade.thaumaturge.node.reverts_to", original);
             }
         }
     }
