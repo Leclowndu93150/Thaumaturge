@@ -16,6 +16,8 @@ public final class TCRenderTypes {
             new RenderStateShard.ShaderStateShard(GameRenderer::getParticleShader);
     private static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER =
             new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
+    private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =
+            new RenderStateShard.ShaderStateShard(TCShaders::occludingEffect);
     private static final RenderStateShard.OverlayStateShard OVERLAY = new RenderStateShard.OverlayStateShard(true);
 
     private static final Function<ResourceLocation, RenderType> FX_ADDITIVE = Util.memoize(texture -> particle(
@@ -82,6 +84,23 @@ public final class TCRenderTypes {
             RenderStateShard.LEQUAL_DEPTH_TEST,
             RenderStateShard.COLOR_DEPTH_WRITE,
             false));
+    private static final Function<ResourceLocation, RenderType> OCCLUDING_EFFECT =
+            Util.memoize(texture -> RenderType.create(
+                    "tc_occluding_effect",
+                    DefaultVertexFormat.NEW_ENTITY,
+                    VertexFormat.Mode.QUADS,
+                    BUFFER,
+                    false,
+                    true,
+                    RenderType.CompositeState.builder()
+                            .setShaderState(OCCLUDING_EFFECT_SHADER)
+                            .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                            .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                            .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+                            .setCullState(RenderStateShard.NO_CULL)
+                            .setOverlayState(OVERLAY)
+                            .createCompositeState(false)));
     private static final Function<ResourceLocation, RenderType> ENTITY_TRANSLUCENT_FLAT = Util.memoize(texture -> flat(
             "tc_entity_translucent_flat",
             texture,
@@ -177,6 +196,10 @@ public final class TCRenderTypes {
 
     public static RenderType entityCutoutFlat(ResourceLocation texture) {
         return ENTITY_CUTOUT_FLAT.apply(texture);
+    }
+
+    public static RenderType occludingEffect(ResourceLocation texture) {
+        return OCCLUDING_EFFECT.apply(texture);
     }
 
     public static RenderType entityTranslucentFlat(ResourceLocation texture) {

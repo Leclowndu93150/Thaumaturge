@@ -27,9 +27,8 @@ public final class CultistPortalGreaterRenderer extends EntityRenderer<EntityCul
             MultiBufferSource buffers,
             int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
-        CultistPortalRenderer.renderPortal(
-                poseStack,
-                buffers,
+        CultistPortalRenderer.queuePortal(
+                entity.getPosition(partialTicks),
                 true,
                 entity.tickCount + partialTicks,
                 entity.hurtTime,
