@@ -56,11 +56,12 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
     public void tickSeal(Level level, ISealEntity seal) {
         List<ProvisionRequest> requests = GolemHelper.getProvisionRequests(level);
         if (delay % CLEAN_INTERVAL == 0) {
-            requests.removeIf(request -> request.isInvalid()
-                    || request.getLinkedTask() == null
-                    || request.getLinkedTask().isSuspended()
-                    || request.getLinkedTask().isCompleted()
-                    || request.getTimeout() < level.getGameTime());
+            requests.removeIf(request -> {
+                Task linkedTask = request.getLinkedTask();
+                return request.isInvalid()
+                        || request.getTimeout() < level.getGameTime()
+                        || linkedTask != null && (linkedTask.isSuspended() || linkedTask.isCompleted());
+            });
         }
         if (delay++ % SCAN_INTERVAL != 0) {
             return;
