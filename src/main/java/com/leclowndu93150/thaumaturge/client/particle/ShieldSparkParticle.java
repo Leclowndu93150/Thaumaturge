@@ -30,6 +30,7 @@ public final class ShieldSparkParticle extends TCParticle {
         this.alpha = this.startAlpha;
         this.lifetime = Math.max(1, options.age());
         this.quadSize = options.scale() * 0.1F;
+        setDelay(options.delay());
         frameByProgress();
     }
 
