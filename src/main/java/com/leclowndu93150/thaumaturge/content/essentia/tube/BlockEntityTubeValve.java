@@ -39,6 +39,9 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
 
     public void setAllowFlow(boolean allow) {
         this.allowFlow = allow;
+        if (!allow) {
+            super.setSuction(null, 0);
+        }
         setChanged();
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -63,6 +66,7 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
             }
             if (!wasPoweredLastTick && powered && allowFlow) {
                 allowFlow = false;
+                super.setSuction(null, 0);
                 level.playSound(
                         null,
                         pos,
@@ -125,9 +129,19 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
 
     @Override
     public void setSuction(Holder<IAspect> aspect, int amount) {
-        if (allowFlow) {
+        if (allowFlow || amount <= 0) {
             super.setSuction(aspect, amount);
         }
+    }
+
+    @Override
+    public Holder<IAspect> getSuctionType(Direction face) {
+        return allowFlow ? super.getSuctionType(face) : null;
+    }
+
+    @Override
+    public int getSuctionAmount(Direction face) {
+        return allowFlow ? super.getSuctionAmount(face) : 0;
     }
 
     @Override
