@@ -529,8 +529,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         if (isRemoved() || player.getItemInHand(hand).is(Items.NAME_TAG)) {
             return InteractionResult.PASS;
         }
-        if (level().isClientSide() || !isOwner(player)) {
+        if (!isOwner(player)) {
             return super.mobInteract(player, hand);
+        }
+        if (level().isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
         if (player.isShiftKeyDown()) {
             pickUpGolem(player, hand);
