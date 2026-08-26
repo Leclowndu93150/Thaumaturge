@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilize
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -61,6 +62,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final float BUBBLE_PULSE_PERIOD = 8.0F;
     private static final int BUBBLE_ADVANCED_TINT = 0xFF4444;
     private static final int BUBBLE_LIGHT = 0x00F000F0;
+    private static final double BUBBLE_SWEEP = BUBBLE_HALF * Mth.SQRT_OF_TWO;
 
     public NodeStabilizerRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -163,6 +165,13 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
                 poseStack.popPose();
             }
         }
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityNodeStabilizer stabilizer) {
+        BlockPos pos = stabilizer.getBlockPos();
+        Vec3 bubble = Vec3.atCenterOf(pos).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
+        return new AABB(pos).minmax(AABB.ofSize(bubble, BUBBLE_SWEEP * 2.0, BUBBLE_SWEEP * 2.0, BUBBLE_SWEEP * 2.0));
     }
 
     private static @Nullable TCMeshPart findPart(TCMesh mesh, String name) {

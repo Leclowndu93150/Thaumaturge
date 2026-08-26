@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -21,6 +23,13 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     private static final float CRYSTAL_HEIGHT = 0.55F;
 
     public VisRelayRenderer(BlockEntityRendererProvider.Context context) {}
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityVisRelay relay) {
+        AABB self = new AABB(relay.getBlockPos());
+        BlockPos parent = relay.parentPos();
+        return parent == null ? self : self.minmax(new AABB(parent));
+    }
 
     @Override
     public VisRelayRenderState createRenderState() {

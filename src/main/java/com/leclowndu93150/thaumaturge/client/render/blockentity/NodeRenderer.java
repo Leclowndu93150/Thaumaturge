@@ -28,6 +28,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
@@ -74,9 +75,15 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode, 
     private static final float ENERGIZED_CORE_SCALE = 1.35F;
     private static final float ENERGIZED_PULSE_PERIOD = 4.0F;
     private static final float ENERGIZED_PULSE_AMPLITUDE = 0.25F;
+    private static final double ORB_SWEEP = (ENERGIZED_CORE_SCALE + ENERGIZED_PULSE_AMPLITUDE) * Mth.SQRT_OF_TWO;
     private static final int ENERGIZED_CORE_COLOR = 0x99CCFF;
 
     public NodeRenderer(BlockEntityRendererProvider.Context context) {}
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityNode node) {
+        return new AABB(node.getBlockPos()).inflate(ORB_SWEEP);
+    }
 
     @Override
     public NodeRenderState createRenderState() {

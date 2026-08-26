@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -22,6 +23,13 @@ public final class RechargePedestalRenderer implements BlockEntityRenderer<Block
 
     public RechargePedestalRenderer(BlockEntityRendererProvider.Context context, float itemScale) {
         this.delegate = new PedestalRenderer<>(context, itemScale);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityRechargePedestal pedestal) {
+        AABB self = new AABB(pedestal.getBlockPos());
+        BlockPos drain = pedestal.getDrainPos();
+        return drain == null ? self : self.minmax(new AABB(drain));
     }
 
     @Override

@@ -31,7 +31,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.STONE_ANCIENT_GLYPHED.get()).add(TCBlocks.STONE_ELDRITCH_TILE.get()).add(TCBlocks.STONE_POROUS.get()).add(TCBlocks.STAIRS_ARCANE.get())
                 .add(TCBlocks.STAIRS_ARCANE_BRICK.get()).add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.PILLAR_ARCANE.get()).add(TCBlocks.PILLAR_ANCIENT.get()).add(TCBlocks.PILLAR_ELDRITCH.get())
                 .add(TCBlocks.PEDESTAL_ARCANE.get()).add(TCBlocks.PEDESTAL_ANCIENT.get()).add(TCBlocks.PEDESTAL_ELDRITCH.get()).add(TCBlocks.RECHARGE_PEDESTAL.get()).add(TCBlocks.MATRIX_SPEED.get())
-                .add(TCBlocks.MATRIX_COST.get()).add(TCBlocks.STABILIZER.get());
+                .add(TCBlocks.MATRIX_COST.get()).add(TCBlocks.STABILIZER.get()).add(TCBlocks.INFUSION_MATRIX.get());
 
         tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.SLAB_GREATWOOD.get()).add(TCBlocks.SLAB_SILVERWOOD.get()).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get())
                 .add(TCBlocks.TABLE_WOOD.get());

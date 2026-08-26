@@ -2,12 +2,10 @@ package com.leclowndu93150.thaumaturge.content.world.plant;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -60,14 +58,22 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     }
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
-        return new BlockPos(x, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z), z);
+        return new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
     }
 
     private static boolean isAdjacentToWood(WorldGenLevel level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            BlockState neighbor = level.getBlockState(pos.relative(direction));
-            if (neighbor.is(BlockTags.LOGS) || neighbor.is(BlockTags.PLANKS)) {
-                return true;
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue;
+                    }
+                    cursor.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+                    if (level.getBlockState(cursor).is(BlockTags.LOGS)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;

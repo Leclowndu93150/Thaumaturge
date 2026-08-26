@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.data.model;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeOneway;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
@@ -24,14 +25,27 @@ public final class TubeModels {
     private static final Identifier TUBE_BUFFER_CORE = id("block/tube_buffer_core");
     private static final Identifier TUBE_SIDE = id("block/tube_side");
     private static final Identifier TUBE_SIDE_RESTRICT = id("block/tube_side_restrict");
+    private static final Identifier TUBE_ONEWAY_MARKER = id("block/tube_oneway_marker");
 
     public static void register(BlockModelGenerators blockModels) {
         registerTube(blockModels, TCBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
         registerTube(blockModels, TCBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
         registerTube(blockModels, TCBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
         registerTube(blockModels, TCBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
-        registerTube(blockModels, TCBlocks.TUBE_ONEWAY.get(), TUBE_CORE, TUBE_SIDE);
+        registerOnewayTube(blockModels);
         registerTube(blockModels, TCBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
+    }
+
+    private static void registerOnewayTube(BlockModelGenerators blockModels) {
+        Block block = TCBlocks.TUBE_ONEWAY.get();
+        MultiPartGenerator generator = tubeParts(block, TUBE_CORE, TUBE_SIDE);
+        for (Direction facing : Direction.values()) {
+            Direction input = facing.getOpposite();
+            Variant marker = applyRotation(new Variant(TUBE_ONEWAY_MARKER), input);
+            ConditionBuilder condition = new ConditionBuilder().term(BlockTubeOneway.FACING, facing).term(BlockEssentiaTransport.propertyFor(input), true);
+            generator = generator.with(condition, new MultiVariant(WeightedList.of(marker)));
+        }
+        blockModels.blockStateOutput.accept(generator);
     }
 
     private static Identifier id(String path) {
@@ -39,6 +53,10 @@ public final class TubeModels {
     }
 
     private static void registerTube(BlockModelGenerators blockModels, Block block, Identifier coreModel, Identifier sideModel) {
+        blockModels.blockStateOutput.accept(tubeParts(block, coreModel, sideModel));
+    }
+
+    private static MultiPartGenerator tubeParts(Block block, Identifier coreModel, Identifier sideModel) {
         MultiVariant coreVariant = new MultiVariant(WeightedList.of(new Variant(coreModel)));
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block).with(coreVariant);
         for (Direction direction : Direction.values()) {
@@ -47,7 +65,7 @@ public final class TubeModels {
             MultiVariant variant = new MultiVariant(WeightedList.of(rotated));
             generator = generator.with(new ConditionBuilder().term(property, true), variant);
         }
-        blockModels.blockStateOutput.accept(generator);
+        return generator;
     }
 
     private static Variant applyRotation(Variant base, Direction direction) {
