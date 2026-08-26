@@ -7,8 +7,12 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealProvide;
 import com.leclowndu93150.thaumaturge.registry.TCMenus;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleContainer;
@@ -35,6 +39,12 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
 
     private static final int SIZE = COLUMNS * ROWS;
     private static final int RANGE = 32;
+    private static final Comparator<ItemStack> ITEM_ORDER = Comparator.comparing(
+                    (ItemStack stack) -> stack.getHoverName().getString(), String.CASE_INSENSITIVE_ORDER)
+            .thenComparing(stack -> stack.getHoverName().getString())
+            .thenComparing(
+                    stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
+            .thenComparing(stack -> stack.getComponents().toString());
 
     private final SimpleContainer display = new SimpleContainer(SIZE);
     private final List<ItemStack> items = new ArrayList<>();
@@ -153,7 +163,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     }
 
     private void collect(ServerLevel level) {
-        List<ItemStack> found = new ArrayList<>();
+        Map<StackKey, ItemStack> found = new HashMap<>();
         String filter = searchText.toLowerCase(Locale.ROOT);
         for (SealEntity seal : SealHandler.getSealsInRange(level, player.blockPosition(), RANGE)) {
             if (!(seal.getSeal() instanceof SealProvide provide)
@@ -170,30 +180,38 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
                 if (stack.isEmpty() || !provide.matchesFilters(stack) || !matchesSearch(stack, filter)) {
                     continue;
                 }
-                ItemStack existing = null;
-                for (ItemStack candidate : found) {
-                    if (ItemStack.isSameItemSameComponents(candidate, stack)) {
-                        existing = candidate;
-                        break;
-                    }
-                }
-                if (existing == null) {
-                    found.add(stack.copy());
-                } else {
-                    existing.grow(stack.getCount());
-                }
+                found.merge(new StackKey(stack), stack.copy(), MenuGolemLogistics::sum);
             }
         }
-        found.sort((left, right) -> left.getHoverName()
-                .getString()
-                .compareToIgnoreCase(right.getHoverName().getString()));
         items.clear();
-        items.addAll(found);
+        items.addAll(found.values());
+        items.sort(ITEM_ORDER);
     }
 
     private static boolean matchesSearch(ItemStack stack, String filter) {
         return filter.isEmpty()
                 || stack.getHoverName().getString().toLowerCase(Locale.ROOT).contains(filter);
+    }
+
+    private static ItemStack sum(ItemStack existing, ItemStack addition) {
+        return existing.copyWithCount(existing.getCount() + addition.getCount());
+    }
+
+    private record StackKey(ItemStack stack) {
+        private StackKey(ItemStack stack) {
+            this.stack = stack.copyWithCount(1);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return this == other
+                    || other instanceof StackKey key && ItemStack.isSameItemSameComponents(stack, key.stack);
+        }
+
+        @Override
+        public int hashCode() {
+            return ItemStack.hashItemAndComponents(stack);
+        }
     }
 
     @Override
