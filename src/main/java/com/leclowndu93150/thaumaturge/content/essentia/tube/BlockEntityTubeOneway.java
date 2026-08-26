@@ -17,8 +17,13 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
     }
 
     @Override
-    protected boolean directionalEqualize() {
-        return true;
+    public boolean canInputFrom(Direction face) {
+        return face != facing().getOpposite() && super.canInputFrom(face);
+    }
+
+    @Override
+    public boolean canOutputTo(Direction face) {
+        return face == facing().getOpposite() && super.canOutputTo(face);
     }
 
     @Override
@@ -28,5 +33,26 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
             return state.getValue(BlockStateProperties.FACING);
         }
         return super.facing();
+    }
+
+    @Override
+    public boolean rotateFacing() {
+        if (level == null) return false;
+        Direction next = findNextFacing(facing());
+        if (next == null) return false;
+        level.setBlock(getBlockPos(), getBlockState().setValue(BlockStateProperties.FACING, next), 3);
+        return true;
+    }
+
+    private Direction findNextFacing(Direction current) {
+        int start = current.ordinal();
+        for (int offset = 1; offset < Direction.values().length; offset++) {
+            Direction candidate = Direction.values()[(start + offset) % Direction.values().length];
+            Direction flowDirection = candidate.getOpposite();
+            if (isSideOpen(flowDirection) && hasTransportNeighbour(flowDirection)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

@@ -44,8 +44,18 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
             return null;
         }
         if (targetSources == null || !link.pos().equals(targetSourcesCenter)) {
-            targetSources =
-                    new EssentiaSources(link.pos(), TARGET_RANGE).drainEffectTarget(Vec3.atCenterOf(link.pos()));
+            ServerLevel targetLevel = targetLevel();
+            if (targetLevel == null) {
+                return null;
+            }
+            BlockState targetState = targetLevel.getBlockState(link.pos());
+            if (!targetState.hasProperty(BlockMirror.FACING)) {
+                return null;
+            }
+            targetSources = new EssentiaSources(link.pos(), TARGET_RANGE)
+                    .facing(targetState.getValue(BlockMirror.FACING))
+                    .ignoring(blockEntity -> blockEntity instanceof BlockEntityMirrorEssentia)
+                    .drainEffectTarget(Vec3.atCenterOf(link.pos()));
             targetSourcesCenter = link.pos();
         }
         return targetSources;

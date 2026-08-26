@@ -12,6 +12,7 @@ import net.minecraft.data.models.blockstates.Variant;
 import net.minecraft.data.models.blockstates.VariantProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public final class TubeModels {
@@ -23,14 +24,34 @@ public final class TubeModels {
     private static final ResourceLocation TUBE_BUFFER_CORE = id("block/tube_buffer_core");
     private static final ResourceLocation TUBE_SIDE = id("block/tube_side");
     private static final ResourceLocation TUBE_SIDE_RESTRICT = id("block/tube_side_restrict");
+    private static final ResourceLocation TUBE_ONEWAY_INDICATOR = id("block/tube_oneway_indicator");
 
     public static void register(Consumer<BlockStateGenerator> blockStateOutput) {
         registerTube(blockStateOutput, TCBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
         registerTube(blockStateOutput, TCBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
         registerTube(blockStateOutput, TCBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
         registerTube(blockStateOutput, TCBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
-        registerTube(blockStateOutput, TCBlocks.TUBE_ONEWAY.get(), TUBE_CORE, TUBE_SIDE);
+        registerOnewayTube(blockStateOutput);
         registerTube(blockStateOutput, TCBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
+    }
+
+    private static void registerOnewayTube(Consumer<BlockStateGenerator> blockStateOutput) {
+        Block block = TCBlocks.TUBE_ONEWAY.get();
+        MultiPartGenerator generator =
+                MultiPartGenerator.multiPart(block).with(Variant.variant().with(VariantProperties.MODEL, TUBE_CORE));
+        for (Direction direction : Direction.values()) {
+            Direction intakeSide = direction.getOpposite();
+            generator = generator
+                    .with(
+                            Condition.condition()
+                                    .term(BlockStateProperties.FACING, direction)
+                                    .term(BlockEssentiaTransport.propertyFor(intakeSide), true),
+                            indicatorVariant(intakeSide))
+                    .with(
+                            Condition.condition().term(BlockEssentiaTransport.propertyFor(direction), true),
+                            sideVariant(TUBE_SIDE, direction));
+        }
+        blockStateOutput.accept(generator);
     }
 
     private static ResourceLocation id(String path) {
@@ -64,6 +85,18 @@ public final class TubeModels {
             case EAST ->
                 variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R270)
                         .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
+        };
+    }
+
+    private static Variant indicatorVariant(Direction direction) {
+        Variant variant = Variant.variant().with(VariantProperties.MODEL, TUBE_ONEWAY_INDICATOR);
+        return switch (direction) {
+            case NORTH -> variant;
+            case SOUTH -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180);
+            case WEST -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270);
+            case EAST -> variant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
+            case UP -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R270);
+            case DOWN -> variant.with(VariantProperties.X_ROT, VariantProperties.Rotation.R90);
         };
     }
 }

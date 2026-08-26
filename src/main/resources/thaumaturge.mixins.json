@@ -11,10 +11,13 @@
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
-    "world.level.block.entity.AbstractFurnaceBlockEntityAccessor"
+    "world.level.block.FireBlockMixin",
+    "world.level.block.entity.AbstractFurnaceBlockEntityAccessor",
+    "world.level.block.piston.PistonBaseBlockMixin"
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
+    "client.particle.ParticleEngineMixin",
     "client.renderer.entity.LivingEntityRendererMixin"
   ],
   "injectors": {

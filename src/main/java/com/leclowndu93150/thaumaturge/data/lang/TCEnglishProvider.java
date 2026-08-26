@@ -1089,6 +1089,10 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("focus.thaumaturge.exchange.text", "Swap one type of block in the world for another.");
         add("focus.thaumaturge.heal.name", "Heal");
         add("focus.thaumaturge.heal.text", "This effect heals living creatures and harms undead.");
+        add("focus.thaumaturge.ward.name", "Ward");
+        add(
+                "focus.thaumaturge.ward.text",
+                "Binds a solid block in place without altering it. Warded blocks cannot be mined, burned, exploded, pushed by pistons or destroyed by creatures. Cast again on your own ward to lift it.");
 
         add("focus.thaumaturge.scatter.name", "Scatter");
         add("focus.thaumaturge.scatter.text", "Split a single trajectory into multiple random trajectories.");
@@ -1142,6 +1146,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.wandtable.problem.no_effects", "The spell needs at least one effect");
         add("gui.thaumaturge.wandtable.problem.xp", "Requires %s experience levels");
         add("gui.thaumaturge.wandtable.problem.ready", "Ready to craft!");
+        add("gui.thaumaturge.golembuilder.stat.health", "Health");
+        add("gui.thaumaturge.golembuilder.stat.armor", "Armour");
+        add("gui.thaumaturge.golembuilder.stat.damage", "Damage");
+        add("gui.thaumaturge.golembuilder.craft", "Assemble Golem");
+        add("gui.thaumaturge.golembuilder.problem.in_progress", "Assembly in progress...");
+        add("gui.thaumaturge.golembuilder.problem.no_parts", "No golem parts are available");
+        add("gui.thaumaturge.golembuilder.problem.component", "Missing %sx %s");
+        add("gui.thaumaturge.golembuilder.problem.ready", "Ready to assemble!");
     }
 
     private void langEnchantments() {
@@ -1347,6 +1359,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.logistics.scroll_down", "Scroll Down");
         add("gui.thaumaturge.logistics.count_down", "Fewer");
         add("gui.thaumaturge.logistics.count_up", "More");
+        add("gui.thaumaturge.seal.priority_down", "Lower Priority");
+        add("gui.thaumaturge.seal.priority_up", "Raise Priority");
+        add("gui.thaumaturge.seal.color_previous", "Previous Colour");
+        add("gui.thaumaturge.seal.color_next", "Next Colour");
+        add("gui.thaumaturge.seal.area_shrink", "Shrink Area (%s)");
+        add("gui.thaumaturge.seal.area_grow", "Grow Area (%s)");
+        add("gui.thaumaturge.golem_builder.previous", "Previous");
+        add("gui.thaumaturge.golem_builder.next", "Next");
         add("golem.prop.blacklist", "Blacklist");
         add("golem.prop.whitelist", "Whitelist");
         add("button.category.0", "Priority/Locking");
@@ -1572,6 +1592,31 @@ public final class TCEnglishProvider extends LanguageProvider {
     }
 
     private void addJade() {
+        add("config.jade.thaumaturge", "Thaumcraft");
+        add("config.jade.plugin_thaumaturge.display", "Thaumcraft Overlay Information");
+        addJadeMode("nodes", "Aura Nodes");
+        addJadeMode("golems", "Golems");
+        addJadeMode("vis_relays", "Vis Relays");
+        addJadeMode("node_transducers", "Node Transducers");
+        addJadeMode("smelters", "Essentia Smelters");
+        addJadeMode("jars", "Essentia Jars and Tanks");
+        addJadeMode("alembics", "Alembics");
+        addJadeMode("crucibles", "Crucibles");
+        addJadeMode("tubes", "Essentia Tubes");
+        addJadeMode("valves", "Tube Valves");
+        addJadeMode("restricted_tubes", "Restricted Tubes");
+        addJadeMode("filter_tubes", "Filtered Tubes");
+        addJadeMode("one_way_tubes", "One-way Tubes");
+        addJadeMode("buffers", "Essentia Buffers");
+        addJadeMode("thaumatoriums", "Thaumatoriums");
+        addJadeMode("centrifuges", "Essentia Centrifuges");
+        addJadeMode("golem_builders", "Golem Builders");
+        addJadeMode("void_siphons", "Void Siphons");
+        addJadeMode("deconstruction_tables", "Deconstruction Tables");
+        addJadeMode("spas", "Arcane Spas");
+        addJadeMode("everfull_urns", "Everfull Urns");
+        addJadeMode("infernal_furnaces", "Infernal Furnaces");
+        addJadeMode("focal_manipulators", "Focal Manipulators");
         add("config.jade.plugin_thaumaturge.node", "Aura Node Info");
         add("config.jade.plugin_thaumaturge.essentia", "Essentia Contents");
         add("config.jade.plugin_thaumaturge.machine", "Machine Progress");
@@ -1593,11 +1638,48 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.node.feeds_aura", "Condensing raw vis from the local aura");
         add("jade.thaumaturge.node.feeds_flux", "Devouring flux from the local aura");
         add("jade.thaumaturge.node.reverts_to", "Reverts to: %s");
-        add("jade.thaumaturge.essentia.empty", "Empty");
+        add("jade.thaumaturge.essentia.empty", "Essentia: Empty");
+        add("jade.thaumaturge.essentia.none", "Essentia: None");
+        add("jade.thaumaturge.essentia.empty_capacity", "Essentia: Empty (0 / %s)");
         add("jade.thaumaturge.essentia.fill", "%s: %s / %s");
         add("jade.thaumaturge.essentia.contents", "Essentia: %s");
+        add("jade.thaumaturge.essentia.amount", "Essentia stored: %s / %s");
+        add("jade.thaumaturge.essentia.combined", "Essentia: %s %s/%s");
         add("jade.thaumaturge.essentia.filter", "Filtering: %s");
         add("jade.thaumaturge.essentia.unfiltered", "No filter set");
+        add("jade.thaumaturge.tube.valve.open", "Valve: Open");
+        add("jade.thaumaturge.tube.valve.closed", "Valve: Closed");
+        add("jade.thaumaturge.tube.direction", "Flow direction: %s");
+        add("jade.thaumaturge.tube.restricted", "Restricted suction");
+        add("jade.thaumaturge.tube.suction", "Suction: %s (%s)");
+        add("jade.thaumaturge.tube.any_aspect", "Any essentia");
+        add("jade.thaumaturge.tube.closed_sides", "Closed sides: %s");
+        add("jade.thaumaturge.tube.choked", "Choke: %s (%s)");
+        add("jade.thaumaturge.tube.choke.reduced", "Reduced");
+        add("jade.thaumaturge.tube.choke.blocked", "Blocked");
+        add("jade.thaumaturge.crucible.state.cold", "Crucible: Cold");
+        add("jade.thaumaturge.crucible.state.heating", "Crucible: Heating");
+        add("jade.thaumaturge.crucible.state.boiling", "Crucible: Boiling");
+        add("jade.thaumaturge.direction.down", "Down");
+        add("jade.thaumaturge.direction.up", "Up");
+        add("jade.thaumaturge.direction.north", "North");
+        add("jade.thaumaturge.direction.south", "South");
+        add("jade.thaumaturge.direction.west", "West");
+        add("jade.thaumaturge.direction.east", "East");
+        add("jade.thaumaturge.thaumatorium.recipes", "Recipes: %s / %s");
+        add("jade.thaumaturge.centrifuge.state", "Centrifuge: %s");
+        add("jade.thaumaturge.state.idle", "Idle");
+        add("jade.thaumaturge.state.processing", "Processing");
+        add("jade.thaumaturge.machine.output", "Output items: %s");
+        add("jade.thaumaturge.machine.fluid", "Fluid: %s / %s mB");
+        add("jade.thaumaturge.machine.stored_items", "Stored items: %s");
+        add("jade.thaumaturge.deconstruction.result", "Pending aspect: %s");
+        add("jade.thaumaturge.spa.mix", "Mode: Mix bath salts");
+        add("jade.thaumaturge.spa.water", "Mode: Dispense fluid");
+        add("jade.thaumaturge.focal.vis", "Vis remaining: %s");
+        add("jade.thaumaturge.focal.focus", "Focus: %s");
+        add("jade.thaumaturge.focal.focus_inserted", "Focus inserted");
+        add("jade.thaumaturge.focal.no_focus", "No focus inserted");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
         add("jade.thaumaturge.transducer.status.0", "No node below");
@@ -1605,8 +1687,17 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.transducer.status.2", "Node energized");
         add("jade.thaumaturge.transducer.charge", "Charge: %s%%");
         add("jade.thaumaturge.relay.linked_node", "Linked to energized node");
+        add("jade.thaumaturge.relay.linked", "Linked");
         add("jade.thaumaturge.relay.linked_relay", "Linked through %s relays");
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
-        add("jade.thaumaturge.golem.rank", "Rank %s (%s XP)");
+        add("jade.thaumaturge.golem.rank", "Rank %s");
+        add("jade.thaumaturge.golem.xp", "Experience: %s / %s");
+    }
+
+    private void addJadeMode(String path, String label) {
+        String key = "config.jade.plugin_thaumaturge.display." + path;
+        add(key, label);
+        add(key + "_always", "Always");
+        add(key + "_goggles", "Goggles");
     }
 }
