@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.screen.construct.ArcaneBoreScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.TurretAdvancedScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.TurretBasicScreen;
 import com.leclowndu93150.thaumaturge.client.screen.golem.GolemBuilderScreen;
+import com.leclowndu93150.thaumaturge.client.screen.golem.GolemLogisticsScreen;
 import com.leclowndu93150.thaumaturge.client.screen.golem.SealScreen;
 import com.leclowndu93150.thaumaturge.client.screen.research.DeconstructionTableScreen;
 import com.leclowndu93150.thaumaturge.client.screen.research.ResearchTableScreen;

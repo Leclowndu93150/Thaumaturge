@@ -1,23 +1,20 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsGuiOpener;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +26,6 @@ import org.jspecify.annotations.Nullable;
 public final class ItemGolemBell extends Item implements ISealDisplayer {
     private static final double AIM_RANGE = 5.0;
     private static final double AIM_STEP = 0.1;
-    private static final int LOGISTICS_RESEARCH_STAGE = 1;
 
     public ItemGolemBell(Properties properties) {
         super(properties);
@@ -55,8 +51,8 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
             }
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
-        if (player.isShiftKeyDown() && player instanceof ServerPlayer serverPlayer) {
-            openLogistics(serverPlayer, null, null);
+        if (LogisticsGuiOpener.canOpen(player)) {
+            LogisticsGuiOpener.open(player, null);
             return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
         return super.use(level, player, hand);
@@ -72,7 +68,15 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         ISealEntity seal =
                 SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
         if (seal == null) {
-            return InteractionResult.PASS;
+            if (!LogisticsGuiOpener.canOpen(player)) {
+                return InteractionResult.PASS;
+            }
+            player.swing(context.getHand(), true);
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            LogisticsGuiOpener.open(player, new LogisticsTarget(context.getClickedPos(), context.getClickedFace()));
+            return InteractionResult.CONSUME;
         }
         player.swing(context.getHand(), true);
         if (level.isClientSide()) {
@@ -85,18 +89,6 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
             SealGuiOpener.open(player, seal);
         }
         return InteractionResult.CONSUME;
-    }
-
-    private static void openLogistics(ServerPlayer player, @Nullable BlockPos destination, @Nullable Direction side) {
-        if (!KnowledgeAccess.of(player).isResearchKnown(TCIds.rl("golem_logistics"), LOGISTICS_RESEARCH_STAGE)) {
-            return;
-        }
-        player.openMenu(
-                new SimpleMenuProvider(
-                        (containerId, inventory, menuPlayer) ->
-                                MenuGolemLogistics.server(containerId, inventory, destination, side),
-                        Component.translatable("gui.thaumaturge.golem_logistics")),
-                buffer -> {});
     }
 
     public static @Nullable ISealEntity getAimedSeal(Player player) {
