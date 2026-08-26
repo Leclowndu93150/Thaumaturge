@@ -3,10 +3,29 @@ package com.leclowndu93150.thaumaturge.client.render;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 
 public final class GuiBlend {
     private GuiBlend() {}
+
+    public static LayeredDraw.Layer alphaBlendedLayer(LayeredDraw.Layer layer) {
+        return (graphics, deltaTracker) -> withAlphaBlend(graphics, () -> layer.render(graphics, deltaTracker));
+    }
+
+    public static void withAlphaBlend(GuiGraphics graphics, Runnable draw) {
+        graphics.flush();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        try {
+            draw.run();
+        } finally {
+            graphics.flush();
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.defaultBlendFunc();
+            RenderSystem.disableBlend();
+        }
+    }
 
     public static void blitTinted(
             GuiGraphics graphics,

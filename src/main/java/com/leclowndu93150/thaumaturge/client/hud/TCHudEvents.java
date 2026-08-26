@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.casters.RadialFocusOverlay;
+import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import java.util.List;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -18,10 +19,23 @@ public final class TCHudEvents {
         event.registerAbove(
                 VanillaGuiLayers.EXPERIENCE_LEVEL,
                 TCIds.rl("left_hud_stack"),
-                new LeftHudStack(List.of(CasterHudOverlay.dialGauge(), new AuraHudOverlay(), new SanityHudOverlay())));
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("knowledge_gain"), new KnowledgeGainOverlay());
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("caster_hud"), new CasterHudOverlay());
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("recharge_hud"), new RechargeHudOverlay());
-        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("radial_focus"), new RadialFocusOverlay());
+                GuiBlend.alphaBlendedLayer(new LeftHudStack(
+                        List.of(CasterHudOverlay.dialGauge(), new AuraHudOverlay(), new SanityHudOverlay()))));
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_LEVEL,
+                TCIds.rl("knowledge_gain"),
+                GuiBlend.alphaBlendedLayer(new KnowledgeGainOverlay()));
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_LEVEL,
+                TCIds.rl("caster_hud"),
+                GuiBlend.alphaBlendedLayer(new CasterHudOverlay()));
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_LEVEL,
+                TCIds.rl("recharge_hud"),
+                GuiBlend.alphaBlendedLayer(new RechargeHudOverlay()));
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_LEVEL,
+                TCIds.rl("radial_focus"),
+                GuiBlend.alphaBlendedLayer(new RadialFocusOverlay()));
     }
 }
