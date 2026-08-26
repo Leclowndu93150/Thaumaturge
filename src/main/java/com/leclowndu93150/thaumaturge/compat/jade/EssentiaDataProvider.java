@@ -121,7 +121,9 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
         String kind = tubeKind(tube);
         tag.putString(TUBE_KIND, kind);
         tag.putString(AREA, "normal".equals(kind) ? "tube" : kind);
-        tag.putString(FACING, tube.facing().getSerializedName());
+        Direction displayDirection =
+                tube instanceof BlockEntityTubeOneway ? tube.facing().getOpposite() : tube.facing();
+        tag.putString(FACING, displayDirection.getSerializedName());
         tag.putInt(CLOSED_SIDES, closedMask(tube.openSides()));
         tag.putInt(SUCTION, tube.suctionRaw());
         putAspect(tag, SUCTION_ASPECT, tube.suctionKey());
