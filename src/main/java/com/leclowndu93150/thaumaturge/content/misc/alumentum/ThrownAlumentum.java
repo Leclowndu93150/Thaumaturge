@@ -62,7 +62,7 @@ public class ThrownAlumentum extends ThrowableItemProjectile {
 
                 Effects.spawn(
                         (ServerLevel) level(),
-                        new ShieldSparkParticleOptions(0xFFFFFF, 0.7F, 0.3F, 8, false),
+                        new ShieldSparkParticleOptions(0xFFFFFF, 0.7F, 0.3F, 8, 0, false),
                         getX() + level().getRandom().nextGaussian() * 0.2F,
                         getY() + level().getRandom().nextGaussian() * 0.2F,
                         getZ() + level().getRandom().nextGaussian() * 0.2F);

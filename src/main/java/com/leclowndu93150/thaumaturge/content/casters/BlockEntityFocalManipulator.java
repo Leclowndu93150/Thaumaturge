@@ -139,6 +139,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
                 0.8F,
                 0.3F + rand.nextFloat() * 0.3F,
                 6 + rand.nextInt(5),
+                0,
                 true);
         level.addParticle(
                 fx,

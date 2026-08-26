@@ -92,6 +92,7 @@ public final class ChampionClientFX {
                                     0.7F,
                                     0.6F + rand.nextFloat() * 0.2F,
                                     5 + rand.nextInt(4),
+                                    0,
                                     true));
                 }
             }
