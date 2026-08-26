@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
+import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.EntityAccessor;
@@ -20,13 +21,24 @@ public enum GolemComponentProvider implements IEntityComponentProvider {
     }
 
     @Override
+    public boolean isRequired() {
+        return true;
+    }
+
+    @Override
     public void appendTooltip(ITooltip tooltip, EntityAccessor accessor, IPluginConfig config) {
-        if (!(accessor.getEntity() instanceof EntityThaumaturgeGolem golem)) {
+        if (!JadeConfig.shouldShow(config, JadeConfig.GOLEMS, accessor)) return;
+        if (!(accessor.getEntity() instanceof EntityThaumaturgeGolem golem)
+                || !golem.getProperties().hasTrait(TCGolemTraits.SMART.get())) {
             return;
         }
-        tooltip.add(Component.translatable(
-                "jade.thaumaturge.golem.rank",
-                golem.getProperties().getRank(),
-                accessor.getServerData().getInt("RankXp")));
+        int rank = golem.getProperties().getRank();
+        tooltip.add(Component.translatable("jade.thaumaturge.golem.rank", rank));
+        if (accessor.showDetails() && rank < EntityThaumaturgeGolem.MAX_RANK) {
+            tooltip.add(Component.translatable(
+                    "jade.thaumaturge.golem.xp",
+                    accessor.getServerData().getInt("RankXp"),
+                    accessor.getServerData().getInt("RankXpRequired")));
+        }
     }
 }
