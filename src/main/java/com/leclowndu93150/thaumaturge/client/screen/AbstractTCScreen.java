@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
+import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,18 @@ public abstract class AbstractTCScreen extends Screen {
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
         if (background != null) {
-            graphics.blit(background, 0, 0, 0.0F, 0.0F, width, height, backgroundTextureWidth, backgroundTextureHeight);
+            GuiBlend.withAlphaBlend(
+                    graphics,
+                    () -> graphics.blit(
+                            background,
+                            0,
+                            0,
+                            0.0F,
+                            0.0F,
+                            width,
+                            height,
+                            backgroundTextureWidth,
+                            backgroundTextureHeight));
         }
     }
 
