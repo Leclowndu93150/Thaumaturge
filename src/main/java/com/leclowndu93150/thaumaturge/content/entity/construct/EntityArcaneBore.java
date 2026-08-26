@@ -435,7 +435,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
         if (source.getEntity() instanceof LivingEntity living && isOwner(living)) {
             Direction face =
-                    Direction.getNearest(living.getX() - getX(), living.getY() - getY(), living.getZ() - getZ());
+                    Direction.getNearest(getX() - living.getX(), getY() - living.getY(), getZ() - living.getZ());
             if (face != Direction.DOWN) {
                 setFacing(face);
             }
@@ -516,6 +516,14 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ISidedHurt
 
     public void setFacing(Direction facing) {
         entityData.set(FACING, facing);
+        this.yHeadRot = switch (facing) {
+            case SOUTH -> 0.0F;
+            case WEST -> 90.0F;
+            case NORTH -> 180.0F;
+            case EAST -> -90.0F;
+            default -> 0.0F;
+        };
+        this.yBodyRot = this.yHeadRot;
     }
 
     public float getCharge() {

@@ -116,10 +116,16 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
         for (Direction direction : Direction.values()) {
             if (Arrays.stream(ignored).anyMatch(d -> d == direction)) continue;
             cursor.setWithOffset(pos, direction);
-            boolean connect = canConnectTo(lvl, cursor.immutable(), direction.getOpposite());
+            boolean connect = canConnectFrom(lvl, pos, direction)
+                    && canConnectTo(lvl, cursor.immutable(), direction.getOpposite());
             next = next.setValue(propertyFor(direction), connect);
         }
         return next;
+    }
+
+    private static boolean canConnectFrom(Level level, BlockPos pos, Direction face) {
+        IEssentiaTransport local = level.getCapability(EssentiaCapabilities.TRANSPORT, pos, face);
+        return local == null || local.isConnectable(face);
     }
 
     public static boolean canConnectTo(Level level, BlockPos neighbourPos, Direction faceFromNeighbour) {
@@ -137,7 +143,8 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
             BlockPos pos,
             BlockPos neighbourPos) {
         if (level instanceof Level lvl) {
-            boolean connect = canConnectTo(lvl, neighbourPos, directionToNeighbour.getOpposite());
+            boolean connect = canConnectFrom(lvl, pos, directionToNeighbour)
+                    && canConnectTo(lvl, neighbourPos, directionToNeighbour.getOpposite());
             return state.setValue(propertyFor(directionToNeighbour), connect);
         }
         return state;
@@ -204,6 +211,13 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
             return next;
         }
         return state;
+    }
+
+    public static void refreshConnectionsAround(LevelAccessor level, BlockPos pos) {
+        refreshConnections(level, pos);
+        for (Direction direction : Direction.values()) {
+            refreshConnections(level, pos.relative(direction));
+        }
     }
 
     @Override
