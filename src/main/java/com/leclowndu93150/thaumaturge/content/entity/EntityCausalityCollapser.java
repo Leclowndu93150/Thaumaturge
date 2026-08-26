@@ -72,7 +72,7 @@ public final class EntityCausalityCollapser extends ThrowableItemProjectile {
                                 0.0);
                 this.level()
                         .addParticle(
-                                new ShieldSparkParticleOptions(0xFFFFFF, SPARK_ALPHA, SPARK_SCALE, SPARK_AGE, false),
+                                new ShieldSparkParticleOptions(0xFFFFFF, SPARK_ALPHA, SPARK_SCALE, SPARK_AGE, 0, false),
                                 this.getX() + this.random.nextGaussian() * SPARK_SPREAD,
                                 this.getY() + this.random.nextGaussian() * SPARK_SPREAD,
                                 this.getZ() + this.random.nextGaussian() * SPARK_SPREAD,

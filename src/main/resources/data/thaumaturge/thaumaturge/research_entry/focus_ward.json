@@ -1,0 +1,45 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_ward.title",
+  "parents": [
+    "thaumaturge:focus_plan"
+  ],
+  "column": 2,
+  "row": 2,
+  "icons": [
+    "focus:thaumaturge:ward"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_ward.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ],
+      "required_research": [
+        "thaumaturge:scanned/aspect/thaumaturge/ordo"
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_ward.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:terra",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

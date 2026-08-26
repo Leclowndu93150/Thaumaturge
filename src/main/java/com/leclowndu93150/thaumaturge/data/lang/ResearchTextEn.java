@@ -204,6 +204,13 @@ public final class ResearchTextEn {
         add.accept(
                 "research.thaumaturge.focus_heal.stage_0",
                 "Infusing targets with victus is a proven way to heal them. Applying the principle to a focus effect should be simple enough.<BR>The effect should be quite devestating against undead.");
+        add.accept("research.thaumaturge.focus_ward.title", "Focus Effect: Ward");
+        add.accept(
+                "research.thaumaturge.focus_ward.stage_0",
+                "Ordo binds a thing to the shape it already has. If I can lay that binding over stone without disturbing the stone itself, the wall would simply refuse to change - no plating, no reinforcement, nothing an onlooker could pry loose.<BR>The trick will be anchoring the pattern to a position rather than to the block sitting in it.");
+        add.accept(
+                "research.thaumaturge.focus_ward.stage_1",
+                "It holds. A warded block cannot be mined, burned, pushed by pistons, or torn apart by explosions, and no creature strong enough to chew through walls will make a mark on it. The block underneath is untouched - remove the ward and it is exactly the stone it always was.<BR>Only I can lift my own wards, and casting the effect a second time on a block I warded will do so. Another thaumaturge's work is beyond me.<BR>The runes are invisible until I hold a focus bearing this pattern, at which point every ward within sight glows: warm gold for mine, dull red for someone else's.<BR>There is a vis cost for each block bound this way, so warding a fortress will not be cheap. Combined with the Plan medium I can at least lay down a wall in one casting.");
         add.accept("research.thaumaturge.focus_curse.title", "Focus Effect: Curse");
         add.accept(
                 "research.thaumaturge.focus_curse.stage_0",

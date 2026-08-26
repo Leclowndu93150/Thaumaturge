@@ -1,0 +1,45 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "indicator": "minecraft:block/blue_concrete",
+    "particle": "thaumaturge:block/tube"
+  },
+  "elements": [
+    {
+      "from": [5.75, 5.75, 4.75],
+      "to": [10.25, 10.25, 5.125],
+      "faces": {
+        "up": { "uv": [5.75, 4.75, 10.25, 5.125], "texture": "#indicator" },
+        "down": { "uv": [5.75, 4.75, 10.25, 5.125], "texture": "#indicator" },
+        "west": { "uv": [4.75, 5.75, 5.125, 10.25], "texture": "#indicator" },
+        "east": { "uv": [4.75, 5.75, 5.125, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
+      }
+    },
+    {
+      "from": [5.75, 5.75, 5.5],
+      "to": [10.25, 10.25, 5.875],
+      "faces": {
+        "up": { "uv": [5.75, 5.5, 10.25, 5.875], "texture": "#indicator" },
+        "down": { "uv": [5.75, 5.5, 10.25, 5.875], "texture": "#indicator" },
+        "west": { "uv": [5.5, 5.75, 5.875, 10.25], "texture": "#indicator" },
+        "east": { "uv": [5.5, 5.75, 5.875, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
+      }
+    },
+    {
+      "from": [5.75, 5.75, 6.25],
+      "to": [10.25, 10.25, 6.625],
+      "faces": {
+        "up": { "uv": [5.75, 6.25, 10.25, 6.625], "texture": "#indicator" },
+        "down": { "uv": [5.75, 6.25, 10.25, 6.625], "texture": "#indicator" },
+        "west": { "uv": [6.25, 5.75, 6.625, 10.25], "texture": "#indicator" },
+        "east": { "uv": [6.25, 5.75, 6.625, 10.25], "texture": "#indicator" },
+        "north": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" },
+        "south": { "uv": [5.75, 5.75, 10.25, 10.25], "texture": "#indicator" }
+      }
+    }
+  ]
+}

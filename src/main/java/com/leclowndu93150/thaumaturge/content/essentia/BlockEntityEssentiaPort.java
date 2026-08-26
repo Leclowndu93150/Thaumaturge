@@ -124,7 +124,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     @Override
     public int getSuctionAmount(Direction face) {
-        return input ? SUCTION : 0;
+        return input && face == tubeSide() ? SUCTION : 0;
     }
 
     @Override
@@ -144,7 +144,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (input
+        if (canInputFrom(face)
                 && level instanceof ServerLevel server
                 && amount == 1
                 && sources.insert(server, aspect, WORK_INTERVAL)) {

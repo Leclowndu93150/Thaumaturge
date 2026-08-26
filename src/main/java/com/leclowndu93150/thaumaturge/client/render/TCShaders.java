@@ -14,6 +14,7 @@ public final class TCShaders {
     private static ShaderInstance ender;
     private static ShaderInstance portal;
     private static ShaderInstance voidStream;
+    private static ShaderInstance wardAdd;
 
     private TCShaders() {}
 
@@ -29,6 +30,10 @@ public final class TCShaders {
         return voidStream;
     }
 
+    public static ShaderInstance wardAdd() {
+        return wardAdd;
+    }
+
     @SubscribeEvent
     public static void register(RegisterShadersEvent event) throws IOException {
         event.registerShader(
@@ -42,5 +47,9 @@ public final class TCShaders {
                 new ShaderInstance(
                         event.getResourceProvider(), TCIds.rl("void_stream"), DefaultVertexFormat.POSITION_TEX_COLOR),
                 shader -> voidStream = shader);
+        event.registerShader(
+                new ShaderInstance(
+                        event.getResourceProvider(), TCIds.rl("ward_add"), DefaultVertexFormat.POSITION_TEX_COLOR),
+                shader -> wardAdd = shader);
     }
 }

@@ -16,8 +16,14 @@ public final class JarCapabilities {
 
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR.get(), (be, side) -> be);
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR_VOID.get(), (be, side) -> be);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.JAR.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.JAR_VOID.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
                 (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),

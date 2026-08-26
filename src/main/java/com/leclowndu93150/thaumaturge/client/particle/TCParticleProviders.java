@@ -25,6 +25,7 @@ public final class TCParticleProviders {
         event.registerSpecial(TCParticles.BUBBLE.get(), new BubbleParticle.Provider());
         event.registerSpecial(TCParticles.SLIMY_BUBBLE.get(), new SlimyBubbleParticle.Provider());
         event.registerSpecial(TCParticles.SPARK.get(), new SparkParticle.Provider());
+        event.registerSpecial(TCParticles.WARD_FLASH.get(), new WardFlashParticle.Provider());
         event.registerSpecial(TCParticles.BURST.get(), new BurstParticle.Provider());
         event.registerSpecial(TCParticles.SCAN_GLYPH.get(), new ScanGlyphParticle.Provider());
         event.registerSpecial(TCParticles.SLASH.get(), new SlashParticle.Provider());

@@ -29,7 +29,9 @@ public final class DeviceCapabilities {
                 TCBlockEntities.VIS_GENERATOR.get(),
                 (be, side) -> side == be.outputFace() ? be : null);
         event.registerBlockEntity(
-                EssentiaCapabilities.TRANSPORT, TCBlockEntities.ESSENTIA_PORT.get(), (be, side) -> be);
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ESSENTIA_PORT.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.CONDENSER.get(), (be, side) -> be);
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, TCBlockEntities.VOID_SIPHON.get(), (be, side) -> be.output());
