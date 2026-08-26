@@ -123,7 +123,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         TCItemTags.ORES_AMBER);
         tag(TCItemTags.RARE_EARTH_CHANCE_NORMAL)
                 .addOptionalTag(TCItemTags.ORES_SILVER)
-                .addTags(Tags.Items.ORES_GOLD, TCItemTags.CLUSTERS);
+                .addTags(Tags.Items.ORES_GOLD, Tags.Items.RAW_MATERIALS_GOLD, TCItemTags.CLUSTERS);
         tag(TCItemTags.RARE_EARTH_CHANCE_LOW)
                 .addOptionalTags(TCItemTags.ORES_TIN, TCItemTags.ORES_LEAD)
                 .addTags(
@@ -132,7 +132,9 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         Tags.Items.ORES_COPPER,
                         Tags.Items.ORES_LAPIS,
                         Tags.Items.ORES_REDSTONE,
-                        Tags.Items.ORES_QUARTZ);
+                        Tags.Items.ORES_QUARTZ,
+                        Tags.Items.RAW_MATERIALS_IRON,
+                        Tags.Items.RAW_MATERIALS_COPPER);
 
         tag(ItemTags.DYEABLE)
                 .add(
