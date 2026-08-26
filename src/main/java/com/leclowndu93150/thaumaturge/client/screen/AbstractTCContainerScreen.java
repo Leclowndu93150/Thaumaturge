@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
+import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -45,8 +46,10 @@ public abstract class AbstractTCContainerScreen<T extends AbstractContainerMenu>
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        renderBackgroundTexture(graphics);
-        renderBackgroundOverlay(graphics, mouseX, mouseY, partialTick);
+        GuiBlend.withAlphaBlend(graphics, () -> {
+            renderBackgroundTexture(graphics);
+            renderBackgroundOverlay(graphics, mouseX, mouseY, partialTick);
+        });
     }
 
     protected void renderBackgroundTexture(GuiGraphics graphics) {
