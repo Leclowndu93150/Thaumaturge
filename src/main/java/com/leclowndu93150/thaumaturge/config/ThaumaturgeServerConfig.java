@@ -17,11 +17,10 @@ public final class ThaumaturgeServerConfig {
                 .define("lavaTurnIntoBlaze", true);
         builder.pop();
         builder.push("liquid_death");
-		builder.comment("Liquid Death will roll every aspect of the entity killed by it with the formula: floor(rand(bound1, bound2) * <aspect count>)");
-        LD_DROP_RATE_BOUND_1 = builder
-                .defineInRange("dropRateBound1", 0.1, 0.0, 1.0);
-        LD_DROP_RATE_BOUND_2 = builder
-                .defineInRange("dropRateBound2", 0.25, 0.0, 1.0);
+        builder.comment(
+                "Liquid Death will roll every aspect of the entity killed by it with the formula: floor(rand(bound1, bound2) * <aspect count>)");
+        LD_DROP_RATE_BOUND_1 = builder.defineInRange("dropRateBound1", 0.1, 0.0, 1.0);
+        LD_DROP_RATE_BOUND_2 = builder.defineInRange("dropRateBound2", 0.25, 0.0, 1.0);
         builder.pop();
         SPEC = builder.build();
     }

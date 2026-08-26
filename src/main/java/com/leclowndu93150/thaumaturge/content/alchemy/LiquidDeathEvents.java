@@ -40,7 +40,7 @@ public final class LiquidDeathEvents {
         for (AspectInstance instance : aspects.entries()) {
             int count = Mth.floor(Mth.nextDouble(random, min, max) * instance.amount());
             if (count > 0) {
-				// Drop at ~chest height
+                // Drop at ~chest height
                 event.getDrops()
                         .add(new ItemEntity(
                                 level,
