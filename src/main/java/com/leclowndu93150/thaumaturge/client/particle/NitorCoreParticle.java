@@ -61,7 +61,7 @@ public final class NitorCoreParticle extends SingleQuadParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.additive(this.sheet);
+        return TCParticleLayers.translucentNoDepth(this.sheet);
     }
 
     @Override
