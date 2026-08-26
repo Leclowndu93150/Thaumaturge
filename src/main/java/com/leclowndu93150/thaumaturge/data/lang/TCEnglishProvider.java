@@ -1142,6 +1142,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.wandtable.problem.no_effects", "The spell needs at least one effect");
         add("gui.thaumaturge.wandtable.problem.xp", "Requires %s experience levels");
         add("gui.thaumaturge.wandtable.problem.ready", "Ready to craft!");
+        add("gui.thaumaturge.golembuilder.stat.health", "Health");
+        add("gui.thaumaturge.golembuilder.stat.armor", "Armour");
+        add("gui.thaumaturge.golembuilder.stat.damage", "Damage");
+        add("gui.thaumaturge.golembuilder.craft", "Assemble Golem");
+        add("gui.thaumaturge.golembuilder.problem.in_progress", "Assembly in progress...");
+        add("gui.thaumaturge.golembuilder.problem.no_parts", "No golem parts are available");
+        add("gui.thaumaturge.golembuilder.problem.component", "Missing %sx %s");
+        add("gui.thaumaturge.golembuilder.problem.ready", "Ready to assemble!");
     }
 
     private void langEnchantments() {
@@ -1340,6 +1348,14 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("golem.prop.leave", "Always leave at least 1 item");
         add("golem.prop.silk", "Use Silk Touch");
         add("gui.thaumaturge.seal", "Seal");
+        add("gui.thaumaturge.seal.priority_down", "Lower Priority");
+        add("gui.thaumaturge.seal.priority_up", "Raise Priority");
+        add("gui.thaumaturge.seal.color_previous", "Previous Colour");
+        add("gui.thaumaturge.seal.color_next", "Next Colour");
+        add("gui.thaumaturge.seal.area_shrink", "Shrink Area (%s)");
+        add("gui.thaumaturge.seal.area_grow", "Grow Area (%s)");
+        add("gui.thaumaturge.golem_builder.previous", "Previous");
+        add("gui.thaumaturge.golem_builder.next", "Next");
         add("golem.prop.blacklist", "Blacklist");
         add("golem.prop.whitelist", "Whitelist");
         add("button.category.0", "Priority/Locking");
