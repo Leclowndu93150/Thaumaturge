@@ -297,14 +297,6 @@ public final class TCCommands {
                 .orElseThrow(() -> ERROR_INVALID_NODE_TYPE.create(typeName));
 
         NodeLocationIndex index = NodeLocationIndex.get(level);
-        if (!index.isMigrationComplete()) {
-            int total = index.migrationTotal();
-            int scanned = Math.max(0, total - index.migrationRemaining());
-            ctx.getSource()
-                    .sendFailure(Component.literal(
-                            "Indexing nodes in existing chunks: " + scanned + "/" + total + ". Try again shortly."));
-            return 0;
-        }
         BlockPos origin = player.blockPosition();
         Optional<BlockPos> result;
         while ((result = index.findNearest(origin, type)).isPresent()) {
@@ -318,7 +310,10 @@ public final class TCCommands {
             index.remove(candidate);
         }
         if (result.isEmpty()) {
-            ctx.getSource().sendFailure(Component.literal("No indexed " + type.getSerializedName() + " node found"));
+            ctx.getSource()
+                    .sendFailure(Component.literal("No known "
+                            + type.getSerializedName()
+                            + " node found; nodes in legacy chunks are indexed when those chunks load"));
             return 0;
         }
 
