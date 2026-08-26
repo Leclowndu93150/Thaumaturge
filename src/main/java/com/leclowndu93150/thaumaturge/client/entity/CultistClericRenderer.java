@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
+import com.leclowndu93150.thaumaturge.client.effect.OccludingEffectRenderer;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -67,10 +68,16 @@ public final class CultistClericRenderer
         poseStack.pushPose();
         poseStack.translate(0.0F, bob, 0.0F);
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, light);
-        poseStack.translate(altarFromEntity.x, altarFromEntity.y, altarFromEntity.z);
-        FloatyLineRenderer.draw(
-                poseStack, buffers, clericFromAltar, time, LINE_COLOR, LINE_SPEED, lineFade, LINE_WIDTH);
         poseStack.popPose();
+        OccludingEffectRenderer.enqueueBeam(
+                position,
+                new Vec3(anchor.getX() + 0.5, anchor.getY() + LINE_END_HEIGHT, anchor.getZ() + 0.5),
+                clericFromAltar,
+                time,
+                LINE_COLOR,
+                LINE_SPEED,
+                lineFade,
+                LINE_WIDTH);
     }
 
     @Override
