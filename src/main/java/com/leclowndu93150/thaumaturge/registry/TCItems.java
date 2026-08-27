@@ -1029,8 +1029,8 @@ public final class TCItems {
                             .rarity(Rarity.RARE)));
 
     public static final int TRINKET_APPRENTICE_DISCOUNT = 5;
-    private static final int AMULET_VIS_FOUND_INTERVAL = 40;
-    private static final int AMULET_VIS_CRAFTED_INTERVAL = 5;
+    private static final int AMULET_VIS_FOUND_INTERVAL = 100;
+    private static final int AMULET_VIS_CRAFTED_INTERVAL = 20;
 
     public static final DeferredItem<TrinketItem> AMULET_MUNDANE =
             ITEMS.registerItem("amulet_mundane", TrinketItem::new, new Item.Properties().stacksTo(1));
