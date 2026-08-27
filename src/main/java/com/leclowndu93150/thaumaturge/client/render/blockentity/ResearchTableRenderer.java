@@ -45,6 +45,11 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     }
 
     @Override
+    public boolean shouldRenderOffScreen(BlockEntityResearchTable table) {
+        return true;
+    }
+
+    @Override
     public void render(
             BlockEntityResearchTable table,
             float partialTick,

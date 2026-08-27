@@ -175,6 +175,11 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
     }
 
     @Override
+    public boolean shouldRenderOffScreen(BlockEntityEldritchObelisk obelisk) {
+        return true;
+    }
+
+    @Override
     public int getViewDistance() {
         return 64;
     }
