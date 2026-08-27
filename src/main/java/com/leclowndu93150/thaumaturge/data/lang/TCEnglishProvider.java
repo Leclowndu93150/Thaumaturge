@@ -788,7 +788,7 @@ public final class TCEnglishProvider extends LanguageProvider {
                 "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
         add(
                 "research.thaumaturge.oculus.stage_1",
-                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
+                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>The eyes are spent in the opening, and a keystone left empty will take four more. Seat them and channel again and the door swings onto somewhere else entirely - an altar already used is not an altar exhausted.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
         add(
                 "research.thaumaturge.enter_outer_lands.stage_0",
