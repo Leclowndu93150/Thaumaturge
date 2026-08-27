@@ -221,6 +221,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add(
                 "gui.thaumaturge.arcane_workbench.wand_pay.tooltip",
                 "Primal vis the wand will contribute in place of crystals (%s per crystal)");
+        add(
+                "gui.thaumaturge.arcane_workbench.crystal_needed.tooltip",
+                "Needs a vis crystal, or %s vis of this primal from a wand in the wand slot");
         add("button.thaumaturge.create_theory", "Create Theory");
         add("button.thaumaturge.complete_theory", "Complete Theory");
         add("button.thaumaturge.scrap_theory", "Scrap Theory");
