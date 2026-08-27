@@ -221,6 +221,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add(
                 "gui.thaumaturge.arcane_workbench.wand_pay.tooltip",
                 "Primal vis the wand will contribute in place of crystals (%s per crystal)");
+        add(
+                "gui.thaumaturge.arcane_workbench.crystal_needed.tooltip",
+                "Needs a vis crystal, or %s vis of this primal from a wand in the wand slot");
         add("button.thaumaturge.create_theory", "Create Theory");
         add("button.thaumaturge.complete_theory", "Complete Theory");
         add("button.thaumaturge.scrap_theory", "Scrap Theory");
@@ -617,12 +620,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
+        add("entity.thaumaturge.brainy_drowned", "Angry Drowned");
+        add("entity.thaumaturge.brainy_husk", "Angry Husk");
         add("entity.thaumaturge.giant_brainy_zombie", "Furious Zombie");
         add("entity.thaumaturge.firebat", "Firebat");
         add("entity.thaumaturge.mind_spider", "Mind Spider");
         add("item.thaumaturge.brain", "Zombie Brain");
 
         add("item.thaumaturge.brainy_zombie_spawn_egg", "Angry Zombie Spawn Egg");
+        add("item.thaumaturge.brainy_drowned_spawn_egg", "Angry Drowned Spawn Egg");
+        add("item.thaumaturge.brainy_husk_spawn_egg", "Angry Husk Spawn Egg");
         add("item.thaumaturge.giant_brainy_zombie_spawn_egg", "Furious Zombie Spawn Egg");
         add("item.thaumaturge.firebat_spawn_egg", "Firebat Spawn Egg");
         add("item.thaumaturge.mind_spider_spawn_egg", "Mind Spider Spawn Egg");
@@ -781,7 +788,7 @@ public final class TCEnglishProvider extends LanguageProvider {
                 "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
         add(
                 "research.thaumaturge.oculus.stage_1",
-                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
+                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>The eyes are spent in the opening, and a keystone left empty will take four more. Seat them and channel again and the door swings onto somewhere else entirely - an altar already used is not an altar exhausted.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
         add(
                 "research.thaumaturge.enter_outer_lands.stage_0",
@@ -951,6 +958,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.focus_pouch.count", "Holds %1$s/%2$s foci");
         add("tc.wand.notenoughvis", "The wand does not hold enough vis");
         add("tc.node.name", "Aura Node");
+        add("tc.node.name.energized", "Energized Aura Node");
         add("tc.node.jar.aspect", "%1$s %2$s");
         add("tc.node.typemod", "%1$s, %2$s");
         add("nodetype.thaumaturge.normal", "Normal");

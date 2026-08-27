@@ -34,6 +34,8 @@ public final class ChampionWhitelistProvider extends DataMapProvider {
         add(b, EntityType.SKELETON, 0);
         add(b, EntityType.WITCH, 1);
         add(b, TCEntities.BRAINY_ZOMBIE.get(), 0);
+        add(b, TCEntities.BRAINY_DROWNED.get(), 0);
+        add(b, TCEntities.BRAINY_HUSK.get(), 0);
         add(b, TCEntities.GIANT_BRAINY_ZOMBIE.get(), 0);
         add(b, TCEntities.ELDRITCH_CRAB.get(), 0);
         add(b, TCEntities.TAINTACLE.get(), 2);

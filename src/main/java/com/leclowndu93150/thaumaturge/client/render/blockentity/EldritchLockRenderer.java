@@ -224,6 +224,11 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     }
 
     @Override
+    public boolean shouldRenderOffScreen(BlockEntityEldritchLock lock) {
+        return true;
+    }
+
+    @Override
     public int getViewDistance() {
         return 64;
     }

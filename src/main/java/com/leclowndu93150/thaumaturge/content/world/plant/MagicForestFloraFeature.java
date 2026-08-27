@@ -58,6 +58,6 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     }
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
-        return new BlockPos(x, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z), z);
+        return new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
     }
 }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistKnight;
@@ -20,6 +21,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,14 +35,17 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
     private static final int SPAWN_INTERVAL = 40;
     private static final int MAX_KNIGHTS = 8;
     private static final int SCAN_RANGE = 24;
+    private static final int MAZE_MIN_SPAN = 15;
+    private static final int MAZE_SPAN_STEPS = 8;
+    private static final long UNLINKED_MAZE = Long.MIN_VALUE;
 
     private boolean spawner;
     private boolean mazeChecked;
-    private boolean open;
     private boolean spawnedClerics;
     private byte spawnType;
     private byte eyes;
     private int counter;
+    private long mazeChunk = UNLINKED_MAZE;
 
     public BlockEntityEldritchAltar(BlockPos pos, BlockState state) {
         super(TCBlockEntities.ELDRITCH_ALTAR.get(), pos, state);
@@ -163,8 +168,8 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
             return false;
         }
         MazeSavedData maze = MazeSavedData.get(serverLevel);
-        int w = 15 + serverLevel.getRandom().nextInt(8) * 2;
-        int h = 15 + serverLevel.getRandom().nextInt(8) * 2;
+        int w = mazeSpan(serverLevel);
+        int h = mazeSpan(serverLevel);
         int chunkX = worldPosition.getX() >> 4;
         int chunkZ = worldPosition.getZ() >> 4;
         if (!maze.mazesInRange(chunkX, chunkZ, w, h)) {
@@ -174,17 +179,52 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         return true;
     }
 
+    private static int mazeSpan(ServerLevel level) {
+        return MAZE_MIN_SPAN + level.getRandom().nextInt(MAZE_SPAN_STEPS) * 2;
+    }
+
     public void openPortal() {
-        if (level == null || level.isClientSide()) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        open = true;
+        linkMaze(serverLevel);
+        eyes = 0;
         BlockPos above = worldPosition.above();
         level.removeBlock(above, false);
         level.setBlock(above, TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
         level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+    }
+
+    private void linkMaze(ServerLevel serverLevel) {
+        MazeSavedData maze = MazeSavedData.get(serverLevel);
+        ChunkPos anchor;
+        if (mazeChunk == UNLINKED_MAZE) {
+            anchor = new ChunkPos(worldPosition);
+        } else {
+            int w = mazeSpan(serverLevel);
+            int h = mazeSpan(serverLevel);
+            ChunkPos fresh = maze.allocateRegion(w, h);
+            if (fresh == null) {
+                Thaumaturge.LOGGER.error(
+                        "No free labyrinth region left for the eldritch altar at {}, reopening the previous labyrinth",
+                        worldPosition);
+                return;
+            }
+            maze.generateMaze(fresh.x, fresh.z, w, h, serverLevel.getRandom().nextLong());
+            anchor = fresh;
+        }
+        mazeChunk = anchor.toLong();
+        maze.setReturn(anchor, worldPosition);
+    }
+
+    public long getMazeChunk() {
+        return mazeChunk;
+    }
+
+    public static boolean isLinkedMaze(long chunk) {
+        return chunk != UNLINKED_MAZE;
     }
 
     public boolean isSpawner() {
@@ -211,16 +251,12 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         this.eyes = eyes;
     }
 
-    public boolean isOpen() {
-        return open;
-    }
-
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         eyes = input.getByte("eyes");
         mazeChecked = input.getBoolean("mazeChecked");
-        open = input.getBoolean("open");
+        mazeChunk = input.contains("mazeChunk") ? input.getLong("mazeChunk") : UNLINKED_MAZE;
         spawnedClerics = input.getBoolean("spawnedClerics");
         spawner = input.getBoolean("spawner");
         spawnType = input.getByte("spawntype");
@@ -231,7 +267,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         super.saveAdditional(output, registries);
         output.putByte("eyes", eyes);
         output.putBoolean("mazeChecked", mazeChecked);
-        output.putBoolean("open", open);
+        output.putLong("mazeChunk", mazeChunk);
         output.putBoolean("spawnedClerics", spawnedClerics);
         output.putBoolean("spawner", spawner);
         output.putByte("spawntype", spawnType);

@@ -25,6 +25,7 @@ public final class TCBiomeTags {
     public static final TagKey<Biome> HAS_CINDERPEARL = biome("has_cinderpearl");
     public static final TagKey<Biome> HAS_MOUND = biome("has_structure/mound");
     public static final TagKey<Biome> HAS_ELDRITCH_OBELISK = biome("has_structure/eldritch_obelisk");
+    public static final TagKey<Biome> HAS_BRAINY_HUSK = biome("has_spawn/brainy_husk");
     public static final TagKey<Biome> IS_MAGICAL = biome("is_magical");
     public static final TagKey<Biome> IS_SPOOKY = biome("is_spooky");
 

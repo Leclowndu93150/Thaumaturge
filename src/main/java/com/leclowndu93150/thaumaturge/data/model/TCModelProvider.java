@@ -253,6 +253,8 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.WISP_SPAWN_EGG.get());
         flatItem(TCItems.BRAINY_ZOMBIE_SPAWN_EGG.get());
         flatItem(TCItems.GIANT_BRAINY_ZOMBIE_SPAWN_EGG.get());
+        flatItem(TCItems.BRAINY_DROWNED_SPAWN_EGG.get());
+        flatItem(TCItems.BRAINY_HUSK_SPAWN_EGG.get());
         flatItem(TCItems.BRAIN.get());
         flatItem(TCItems.FIREBAT_SPAWN_EGG.get());
         flatItem(TCItems.MIND_SPIDER_SPAWN_EGG.get());
