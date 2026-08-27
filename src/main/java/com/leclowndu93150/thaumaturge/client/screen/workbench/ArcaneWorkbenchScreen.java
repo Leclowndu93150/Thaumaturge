@@ -33,6 +33,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     private static final int WAND_COST_Y_OFFSET = 129;
     private static final int WAND_COST_HOVER_HEIGHT = 6;
     private static final int WAND_COST_HOVER_MIN_HALF_WIDTH = 10;
+    private static final int SLOT_SIZE = 16;
     private static final DecimalFormat WAND_COST_FORMAT = new DecimalFormat("#.##");
 
     private Component wandTooltip;
@@ -82,12 +83,10 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
                 int color = instance.aspect().value().color();
                 int index = MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(
                         instance.aspect().getKey());
+                int slotX = x + MenuArcaneWorkbench.CRYSTAL_X[index];
+                int slotY = y + MenuArcaneWorkbench.CRYSTAL_Y[index];
                 graphics.pose().pushPose();
-                graphics.pose()
-                        .translate(
-                                x + MenuArcaneWorkbench.CRYSTAL_X[index] + 7.5F,
-                                y + MenuArcaneWorkbench.CRYSTAL_Y[index] + 8F,
-                                0.0F);
+                graphics.pose().translate(slotX + 7.5F, slotY + 8F, 0.0F);
                 graphics.pose()
                         .mulPose(Axis.ZP.rotationDegrees(
                                 index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) % 360));
@@ -105,6 +104,11 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
                         256,
                         ARGB32.color(128, color));
                 graphics.pose().popPose();
+                if (mouseX >= slotX && mouseX < slotX + SLOT_SIZE && mouseY >= slotY && mouseY < slotY + SLOT_SIZE) {
+                    wandTooltip = Component.translatable(
+                            "gui.thaumaturge.arcane_workbench.crystal_needed.tooltip",
+                            WandEconomy.CRYSTAL_SUBSTITUTE_VIS);
+                }
             }
         }
 
