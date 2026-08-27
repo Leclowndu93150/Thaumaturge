@@ -42,7 +42,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float RAY_ALPHA = 0.66F;
 
     private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditive(ParticleTextures.PARTICLES);
+    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
 
     private final RandomSource rayRandom = RandomSource.create();
 

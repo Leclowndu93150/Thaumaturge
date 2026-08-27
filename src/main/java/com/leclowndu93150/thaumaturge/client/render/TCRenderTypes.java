@@ -14,6 +14,8 @@ public final class TCRenderTypes {
 
     private static final RenderStateShard.ShaderStateShard PARTICLE_SHADER =
             new RenderStateShard.ShaderStateShard(TCShaders::fx);
+    private static final RenderStateShard.ShaderStateShard PARTICLE_ALPHA_TEST_SHADER =
+            new RenderStateShard.ShaderStateShard(TCShaders::fxAlphaTest);
     private static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER =
             new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
     private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =
@@ -27,6 +29,25 @@ public final class TCRenderTypes {
             RenderStateShard.LEQUAL_DEPTH_TEST,
             RenderStateShard.COLOR_WRITE,
             false));
+    private static final Function<ResourceLocation, RenderType> FX_ADDITIVE_BLURRED = Util.memoize(texture -> particle(
+            "tc_fx_additive_blurred",
+            texture,
+            PARTICLE_SHADER,
+            RenderStateShard.ADDITIVE_TRANSPARENCY,
+            RenderStateShard.LEQUAL_DEPTH_TEST,
+            RenderStateShard.COLOR_WRITE,
+            false,
+            true));
+    private static final Function<ResourceLocation, RenderType> FX_ADDITIVE_ALPHA_TEST =
+            Util.memoize(texture -> particle(
+                    "tc_fx_additive_alpha_test",
+                    texture,
+                    PARTICLE_ALPHA_TEST_SHADER,
+                    RenderStateShard.ADDITIVE_TRANSPARENCY,
+                    RenderStateShard.LEQUAL_DEPTH_TEST,
+                    RenderStateShard.COLOR_WRITE,
+                    false,
+                    false));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT = Util.memoize(texture -> particle(
             "tc_fx_translucent",
             texture,
@@ -34,6 +55,16 @@ public final class TCRenderTypes {
             RenderStateShard.LEQUAL_DEPTH_TEST,
             RenderStateShard.COLOR_WRITE,
             true));
+    private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_BLURRED =
+            Util.memoize(texture -> particle(
+                    "tc_fx_translucent_blurred",
+                    texture,
+                    PARTICLE_SHADER,
+                    RenderStateShard.TRANSLUCENT_TRANSPARENCY,
+                    RenderStateShard.LEQUAL_DEPTH_TEST,
+                    RenderStateShard.COLOR_WRITE,
+                    true,
+                    true));
     private static final Function<ResourceLocation, RenderType> FX_ADDITIVE_NO_DEPTH = Util.memoize(texture -> particle(
             "tc_fx_additive_no_depth",
             texture,
@@ -166,8 +197,20 @@ public final class TCRenderTypes {
         return FX_ADDITIVE.apply(texture);
     }
 
+    public static RenderType fxAdditiveBlurred(ResourceLocation texture) {
+        return FX_ADDITIVE_BLURRED.apply(texture);
+    }
+
+    public static RenderType fxAdditiveAlphaTest(ResourceLocation texture) {
+        return FX_ADDITIVE_ALPHA_TEST.apply(texture);
+    }
+
     public static RenderType fxTranslucent(ResourceLocation texture) {
         return FX_TRANSLUCENT.apply(texture);
+    }
+
+    public static RenderType fxTranslucentBlurred(ResourceLocation texture) {
+        return FX_TRANSLUCENT_BLURRED.apply(texture);
     }
 
     public static RenderType fxAdditiveNoDepth(ResourceLocation texture) {
@@ -225,6 +268,18 @@ public final class TCRenderTypes {
             RenderStateShard.DepthTestStateShard depthTest,
             RenderStateShard.WriteMaskStateShard writeMask,
             boolean sort) {
+        return particle(name, texture, PARTICLE_SHADER, transparency, depthTest, writeMask, sort, false);
+    }
+
+    private static RenderType particle(
+            String name,
+            ResourceLocation texture,
+            RenderStateShard.ShaderStateShard shader,
+            RenderStateShard.TransparencyStateShard transparency,
+            RenderStateShard.DepthTestStateShard depthTest,
+            RenderStateShard.WriteMaskStateShard writeMask,
+            boolean sort,
+            boolean blur) {
         return RenderType.create(
                 name,
                 DefaultVertexFormat.PARTICLE,
@@ -233,8 +288,8 @@ public final class TCRenderTypes {
                 false,
                 sort,
                 RenderType.CompositeState.builder()
-                        .setShaderState(PARTICLE_SHADER)
-                        .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+                        .setShaderState(shader)
+                        .setTextureState(new RenderStateShard.TextureStateShard(texture, blur, false))
                         .setTransparencyState(transparency)
                         .setDepthTestState(depthTest)
                         .setWriteMaskState(writeMask)

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
@@ -29,7 +30,7 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/grappler.png");
     private static final ResourceLocation ROPE = TCIds.rl("textures/misc/rope.png");
     private static final RenderType ROPE_TYPE = TCRenderTypes.fxTranslucent(ROPE);
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditive(ParticleTextures.PARTICLES);
+    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
 
     private static final double ROPE_RADIUS = 0.025;
     private static final int ROPE_SIDES = 4;
@@ -65,8 +66,6 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
         model.root.render(
                 poseStack, buffers.getBuffer(RenderType.entityCutout(TEXTURE)), packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
-        poseStack.pushPose();
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         float bob = Mth.sin(ticks / 5.0F) * 0.2F + 0.2F;
         float glowScale = 1.0F + bob;
         float u0 = (1 + ticks % 6) / 32.0F;
@@ -74,9 +73,26 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
         float v0 = 0.21875F;
         float v1 = v0 + 0.03125F;
         int glowTint = ARGB32.colorFromFloat(GLOW_ALPHA, 1.0F, 1.0F, 1.0F);
-        VertexConsumer glowBuffer = buffers.getBuffer(GLOW_TYPE);
-        Matrix4f glowMat = poseStack.last().pose();
         float half = GLOW_HALF * glowScale;
+        Vec3 glowOrigin = entity.getPosition(partialTicks);
+        LateWorldRenderQueue.enqueue(glowOrigin, (latePose, lateBuffers) -> {
+            latePose.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            writeGlow(lateBuffers.getBuffer(GLOW_TYPE), latePose.last().pose(), half, u0, v0, u1, v1, glowTint);
+        });
+        if (points.size() > 2) {
+            submitRope(buffers.getBuffer(ROPE_TYPE), poseStack.last().pose(), points, packedLight);
+        }
+    }
+
+    private static void writeGlow(
+            VertexConsumer glowBuffer,
+            Matrix4f glowMat,
+            float half,
+            float u0,
+            float v0,
+            float u1,
+            float v1,
+            int glowTint) {
         glowBuffer
                 .addVertex(glowMat, -half, -half, 0.0F)
                 .setUv(u0, v1)
@@ -97,10 +113,6 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
                 .setUv(u0, v0)
                 .setColor(glowTint)
                 .setLight(EMISSIVE_LIGHT);
-        poseStack.popPose();
-        if (points.size() > 2) {
-            submitRope(buffers.getBuffer(ROPE_TYPE), poseStack.last().pose(), points, packedLight);
-        }
     }
 
     @Override

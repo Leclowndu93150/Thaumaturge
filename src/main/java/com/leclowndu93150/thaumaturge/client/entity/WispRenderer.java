@@ -2,12 +2,13 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
-import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -15,28 +16,24 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class WispRenderer extends EntityRenderer<WispEntity> {
     private static final ResourceLocation NODES = TCIds.rl("textures/misc/auranodes.png");
 
-    private static final RenderType PARTICLES_TYPE = TCRenderTypes.fxAdditive(ParticleTextures.PARTICLES);
-    private static final RenderType NODES_TYPE = TCRenderTypes.fxAdditive(NODES);
+    private static final RenderType NODES_TYPE = TCRenderTypes.fxAdditiveAlphaTest(NODES);
 
-    private static final int PARTICLE_GRID = 64;
     private static final int NODE_GRID = 32;
-    private static final int CORE_FRAME_START = 512;
-    private static final int HALO_FRAME_START = 320;
     private static final int NODE_FRAME_START = 800;
     private static final int FRAME_SPREAD = 16;
     private static final float CORE_SCALE = 0.4F;
-    private static final float HALO_SCALE = 0.75F;
-    private static final float NODE_SCALE = 0.75F;
-    private static final float HALO_ALPHA = 0.25F;
-    private static final float NODE_ALPHA = 0.5F;
+    private static final float AURA_SCALE = 0.7F;
+    private static final float CORE_ALPHA = 0.9F;
+    private static final float AURA_ALPHA = 0.4F;
     private static final float QUAD_HALF_FACTOR = 0.5F;
     private static final float CENTER_Y = 0.45F;
-    private static final int EMISSIVE_LIGHT = 0x00F000F0;
+    private static final int LEGACY_LIGHT = LightTexture.pack(14, 0);
 
     public WispRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -57,29 +54,14 @@ public final class WispRenderer extends EntityRenderer<WispEntity> {
         Holder<IAspect> aspect = entity.aspect();
         int color = aspect == null ? 0xFFFFFF : aspect.value().color();
         int frame = entity.tickCount % FRAME_SPREAD;
-        poseStack.pushPose();
-        poseStack.translate(0.0F, CENTER_Y, 0.0F);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-        drawQuad(
-                buffers,
-                poseStack,
-                PARTICLES_TYPE,
-                PARTICLE_GRID,
-                CORE_FRAME_START + frame,
-                CORE_SCALE,
-                0xFFFFFF,
-                1.0F);
-        drawQuad(
-                buffers,
-                poseStack,
-                PARTICLES_TYPE,
-                PARTICLE_GRID,
-                HALO_FRAME_START + frame,
-                HALO_SCALE,
-                0xFFFFFF,
-                HALO_ALPHA);
-        drawQuad(buffers, poseStack, NODES_TYPE, NODE_GRID, NODE_FRAME_START + frame, NODE_SCALE, color, NODE_ALPHA);
-        poseStack.popPose();
+        Vec3 origin = entity.getPosition(partialTick).add(0.0, CENTER_Y, 0.0);
+        LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> {
+            latePose.mulPose(
+                    Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+            int nodeFrame = NODE_FRAME_START + frame;
+            drawQuad(lateBuffers, latePose, NODES_TYPE, NODE_GRID, nodeFrame, AURA_SCALE, color, AURA_ALPHA);
+            drawQuad(lateBuffers, latePose, NODES_TYPE, NODE_GRID, nodeFrame, CORE_SCALE, 0xFFFFFF, CORE_ALPHA);
+        });
     }
 
     @Override
@@ -106,9 +88,9 @@ public final class WispRenderer extends EntityRenderer<WispEntity> {
                 alpha, ARGB32.red(color) / 255.0F, ARGB32.green(color) / 255.0F, ARGB32.blue(color) / 255.0F);
         VertexConsumer buffer = buffers.getBuffer(type);
         Matrix4f mat = poseStack.last().pose();
-        buffer.addVertex(mat, -half, -half, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, -half, half, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, half, half, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
-        buffer.addVertex(mat, half, -half, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
+        buffer.addVertex(mat, -half, -half, 0.0F).setUv(u1, v1).setColor(tint).setLight(LEGACY_LIGHT);
+        buffer.addVertex(mat, -half, half, 0.0F).setUv(u1, v0).setColor(tint).setLight(LEGACY_LIGHT);
+        buffer.addVertex(mat, half, half, 0.0F).setUv(u0, v0).setColor(tint).setLight(LEGACY_LIGHT);
+        buffer.addVertex(mat, half, -half, 0.0F).setUv(u0, v1).setColor(tint).setLight(LEGACY_LIGHT);
     }
 }

@@ -14,6 +14,7 @@ public final class TCShaders {
     private static ShaderInstance ender;
     private static ShaderInstance occludingEffect;
     private static ShaderInstance fx;
+    private static ShaderInstance fxAlphaTest;
     private static ShaderInstance portal;
     private static ShaderInstance voidStream;
     private static ShaderInstance wardAdd;
@@ -30,6 +31,10 @@ public final class TCShaders {
 
     public static ShaderInstance fx() {
         return fx;
+    }
+
+    public static ShaderInstance fxAlphaTest() {
+        return fxAlphaTest;
     }
 
     public static ShaderInstance portal() {
@@ -52,6 +57,10 @@ public final class TCShaders {
         event.registerShader(
                 new ShaderInstance(event.getResourceProvider(), TCIds.rl("tc_fx"), DefaultVertexFormat.PARTICLE),
                 shader -> fx = shader);
+        event.registerShader(
+                new ShaderInstance(
+                        event.getResourceProvider(), TCIds.rl("tc_fx_alpha_test"), DefaultVertexFormat.PARTICLE),
+                shader -> fxAlphaTest = shader);
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(), TCIds.rl("tc_occluding_effect"), DefaultVertexFormat.NEW_ENTITY),

@@ -27,7 +27,7 @@ public final class EldritchPortalSurface {
                     .setShaderState(new RenderStateShard.ShaderStateShard(TCShaders::portal))
                     .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
                             .add(TUNNEL_TEXTURE, false, false)
-                            .add(PARTICLE_FIELD_TEXTURE, false, false)
+                            .add(PARTICLE_FIELD_TEXTURE, true, false)
                             .build())
                     .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                     .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
