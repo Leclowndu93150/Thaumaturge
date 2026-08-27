@@ -299,6 +299,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final long HOLD_TIMEOUT_TICKS = 60;
     private int rhash;
     private boolean isComplete;
+    private int renderedStage = -1;
+    private boolean renderedComplete;
+    private int renderedAddenda = -1;
     private final Deque<ResourceLocation> history = new ArrayDeque<>();
 
     public EntryDetailScreen(Holder<IResearchEntry> entry, ResourceLocation entryId, @Nullable Screen parent) {
@@ -351,6 +354,21 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 !stage.obtain().isEmpty(),
                 !stage.craft().isEmpty(),
                 !stage.requiredKnowledge().isEmpty());
+        renderedStage = currentStageIndex;
+        renderedComplete = isComplete;
+        renderedAddenda = addendaKeys.size();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        int stageIndex = currentStageIndex();
+        if (stageIndex != renderedStage
+                || isComplete != renderedComplete
+                || unlockedAddenda().size() != renderedAddenda) {
+            rebuildPages();
+            currentPage = clampPage(currentPage);
+        }
     }
 
     private List<ResearchAddendum> unlockedAddenda() {
