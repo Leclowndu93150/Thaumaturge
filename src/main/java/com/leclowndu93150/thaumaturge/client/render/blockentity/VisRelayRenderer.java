@@ -8,10 +8,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVisRelay> {
-    private static final int BEAM_COLOR = 0xB08CFF;
+    private static final int BEAM_COLOR = 0x8469BF;
     private static final float BEAM_SPEED = -0.01F;
     private static final float BEAM_WIDTH = 0.08F;
     private static final float CRYSTAL_HEIGHT = 0.55F;
@@ -42,5 +43,12 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     @Override
     public boolean shouldRenderOffScreen(BlockEntityVisRelay be) {
         return true;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityVisRelay relay) {
+        AABB self = new AABB(relay.getBlockPos());
+        BlockPos parent = relay.parentPos();
+        return parent == null ? self : self.minmax(new AABB(parent));
     }
 }
