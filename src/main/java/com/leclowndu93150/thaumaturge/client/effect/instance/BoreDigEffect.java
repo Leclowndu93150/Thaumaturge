@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect.instance;
 
 import com.leclowndu93150.thaumaturge.client.effect.manager.IFXInstance;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.particle.BoreDebrisParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -10,6 +11,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public final class BoreDigEffect implements IFXInstance {
     private static final float TOTAL_PARTICLES = 50.0F;
@@ -22,14 +24,16 @@ public final class BoreDigEffect implements IFXInstance {
     private final ClientLevel level;
     private final BlockPos target;
     private final int boreEntityId;
+    private final BlockPos borePos;
     private final BlockState state;
     private final int particlesPerTick;
     private int remainingTicks;
 
-    public BoreDigEffect(ClientLevel level, BlockPos target, int boreEntityId, BlockState state, int delay) {
+    public BoreDigEffect(ClientLevel level, BlockPos target, int boreEntityId, BlockPos borePos, BlockState state, int delay) {
         this.level = level;
         this.target = target;
         this.boreEntityId = boreEntityId;
+        this.borePos = borePos;
         this.state = state;
         this.remainingTicks = Math.max(1, delay);
         this.particlesPerTick = Mth.ceil(TOTAL_PARTICLES / this.remainingTicks);
@@ -37,13 +41,12 @@ public final class BoreDigEffect implements IFXInstance {
 
     @Override
     public void tick() {
-        Entity bore = this.level.getEntity(this.boreEntityId);
-        if (bore == null) {
+        Vec3 destination = sourcePosition();
+        if (destination == null) {
             this.remainingTicks = 0;
             return;
         }
         RandomSource random = this.level.getRandom();
-        Vec3 destination = bore.getEyePosition();
         for (int index = 0; index < this.particlesPerTick; index++) {
             double x = this.target.getX() + random.nextFloat();
             double y = this.target.getY() + random.nextFloat();
@@ -58,6 +61,14 @@ public final class BoreDigEffect implements IFXInstance {
             }
         }
         this.remainingTicks--;
+    }
+
+    private @Nullable Vec3 sourcePosition() {
+        if (this.boreEntityId == BoreDebrisParticleOptions.NO_ENTITY) {
+            return new Vec3(this.borePos.getX() + 0.5, this.borePos.getY() + BlockEntityArcaneBore.EYE_HEIGHT, this.borePos.getZ() + 0.5);
+        }
+        Entity bore = this.level.getEntity(this.boreEntityId);
+        return bore == null ? null : bore.getEyePosition();
     }
 
     @Override

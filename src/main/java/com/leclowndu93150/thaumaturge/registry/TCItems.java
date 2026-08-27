@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemHandMirror;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
@@ -694,8 +695,9 @@ public final class TCItems {
             props -> new TurretPlacerItem(props, level -> new EntityTurretCrossbow(TCEntities.TURRET_CROSSBOW.get(), level)), props -> props.stacksTo(16));
     public static final DeferredItem<TurretPlacerItem> TURRET_ADVANCED = ITEMS.registerItem("turret_advanced",
             props -> new TurretPlacerItem(props, level -> new EntityTurretCrossbowAdvanced(TCEntities.TURRET_CROSSBOW_ADVANCED.get(), level)), props -> props.stacksTo(16));
-    public static final DeferredItem<TurretPlacerItem> TURRET_BORE = ITEMS.registerItem("turret_bore",
-            props -> new TurretPlacerItem(props, level -> new EntityArcaneBore(TCEntities.ARCANE_BORE.get(), level)), props -> props.stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<ArcaneBoreItem> ARCANE_BORE = ITEMS.registerItem("arcane_bore",
+            props -> new ArcaneBoreItem(TCBlocks.ARCANE_BORE.get(), props, level -> new EntityArcaneBore(TCEntities.ARCANE_BORE.get(), level)),
+            props -> props.stacksTo(16).rarity(Rarity.UNCOMMON).useBlockDescriptionPrefix());
     public static final DeferredItem<GrappleGunItem> GRAPPLE_GUN = ITEMS.registerItem("grapple_gun", GrappleGunItem::new, props -> props.stacksTo(1).rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> GRAPPLE_GUN_TIP = ITEMS.registerSimpleItem("grapple_gun_tip");
     public static final DeferredItem<Item> GRAPPLE_GUN_SPOOL = ITEMS.registerSimpleItem("grapple_gun_spool");

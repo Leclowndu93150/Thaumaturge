@@ -320,7 +320,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStackTemplate(TCItems.TURRET_ADVANCED), 150).aspect(TCAspects.AER, 2).pattern("PMP").pattern("PTP").define('T', TCItems.TURRET_BASIC).define('P', TCItemTags.PLATES_IRON)
                 .define('M', TCItems.MIND_BIOTHAUMIC).gate(gate("advanced_turret")).unlockedBy("has", has(TCItems.MIND_BIOTHAUMIC)).save(output);
 
-        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.TOOLS, new ItemStackTemplate(TCItems.TURRET_BORE), Ingredient.of(TCItems.TURRET_BASIC.get()))
+        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.TOOLS, new ItemStackTemplate(TCItems.ARCANE_BORE), Ingredient.of(TCItems.TURRET_BASIC.get()))
                 .component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get())).component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get())).component(Ingredient.of(TCItems.MECHANISM_COMPLEX.get()))
                 .component(Ingredient.of(registries.lookupOrThrow(Registries.ITEM).getOrThrow(TCItemTags.PLATES_BRASS))).component(Ingredient.of(Items.DIAMOND_PICKAXE))
                 .component(Ingredient.of(Items.DIAMOND_SHOVEL)).component(Ingredient.of(TCItems.MORPHIC_RESONATOR.get())).component(Ingredient.of(TCItems.RARE_EARTH.get()))

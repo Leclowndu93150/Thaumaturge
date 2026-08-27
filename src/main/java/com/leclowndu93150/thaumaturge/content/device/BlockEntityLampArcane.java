@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -10,8 +11,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
@@ -27,7 +29,14 @@ public final class BlockEntityLampArcane extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampArcane lamp) {
-        if (level.getGameTime() % SPAWN_INTERVAL != 0 || level.hasNeighborSignal(pos)) {
+        boolean powered = level.hasNeighborSignal(pos);
+        if (powered == state.getValue(BlockStateProperties.ENABLED)) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, !powered), Block.UPDATE_ALL);
+            if (powered) {
+                lamp.removeLights();
+            }
+        }
+        if (level.getGameTime() % SPAWN_INTERVAL != 0 || powered) {
             return;
         }
         int x = level.getRandom().nextInt(SPREAD) - level.getRandom().nextInt(SPREAD);
@@ -48,10 +57,15 @@ public final class BlockEntityLampArcane extends BlockEntity {
     }
 
     private static boolean hasLineOfSight(Level level, BlockPos from, BlockPos to) {
-        Vec3 start = Vec3.atCenterOf(from);
-        Vec3 end = Vec3.atCenterOf(to);
-        HitResult hit = level.clip(new ClipContext(start, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.empty()));
-        return hit.getType() == HitResult.Type.MISS || BlockPos.containing(hit.getLocation()).equals(to);
+        ClipContext context = new ClipContext(Vec3.atCenterOf(from), Vec3.atCenterOf(to), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty());
+        BlockHitResult hit = BlockGetter.traverseBlocks(context.getFrom(), context.getTo(), context, (ctx, pos) -> {
+            if (pos.equals(from)) {
+                return null;
+            }
+            BlockState state = level.getBlockState(pos);
+            return ctx.getBlockShape(state, level, pos).clip(ctx.getFrom(), ctx.getTo(), pos);
+        }, ctx -> null);
+        return hit == null || hit.getBlockPos().equals(to);
     }
 
     public void removeLights() {

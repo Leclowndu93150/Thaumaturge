@@ -1011,7 +1011,7 @@
   "item.thaumaturge.triple_meat_treat": "Тройное мясное лакомство",
   "item.thaumaturge.turret_advanced": "Усовершенствованный автоматизированный арбалет",
   "item.thaumaturge.turret_basic": "Автоматический арбалет",
-  "item.thaumaturge.turret_bore": "Мистический Бур",
+  "block.thaumaturge.arcane_bore": "Мистический Бур",
   "item.thaumaturge.verdant_charm": "Амулет «Зеленое сердце»",
   "item.thaumaturge.verdant_charm.life.text": "Даритель жизни",
   "item.thaumaturge.verdant_charm.sustain.text": "Поддерживающий",

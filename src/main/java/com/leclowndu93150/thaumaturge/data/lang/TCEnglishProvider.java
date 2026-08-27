@@ -1270,7 +1270,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.activator_rail", "Arcane Activator Rail");
         add("item.thaumaturge.turret_basic", "Automated Crossbow");
         add("item.thaumaturge.turret_advanced", "Advanced Automated Crossbow");
-        add("item.thaumaturge.turret_bore", "Arcane Bore");
+        add("block.thaumaturge.arcane_bore", "Arcane Bore");
         add("item.thaumaturge.grapple_gun", "Arcane Grappler");
         add("item.thaumaturge.grapple_gun_tip", "Grappler Head");
         add("item.thaumaturge.grapple_gun_spool", "Grappler Spool");

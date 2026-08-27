@@ -60,8 +60,8 @@ public final class ScanEntryBootstrap {
         register(ctx, "f_matthaumium", "f_matthaumium", blocks(blockReg, TCBlocks.METAL_THAUMIUM_BLOCK.get()), items(itemReg, TCItems.INGOT_THAUMIUM.get(), TCItems.PLATE_THAUMIUM.get()), null);
         register(ctx, "f_matvoid", "f_matvoid", blocks(blockReg, TCBlocks.METAL_VOID_BLOCK.get()), items(itemReg, TCItems.INGOT_VOID.get(), TCItems.PLATE_VOID.get()), null);
         register(ctx, "f_brain", "f_brain", null, items(itemReg, TCItems.BRAIN.get()), entities(entityReg, TCEntities.BRAINY_ZOMBIE.get(), TCEntities.GIANT_BRAINY_ZOMBIE.get()));
-        register(ctx, "f_golem", "f_golem", null, null, entities(entityReg, TCEntities.THAUMATURGE_GOLEM.get(), TCEntities.TURRET_CROSSBOW.get(), TCEntities.TURRET_CROSSBOW_ADVANCED.get(),
-                TCEntities.ARCANE_BORE.get(), EntityType.IRON_GOLEM, EntityType.SNOW_GOLEM, EntityType.COPPER_GOLEM, EntityType.SHULKER));
+        register(ctx, "f_golem", "f_golem", blocks(blockReg, TCBlocks.ARCANE_BORE.get()), null, entities(entityReg, TCEntities.THAUMATURGE_GOLEM.get(), TCEntities.TURRET_CROSSBOW.get(),
+                TCEntities.TURRET_CROSSBOW_ADVANCED.get(), TCEntities.ARCANE_BORE.get(), EntityType.IRON_GOLEM, EntityType.SNOW_GOLEM, EntityType.COPPER_GOLEM, EntityType.SHULKER));
         register(ctx, "f_arrow", "f_arrow", null, items(itemReg, Items.ARROW), entities(entityReg, EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.TRIDENT, TCEntities.GOLEM_DART.get()));
         register(ctx, "f_fireball", "f_fireball", null, null,
                 entities(entityReg, EntityType.FIREBALL, EntityType.SMALL_FIREBALL, EntityType.DRAGON_FIREBALL, EntityType.WITHER_SKULL, EntityType.WIND_CHARGE, EntityType.BREEZE_WIND_CHARGE));

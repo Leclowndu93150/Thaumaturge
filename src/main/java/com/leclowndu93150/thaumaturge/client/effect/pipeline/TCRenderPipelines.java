@@ -20,22 +20,23 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public final class TCRenderPipelines {
     private static final BlendFunction TC_ADDITIVE = new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE);
+    private static final Identifier FX_FRAGMENT = Identifier.fromNamespaceAndPath(TCIds.MODID, "core/tc_fx");
     private static final DepthStencilState TEST_NO_WRITE = new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false);
     private static final DepthStencilState ALWAYS_NO_WRITE = new DepthStencilState(CompareOp.ALWAYS_PASS, false);
 
     public static final RenderPipeline FX_ADDITIVE = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET).withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_additive"))
-            .withColorTargetState(new ColorTargetState(TC_ADDITIVE)).withDepthStencilState(TEST_NO_WRITE).withCull(false).build();
+            .withFragmentShader(FX_FRAGMENT).withColorTargetState(new ColorTargetState(TC_ADDITIVE)).withDepthStencilState(TEST_NO_WRITE).withCull(false).build();
 
     public static final RenderPipeline FX_TRANSLUCENT = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET).withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_translucent"))
-            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withDepthStencilState(TEST_NO_WRITE).withCull(false).build();
+            .withFragmentShader(FX_FRAGMENT).withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withDepthStencilState(TEST_NO_WRITE).withCull(false).build();
 
     public static final RenderPipeline FX_ADDITIVE_NO_DEPTH = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_additive_no_depth")).withColorTargetState(new ColorTargetState(TC_ADDITIVE)).withDepthStencilState(ALWAYS_NO_WRITE)
-            .withCull(false).build();
+            .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_additive_no_depth")).withFragmentShader(FX_FRAGMENT).withColorTargetState(new ColorTargetState(TC_ADDITIVE))
+            .withDepthStencilState(ALWAYS_NO_WRITE).withCull(false).build();
 
     public static final RenderPipeline FX_TRANSLUCENT_NO_DEPTH = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
-            .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_translucent_no_depth")).withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-            .withDepthStencilState(ALWAYS_NO_WRITE).withCull(false).build();
+            .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/fx_translucent_no_depth")).withFragmentShader(FX_FRAGMENT)
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withDepthStencilState(ALWAYS_NO_WRITE).withCull(false).build();
 
     public static final RenderPipeline SPARKLE = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET).withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/sparkle"))
             .withVertexShader("core/rendertype_lightning").withFragmentShader("core/rendertype_lightning").withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
@@ -78,7 +79,7 @@ public final class TCRenderPipelines {
     public static final RenderPipeline ENTITY_ADDITIVE_EMISSIVE = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/entity_additive_emissive")).withVertexShader("core/entity").withFragmentShader("core/entity")
             .withShaderDefine("EMISSIVE").withShaderDefine("NO_OVERLAY").withShaderDefine("NO_CARDINAL_LIGHTING").withSampler("Sampler0").withColorTargetState(new ColorTargetState(TC_ADDITIVE))
-            .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS).withDepthStencilState(TEST_NO_WRITE).build();
+            .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS).withDepthStencilState(TEST_NO_WRITE).withCull(false).build();
 
     public static final RenderPipeline ENTITY_TRANSLUCENT_NO_DEPTH = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/entity_translucent_no_depth")).withVertexShader("core/entity").withFragmentShader("core/entity")

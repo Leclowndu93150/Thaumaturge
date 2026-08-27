@@ -26,6 +26,7 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
 import com.leclowndu93150.thaumaturge.content.device.BlockArcaneEar;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.BlockCondenser;
 import com.leclowndu93150.thaumaturge.content.device.BlockCondenserLattice;
 import com.leclowndu93150.thaumaturge.content.device.BlockDioptra;
@@ -348,6 +349,9 @@ public final class TCBlocks {
 
     public static final DeferredBlock<BlockGolemBuilder> GOLEM_BUILDER = BLOCKS.registerBlock("golem_builder", BlockGolemBuilder::new,
             props -> props.mapColor(MapColor.STONE).strength(2.0F, 20.0F).sound(SoundType.STONE).noOcclusion());
+
+    public static final DeferredBlock<BlockArcaneBore> ARCANE_BORE = BLOCKS.registerBlock("arcane_bore", BlockArcaneBore::new,
+            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion());
 
     public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_IRON_BARS = BLOCKS.registerBlock("placeholder_iron_bars", BlockPlaceholder::new, TCBlocks::pressPlaceholderProps);
 

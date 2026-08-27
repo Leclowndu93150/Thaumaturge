@@ -14,6 +14,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public final class WarpFogEvents {
     private static final float MIST_FAR_PLANE = 12.0F;
     private static final float MIST_NEAR_PLANE = 2.0F;
+    private static final float MAX_SANE_FOG_PLANE = 4096.0F;
+    private static final float FALLBACK_FAR_PLANE = 512.0F;
+    private static final float FALLBACK_NEAR_PLANE = 256.0F;
 
     private WarpFogEvents() {}
 
@@ -34,7 +37,11 @@ public final class WarpFogEvents {
         }
         float intensity = WarpFogState.intensity();
         FogData fog = event.getFogData();
-        fog.environmentalEnd = Mth.lerp(intensity, fog.environmentalEnd, MIST_FAR_PLANE);
-        fog.environmentalStart = Mth.lerp(intensity, fog.environmentalStart, MIST_NEAR_PLANE);
+        fog.environmentalEnd = Mth.lerp(intensity, usablePlane(fog.environmentalEnd, FALLBACK_FAR_PLANE), MIST_FAR_PLANE);
+        fog.environmentalStart = Mth.lerp(intensity, usablePlane(fog.environmentalStart, FALLBACK_NEAR_PLANE), MIST_NEAR_PLANE);
+    }
+
+    private static float usablePlane(float plane, float fallback) {
+        return plane > MAX_SANE_FOG_PLANE ? fallback : plane;
     }
 }

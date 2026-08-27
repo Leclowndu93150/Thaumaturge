@@ -427,7 +427,7 @@ public final class ResearchTextEn {
         add.accept("research.thaumaturge.arcane_lamp.title", "Arcane Lamp");
         add.accept("research.thaumaturge.arcane_lamp.stage_0", "My laboratory has seemed quite gloomy of late. I should find a way to light it more effectively.");
         add.accept("research.thaumaturge.arcane_lamp.stage_1",
-                "This mystical lamp can be attached to walls, floors or ceilings and will provide strong and steady light.<BR>Additional sources of light may also appear up to 16 blocks away wherever light levels fall below accepted 'safe' levels. Remember: Only YOU can prevent zombie outbreaks.<BR>These secondary sources of light will disappear soon after the lamp has been removed.<BR>The lamp can be turned off by applying a redstone signal.");
+                "This mystical lamp can be attached to walls, floors or ceilings and will provide strong and steady light.<BR>Additional sources of light may also appear up to 16 blocks away wherever light levels fall below accepted 'safe' levels. Remember: Only YOU can prevent zombie outbreaks.<BR>These secondary sources of light will disappear soon after the lamp has been removed.<BR>The lamp can be turned off by applying a redstone signal.<BR>When placed against an arcane bore, the arcane lamp gains an additional ability: It will light up the tunnel that the bore digs.");
         add.accept("research.thaumaturge.lamp_growth.title", "Lamp of Growth");
         add.accept("research.thaumaturge.lamp_growth.stage_0",
                 "My studies of Lux has shown me that light can be used as a medium for other helpful magics.<BR>Light already has a positive effect on plants so if I add some magic to the equation it should only improve things, right?");

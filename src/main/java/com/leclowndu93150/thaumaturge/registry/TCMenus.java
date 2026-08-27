@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
 import com.leclowndu93150.thaumaturge.content.device.MenuVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.mirror.MenuHandMirror;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.MenuPotionSprayer;
-import com.leclowndu93150.thaumaturge.content.entity.construct.MenuArcaneBore;
+import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;

@@ -1206,7 +1206,7 @@ public final class TCSimplifiedChineseProvider extends LanguageProvider {
         add("block.thaumaturge.activator_rail", "奥术激活轨道");
         add("item.thaumaturge.turret_basic", "自动十字弩");
         add("item.thaumaturge.turret_advanced", "高级自动弩");
-        add("item.thaumaturge.turret_bore", "奥术钻探机");
+        add("block.thaumaturge.arcane_bore", "奥术钻探机");
         add("item.thaumaturge.grapple_gun", "奥术机动装置");
         add("item.thaumaturge.grapple_gun_tip", "机动装置头部");
         add("item.thaumaturge.grapple_gun_spool", "机动装置滚轴");

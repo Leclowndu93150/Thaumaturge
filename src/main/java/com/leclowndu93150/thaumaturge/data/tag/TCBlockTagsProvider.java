@@ -58,7 +58,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.BEACON_BASE_BLOCKS).add(TCBlocks.METAL_THAUMIUM_BLOCK.get()).add(TCBlocks.METAL_BRASS_BLOCK.get()).add(TCBlocks.METAL_VOID_BLOCK.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.METAL_THAUMIUM_BLOCK.get()).add(TCBlocks.METAL_BRASS_BLOCK.get()).add(TCBlocks.METAL_VOID_BLOCK.get())
-                .add(TCBlocks.OBSIDIAN_PLACEHOLDER.get()).add(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get()).add(TCBlocks.INFERNAL_FURNACE.get());
+                .add(TCBlocks.OBSIDIAN_PLACEHOLDER.get()).add(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get()).add(TCBlocks.INFERNAL_FURNACE.get()).add(TCBlocks.ARCANE_BORE.get());
 
         tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.METAL_THAUMIUM_BLOCK.get()).add(TCBlocks.METAL_BRASS_BLOCK.get()).add(TCBlocks.METAL_VOID_BLOCK.get());
 

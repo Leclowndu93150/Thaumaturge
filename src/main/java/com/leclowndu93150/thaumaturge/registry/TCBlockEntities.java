@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.decor.BlockEntityBarrierStone;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BlockEntityBanner;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityArcaneEar;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityDioptra;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
@@ -272,6 +273,9 @@ public final class TCBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityGolemBuilder>> GOLEM_BUILDER = BLOCK_ENTITIES.register("golem_builder",
             () -> new BlockEntityType<>(BlockEntityGolemBuilder::new, Set.of(TCBlocks.GOLEM_BUILDER.get())));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityArcaneBore>> ARCANE_BORE = BLOCK_ENTITIES.register("arcane_bore",
+            () -> new BlockEntityType<>(BlockEntityArcaneBore::new, Set.of(TCBlocks.ARCANE_BORE.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHole>> HOLE = BLOCK_ENTITIES.register("hole",
             () -> new BlockEntityType<>(BlockEntityHole::new, Set.of(TCBlocks.HOLE.get())));

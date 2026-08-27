@@ -242,7 +242,8 @@ public final class TCModelProvider extends ModelProvider {
     private static void registerConstructs(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         itemModels.generateFlatItem(TCItems.TURRET_BASIC.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.TURRET_ADVANCED.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.generateFlatItem(TCItems.TURRET_BORE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.ARCANE_BORE.get(), ModelTemplates.FLAT_ITEM);
+        registerInvisibleBlock(blockModels, TCBlocks.ARCANE_BORE.get());
         itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_TIP.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_SPOOL.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.ELDRITCH_EYE.get(), ModelTemplates.FLAT_ITEM);

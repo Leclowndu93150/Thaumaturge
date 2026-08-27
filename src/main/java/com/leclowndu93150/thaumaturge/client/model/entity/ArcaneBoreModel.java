@@ -32,10 +32,14 @@ public final class ArcaneBoreModel extends EntityModel<ArcaneBoreRenderState> {
         return LayerDefinition.create(mesh, 64, 32);
     }
 
+    public void setAim(float yawDegrees, float pitchDegrees) {
+        base.yRot = yawDegrees * Mth.DEG_TO_RAD;
+        base.xRot = pitchDegrees * Mth.DEG_TO_RAD;
+    }
+
     @Override
     public void setupAnim(ArcaneBoreRenderState state) {
         super.setupAnim(state);
-        base.yRot = state.yRot * Mth.DEG_TO_RAD;
-        base.xRot = state.xRot * Mth.DEG_TO_RAD;
+        setAim(state.yRot, state.xRot);
     }
 }
