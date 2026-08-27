@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -12,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
@@ -58,12 +59,25 @@ public final class BlockEntityLampArcane extends BlockEntity {
     }
 
     private static boolean hasLineOfSight(Level level, BlockPos from, BlockPos to) {
-        Vec3 start = Vec3.atCenterOf(from);
-        Vec3 end = Vec3.atCenterOf(to);
-        HitResult hit = level.clip(new ClipContext(
-                start, end, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, CollisionContext.empty()));
-        return hit.getType() == HitResult.Type.MISS
-                || BlockPos.containing(hit.getLocation()).equals(to);
+        ClipContext context = new ClipContext(
+                Vec3.atCenterOf(from),
+                Vec3.atCenterOf(to),
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                CollisionContext.empty());
+        BlockHitResult hit = BlockGetter.traverseBlocks(
+                context.getFrom(),
+                context.getTo(),
+                context,
+                (ctx, cursor) -> {
+                    if (cursor.equals(from)) {
+                        return null;
+                    }
+                    BlockState blockState = level.getBlockState(cursor);
+                    return ctx.getBlockShape(blockState, level, cursor).clip(ctx.getFrom(), ctx.getTo(), cursor);
+                },
+                ctx -> null);
+        return hit == null || hit.getBlockPos().equals(to);
     }
 
     public void removeLights() {
