@@ -53,6 +53,11 @@ public final class ArcaneBoreModel extends HierarchicalModel<EntityArcaneBore> {
         return root;
     }
 
+    public void setAim(float yaw, float pitch) {
+        base.yRot = yaw * Mth.DEG_TO_RAD;
+        base.xRot = pitch * Mth.DEG_TO_RAD;
+    }
+
     @Override
     public void setupAnim(
             EntityArcaneBore entity,
@@ -61,7 +66,6 @@ public final class ArcaneBoreModel extends HierarchicalModel<EntityArcaneBore> {
             float ageInTicks,
             float netHeadYaw,
             float headPitch) {
-        base.yRot = netHeadYaw * Mth.DEG_TO_RAD;
-        base.xRot = headPitch * Mth.DEG_TO_RAD;
+        setAim(netHeadYaw, headPitch);
     }
 }

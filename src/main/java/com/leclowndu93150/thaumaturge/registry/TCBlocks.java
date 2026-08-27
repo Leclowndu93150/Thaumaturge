@@ -41,6 +41,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockVoidSiphon;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockPotionSprayer;
@@ -647,6 +648,15 @@ public final class TCBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(2.0F, 20.0F)
                     .sound(SoundType.STONE)
+                    .noOcclusion());
+
+    public static final DeferredBlock<BlockArcaneBore> ARCANE_BORE = BLOCKS.registerBlock(
+            "arcane_bore",
+            BlockArcaneBore::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0F, 20.0F)
+                    .sound(SoundType.METAL)
                     .noOcclusion());
 
     public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_IRON_BARS =

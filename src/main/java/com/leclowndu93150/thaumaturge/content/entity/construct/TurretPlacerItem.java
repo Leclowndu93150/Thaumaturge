@@ -26,6 +26,10 @@ public final class TurretPlacerItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
+        return placeConstruct(context, factory);
+    }
+
+    public static InteractionResult placeConstruct(UseOnContext context, ConstructFactory factory) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
         Direction side = context.getClickedFace();

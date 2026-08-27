@@ -346,7 +346,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.RUNED_TABLET.get());
                         output.accept(TCItems.TURRET_BASIC.get());
                         output.accept(TCItems.TURRET_ADVANCED.get());
-                        output.accept(TCItems.TURRET_BORE.get());
+                        output.accept(TCItems.ARCANE_BORE.get());
                         output.accept(TCItems.GRAPPLE_GUN.get());
                         output.accept(TCItems.GRAPPLE_GUN_TIP.get());
                         output.accept(TCItems.GRAPPLE_GUN_SPOOL.get());
