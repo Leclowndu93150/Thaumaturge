@@ -60,6 +60,8 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.FOREST)
                 .add(Biomes.DARK_FOREST);
 
+        tag(TCBiomeTags.HAS_BRAINY_HUSK).add(Biomes.DESERT);
+
         tag(TCBiomeTags.HAS_MOUND)
                 .add(Biomes.PLAINS)
                 .add(Biomes.SUNFLOWER_PLAINS)

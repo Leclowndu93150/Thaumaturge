@@ -617,12 +617,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
+        add("entity.thaumaturge.brainy_drowned", "Angry Drowned");
+        add("entity.thaumaturge.brainy_husk", "Angry Husk");
         add("entity.thaumaturge.giant_brainy_zombie", "Furious Zombie");
         add("entity.thaumaturge.firebat", "Firebat");
         add("entity.thaumaturge.mind_spider", "Mind Spider");
         add("item.thaumaturge.brain", "Zombie Brain");
 
         add("item.thaumaturge.brainy_zombie_spawn_egg", "Angry Zombie Spawn Egg");
+        add("item.thaumaturge.brainy_drowned_spawn_egg", "Angry Drowned Spawn Egg");
+        add("item.thaumaturge.brainy_husk_spawn_egg", "Angry Husk Spawn Egg");
         add("item.thaumaturge.giant_brainy_zombie_spawn_egg", "Furious Zombie Spawn Egg");
         add("item.thaumaturge.firebat_spawn_egg", "Firebat Spawn Egg");
         add("item.thaumaturge.mind_spider_spawn_egg", "Mind Spider Spawn Egg");

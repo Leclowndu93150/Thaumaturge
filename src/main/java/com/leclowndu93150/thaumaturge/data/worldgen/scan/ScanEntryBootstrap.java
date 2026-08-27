@@ -140,7 +140,12 @@ public final class ScanEntryBootstrap {
                 "f_brain",
                 null,
                 items(itemReg, TCItems.BRAIN.get()),
-                entities(entityReg, TCEntities.BRAINY_ZOMBIE.get(), TCEntities.GIANT_BRAINY_ZOMBIE.get()));
+                entities(
+                        entityReg,
+                        TCEntities.BRAINY_ZOMBIE.get(),
+                        TCEntities.GIANT_BRAINY_ZOMBIE.get(),
+                        TCEntities.BRAINY_DROWNED.get(),
+                        TCEntities.BRAINY_HUSK.get()));
         register(
                 ctx,
                 "f_golem",

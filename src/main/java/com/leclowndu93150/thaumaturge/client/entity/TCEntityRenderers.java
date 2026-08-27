@@ -90,6 +90,8 @@ public final class TCEntityRenderers {
         event.registerEntityRenderer(TCEntities.FLUX_RIFT.get(), FluxRiftRenderer::new);
         event.registerEntityRenderer(TCEntities.CAUSALITY_COLLAPSER.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TCEntities.BRAINY_ZOMBIE.get(), BrainyZombieRenderer::new);
+        event.registerEntityRenderer(TCEntities.BRAINY_DROWNED.get(), BrainyDrownedRenderer::new);
+        event.registerEntityRenderer(TCEntities.BRAINY_HUSK.get(), BrainyHuskRenderer::new);
         event.registerEntityRenderer(TCEntities.GIANT_BRAINY_ZOMBIE.get(), BrainyZombieRenderer::new);
         event.registerEntityRenderer(TCEntities.FIRE_BAT.get(), FireBatRenderer::new);
         event.registerEntityRenderer(TCEntities.MIND_SPIDER.get(), MindSpiderRenderer::new);

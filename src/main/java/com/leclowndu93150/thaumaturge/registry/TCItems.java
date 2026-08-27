@@ -514,6 +514,10 @@ public final class TCItems {
 
     public static final DeferredItem<SpawnEggItem> BRAINY_ZOMBIE_SPAWN_EGG =
             registerSpawnEgg("brainy_zombie_spawn_egg", TCEntities.BRAINY_ZOMBIE);
+    public static final DeferredItem<SpawnEggItem> BRAINY_DROWNED_SPAWN_EGG =
+            registerSpawnEgg("brainy_drowned_spawn_egg", TCEntities.BRAINY_DROWNED);
+    public static final DeferredItem<SpawnEggItem> BRAINY_HUSK_SPAWN_EGG =
+            registerSpawnEgg("brainy_husk_spawn_egg", TCEntities.BRAINY_HUSK);
     public static final DeferredItem<SpawnEggItem> GIANT_BRAINY_ZOMBIE_SPAWN_EGG =
             registerSpawnEgg("giant_brainy_zombie_spawn_egg", TCEntities.GIANT_BRAINY_ZOMBIE);
     public static final DeferredItem<SpawnEggItem> FIREBAT_SPAWN_EGG =
