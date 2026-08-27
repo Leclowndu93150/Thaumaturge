@@ -322,6 +322,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.LAMP_GROWTH.get());
         dropSelf(TCBlocks.LAMP_FERTILITY.get());
         dropSelf(TCBlocks.CENTRIFUGE.get());
+        dropSelf(TCBlocks.ARCANE_BORE.get());
         dropSelf(TCBlocks.HUNGRY_CHEST.get());
         dropSelf(TCBlocks.EVERFULL_URN.get());
         dropSelf(TCBlocks.VIS_GENERATOR.get());

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 
@@ -24,6 +25,12 @@ public enum TCFakePlayer {
     public FakePlayer at(ServerLevel level, Entity entity) {
         FakePlayer player = get(level);
         player.moveTo(entity.getX(), entity.getY(), entity.getZ(), entity.getYRot(), entity.getXRot());
+        return player;
+    }
+
+    public FakePlayer at(ServerLevel level, Vec3 pos, float yRot, float xRot) {
+        FakePlayer player = get(level);
+        player.moveTo(pos.x, pos.y, pos.z, yRot, xRot);
         return player;
     }
 }
