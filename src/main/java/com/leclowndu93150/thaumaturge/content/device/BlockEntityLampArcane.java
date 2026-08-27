@@ -76,17 +76,12 @@ public final class BlockEntityLampArcane extends BlockEntity {
             for (int y = -CLEANUP_RADIUS; y <= CLEANUP_RADIUS; y++) {
                 for (int z = -CLEANUP_RADIUS; z <= CLEANUP_RADIUS; z++) {
                     cursor.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+                    if (!level.hasChunkAt(cursor)) continue;
                     if (level.getBlockState(cursor).is(TCBlocks.EFFECT_GLIMMER.get())) {
                         level.setBlock(cursor, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public void setRemoved() {
-        removeLights();
-        super.setRemoved();
     }
 }
