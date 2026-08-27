@@ -951,6 +951,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.focus_pouch.count", "Holds %1$s/%2$s foci");
         add("tc.wand.notenoughvis", "The wand does not hold enough vis");
         add("tc.node.name", "Aura Node");
+        add("tc.node.name.energized", "Energized Aura Node");
         add("tc.node.jar.aspect", "%1$s %2$s");
         add("tc.node.typemod", "%1$s, %2$s");
         add("nodetype.thaumaturge.normal", "Normal");
