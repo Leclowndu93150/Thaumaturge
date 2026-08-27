@@ -36,4 +36,15 @@ public final class BlockLampArcane extends BlockLamp {
         }
         return createTickerHelper(type, TCBlockEntities.LAMP_ARCANE.get(), BlockEntityLampArcane::serverTick);
     }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof BlockEntityLampArcane lamp) {
+                lamp.removeLights();
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
 }
