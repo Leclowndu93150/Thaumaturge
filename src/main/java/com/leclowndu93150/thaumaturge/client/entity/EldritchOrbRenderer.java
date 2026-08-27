@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchOrb;
@@ -13,11 +14,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb> {
     private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType BILLBOARD_TYPE = TCRenderTypes.fxTranslucent(ParticleTextures.PARTICLES);
+    private static final RenderType BILLBOARD_TYPE = TCRenderTypes.fxTranslucentBlurred(ParticleTextures.PARTICLES);
 
     private static final long RAY_SEED = 187L;
     private static final int RAY_COUNT = 12;
@@ -63,22 +65,27 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb>
             addRay(rayBuffer, poseStack.last().pose(), fa, f4);
         }
         poseStack.popPose();
-        poseStack.pushPose();
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.scale(BILLBOARD_SCALE, BILLBOARD_SCALE, BILLBOARD_SCALE);
         float texFrame = 1.0F / GRID;
         float u0 = ((int) ticks % BILLBOARD_FRAMES) * texFrame;
         float v0 = BILLBOARD_ROW * texFrame;
         float u1 = u0 + texFrame;
         float v1 = v0 + texFrame;
         int tint = ARGB32.colorFromFloat(1.0F, 1.0F, 1.0F, 1.0F);
-        VertexConsumer buffer = buffers.getBuffer(BILLBOARD_TYPE);
-        Matrix4f mat = poseStack.last().pose();
+        Vec3 origin = entity.getPosition(partialTicks);
+        LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> {
+            latePose.mulPose(this.entityRenderDispatcher.cameraOrientation());
+            latePose.scale(BILLBOARD_SCALE, BILLBOARD_SCALE, BILLBOARD_SCALE);
+            writeBillboard(
+                    lateBuffers.getBuffer(BILLBOARD_TYPE), latePose.last().pose(), u0, v0, u1, v1, tint);
+        });
+    }
+
+    private static void writeBillboard(
+            VertexConsumer buffer, Matrix4f mat, float u0, float v0, float u1, float v1, int tint) {
         buffer.addVertex(mat, -HALF, -HALF, 0.0F).setUv(u1, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, -HALF, HALF, 0.0F).setUv(u1, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, HALF, HALF, 0.0F).setUv(u0, v0).setColor(tint).setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, HALF, -HALF, 0.0F).setUv(u0, v1).setColor(tint).setLight(EMISSIVE_LIGHT);
-        poseStack.popPose();
     }
 
     @Override
