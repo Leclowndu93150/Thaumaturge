@@ -43,7 +43,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final int TRANSDUCER_TINT_ENERGIZED = 0xFFFF004D;
     private static final float TRANSDUCER_GLOW_GAIN = 2.5F;
     private static final ResourceLocation BUBBLE_TEXTURE = TCIds.rl("textures/misc/node_bubble.png");
-    private static final RenderType BUBBLE = TCRenderTypes.fxAdditive(BUBBLE_TEXTURE);
+    private static final RenderType BUBBLE = TCRenderTypes.fxTranslucent(BUBBLE_TEXTURE);
 
     private static final String PART_LOCK = "lock";
     private static final String PART_PISTON = "piston";
@@ -61,7 +61,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final float BUBBLE_ALPHA_PULSE = 0.1F;
     private static final float BUBBLE_PULSE_PERIOD = 8.0F;
     private static final int BUBBLE_ADVANCED_TINT = 0xFF4444;
-    private static final int BUBBLE_LIGHT = 0x00F000F0;
+    private static final int BUBBLE_LIGHT = 220;
 
     public NodeStabilizerRenderer(BlockEntityRendererProvider.Context context) {}
 
