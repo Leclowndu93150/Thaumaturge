@@ -16,9 +16,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEntityResearchTable> {
@@ -41,7 +43,12 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
 
     @Override
     public AABB getRenderBoundingBox(BlockEntityResearchTable table) {
-        return new AABB(table.getBlockPos()).inflate(1.0);
+        BlockPos pos = table.getBlockPos();
+        BlockState state = table.getBlockState();
+        Direction facing = state.hasProperty(BlockResearchTable.FACING)
+                ? state.getValue(BlockResearchTable.FACING)
+                : Direction.NORTH;
+        return new AABB(pos).minmax(new AABB(pos.relative(facing))).inflate(0.5);
     }
 
     @Override
