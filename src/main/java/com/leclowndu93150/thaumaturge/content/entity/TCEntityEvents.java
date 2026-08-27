@@ -38,6 +38,12 @@ public final class TCEntityEvents {
                 Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(
+                TCEntities.BRAINY_HUSK.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                Monster::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(
                 TCEntities.GIANT_BRAINY_ZOMBIE.get(),
                 SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
@@ -114,6 +120,12 @@ public final class TCEntityEvents {
         event.put(
                 TCEntities.BRAINY_ZOMBIE.get(),
                 EntityBrainyZombie.createAttributes().build());
+        event.put(
+                TCEntities.BRAINY_DROWNED.get(),
+                EntityBrainyDrowned.createAttributes().build());
+        event.put(
+                TCEntities.BRAINY_HUSK.get(),
+                EntityBrainyHusk.createAttributes().build());
         event.put(TCEntities.FIRE_BAT.get(), EntityFireBat.createAttributes().build());
         event.put(
                 TCEntities.MIND_SPIDER.get(),

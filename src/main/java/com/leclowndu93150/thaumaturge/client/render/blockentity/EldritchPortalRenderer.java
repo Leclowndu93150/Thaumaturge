@@ -63,6 +63,11 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
     }
 
     @Override
+    public boolean shouldRenderOffScreen(BlockEntityEldritchPortal portal) {
+        return true;
+    }
+
+    @Override
     public int getViewDistance() {
         return 64;
     }

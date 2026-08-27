@@ -390,6 +390,8 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.WISP_SPAWN_EGG.get());
                         output.accept(TCItems.BRAINY_ZOMBIE_SPAWN_EGG.get());
                         output.accept(TCItems.GIANT_BRAINY_ZOMBIE_SPAWN_EGG.get());
+                        output.accept(TCItems.BRAINY_DROWNED_SPAWN_EGG.get());
+                        output.accept(TCItems.BRAINY_HUSK_SPAWN_EGG.get());
                         output.accept(TCItems.FIREBAT_SPAWN_EGG.get());
                         output.accept(TCItems.MIND_SPIDER_SPAWN_EGG.get());
                         output.accept(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());

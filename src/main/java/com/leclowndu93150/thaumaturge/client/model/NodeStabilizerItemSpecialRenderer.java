@@ -37,7 +37,7 @@ public final class NodeStabilizerItemSpecialRenderer extends BlockEntityWithoutL
         if (transducer) {
             poseStack.translate(0.5F, 1.0F, 0.5F);
             poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            NodeStabilizerRenderer.submitTransducerParts(0.0F, 0.0F, poseStack, buffers, light);
+            NodeStabilizerRenderer.submitTransducerParts(0, 0, 0.0F, poseStack, buffers, light);
         } else {
             poseStack.translate(0.5F, 0.0F, 0.5F);
             poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));

@@ -20,13 +20,13 @@ public final class NodeTransducerRenderer implements BlockEntityRenderer<BlockEn
             MultiBufferSource buffers,
             int light,
             int overlay) {
-        float chargeFraction = transducer.getCount() / (float) BlockEntityNodeTransducer.CHARGE_TARGET;
         LocalPlayer player = Minecraft.getInstance().player;
         float ticks = player == null ? 0.0F : player.tickCount + partialTick;
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.0F, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        NodeStabilizerRenderer.submitTransducerParts(chargeFraction, ticks, poseStack, buffers, light);
+        NodeStabilizerRenderer.submitTransducerParts(
+                transducer.getCount(), transducer.getStatus(), ticks, poseStack, buffers, light);
         poseStack.popPose();
     }
 }

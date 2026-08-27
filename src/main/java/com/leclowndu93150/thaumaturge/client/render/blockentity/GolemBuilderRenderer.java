@@ -105,4 +105,9 @@ public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEnti
     public AABB getRenderBoundingBox(BlockEntityGolemBuilder builder) {
         return builder.getRenderBoundingBox();
     }
+
+    @Override
+    public boolean shouldRenderOffScreen(BlockEntityGolemBuilder builder) {
+        return true;
+    }
 }

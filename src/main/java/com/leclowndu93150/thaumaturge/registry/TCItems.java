@@ -514,6 +514,10 @@ public final class TCItems {
 
     public static final DeferredItem<SpawnEggItem> BRAINY_ZOMBIE_SPAWN_EGG =
             registerSpawnEgg("brainy_zombie_spawn_egg", TCEntities.BRAINY_ZOMBIE);
+    public static final DeferredItem<SpawnEggItem> BRAINY_DROWNED_SPAWN_EGG =
+            registerSpawnEgg("brainy_drowned_spawn_egg", TCEntities.BRAINY_DROWNED);
+    public static final DeferredItem<SpawnEggItem> BRAINY_HUSK_SPAWN_EGG =
+            registerSpawnEgg("brainy_husk_spawn_egg", TCEntities.BRAINY_HUSK);
     public static final DeferredItem<SpawnEggItem> GIANT_BRAINY_ZOMBIE_SPAWN_EGG =
             registerSpawnEgg("giant_brainy_zombie_spawn_egg", TCEntities.GIANT_BRAINY_ZOMBIE);
     public static final DeferredItem<SpawnEggItem> FIREBAT_SPAWN_EGG =
@@ -1029,8 +1033,8 @@ public final class TCItems {
                             .rarity(Rarity.RARE)));
 
     public static final int TRINKET_APPRENTICE_DISCOUNT = 5;
-    private static final int AMULET_VIS_FOUND_INTERVAL = 40;
-    private static final int AMULET_VIS_CRAFTED_INTERVAL = 5;
+    private static final int AMULET_VIS_FOUND_INTERVAL = 100;
+    private static final int AMULET_VIS_CRAFTED_INTERVAL = 20;
 
     public static final DeferredItem<TrinketItem> AMULET_MUNDANE =
             ITEMS.registerItem("amulet_mundane", TrinketItem::new, new Item.Properties().stacksTo(1));

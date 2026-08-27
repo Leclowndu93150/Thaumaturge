@@ -13,7 +13,7 @@ public final class TCRenderTypes {
     private static final int BUFFER = 1536;
 
     private static final RenderStateShard.ShaderStateShard PARTICLE_SHADER =
-            new RenderStateShard.ShaderStateShard(GameRenderer::getParticleShader);
+            new RenderStateShard.ShaderStateShard(TCShaders::fx);
     private static final RenderStateShard.ShaderStateShard POSITION_TEX_COLOR_SHADER =
             new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
     private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =

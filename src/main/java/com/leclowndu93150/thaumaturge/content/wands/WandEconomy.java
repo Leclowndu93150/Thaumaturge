@@ -8,8 +8,8 @@ public final class WandEconomy {
     public static final float SCEPTRE_CRAFT_COST_FACTOR = 1.5F;
     public static final int WAND_ASSEMBLY_VIS_PER_PRIMAL = 1;
     public static final int PRIMAL_COUNT = 6;
-    public static final int ROD_SELF_CHARGE_INTERVAL_TICKS = 200;
-    public static final int PRIMAL_SELF_CHARGE_INTERVAL_TICKS = 50;
+    public static final int ROD_SELF_CHARGE_INTERVAL_TICKS = 60;
+    public static final int PRIMAL_SELF_CHARGE_INTERVAL_TICKS = 20;
     public static final int ROD_SELF_CHARGE_CAP_DIVISOR = 10;
     public static final int RAW_TO_PRIMAL_RATIO = 3;
     public static final float CRAFT_AURA_SURCHARGE = 1.25F;

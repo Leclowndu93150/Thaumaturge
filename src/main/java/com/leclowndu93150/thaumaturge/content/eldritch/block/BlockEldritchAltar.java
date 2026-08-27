@@ -93,7 +93,7 @@ public final class BlockEldritchAltar extends BlockEldritchStructure implements 
             return ItemInteractionResult.SUCCESS;
         }
         if (stack.getItem() instanceof ICaster) {
-            if (altar.getEyes() < MAX_EYES || altar.isOpen()) {
+            if (altar.getEyes() < MAX_EYES) {
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
             if (level.isClientSide()) {

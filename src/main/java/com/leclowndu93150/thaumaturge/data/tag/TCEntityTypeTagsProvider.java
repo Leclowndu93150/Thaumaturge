@@ -27,13 +27,25 @@ public final class TCEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
         tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS).add(key(TCEntities.ELDRITCH_CRAB.get()));
         tag(EntityTypeTags.UNDEAD)
                 .add(key(TCEntities.ELDRITCH_GUARDIAN.get()))
-                .add(key(TCEntities.INHABITED_ZOMBIE.get()));
+                .add(key(TCEntities.INHABITED_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.GIANT_BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_DROWNED.get()))
+                .add(key(TCEntities.BRAINY_HUSK.get()));
         tag(EntityTypeTags.SENSITIVE_TO_SMITE)
                 .add(key(TCEntities.ELDRITCH_GUARDIAN.get()))
-                .add(key(TCEntities.INHABITED_ZOMBIE.get()));
+                .add(key(TCEntities.INHABITED_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.GIANT_BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_DROWNED.get()))
+                .add(key(TCEntities.BRAINY_HUSK.get()));
         tag(EntityTypeTags.INVERTED_HEALING_AND_HARM)
                 .add(key(TCEntities.ELDRITCH_GUARDIAN.get()))
-                .add(key(TCEntities.INHABITED_ZOMBIE.get()));
+                .add(key(TCEntities.INHABITED_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.GIANT_BRAINY_ZOMBIE.get()))
+                .add(key(TCEntities.BRAINY_DROWNED.get()))
+                .add(key(TCEntities.BRAINY_HUSK.get()));
         tag(EntityTypeTags.WITHER_FRIENDS).add(key(TCEntities.ELDRITCH_GUARDIAN.get()));
     }
 
