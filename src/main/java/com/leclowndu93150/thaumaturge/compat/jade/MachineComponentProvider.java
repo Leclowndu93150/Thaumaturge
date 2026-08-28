@@ -51,7 +51,7 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
         if (accessor.getBlockEntity() instanceof BlockEntityNodeTransducer transducer) {
             if (!JadeConfig.shouldShow(config, JadeConfig.NODE_TRANSDUCERS, accessor)) return;
             tooltip.add(Component.translatable("jade.thaumaturge.transducer.status." + transducer.getStatus()));
-            if (transducer.getStatus() != 0 && accessor.showDetails()) {
+            if (transducer.getStatus() != 0) {
                 tooltip.add(Component.translatable(
                         "jade.thaumaturge.transducer.charge",
                         transducer.getCount() * 100 / BlockEntityNodeTransducer.CHARGE_TARGET));
