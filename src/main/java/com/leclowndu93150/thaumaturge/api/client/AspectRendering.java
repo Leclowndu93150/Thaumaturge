@@ -56,6 +56,44 @@ public final class AspectRendering {
         }
     }
 
+    /** Renders a placeholder for a syntactically valid aspect id missing from the registry. */
+    public static void renderMissingGui(GuiGraphics graphics, int x, int y, ResourceLocation missingId) {
+        java.util.Objects.requireNonNull(missingId, "missingId");
+        AspectTagRenderer.renderMissingChip(graphics, x, y);
+    }
+
+    /** Returns the render type for a holder-free missing-aspect placeholder. */
+    public static RenderType missingRenderType(BlendMode blendMode) {
+        return blendMode == BlendMode.ADDITIVE
+                ? TCFlatRenderTypes.entityAdditiveFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE)
+                : TCFlatRenderTypes.entityTranslucentFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE);
+    }
+
+    /** Renders a camera-facing placeholder for a missing registry entry. */
+    public static void renderMissingBillboard(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            ResourceLocation missingId,
+            float scale,
+            float alpha,
+            int packedLight,
+            BlendMode blendMode) {
+        java.util.Objects.requireNonNull(missingId, "missingId");
+        poseStack.pushPose();
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        poseStack.scale(scale, scale, scale);
+        AspectTagWorldRenderer.renderMissingQuad(
+                poseStack, buffers.getBuffer(missingRenderType(blendMode)), alpha, packedLight);
+        poseStack.popPose();
+    }
+
+    /** Writes a holder-free missing-aspect placeholder to a caller-provided vertex consumer. */
+    public static void renderMissingQuad(
+            PoseStack poseStack, VertexConsumer buffer, ResourceLocation missingId, float alpha, int packedLight) {
+        java.util.Objects.requireNonNull(missingId, "missingId");
+        AspectTagWorldRenderer.renderMissingQuad(poseStack, buffer, alpha, packedLight);
+    }
+
     /** Returns the render type used for an aspect quad with the requested discovery state. */
     public static RenderType renderType(Holder<IAspect> aspect, AspectKnowledge knowledge, BlendMode blendMode) {
         ResourceLocation texture =

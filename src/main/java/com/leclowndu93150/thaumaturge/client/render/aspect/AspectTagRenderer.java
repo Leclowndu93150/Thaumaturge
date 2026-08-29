@@ -80,6 +80,10 @@ public final class AspectTagRenderer {
         renderMaskedChip(graphics, x, y, aspect, UNKNOWN_ALPHA);
     }
 
+    public static void renderMissingChip(GuiGraphics graphics, int x, int y) {
+        renderMaskedChip(graphics, x, y, null, UNKNOWN_ALPHA);
+    }
+
     private static void renderMaskedChip(GuiGraphics graphics, int x, int y, Holder<IAspect> aspect, float alpha) {
         int tint = ARGB32.colorFromFloat(alpha, 1.0F, 1.0F, 1.0F);
         int color = aspect != null && aspect.value() != null
