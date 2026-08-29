@@ -94,6 +94,12 @@ public final class AuraTickHandler {
         float flux = aura.getFlux();
         boolean dirty = false;
 
+        float physicalFluxFloor = PhysicalFluxAuraContamination.targetFlux(level, aura.getChunkPos(), aura.getBase());
+        if (flux < physicalFluxFloor) {
+            flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
+            dirty = true;
+        }
+
         Sink visSink = neighbours.visSink();
         if (visSink != null) {
             float sinkVis = visSink.data().getVis();
@@ -119,11 +125,6 @@ public final class AuraTickHandler {
             }
         }
 
-        float physicalFluxFloor = PhysicalFluxAuraContamination.targetFlux(level, aura.getChunkPos(), aura.getBase());
-        if (flux < physicalFluxFloor) {
-            flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
-            dirty = true;
-        }
         if (vis + flux < base) {
             vis += Math.min(base - (vis + flux), factors.vis());
             dirty = true;

@@ -1291,7 +1291,6 @@ public final class TCBlocks {
     }
 
     //
-
     public static final DeferredBlock<BlockMetalTC> ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
             "alchemical_construct",
             BlockMetalTC::new,

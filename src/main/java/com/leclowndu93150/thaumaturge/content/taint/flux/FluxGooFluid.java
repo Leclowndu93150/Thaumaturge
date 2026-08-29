@@ -72,10 +72,6 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         // Report the physical pollution before it moves/decays. These observations establish a
         // capped local Aura Flux floor rather than generating Flux endlessly every tick.
         PhysicalFluxAuraContamination.observeGoo(serverLevel, pos, fluidState.getAmount());
-
-        // Finite-fluid movement remains on its normal scheduled cadence. TC4 lifecycle rolls
-        // (slime, taint and natural decay) run from randomTick instead, so their historical
-        // probabilities are not multiplied by this fluid's much faster movement tick rate.
         spreadTick(serverLevel, pos, fluidState, serverLevel.getRandom());
         FluidState current = serverLevel.getFluidState(pos);
         if (!current.isEmpty() && current.getType().isSame(this)) {

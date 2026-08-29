@@ -37,6 +37,8 @@ import org.jspecify.annotations.Nullable;
 /** TC4 essentia reservoir: a 256-unit mixed-aspect store with one configurable tube face. */
 public final class BlockEssentiaReservoir extends BaseEntityBlock implements IInteractWithCaster {
     public static final MapCodec<BlockEssentiaReservoir> CODEC = simpleCodec(BlockEssentiaReservoir::new);
+    private static final float RUPTURE_AURA_FLUX_PER_ESSENTIA = 0.25F;
+    private static final float MAX_RUPTURE_AURA_FLUX = 64.0F;
     private static final Map<Direction, VoxelShape> SHAPES =
             DeviceShapes.facingShapesFromDown(Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0));
 
@@ -132,15 +134,15 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    private static final float RELEASED_ESSENTIA_FLUX_POLLUTION = 0.25F;
-
     private static void releaseStoredEssentia(ServerLevel level, BlockPos pos, int stored) {
         int releases = stored / 16;
-        if (releases <= 0) return;
+        if (stored <= 0) return;
 
-        // Hybrid TC4/TC6 behavior: a ruptured reservoir still ejects physical Goo/Gas, but the
-        // discarded essentia also pollutes the local aura so Rift gameplay remains reachable.
-        AuraHelper.polluteAura(level, pos, stored * RELEASED_ESSENTIA_FLUX_POLLUTION, true);
+        // Preserve the TC4 physical rupture and add a bounded TC6 Aura consequence proportional
+        // to the stored essentia. This is a catastrophic containment failure, not routine leakage.
+        AuraHelper.polluteAura(
+                level, pos, Math.min(stored * RUPTURE_AURA_FLUX_PER_ESSENTIA, MAX_RUPTURE_AURA_FLUX), true);
+        if (releases <= 0) return;
 
         // TC4 physically ruptured a loaded reservoir: full-strength Flux Goo formed below the
         // tank and full-strength Flux Gas formed at/above it. Keep the original 50-attempt search

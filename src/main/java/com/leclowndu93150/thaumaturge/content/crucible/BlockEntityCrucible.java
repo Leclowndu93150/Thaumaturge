@@ -5,7 +5,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
@@ -45,11 +44,6 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
 
     public static final int TANK_CAPACITY = 1000;
     public static final int MAX_ASPECT = 100;
-
-    // Hybrid pollution model: preserve TC4 physical Goo/Gas while restoring the later
-    // numerical Aura Flux consequence that drives Flux pressure and Rift formation.
-    private static final float AURA_FLUX_PER_DISCARDED_ASPECT = 0.25F;
-    private static final float AURA_FLUX_PER_DISCARDED_VITIUM = 1.0F;
 
     private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override
@@ -103,7 +97,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
 
             if (aspects.totalAmount() > MAX_ASPECT && counter % 5L == 0L) spillOverflow();
 
-            if (counter > 100L && heat > 150) {
+            if (counter >= 100L) {
                 spillRandom();
                 counter = 0L;
             }
@@ -296,14 +290,19 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
         int total = aspects.totalAmount();
         if (tank.getFluidAmount() > 0 || total > 0) {
             tank.setFluid(FluidStack.EMPTY);
+            // Each discarded essentia has one consequence: a TC4-style physical spill or one unit
+            // of TC6 Aura Flux. Physical Flux therefore does not double-count as Aura Flux.
+            int successfulPhysicalSpills = 0;
+            for (int i = 0; i < total; i++) {
+                if (serverLevel.getRandom().nextInt(4) == 0
+                        && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom())) {
+                    successfulPhysicalSpills++;
+                }
+            }
 
-            // Additive TC4/TC6 hybrid: dumping a dirty crucible keeps the physical Goo/Gas
-            // consequences, but discarded essentia also pollutes the local numerical aura so
-            // ordinary gameplay can build Rift pressure. Vitium is intentionally four times
-            // dirtier than other essentia, matching the later crucible pollution semantics.
-            polluteDiscardedAspects(serverLevel, aspects, true);
-            for (int i = 0; i < total / 2; i++) {
-                spillPhysical(serverLevel);
+            float auraFlux = Math.max(0.0F, total - successfulPhysicalSpills);
+            if (auraFlux > 0.0F) {
+                AuraHelper.polluteAura(serverLevel, getBlockPos(), auraFlux, true);
             }
 
             this.aspects = AspectList.EMPTY;
@@ -320,72 +319,32 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                 .aspect();
         aspects = aspects.reduce(randAspect, 1);
 
-        // The aspect actually escaped the crucible: keep TC4's physical spill attempt and
-        // additionally credit the discarded essentia to numerical Aura Flux.
-        polluteDiscardedAspect(serverLevel, randAspect, 1, false);
-        spillPhysical(serverLevel);
+        // Overflow is a one-unit budget: either a physical spill or Aura Flux.
+        boolean physical = serverLevel.getRandom().nextInt(4) == 0
+                && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom());
+        if (!physical) {
+            AuraHelper.polluteAura(serverLevel, getBlockPos(), 1.0F, true);
+        }
         setChanged();
         syncToClient();
     }
 
     public void spillRandom() {
-        if (!(level instanceof ServerLevel serverLevel) || aspects.isEmpty()) return;
-        Holder<IAspect> randomAspect = aspects.entries()
-                .get(serverLevel.getRandom().nextInt(aspects.size()))
-                .aspect();
-        // The original crucible rerolled once when it first selected a primal aspect, making
-        // compound essentia slowly decompose while primals escaped as physical pollution.
-        if (randomAspect.value().isPrimal()) {
-            randomAspect = aspects.entries()
-                    .get(serverLevel.getRandom().nextInt(aspects.size()))
+        if (level == null || level.isClientSide()) return;
+        if (!aspects.isEmpty()) {
+            Holder<IAspect> randAspect = aspects.entries()
+                    .get(level.getRandom().nextInt(aspects.size()))
                     .aspect();
-        }
-        tank.drain(2, IFluidHandler.FluidAction.EXECUTE);
-        aspects = aspects.reduce(randomAspect, 1);
-        if (randomAspect.value().isPrimal()) {
-            // Primals are genuinely discarded here. Compound aspects instead decompose back
-            // into a component and therefore do not pollute the numerical aura until something
-            // actually escapes.
-            polluteDiscardedAspect(serverLevel, randomAspect, 1, false);
-            spillPhysical(serverLevel);
-        } else {
-            var components = randomAspect.value().components();
-            if (!components.isEmpty()) {
-                aspects = aspects.add(components.get(serverLevel.getRandom().nextBoolean() ? 0 : 1), 1);
+            aspects = aspects.reduce(randAspect, 1);
+            // Slow neglect should first look like a TC4 leak. Only an actual physical leak adds a
+            // very small TC6 Aura consequence; blocked leak attempts do not become free Flux.
+            if (level.getRandom().nextInt(4) != 0
+                    && PhysicalFlux.spill((ServerLevel) level, getBlockPos(), level.getRandom())) {
+                AuraHelper.polluteAura(level, getBlockPos(), 0.25F, true);
             }
         }
         setChanged();
         syncToClient();
-    }
-
-    private void spillPhysical(ServerLevel serverLevel) {
-        if (serverLevel.getRandom().nextInt(4) == 0) {
-            PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom());
-        }
-    }
-
-    private void polluteDiscardedAspects(ServerLevel serverLevel, AspectList discarded, boolean showEffect) {
-        float pollution = 0.0F;
-        for (AspectInstance aspect : discarded.entries()) {
-            pollution += pollutionFor(aspect.aspect(), aspect.amount());
-        }
-        if (pollution > 0.0F) {
-            AuraHelper.polluteAura(serverLevel, getBlockPos(), pollution, showEffect);
-        }
-    }
-
-    private void polluteDiscardedAspect(
-            ServerLevel serverLevel, Holder<IAspect> aspect, int amount, boolean showEffect) {
-        float pollution = pollutionFor(aspect, amount);
-        if (pollution > 0.0F) {
-            AuraHelper.polluteAura(serverLevel, getBlockPos(), pollution, showEffect);
-        }
-    }
-
-    private static float pollutionFor(Holder<IAspect> aspect, int amount) {
-        if (amount <= 0) return 0.0F;
-        float perUnit = aspect.is(TCAspects.VITIUM) ? AURA_FLUX_PER_DISCARDED_VITIUM : AURA_FLUX_PER_DISCARDED_ASPECT;
-        return perUnit * amount;
     }
 
     public short getHeat() {
