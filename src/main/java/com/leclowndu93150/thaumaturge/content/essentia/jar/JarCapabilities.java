@@ -24,6 +24,14 @@ public final class JarCapabilities {
                 EssentiaCapabilities.TRANSPORT,
                 TCBlockEntities.JAR_VOID.get(),
                 (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.STORAGE,
+                TCBlockEntities.JAR.get(),
+                (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.STORAGE,
+                TCBlockEntities.JAR_VOID.get(),
+                (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
                 (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),

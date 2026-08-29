@@ -11,6 +11,10 @@ import net.neoforged.neoforge.capabilities.ItemCapability;
  * <p>{@link #TRANSPORT} is the sided block capability that exposes {@link IEssentiaTransport};
  * it accepts a nullable {@link Direction} context the way vanilla item / fluid handlers do.
  *
+ * <p>{@link #STORAGE} is the sided block capability for enumerable, typed and simulation-safe
+ * essentia storage. The returned {@link IEssentiaStorage} is already bound to the queried side;
+ * querying without a side returns no storage view.
+ *
  * <p>{@link #CONTAINER} is the item capability for {@link IEssentiaContainerItem}; it requires
  * no context.
  *
@@ -20,6 +24,10 @@ public final class EssentiaCapabilities {
     /** Sided block capability for essentia transport. */
     public static final BlockCapability<IEssentiaTransport, Direction> TRANSPORT = BlockCapability.createSided(
             ResourceLocation.fromNamespaceAndPath("thaumaturge", "essentia_transport"), IEssentiaTransport.class);
+
+    /** Sided block capability for enumerable essentia storage. */
+    public static final BlockCapability<IEssentiaStorage, Direction> STORAGE = BlockCapability.createSided(
+            ResourceLocation.fromNamespaceAndPath("thaumaturge", "essentia_storage"), IEssentiaStorage.class);
 
     /** Item capability for essentia containers. */
     public static final ItemCapability<IEssentiaContainerItem, Void> CONTAINER = ItemCapability.createVoid(

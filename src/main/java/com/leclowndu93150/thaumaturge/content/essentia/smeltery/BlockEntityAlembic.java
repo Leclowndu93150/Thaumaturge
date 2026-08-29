@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
 import com.leclowndu93150.thaumaturge.api.aspect.*;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
@@ -33,6 +34,8 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     private @Nullable ResourceKey<IAspect> aspectFilter;
     private int amount;
     private int tickCount;
+    private long contentRevision;
+    private final IEssentiaStorage[] storageViews = new IEssentiaStorage[Direction.values().length];
     private Direction facing = Direction.DOWN;
 
     public BlockEntityAlembic(BlockPos pos, BlockState state) {
@@ -75,10 +78,15 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     }
 
     protected void clearAspect() {
+        boolean changed = amount > 0;
         this.aspect = null;
         this.amount = 0;
-        setChanged();
-        syncToClient();
+        if (changed) {
+            contentsChanged();
+        } else {
+            setChanged();
+            syncToClient();
+        }
     }
 
     protected static boolean processAlembics(Level level, BlockPos pos, Holder<IAspect> aspectHolder) {
@@ -126,14 +134,13 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
             int added = Math.min(requested, CAPACITY - amount);
             amount += added;
             requested -= added;
-            setChanged();
-            syncToClient();
+            if (added > 0) contentsChanged();
         }
         return requested;
     }
 
     protected boolean doTakeFromContainer(ResourceKey<IAspect> requested, int amt) {
-        if (amount >= amt && requested.equals(aspect)) {
+        if (amt > 0 && amount >= amt && requested.equals(aspect)) {
             amount -= amt;
             if (amount <= 0) {
                 if (aspectFilter == null) {
@@ -141,8 +148,7 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
                 }
                 amount = 0;
             }
-            setChanged();
-            syncToClient();
+            contentsChanged();
             return true;
         }
         return false;
@@ -158,6 +164,22 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     public EssentiaList getEssentiaContents(HolderLookup.Provider registries) {
         AspectList contents = getContents(registries);
         return contents.isEmpty() ? EssentiaList.EMPTY : new EssentiaList(contents);
+    }
+
+    public IEssentiaStorage storage(Direction side) {
+        int index = side.ordinal();
+        IEssentiaStorage view = storageViews[index];
+        if (view == null) {
+            view = new StorageView(side);
+            storageViews[index] = view;
+        }
+        return view;
+    }
+
+    private void contentsChanged() {
+        contentRevision++;
+        setChanged();
+        syncToClient();
     }
 
     @Override
@@ -296,8 +318,14 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
         AspectInstance first = aspects.entries().getFirst();
         ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
         if (key != null) {
+            int previousAmount = amount;
+            ResourceKey<IAspect> previousAspect = aspect;
             aspect = key;
             amount = Math.min(first.amount(), CAPACITY);
+            if (amount != previousAmount || !Objects.equals(aspect, previousAspect)) {
+                contentsChanged();
+                return;
+            }
         }
         setChanged();
         syncToClient();
@@ -310,33 +338,12 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
 
     @Override
     public int addToContainer(Holder<IAspect> aspect, int amount) {
-        if (amount == 0) return amount;
-        if ((this.amount < CAPACITY && Objects.equals(this.aspect, aspect.getKey())) || this.amount == 0) {
-            this.aspect = aspect.getKey();
-            int added = Math.min(amount, CAPACITY - this.amount);
-            this.amount += added;
-            amount -= added;
-        }
-        setChanged();
-        syncToClient();
-        return amount;
+        return doAddToContainer(aspect.getKey(), amount);
     }
 
     @Override
     public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
-        if (this.amount >= amount && Objects.equals(this.aspect, aspect.getKey())) {
-            this.amount -= amount;
-            if (this.amount <= 0) {
-                if (aspectFilter == null) {
-                    this.aspect = null;
-                }
-                this.amount = 0;
-            }
-            setChanged();
-            syncToClient();
-            return true;
-        }
-        return false;
+        return doTakeFromContainer(aspect.getKey(), amount);
     }
 
     @Override
@@ -347,5 +354,38 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     @Override
     public int containerContains(Holder<IAspect> aspect) {
         return Objects.equals(this.aspect, aspect.getKey()) ? this.amount : 0;
+    }
+
+    private final class StorageView implements IEssentiaStorage {
+        private final Direction side;
+
+        private StorageView(Direction side) {
+            this.side = side;
+        }
+
+        @Override
+        public AspectList contents() {
+            return getAspects();
+        }
+
+        @Override
+        public int insert(Holder<IAspect> aspect, int amount, boolean simulate) {
+            return 0;
+        }
+
+        @Override
+        public int extract(Holder<IAspect> aspect, int amount, boolean simulate) {
+            if (amount <= 0 || !canOutputTo(side) || !Objects.equals(BlockEntityAlembic.this.aspect, aspect.getKey())) {
+                return 0;
+            }
+            int extracted = Math.min(amount, BlockEntityAlembic.this.amount);
+            if (!simulate && extracted > 0 && !doTakeFromContainer(aspect.getKey(), extracted)) return 0;
+            return extracted;
+        }
+
+        @Override
+        public long contentRevision() {
+            return contentRevision;
+        }
     }
 }
