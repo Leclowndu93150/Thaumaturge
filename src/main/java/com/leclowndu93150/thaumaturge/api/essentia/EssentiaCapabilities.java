@@ -18,6 +18,9 @@ import net.neoforged.neoforge.capabilities.ItemCapability;
  * <p>{@link #CONTAINER} is the item capability for {@link IEssentiaContainerItem}; it requires
  * no context.
  *
+ * <p>{@link #ITEM_STORAGE} is the item capability for explicitly transfer-capable portable
+ * storage. Scanning-only aspect containers do not expose it.
+ *
  * @since 1.0.0
  */
 public final class EssentiaCapabilities {
@@ -32,6 +35,10 @@ public final class EssentiaCapabilities {
     /** Item capability for essentia containers. */
     public static final ItemCapability<IEssentiaContainerItem, Void> CONTAINER = ItemCapability.createVoid(
             ResourceLocation.fromNamespaceAndPath("thaumaturge", "essentia_container"), IEssentiaContainerItem.class);
+
+    /** Item capability for transfer-capable portable essentia storage. */
+    public static final ItemCapability<IEssentiaItemStorage, Void> ITEM_STORAGE = ItemCapability.createVoid(
+            ResourceLocation.fromNamespaceAndPath("thaumaturge", "essentia_item_storage"), IEssentiaItemStorage.class);
 
     /** Sided block capability for synthetic aspect queries (filters, routing intents). */
     public static final BlockCapability<IAspectQuery, Direction> ASPECT_QUERY = BlockCapability.createSided(
