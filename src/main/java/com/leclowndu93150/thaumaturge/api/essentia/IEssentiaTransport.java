@@ -137,9 +137,11 @@ public interface IEssentiaTransport {
      * value reports how much would be extracted.
      *
      * <p>The default implementation commits through {@link #takeEssentia(Holder, int, Direction)}
-     * when not simulating, and otherwise estimates the extraction as
-     * {@code min(amount, getEssentiaAmount(face))}. Devices whose extraction is not a pure function
-     * of stored amount should override this method so that simulation matches the real transfer.
+     * when not simulating. Simulation first verifies that the requested aspect matches
+     * {@link #getEssentiaType(Direction)}, then estimates extraction as
+     * {@code min(amount, getEssentiaAmount(face))}. Mixed-aspect stores and devices whose extraction
+     * is not a pure function of their exposed type and amount should override this method or expose
+     * {@link IEssentiaStorage} so simulation matches the real transfer.
      *
      * @param aspect   the aspect requested
      * @param amount   the maximum amount to extract
@@ -151,6 +153,8 @@ public interface IEssentiaTransport {
         if (!simulate) {
             return takeEssentia(aspect, amount, face);
         }
+        Holder<IAspect> stored = getEssentiaType(face);
+        if (amount <= 0 || stored == null || !stored.equals(aspect)) return 0;
         return Math.min(amount, getEssentiaAmount(face));
     }
 
