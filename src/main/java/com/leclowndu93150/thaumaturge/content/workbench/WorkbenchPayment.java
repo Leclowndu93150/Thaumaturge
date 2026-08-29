@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCostEvent;
+import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.api.recipe.IWorkbenchVisSource;
@@ -37,14 +38,24 @@ public final class WorkbenchPayment {
         SOURCES.addAll(sources);
     }
 
+    public static Plan plan(
+            IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, ArcaneWorkbenchContext context) {
+        return planInternal(recipe, inventory, player, context);
+    }
+
     public static Plan plan(IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player) {
+        return planInternal(recipe, inventory, player, null);
+    }
+
+    private static Plan planInternal(
+            IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, @Nullable ArcaneWorkbenchContext context) {
         ItemStack wand = inventory.wandStack();
         boolean hasWand = wand.getItem() instanceof ItemWand;
 
         Map<ResourceKey<IAspect>, Integer> wandCentivis = new LinkedHashMap<>();
         Map<ResourceKey<IAspect>, Integer> sourceCentivis = new LinkedHashMap<>();
         AspectList crystalNeeds =
-                calculateCrystalNeeds(recipe, inventory, player, hasWand, wand, wandCentivis, sourceCentivis);
+                calculateCrystalNeeds(recipe, inventory, player, context, hasWand, wand, wandCentivis, sourceCentivis);
 
         boolean fullWand = hasWand && crystalNeeds.isEmpty() && sourceCentivis.isEmpty();
         float modifier;
@@ -66,6 +77,7 @@ public final class WorkbenchPayment {
             IArcaneRecipe recipe,
             IArcaneWorkbench inventory,
             Player player,
+            @Nullable ArcaneWorkbenchContext context,
             boolean hasWand,
             ItemStack wand,
             Map<ResourceKey<IAspect>, Integer> wandCentivis,
@@ -78,7 +90,7 @@ public final class WorkbenchPayment {
             single.put(primal, centivis);
             if (hasWand && WandVisHelper.consumeAllVisRaw(wand, single, true)) {
                 wandCentivis.put(primal, centivis);
-            } else if (supplyFromSources(player, inventory, entry.aspect(), centivis, true) >= centivis) {
+            } else if (supplyFromSources(context, player, inventory, entry.aspect(), centivis, true) >= centivis) {
                 sourceCentivis.put(primal, centivis);
             } else {
                 crystalNeeds = crystalNeeds.add(entry.aspect(), entry.amount());
@@ -106,6 +118,17 @@ public final class WorkbenchPayment {
                 result.affordable() && hasCrystals(inventory, result.crystalsNeeded()));
     }
 
+    public static ArcaneCraftCost cost(
+            IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player, ArcaneWorkbenchContext context) {
+        Plan plan = plan(recipe, workbench, player, context);
+        return new ArcaneCraftCost(
+                plan.fullWand(),
+                plan.wandCentivis(),
+                plan.crystalsToConsume(),
+                plan.auraVis(),
+                plan.crystalsSatisfied());
+    }
+
     public static ArcaneCraftCost cost(IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player) {
         Plan plan = plan(recipe, workbench, player);
         return new ArcaneCraftCost(
@@ -124,7 +147,11 @@ public final class WorkbenchPayment {
     }
 
     public static void pay(
-            Plan plan, @Nullable BlockEntityArcaneWorkbench tile, Player player, InventoryArcaneWorkbench inventory) {
+            Plan plan,
+            @Nullable BlockEntityArcaneWorkbench tile,
+            Player player,
+            IArcaneWorkbench inventory,
+            ArcaneWorkbenchContext context) {
         if (!plan.wandCentivis().isEmpty()) {
             WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), false);
         }
@@ -132,19 +159,35 @@ public final class WorkbenchPayment {
                 plan.sourceCentivis().entrySet()) {
             Holder<IAspect> aspect = Aspects.resolve(player.level(), entry.getKey());
             if (aspect != null) {
-                supplyFromSources(player, inventory, aspect, entry.getValue(), false);
+                supplyFromSources(context, player, inventory, aspect, entry.getValue(), false);
             }
-        }
-        if (!plan.crystalsToConsume().isEmpty()) {
-            consumeCrystals(inventory, plan.crystalsToConsume());
         }
         if (plan.auraVis() > 0 && tile != null) {
             tile.spendAura(plan.auraVis());
         }
     }
 
+    public static void pay(
+            Plan plan, @Nullable BlockEntityArcaneWorkbench tile, Player player, InventoryArcaneWorkbench inventory) {
+        if (!plan.wandCentivis().isEmpty()) {
+            WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), false);
+        }
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry :
+                plan.sourceCentivis().entrySet()) {
+            Holder<IAspect> aspect = Aspects.resolve(player.level(), entry.getKey());
+            if (aspect != null) supplyFromSources(null, player, inventory, aspect, entry.getValue(), false);
+        }
+        consumeCrystals(inventory, plan.crystalsToConsume());
+        if (plan.auraVis() > 0 && tile != null) tile.spendAura(plan.auraVis());
+    }
+
     private static int supplyFromSources(
-            Player player, IArcaneWorkbench inventory, Holder<IAspect> aspect, int need, boolean simulate) {
+            @Nullable ArcaneWorkbenchContext context,
+            Player player,
+            IArcaneWorkbench inventory,
+            Holder<IAspect> aspect,
+            int need,
+            boolean simulate) {
         if (player == null) {
             return 0;
         }
@@ -153,7 +196,9 @@ public final class WorkbenchPayment {
             if (supplied >= need) {
                 break;
             }
-            supplied += source.supply(player, inventory, aspect, need - supplied, simulate);
+            supplied += context == null
+                    ? source.supply(player, inventory, aspect, need - supplied, simulate)
+                    : source.supply(context, player, inventory, aspect, need - supplied, simulate);
         }
         return supplied;
     }
