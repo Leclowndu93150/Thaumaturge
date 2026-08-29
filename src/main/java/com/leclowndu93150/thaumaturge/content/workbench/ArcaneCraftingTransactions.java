@@ -18,6 +18,27 @@ import org.jspecify.annotations.Nullable;
 public final class ArcaneCraftingTransactions {
     private ArcaneCraftingTransactions() {}
 
+    public static ArcaneCraftingTransaction.Inspection inspect(
+            ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
+        ArcaneCraftingTransaction.Failure invalid = validateCall(context, player);
+        if (invalid != ArcaneCraftingTransaction.Failure.NONE) {
+            return ArcaneCraftingTransaction.Inspection.failure(invalid);
+        }
+        Match match = match(context, player, input);
+        if (match.failure() != ArcaneCraftingTransaction.Failure.NONE) {
+            return ArcaneCraftingTransaction.Inspection.failure(match.failure());
+        }
+        IArcaneRecipe recipe = match.recipe();
+        return new ArcaneCraftingTransaction.Inspection(
+                true,
+                ArcaneCraftingTransaction.Failure.NONE,
+                match.holder().id(),
+                recipe.assemble(input, context.level().registryAccess()),
+                recipe.getRemainingItems(input),
+                new ArcaneCraftingTransaction.Requirements(
+                        recipe.getBaseVis(), recipe.getCrystals(), recipe.getIngredients()));
+    }
+
     public static ArcaneCraftingTransaction.Result preview(
             ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
         ArcaneCraftingTransaction.Failure invalid = validateCall(context, player);
@@ -57,7 +78,8 @@ public final class ArcaneCraftingTransactions {
                 return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.INGREDIENTS_CHANGED);
             }
             Match current = match(context, player, input);
-            if (current.failure() != ArcaneCraftingTransaction.Failure.NONE || current.recipe() != initial.recipe()) {
+            if (current.failure() != ArcaneCraftingTransaction.Failure.NONE
+                    || !current.holder().id().equals(initial.holder().id())) {
                 return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.INGREDIENTS_CHANGED);
             }
             IArcaneRecipe recipe = current.recipe();
@@ -106,16 +128,16 @@ public final class ArcaneCraftingTransactions {
     }
 
     private static Match match(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        IArcaneRecipe recipe = context.level().getRecipeManager().getAllRecipesFor(TCRecipeTypes.ARCANE.get()).stream()
-                .map(RecipeHolder::value)
-                .filter(candidate -> candidate.matches(input, context.level()))
-                .findFirst()
-                .orElse(null);
-        if (recipe == null) return new Match(null, ArcaneCraftingTransaction.Failure.NO_RECIPE);
-        if (!recipe.doesPassGate(player)) {
+        RecipeHolder<? extends IArcaneRecipe> holder =
+                context.level().getRecipeManager().getAllRecipesFor(TCRecipeTypes.ARCANE.get()).stream()
+                        .filter(candidate -> candidate.value().matches(input, context.level()))
+                        .findFirst()
+                        .orElse(null);
+        if (holder == null) return new Match(null, ArcaneCraftingTransaction.Failure.NO_RECIPE);
+        if (!holder.value().doesPassGate(player)) {
             return new Match(null, ArcaneCraftingTransaction.Failure.RESEARCH_LOCKED);
         }
-        return new Match(recipe, ArcaneCraftingTransaction.Failure.NONE);
+        return new Match(holder, ArcaneCraftingTransaction.Failure.NONE);
     }
 
     private static List<ItemStack> gridSnapshot(IArcaneCraftingInput input) {
@@ -133,5 +155,10 @@ public final class ArcaneCraftingTransactions {
                 .orElse(null);
     }
 
-    private record Match(@Nullable IArcaneRecipe recipe, ArcaneCraftingTransaction.Failure failure) {}
+    private record Match(
+            @Nullable RecipeHolder<? extends IArcaneRecipe> holder, ArcaneCraftingTransaction.Failure failure) {
+        private @Nullable IArcaneRecipe recipe() {
+            return holder == null ? null : holder.value();
+        }
+    }
 }
