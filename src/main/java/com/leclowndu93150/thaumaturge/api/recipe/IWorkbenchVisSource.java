@@ -21,6 +21,21 @@ import net.minecraft.world.entity.player.Player;
 @FunctionalInterface
 public interface IWorkbenchVisSource {
     /**
+     * Context-aware form used by arcane-crafting transactions.
+     *
+     * <p>The default preserves compatibility with sources compiled against the original API.
+     */
+    default int supply(
+            ArcaneWorkbenchContext context,
+            Player player,
+            IArcaneWorkbench workbench,
+            Holder<IAspect> aspect,
+            int need,
+            boolean simulate) {
+        return supply(player, workbench, aspect, need, simulate);
+    }
+
+    /**
      * Supplies up to {@code need} centivis of the given aspect toward a craft at the workbench.
      *
      * @param player    the crafting player
