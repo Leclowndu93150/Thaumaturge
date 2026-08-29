@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCostEvent;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneWorkbench;
+import com.leclowndu93150.thaumaturge.api.recipe.IWorkbenchAuraSource;
 import com.leclowndu93150.thaumaturge.api.recipe.IWorkbenchVisSource;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
@@ -31,11 +32,16 @@ import org.jspecify.annotations.Nullable;
 public final class WorkbenchPayment {
 
     private static final List<IWorkbenchVisSource> SOURCES = new ArrayList<>();
+    private static final List<IWorkbenchAuraSource> AURA_SOURCES = new ArrayList<>();
 
     private WorkbenchPayment() {}
 
     public static void registerSources(List<IWorkbenchVisSource> sources) {
         SOURCES.addAll(sources);
+    }
+
+    public static void registerAuraSources(List<IWorkbenchAuraSource> sources) {
+        AURA_SOURCES.addAll(sources);
     }
 
     public static Plan plan(
@@ -146,6 +152,77 @@ public final class WorkbenchPayment {
         return plan.auraVis() <= 0 || (tile != null && tile.auraVis >= plan.auraVis());
     }
 
+    public static @Nullable PaymentReservation reserve(
+            Plan plan,
+            @Nullable BlockEntityArcaneWorkbench tile,
+            Player player,
+            IArcaneWorkbench inventory,
+            ArcaneWorkbenchContext context) {
+        if (!plan.crystalsSatisfied()) return null;
+        if (!plan.wandCentivis().isEmpty()
+                && !WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), true)) {
+            return null;
+        }
+
+        List<VisAllocation> visAllocations = new ArrayList<>();
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry :
+                plan.sourceCentivis().entrySet()) {
+            Holder<IAspect> aspect = Aspects.resolve(player.level(), entry.getKey());
+            if (aspect == null) return null;
+            int remaining = entry.getValue();
+            for (IWorkbenchVisSource source : SOURCES) {
+                if (remaining <= 0) break;
+                int supplied =
+                        clampSupply(source.supply(context, player, inventory, aspect, remaining, true), remaining);
+                if (supplied > 0) {
+                    visAllocations.add(new VisAllocation(source, aspect, supplied));
+                    remaining -= supplied;
+                }
+            }
+            if (remaining > 0) return null;
+        }
+
+        if (plan.auraVis() <= 0) {
+            return new PaymentReservation(plan, tile, List.copyOf(visAllocations), List.of());
+        }
+        if (tile != null) {
+            if (tile.auraVis < plan.auraVis()) return null;
+            return new PaymentReservation(plan, tile, List.copyOf(visAllocations), List.of());
+        }
+
+        int remainingAura = plan.auraVis();
+        List<AuraAllocation> auraAllocations = new ArrayList<>();
+        for (IWorkbenchAuraSource source : AURA_SOURCES) {
+            if (remainingAura <= 0) break;
+            int supplied = clampSupply(source.supply(context, player, inventory, remainingAura, true), remainingAura);
+            if (supplied > 0) {
+                auraAllocations.add(new AuraAllocation(source, supplied));
+                remainingAura -= supplied;
+            }
+        }
+        return remainingAura == 0
+                ? new PaymentReservation(plan, null, List.copyOf(visAllocations), List.copyOf(auraAllocations))
+                : null;
+    }
+
+    public static void commit(
+            PaymentReservation reservation, Player player, IArcaneWorkbench inventory, ArcaneWorkbenchContext context) {
+        Plan plan = reservation.plan();
+        if (!plan.wandCentivis().isEmpty()) {
+            WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), false);
+        }
+        for (VisAllocation allocation : reservation.visAllocations()) {
+            allocation.source().supply(context, player, inventory, allocation.aspect(), allocation.amount(), false);
+        }
+        if (reservation.nativeWorkbench() != null && plan.auraVis() > 0) {
+            reservation.nativeWorkbench().spendAura(plan.auraVis());
+        } else {
+            for (AuraAllocation allocation : reservation.auraAllocations()) {
+                allocation.source().supply(context, player, inventory, allocation.amount(), false);
+            }
+        }
+    }
+
     public static void pay(
             Plan plan,
             @Nullable BlockEntityArcaneWorkbench tile,
@@ -196,11 +273,16 @@ public final class WorkbenchPayment {
             if (supplied >= need) {
                 break;
             }
-            supplied += context == null
+            int offered = context == null
                     ? source.supply(player, inventory, aspect, need - supplied, simulate)
                     : source.supply(context, player, inventory, aspect, need - supplied, simulate);
+            supplied += clampSupply(offered, need - supplied);
         }
         return supplied;
+    }
+
+    private static int clampSupply(int supplied, int need) {
+        return Math.max(0, Math.min(need, supplied));
     }
 
     public static int crudeCost(IArcaneRecipe recipe) {
@@ -265,4 +347,14 @@ public final class WorkbenchPayment {
             AspectList crystalsToConsume,
             int auraVis,
             boolean crystalsSatisfied) {}
+
+    public record PaymentReservation(
+            Plan plan,
+            @Nullable BlockEntityArcaneWorkbench nativeWorkbench,
+            List<VisAllocation> visAllocations,
+            List<AuraAllocation> auraAllocations) {}
+
+    public record VisAllocation(IWorkbenchVisSource source, Holder<IAspect> aspect, int amount) {}
+
+    public record AuraAllocation(IWorkbenchAuraSource source, int amount) {}
 }

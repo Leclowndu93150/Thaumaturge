@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
+import com.leclowndu93150.thaumaturge.api.recipe.RegisterWorkbenchAuraSourcesEvent;
 import com.leclowndu93150.thaumaturge.api.recipe.RegisterWorkbenchVisSourcesEvent;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
@@ -93,6 +94,9 @@ public final class Thaumaturge {
         visSourcesEvent.register(new VisRelayWorkbenchSource());
         modBus.post(visSourcesEvent);
         WorkbenchPayment.registerSources(visSourcesEvent.sources());
+        RegisterWorkbenchAuraSourcesEvent auraSourcesEvent = new RegisterWorkbenchAuraSourcesEvent();
+        modBus.post(auraSourcesEvent);
+        WorkbenchPayment.registerAuraSources(auraSourcesEvent.sources());
         AuraHelper.bind(new AuraHelperBindings());
         VisRelayHelper.bind(new VisRelayNetwork());
         TaintApi.bind(new TaintApiBindings());

@@ -32,7 +32,7 @@ public final class ArcaneCraftingTransactions {
         WorkbenchPayment.Plan plan = WorkbenchPayment.plan(recipe, input, player, context);
         BlockEntityArcaneWorkbench tile = placedWorkbench(context);
         if (tile != null) tile.refreshAura();
-        if (!WorkbenchPayment.canCraft(plan, tile)) {
+        if (WorkbenchPayment.reserve(plan, tile, player, input, context) == null) {
             return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE);
         }
         return result(context, recipe, input, plan, false);
@@ -64,12 +64,13 @@ public final class ArcaneCraftingTransactions {
             BlockEntityArcaneWorkbench tile = placedWorkbench(context);
             if (tile != null) tile.refreshAura();
             WorkbenchPayment.Plan plan = WorkbenchPayment.plan(recipe, input, player, context);
-            if (!reservation.isValid() || !WorkbenchPayment.canCraft(plan, tile)) {
+            WorkbenchPayment.PaymentReservation payment = WorkbenchPayment.reserve(plan, tile, player, input, context);
+            if (!reservation.isValid() || payment == null) {
                 return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE);
             }
 
             ArcaneCraftingTransaction.Result result = result(context, recipe, input, plan, true);
-            WorkbenchPayment.pay(plan, tile, player, input, context);
+            WorkbenchPayment.commit(payment, player, input, context);
             reservation.commit(result.output(), result.remainders(), plan.crystalsToConsume());
             ResearchProgressionEvents.recordCrafted(player, result.output());
             return result;
