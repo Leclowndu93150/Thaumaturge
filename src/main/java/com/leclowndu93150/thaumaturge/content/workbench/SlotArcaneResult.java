@@ -26,6 +26,7 @@ public final class SlotArcaneResult extends Slot {
     private final InventoryArcaneWorkbench craftMatrix;
     private final @Nullable BlockEntityArcaneWorkbench tile;
     private int amountCrafted;
+    private boolean committedArcaneCraft;
 
     public SlotArcaneResult(
             ResultContainer result,
@@ -44,6 +45,23 @@ public final class SlotArcaneResult extends Slot {
     }
 
     @Override
+    public boolean mayPickup(Player player) {
+        if (committedArcaneCraft) return true;
+        if (!(player instanceof ServerPlayer serverPlayer) || tile == null) return super.mayPickup(player);
+        ResultContainer resultContainer = (ResultContainer) container;
+        if (resultContainer.getRecipeUsed() != null) return super.mayPickup(player);
+
+        ArcaneCraftingInput.Positioned positioned = craftMatrix.asPositionedArcaneCraftInput();
+        ArcaneCraftingInput input = positioned.input().withPlayer(player);
+        ArcaneCraftingTransaction.Result result = ArcaneCraftingTransaction.commit(
+                context(serverPlayer), serverPlayer, input, new NativeStore(player, positioned));
+        if (!result.successful()) return false;
+        committedArcaneCraft = true;
+        resultContainer.setItem(0, result.output());
+        return true;
+    }
+
+    @Override
     protected void onQuickCraft(ItemStack stack, int amount) {
         amountCrafted += amount;
     }
@@ -57,22 +75,13 @@ public final class SlotArcaneResult extends Slot {
     public void onTake(Player player, ItemStack stack) {
         amountCrafted = 0;
 
-        if (!(player.level() instanceof ServerLevel serverLevel)) return;
-        ArcaneCraftingInput.Positioned positioned = craftMatrix.asPositionedArcaneCraftInput();
-        ArcaneCraftingInput input = positioned.input().withPlayer(player);
-
-        if (player instanceof ServerPlayer serverPlayer && tile != null) {
-            String hostKey = serverLevel.dimension().location() + ":"
-                    + tile.getBlockPos().asLong();
-            ArcaneWorkbenchContext context = ArcaneWorkbenchContext.placed(
-                    serverPlayer,
-                    tile.getBlockPos(),
-                    UUID.nameUUIDFromBytes(hostKey.getBytes(StandardCharsets.UTF_8)),
-                    null);
-            ArcaneCraftingTransaction.Result result =
-                    ArcaneCraftingTransaction.commit(context, serverPlayer, input, new NativeStore(player, positioned));
-            if (result.successful()) return;
+        if (committedArcaneCraft) {
+            committedArcaneCraft = false;
+            craftMatrix.setChanged();
+            return;
         }
+
+        if (!(player.level() instanceof ServerLevel)) return;
 
         List<ItemStack> remaining;
         ResultContainer result = (ResultContainer) this.container;
@@ -101,6 +110,13 @@ public final class SlotArcaneResult extends Slot {
                 }
             }
         }
+    }
+
+    private ArcaneWorkbenchContext context(ServerPlayer player) {
+        String hostKey = player.serverLevel().dimension().location() + ":"
+                + tile.getBlockPos().asLong();
+        return ArcaneWorkbenchContext.placed(
+                player, tile.getBlockPos(), UUID.nameUUIDFromBytes(hostKey.getBytes(StandardCharsets.UTF_8)), null);
     }
 
     private final class NativeStore implements IArcaneCraftingStore {

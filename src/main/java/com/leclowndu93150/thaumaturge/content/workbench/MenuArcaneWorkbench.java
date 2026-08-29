@@ -242,6 +242,9 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         ItemStack copy = stack.copy();
 
         if (slotIndex == RESULT_SLOT) {
+            if (!slot.mayPickup(player)) return ItemStack.EMPTY;
+            stack = slot.getItem();
+            copy = stack.copy();
             if (!this.moveItemStackTo(stack, PLAYER_INV_START, HOTBAR_END, true)) {
                 return ItemStack.EMPTY;
             }

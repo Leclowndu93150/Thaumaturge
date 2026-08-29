@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>{@link #reserve(List)} must atomically verify and reserve the supplied grid snapshot. While a
  * reservation is live, its ingredients cannot be consumed by another operation. A successful
- * {@link Reservation#commit(ItemStack, List)} must consume exactly one item from each occupied
+ * {@link Reservation#commit(ItemStack, List, AspectList)} must consume exactly one item from each occupied
  * recipe slot and insert the output and remainders exactly once. Implementations must make commit
  * infallible after reservation, or provide their own rollback before returning from it.
  *
