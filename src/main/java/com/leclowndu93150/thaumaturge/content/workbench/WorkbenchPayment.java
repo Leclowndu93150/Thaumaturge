@@ -212,13 +212,25 @@ public final class WorkbenchPayment {
             WandVisHelper.consumeAllVisRaw(inventory.wandStack(), plan.wandCentivis(), false);
         }
         for (VisAllocation allocation : reservation.visAllocations()) {
-            allocation.source().supply(context, player, inventory, allocation.aspect(), allocation.amount(), false);
+            int supplied = clampSupply(
+                    allocation
+                            .source()
+                            .supply(context, player, inventory, allocation.aspect(), allocation.amount(), false),
+                    allocation.amount());
+            if (supplied != allocation.amount()) {
+                throw new IllegalStateException("Workbench vis source changed between simulation and commit");
+            }
         }
         if (reservation.nativeWorkbench() != null && plan.auraVis() > 0) {
             reservation.nativeWorkbench().spendAura(plan.auraVis());
         } else {
             for (AuraAllocation allocation : reservation.auraAllocations()) {
-                allocation.source().supply(context, player, inventory, allocation.amount(), false);
+                int supplied = clampSupply(
+                        allocation.source().supply(context, player, inventory, allocation.amount(), false),
+                        allocation.amount());
+                if (supplied != allocation.amount()) {
+                    throw new IllegalStateException("Workbench aura source changed between simulation and commit");
+                }
             }
         }
     }

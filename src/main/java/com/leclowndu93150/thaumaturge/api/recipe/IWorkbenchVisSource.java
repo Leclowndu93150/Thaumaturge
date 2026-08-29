@@ -43,7 +43,7 @@ public interface IWorkbenchVisSource {
      * @param aspect    the primal aspect required
      * @param need      the centivis still required for this aspect
      * @param simulate  when true, do not modify source state; only report what would be supplied
-     * @return the centivis supplied, never more than {@code need}
+     * @return the centivis supplied; invalid values are clamped to {@code [0, need]}
      */
     int supply(Player player, IArcaneWorkbench workbench, Holder<IAspect> aspect, int need, boolean simulate);
 }

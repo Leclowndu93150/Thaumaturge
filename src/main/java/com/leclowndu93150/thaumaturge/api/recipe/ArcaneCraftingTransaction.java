@@ -86,7 +86,10 @@ public final class ArcaneCraftingTransaction {
         PAYMENT_UNAVAILABLE
     }
 
-    /** Immutable, reload-safe display snapshot returned by {@link #inspect}. */
+    /**
+     * Immutable, reload-safe display snapshot returned by {@link #inspect}. It is descriptive only:
+     * recipe reloads and resources are authoritatively revalidated by {@link #commit}.
+     */
     public record Inspection(
             boolean successful,
             Failure failure,
