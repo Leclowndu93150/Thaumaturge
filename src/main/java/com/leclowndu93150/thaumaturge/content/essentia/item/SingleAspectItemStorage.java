@@ -5,7 +5,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.ItemEssentiaTransferResult;
+import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public final class SingleAspectItemStorage implements IEssentiaItemStorage {
@@ -56,6 +59,11 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
         ItemStack result = stack.copy();
         container.setAspects(result, contents.remove(aspect, moved));
         return new ItemEssentiaTransferResult(moved, result);
+    }
+
+    @Override
+    public void playTransferFeedback(Player player, TransferDirection direction) {
+        player.level().playSound(null, player.blockPosition(), TCSounds.JAR.get(), SoundSource.PLAYERS, 0.25F, 1.0F);
     }
 
     private ItemEssentiaTransferResult unchanged() {

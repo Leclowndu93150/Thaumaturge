@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.api.essentia;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import net.minecraft.core.Holder;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Transfer-capable essentia storage bound to one item stack.
@@ -33,4 +34,16 @@ public interface IEssentiaItemStorage {
 
     /** Extracts up to {@code amount}, returning the amount moved and replacement stack. */
     ItemEssentiaTransferResult extract(Holder<IAspect> aspect, int amount, boolean simulate);
+
+    /**
+     * Plays storage-specific feedback after a successful committed transfer. The default is silent;
+     * callers should use {@link EssentiaTransferFeedback}, which suppresses simulation and rejected
+     * operations.
+     */
+    default void playTransferFeedback(Player player, TransferDirection direction) {}
+
+    enum TransferDirection {
+        FILL,
+        DRAIN
+    }
 }
