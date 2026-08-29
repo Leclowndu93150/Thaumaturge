@@ -21,6 +21,18 @@ public final class DeviceCapabilities {
                 EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ESSENTIA_RESERVOIR.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ESSENTIA_CRYSTALIZER.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.FLUX_SCRUBBER.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, TCBlockEntities.HUNGRY_CHEST.get(), (be, side) -> new InvWrapper(be));
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK, TCBlockEntities.EVERFULL_URN.get(), (be, side) -> be.getTank());

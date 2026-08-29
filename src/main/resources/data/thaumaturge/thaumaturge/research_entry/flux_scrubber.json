@@ -1,0 +1,57 @@
+{
+  "category": "thaumaturge:artifice",
+  "name": "research.thaumaturge.flux_scrubber.title",
+  "parents": [
+    "~thaumaturge:infusion",
+    "thaumaturge:vis_battery",
+    "thaumaturge:bellows",
+    "thaumaturge:tubes"
+  ],
+  "column": -8,
+  "row": -3,
+  "icons": [
+    "thaumaturge:flux_scrubber"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.flux_scrubber.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.flux_scrubber.stage_1",
+      "recipes": [
+        "thaumaturge:arcane_workbench/flux_scrubber"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:vinculum",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:aqua",
+      "amount": 3
+    }
+  ],
+  "complexity": 1
+}

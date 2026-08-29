@@ -1,0 +1,52 @@
+{
+  "category": "thaumaturge:alchemy",
+  "name": "research.thaumaturge.essentia_crystalizer.title",
+  "parents": [
+    "thaumaturge:tubes"
+  ],
+  "column": 8,
+  "row": -2,
+  "meta": [
+    "hidden"
+  ],
+  "icons": [
+    "thaumaturge:essentia_crystalizer"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.essentia_crystalizer.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:alchemy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.essentia_crystalizer.stage_1",
+      "recipes": [
+        "thaumaturge:arcane_workbench/essentia_crystalizer"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:aqua",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:vitreus",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 5
+    }
+  ],
+  "complexity": 1
+}

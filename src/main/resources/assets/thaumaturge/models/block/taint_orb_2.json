@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "thaumaturge:block/taint_growth_5",
     "side1": "thaumaturge:block/taint_growth_5",

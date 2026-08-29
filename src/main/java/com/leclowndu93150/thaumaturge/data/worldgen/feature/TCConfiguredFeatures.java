@@ -17,6 +17,7 @@ import java.util.Optional;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.placement.TreePlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
@@ -40,6 +41,7 @@ public final class TCConfiguredFeatures {
             TCTreeGrowers.SILVERWOOD_TREE_GROWN;
     public static final ResourceKey<ConfiguredFeature<?, ?>> BIG_MAGIC_TREE = key("big_magic_tree");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MAGIC_FOREST_TREES = key("magic_forest_trees");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> TAINTED_LANDS_TREES = key("tainted_lands_trees");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MAGIC_FOREST_FLORA = key("magic_forest_flora");
     public static final ResourceKey<ConfiguredFeature<?, ?>> MANA_PODS = key("mana_pods");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CRYSTALS = key("crystals");
@@ -52,6 +54,7 @@ public final class TCConfiguredFeatures {
     public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_QUARTZ = key("ore_quartz");
     public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_AMBER = key("ore_amber");
     public static final ResourceKey<ConfiguredFeature<?, ?>> CINDERPEARL_PATCH = key("cinderpearl_patch");
+    public static final ResourceKey<ConfiguredFeature<?, ?>> TAINT_BIOME = key("taint_biome");
 
     private static final double GREATWOOD_HEIGHT_ATTENUATION = 0.618;
     private static final double GREATWOOD_BRANCH_SLOPE = 0.38;
@@ -63,6 +66,7 @@ public final class TCConfiguredFeatures {
     private static final int SILVERWOOD_GROWN_EXTRA_HEIGHT = 4;
     private static final float MAGIC_FOREST_SILVERWOOD_CHANCE = 1.0F / 18.0F;
     private static final float MAGIC_FOREST_GREATWOOD_CHANCE = 1.0F / 12.0F;
+    private static final float TAINTED_LANDS_BIG_TREE_CHANCE = 1.0F / 8.0F;
     private static final int CRYSTAL_ATTEMPTS = 8;
     private static final int CRYSTAL_MAX_TOTAL = 64;
     private static final int CRYSTAL_BIOME_ASPECT_CHANCE = 3;
@@ -139,6 +143,19 @@ public final class TCConfiguredFeatures {
                                                 MAGIC_FOREST_GREATWOOD_CHANCE)),
                                 placed.getOrThrow(TCPlacedFeatures.BIG_MAGIC_CHECKED))));
 
+        // TC4 BiomeGenTaint selected its old WorldGenBigMagicTree one time in eight and otherwise
+        // delegated to the vanilla biome tree generator. WorldGenBigMagicTree itself used oak
+        // logs/leaves, so a fancy/big oak plus ordinary oak is the faithful modern equivalent.
+        context.register(
+                TAINTED_LANDS_TREES,
+                new ConfiguredFeature<>(
+                        Feature.RANDOM_SELECTOR,
+                        new RandomFeatureConfiguration(
+                                List.of(new WeightedPlacedFeature(
+                                        placed.getOrThrow(TCPlacedFeatures.BIG_MAGIC_CHECKED),
+                                        TAINTED_LANDS_BIG_TREE_CHANCE)),
+                                placed.getOrThrow(TreePlacements.OAK_CHECKED))));
+
         context.register(
                 MAGIC_FOREST_FLORA,
                 new ConfiguredFeature<>(
@@ -151,6 +168,9 @@ public final class TCConfiguredFeatures {
 
         context.register(
                 MANA_PODS, new ConfiguredFeature<>(TCFeatures.MANA_PODS.get(), NoneFeatureConfiguration.INSTANCE));
+
+        context.register(
+                TAINT_BIOME, new ConfiguredFeature<>(TCFeatures.TAINT_BIOME.get(), NoneFeatureConfiguration.INSTANCE));
 
         context.register(
                 NODES_WILD,

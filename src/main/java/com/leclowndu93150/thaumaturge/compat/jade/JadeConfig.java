@@ -35,6 +35,9 @@ final class JadeConfig {
     static final ResourceLocation EVERFULL_URNS = option("everfull_urns");
     static final ResourceLocation INFERNAL_FURNACES = option("infernal_furnaces");
     static final ResourceLocation FOCAL_MANIPULATORS = option("focal_manipulators");
+    static final ResourceLocation FLUX_SCRUBBERS = option("flux_scrubbers");
+    static final ResourceLocation CRYSTALIZERS = option("crystalizers");
+    static final ResourceLocation RESERVOIRS = option("reservoirs");
 
     private static final List<ResourceLocation> OPTIONS = List.of(
             NODES,
@@ -59,7 +62,10 @@ final class JadeConfig {
             SPAS,
             EVERFULL_URNS,
             INFERNAL_FURNACES,
-            FOCAL_MANIPULATORS);
+            FOCAL_MANIPULATORS,
+            FLUX_SCRUBBERS,
+            CRYSTALIZERS,
+            RESERVOIRS);
 
     private JadeConfig() {}
 

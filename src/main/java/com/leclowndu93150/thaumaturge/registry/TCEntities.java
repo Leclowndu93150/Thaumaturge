@@ -99,6 +99,14 @@ public final class TCEntities {
                     .eyeHeight(0.1F)
                     .clientTrackingRange(8));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSpider>> TAINT_SPIDER = register(
+            "taint_spider",
+            () -> EntityType.Builder.of(EntityTaintSpider::new, MobCategory.MONSTER)
+                    .sized(0.4F, 0.3F)
+                    .eyeHeight(0.1F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSeed>> TAINT_SEED = register(
             "taint_seed",
             () -> EntityType.Builder.of(EntityTaintSeed::new, MobCategory.MONSTER)
@@ -188,6 +196,56 @@ public final class TCEntities {
                     .sized(0.5F, 0.9F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintCreeper>> TAINT_CREEPER = register(
+            "taint_creeper",
+            () -> EntityType.Builder.of(EntityTaintCreeper::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.7F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintCow>> TAINT_COW = register(
+            "taint_cow",
+            () -> EntityType.Builder.of(EntityTaintCow::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.3F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintPig>> TAINT_PIG = register(
+            "taint_pig",
+            () -> EntityType.Builder.of(EntityTaintPig::new, MobCategory.MONSTER)
+                    .sized(0.9F, 0.9F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintChicken>> TAINT_CHICKEN = register(
+            "taint_chicken",
+            () -> EntityType.Builder.of(EntityTaintChicken::new, MobCategory.MONSTER)
+                    .sized(0.5F, 0.8F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSheep>> TAINT_SHEEP = register(
+            "taint_sheep",
+            () -> EntityType.Builder.of(EntityTaintSheep::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.3F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintVillager>> TAINT_VILLAGER = register(
+            "taint_villager",
+            () -> EntityType.Builder.of(EntityTaintVillager::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSpore>> TAINT_SPORE = register(
+            "taint_spore",
+            () -> EntityType.Builder.of(EntityTaintSpore::new, MobCategory.MONSTER)
+                    .sized(0.7F, 0.7F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSporeSwarmer>> TAINT_SPORE_SWARMER =
+            register(
+                    "taint_spore_swarmer",
+                    () -> EntityType.Builder.of(EntityTaintSporeSwarmer::new, MobCategory.MONSTER)
+                            .sized(0.9F, 0.9F)
+                            .clientTrackingRange(8)
+                            .updateInterval(3));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpecialItem>> SPECIAL_ITEM = register(
             "special_item",

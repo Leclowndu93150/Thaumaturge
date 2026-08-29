@@ -5,13 +5,13 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -43,7 +43,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public class BlockEntityCrucible extends BlockEntity implements IAspectContainer {
 
     public static final int TANK_CAPACITY = 1000;
-    public static final int MAX_ASPECT = 500;
+    public static final int MAX_ASPECT = 100;
 
     private final FluidTank tank = new FluidTank(TANK_CAPACITY) {
         @Override
@@ -95,7 +95,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                 heat--;
             }
 
-            if (aspects.totalAmount() > MAX_ASPECT) spillRandom();
+            if (aspects.totalAmount() > MAX_ASPECT && counter % 5L == 0L) spillOverflow();
 
             if (counter >= 100L) {
                 spillRandom();
@@ -110,12 +110,6 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
         if (level.isClientSide() && prevHeat < 151 && this.heat >= 151) {
             this.heat++;
         }
-    }
-
-    @Override
-    public void setRemoved() {
-        super.setRemoved();
-        if (level instanceof ServerLevel) spillRemnants();
     }
 
     private void sendEffects() {
@@ -292,19 +286,53 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
     }
 
     public void spillRemnants() {
-        if (level == null || level.isClientSide()) return;
+        if (!(level instanceof ServerLevel serverLevel)) return;
         int total = aspects.totalAmount();
         if (tank.getFluidAmount() > 0 || total > 0) {
             tank.setFluid(FluidStack.EMPTY);
-            AuraHelper.polluteAura(level, getBlockPos(), total * 0.25f, true);
-            int fluxAmount = aspects.amountOf(
-                    level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM));
-            if (fluxAmount > 0) AuraHelper.polluteAura(level, getBlockPos(), fluxAmount * 0.75f, false);
+            // TC4 dumped crucible remnants as repeated physical Goo/Gas spill attempts while TC5
+            // made discarded essentia worth one aura Flux each. Use the TC5 one-per-aspect budget,
+            // externalizing successful TC4-style physical spills first so the same waste is not
+            // double-counted as both physical and numerical Flux.
+            int successfulPhysicalSpills = 0;
+            int spillChecks = Math.min(total / 2, 128);
+            for (int i = 0; i < spillChecks; i++) {
+                if (serverLevel.getRandom().nextInt(4) == 0
+                        && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom())) {
+                    successfulPhysicalSpills++;
+                }
+            }
+
+            float auraFlux = Math.max(0.0F, total - successfulPhysicalSpills);
+            if (auraFlux > 0.0F) {
+                AuraHelper.polluteAura(serverLevel, getBlockPos(), auraFlux, true);
+            }
+
             this.aspects = AspectList.EMPTY;
-            level.blockEvent(getBlockPos(), getBlockState().getBlock(), 2, 5);
+            serverLevel.blockEvent(getBlockPos(), getBlockState().getBlock(), 2, 5);
             setChanged();
             syncToClient();
         }
+    }
+
+    private void spillOverflow() {
+        if (!(level instanceof ServerLevel serverLevel) || aspects.isEmpty()) return;
+        Holder<IAspect> randAspect = aspects.entries()
+                .get(serverLevel.getRandom().nextInt(aspects.size()))
+                .aspect();
+        aspects = aspects.reduce(randAspect, 1);
+
+        // TC4/TC5 crucibles overflowed at 100 essentia, not 500. Restore the old physical
+        // containment failure here while retaining the TC6 numerical pollution path for routine
+        // simmering waste below. A blocked spill falls back to aura Flux so sealing a crucible in
+        // solid blocks cannot make overflow harmless.
+        boolean physical = serverLevel.getRandom().nextInt(4) == 0
+                && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom());
+        if (!physical) {
+            AuraHelper.polluteAura(serverLevel, getBlockPos(), 1.0F, true);
+        }
+        setChanged();
+        syncToClient();
     }
 
     public void spillRandom() {
@@ -314,7 +342,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                     .get(level.getRandom().nextInt(aspects.size()))
                     .aspect();
             aspects = aspects.reduce(randAspect, 1);
-            AuraHelper.polluteAura(level, getBlockPos(), randAspect.is(TCAspects.VITIUM) ? 1.0f : 0.25f, true);
+            AuraHelper.polluteAura(level, getBlockPos(), 1.0F, true);
         }
         setChanged();
         syncToClient();

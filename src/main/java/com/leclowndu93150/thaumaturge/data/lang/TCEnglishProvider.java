@@ -549,12 +549,14 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void langEPlants() {
 
         add("block.thaumaturge.shimmerleaf", "Shimmerleaf");
+        add("block.thaumaturge.ethereal_bloom", "Ethereal Bloom");
         add("block.thaumaturge.cinderpearl", "Cinderpearl");
         add("block.thaumaturge.vishroom", "Vishroom");
         add("block.thaumaturge.grass_ambient", "Ambient Grass Block");
         add("biome.thaumaturge.magical_forest", "Magical Forest");
         add("biome.thaumaturge.eerie", "Eerie");
         add("biome.thaumaturge.eldritch", "Eldritch");
+        add("biome.thaumaturge.tainted_lands", "Tainted Lands");
     }
 
     private void langMAuraHud() {
@@ -575,6 +577,7 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void langTaint() {
 
         add("block.thaumaturge.flux_goo", "Flux Goo");
+        add("block.thaumaturge.flux_gas", "Flux Gas");
         add("fluid_type.thaumaturge.flux_goo", "Flux Goo");
 
         add("block.thaumaturge.taint_rock", "Tainted Rock");
@@ -584,6 +587,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.taint_log", "Tainted Log");
         add("block.thaumaturge.taint_feature", "Taint Feature");
         add("block.thaumaturge.taint_fibre", "Taint Fibre");
+        add("block.thaumaturge.taint_spore_stalk", "Taint Spore Stalk");
+        add("entity.thaumaturge.taint_spore", "Taint Spore");
+        add("entity.thaumaturge.taint_spore_swarmer", "Taint Spore Swarmer");
+        add("entity.thaumaturge.taint_creeper", "Tainted Creeper");
+        add("entity.thaumaturge.taint_cow", "Tainted Cow");
+        add("entity.thaumaturge.taint_pig", "Tainted Pig");
+        add("entity.thaumaturge.taint_chicken", "Tainted Chicken");
+        add("entity.thaumaturge.taint_sheep", "Tainted Sheep");
+        add("entity.thaumaturge.taint_villager", "Tainted Villager");
+        add("entity.thaumaturge.taint_spider", "Tainted Crawler");
 
         add("effect.thaumaturge.vis_exhaust", "Vis Exhaust");
         add("effect.thaumaturge.infectious_vis_exhaust", "Flux Phage");
@@ -817,6 +830,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.lamp_growth", "Lamp of Growth");
         add("block.thaumaturge.lamp_fertility", "Lamp of Fertility");
         add("block.thaumaturge.centrifuge", "Essentia Centrifuge");
+        add("block.thaumaturge.essentia_reservoir", "Essentia Reservoir");
+        add("block.thaumaturge.essentia_crystalizer", "Essentia Crystallizer");
+        add("block.thaumaturge.flux_scrubber", "Flux Scrubber");
         add("block.thaumaturge.hungry_chest", "Hungry Chest");
         add("block.thaumaturge.everfull_urn", "Everfull Urn");
         add("block.thaumaturge.vis_generator", "Vis Generator");
@@ -866,6 +882,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("warp.thaumaturge.text.16", "The faint sound of chanting can be heard nearby.");
         add("warp.thaumaturge.text.hunger.1", "Your hunger cannot be satisfied with normal food.");
         add("warp.thaumaturge.text.hunger.2", "Your hunger begins to fade.");
+        add(
+                "warp.thaumaturge.fluxevent.1",
+                "The nearby aura suddenly twists and warps, leaving your thoughts in a shambles.");
         add("warp.thaumaturge.fluxevent.2", "You feel something invading your mind and sapping your will.");
         add("warp.thaumaturge.fluxevent.3", "You feel a sudden release of magical tension nearby.");
         add("entity.thaumaturge.flux_rift", "Flux Rift");
@@ -1627,6 +1646,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         addJadeMode("everfull_urns", "Everfull Urns");
         addJadeMode("infernal_furnaces", "Infernal Furnaces");
         addJadeMode("focal_manipulators", "Focal Manipulators");
+        addJadeMode("flux_scrubbers", "Flux Scrubbers");
+        addJadeMode("crystalizers", "Essentia Crystalizers");
+        addJadeMode("reservoirs", "Essentia Reservoirs");
         add("config.jade.plugin_thaumaturge.node", "Aura Node Info");
         add("config.jade.plugin_thaumaturge.essentia", "Essentia Contents");
         add("config.jade.plugin_thaumaturge.machine", "Machine Progress");
@@ -1678,6 +1700,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.direction.east", "East");
         add("jade.thaumaturge.thaumatorium.recipes", "Recipes: %s / %s");
         add("jade.thaumaturge.centrifuge.state", "Centrifuge: %s");
+        add("jade.thaumaturge.flux_scrubber.charges", "Charges: %s");
+        add("jade.thaumaturge.flux_scrubber.power", "Power: %s%%");
         add("jade.thaumaturge.state.idle", "Idle");
         add("jade.thaumaturge.state.processing", "Processing");
         add("jade.thaumaturge.machine.output", "Output items: %s");

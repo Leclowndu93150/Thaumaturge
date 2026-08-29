@@ -92,6 +92,7 @@ public final class AuraModifierProvider extends DataMapProvider {
         add(b, TCBiomes.MAGICAL_FOREST, 0.625F);
         add(b, TCBiomes.EERIE, 0.625F);
         add(b, TCBiomes.ELDRITCH, 0.458F);
+        add(b, TCBiomes.TAINTED_LANDS, 0.45F);
 
         Builder<BiomeAspects, Biome> aspects = builder(TCDataMaps.BIOME_ASPECTS);
 
@@ -163,6 +164,7 @@ public final class AuraModifierProvider extends DataMapProvider {
         addAspects(aspects, TCBiomes.MAGICAL_FOREST, TCAspects.ORDO, TCAspects.TERRA);
         addAspects(aspects, TCBiomes.EERIE, TCAspects.ORDO, TCAspects.IGNIS);
         addAspects(aspects, TCBiomes.ELDRITCH, TCAspects.ORDO, TCAspects.IGNIS, TCAspects.AER);
+        addAspects(aspects, TCBiomes.TAINTED_LANDS, TCAspects.PERDITIO);
     }
 
     @SafeVarargs

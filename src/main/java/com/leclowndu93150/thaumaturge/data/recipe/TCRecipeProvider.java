@@ -1190,6 +1190,19 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
+                        new ItemStack(TCItems.ETHEREAL_BLOOM.get()),
+                        Ingredient.of(TCItems.PLANT_SHIMMERLEAF.get()))
+                .aspect(TCAspects.LUX, 8)
+                .aspect(TCAspects.HERBA, 16)
+                .aspect(TCAspects.VICTUS, 16)
+                .aspect(TCAspects.VITIUM, 16)
+                .gate(gate("ethereal_bloom"))
+                .unlockedBy("has", has(TCItems.PLANT_SHIMMERLEAF.get()))
+                .save(output);
+
+        new CrucibleRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
                         new ItemStack(TCItems.BATH_SALTS.get()),
                         Ingredient.of(TCItems.SALIS_MUNDUS))
                 .aspect(TCAspects.COGNITIO, 40)
@@ -2390,9 +2403,66 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("essentia_transport"))
                 .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
                 .save(output);
+
+        // TC4 ESSENTIACRYSTAL: the balanced shard role is represented by Salis Mundus in modern Thaumaturge.
+        arcaneShaped(new ItemStack(TCItems.ESSENTIA_CRYSTALIZER.get()), 125)
+                .aspect(TCAspects.AQUA, 1)
+                .aspect(TCAspects.TERRA, 3)
+                .aspect(TCAspects.ORDO, 1)
+                .pattern("IDI")
+                .pattern("QCQ")
+                .pattern("WTW")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('D', Items.DIAMOND_BLOCK)
+                .define('Q', TCItems.SALIS_MUNDUS)
+                .define('C', TCItems.ALCHEMICAL_CONSTRUCT)
+                .define('W', ItemTags.PLANKS)
+                .define('T', TCItems.TUBE)
+                .gate(gate("essentia_crystalizer"))
+                .unlockedBy("has", has(TCItems.SALIS_MUNDUS))
+                .save(output);
+
+        // TC4 ESSENTIARESERVOIR: direct infusion backport with the original catalyst/components/aspects.
+        new InfusionRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
+                        new ItemStack(TCItems.ESSENTIA_RESERVOIR.get()),
+                        Ingredient.of(TCItems.TUBE_BUFFER.get()))
+                .component(Ingredient.of(TCItems.INGOT_VOID.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.INGOT_VOID.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .aspect(TCAspects.AQUA, 8)
+                .aspect(TCAspects.VACUOS, 8)
+                .aspect(TCAspects.PRAECANTATIO, 8)
+                .aspect(TCAspects.PERMUTATIO, 8)
+                .instability(6)
+                .gate(gate("essentia_reservoir"))
+                .unlockedBy("has", has(TCItems.TUBE_BUFFER.get()))
+                .save(output);
     }
 
     private void buildFluxMachineRecipes() {
+
+        // TC4 FLUXSCRUB. Typed Aer CV no longer exists, so the crafting cost is expressed in modern vis + primal
+        // crystals.
+        arcaneShaped(new ItemStack(TCItems.FLUX_SCRUBBER.get()), 200)
+                .aspect(TCAspects.AQUA, 2)
+                .aspect(TCAspects.ORDO, 2)
+                .aspect(TCAspects.AER, 1)
+                .pattern(" B ")
+                .pattern("GOG")
+                .pattern("STS")
+                .define('B', TCItems.BELLOWS)
+                .define('G', Items.IRON_BARS)
+                .define('O', TCItems.FILTER)
+                .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('T', TCItems.TUBE)
+                .gate(gate("flux_scrubber"))
+                .unlockedBy("has", has(TCItems.BELLOWS))
+                .save(output);
 
         arcaneShaped(new ItemStack(TCItems.BRAIN_BOX.get()), 50)
                 .aspect(TCAspects.TERRA, 1)

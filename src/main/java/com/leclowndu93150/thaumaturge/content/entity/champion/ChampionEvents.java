@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityOwnedConstruct;
+import com.leclowndu93150.thaumaturge.content.taint.entity.TaintMobConversion;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
@@ -124,7 +125,7 @@ public final class ChampionEvents {
                 && !(victim instanceof ITaintedMob)
                 && victim.hasEffect(TCMobEffects.FLUX_TAINT)
                 && victim.getRandom().nextBoolean()) {
-            ChampionHelper.makeTainted(victim);
+            TaintMobConversion.tryConvert((ServerLevel) victim.level(), victim);
             return;
         }
         int victimType = ChampionHelper.championType(victim);
@@ -160,6 +161,13 @@ public final class ChampionEvents {
                         .get(attackerType)
                         .effect()
                         .perform(attacker, victim, event.getSource(), event.getAmount()));
+            }
+        }
+        if (event.getAmount() > 0.0F && event.getSource().getEntity() instanceof LivingEntity attacker) {
+            int attackerType = ChampionHelper.championType(attacker);
+            if (attacker instanceof ITaintedMob || attackerType == ChampionModifier.TAINTED) {
+                victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                        TCMobEffects.FLUX_TAINT, 200, 0, true, false, false));
             }
         }
     }

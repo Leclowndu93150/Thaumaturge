@@ -8,8 +8,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
+import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
+import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTube;
@@ -91,6 +94,32 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
             tag.putInt(CAPACITY, 1);
             tag.putString(AREA, "centrifuge");
             tag.putBoolean(ACTIVE, centrifuge.isSpinning());
+            return;
+        }
+        if (blockEntity instanceof BlockEntityEssentiaCrystalizer crystalizer) {
+            tag.putBoolean(PRESENT, true);
+            if (crystalizer.aspectKey() != null) {
+                writeSingleAspect(tag, crystalizer.aspectKey(), 1);
+                tag.putInt("CrystalProgress", crystalizer.progress());
+            }
+            tag.putInt(CAPACITY, 1);
+            tag.putString(AREA, "crystalizer");
+            tag.putBoolean(ACTIVE, crystalizer.aspectKey() != null);
+            return;
+        }
+        if (blockEntity instanceof BlockEntityEssentiaReservoir reservoir) {
+            tag.putBoolean(PRESENT, true);
+            writeStorage(tag, reservoir.contents(), BlockEntityEssentiaReservoir.CAPACITY);
+            tag.putString(AREA, "reservoir");
+            return;
+        }
+        if (blockEntity instanceof BlockEntityFluxScrubber scrubber) {
+            tag.putBoolean(PRESENT, true);
+            writeSingleAspect(tag, scrubber.getEssentiaType(Direction.UP), scrubber.getEssentiaAmount(Direction.UP));
+            tag.putInt(CAPACITY, BlockEntityFluxScrubber.essentiaCapacity());
+            tag.putString(AREA, "flux_scrubber");
+            tag.putInt("ScrubberCharges", scrubber.charges());
+            tag.putFloat("ScrubberPower", scrubber.power());
             return;
         }
         if (blockEntity instanceof IAspectContainer container) {

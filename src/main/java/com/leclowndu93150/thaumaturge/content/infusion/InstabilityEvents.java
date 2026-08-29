@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -121,8 +121,12 @@ public final class InstabilityEvents {
             }
             switch (kind) {
                 case DROP_GOO, DELETE_GOO -> {
-                    level.setBlockAndUpdate(
-                            pedestalPos.above(), TCBlocks.FLUX_GOO.get().defaultBlockState());
+                    BlockPos spillPos = pedestalPos.above();
+                    if (rand.nextBoolean()) {
+                        PhysicalFlux.placeGoo(level, spillPos, PhysicalFlux.MAX_QUANTA);
+                    } else {
+                        PhysicalFlux.placeGas(level, spillPos, PhysicalFlux.MAX_QUANTA);
+                    }
                     level.playSound(null, pedestalPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.3F, 1.0F);
                 }
                 case DROP_POLLUTE, DELETE_POLLUTE ->

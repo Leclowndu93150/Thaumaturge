@@ -104,6 +104,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ALCHEMICAL_CONSTRUCT.get());
                         output.accept(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
                         output.accept(TCItems.CENTRIFUGE.get());
+                        output.accept(TCItems.ESSENTIA_CRYSTALIZER.get());
 
                         output.accept(TCItems.ALEMBIC.get());
                         output.accept(TCItems.BELLOWS.get());
@@ -126,6 +127,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.TUBE_FILTER.get());
                         output.accept(TCItems.TUBE_ONEWAY.get());
                         output.accept(TCItems.TUBE_BUFFER.get());
+                        output.accept(TCItems.ESSENTIA_RESERVOIR.get());
                         output.accept(TCItems.BRAIN_BOX.get());
 
                         output.accept(TCItems.CRYSTAL_AER.get());
@@ -243,6 +245,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.PLANK_GREATWOOD.get());
                         output.accept(TCItems.PLANK_SILVERWOOD.get());
                         output.accept(TCItems.PLANT_SHIMMERLEAF.get());
+                        output.accept(TCItems.ETHEREAL_BLOOM.get());
                         output.accept(TCItems.PLANT_CINDERPEARL.get());
                         output.accept(TCItems.PLANT_VISHROOM.get());
                         output.accept(TCItems.GRASS_AMBIENT.get());
@@ -313,6 +316,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.EVERFULL_URN.get());
                         output.accept(TCItems.VIS_GENERATOR.get());
                         output.accept(TCItems.CONDENSER.get());
+                        output.accept(TCItems.FLUX_SCRUBBER.get());
                         output.accept(TCItems.CONDENSER_LATTICE.get());
                         output.accept(TCItems.CONDENSER_LATTICE_DIRTY.get());
                         output.accept(TCItems.STABILIZER.get());
@@ -403,6 +407,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.TAINT_LOG.get());
                         output.accept(TCItems.TAINT_FEATURE.get());
                         output.accept(TCItems.TAINT_FIBRE.get());
+                        output.accept(TCItems.TAINT_SPORE_STALK.get());
                         output.accept(TCItems.TAINT_CRAWLER_SPAWN_EGG.get());
                         output.accept(TCItems.TAINTACLE_SPAWN_EGG.get());
                         output.accept(TCItems.TAINT_SWARM_SPAWN_EGG.get());

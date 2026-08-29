@@ -6,8 +6,10 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue WUSS_MODE;
-    public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
+    public static final ModConfigSpec.IntValue TAINT_SPREAD_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
+    public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
+    public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -17,6 +19,7 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.DoubleValue DARK_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue UNSTABLE_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue PURE_NODE_CHANCE;
+    public static final ModConfigSpec.DoubleValue TAINTED_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue HUNGRY_NODE_CHANCE;
     public static final ModConfigSpec.IntValue HUNGRY_NODE_BLOCK_EAT_RANGE;
     public static final ModConfigSpec.BooleanValue SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER;
@@ -32,6 +35,11 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.BooleanValue NO_STRESS;
     public static final ModConfigSpec.BooleanValue SHOW_GOLEM_EMOTES;
 
+    public static final ModConfigSpec.IntValue FLUX_SCRUBBER_CHARGES_PER_ROLL;
+    public static final ModConfigSpec.DoubleValue FLUX_SCRUBBER_ESSENTIA_CHANCE;
+    public static final ModConfigSpec.IntValue FLUX_SCRUBBER_ESSENTIA_PER_ROLL;
+    public static final ModConfigSpec.IntValue FLUX_SCRUBBER_ESSENTIA_CAPACITY;
+
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -40,11 +48,17 @@ public final class ThaumaturgeCommonConfig {
         WUSS_MODE = builder.comment("Setting this to true disables Warp, Taint spread and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
-                        "The % chance of taint fibres spreading on a block tick. Setting this to 0 will effectively stop taint fibre spread.")
-                .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);
+                        "TC4-style Tainted Lands frontier spread interval. Fibres attempt to expand the biome with probability 1 / (taintSpreadRate * 5) per relevant random tick, and only with at least two adjacent taint blocks. Higher is slower; 0 disables biome takeover while leaving existing taint active.")
+                .defineInRange("taintSpreadRate", 200, 0, 100000);
         TAINT_SPREAD_AREA = builder.comment(
-                        "The range at which taint can spread from a taint seed. This value is only a base and will be modified by flux levels.")
+                        "Legacy TC6 Taint Seed influence radius. Seeds are optional outbreak accelerants and are no longer required for ordinary TC4-style taint spread.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
+        GENERATE_TAINTED_LANDS = builder.comment(
+                        "Whether rare Tainted Lands can occur naturally in Overworld world generation, matching Thaumcraft 4. Dynamically created Tainted Lands from Flux Goo, Bottled Taint, nodes, or Seeds are unaffected.")
+                .define("generateTaintedLands", true);
+        TAINT_FROM_FLUX = builder.comment(
+                        "Whether sufficiently deep, exposed Flux Goo can fester into Fibrous Taint and Tainted Lands. This is the Thaumcraft 4 pollution-catastrophe route and is enabled by default.")
+                .define("taintFromFlux", true);
         ENERGIZED_NODE_VIS_PER_POINT = builder.comment(
                         "Raw vis an energized node drains from the chunk aura to restore one aspect point. Normal nodes refine at 3.0 per point; higher values make energized nodes more wasteful. 0 makes their refill free.")
                 .defineInRange("energizedNodeVisPerPoint", 6.0, 0.0, 100.0);
@@ -68,7 +82,7 @@ public final class ThaumaturgeCommonConfig {
                 .defineInRange("netherSpawnChance", 100.0 / 36.0, 0.0, 100.0);
 
         builder.comment(
-                        "The following values are percentages among ordinary random nodes. Their default total is 5.5556%, leaving 94.4444% normal nodes, matching Thaumcraft 4. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
+                        "The following values are percentages among ordinary random nodes. Their default total is 6.1111%, leaving 93.8889% normal nodes. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
                 .push("types");
 
         DARK_NODE_CHANCE = builder.comment(
@@ -80,6 +94,9 @@ public final class ThaumaturgeCommonConfig {
         PURE_NODE_CHANCE = builder.comment(
                         "Pure-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
                 .defineInRange("pureChance", 100.0 / 60.0, 0.0, 100.0);
+        TAINTED_NODE_CHANCE = builder.comment(
+                        "Tainted-node percentage among ordinary random nodes. Default: 1.1111%, matching TC5's effective natural tainted-node chance after its one-third rejection roll. Wuss Mode suppresses this type.")
+                .defineInRange("taintedChance", 10.0 / 9.0, 0.0, 100.0);
         HUNGRY_NODE_CHANCE = builder.comment(
                         "Hungry-node percentage, from 0 to 100. Default: 0.5556%, approximately one hungry node per 180 ordinary nodes, matching Thaumcraft 4.")
                 .defineInRange("hungryChance", 100.0 / 180.0, 0.0, 100.0);
@@ -142,6 +159,23 @@ public final class ThaumaturgeCommonConfig {
         SHOW_GOLEM_EMOTES = builder.comment(
                         "Will golems display emote particles if they receive orders or encounter problems.")
                 .define("showGolemEmotes", true);
+
+        builder.pop();
+        builder.push("fluxScrubber");
+
+        FLUX_SCRUBBER_CHARGES_PER_ROLL = builder.comment(
+                        "Physical Flux quanta (Goo or Gas) the scrubber must clean before it rolls for Praecantatio.",
+                        "Lower values make Praecantatio recovery faster.")
+                .defineInRange("chargesPerRoll", 2, 1, 64);
+        FLUX_SCRUBBER_ESSENTIA_CHANCE = builder.comment(
+                        "Chance (0 to 1) a roll succeeds and yields Praecantatio. 1.0 = always.")
+                .defineInRange("essentiaChance", 0.8, 0.0, 1.0);
+        FLUX_SCRUBBER_ESSENTIA_PER_ROLL = builder.comment(
+                        "Praecantatio produced per successful roll. Raise essentiaCapacity so large rolls accumulate before a pipe drains them.")
+                .defineInRange("essentiaPerRoll", 1, 0, 64);
+        FLUX_SCRUBBER_ESSENTIA_CAPACITY = builder.comment(
+                        "Max Praecantatio the scrubber holds before it must be drained by an attached pipe/jar. TC4 held 'a little'.")
+                .defineInRange("essentiaCapacity", 16, 1, 1024);
 
         builder.pop();
         SPEC = builder.build();

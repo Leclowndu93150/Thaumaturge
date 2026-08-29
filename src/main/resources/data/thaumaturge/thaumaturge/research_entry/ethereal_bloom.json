@@ -1,0 +1,52 @@
+{
+  "category": "thaumaturge:alchemy",
+  "name": "research.thaumaturge.ethereal_bloom.title",
+  "parents": [
+    "thaumaturge:bottle_taint",
+    "~thaumaturge:plants"
+  ],
+  "column": -8,
+  "row": -2,
+  "icons": [
+    "thaumaturge:ethereal_bloom"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.ethereal_bloom.stage_0",
+      "recipes": [
+        "thaumaturge:crucible/ethereal_bloom"
+      ],
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:alchemy",
+          "amount": 2
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:alchemy",
+          "amount": 1
+        }
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:lux",
+      "amount": 1
+    },
+    {
+      "aspect": "thaumaturge:herba",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:victus",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:vitium",
+      "amount": 6
+    }
+  ],
+  "complexity": 2
+}

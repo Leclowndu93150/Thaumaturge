@@ -134,6 +134,35 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_HOE).add(TCBlocks.LEAVES_GREATWOOD.get()).add(TCBlocks.LEAVES_SILVERWOOD.get());
 
+        tag(TCBlockTags.PHYSICAL_FLUX).add(TCBlocks.FLUX_GOO.get(), TCBlocks.FLUX_GAS.get());
+        tag(TCBlockTags.FLUX_SCRUBBABLE).addTag(TCBlockTags.PHYSICAL_FLUX);
+        tag(TCBlockTags.TAINT_CONVERTIBLE_LOG).addTag(BlockTags.LOGS);
+        tag(TCBlockTags.TAINT_CONVERTIBLE_SOIL)
+                .addTag(BlockTags.SAND)
+                .addTag(BlockTags.DIRT)
+                .add(Blocks.CLAY);
+        tag(TCBlockTags.TAINT_CONVERTIBLE_ROCK)
+                .addTag(BlockTags.BASE_STONE_OVERWORLD)
+                .addTag(BlockTags.STONE_ORE_REPLACEABLES)
+                .addTag(BlockTags.STONE_BRICKS)
+                .addTag(Tags.Blocks.STONES)
+                .addTag(Tags.Blocks.COBBLESTONES)
+                .addTag(Tags.Blocks.ORES);
+        tag(TCBlockTags.TAINT_CONVERTIBLE_CRUST)
+                .add(Blocks.RED_MUSHROOM_BLOCK)
+                .add(Blocks.BROWN_MUSHROOM_BLOCK)
+                .add(Blocks.MUSHROOM_STEM)
+                .add(Blocks.PUMPKIN)
+                .add(Blocks.CARVED_PUMPKIN)
+                .add(Blocks.JACK_O_LANTERN)
+                .add(Blocks.MELON)
+                .add(Blocks.CACTUS)
+                .add(Blocks.SPONGE)
+                .add(Blocks.WET_SPONGE)
+                .addTag(BlockTags.CORAL_BLOCKS)
+                .addTag(BlockTags.PLANKS);
+        tag(TCBlockTags.TAINT_CONVERSION_IMMUNE);
+
         tag(TCBlockTags.CRUCIBLE_HEAT_SOURCES)
                 .add(Blocks.LAVA)
                 .add(Blocks.FIRE)

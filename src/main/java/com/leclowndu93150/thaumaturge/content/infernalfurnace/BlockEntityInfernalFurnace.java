@@ -166,7 +166,7 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
                                 0.1F + rand.nextFloat() * 0.1F,
                                 0.9F + rand.nextFloat() * 0.15F);
 
-                        if (level.getRandom().nextInt(20) == 0)
+                        if (level.getRandom().nextInt(12) == 0)
                             AuraHelper.polluteAura(
                                     level,
                                     getBlockPos()

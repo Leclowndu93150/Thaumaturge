@@ -130,9 +130,14 @@ public final class AuraTickHandler {
             chunk.setUnsaved(true);
         }
 
+        boolean riftQueued = false;
         if (flux > base * RIFT_FLUX_RATIO && rand.nextFloat() < flux / RIFT_CHANCE_DIVISOR) {
             ChunkPos pos = aura.getChunkPos();
             AuraManager.queueRiftTrigger(level, new BlockPos(pos.x * 16, 0, pos.z * 16));
+            riftQueued = true;
+        }
+        if (!riftQueued && flux > base * RIFT_FLUX_RATIO && rand.nextFloat() < flux / (Math.max(1.0F, base) * 100.0F)) {
+            FluxPressureEvents.queueTrigger(level, aura.getChunkPos());
         }
     }
 

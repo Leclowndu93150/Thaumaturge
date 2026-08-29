@@ -25,6 +25,7 @@ public final class TCBiomes {
     public static final ResourceKey<Biome> MAGICAL_FOREST = key("magical_forest");
     public static final ResourceKey<Biome> EERIE = key("eerie");
     public static final ResourceKey<Biome> ELDRITCH = key("eldritch");
+    public static final ResourceKey<Biome> TAINTED_LANDS = key("tainted_lands");
 
     private static final float MAGICAL_FOREST_TEMPERATURE = 0.8F;
     private static final float MAGICAL_FOREST_DOWNFALL = 0.4F;
@@ -36,6 +37,13 @@ public final class TCBiomes {
     private static final int EERIE_SKY = 2237081;
     private static final int EERIE_WATER = 3035999;
     private static final float ELDRITCH_TEMPERATURE = 0.8F;
+    private static final float TAINTED_LANDS_TEMPERATURE = 0.5F;
+    private static final float TAINTED_LANDS_DOWNFALL = 0.5F;
+    private static final int TAINTED_LANDS_GRASS = 7160201;
+    private static final int TAINTED_LANDS_FOLIAGE = 8154503;
+    private static final int TAINTED_LANDS_SKY = 8144127;
+    private static final int TAINTED_LANDS_WATER = 8203431; // #7D2CA7, deeper modern taint purple
+    private static final int TAINTED_LANDS_WATER_FOG = 2755133; // #2A0A3D
     private static final int NORMAL_WATER_COLOR = 4159204;
     private static final float ELDRITCH_DOWNFALL = 0.2F;
     private static final int DEFAULT_FOG_COLOR = 12638463;
@@ -58,6 +66,7 @@ public final class TCBiomes {
         context.register(MAGICAL_FOREST, magicalForest(placed, carvers));
         context.register(EERIE, eerie(placed, carvers));
         context.register(ELDRITCH, eldritch(placed, carvers));
+        context.register(TAINTED_LANDS, taintedLands(placed, carvers));
     }
 
     private static void globalGeneration(BiomeGenerationSettings.Builder generation) {
@@ -166,6 +175,56 @@ public final class TCBiomes {
                         .fogColor(DEFAULT_FOG_COLOR)
                         .waterColor(NORMAL_WATER_COLOR)
                         .waterFogColor(DEFAULT_WATER_FOG_COLOR)
+                        .build())
+                .mobSpawnSettings(mobs.build())
+                .generationSettings(generation.build())
+                .build();
+    }
+    /**
+     * TC4-style Tainted Lands. It may occur naturally through the small TerraBlender taint region
+     * and can also overwrite already-generated terrain when an active infestation expands.
+     */
+    private static Biome taintedLands(
+            HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers) {
+        MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
+        // Modern-TC4 hybrid: use the vanilla farm-animal pool as spawn *attempts*, then
+        // TaintNaturalSpawnEvents immediately replaces cows/pigs/chickens/sheep with their
+        // dedicated tainted variants. TC4 itself cleared passive creatures here, but retaining
+        // tainted native fauna makes naturally generated Tainted Lands feel inhabited rather than
+        // requiring ordinary animals to wander across the biome border first.
+        BiomeDefaultFeatures.farmAnimals(mobs);
+        // TC4 inherited the cave-creature list, so bats remained.
+        mobs.addSpawn(MobCategory.AMBIENT, new MobSpawnSettings.SpawnerData(EntityType.BAT, 10, 8, 8));
+        mobs.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(TCEntities.TAINTACLE.get(), 1, 1, 1));
+
+        BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placed, carvers);
+        globalGeneration(generation);
+        BiomeDefaultFeatures.addDefaultOres(generation);
+        BiomeDefaultFeatures.addDefaultSoftDisks(generation);
+        generation.addFeature(
+                GenerationStep.Decoration.VEGETAL_DECORATION, placed.getOrThrow(TCPlacedFeatures.TREES_TAINTED_LANDS));
+        // TC4 suppressed flowers and mushrooms but still made exactly two grass decoration
+        // attempts per chunk. Reuse vanilla's grass patch configuration with our own explicit
+        // two-attempt placement instead of inheriting the modern Plains placement density.
+        generation.addFeature(
+                GenerationStep.Decoration.VEGETAL_DECORATION, placed.getOrThrow(TCPlacedFeatures.GRASS_TAINTED_LANDS));
+        // The TC4 biome disabled flowers and mushrooms, but the normal decorator still supplied
+        // sparse reeds and pumpkins. This helper restores those vanilla extra-vegetation pieces.
+        BiomeDefaultFeatures.addDefaultExtraVegetation(generation);
+        generation.addFeature(
+                GenerationStep.Decoration.VEGETAL_DECORATION, placed.getOrThrow(TCPlacedFeatures.TAINT_BIOME));
+
+        return new Biome.BiomeBuilder()
+                .hasPrecipitation(true)
+                .temperature(TAINTED_LANDS_TEMPERATURE)
+                .downfall(TAINTED_LANDS_DOWNFALL)
+                .specialEffects(new BiomeSpecialEffects.Builder()
+                        .skyColor(TAINTED_LANDS_SKY)
+                        .fogColor(DEFAULT_FOG_COLOR)
+                        .waterColor(TAINTED_LANDS_WATER)
+                        .waterFogColor(TAINTED_LANDS_WATER_FOG)
+                        .grassColorOverride(TAINTED_LANDS_GRASS)
+                        .foliageColorOverride(TAINTED_LANDS_FOLIAGE)
                         .build())
                 .mobSpawnSettings(mobs.build())
                 .generationSettings(generation.build())

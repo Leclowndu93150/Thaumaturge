@@ -151,6 +151,12 @@ public final class TCItems {
 
     public static final DeferredItem<BlockItem> TUBE_BUFFER = ITEMS.registerSimpleBlockItem(TCBlocks.TUBE_BUFFER);
 
+    public static final DeferredItem<BlockItem> ESSENTIA_RESERVOIR =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ESSENTIA_RESERVOIR);
+
+    public static final DeferredItem<BlockItem> ESSENTIA_CRYSTALIZER =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ESSENTIA_CRYSTALIZER);
+
     public static final DeferredItem<BlockItem> TAINT_ROCK = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_ROCK);
     public static final DeferredItem<BlockItem> TAINT_SOIL = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_SOIL);
     public static final DeferredItem<BlockItem> TAINT_CRUST = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_CRUST);
@@ -158,6 +164,9 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> TAINT_LOG = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_LOG);
     public static final DeferredItem<BlockItem> TAINT_FEATURE = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_FEATURE);
     public static final DeferredItem<BlockItem> TAINT_FIBRE = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_FIBRE);
+    public static final DeferredItem<BlockItem> TAINT_SPORE_STALK =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_SPORE_STALK);
+    public static final DeferredItem<BlockItem> ETHEREAL_BLOOM = ITEMS.registerSimpleBlockItem(TCBlocks.ETHEREAL_BLOOM);
 
     public static final DeferredItem<BucketItem> BUCKET_LIQUID_DEATH = ITEMS.registerItem(
             "liquid_death_bucket",
@@ -205,6 +214,7 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> THAUMATORIUM = ITEMS.registerSimpleBlockItem(TCBlocks.THAUMATORIUM);
     public static final DeferredItem<BlockItem> BRAIN_BOX = ITEMS.registerSimpleBlockItem(TCBlocks.BRAIN_BOX);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(TCBlocks.CONDENSER);
+    public static final DeferredItem<BlockItem> FLUX_SCRUBBER = ITEMS.registerSimpleBlockItem(TCBlocks.FLUX_SCRUBBER);
     public static final DeferredItem<BlockItem> CONDENSER_LATTICE =
             ITEMS.registerSimpleBlockItem(TCBlocks.CONDENSER_LATTICE);
     public static final DeferredItem<BlockItem> CONDENSER_LATTICE_DIRTY =

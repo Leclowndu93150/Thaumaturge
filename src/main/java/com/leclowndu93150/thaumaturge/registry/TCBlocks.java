@@ -42,6 +42,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
+import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockPotionSprayer;
@@ -59,9 +60,11 @@ import com.leclowndu93150.thaumaturge.content.equipment.BlockEffectGlimmer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
+import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJarBrain;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJarVoid;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelterAux;
@@ -97,6 +100,9 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintGeyser;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintLog;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintRock;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSoil;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEtherealBloom;
+import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGoo;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooRefs;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbench;
@@ -299,6 +305,24 @@ public final class TCBlocks {
     public static final DeferredBlock<BlockTubeBuffer> TUBE_BUFFER =
             BLOCKS.registerBlock("tube_buffer", BlockTubeBuffer::new, tubeProps());
 
+    public static final DeferredBlock<BlockEssentiaReservoir> ESSENTIA_RESERVOIR = BLOCKS.registerBlock(
+            "essentia_reservoir",
+            BlockEssentiaReservoir::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0F, 17.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion());
+
+    public static final DeferredBlock<BlockEssentiaCrystalizer> ESSENTIA_CRYSTALIZER = BLOCKS.registerBlock(
+            "essentia_crystalizer",
+            BlockEssentiaCrystalizer::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0F, 10.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion());
+
     public static final DeferredBlock<BlockFluxGoo> FLUX_GOO = BLOCKS.registerBlock(
             "flux_goo",
             props -> new BlockFluxGoo(FluxGooRefs.sourceFluid(), props),
@@ -310,8 +334,21 @@ public final class TCBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .sound(TCSoundTypes.GORE)
                     .noLootTable()
-                    .liquid()
-                    .randomTicks());
+                    .liquid());
+
+    public static final DeferredBlock<BlockFluxGas> FLUX_GAS = BLOCKS.registerBlock(
+            "flux_gas",
+            BlockFluxGas::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PINK)
+                    .replaceable()
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(100.0F)
+                    .pushReaction(PushReaction.DESTROY)
+                    .lightLevel(state -> 7)
+                    .sound(TCSoundTypes.GORE)
+                    .noLootTable());
 
     public static final DeferredBlock<BlockPurifyingFluid> PURIFYING_FLUID = BLOCKS.registerBlock(
             "purifying_fluid",
@@ -398,6 +435,19 @@ public final class TCBlocks {
                         if (s.getValue(BlockTaintFibre.GROWTH2) || s.getValue(BlockTaintFibre.GROWTH4)) return 6;
                         return 0;
                     }));
+
+    public static final DeferredBlock<BlockTaintSporeStalk> TAINT_SPORE_STALK = BLOCKS.registerBlock(
+            "taint_spore_stalk",
+            BlockTaintSporeStalk::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.4F)
+                    .sound(TCSoundTypes.GORE)
+                    .noOcclusion()
+                    .noCollission()
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks()
+                    .lightLevel(state -> state.getValue(BlockTaintSporeStalk.MATURE) ? 10 : 0));
 
     private static BlockBehaviour.Properties pressPlaceholderProps() {
         return BlockBehaviour.Properties.of()
@@ -826,6 +876,15 @@ public final class TCBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
 
+    public static final DeferredBlock<BlockFluxScrubber> FLUX_SCRUBBER = BLOCKS.registerBlock(
+            "flux_scrubber",
+            BlockFluxScrubber::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0F, 10.0F)
+                    .sound(SoundType.STONE)
+                    .noOcclusion());
+
     public static final DeferredBlock<BlockCondenserLattice> CONDENSER_LATTICE = BLOCKS.registerBlock(
             "condenser_lattice",
             props -> new BlockCondenserLattice(false, props),
@@ -1105,6 +1164,18 @@ public final class TCBlocks {
                     .instabreak()
                     .sound(SoundType.GRASS)
                     .lightLevel(state -> 6)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion());
+
+    public static final DeferredBlock<BlockEtherealBloom> ETHEREAL_BLOOM = BLOCKS.registerBlock(
+            "ethereal_bloom",
+            BlockEtherealBloom::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .lightLevel(state -> 12)
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 

@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalBlockstateGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalItemModelGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.EssentiaCrystalModelGenerator;
@@ -123,7 +124,13 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private static final Set<String> CHECKED_IN_ITEM_MODELS = Set.of(
-            "bellows", "leaves_greatwood", "leaves_silverwood", "plank_greatwood", "plank_silverwood", "thaumometer");
+            "bellows",
+            "flux_scrubber",
+            "leaves_greatwood",
+            "leaves_silverwood",
+            "plank_greatwood",
+            "plank_silverwood",
+            "thaumometer");
 
     private void autoBlockItems() {
         for (Item item : BuiltInRegistries.ITEM) {
@@ -159,6 +166,9 @@ public final class TCModelProvider implements DataProvider {
         registerAuraDevices(blockModels);
         registerNoiseDevices();
         TubeModels.register(blockStateOutput);
+        legacyNorthFacingBlock(TCBlocks.ESSENTIA_RESERVOIR.get(), "essentia_reservoir");
+        legacyNorthFacingBlock(TCBlocks.ESSENTIA_CRYSTALIZER.get(), "essentia_crystalizer");
+        legacyNorthFacingBlock(TCBlocks.FLUX_SCRUBBER.get(), "flux_scrubber");
         simpleFromExisting(TCBlocks.CRUCIBLE.get(), "crucible");
         mirrorBlockState(TCBlocks.MIRROR.get());
         mirrorBlockState(TCBlocks.MIRROR_ESSENTIA.get());
@@ -538,6 +548,23 @@ public final class TCModelProvider implements DataProvider {
                         .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
                         .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
         };
+    }
+
+    private void legacyNorthFacingBlock(Block block, String modelName) {
+        PropertyDispatch.C1<Direction> dispatch = PropertyDispatch.property(BlockStateProperties.FACING);
+        dispatch = dispatch.select(Direction.NORTH, Variant.variant());
+        dispatch = dispatch.select(
+                Direction.SOUTH, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180));
+        dispatch = dispatch.select(
+                Direction.WEST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270));
+        dispatch = dispatch.select(
+                Direction.EAST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90));
+        dispatch = dispatch.select(
+                Direction.UP, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270));
+        dispatch = dispatch.select(
+                Direction.DOWN, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90));
+        blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(block, vName(modelName)).with(dispatch));
     }
 
     private static PropertyDispatch upBaseFacingDispatch() {
@@ -1321,6 +1348,20 @@ public final class TCModelProvider implements DataProvider {
             model.addProperty("render_type", "minecraft:cutout_mipped");
             return model;
         });
+        ResourceLocation bloomModel = ModelTemplates.CROSS.create(
+                TCBlocks.ETHEREAL_BLOOM.get(),
+                TextureMapping.cross(TCBlocks.PLANT_SHIMMERLEAF.get()),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        simpleBlock(TCBlocks.ETHEREAL_BLOOM.get(), bloomModel);
+        ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCItems.ETHEREAL_BLOOM.get()),
+                TextureMapping.layer0(TextureMapping.getBlockTexture(TCBlocks.PLANT_SHIMMERLEAF.get())),
+                modelOutput);
+
         simpleBlock(TCBlocks.GRASS_AMBIENT.get(), grassModel);
         delegateItem(TCItems.GRASS_AMBIENT.get(), grassModel);
     }
@@ -1368,10 +1409,12 @@ public final class TCModelProvider implements DataProvider {
                         new String[] {"taint_crust_0", "taint_crust_1", "taint_crust_2"}, new int[] {8, 1, 1})));
 
         simpleFromExisting(TCBlocks.FLUX_GOO.get(), "flux_goo");
+        translucentCube(TCBlocks.FLUX_GAS.get());
         simpleFromExisting(TCBlocks.TAINT_GEYSER.get(), "taint_geyser");
         registerTaintLog();
         registerTaintFeature();
         registerTaintFibre();
+        registerTaintSporeStalk();
 
         delegateItem(TCBlocks.TAINT_ROCK.asItem(), TCIds.rl("block/taint_rock"));
         delegateItem(TCBlocks.TAINT_SOIL.asItem(), TCIds.rl("block/taint_soil_0"));
@@ -1380,6 +1423,33 @@ public final class TCModelProvider implements DataProvider {
         delegateItem(TCBlocks.TAINT_LOG.asItem(), TCIds.rl("block/taint_log"));
         delegateItem(TCBlocks.TAINT_FEATURE.asItem(), TCIds.rl("block/taint_orb_0"));
         delegateItem(TCBlocks.TAINT_FIBRE.asItem(), TCIds.rl("block/taint_fibre"));
+        delegateItem(TCBlocks.TAINT_SPORE_STALK.asItem(), TCIds.rl("block/taint_spore_stalk_immature"));
+    }
+
+    private void registerTaintSporeStalk() {
+        Block stalk = TCBlocks.TAINT_SPORE_STALK.get();
+        ResourceLocation immature = ModelTemplates.CROSS.createWithSuffix(
+                stalk,
+                "_immature",
+                TextureMapping.cross(TCIds.rl("block/taint_spore_stalk_1")),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        ResourceLocation mature = ModelTemplates.CROSS.createWithSuffix(
+                stalk,
+                "_mature",
+                TextureMapping.cross(TCIds.rl("block/taint_spore_stalk_2")),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(stalk)
+                .with(PropertyDispatch.property(BlockTaintSporeStalk.MATURE)
+                        .select(false, v(immature))
+                        .select(true, v(mature))));
     }
 
     private void registerTaintLog() {

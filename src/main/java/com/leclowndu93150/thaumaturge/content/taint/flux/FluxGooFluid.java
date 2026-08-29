@@ -1,7 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
@@ -28,8 +32,9 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 public abstract class FluxGooFluid extends BaseFlowingFluid {
     private static final int QUANTA_PER_BLOCK = 8;
     private static final int GOO_DENSITY = 8;
-    private static final int SLIME_SPAWN_CHANCE = 50;
-    private static final int DECAY_ROLL_CHANCE = 4;
+    private static final int SLIME_SPAWN_CHANCE = 25;
+    private static final int TAINT_CONVERSION_CHANCE = 50;
+    private static final int DECAY_ROLL_CHANCE = 30;
     private static final int SMALL_SLIME_META_MIN = 2;
     private static final int SMALL_SLIME_META_MAX = 6;
     private static final int VIS_EXHAUST_DURATION = 600;
@@ -42,51 +47,75 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
 
     @Override
     protected boolean isRandomlyTicking() {
-        return true;
+        return false;
     }
 
     @Override
     public void tick(Level level, BlockPos pos, FluidState fluidState) {
-        if (level instanceof ServerLevel serverLevel) {
-            updateTick(serverLevel, pos, fluidState, serverLevel.getRandom());
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
-        super.tick(level, pos, fluidState);
+
+        // Keep finite-fluid movement and pollution lifecycle on one scheduled cadence. The previous
+        // implementation also ran the lifecycle from random ticks, which made probability constants
+        // much harsher than their TC4/TC5 counterparts.
+        spreadTick(serverLevel, pos, fluidState, serverLevel.getRandom());
+        FluidState current = serverLevel.getFluidState(pos);
+        if (!current.isEmpty() && current.getType().isSame(this)) {
+            lifecycleTick(serverLevel, pos, current, serverLevel.getRandom());
+        }
+        current = serverLevel.getFluidState(pos);
+        if (!current.isEmpty() && current.getType().isSame(this)) {
+            scheduleGooTick(serverLevel, pos);
+        }
     }
 
-    @Override
-    protected void randomTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
-        if (level instanceof ServerLevel serverLevel) {
-            updateTick(serverLevel, pos, state, random);
-        }
-    }
-
-    private void updateTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource rand) {
+    private void lifecycleTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource rand) {
         if (!level.getFluidState(pos).getType().isSame(this)) {
             return;
         }
         int meta = state.getAmount() - 1;
         boolean airAbove = level.getBlockState(pos.above()).isAir();
+
+        // TC4: medium exposed pools occasionally hatch a small thaumic slime.
         if (meta >= SMALL_SLIME_META_MIN
                 && meta < SMALL_SLIME_META_MAX
                 && airAbove
                 && rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
             spawnSlime(level, pos, 1);
-        } else if (meta >= SMALL_SLIME_META_MAX && airAbove && rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
-            spawnSlime(level, pos, 2);
-        } else if (rand.nextInt(DECAY_ROLL_CHANCE) == 0) {
-            if (meta == 0) {
-                if (rand.nextBoolean()) {
-                    AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                } else {
-                    level.setBlock(pos, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
-                }
-            } else {
-                setGoo(level, pos, meta, Block.UPDATE_CLIENTS);
+            return;
+        }
+
+        // TC4: large exposed pools persist rather than following the generic evaporation branch.
+        // They may hatch a larger slime, or (when enabled) fester directly into a Taint outbreak.
+        if (meta >= SMALL_SLIME_META_MAX && airAbove) {
+            if (rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
+                spawnSlime(level, pos, 2);
+            } else if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get() && rand.nextInt(TAINT_CONVERSION_CHANCE) == 0) {
+                TaintBiomeManager.taintColumn(level, pos);
+                level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
+                TaintEcology.addPressure(level, pos, 0.12F);
+                // Modern aura integration: the physical disaster also leaves a small amount of
+                // numerical Flux behind, but the resulting Taint does not require it to survive.
                 AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
             }
-        } else {
-            spreadTick(level, pos, state, rand);
+            return;
+        }
+
+        // TC4 generic decay: one level evaporates on a 1/30 roll. The thinnest trace disappears;
+        // thicker Goo may emit one quantum of visible Flux Gas above itself. It does not randomly
+        // turn into Taint or silently collapse into aura Flux.
+        if (rand.nextInt(DECAY_ROLL_CHANCE) != 0) {
+            return;
+        }
+        if (meta == 0) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            return;
+        }
+
+        setGoo(level, pos, meta, Block.UPDATE_CLIENTS);
+        if (airAbove && rand.nextBoolean()) {
+            PhysicalFlux.placeGas(level, pos.above(), 1);
         }
     }
 

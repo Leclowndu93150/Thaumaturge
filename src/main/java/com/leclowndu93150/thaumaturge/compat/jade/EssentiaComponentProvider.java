@@ -83,6 +83,22 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
                                     ? "jade.thaumaturge.state.processing"
                                     : "jade.thaumaturge.state.idle")));
         }
+        if ("crystalizer".equals(area)) {
+            int progress = data.getInt("CrystalProgress");
+            tooltip.add(Component.translatable(
+                    progress > 0 ? "jade.thaumaturge.state.processing" : "jade.thaumaturge.state.idle"));
+            if (accessor.showDetails() && progress > 0) {
+                tooltip.add(Component.translatable("jade.thaumaturge.machine.progress", progress * 100 / 200));
+            }
+        } else if ("flux_scrubber".equals(area)) {
+            tooltip.add(
+                    Component.translatable("jade.thaumaturge.flux_scrubber.charges", data.getInt("ScrubberCharges")));
+            if (accessor.showDetails()) {
+                tooltip.add(Component.translatable(
+                        "jade.thaumaturge.flux_scrubber.power",
+                        Math.round(data.getFloat("ScrubberPower") / 0.05F * 100.0F)));
+            }
+        }
     }
 
     private static void appendEssentia(ITooltip tooltip, BlockAccessor accessor, CompoundTag data) {
@@ -199,6 +215,9 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
             case "buffer" -> JadeConfig.BUFFERS;
             case "thaumatorium" -> JadeConfig.THAUMATORIUMS;
             case "centrifuge" -> JadeConfig.CENTRIFUGES;
+            case "crystalizer" -> JadeConfig.CRYSTALIZERS;
+            case "reservoir" -> JadeConfig.RESERVOIRS;
+            case "flux_scrubber" -> JadeConfig.FLUX_SCRUBBERS;
             default -> null;
         };
     }

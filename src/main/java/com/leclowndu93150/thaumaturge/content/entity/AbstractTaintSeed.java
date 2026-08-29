@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSeedRegistry;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -114,12 +116,20 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
                     .send();
         }
         BlockPos pos = this.blockPosition();
-        float saturation = AuraHelper.getFluxSaturation(server, pos);
+        TaintEcology.touchActiveSeed(server, pos);
+        TaintBiomeManager.taintColumn(server, pos);
+
+        float saturation = Math.max(0.0F, AuraHelper.getFluxSaturation(server, pos));
         if (saturation <= 0.0F) {
+            // The later-era Seed itself is Flux-fed and eventually starves, but the TC4-style
+            // Tainted Lands it established remains a self-sustaining ecological problem.
             this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
             AuraHelper.polluteAura(server, pos, STARVE_POLLUTION, false);
-        } else {
-            int area = getArea();
+        }
+
+        int area = getArea();
+        int attempts = 1 + Math.min(3, Mth.floor(saturation * 2.0F));
+        for (int attempt = 0; attempt < attempts; attempt++) {
             int dx = Mth.nextInt(server.getRandom(), -area * 3, area * 3);
             int dy = Mth.nextInt(server.getRandom(), -area, area);
             int dz = Mth.nextInt(server.getRandom(), -area * 3, area * 3);

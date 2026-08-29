@@ -204,6 +204,9 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.TUBE_FILTER.get());
         dropSelf(TCBlocks.TUBE_ONEWAY.get());
         dropSelf(TCBlocks.TUBE_BUFFER.get());
+        dropSelf(TCBlocks.ESSENTIA_RESERVOIR.get());
+        dropSelf(TCBlocks.ESSENTIA_CRYSTALIZER.get());
+        dropSelf(TCBlocks.FLUX_SCRUBBER.get());
 
         for (DyeColor dye : DyeColor.values()) {
             dropSelf(TCBlocks.NITORS.get(dye).get());
@@ -248,6 +251,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                 TCBlocks.LEAVES_SILVERWOOD.get(),
                 createLeavesDrops(TCBlocks.LEAVES_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get()));
         dropSelf(TCBlocks.PLANT_SHIMMERLEAF.get());
+        dropSelf(TCBlocks.ETHEREAL_BLOOM.get());
         dropSelf(TCBlocks.PLANT_CINDERPEARL.get());
         dropSelf(TCBlocks.PLANT_VISHROOM.get());
         add(TCBlocks.POTTED_SHIMMERLEAF.get(), createPotFlowerItemTable(TCBlocks.PLANT_SHIMMERLEAF.get()));
@@ -261,6 +265,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.TAINT_LOG.get());
         dropSelf(TCBlocks.TAINT_FEATURE.get());
         add(TCBlocks.TAINT_FIBRE.get(), noDrop());
+        add(TCBlocks.TAINT_SPORE_STALK.get(), noDrop());
     }
 
     private LootTable.Builder createLeavesDrops(Block leaves, Block sapling) {

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -134,7 +136,17 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     }
 
     private void checkStatus(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos.below()) instanceof BlockEntityNode node) {
+        BlockPos nodePos = pos.below();
+        if (level.getBlockEntity(nodePos) instanceof BlockEntityNode node) {
+            if (node.isEnergized() && !hasStabilizer(level, pos)) {
+                if (level instanceof ServerLevel serverLevel) {
+                    catastrophicFailure(serverLevel, nodePos);
+                }
+                status = STATUS_IDLE;
+                count = REVERT_THRESHOLD;
+                setChanged();
+                return;
+            }
             boolean wasEnergized = status == STATUS_ENERGIZED;
             status = node.isEnergized() ? STATUS_ENERGIZED : STATUS_NODE;
             if (node.isEnergized() && (!wasEnergized || count == -1)) {
@@ -145,6 +157,32 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         } else {
             status = STATUS_IDLE;
             count = 0;
+        }
+    }
+
+    private static void catastrophicFailure(ServerLevel level, BlockPos nodePos) {
+        level.removeBlock(nodePos, false);
+        level.explode(
+                null,
+                nodePos.getX() + 0.5,
+                nodePos.getY() + 0.5,
+                nodePos.getZ() + 0.5,
+                3.0F,
+                Level.ExplosionInteraction.NONE);
+        RandomSource random = level.getRandom();
+        for (int i = 0; i < 50; i++) {
+            BlockPos target = nodePos.offset(
+                    random.nextInt(8) - random.nextInt(8),
+                    random.nextInt(8) - random.nextInt(8),
+                    random.nextInt(8) - random.nextInt(8));
+            if (!level.hasChunkAt(target)) {
+                continue;
+            }
+            if (target.getY() < nodePos.getY()) {
+                PhysicalFlux.placeGoo(level, target, PhysicalFlux.MAX_QUANTA);
+            } else {
+                PhysicalFlux.placeGas(level, target, PhysicalFlux.MAX_QUANTA);
+            }
         }
     }
 
