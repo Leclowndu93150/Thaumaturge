@@ -216,6 +216,9 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
 
     @Override
     public void removed(Player player) {
+        if (!slots.isEmpty() && slots.get(RESULT_SLOT) instanceof SlotArcaneResult result) {
+            result.returnCommittedOutput(player);
+        }
         super.removed(player);
         craftingInventory.removeChangedListener(onChange);
     }

@@ -119,6 +119,14 @@ public final class SlotArcaneResult extends Slot {
                 player, tile.getBlockPos(), UUID.nameUUIDFromBytes(hostKey.getBytes(StandardCharsets.UTF_8)), null);
     }
 
+    void returnCommittedOutput(Player player) {
+        if (!committedArcaneCraft) return;
+        ItemStack output = getItem().copy();
+        committedArcaneCraft = false;
+        set(ItemStack.EMPTY);
+        if (!output.isEmpty() && !player.getInventory().add(output)) player.drop(output, false);
+    }
+
     private final class NativeStore implements IArcaneCraftingStore {
         private final Player player;
         private final ArcaneCraftingInput.Positioned positioned;
