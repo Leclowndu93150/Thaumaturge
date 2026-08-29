@@ -1,7 +1,11 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
@@ -40,5 +44,24 @@ public final class EssentiaAccess {
      */
     public static boolean isEssentiaTransport(Level level, BlockPos pos, Direction face) {
         return transport(level, pos, face) != null;
+    }
+
+    /**
+     * Returns the aspect a stack advertises as filter intent. Filter intent is scanning metadata;
+     * it does not make the item an essentia container or grant transfer support.
+     */
+    public static @Nullable ResourceKey<IAspect> aspectFilter(ItemStack stack) {
+        return stack.get(TCDataComponents.ASPECT_FILTER.get());
+    }
+
+    /**
+     * Returns a configured copy of {@code stack}. Passing {@code null} removes its filter. The
+     * supplied stack is never changed.
+     */
+    public static ItemStack withAspectFilter(ItemStack stack, @Nullable ResourceKey<IAspect> aspect) {
+        ItemStack copy = stack.copy();
+        if (aspect == null) copy.remove(TCDataComponents.ASPECT_FILTER.get());
+        else copy.set(TCDataComponents.ASPECT_FILTER.get(), aspect);
+        return copy;
     }
 }
