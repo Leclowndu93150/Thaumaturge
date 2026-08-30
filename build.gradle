@@ -121,6 +121,11 @@ neoForge {
             sourceSet(sourceSets.main)
         }
     }
+
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
+    }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
@@ -142,6 +147,11 @@ jar {
 dependencies {
     compileOnly "org.jspecify:jspecify:1.0.0"
 
+    testImplementation platform("org.junit:junit-bom:5.11.4")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.mockito:mockito-core:5.15.2"
+
     implementation "curse.maven:terrablender-neoforge-940057:6054947"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
@@ -156,6 +166,10 @@ dependencies {
 
     compileOnly "maven.modrinth:iris:${iris_version}"
     compileOnly "maven.modrinth:distanthorizons:${distant_horizons_version}"
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
