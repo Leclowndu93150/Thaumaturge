@@ -9,7 +9,7 @@
   "column": -3,
   "row": -6,
   "icons": [
-    "thaumaturge:turret_bore"
+    "thaumaturge:arcane_bore"
   ],
   "stages": [
     {
@@ -35,7 +35,7 @@
     {
       "text": "research.thaumaturge.arcane_bore.stage_1",
       "recipes": [
-        "thaumaturge:infusion/turret_bore"
+        "thaumaturge:infusion/arcane_bore"
       ]
     }
   ],

@@ -150,7 +150,7 @@ public final class ScanEntryBootstrap {
                 ctx,
                 "f_golem",
                 "f_golem",
-                null,
+                blocks(blockReg, TCBlocks.ARCANE_BORE.get()),
                 null,
                 entities(
                         entityReg,

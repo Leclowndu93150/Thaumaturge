@@ -540,7 +540,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         new InfusionRecipeBuilder(
                         registries.lookupOrThrow(IAspect.REGISTRY_KEY),
                         RecipeCategory.TOOLS,
-                        new ItemStack(TCItems.TURRET_BORE.get()),
+                        new ItemStack(TCItems.ARCANE_BORE.get()),
                         Ingredient.of(TCItems.TURRET_BASIC.get()))
                 .component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get()))
                 .component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get()))
