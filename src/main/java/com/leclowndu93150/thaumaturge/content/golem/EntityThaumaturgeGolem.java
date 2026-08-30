@@ -195,6 +195,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             if (accessory.behavior() != null) {
                 accessory.behavior().onRemove(accessoryContext(accessory), stack);
             }
+            if (stack.getCount() > 1) stack.setCount(1);
             clearAccessoryState(accessory.id());
             if (!stack.isEmpty()) {
                 spawnAtLocation(stack, 0.5F);
