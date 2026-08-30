@@ -18,17 +18,21 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
     public int drainCentivis(
             ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
         BlockEntityNode source = findSource(level, consumerPos);
-        if (source == null) {
-            return 0;
-        }
         Holder<IAspect> aspect = Aspects.resolve(level.registryAccess(), primal);
         if (aspect == null) {
             return 0;
         }
-        if (simulate) {
-            return Math.min(amount, source.availableCentivis(aspect));
+        if (source != null) {
+            if (simulate) {
+                return Math.min(amount, source.availableCentivis(aspect));
+            }
+            return source.drainCentivis(aspect, amount);
         }
-        return source.drainCentivis(aspect, amount);
+        BlockEntityVisRelay relay = findRelayNear(level, consumerPos);
+        BlockPos addonSource = relay == null ? null : relay.resolveAddonSource(level);
+        return addonSource == null
+                ? 0
+                : AddonVisRelaySources.INSTANCE.drain(level, addonSource, primal, amount, simulate);
     }
 
     public static @Nullable BlockEntityNode findSource(ServerLevel level, BlockPos consumerPos) {
