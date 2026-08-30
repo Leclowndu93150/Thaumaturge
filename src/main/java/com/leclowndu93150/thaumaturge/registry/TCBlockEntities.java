@@ -24,6 +24,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityRedstoneRelay;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorEssentia;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
@@ -454,6 +455,11 @@ public final class TCBlockEntities {
                     "golem_builder",
                     () -> new BlockEntityType<>(
                             BlockEntityGolemBuilder::new, Set.of(TCBlocks.GOLEM_BUILDER.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityArcaneBore>> ARCANE_BORE =
+            BLOCK_ENTITIES.register(
+                    "arcane_bore",
+                    () -> new BlockEntityType<>(BlockEntityArcaneBore::new, Set.of(TCBlocks.ARCANE_BORE.get()), null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHole>> HOLE =
             BLOCK_ENTITIES.register(

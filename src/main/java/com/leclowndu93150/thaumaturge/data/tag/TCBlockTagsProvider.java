@@ -112,7 +112,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.METAL_VOID_BLOCK.get())
                 .add(TCBlocks.OBSIDIAN_PLACEHOLDER.get())
                 .add(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get())
-                .add(TCBlocks.INFERNAL_FURNACE.get());
+                .add(TCBlocks.INFERNAL_FURNACE.get())
+                .add(TCBlocks.ARCANE_BORE.get());
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())

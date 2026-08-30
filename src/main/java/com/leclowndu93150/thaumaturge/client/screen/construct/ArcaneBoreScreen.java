@@ -2,8 +2,9 @@ package com.leclowndu93150.thaumaturge.client.screen.construct;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
-import com.leclowndu93150.thaumaturge.content.entity.construct.MenuArcaneBore;
+import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreHost;
+import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreTool;
+import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -49,11 +50,11 @@ public final class ArcaneBoreScreen extends AbstractTCContainerScreen<MenuArcane
 
     @Override
     protected void renderBackgroundOverlay(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        EntityArcaneBore bore = menu.bore();
+        ArcaneBoreHost bore = menu.bore();
         if (bore == null) {
             return;
         }
-        int fill = (int) (HEALTH_BAR_WIDTH * (bore.getHealth() / bore.getMaxHealth()));
+        int fill = (int) (HEALTH_BAR_WIDTH * (bore.boreHealth() / bore.boreMaxHealth()));
         graphics.blit(
                 TEXTURE,
                 leftPos + HEALTH_BAR_X,
@@ -64,7 +65,7 @@ public final class ArcaneBoreScreen extends AbstractTCContainerScreen<MenuArcane
                 HEALTH_BAR_HEIGHT,
                 256,
                 256);
-        ItemStack held = bore.getMainHandItem();
+        ItemStack held = menu.getSlot(0).getItem();
         if (!held.isEmpty() && held.isDamageableItem() && held.getDamageValue() + 1 >= held.getMaxDamage()) {
             graphics.blit(
                     TEXTURE,
@@ -82,14 +83,14 @@ public final class ArcaneBoreScreen extends AbstractTCContainerScreen<MenuArcane
         graphics.pose().scale(STATS_SCALE, STATS_SCALE, 1.0F);
         graphics.drawString(
                 font,
-                Component.translatable("gui.thaumaturge.bore.width", 1 + bore.getDigRadius() * 2),
+                Component.translatable("gui.thaumaturge.bore.width", 1 + ArcaneBoreTool.digRadius(held) * 2),
                 0,
                 0,
                 COLOR_WHITE,
                 true);
         graphics.drawString(
                 font,
-                Component.translatable("gui.thaumaturge.bore.depth", bore.getDigDepth()),
+                Component.translatable("gui.thaumaturge.bore.depth", ArcaneBoreTool.digDepth(held)),
                 STATS_COLUMN_2,
                 0,
                 COLOR_WHITE,
@@ -97,14 +98,15 @@ public final class ArcaneBoreScreen extends AbstractTCContainerScreen<MenuArcane
         graphics.drawString(
                 font,
                 Component.translatable(
-                        "gui.thaumaturge.bore.speed", bore.getDigSpeed(Blocks.STONE.defaultBlockState())),
+                        "gui.thaumaturge.bore.speed",
+                        ArcaneBoreTool.digSpeed(bore.boreLevel(), held, Blocks.STONE.defaultBlockState())),
                 0,
                 STATS_LINE_2,
                 COLOR_WHITE,
                 true);
-        int refining = bore.getRefining();
-        int fortune = bore.getFortune();
-        boolean silk = bore.hasSilkTouch();
+        int refining = ArcaneBoreTool.refining(held);
+        int fortune = ArcaneBoreTool.fortune(bore.boreLevel(), held);
+        boolean silk = ArcaneBoreTool.silkTouch(bore.boreLevel(), held);
         if (silk || refining > 0 || fortune > 0) {
             graphics.drawString(
                     font,

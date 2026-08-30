@@ -920,7 +920,8 @@ public final class TCModelProvider implements DataProvider {
     private void registerConstructs() {
         flatItem(TCItems.TURRET_BASIC.get());
         flatItem(TCItems.TURRET_ADVANCED.get());
-        flatItem(TCItems.TURRET_BORE.get());
+        flatItem(TCItems.ARCANE_BORE.get());
+        registerInvisibleBlock(TCBlocks.ARCANE_BORE.get());
         flatItem(TCItems.GRAPPLE_GUN_TIP.get());
         flatItem(TCItems.GRAPPLE_GUN_SPOOL.get());
         flatItem(TCItems.ELDRITCH_EYE.get());
