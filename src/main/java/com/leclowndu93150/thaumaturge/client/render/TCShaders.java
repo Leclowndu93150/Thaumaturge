@@ -1,8 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import java.io.IOException;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -22,31 +24,33 @@ public final class TCShaders {
     private TCShaders() {}
 
     public static ShaderInstance ender() {
-        return ender;
+        return IrisCompat.shadersActive() ? GameRenderer.getPositionShader() : ender;
     }
 
     public static ShaderInstance occludingEffect() {
-        return occludingEffect;
+        return IrisCompat.shadersActive()
+                ? GameRenderer.getRendertypeEntityTranslucentEmissiveShader()
+                : occludingEffect;
     }
 
     public static ShaderInstance fx() {
-        return fx;
+        return IrisCompat.shadersActive() ? GameRenderer.getParticleShader() : fx;
     }
 
     public static ShaderInstance fxAlphaTest() {
-        return fxAlphaTest;
+        return IrisCompat.shadersActive() ? GameRenderer.getParticleShader() : fxAlphaTest;
     }
 
     public static ShaderInstance portal() {
-        return portal;
+        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexShader() : portal;
     }
 
     public static ShaderInstance voidStream() {
-        return voidStream;
+        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexColorShader() : voidStream;
     }
 
     public static ShaderInstance wardAdd() {
-        return wardAdd;
+        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexColorShader() : wardAdd;
     }
 
     @SubscribeEvent
