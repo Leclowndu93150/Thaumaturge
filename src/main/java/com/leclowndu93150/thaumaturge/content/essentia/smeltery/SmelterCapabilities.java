@@ -34,6 +34,10 @@ public class SmelterCapabilities {
 
         event.registerBlockEntity(
                 EssentiaCapabilities.TRANSPORT, TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), (be, side) -> be);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get(),
+                (be, side) -> be);
 
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.ALEMBIC.get(), (be, side) -> be);
     }

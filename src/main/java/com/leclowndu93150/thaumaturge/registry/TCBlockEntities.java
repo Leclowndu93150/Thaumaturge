@@ -41,6 +41,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritch
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnaceNozzle;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
@@ -189,6 +190,14 @@ public final class TCBlockEntities {
                     () -> new BlockEntityType<>(
                             BlockEntityAdvancedAlchemicalFurnace::new,
                             Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()),
+                            null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnaceNozzle>>
+            ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = BLOCK_ENTITIES.register(
+                    "advanced_alchemical_furnace_nozzle",
+                    () -> new BlockEntityType<>(
+                            BlockEntityAdvancedAlchemicalFurnaceNozzle::new,
+                            Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get()),
                             null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAlembic>> ALEMBIC =

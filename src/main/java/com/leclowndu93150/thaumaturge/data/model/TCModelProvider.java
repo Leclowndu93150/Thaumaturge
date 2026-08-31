@@ -967,6 +967,7 @@ public final class TCModelProvider implements DataProvider {
         registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get());
         registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get());
         registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
+        registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
     }
 
     private void registerConstructs() {

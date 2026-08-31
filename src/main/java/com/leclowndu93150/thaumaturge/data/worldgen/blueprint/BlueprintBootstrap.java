@@ -93,11 +93,15 @@ public final class BlueprintBootstrap {
                                                         TCBlocks
                                                                 .ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER
                                                                 .get())),
+                                'N',
+                                        part(
+                                                block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())),
                                 'F',
                                         part(
                                                 block(TCBlocks.ALCHEMICAL_FURNACE.get()),
                                                 toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()))),
-                        List.of(List.of("ACA", "C C", "ACA"), List.of("VVV", "VFV", "VVV"))));
+                        List.of(List.of("ACA", "C C", "ACA"), List.of("VNV", "NFN", "VNV"))));
 
         register(
                 ctx,

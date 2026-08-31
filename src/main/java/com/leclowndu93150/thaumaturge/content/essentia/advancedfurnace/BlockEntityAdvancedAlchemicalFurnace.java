@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -42,8 +43,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     public static final int MAX_POWER = 500;
     private static final int POWER_DRAW_INTERVAL = 5;
     private static final int NODE_DRAW_RANGE = 8;
-    private static final int NODE_POWER_PER_POINT = 10;
-    private static final int AURA_POWER_PER_VIS = 10;
+    private static final int POWER_REFILL_REQUEST = 50;
 
     private AspectList aspects = AspectList.EMPTY;
     private ItemStack input = ItemStack.EMPTY;
@@ -92,102 +92,100 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     }
 
     /**
-     * The controller replaces the centre of a 3x3x2 advanced-construct casing. The centre of
-     * the upper layer is intentionally open: it is the sole essentia output port.
+     * The controller occupies the centre of the lower layer. Four adjacent nozzle block entities
+     * expose its shared essentia store; the upper centre remains open.
      */
     private boolean validateStructure(ServerLevel level) {
-        for (int y = 0; y <= 1; y++) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    if (x == 0 && z == 0) continue;
-                    BlockPos target = worldPosition.offset(x, y, z);
-                    if (!level.isLoaded(target) || !isFurnacePart(level.getBlockState(target))) {
-                        return false;
-                    }
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (!level.getBlockState(worldPosition.relative(direction))
+                    .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+                return false;
+            }
+        }
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                if (x == 0 && z == 0) continue;
+                BlockPos lower = worldPosition.offset(x, 0, z);
+                BlockPos upper = worldPosition.offset(x, 1, z);
+                if (!level.isLoaded(lower) || !level.isLoaded(upper)) return false;
+                boolean corner = x != 0 && z != 0;
+                if (!(corner
+                                ? level.getBlockState(lower)
+                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
+                                : level.getBlockState(lower).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE))
+                        || !(corner
+                                ? level.getBlockState(upper)
+                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
+                                : level.getBlockState(upper)
+                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER))) {
+                    return false;
                 }
             }
         }
         return true;
     }
 
-    private static boolean isFurnacePart(BlockState state) {
-        return state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
-    }
-
     public static void restoreStructure(LevelAccessor level, BlockPos controllerPos, BlockPos excludedPos) {
         if (level.isClientSide()) return;
-        for (int y = 0; y <= 1; y++) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    if (x == 0 && z == 0) continue;
-                    BlockPos target = controllerPos.offset(x, y, z);
-                    if (target.equals(excludedPos)) continue;
-                    BlockState state = level.getBlockState(target);
-                    if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
-                        level.setBlock(target, TCBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
-                    } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
-                        level.setBlock(
-                                target, TCBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
-                    } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())) {
-                        level.setBlock(
-                                target,
-                                TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(),
-                                Block.UPDATE_ALL);
-                    }
-                }
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                if (x == 0 && z == 0) continue;
+                restorePart(level, controllerPos.offset(x, 0, z), excludedPos);
+                restorePart(level, controllerPos.offset(x, 1, z), excludedPos);
             }
+        }
+    }
+
+    private static void restorePart(LevelAccessor level, BlockPos target, BlockPos excludedPos) {
+        if (target.equals(excludedPos)) return;
+        BlockState state = level.getBlockState(target);
+        if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
+            level.setBlock(target, TCBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
+        } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
+            level.setBlock(target, TCBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())) {
+            level.setBlock(target, TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 
     private boolean charge(ServerLevel level) {
-        boolean changed = chargeFromNodes(level);
-        for (Power power : Power.values()) {
-            if (power.amount(this) >= MAX_POWER) continue;
-            float drained = AuraHelper.drainVis(level, worldPosition, 1.0F, false);
-            if (drained > 0.0F) {
-                power.add(this, Math.round(drained * AURA_POWER_PER_VIS));
-                changed = true;
-            }
-        }
+        boolean changed = heat > 0;
+        heat = Math.max(0, heat - 1);
+        HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        changed |= refill(level, Power.HEAT, aspects.get(TCAspects.IGNIS).orElse(null), TCAspects.IGNIS);
+        changed |= refill(level, Power.PERDITIO, aspects.get(TCAspects.PERDITIO).orElse(null), TCAspects.PERDITIO);
+        changed |= refill(level, Power.AQUA, aspects.get(TCAspects.AQUA).orElse(null), TCAspects.AQUA);
         return changed;
     }
 
-    private boolean chargeFromNodes(ServerLevel level) {
-        HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        Holder<IAspect> ignis = aspects.get(TCAspects.IGNIS).orElse(null);
-        Holder<IAspect> perditioAspect = aspects.get(TCAspects.PERDITIO).orElse(null);
-        Holder<IAspect> aquaAspect = aspects.get(TCAspects.AQUA).orElse(null);
-        if (ignis == null || perditioAspect == null || aquaAspect == null) return false;
-        boolean changed = false;
+    private boolean refill(
+            ServerLevel level,
+            Power power,
+            @Nullable Holder<IAspect> aspect,
+            net.minecraft.resources.ResourceKey<IAspect> key) {
+        if (aspect == null || power.amount(this) >= MAX_POWER) return false;
+        int request = Math.min(POWER_REFILL_REQUEST, MAX_POWER - power.amount(this));
+        int drained = VisRelayHelper.drainCentivis(level, worldPosition, key, request, false);
+        int remaining = request - drained;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = -NODE_DRAW_RANGE; x <= NODE_DRAW_RANGE; x++) {
+        for (int x = -NODE_DRAW_RANGE; remaining > 0 && x <= NODE_DRAW_RANGE; x++) {
             for (int y = -NODE_DRAW_RANGE; y <= NODE_DRAW_RANGE; y++) {
                 for (int z = -NODE_DRAW_RANGE; z <= NODE_DRAW_RANGE; z++) {
                     cursor.setWithOffset(worldPosition, x, y, z);
                     if (!level.isLoaded(cursor)) continue;
                     if (!(level.getBlockEntity(cursor) instanceof BlockEntityNode node)
                             || node instanceof BlockEntityJarNode) continue;
-                    if (Power.HEAT.amount(this) < MAX_POWER && node.takeFromContainer(ignis, 1)) {
-                        Power.HEAT.add(this, NODE_POWER_PER_POINT);
-                        changed = true;
-                    }
-                    if (Power.PERDITIO.amount(this) < MAX_POWER && node.takeFromContainer(perditioAspect, 1)) {
-                        Power.PERDITIO.add(this, NODE_POWER_PER_POINT);
-                        changed = true;
-                    }
-                    if (Power.AQUA.amount(this) < MAX_POWER && node.takeFromContainer(aquaAspect, 1)) {
-                        Power.AQUA.add(this, NODE_POWER_PER_POINT);
-                        changed = true;
-                    }
-                    if (Power.HEAT.amount(this) >= MAX_POWER
-                            && Power.PERDITIO.amount(this) >= MAX_POWER
-                            && Power.AQUA.amount(this) >= MAX_POWER) return changed;
+                    int taken = node.drainCentivis(aspect, remaining);
+                    drained += taken;
+                    remaining -= taken;
+                    if (remaining == 0) break;
                 }
             }
         }
-        return changed;
+        if (drained <= 0) return false;
+        power.add(this, drained);
+        return true;
     }
 
     private boolean processInput() {
@@ -271,7 +269,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
 
     @Override
     public boolean isConnectable(Direction face) {
-        return assembled && face == Direction.UP;
+        return false;
     }
 
     @Override
@@ -281,7 +279,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
 
     @Override
     public boolean canOutputTo(Direction face) {
-        return assembled && face == Direction.UP;
+        return false;
     }
 
     @Override
@@ -325,6 +323,19 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     @Override
     public int getEssentiaAmount(Direction face) {
         return aspects.totalAmount();
+    }
+
+    public int takeEssentiaFromNozzle(Holder<IAspect> aspect, int amount) {
+        if (amount <= 0 || aspects.amountOf(aspect) <= 0) return 0;
+        int taken = Math.min(amount, aspects.amountOf(aspect));
+        aspects = aspects.reduce(aspect, taken);
+        setChanged();
+        sync();
+        return taken;
+    }
+
+    public @Nullable Holder<IAspect> firstEssentia() {
+        return aspects.entries().isEmpty() ? null : aspects.entries().getFirst().aspect();
     }
 
     @Override
