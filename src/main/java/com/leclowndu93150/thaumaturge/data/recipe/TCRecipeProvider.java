@@ -1793,6 +1793,21 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.ALCHEMICAL_CONSTRUCT))
                 .save(output);
 
+        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get()), 300)
+                .aspect(TCAspects.IGNIS)
+                .aspect(TCAspects.AQUA)
+                .aspect(TCAspects.PERDITIO)
+                .pattern("AVA")
+                .pattern("PCP")
+                .pattern("AVA")
+                .define('A', TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT)
+                .define('V', TCItemTags.PLATES_VOID_METAL)
+                .define('P', TCItems.PRIMORDIAL_PEARL)
+                .define('C', TCItems.ALCHEMICAL_CONSTRUCT)
+                .gate(gate("essentia_smelter_void", 0))
+                .unlockedBy("has", has(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT))
+                .save(output);
+
         arcaneShaped(new ItemStack(TCItems.BELLOWS.get()), 25)
                 .aspect(TCAspects.AER)
                 .pattern("PP ")

@@ -367,6 +367,7 @@ public final class TCEnglishProvider extends LanguageProvider {
 
         add("block.thaumaturge.alchemical_construct", "Alchemical Construct");
         add("block.thaumaturge.advanced_alchemical_construct", "Advanced Alchemical Construct");
+        add("block.thaumaturge.advanced_alchemical_furnace", "Advanced Alchemical Furnace");
 
         add("block.thaumaturge.metal_thaumium", "Thaumium Block");
         add("block.thaumaturge.metal_brass", "Alchemical Brass Block");

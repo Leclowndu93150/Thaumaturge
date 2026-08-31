@@ -32,6 +32,9 @@ public class SmelterCapabilities {
                 TCBlockEntities.ALEMBIC.get(),
                 (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
 
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT, TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), (be, side) -> be);
+
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.ALEMBIC.get(), (be, side) -> be);
     }
 }
