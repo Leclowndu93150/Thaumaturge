@@ -5,13 +5,15 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -153,20 +155,16 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         boolean changed = heat > 0;
         heat = Math.max(0, heat - 1);
         HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        changed |= refill(level, Power.HEAT, aspects.get(TCAspects.IGNIS).orElse(null), TCAspects.IGNIS);
-        changed |= refill(level, Power.PERDITIO, aspects.get(TCAspects.PERDITIO).orElse(null), TCAspects.PERDITIO);
-        changed |= refill(level, Power.AQUA, aspects.get(TCAspects.AQUA).orElse(null), TCAspects.AQUA);
+        changed |= refill(level, Power.HEAT, aspects.get(TCAspects.IGNIS).orElse(null));
+        changed |= refill(level, Power.PERDITIO, aspects.get(TCAspects.PERDITIO).orElse(null));
+        changed |= refill(level, Power.AQUA, aspects.get(TCAspects.AQUA).orElse(null));
         return changed;
     }
 
-    private boolean refill(
-            ServerLevel level,
-            Power power,
-            @Nullable Holder<IAspect> aspect,
-            net.minecraft.resources.ResourceKey<IAspect> key) {
+    private boolean refill(ServerLevel level, Power power, @Nullable Holder<IAspect> aspect) {
         if (aspect == null || power.amount(this) >= MAX_POWER) return false;
         int request = Math.min(POWER_REFILL_REQUEST, MAX_POWER - power.amount(this));
-        int drained = VisRelayHelper.drainCentivis(level, worldPosition, key, request, false);
+        int drained = drainRelaySources(level, aspect, request);
         int remaining = request - drained;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = -NODE_DRAW_RANGE; remaining > 0 && x <= NODE_DRAW_RANGE; x++) {
@@ -186,6 +184,26 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         if (drained <= 0) return false;
         power.add(this, drained);
         return true;
+    }
+
+    /** Draw from every distinct energized node reachable through a relay near this furnace. */
+    private int drainRelaySources(ServerLevel level, Holder<IAspect> aspect, int request) {
+        int drained = 0;
+        Set<BlockPos> sources = new ObjectOpenHashSet<>();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int x = -NODE_DRAW_RANGE; drained < request && x <= NODE_DRAW_RANGE; x++) {
+            for (int y = -NODE_DRAW_RANGE; drained < request && y <= NODE_DRAW_RANGE; y++) {
+                for (int z = -NODE_DRAW_RANGE; drained < request && z <= NODE_DRAW_RANGE; z++) {
+                    cursor.setWithOffset(worldPosition, x, y, z);
+                    if (!(level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) || !relay.isLinked())
+                        continue;
+                    BlockEntityNode source = relay.resolveSource(level);
+                    if (source == null || !sources.add(source.getBlockPos())) continue;
+                    drained += source.drainCentivis(aspect, request - drained);
+                }
+            }
+        }
+        return drained;
     }
 
     private boolean processInput() {
