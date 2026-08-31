@@ -154,6 +154,7 @@ dependencies {
     runtimeOnly "maven.modrinth:jade:${jade_version}"
 
     compileOnly "maven.modrinth:iris:${iris_version}"
+    compileOnly "maven.modrinth:distanthorizons:${distant_horizons_version}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
