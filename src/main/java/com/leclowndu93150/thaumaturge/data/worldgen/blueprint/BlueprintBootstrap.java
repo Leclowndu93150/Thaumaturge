@@ -77,15 +77,22 @@ public final class BlueprintBootstrap {
                                 'A',
                                         part(
                                                 block(TCBlocks.ALEMBIC.get()),
-                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get())),
+                                                toBlock(
+                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER
+                                                                .get())),
                                 'C',
                                         part(
                                                 block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
-                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get())),
+                                                toBlock(
+                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER
+                                                                .get())),
                                 'V',
                                         part(
                                                 block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
-                                                BlueprintTarget.Keep.INSTANCE),
+                                                toBlock(
+                                                        TCBlocks
+                                                                .ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER
+                                                                .get())),
                                 'F',
                                         part(
                                                 block(TCBlocks.ALCHEMICAL_FURNACE.get()),

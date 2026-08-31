@@ -25,6 +25,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -99,14 +101,44 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
                 for (int z = -1; z <= 1; z++) {
                     if (x == 0 && z == 0) continue;
                     BlockPos target = worldPosition.offset(x, y, z);
-                    if (!level.isLoaded(target)
-                            || !level.getBlockState(target).is(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get())) {
+                    if (!level.isLoaded(target) || !isFurnacePart(level.getBlockState(target))) {
                         return false;
                     }
                 }
             }
         }
         return true;
+    }
+
+    private static boolean isFurnacePart(BlockState state) {
+        return state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
+                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
+    }
+
+    public static void restoreStructure(LevelAccessor level, BlockPos controllerPos, BlockPos excludedPos) {
+        if (level.isClientSide()) return;
+        for (int y = 0; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && z == 0) continue;
+                    BlockPos target = controllerPos.offset(x, y, z);
+                    if (target.equals(excludedPos)) continue;
+                    BlockState state = level.getBlockState(target);
+                    if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
+                        level.setBlock(target, TCBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
+                    } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
+                        level.setBlock(
+                                target, TCBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+                    } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())) {
+                        level.setBlock(
+                                target,
+                                TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(),
+                                Block.UPDATE_ALL);
+                    }
+                }
+            }
+        }
     }
 
     private boolean charge(ServerLevel level) {

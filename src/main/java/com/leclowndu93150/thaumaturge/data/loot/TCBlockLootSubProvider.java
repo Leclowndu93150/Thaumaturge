@@ -314,7 +314,13 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
-        dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.ALCHEMICAL_FURNACE.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), TCBlocks.ALEMBIC.get());
+        dropOther(
+                TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        dropOther(
+                TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get(),
+                TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.INFUSION_MATRIX.get());
 
         dropSelf(TCBlocks.METAL_BRASS_BLOCK.get());

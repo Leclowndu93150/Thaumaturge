@@ -459,6 +459,14 @@ public final class TCBlocks {
                 .noLootTable();
     }
 
+    private static BlockBehaviour.Properties advancedFurnacePlaceholderProps() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .strength(2.5F, 3600000.0F)
+                .sound(SoundType.METAL)
+                .noLootTable();
+    }
+
     private static BlockBehaviour.Properties pedestalProps() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
@@ -724,6 +732,24 @@ public final class TCBlocks {
 
     public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_TABLE =
             BLOCKS.registerBlock("placeholder_table", BlockPlaceholder::new, pressPlaceholderProps());
+
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_alembic_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
+
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_construct_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
+
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_advanced_construct_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ANCIENT =
             BLOCKS.registerBlock("pedestal_ancient", BlockPedestal::new, pedestalProps());

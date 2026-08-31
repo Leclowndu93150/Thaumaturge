@@ -107,6 +107,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
                 && !level.isClientSide()
                 && level.getBlockEntity(pos) instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
             furnace.dropContents();
+            BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, pos, pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
