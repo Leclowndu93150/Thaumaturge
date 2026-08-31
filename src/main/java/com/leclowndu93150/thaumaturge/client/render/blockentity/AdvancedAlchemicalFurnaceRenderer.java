@@ -30,7 +30,21 @@ public final class AdvancedAlchemicalFurnaceRenderer
 
     private final RandomSource random = RandomSource.create();
 
+    private static final RandomSource PREVIEW_RANDOM = RandomSource.create();
+
     public AdvancedAlchemicalFurnaceRenderer(BlockEntityRendererProvider.Context context) {}
+
+    /** Renders the inactive complete furnace for inventory and recipe-viewer previews. */
+    public static void renderPreview(
+            BlockState state, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
+        renderModel(state, BASE_MODEL_ID, PREVIEW_RANDOM, poseStack, buffers, light, overlay);
+        for (int rotation = 0; rotation < 4; rotation++) {
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * rotation));
+            renderModel(state, TANK_MODEL_ID, PREVIEW_RANDOM, poseStack, buffers, light, overlay);
+            poseStack.popPose();
+        }
+    }
 
     @Override
     public void render(
@@ -50,20 +64,21 @@ public final class AdvancedAlchemicalFurnaceRenderer
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        renderModel(state, hot ? BASE_ON_MODEL_ID : BASE_MODEL_ID, poseStack, buffers, light, overlay);
+        renderModel(state, hot ? BASE_ON_MODEL_ID : BASE_MODEL_ID, random, poseStack, buffers, light, overlay);
         ModelResourceLocation tank = charged ? TANK_ON_MODEL_ID : TANK_MODEL_ID;
         for (int rotation = 0; rotation < 4; rotation++) {
             poseStack.pushPose();
             poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * rotation));
-            renderModel(state, tank, poseStack, buffers, light, overlay);
+            renderModel(state, tank, random, poseStack, buffers, light, overlay);
             poseStack.popPose();
         }
         poseStack.popPose();
     }
 
-    private void renderModel(
+    private static void renderModel(
             BlockState state,
             ModelResourceLocation modelId,
+            RandomSource random,
             PoseStack poseStack,
             MultiBufferSource buffers,
             int light,

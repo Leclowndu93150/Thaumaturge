@@ -319,7 +319,10 @@ public final class TCModelProvider implements DataProvider {
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         horizontalBlock(TCBlocks.ALCHEMICAL_FURNACE.get(), "alchemical_furnace");
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
-        horizontalBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), "advanced_alchemical_furnace_base");
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(
+                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), vName("advanced_alchemical_furnace_base"))
+                .with(horizontalDispatch()));
+        delegateItem(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get(), BEWLR_BLOCK_PARENT);
 
         blockModels.createTrivialCube(TCBlocks.METAL_BRASS_BLOCK.get());
         blockModels.createTrivialCube(TCBlocks.METAL_THAUMIUM_BLOCK.get());

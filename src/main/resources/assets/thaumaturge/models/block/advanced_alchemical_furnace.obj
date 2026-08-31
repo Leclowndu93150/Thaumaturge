@@ -1,3 +1,4 @@
+mtllib advanced_alchemical_furnace.mtl
 # 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
 # File Created: 29.11.2014 09:05:41
 
@@ -152,6 +153,7 @@ vt 0.1797 0.9844 0.0000
 # 56 texture coords
 
 g Base
+usemtl legacy
 s 2
 f 1/1/1 2/2/1 3/3/1
 f 3/3/1 4/4/1 1/1/1
@@ -440,4 +442,3 @@ f 91/61/50 94/57/50 92/60/50
 f 92/60/50 94/57/50 93/59/50
 f 93/59/50 94/57/50 86/58/50
 # 64 faces
-

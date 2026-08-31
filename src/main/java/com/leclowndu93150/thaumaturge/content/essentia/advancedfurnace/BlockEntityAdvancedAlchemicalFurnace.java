@@ -292,28 +292,36 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         TCNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
-        output.put("Input", input.save(registries));
+        if (!input.isEmpty()) {
+            output.put("Input", input.save(registries));
+        }
         output.putInt("Heat", heat);
         output.putInt("Perditio", perditio);
         output.putInt("Aqua", aqua);
         output.putInt("Cooldown", cooldown);
+        output.putBoolean("Assembled", assembled);
     }
 
     @Override
     protected void loadAdditional(CompoundTag inputTag, HolderLookup.Provider registries) {
         super.loadAdditional(inputTag, registries);
         aspects = TCNbt.read(inputTag, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
-        input = ItemStack.parse(registries, inputTag.getCompound("Input")).orElse(ItemStack.EMPTY);
+        input = inputTag.contains("Input")
+                ? ItemStack.parse(registries, inputTag.getCompound("Input")).orElse(ItemStack.EMPTY)
+                : ItemStack.EMPTY;
         heat = Math.min(MAX_POWER, inputTag.getInt("Heat"));
         perditio = Math.min(MAX_POWER, inputTag.getInt("Perditio"));
         aqua = Math.min(MAX_POWER, inputTag.getInt("Aqua"));
         cooldown = Math.max(0, inputTag.getInt("Cooldown"));
+        assembled = inputTag.getBoolean("Assembled");
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
-        saveAdditional(tag, registries);
+        CompoundTag output = new CompoundTag();
+        saveAdditional(output, registries);
+        tag.merge(output);
         return tag;
     }
 
