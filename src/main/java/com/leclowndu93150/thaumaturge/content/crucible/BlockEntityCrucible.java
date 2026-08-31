@@ -5,7 +5,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
-import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
@@ -97,7 +96,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
 
             if (aspects.totalAmount() > MAX_ASPECT && counter % 5L == 0L) spillOverflow();
 
-            if (counter >= 100L) {
+            if (counter > 100L && heat > 150) {
                 spillRandom();
                 counter = 0L;
             }
@@ -290,22 +289,11 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
         int total = aspects.totalAmount();
         if (tank.getFluidAmount() > 0 || total > 0) {
             tank.setFluid(FluidStack.EMPTY);
-            // TC4 dumped crucible remnants as repeated physical Goo/Gas spill attempts while TC5
-            // made discarded essentia worth one aura Flux each. Use the TC5 one-per-aspect budget,
-            // externalizing successful TC4-style physical spills first so the same waste is not
-            // double-counted as both physical and numerical Flux.
-            int successfulPhysicalSpills = 0;
-            int spillChecks = Math.min(total / 2, 128);
-            for (int i = 0; i < spillChecks; i++) {
-                if (serverLevel.getRandom().nextInt(4) == 0
-                        && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom())) {
-                    successfulPhysicalSpills++;
-                }
-            }
-
-            float auraFlux = Math.max(0.0F, total - successfulPhysicalSpills);
-            if (auraFlux > 0.0F) {
-                AuraHelper.polluteAura(serverLevel, getBlockPos(), auraFlux, true);
+            // Faithful TC4 disposal: each pair of remaining essentia gets one 25% physical
+            // Goo/Gas spill attempt. Failed attempts are simply contained rather than converted
+            // into numerical aura Flux, so a sealed crucible cannot manufacture Rift pressure.
+            for (int i = 0; i < total / 2; i++) {
+                spillPhysical(serverLevel);
             }
 
             this.aspects = AspectList.EMPTY;
@@ -322,30 +310,43 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                 .aspect();
         aspects = aspects.reduce(randAspect, 1);
 
-        // TC4/TC5 crucibles overflowed at 100 essentia, not 500. Restore the old physical
-        // containment failure here while retaining the TC6 numerical pollution path for routine
-        // simmering waste below. A blocked spill falls back to aura Flux so sealing a crucible in
-        // solid blocks cannot make overflow harmless.
-        boolean physical = serverLevel.getRandom().nextInt(4) == 0
-                && PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom());
-        if (!physical) {
-            AuraHelper.polluteAura(serverLevel, getBlockPos(), 1.0F, true);
-        }
+        // TC4 overflow discarded one random aspect every five ticks and made one ordinary
+        // physical spill attempt. It did not turn every failed placement into aura Flux.
+        spillPhysical(serverLevel);
         setChanged();
         syncToClient();
     }
 
     public void spillRandom() {
-        if (level == null || level.isClientSide()) return;
-        if (!aspects.isEmpty()) {
-            Holder<IAspect> randAspect = aspects.entries()
-                    .get(level.getRandom().nextInt(aspects.size()))
+        if (!(level instanceof ServerLevel serverLevel) || aspects.isEmpty()) return;
+        Holder<IAspect> randomAspect = aspects.entries()
+                .get(serverLevel.getRandom().nextInt(aspects.size()))
+                .aspect();
+        // The original crucible rerolled once when it first selected a primal aspect, making
+        // compound essentia slowly decompose while primals escaped as physical pollution.
+        if (randomAspect.value().isPrimal()) {
+            randomAspect = aspects.entries()
+                    .get(serverLevel.getRandom().nextInt(aspects.size()))
                     .aspect();
-            aspects = aspects.reduce(randAspect, 1);
-            AuraHelper.polluteAura(level, getBlockPos(), 1.0F, true);
+        }
+        tank.drain(2, IFluidHandler.FluidAction.EXECUTE);
+        aspects = aspects.reduce(randomAspect, 1);
+        if (randomAspect.value().isPrimal()) {
+            spillPhysical(serverLevel);
+        } else {
+            var components = randomAspect.value().components();
+            if (!components.isEmpty()) {
+                aspects = aspects.add(components.get(serverLevel.getRandom().nextBoolean() ? 0 : 1), 1);
+            }
         }
         setChanged();
         syncToClient();
+    }
+
+    private void spillPhysical(ServerLevel serverLevel) {
+        if (serverLevel.getRandom().nextInt(4) == 0) {
+            PhysicalFlux.spill(serverLevel, getBlockPos(), serverLevel.getRandom());
+        }
     }
 
     public short getHeat() {
