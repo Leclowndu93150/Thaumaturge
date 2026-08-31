@@ -7,9 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +28,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 /** Controller for the assembled Advanced Alchemical Furnace. */
@@ -33,6 +39,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
             simpleCodec(BlockAdvancedAlchemicalFurnace::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    private static final VoxelShape ITEM_INPUT_COLLISION = Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, 0.7D, 1.0D);
 
     public BlockAdvancedAlchemicalFurnace(Properties properties) {
         super(properties);
@@ -72,6 +79,12 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     }
 
     @Override
+    protected VoxelShape getCollisionShape(
+            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return ITEM_INPUT_COLLISION;
+    }
+
+    @Override
     protected ItemInteractionResult useItemOn(
             ItemStack stack,
             BlockState state,
@@ -94,6 +107,24 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
         return furnace.insertInput(player, hand) ? ItemInteractionResult.SUCCESS : ItemInteractionResult.FAIL;
+    }
+
+    @Override
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (!level.isClientSide()
+                && entity instanceof ItemEntity itemEntity
+                && entity.tickCount % 10 == 0
+                && level.getBlockEntity(pos) instanceof BlockEntityAdvancedAlchemicalFurnace furnace
+                && furnace.insertInput(itemEntity.getItem())) {
+            ItemStack stack = itemEntity.getItem();
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                itemEntity.discard();
+            } else {
+                itemEntity.setItem(stack);
+            }
+        }
+        super.entityInside(state, level, pos, entity);
     }
 
     @Override

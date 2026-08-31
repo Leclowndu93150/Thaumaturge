@@ -463,8 +463,7 @@ public final class TCBlocks {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .strength(2.5F, 3600000.0F)
-                .sound(SoundType.METAL)
-                .noLootTable();
+                .sound(SoundType.METAL);
     }
 
     private static BlockBehaviour.Properties pedestalProps() {

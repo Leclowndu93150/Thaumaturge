@@ -179,7 +179,8 @@ public final class TCBlockEntities {
                             Set.of(
                                     TCBlocks.SMELTER_BASIC.get(),
                                     TCBlocks.SMELTER_THAUMIUM.get(),
-                                    TCBlocks.SMELTER_VOID.get()),
+                                    TCBlocks.SMELTER_VOID.get(),
+                                    TCBlocks.ALCHEMICAL_FURNACE.get()),
                             null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>>

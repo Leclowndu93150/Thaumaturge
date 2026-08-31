@@ -210,11 +210,18 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     }
 
     public boolean insertInput(Player player, InteractionHand hand) {
-        if (!assembled || !input.isEmpty()) return false;
         ItemStack held = player.getItemInHand(hand);
-        if (AspectIndexAccess.index().of(held.copy()).isEmpty()) return false;
-        input = held.copyWithCount(1);
+        if (!insertInput(held)) return false;
         if (!player.getAbilities().instabuild) held.shrink(1);
+        return true;
+    }
+
+    /** Accepts one valid item for the next furnace cycle without consuming the supplied stack. */
+    public boolean insertInput(ItemStack stack) {
+        if (!assembled
+                || !input.isEmpty()
+                || AspectIndexAccess.index().of(stack.copy()).isEmpty()) return false;
+        input = stack.copyWithCount(1);
         setChanged();
         sync();
         return true;

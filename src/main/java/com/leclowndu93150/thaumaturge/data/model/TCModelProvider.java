@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
@@ -317,7 +318,7 @@ public final class TCModelProvider implements DataProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
-        horizontalBlock(TCBlocks.ALCHEMICAL_FURNACE.get(), "alchemical_furnace");
+        registerAlchemicalFurnace();
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(
                         TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), vName("advanced_alchemical_furnace_base"))
@@ -791,6 +792,22 @@ public final class TCModelProvider implements DataProvider {
                             };
                         })));
         delegateItem(block.asItem(), TCIds.rl("block/" + modelName + "_off"));
+    }
+
+    private void registerAlchemicalFurnace() {
+        ResourceLocation model = TCIds.rl("block/alchemical_furnace");
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ALCHEMICAL_FURNACE.get(), v(model))
+                .with(PropertyDispatch.properties(BlockAlchemicalFurnace.LIT, BlockStateProperties.HORIZONTAL_FACING)
+                        .generate((lit, facing) -> switch (facing) {
+                            case EAST ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
+                            case SOUTH ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180);
+                            case WEST ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270);
+                            default -> Variant.variant();
+                        })));
+        delegateItem(TCItems.ALCHEMICAL_FURNACE.get(), model);
     }
 
     private void registerDeconstructionTable() {
