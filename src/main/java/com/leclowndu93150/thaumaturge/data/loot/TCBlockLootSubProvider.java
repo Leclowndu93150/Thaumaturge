@@ -312,6 +312,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        dropSelf(TCBlocks.ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.INFUSION_MATRIX.get());

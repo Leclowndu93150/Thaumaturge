@@ -1780,6 +1780,20 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
                 .save(output);
 
+        // TC4 DISTILESSENTIA / AlchemyFurnace.
+        arcaneShaped(new ItemStack(TCItems.ALCHEMICAL_FURNACE.get()), 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .aspect(TCAspects.AQUA, 5)
+                .pattern("SCS")
+                .pattern("SFS")
+                .pattern("SSS")
+                .define('S', TCItems.STONE_ARCANE)
+                .define('C', TCItems.CRUCIBLE)
+                .define('F', Items.FURNACE)
+                .gate(gate("essentia_smelter"))
+                .unlockedBy("has", has(TCItems.CRUCIBLE))
+                .save(output);
+
         // TC4 ADVALCHEMYFURNACE / AdvAlchemyConstruct.
         // The original used typed wand vis; retain both its total cost and each primal requirement
         // through the modern generic-vis and crystal payment model.
@@ -3359,6 +3373,12 @@ public final class TCRecipeProvider extends RecipeProvider {
                         TCIds.rl("golem_press"),
                         new ItemStack(TCBlocks.GOLEM_BUILDER.get().asItem()),
                         Optional.of(gate("mind_clockwork"))));
+        dustTrigger(
+                "advanced_alchemical_furnace",
+                new DustTriggerMultiblockRecipe(
+                        TCIds.rl("advanced_alchemical_furnace"),
+                        new ItemStack(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get().asItem()),
+                        Optional.of(gate("essentia_smelter_void"))));
         dustTrigger(
                 "infernal_furnace",
                 new DustTriggerMultiblockRecipe(

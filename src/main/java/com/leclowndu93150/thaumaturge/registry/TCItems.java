@@ -767,6 +767,8 @@ public final class TCItems {
 
     public static final DeferredItem<BlockItem> ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_CONSTRUCT);
+    public static final DeferredItem<BlockItem> ALCHEMICAL_FURNACE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_FURNACE);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_FURNACE =
