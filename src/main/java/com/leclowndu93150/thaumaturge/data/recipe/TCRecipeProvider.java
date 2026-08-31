@@ -1780,32 +1780,21 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
                 .save(output);
 
-        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get()), 200)
-                .aspect(TCAspects.TERRA)
-                .aspect(TCAspects.IGNIS)
-                .pattern(" A ")
-                .pattern("VPV")
-                .pattern(" A ")
+        // TC4 ADVALCHEMYFURNACE / AdvAlchemyConstruct.
+        // The original used typed wand vis; retain both its total cost and each primal requirement
+        // through the modern generic-vis and crystal payment model.
+        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get(), 4), 50)
+                .aspect(TCAspects.AQUA, 10)
+                .aspect(TCAspects.ORDO, 30)
+                .aspect(TCAspects.TERRA, 10)
+                .pattern("VAV")
+                .pattern("APA")
+                .pattern("VAV")
                 .define('A', TCItems.ALCHEMICAL_CONSTRUCT)
-                .define('V', TCItemTags.PLATES_VOID_METAL)
+                .define('V', TCItems.INGOT_VOID)
                 .define('P', TCItems.PRIMORDIAL_PEARL)
                 .gate(gate("essentia_smelter_void", 0))
                 .unlockedBy("has", has(TCItems.ALCHEMICAL_CONSTRUCT))
-                .save(output);
-
-        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get()), 300)
-                .aspect(TCAspects.IGNIS)
-                .aspect(TCAspects.AQUA)
-                .aspect(TCAspects.PERDITIO)
-                .pattern("AVA")
-                .pattern("PCP")
-                .pattern("AVA")
-                .define('A', TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT)
-                .define('V', TCItemTags.PLATES_VOID_METAL)
-                .define('P', TCItems.PRIMORDIAL_PEARL)
-                .define('C', TCItems.ALCHEMICAL_CONSTRUCT)
-                .gate(gate("essentia_smelter_void", 0))
-                .unlockedBy("has", has(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT))
                 .save(output);
 
         arcaneShaped(new ItemStack(TCItems.BELLOWS.get()), 25)
