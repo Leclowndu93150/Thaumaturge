@@ -22,6 +22,10 @@ public final class ThaumarhiaEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity mob, int amplification) {
+        if (mob.level().isClientSide()) {
+            return true;
+        }
+
         ServerLevel level = (ServerLevel) mob.level();
         BlockPos pos = mob.blockPosition();
         if (level.getRandom().nextInt(GOO_CHANCE) == 0 && level.isEmptyBlock(pos)) {
