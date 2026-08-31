@@ -19,6 +19,10 @@ public final class UnnaturalHungerEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity mob, int amplification) {
+        if (mob.level().isClientSide()) {
+            return true;
+        }
+
         if (mob instanceof Player player) {
             player.causeFoodExhaustion(EXHAUSTION_PER_LEVEL * (amplification + 1));
         }
