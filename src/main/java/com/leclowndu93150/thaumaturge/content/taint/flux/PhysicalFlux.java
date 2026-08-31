@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -165,7 +166,8 @@ public final class PhysicalFlux {
             return false;
         }
         if (!state.getFluidState().isEmpty()) {
-            return false;
+            return state.getFluidState().is(FluidTags.WATER)
+                    || state.getFluidState().is(FluidTags.LAVA);
         }
         return state.canBeReplaced();
     }

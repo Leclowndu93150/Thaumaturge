@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -223,7 +224,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return amtToInput;
         }
 
-        if (densityOther < GOO_DENSITY) {
+        if (densityOther < GOO_DENSITY || isDisplaceableVanillaFluid(level.getFluidState(other))) {
             BlockState displaced = level.getBlockState(other);
             setGoo(level, other, amtToInput, Block.UPDATE_ALL);
             level.setBlock(pos, displaced, Block.UPDATE_ALL);
@@ -273,7 +274,8 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             if (fluidState.getType().isSame(this)) {
                 return false;
             }
-            return GOO_DENSITY > fluidState.getFluidType().getDensity();
+            return isDisplaceableVanillaFluid(fluidState)
+                    || GOO_DENSITY > fluidState.getFluidType().getDensity();
         }
         if (state.is(TCBlocks.TAINT_FIBRE.get())) {
             return true;
@@ -293,6 +295,10 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             }
         }
         return canDisplace;
+    }
+
+    private static boolean isDisplaceableVanillaFluid(FluidState state) {
+        return state.is(FluidTags.WATER) || state.is(FluidTags.LAVA);
     }
 
     private void setGoo(Level level, BlockPos pos, int quanta, int flags) {

@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -38,8 +39,8 @@ public final class BlockFluxGas extends Block {
     private static final int TICK_DELAY = 10;
     private static final int CONTACT_EFFECT_CHANCE = 10;
     private static final int VIS_EXHAUST_DURATION = 1200;
-    private static final int POISON_BASE_DURATION = 80;
-    private static final int POISON_DURATION_PER_LEVEL = 20;
+    private static final int CONFUSION_BASE_DURATION = 80;
+    private static final int CONFUSION_DURATION_PER_LEVEL = 20;
     private static final int REPLACEABLE_AMOUNT = 2;
     private static final int AMBIENT_FUME_CHANCE = 10;
     private static final int GAS_COLOR = ARGB32.color(0xFF, 0x9C, 0x1D, 0xB8);
@@ -149,6 +150,15 @@ public final class BlockFluxGas extends Block {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             return 0;
         }
+        BlockState aboveState = level.getBlockState(above);
+        if (!aboveState.getFluidState().isEmpty() && !PhysicalFlux.isPhysicalFlux(aboveState)) {
+            level.setBlock(above, gasBlockState(amount), Block.UPDATE_ALL);
+            level.setBlock(pos, aboveState, Block.UPDATE_ALL);
+            FluidState displaced = aboveState.getFluidState();
+            level.scheduleTick(pos, displaced.getType(), displaced.getType().getTickDelay(level));
+            scheduleTick(level, above);
+            return 0;
+        }
         int aboveAmount = amountAvailable(level, above);
         if (aboveAmount < 0) {
             return amount;
@@ -170,9 +180,10 @@ public final class BlockFluxGas extends Block {
         if (state.isAir()) {
             return 0;
         }
-        if (!state.getFluidState().isEmpty() || PhysicalFlux.isPhysicalFlux(state)) {
+        if (PhysicalFlux.isPhysicalFlux(state)) {
             return -1;
         }
+        if (!state.getFluidState().isEmpty()) return 0;
         return state.canBeReplaced() ? 0 : -1;
     }
 
@@ -204,7 +215,7 @@ public final class BlockFluxGas extends Block {
                 || living.getType().is(EntityTypeTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
                 || living.hasEffect(TCMobEffects.VIS_EXHAUST)
-                || living.hasEffect(MobEffects.POISON)
+                || living.hasEffect(MobEffects.CONFUSION)
                 || serverLevel.getRandom().nextInt(CONTACT_EFFECT_CHANCE) != 0) {
             return;
         }
@@ -215,8 +226,8 @@ public final class BlockFluxGas extends Block {
             living.addEffect(
                     new MobEffectInstance(TCMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, meta / 3, true, true, false));
         } else {
-            living.addEffect(
-                    new MobEffectInstance(MobEffects.POISON, POISON_BASE_DURATION + meta * POISON_DURATION_PER_LEVEL));
+            living.addEffect(new MobEffectInstance(
+                    MobEffects.CONFUSION, CONFUSION_BASE_DURATION + meta * CONFUSION_DURATION_PER_LEVEL));
         }
         PhysicalFlux.reduce(serverLevel, pos, 1);
     }

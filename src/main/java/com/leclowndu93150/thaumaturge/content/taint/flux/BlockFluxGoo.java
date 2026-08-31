@@ -22,7 +22,7 @@ public final class BlockFluxGoo extends LiquidBlock {
     public static final MapCodec<LiquidBlock> CODEC =
             simpleCodec(p -> (LiquidBlock) new BlockFluxGoo(FluxGooRefs.sourceFluid(), p));
 
-    private static final int REPLACEABLE_AMOUNT_THRESHOLD = 5;
+    private static final int REPLACEABLE_AMOUNT_THRESHOLD = 2;
     private static final int AMBIENT_FUME_DENOMINATOR = 44;
     private static final int FUME_GRID = 64;
     private static final int FUME_PARTICLE_INDEX = 64;
@@ -45,7 +45,7 @@ public final class BlockFluxGoo extends LiquidBlock {
     @Override
     protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         FluidState fluidState = state.getFluidState();
-        return fluidState.getAmount() < REPLACEABLE_AMOUNT_THRESHOLD;
+        return fluidState.getAmount() <= REPLACEABLE_AMOUNT_THRESHOLD;
     }
 
     @Override
