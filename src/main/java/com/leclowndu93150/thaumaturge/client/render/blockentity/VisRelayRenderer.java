@@ -34,7 +34,7 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         Vec3 own = Vec3.atCenterOf(relay.getBlockPos()).add(0.0, CRYSTAL_HEIGHT - 0.5, 0.0);
         Vec3 from = Vec3.atCenterOf(parent).subtract(own);
         float time = FloatyLineRenderer.time(relay.getLevel().getGameTime(), partialTick);
-        LateWorldRenderQueue.enqueue(
+        LateWorldRenderQueue.enqueueBlockEntity(
                 own,
                 (latePose, lateBuffers) -> FloatyLineRenderer.draw(
                         latePose, lateBuffers, from, time, BEAM_COLOR, BEAM_SPEED, 1.0F, BEAM_WIDTH));

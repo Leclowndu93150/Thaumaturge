@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -64,6 +65,7 @@ public final class AspectTagWorldRenderer {
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cam = camera.getPosition();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
         Font font = mc.font;
         int stepX = 0;
         int stepY = 0;
@@ -108,7 +110,7 @@ public final class AspectTagWorldRenderer {
             poseStack.scale(tagScale, tagScale, tagScale);
             renderQuad(
                     poseStack,
-                    buffers.getBuffer(TCFlatRenderTypes.entityTranslucentFlat(
+                    effectBuffers.getBuffer(TCFlatRenderTypes.entityTranslucentFlat(
                             known ? entry.aspect().value().texture() : UNKNOWN_TEXTURE)),
                     entry.aspect(),
                     known ? alpha : UNKNOWN_ALPHA,
@@ -128,7 +130,7 @@ public final class AspectTagWorldRenderer {
                     TEXT_SHADOW_COLOR,
                     false,
                     poseStack.last().pose(),
-                    buffers,
+                    effectBuffers,
                     Font.DisplayMode.NORMAL,
                     0,
                     LightTexture.FULL_BRIGHT);
@@ -140,7 +142,7 @@ public final class AspectTagWorldRenderer {
                     TEXT_COLOR,
                     false,
                     poseStack.last().pose(),
-                    buffers,
+                    effectBuffers,
                     Font.DisplayMode.NORMAL,
                     0,
                     LightTexture.FULL_BRIGHT);

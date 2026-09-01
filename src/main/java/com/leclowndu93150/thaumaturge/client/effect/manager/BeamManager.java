@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.effect.instance.BoltInstance;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.ArcRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BeamRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BoltRenderType;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -74,23 +75,23 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
 
         if (!ARCS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
-            VertexConsumer consumer = bufSource.getBuffer(ArcRenderType.RENDER_TYPE);
+            VertexConsumer consumer = IrisCompat.entityEffectBuffers(bufSource).getBuffer(ArcRenderType.RENDER_TYPE);
             for (ArcInstance arc : ARCS) renderArc(poseStack, consumer, arc, camPos, partialTick);
-            bufSource.endBatch(ArcRenderType.RENDER_TYPE);
+            bufSource.endBatch();
         }
 
         if (!BOLTS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(4096));
-            VertexConsumer consumer = bufSource.getBuffer(BoltRenderType.RENDER_TYPE);
+            VertexConsumer consumer = IrisCompat.entityEffectBuffers(bufSource).getBuffer(BoltRenderType.RENDER_TYPE);
             for (BoltInstance bolt : BOLTS) renderBolt(poseStack, consumer, bolt, camPos, partialTick);
-            bufSource.endBatch(BoltRenderType.RENDER_TYPE);
+            bufSource.endBatch();
         }
 
         if (!BEAMS.isEmpty()) {
             MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(8192));
-            for (BeamInstance beam : BEAMS) renderBeam(poseStack, bufSource, beam, camPos, partialTick);
-            for (int t = 0; t < 4; t++) bufSource.endBatch(BeamRenderType.trunkForType(t));
-            bufSource.endBatch(BeamRenderType.NODE_TYPE);
+            MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(bufSource);
+            for (BeamInstance beam : BEAMS) renderBeam(poseStack, effectBuffers, beam, camPos, partialTick);
+            bufSource.endBatch();
         }
     }
 

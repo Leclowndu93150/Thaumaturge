@@ -40,7 +40,7 @@ public final class RechargePedestalRenderer implements BlockEntityRenderer<Block
         float time = FloatyLineRenderer.time(pedestal.getLevel().getGameTime(), partialTick);
         int color = pedestal.getDrainColor();
         Vec3 origin = Vec3.atLowerCornerOf(pedestal.getBlockPos()).add(0.5, PEDESTAL_TOP, 0.5);
-        LateWorldRenderQueue.enqueue(
+        LateWorldRenderQueue.enqueueBlockEntity(
                 origin,
                 (latePose, lateBuffers) -> FloatyLineRenderer.draw(
                         latePose, lateBuffers, from, time, color, LINE_SPEED, 1.0F, LINE_WIDTH));
