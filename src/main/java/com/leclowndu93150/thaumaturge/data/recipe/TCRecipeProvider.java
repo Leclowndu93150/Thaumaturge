@@ -1453,8 +1453,41 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
-                        new ItemStack(Items.LAVA_BUCKET),
-                        Ingredient.of(Tags.Items.BUCKETS_EMPTY))
+                        new ItemStack(Blocks.MOSSY_COBBLESTONE),
+                        Ingredient.of(Blocks.COBBLESTONE))
+                .aspect(TCAspects.HERBA, 2)
+                .aspect(TCAspects.PRAECANTATIO, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.COBBLESTONE))
+                .save(output, TCIds.MODID + ":crucible/mossy_cobblestone");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.PACKED_ICE))
+                .aspect(TCAspects.ORDO, 1)
+                .aspect(TCAspects.GELUM, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.PACKED_ICE))
+                .save(output, TCIds.MODID + ":crucible/ice");
+
+        new CrucibleRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
+                        new ItemStack(Blocks.CRACKED_STONE_BRICKS),
+                        Ingredient.of(Blocks.STONE_BRICKS))
+                .aspect(TCAspects.PERDITIO, 2)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.STONE_BRICKS))
+                .save(output, TCIds.MODID + ":crucible/cracked_stone_bricks");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Items.BONE_MEAL, 4), Ingredient.of(Items.BONE))
+                .aspect(TCAspects.PERDITIO, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Items.BONE))
+                .save(output, TCIds.MODID + ":crucible/bone_meal");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Items.LAVA_BUCKET), Ingredient.of(Items.BUCKET))
                 .aspect(TCAspects.IGNIS, 15)
                 .aspect(TCAspects.TERRA, 5)
                 .gate(gate("hedge_alchemy", 2))
@@ -1546,6 +1579,9 @@ public final class TCRecipeProvider extends RecipeProvider {
         clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
+        transmutationRecipe(Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
+        transmutationRecipe(Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
+
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
@@ -1567,6 +1603,21 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("metal_purification"))
                 .unlockedBy("has", has(oreTag))
                 .save(output.withConditions(new NotCondition(new TagEmptyCondition(oreTag))));
+    }
+
+    private void transmutationRecipe(ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
+        HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
+        CrucibleRecipeBuilder builder = new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(result, 3), Ingredient.of(catalyst))
+                .aspect(TCAspects.METALLUM, 2)
+                .gate(gate("metal_purification"));
+        builder.unlockedBy("has", has(catalyst));
+        for (ResourceKey<IAspect> cost : costs) {
+            if (!cost.equals(TCAspects.METALLUM)) {
+                builder.aspect(cost, 1);
+            }
+        }
+        builder.save(output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))));
     }
 
     private void buildArcaneWorkbenchRecipes() {
