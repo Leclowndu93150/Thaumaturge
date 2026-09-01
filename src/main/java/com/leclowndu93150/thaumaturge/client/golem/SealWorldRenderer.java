@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigArea;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -62,7 +63,7 @@ public final class SealWorldRenderer {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -80,6 +81,7 @@ public final class SealWorldRenderer {
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
         float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
@@ -90,10 +92,10 @@ public final class SealWorldRenderer {
             }
             float alpha = 1.0F - (float) (distSqr / MAX_DIST_SQR);
             boolean inactive = seal.isStoppedByRedstone(mc.level);
-            drawSealIcon(poseStack, buffers, seal, cam, alpha, inactive);
-            drawSealRing(poseStack, buffers, seal, cam, alpha, time);
+            drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive);
+            drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
             if (seal.getSeal() instanceof ISealConfigArea) {
-                drawAreaCorners(poseStack, buffers, seal, cam, alpha, time);
+                drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
             }
         }
         buffers.endBatch();

@@ -18,7 +18,10 @@
   "client": [
     "client.gui.GuiGraphicsAccessor",
     "client.particle.ParticleEngineMixin",
-    "client.renderer.entity.LivingEntityRendererMixin"
+    "client.renderer.entity.LivingEntityRendererMixin",
+    "client.iris.ExtendedShaderMixin",
+    "client.iris.FallbackShaderMixin",
+    "client.iris.ShaderInstanceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

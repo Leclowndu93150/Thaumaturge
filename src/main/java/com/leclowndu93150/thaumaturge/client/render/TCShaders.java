@@ -24,21 +24,27 @@ public final class TCShaders {
     private TCShaders() {}
 
     public static ShaderInstance ender() {
-        return IrisCompat.shadersActive() ? GameRenderer.getPositionShader() : ender;
+        return ender;
     }
 
     public static ShaderInstance occludingEffect() {
-        return IrisCompat.shadersActive()
-                ? GameRenderer.getRendertypeEntityTranslucentEmissiveShader()
-                : occludingEffect;
+        return occludingEffect;
+    }
+
+    /**
+     * Core effect shaders that must keep their Thaumaturge fragment program under Iris. Iris normally blocks unknown
+     * core shaders while a shader pack is active; the Iris compatibility mixin selectively opts these two back in.
+     */
+    public static boolean isIrisAllowedCustomEffectShader(ShaderInstance shader) {
+        return shader != null && (shader == ender || shader == occludingEffect);
     }
 
     public static ShaderInstance fx() {
-        return IrisCompat.shadersActive() ? GameRenderer.getParticleShader() : fx;
+        return IrisCompat.shadersActive() ? IrisCompat.particleTranslucentShader() : fx;
     }
 
     public static ShaderInstance fxAlphaTest() {
-        return IrisCompat.shadersActive() ? GameRenderer.getParticleShader() : fxAlphaTest;
+        return IrisCompat.shadersActive() ? IrisCompat.particleTranslucentShader() : fxAlphaTest;
     }
 
     public static ShaderInstance portal() {
