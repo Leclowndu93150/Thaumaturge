@@ -28,7 +28,7 @@ import terrablender.api.RegionType;
  */
 public final class TCTaintedLandsRegion extends Region {
     public static final int WEIGHT = 1;
-    private static final int CLIMATE_SLICE_STRIDE = 8;
+    private static final int CLIMATE_SLICE_STRIDE = 7;
     private static final Set<ResourceKey<Biome>> ELIGIBLE_LAND_BIOMES = Set.of(
             Biomes.PLAINS,
             Biomes.SUNFLOWER_PLAINS,
@@ -36,7 +36,10 @@ public final class TCTaintedLandsRegion extends Region {
             Biomes.FLOWER_FOREST,
             Biomes.BIRCH_FOREST,
             Biomes.OLD_GROWTH_BIRCH_FOREST,
-            Biomes.DARK_FOREST);
+            Biomes.DARK_FOREST,
+            Biomes.SWAMP,
+            Biomes.OLD_GROWTH_PINE_TAIGA,
+            Biomes.OLD_GROWTH_SPRUCE_TAIGA);
 
     public TCTaintedLandsRegion(ResourceLocation name) {
         super(name, RegionType.OVERWORLD, WEIGHT);
