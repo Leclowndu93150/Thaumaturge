@@ -90,6 +90,15 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     private static final float CAP_PIVOT_BOTTOM_PX = 20.0F;
 
     public static void submitParts(WandArg arg, PoseStack poseStack, MultiBufferSource buffers, int light) {
+        submitParts(arg, poseStack, buffers, light, false);
+    }
+
+    /**
+     * Submits the wand model. First-person hands use vanilla's cutout layer so Iris can route the solid rod and caps
+     * through its dedicated hand pass.
+     */
+    public static void submitParts(
+            WandArg arg, PoseStack poseStack, MultiBufferSource buffers, int light, boolean firstPersonHand) {
         boolean staff = arg.rod().staff();
         float ticks = clientTicks();
 
@@ -97,8 +106,8 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         if (staff) {
             poseStack.translate(0.0F, STAFF_MODEL_SHIFT, 0.0F);
         }
-        submitRod(arg, poseStack, buffers, light, staff, ticks);
-        submitCaps(arg, poseStack, buffers, light, staff);
+        submitRod(arg, poseStack, buffers, light, staff, ticks, firstPersonHand);
+        submitCaps(arg, poseStack, buffers, light, staff, firstPersonHand);
         if (arg.hasFocus()) {
             submitFocus(arg, poseStack, buffers, staff, ticks);
         }
@@ -112,9 +121,17 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     }
 
     private static void submitRod(
-            WandArg arg, PoseStack poseStack, MultiBufferSource buffers, int light, boolean staff, float ticks) {
+            WandArg arg,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            boolean staff,
+            float ticks,
+            boolean firstPersonHand) {
         int rodLight = arg.rod().glow() ? (int) (200.0F + Mth.sin((int) ticks) * 5.0F + 5.0F) : light;
-        RenderType rodType = TCFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
+        RenderType rodType = firstPersonHand
+                ? RenderType.entityCutoutNoCull(arg.rod().texture())
+                : TCFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.translate(0.0F, -0.1F, 0.0F);
@@ -142,8 +159,15 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     }
 
     private static void submitCaps(
-            WandArg arg, PoseStack poseStack, MultiBufferSource buffers, int light, boolean staff) {
-        RenderType capType = TCFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
+            WandArg arg,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            boolean staff,
+            boolean firstPersonHand) {
+        RenderType capType = firstPersonHand
+                ? RenderType.entityCutoutNoCull(arg.cap().texture())
+                : TCFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.scale(1.3F, CAP_STAFF_SCALE_Y, 1.3F);
