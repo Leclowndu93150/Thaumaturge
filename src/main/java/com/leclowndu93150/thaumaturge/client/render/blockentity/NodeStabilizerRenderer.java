@@ -100,7 +100,8 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
             int tint = advanced ? BUBBLE_ADVANCED_TINT : 0xFFFFFF;
             int color = ARGB32.color((int) (alpha * 255.0F), tint);
             Vec3 origin = Vec3.atCenterOf(stabilizer.getBlockPos()).add(0.0, BUBBLE_LIFT - 0.5, 0.0);
-            LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> drawBubble(latePose, lateBuffers, color));
+            LateWorldRenderQueue.enqueueBlockEntity(
+                    origin, (latePose, lateBuffers) -> drawBubble(latePose, lateBuffers, color));
         }
     }
 

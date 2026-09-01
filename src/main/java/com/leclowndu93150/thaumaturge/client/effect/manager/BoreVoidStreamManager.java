@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.client.effect.instance.StreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.instance.VoidStreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.EssentiaStreamRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VoidStreamRenderType;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -62,7 +63,8 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
 
         if (!BORES.isEmpty()) {
             MultiBufferSource.BufferSource buf = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
-            VertexConsumer consumer = buf.getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
+            VertexConsumer consumer =
+                    IrisCompat.entityEffectBuffers(buf).getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
             for (BoreStreamInstance inst : BORES) {
                 StreamInstance.Snapshot snap = inst.snapshot(partialTick);
                 if (snap == null) continue;
@@ -79,7 +81,7 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
                         snap.start());
                 poseStack.popPose();
             }
-            buf.endBatch(EssentiaStreamRenderType.RENDER_TYPE);
+            buf.endBatch();
         }
 
         if (!VOIDS.isEmpty()) {
@@ -91,7 +93,7 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
             float pitchNorm = (pitchRad + (float) (Math.PI * 0.5)) / (float) Math.PI;
 
             MultiBufferSource.BufferSource bufA = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
-            VertexConsumer addConsumer = bufA.getBuffer(VoidStreamRenderType.ADDITIVE);
+            VertexConsumer addConsumer = IrisCompat.entityEffectBuffers(bufA).getBuffer(VoidStreamRenderType.ADDITIVE);
             for (VoidStreamInstance inst : VOIDS) {
                 StreamInstance.Snapshot snap = inst.snapshotWithRadiusMul(partialTick, 1.5F);
                 if (snap == null) continue;
@@ -109,10 +111,11 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
                         snap.start());
                 poseStack.popPose();
             }
-            bufA.endBatch(VoidStreamRenderType.ADDITIVE);
+            bufA.endBatch();
 
             MultiBufferSource.BufferSource bufT = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
-            VertexConsumer trConsumer = bufT.getBuffer(VoidStreamRenderType.TRANSLUCENT);
+            VertexConsumer trConsumer =
+                    IrisCompat.entityEffectBuffers(bufT).getBuffer(VoidStreamRenderType.TRANSLUCENT);
             for (VoidStreamInstance inst : VOIDS) {
                 StreamInstance.Snapshot snap = inst.snapshotWithRadiusMul(partialTick, 0.5F);
                 if (snap == null) continue;
@@ -130,7 +133,7 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
                         snap.start());
                 poseStack.popPose();
             }
-            bufT.endBatch(VoidStreamRenderType.TRANSLUCENT);
+            bufT.endBatch();
         }
     }
 

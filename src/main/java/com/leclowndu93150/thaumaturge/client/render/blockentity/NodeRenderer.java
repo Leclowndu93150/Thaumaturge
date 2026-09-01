@@ -103,12 +103,13 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             drawLayers(data, poseStack, buffers);
             poseStack.popPose();
             if (data.draining) {
-                LateWorldRenderQueue.enqueue(
+                LateWorldRenderQueue.enqueueBlockEntity(
                         origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
             }
             return;
         }
-        LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> drawLate(data, latePose, lateBuffers));
+        LateWorldRenderQueue.enqueueBlockEntity(
+                origin, (latePose, lateBuffers) -> drawLate(data, latePose, lateBuffers));
     }
 
     private static NodeRenderState build(BlockEntityNode node, float partialTicks, LocalPlayer player) {

@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.casters;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public final class ArchitectOverlayRenderer {
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -105,9 +106,10 @@ public final class ArchitectOverlayRenderer {
         PoseStack poseStack = event.getPoseStack();
         Vec3 cam = mc.gameRenderer.getMainCamera().getPosition();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
         drawArchitectAxis(
                 poseStack,
-                buffers,
+                effectBuffers,
                 player,
                 anchor,
                 cam,
@@ -115,7 +117,7 @@ public final class ArchitectOverlayRenderer {
                 architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Y),
                 architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Z));
         for (BlockPos pos : architectBlocks) {
-            drawOverlayBlock(poseStack, buffers, pos, cam);
+            drawOverlayBlock(poseStack, effectBuffers, pos, cam);
         }
         buffers.endBatch();
     }

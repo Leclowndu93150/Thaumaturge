@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.effect;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -67,19 +68,21 @@ public final class OccludingEffectRenderer {
         }
         Minecraft mc = Minecraft.getInstance();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(buffers);
         PoseStack poseStack = event.getPoseStack();
         Vec3 camera = mc.gameRenderer.getMainCamera().getPosition();
         try {
-            renderBeams(poseStack, buffers, camera, WISPY);
-            renderPortals(poseStack, buffers, camera, PORTAL);
+            renderBeams(poseStack, effectBuffers, camera, WISPY);
+            renderPortals(poseStack, effectBuffers, camera, PORTAL);
         } finally {
+            buffers.endBatch();
             BEAMS.clear();
             PORTALS.clear();
         }
     }
 
     private static void renderBeams(
-            PoseStack poseStack, MultiBufferSource.BufferSource buffers, Vec3 camera, RenderType renderType) {
+            PoseStack poseStack, MultiBufferSource buffers, Vec3 camera, RenderType renderType) {
         if (BEAMS.isEmpty()) {
             return;
         }
@@ -98,11 +101,10 @@ public final class OccludingEffectRenderer {
                     beam.width);
             poseStack.popPose();
         }
-        buffers.endBatch(renderType);
     }
 
     private static void renderPortals(
-            PoseStack poseStack, MultiBufferSource.BufferSource buffers, Vec3 camera, RenderType renderType) {
+            PoseStack poseStack, MultiBufferSource buffers, Vec3 camera, RenderType renderType) {
         if (PORTALS.isEmpty()) {
             return;
         }
@@ -115,7 +117,6 @@ public final class OccludingEffectRenderer {
             writePortal(poseStack.last(), buffer, portal);
             poseStack.popPose();
         }
-        buffers.endBatch(renderType);
     }
 
     private static void writePortal(PoseStack.Pose pose, VertexConsumer buffer, Portal portal) {
