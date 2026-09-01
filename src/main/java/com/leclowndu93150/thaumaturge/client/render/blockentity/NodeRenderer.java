@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
 import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
@@ -41,6 +42,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final double THAUMOMETER_VIEW_DISTANCE = 48.0;
     private static final float BASE_LAYER_SCALE = 0.25F;
     private static final float FAINT_ALPHA = 0.1F;
+    private static final float IRIS_FAINT_ALPHA = 0.2F;
     private static final float FAINT_SCALE = 0.5F;
     private static final float JARRED_SIZE = 0.7F;
     private static final float JARRED_HEIGHT = 0.4F;
@@ -108,8 +110,21 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             }
             return;
         }
-        LateWorldRenderQueue.enqueueBlockEntity(
-                origin, (latePose, lateBuffers) -> drawLate(data, latePose, lateBuffers));
+        if (IrisCompat.shadersActive()) {
+            poseStack.pushPose();
+            poseStack.translate(0.5F, 0.5F, 0.5F);
+            poseStack.mulPose(
+                    Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+            drawLayers(data, poseStack, buffers);
+            poseStack.popPose();
+            if (data.draining) {
+                LateWorldRenderQueue.enqueueBlockEntity(
+                        origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
+            }
+        } else {
+            LateWorldRenderQueue.enqueueBlockEntity(
+                    origin, (latePose, lateBuffers) -> drawLate(data, latePose, lateBuffers));
+        }
     }
 
     private static NodeRenderState build(BlockEntityNode node, float partialTicks, LocalPlayer player) {
@@ -209,7 +224,8 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     public static void forEachLayer(NodeRenderState state, LayerSink sink) {
         int frame = (int) ((state.ticks * FRAME_ADVANCE_PER_TICK + state.frameSeed) % GRID + GRID) % GRID;
         if (!state.visible || state.layers.isEmpty()) {
-            sink.layer(0, NODE_ADDITIVE, 0.0F, FAINT_SCALE, FAINT_ALPHA, 0xFFFFFF, STRIP_NORMAL, frame);
+            float faintAlpha = IrisCompat.shadersActive() ? IRIS_FAINT_ALPHA : FAINT_ALPHA;
+            sink.layer(0, NODE_ADDITIVE, 0.0F, FAINT_SCALE, faintAlpha, 0xFFFFFF, STRIP_NORMAL, frame);
             return;
         }
         float average = 0.0F;
