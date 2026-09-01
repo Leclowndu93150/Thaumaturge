@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.function.Function;
@@ -11,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public final class TCRenderTypes {
     private static final int BUFFER = 1536;
+    private static final float NON_ZERO_ALPHA_TEST = 0.0001F;
+    private static final float IRIS_PARTICLE_ALPHA_TEST = 0.1F;
 
     private static final RenderStateShard.ShaderStateShard PARTICLE_SHADER =
             new RenderStateShard.ShaderStateShard(TCShaders::fx);
@@ -21,6 +24,10 @@ public final class TCRenderTypes {
     private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =
             new RenderStateShard.ShaderStateShard(TCShaders::occludingEffect);
     private static final RenderStateShard.OverlayStateShard OVERLAY = new RenderStateShard.OverlayStateShard(true);
+    private static final RenderStateShard.LayeringStateShard FX_ALPHA_TEST = new RenderStateShard.LayeringStateShard(
+            "tc_fx_alpha_test",
+            () -> IrisCompat.setParticleAlphaTest(NON_ZERO_ALPHA_TEST),
+            () -> IrisCompat.setParticleAlphaTest(IRIS_PARTICLE_ALPHA_TEST));
 
     private static final Function<ResourceLocation, RenderType> FX_ADDITIVE = Util.memoize(texture -> particle(
             "tc_fx_additive",
@@ -295,6 +302,7 @@ public final class TCRenderTypes {
                         .setWriteMaskState(writeMask)
                         .setCullState(RenderStateShard.NO_CULL)
                         .setLightmapState(RenderStateShard.LIGHTMAP)
+                        .setLayeringState(FX_ALPHA_TEST)
                         .createCompositeState(false));
     }
 

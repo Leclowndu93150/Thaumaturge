@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.client.effect.geometry.PolyCone;
 import com.leclowndu93150.thaumaturge.client.effect.instance.EssentiaStreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.instance.StreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.EssentiaStreamRenderType;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -128,7 +129,8 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
     public void renderAll(PoseStack poseStack, Camera camera, float partialTick) {
         if (ACTIVE.isEmpty()) return;
         MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
-        VertexConsumer consumer = bufferSource.getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
+        VertexConsumer consumer =
+                IrisCompat.entityEffectBuffers(bufferSource).getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
         double cx = camera.getPosition().x;
         double cy = camera.getPosition().y;
         double cz = camera.getPosition().z;
@@ -148,6 +150,6 @@ public final class EssentiaStreamManager extends AbstractFXManager<EssentiaStrea
                     snap.start());
             poseStack.popPose();
         }
-        bufferSource.endBatch(EssentiaStreamRenderType.RENDER_TYPE);
+        bufferSource.endBatch();
     }
 }
