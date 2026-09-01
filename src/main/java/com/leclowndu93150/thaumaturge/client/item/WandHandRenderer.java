@@ -64,7 +64,7 @@ public final class WandHandRenderer {
             applyUseWave(poseStack, mirror, player.getTicksUsingItem() + partial);
         }
         WandTipTracker.capture(poseStack, WandItemSpecialRenderer.tipModelY(arg));
-        WandItemSpecialRenderer.submitParts(arg, poseStack, buffers, event.getPackedLight());
+        WandItemSpecialRenderer.submitParts(arg, poseStack, buffers, event.getPackedLight(), true);
         poseStack.popPose();
     }
 
