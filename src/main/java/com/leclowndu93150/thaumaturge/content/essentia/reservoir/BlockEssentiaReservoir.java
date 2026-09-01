@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
@@ -131,9 +132,15 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
+    private static final float RELEASED_ESSENTIA_FLUX_POLLUTION = 0.25F;
+
     private static void releaseStoredEssentia(ServerLevel level, BlockPos pos, int stored) {
         int releases = stored / 16;
         if (releases <= 0) return;
+
+        // Hybrid TC4/TC6 behavior: a ruptured reservoir still ejects physical Goo/Gas, but the
+        // discarded essentia also pollutes the local aura so Rift gameplay remains reachable.
+        AuraHelper.polluteAura(level, pos, stored * RELEASED_ESSENTIA_FLUX_POLLUTION, true);
 
         // TC4 physically ruptured a loaded reservoir: full-strength Flux Goo formed below the
         // tank and full-strength Flux Gas formed at/above it. Keep the original 50-attempt search

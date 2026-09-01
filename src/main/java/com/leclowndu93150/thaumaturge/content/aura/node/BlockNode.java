@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
@@ -32,6 +33,7 @@ public final class BlockNode extends Block implements EntityBlock {
     public static final MapCodec<BlockNode> CODEC = simpleCodec(BlockNode::new);
 
     private static final VoxelShape SHAPE = box(4.8, 4.8, 4.8, 11.2, 11.2, 11.2);
+    private static final float PRIMORDIAL_PEARL_FLUX_POLLUTION = 25.0F;
 
     public BlockNode(BlockBehaviour.Properties properties) {
         super(properties);
@@ -84,6 +86,7 @@ public final class BlockNode extends Block implements EntityBlock {
         }
 
         float strength = 3.0F + serverLevel.random.nextFloat() * (researched ? 3.0F : 5.0F);
+        AuraHelper.polluteAura(serverLevel, pos, PRIMORDIAL_PEARL_FLUX_POLLUTION, true);
         serverLevel.explode(
                 null, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, strength, Level.ExplosionInteraction.BLOCK);
         for (int i = 0; i < 33; i++) {

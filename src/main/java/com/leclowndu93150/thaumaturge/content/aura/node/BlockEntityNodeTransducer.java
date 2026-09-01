@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
@@ -21,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityNodeTransducer extends BlockEntity {
+    private static final float CATASTROPHIC_FAILURE_FLUX_POLLUTION = 32.0F;
     public static final int CHARGE_TARGET = 1000;
     public static final int REVERT_THRESHOLD = 50;
 
@@ -161,6 +163,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     }
 
     private static void catastrophicFailure(ServerLevel level, BlockPos nodePos) {
+        AuraHelper.polluteAura(level, nodePos, CATASTROPHIC_FAILURE_FLUX_POLLUTION, true);
         level.removeBlock(nodePos, false);
         level.explode(
                 null,
