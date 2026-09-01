@@ -1,27 +1,24 @@
 package com.leclowndu93150.thaumaturge.compat.iris;
 
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.irisshaders.iris.api.v0.IrisApi;
-import net.irisshaders.iris.layer.BlockEntityRenderStateShard;
-import net.irisshaders.iris.layer.BufferSourceWrapper;
-import net.irisshaders.iris.layer.EntityRenderStateShard;
-import net.irisshaders.iris.layer.OuterWrappedRenderType;
-import net.irisshaders.iris.pipeline.programs.ShaderAccess;
-import net.minecraft.client.Minecraft;
+import java.lang.reflect.Method;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
+import org.jspecify.annotations.Nullable;
 
 public final class IrisCompat {
-    private static final String ALPHA_TEST_UNIFORM = "AlphaTestValue";
-    private static final ResourceLocation NODE_TEXTURE = TCIds.rl("textures/misc/nodes.png");
+    private static final String IMPLEMENTATION = IrisCompat.class.getName() + "Impl";
+    private static final Class<?>[] NO_ARGUMENTS = new Class<?>[0];
+    private static final Object[] NO_VALUES = new Object[0];
+
+    private static @Nullable Class<?> implementation;
+    private static boolean unavailable;
 
     private IrisCompat() {}
 
     public static boolean shadersActive() {
-        return ModList.get().isLoaded(TCIds.IRIS) && IrisApi.getInstance().isShaderPackInUse();
+        return invokeBoolean("shadersActive", NO_ARGUMENTS, NO_VALUES);
     }
 
     /**
@@ -29,7 +26,7 @@ public final class IrisCompat {
      * equivalent of assigning {@code IrisProgram.PARTICLES_TRANSLUCENT} to a modern render pipeline.
      */
     public static ShaderInstance particleTranslucentShader() {
-        return ShaderAccess.getParticleTranslucentShader();
+        return invoke("particleTranslucentShader", NO_ARGUMENTS, NO_VALUES, ShaderInstance.class);
     }
 
     /**
@@ -40,37 +37,17 @@ public final class IrisCompat {
      * changing the shader-pack particle rules for vanilla particles or unrelated Thaumaturge effects.</p>
      */
     public static boolean isNodeParticleShaderPass(Object shader) {
-        if (!shadersActive() || shader != particleTranslucentShader()) {
-            return false;
-        }
-        int nodeTextureId = Minecraft.getInstance()
-                .getTextureManager()
-                .getTexture(NODE_TEXTURE)
-                .getId();
-        return RenderSystem.getShaderTexture(0) == nodeTextureId;
+        return invokeBoolean("isNodeParticleShaderPass", new Class<?>[] {Object.class}, new Object[] {shader});
     }
 
     /** True while the node atlas is bound, used by Iris fallback-shader compatibility. */
     public static boolean isNodeTextureBound() {
-        if (!shadersActive()) {
-            return false;
-        }
-        int nodeTextureId = Minecraft.getInstance()
-                .getTextureManager()
-                .getTexture(NODE_TEXTURE)
-                .getId();
-        return RenderSystem.getShaderTexture(0) == nodeTextureId;
+        return invokeBoolean("isNodeTextureBound", NO_ARGUMENTS, NO_VALUES);
     }
 
     /** Sets the Iris particle alpha cutoff for the duration of a Thaumaturge effect render type. */
     public static void setParticleAlphaTest(float threshold) {
-        if (!shadersActive()) {
-            return;
-        }
-        ShaderInstance shader = particleTranslucentShader();
-        if (shader.getUniform(ALPHA_TEST_UNIFORM) != null) {
-            shader.getUniform(ALPHA_TEST_UNIFORM).set(threshold);
-        }
+        invoke("setParticleAlphaTest", new Class<?>[] {float.class}, new Object[] {threshold}, Void.class);
     }
 
     /**
@@ -79,10 +56,11 @@ public final class IrisCompat {
      */
     public static MultiBufferSource entityEffectBuffers(MultiBufferSource buffers) {
         return shadersActive()
-                ? new BufferSourceWrapper(
-                        buffers,
-                        renderType -> OuterWrappedRenderType.wrapExactlyOnce(
-                                "iris:thaumaturge_entity_effect", renderType, EntityRenderStateShard.INSTANCE))
+                ? invoke(
+                        "entityEffectBuffers",
+                        new Class<?>[] {MultiBufferSource.class},
+                        new Object[] {buffers},
+                        MultiBufferSource.class)
                 : buffers;
     }
 
@@ -92,12 +70,46 @@ public final class IrisCompat {
      */
     public static MultiBufferSource blockEntityEffectBuffers(MultiBufferSource buffers) {
         return shadersActive()
-                ? new BufferSourceWrapper(
-                        buffers,
-                        renderType -> OuterWrappedRenderType.wrapExactlyOnce(
-                                "iris:thaumaturge_block_entity_effect",
-                                renderType,
-                                BlockEntityRenderStateShard.INSTANCE))
+                ? invoke(
+                        "blockEntityEffectBuffers",
+                        new Class<?>[] {MultiBufferSource.class},
+                        new Object[] {buffers},
+                        MultiBufferSource.class)
                 : buffers;
+    }
+
+    private static boolean invokeBoolean(String method, Class<?>[] parameterTypes, Object[] arguments) {
+        return invoke(method, parameterTypes, arguments, Boolean.class);
+    }
+
+    private static <T> T invoke(String method, Class<?>[] parameterTypes, Object[] arguments, Class<T> resultType) {
+        Class<?> impl = implementation();
+        if (impl == null) {
+            return resultType == Boolean.class ? resultType.cast(false) : null;
+        }
+        try {
+            Method target = impl.getMethod(method, parameterTypes);
+            Object result = target.invoke(null, arguments);
+            return resultType == Void.class ? null : resultType.cast(result);
+        } catch (ReflectiveOperationException | LinkageError exception) {
+            unavailable = true;
+            return resultType == Boolean.class ? resultType.cast(false) : null;
+        }
+    }
+
+    private static @Nullable Class<?> implementation() {
+        if (unavailable || !ModList.get().isLoaded(TCIds.IRIS)) {
+            return null;
+        }
+        if (implementation != null) {
+            return implementation;
+        }
+        try {
+            implementation = Class.forName(IMPLEMENTATION);
+            return implementation;
+        } catch (ClassNotFoundException | LinkageError exception) {
+            unavailable = true;
+            return null;
+        }
     }
 }
