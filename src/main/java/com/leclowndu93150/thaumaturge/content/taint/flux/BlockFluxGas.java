@@ -98,7 +98,9 @@ public final class BlockFluxGas extends Block {
         if (!state.is(this)) {
             return;
         }
-        spread(level, pos, state.getValue(AMOUNT), random);
+        int amount = state.getValue(AMOUNT);
+        PhysicalFluxAuraContamination.observeGas(level, pos, amount);
+        spread(level, pos, amount, random);
     }
 
     private void spread(ServerLevel level, BlockPos pos, int amount, RandomSource random) {

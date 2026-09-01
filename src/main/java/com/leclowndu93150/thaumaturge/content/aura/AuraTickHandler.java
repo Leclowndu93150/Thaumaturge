@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -34,6 +35,7 @@ public final class AuraTickHandler {
     private static final float DEGRADE_CHANCE = 0.1F;
     private static final float RIFT_FLUX_RATIO = 0.75F;
     private static final float RIFT_CHANCE_DIVISOR = 5000.0F;
+    private static final float PHYSICAL_FLUX_SEEP_CAP = 0.5F;
 
     private AuraTickHandler() {}
 
@@ -110,6 +112,12 @@ public final class AuraTickHandler {
                 fluxSink.chunk().setUnsaved(true);
                 dirty = true;
             }
+        }
+
+        float physicalFluxFloor = PhysicalFluxAuraContamination.targetFlux(level, aura.getChunkPos(), aura.getBase());
+        if (flux < physicalFluxFloor) {
+            flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
+            dirty = true;
         }
 
         if (vis + flux < base) {

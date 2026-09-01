@@ -57,6 +57,10 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return;
         }
 
+        // Report the physical pollution before it moves/decays. These observations establish a
+        // capped local Aura Flux floor rather than generating Flux endlessly every tick.
+        PhysicalFluxAuraContamination.observeGoo(serverLevel, pos, fluidState.getAmount());
+
         // Keep finite-fluid movement and pollution lifecycle on one scheduled cadence. The previous
         // implementation also ran the lifecycle from random ticks, which made probability constants
         // much harsher than their TC4/TC5 counterparts.
