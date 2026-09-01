@@ -42,7 +42,9 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final double THAUMOMETER_VIEW_DISTANCE = 48.0;
     private static final float BASE_LAYER_SCALE = 0.25F;
     private static final float FAINT_ALPHA = 0.1F;
-    private static final float IRIS_FAINT_ALPHA = 0.2F;
+    // Iris routes this through its translucent particle program instead of the normal additive
+    // path, so it needs a stronger source alpha to retain the same faint, unaided visibility.
+    private static final float IRIS_FAINT_ALPHA = 0.4F;
     private static final float FAINT_SCALE = 0.5F;
     private static final float JARRED_SIZE = 0.7F;
     private static final float JARRED_HEIGHT = 0.4F;
