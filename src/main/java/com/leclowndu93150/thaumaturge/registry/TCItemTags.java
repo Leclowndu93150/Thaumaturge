@@ -15,6 +15,8 @@ public final class TCItemTags {
 
     public static final TagKey<Item> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Item> SILVERWOOD_LOGS = key("silverwood_logs");
+    public static final TagKey<Item> PLANKS_GREATWOOD = common("planks/greatwood");
+    public static final TagKey<Item> PLANKS_SILVERWOOD = common("planks/silverwood");
 
     public static final TagKey<Item> RARE_EARTH_CHANCE_LOW = key("rare_earth_chance_low");
     public static final TagKey<Item> RARE_EARTH_CHANCE_NORMAL = key("rare_earth_chance_normal");
