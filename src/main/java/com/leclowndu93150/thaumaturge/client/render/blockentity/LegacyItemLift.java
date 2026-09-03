@@ -25,6 +25,7 @@ public final class LegacyItemLift {
 
         PoseStack poseStack = new PoseStack();
         model.getTransforms().getTransform(context).apply(false, poseStack);
+        poseStack.translate(-0.5F, -0.5F, -0.5F);
         Matrix4f matrix = poseStack.last().pose();
 
         float[] bounds = {Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY};
