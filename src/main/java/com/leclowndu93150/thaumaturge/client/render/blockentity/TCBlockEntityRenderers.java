@@ -66,6 +66,11 @@ public final class TCBlockEntityRenderers {
     }
 
     @SubscribeEvent
+    public static void onModelsBaked(ModelEvent.BakingCompleted event) {
+        LegacyItemLift.clearBottomLiftCache();
+    }
+
+    @SubscribeEvent
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         for (ModelResourceLocation modelId : BellowsRenderer.MODEL_IDS) {
             event.register(modelId);
