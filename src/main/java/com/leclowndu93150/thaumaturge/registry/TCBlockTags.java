@@ -15,6 +15,7 @@ public final class TCBlockTags {
 
     public static final TagKey<Block> ORES_AMBER = common("ores/amber");
     public static final TagKey<Block> ORES_CINNABAR = common("ores/cinnabar");
+    public static final TagKey<Block> ORES_QUARTZ = common("ores/quartz");
 
     public static final TagKey<Block> STORAGE_BLOCKS_BRASS = common("storage_blocks/brass");
     public static final TagKey<Block> STORAGE_BLOCKS_THAUMIUM = common("storage_blocks/thaumium");

@@ -29,6 +29,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         copy(BlockTags.LOGS_THAT_BURN, ItemTags.LOGS_THAT_BURN);
+        copy(BlockTags.LOGS, ItemTags.LOGS);
         copy(BlockTags.LEAVES, ItemTags.LEAVES);
         copy(BlockTags.SAPLINGS, ItemTags.SAPLINGS);
         copy(BlockTags.PLANKS, ItemTags.PLANKS);
@@ -55,8 +56,12 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
 
         copy(TCBlockTags.ORES_AMBER, TCItemTags.ORES_AMBER);
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
-        tag(Tags.Items.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
-        tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR);
+        tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
+        tag(Tags.Items.ORES)
+                .addTags(
+                        TCItemTags.ORES_AMBER,
+                        TCItemTags.ORES_CINNABAR,
+                        TCItemTags.ORES_QUARTZ);
         tag(TCItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TCBlockTags.STORAGE_BLOCKS_AMBER, TCItemTags.STORAGE_BLOCKS_AMBER);
@@ -214,6 +219,44 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         TCItems.CRIMSON_ROBE_LEGS.get(),
                         TCItems.CRIMSON_PRAETOR_LEGS.get());
         tag(ItemTags.FOOT_ARMOR)
+                .add(
+                        TCItems.THAUMIUM_BOOTS.get(),
+                        TCItems.VOID_BOOTS.get(),
+                        TCItems.TRAVELLER_BOOTS.get(),
+                        TCItems.CLOTH_BOOTS.get(),
+                        TCItems.CRIMSON_BOOTS.get());
+
+        tag(TCItemTags.ARMORS_HELMETS)
+                .add(
+                        TCItems.THAUMIUM_HELM.get(),
+                        TCItems.VOID_HELM.get(),
+                        TCItems.VOID_ROBE_HELM.get(),
+                        TCItems.FORTRESS_HELM.get(),
+                        TCItems.CRIMSON_PLATE_HELM.get(),
+                        TCItems.CRIMSON_ROBE_HELM.get(),
+                        TCItems.CRIMSON_PRAETOR_HELM.get(),
+                        TCItems.GOGGLES_REVEALING.get());
+        tag(TCItemTags.ARMORS_CHESTPLATES)
+                .add(
+                        TCItems.THAUMIUM_CHEST.get(),
+                        TCItems.VOID_CHEST.get(),
+                        TCItems.VOID_ROBE_CHEST.get(),
+                        TCItems.FORTRESS_CHEST.get(),
+                        TCItems.CLOTH_CHEST.get(),
+                        TCItems.CRIMSON_PLATE_CHEST.get(),
+                        TCItems.CRIMSON_ROBE_CHEST.get(),
+                        TCItems.CRIMSON_PRAETOR_CHEST.get());
+        tag(TCItemTags.ARMORS_LEGGINGS)
+                .add(
+                        TCItems.THAUMIUM_LEGS.get(),
+                        TCItems.VOID_LEGS.get(),
+                        TCItems.VOID_ROBE_LEGS.get(),
+                        TCItems.FORTRESS_LEGS.get(),
+                        TCItems.CLOTH_LEGS.get(),
+                        TCItems.CRIMSON_PLATE_LEGS.get(),
+                        TCItems.CRIMSON_ROBE_LEGS.get(),
+                        TCItems.CRIMSON_PRAETOR_LEGS.get());
+        tag(TCItemTags.ARMORS_BOOTS)
                 .add(
                         TCItems.THAUMIUM_BOOTS.get(),
                         TCItems.VOID_BOOTS.get(),

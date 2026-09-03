@@ -121,6 +121,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.METAL_VOID_BLOCK.get());
 
         tag(BlockTags.LOGS_THAT_BURN).addTag(TCBlockTags.GREATWOOD_LOGS).addTag(TCBlockTags.SILVERWOOD_LOGS);
+        tag(BlockTags.LOGS).addTag(TCBlockTags.GREATWOOD_LOGS).addTag(TCBlockTags.SILVERWOOD_LOGS);
 
         tag(BlockTags.LEAVES).add(TCBlocks.LEAVES_GREATWOOD.get()).add(TCBlocks.LEAVES_SILVERWOOD.get());
 
@@ -144,7 +145,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get());
         tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get());
         tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get());
-        tag(Tags.Blocks.ORES).addTags(TCBlockTags.ORES_AMBER, TCBlockTags.ORES_CINNABAR);
+        tag(Tags.Blocks.ORES)
+                .addTags(
+                        TCBlockTags.ORES_AMBER,
+                        TCBlockTags.ORES_CINNABAR,
+                        TCBlockTags.ORES_QUARTZ);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TCBlocks.ORE_AMBER.get())

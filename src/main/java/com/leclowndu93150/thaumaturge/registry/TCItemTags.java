@@ -52,6 +52,7 @@ public final class TCItemTags {
     public static final TagKey<Item> ORES_SILVER = common("ores/silver");
     public static final TagKey<Item> ORES_AMBER = common("ores/amber");
     public static final TagKey<Item> ORES_CINNABAR = common("ores/cinnabar");
+    public static final TagKey<Item> ORES_QUARTZ = common("ores/quartz");
 
     public static final TagKey<Item> STORAGE_BLOCKS_BRASS = common("storage_blocks/brass");
     public static final TagKey<Item> STORAGE_BLOCKS_THAUMIUM = common("storage_blocks/thaumium");
@@ -61,6 +62,11 @@ public final class TCItemTags {
     public static final TagKey<Item> CANDLES = key("candles");
 
     public static final TagKey<Item> MAGICAL_PLANTS = key("magical_plants");
+
+    public static final TagKey<Item> ARMORS_HELMETS = common("armors/helmets");
+    public static final TagKey<Item> ARMORS_CHESTPLATES = common("armors/chestplates");
+    public static final TagKey<Item> ARMORS_LEGGINGS = common("armors/leggings");
+    public static final TagKey<Item> ARMORS_BOOTS = common("armors/boots");
 
     private TCItemTags() {}
 
