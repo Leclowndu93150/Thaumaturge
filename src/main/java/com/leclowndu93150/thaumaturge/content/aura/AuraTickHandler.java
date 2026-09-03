@@ -73,6 +73,10 @@ public final class AuraTickHandler {
                 continue;
             }
             AuraData data = chunk.getData(TCAttachments.AURA.get());
+            // Physical Flux is a TC4 ecological system in its own right. Evaluate its direct
+            // Taint route for every loaded chunk, even when that dimension/chunk has no modern
+            // Aura base. Numeric Aura/Rift processing below remains conditional on Aura support.
+            PhysicalFluxAuraContamination.tryTaintOutbreak(level, pos, rand);
             if (data.getBase() == 0) {
                 continue;
             }
@@ -119,7 +123,6 @@ public final class AuraTickHandler {
             flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
             dirty = true;
         }
-
         if (vis + flux < base) {
             vis += Math.min(base - (vis + flux), factors.vis());
             dirty = true;

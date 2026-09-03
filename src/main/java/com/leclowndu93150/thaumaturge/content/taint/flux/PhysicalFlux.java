@@ -155,6 +155,17 @@ public final class PhysicalFlux {
     }
 
     private static boolean trySpillAt(ServerLevel level, BlockPos target, RandomSource random) {
+        // TC4 repeatedly thickened an existing Flux pocket instead of rerolling its phase and
+        // scattering the failed half of the spills elsewhere. Preserve that behavior so sustained
+        // pollution naturally builds dangerous Goo/Gas concentrations.
+        BlockState existing = level.getBlockState(target);
+        if (existing.is(TCBlocks.FLUX_GAS.get())) {
+            return placeGas(level, target, 1);
+        }
+        FluidState existingFluid = existing.getFluidState();
+        if (!existingFluid.isEmpty() && existingFluid.getType().isSame(TCFluids.FLUX_GOO_SOURCE.get())) {
+            return placeGoo(level, target, 1);
+        }
         return random.nextBoolean() ? placeGas(level, target, 1) : placeGoo(level, target, 1);
     }
 

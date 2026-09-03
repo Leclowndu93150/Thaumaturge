@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
@@ -96,10 +97,19 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         if (meta >= SMALL_SLIME_META_MAX && airAbove) {
             if (rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
                 spawnSlime(level, pos, 2);
-            } else if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get() && rand.nextInt(TAINT_CONVERSION_CHANCE) == 0) {
-                TaintBiomeManager.taintColumn(level, pos);
+            } else if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()
+                    && !ThaumaturgeCommonConfig.WUSS_MODE.get()
+                    && !TaintBloomRegistry.isProtected(level, pos)
+                    && rand.nextInt(TAINT_CONVERSION_CHANCE) == 0
+                    && (TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.taintColumn(level, pos))) {
                 level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
-                TaintEcology.addPressure(level, pos, 0.12F);
+                TaintEcology.addPressure(level, pos, 0.16F);
+                // A TC4 Goo catastrophe should be visibly ecological, not a lonely fibre that is
+                // easy to miss. Seed a few initial conversion attempts; normal spread rules take
+                // over immediately afterward and no Seed/Flux life-support is required.
+                for (int i = 0; i < 6; i++) {
+                    com.leclowndu93150.thaumaturge.content.taint.TaintHelper.spreadFibres(level, pos, true);
+                }
                 // Modern aura integration: the physical disaster also leaves a small amount of
                 // numerical Flux behind, but the resulting Taint does not require it to survive.
                 AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
