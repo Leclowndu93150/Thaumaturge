@@ -64,6 +64,7 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -83,6 +84,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -136,6 +138,9 @@ public final class TCCommands {
                                                 IntegerArgumentType.getInteger(ctx, "width"),
                                                 IntegerArgumentType.getInteger(ctx, "height"))))))
                 .then(Commands.literal("book").executes(TCCommands::giveThaumonomicon))
+                .then(Commands.literal("build")
+                        .requires(source -> source.getEntity() instanceof ServerPlayer player && player.isCreative())
+                        .then(Commands.literal("infusion_altar").executes(TCCommands::buildInfusionAltar)))
                 .then(Commands.literal("particle")
                         .then(Commands.literal("list").executes(TCCommands::listParticles))
                         .then(Commands.argument("name", StringArgumentType.word())
@@ -906,6 +911,55 @@ public final class TCCommands {
             ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
             return 0;
         }
+    }
+
+    private static int buildInfusionAltar(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        ServerLevel level = player.serverLevel();
+        BlockPos center = player.blockPosition().relative(player.getDirection(), 4);
+
+        level.setBlockAndUpdate(center, TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
+        level.setBlockAndUpdate(center.above(2), TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
+
+        placeArcanePillar(level, center.offset(-1, 0, -1), Direction.NORTH);
+        placeArcanePillar(level, center.offset(-1, 0, 1), Direction.WEST);
+        placeArcanePillar(level, center.offset(1, 0, -1), Direction.EAST);
+        placeArcanePillar(level, center.offset(1, 0, 1), Direction.SOUTH);
+
+        for (int dx = -3; dx <= 3; dx += 3) {
+            for (int dz = -3; dz <= 3; dz += 3) {
+                if (dx != 0 || dz != 0) {
+                    level.setBlockAndUpdate(
+                            center.offset(dx, 0, dz),
+                            TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
+                }
+            }
+        }
+
+        level.removeBlock(center.offset(-1, 1, -1), false);
+        level.removeBlock(center.offset(-1, 1, 1), false);
+        level.removeBlock(center.offset(1, 1, -1), false);
+        level.removeBlock(center.offset(1, 1, 1), false);
+
+        ctx.getSource()
+                .sendSuccess(
+                        () -> Component.literal("Built infusion altar centered at "
+                                + center.getX()
+                                + " "
+                                + center.getY()
+                                + " "
+                                + center.getZ()),
+                        false);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static void placeArcanePillar(ServerLevel level, BlockPos pos, Direction facing) {
+        level.setBlockAndUpdate(
+                pos,
+                TCBlocks.PILLAR_ARCANE
+                        .get()
+                        .defaultBlockState()
+                        .setValue(BlockStateProperties.HORIZONTAL_FACING, facing));
     }
 
     private static int giveResearchTable(CommandContext<CommandSourceStack> ctx) {
