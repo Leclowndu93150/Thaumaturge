@@ -83,8 +83,9 @@ public final class TCRenderPipelines {
 
     public static final RenderPipeline ENTITY_TRANSLUCENT_NO_DEPTH = RenderPipeline.builder(RenderPipelines.MATRICES_FOG_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/entity_translucent_no_depth")).withVertexShader("core/entity").withFragmentShader("core/entity")
-            .withShaderDefine("NO_OVERLAY").withShaderDefine("NO_CARDINAL_LIGHTING").withSampler("Sampler0").withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-            .withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS).withDepthStencilState(ALWAYS_NO_WRITE).withCull(false).build();
+            .withShaderDefine("ALPHA_CUTOUT", 0.1F).withShaderDefine("NO_OVERLAY").withShaderDefine("NO_CARDINAL_LIGHTING").withSampler("Sampler0").withSampler("Sampler2")
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS).withDepthStencilState(ALWAYS_NO_WRITE)
+            .withCull(false).build();
 
     public static final RenderPipeline TAINTED_SWIRL_NO_DEPTH = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
             .withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/tainted_swirl_no_depth")).withShaderDefine("ALPHA_CUTOUT", 0.1F).withShaderDefine("APPLY_TEXTURE_MATRIX")

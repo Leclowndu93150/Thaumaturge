@@ -13,6 +13,7 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,6 +51,7 @@ import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityInfusionMatrix extends BlockEntity implements IGogglesDisplayExtended, IInteractWithCaster {
@@ -128,7 +131,9 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     private void tickServer(ServerLevel level) {
         count++;
         MatrixEnvironment env = environment(level);
-        int interval = isCrafting() ? CRAFT_VALIDATE_INTERVAL : IDLE_VALIDATE_INTERVAL;
+        int interval = isCrafting()
+                ? CRAFT_VALIDATE_INTERVAL
+                : IDLE_VALIDATE_INTERVAL;
         if (count % interval == 0 && !MatrixEnvironment.validLocation(level, worldPosition)) {
             active = false;
             job = null;
@@ -325,6 +330,11 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
         return new Component[]{tier, gain, loss};
     }
 
+    @Override
+    public AspectList getIGogglesTags() {
+        return isCrafting() ? remainingEssentia() : AspectList.EMPTY;
+    }
+
     private boolean catalystStillPresent(ServerLevel level) {
         if (job == null) {
             return false;
@@ -435,7 +445,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
             }
             clientCraftTicks++;
         } else if (clientCraftTicks > 0) {
-            clientCraftTicks = Math.min(50, Math.max(0, clientCraftTicks - 2));
+            clientCraftTicks = Math.clamp(clientCraftTicks - 2, 0, 50);
         }
         if (active && clientStartUp < 1.0F) {
             clientStartUp = Math.min(1.0F, clientStartUp + Math.max(clientStartUp / 10.0F, 0.001F));
@@ -501,7 +511,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     }
 
     @Override
-    protected void saveAdditional(ValueOutput output) {
+    protected void saveAdditional(@NonNull ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean("Active", active);
         output.putFloat("Stability", stability);
@@ -512,7 +522,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     }
 
     @Override
-    protected void loadAdditional(ValueInput input) {
+    protected void loadAdditional(@NonNull ValueInput input) {
         super.loadAdditional(input);
         active = input.getBooleanOr("Active", false);
         stability = input.getFloatOr("Stability", 0.0F);
@@ -529,7 +539,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider registries) {
         CompoundTag nbt = super.getUpdateTag(registries);
         try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(this.problemPath(), Thaumaturge.LOGGER)) {
             TagValueOutput output = TagValueOutput.createWithContext(reporter, registries);
