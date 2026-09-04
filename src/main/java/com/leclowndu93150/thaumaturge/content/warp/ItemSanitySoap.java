@@ -49,7 +49,7 @@ public class ItemSanitySoap extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingTicks) {
         if (getUseDuration(stack, entity) - remainingTicks > FINISH_THRESHOLD_TICKS) {
-            entity.stopUsingItem();
+            entity.releaseUsingItem();
         }
         if (level.isClientSide()) {
             if (level.getRandom().nextFloat() < SCRUB_SOUND_CHANCE) {
