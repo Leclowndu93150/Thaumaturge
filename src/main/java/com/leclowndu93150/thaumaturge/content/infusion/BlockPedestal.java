@@ -122,7 +122,7 @@ public final class BlockPedestal extends BaseEntityBlock {
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
+        if (!movedByPiston && !state.is(newState.getBlock())) {
             if (level.getBlockEntity(pos) instanceof BlockEntityPedestal pedestal
                     && !pedestal.getItem().isEmpty()) {
                 Containers.dropItemStack(

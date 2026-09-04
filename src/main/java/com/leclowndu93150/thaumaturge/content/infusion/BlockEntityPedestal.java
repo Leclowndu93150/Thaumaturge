@@ -11,13 +11,14 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityPedestal extends BlockEntity {
+public class BlockEntityPedestal extends BlockEntity implements Clearable {
     private ItemStack item = ItemStack.EMPTY;
 
     public BlockEntityPedestal(BlockPos pos, BlockState state) {
@@ -36,6 +37,11 @@ public class BlockEntityPedestal extends BlockEntity {
         this.item = stack;
         setChanged();
         syncToClient();
+    }
+
+    @Override
+    public void clearContent() {
+        setItem(ItemStack.EMPTY);
     }
 
     @Override
