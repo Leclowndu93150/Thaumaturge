@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -67,11 +68,17 @@ public final class GogglesWorldOverlay {
             resetAnimation();
             return;
         }
-        IAspectContainer container = mc.level.getCapability(AspectCapabilities.CONTAINER, pos, null);
-        IAspectQuery query =
-                container == null ? mc.level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, null) : null;
-        AspectList aspects =
-                container != null ? container.getAspects() : query != null ? query.queryAspects() : AspectList.EMPTY;
+        AspectList aspects;
+        if (be instanceof BlockEntityInfusionMatrix matrix) {
+            aspects = matrix.remainingEssentia();
+        } else {
+            IAspectContainer container = mc.level.getCapability(AspectCapabilities.CONTAINER, pos, null);
+            IAspectQuery query =
+                    container == null ? mc.level.getCapability(EssentiaCapabilities.ASPECT_QUERY, pos, null) : null;
+            aspects = container != null
+                    ? container.getAspects()
+                    : query != null ? query.queryAspects() : AspectList.EMPTY;
+        }
         if (aspects.isEmpty()) {
             resetAnimation();
             return;
