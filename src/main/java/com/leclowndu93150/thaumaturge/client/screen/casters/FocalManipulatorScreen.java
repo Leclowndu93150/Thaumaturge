@@ -21,13 +21,10 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.network.ServerboundFocusDataPayload;
 import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
@@ -45,6 +42,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public final class FocalManipulatorScreen extends AbstractTCContainerScreen<MenuFocalManipulator> {
@@ -199,7 +197,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     @Override
     protected void init() {
         super.init();
-        if (minecraft != null && minecraft.level != null && minecraft.level.getBlockEntity(menu.pos()) instanceof BlockEntityFocalManipulator be) {
+        if (minecraft.level != null && minecraft.level.getBlockEntity(menu.pos()) instanceof BlockEntityFocalManipulator be) {
             table = be;
             lastDataStamp = be.clientDataStamp;
         }
@@ -209,6 +207,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         nameField.setTextColor(-1);
         nameField.setBordered(false);
         nameField.setMaxLength(NAME_MAX);
+        nameField.setCanLoseFocus(false);
         nameField.setResponder(this::onNameChanged);
         if (table != null) {
             if (table.focusName.isEmpty() && !menu.getSlot(0).getItem().isEmpty()) {
@@ -224,7 +223,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     }
 
     private void confirmCraft() {
-        if (minecraft != null && minecraft.gameMode != null && valid && table != null && table.vis <= 0.0F) {
+        if (minecraft.gameMode != null && valid && table != null && table.vis <= 0.0F) {
             gatherInfo(true);
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuFocalManipulator.BUTTON_START_CRAFT);
         }
@@ -270,7 +269,8 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     }
 
     @Override
-    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {}
+    protected void extractLabels(@NonNull GuiGraphicsExtractor graphics, int xm, int ym) {
+    }
 
     public List<Rect2i> jeiExtraAreas() {
         List<Rect2i> areas = new ArrayList<>();
@@ -300,8 +300,8 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             graphics.text(font, Component.literal(totalComplexity + "/" + maxComplexity), leftPos + STAT_TEXT_X, topPos + INFO_COMPLEXITY_Y + STAT_TEXT_Y_NUDGE,
                     totalComplexity > maxComplexity ? COLOR_STAT_BAD : COLOR_STAT_GOOD, true);
         }
-        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
-        int playerLevel = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
+        boolean creative = minecraft.player != null && minecraft.player.getAbilities().instabuild;
+        int playerLevel = minecraft.player != null ? minecraft.player.experienceLevel : 0;
         graphics.text(font, Component.literal(Integer.toString(costXp)), leftPos + STAT_TEXT_X, topPos + INFO_XP_Y + STAT_TEXT_Y_NUDGE,
                 costXp > playerLevel && !creative ? COLOR_STAT_BAD : COLOR_STAT_NEUTRAL, true);
         int visShown = table != null && table.vis > 0.0F ? (int) table.vis : costVis;
@@ -435,7 +435,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         if (hover >= 0) {
             FocusElementNode fn = table.data.get(hover);
             if (fn != null && fn.element != null && fn.resolve() != null) {
-                graphics.setComponentTooltipForNextFrame(font, genPartText(fn.element, fn.resolve(), hover), mouseX, mouseY);
+                graphics.setComponentTooltipForNextFrame(font, genPartText(fn.element, Objects.requireNonNull(fn.resolve()), hover), mouseX, mouseY);
             }
         }
     }
@@ -507,7 +507,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (event.isEscape()) {
-            if (minecraft != null && minecraft.player != null) {
+            if (minecraft.player != null) {
                 minecraft.player.closeContainer();
             }
             return true;
@@ -625,15 +625,11 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     }
 
     private void playButtonClick() {
-        if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 1.0F, 0.4F));
-        }
+        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 1.0F, 0.4F));
     }
 
     private void playRollover() {
-        if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 2.0F, 0.4F));
-        }
+        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 2.0F, 0.4F));
     }
 
     private int getNextId() {
@@ -836,7 +832,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private void gatherPartsList() {
         List<Identifier> previousParts = new ArrayList<>(shownParts);
         shownParts.clear();
-        if (table == null || minecraft == null || minecraft.player == null || selectedNode < 0 || !table.data.containsKey(selectedNode)) {
+        if (table == null || minecraft.player == null || selectedNode < 0 || !table.data.containsKey(selectedNode)) {
             return;
         }
         List<Identifier> pMed = new ArrayList<>();
@@ -918,9 +914,13 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             addRenderableWidget(buttonConfirm);
         }
         if (nameField != null) {
+            boolean refocusName = nameField.isFocused();
             removeWidget(nameField);
             if (table != null && !table.data.isEmpty()) {
                 addRenderableWidget(nameField);
+                if (refocusName) {
+                    setFocused(nameField);
+                }
             }
         }
         if (table == null) {
@@ -974,33 +974,27 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         costVis = totalComplexity * 10 + maxComplexity / 5;
         costXp = (int) Math.max(1L, Math.round(Math.sqrt(totalComplexity)));
         boolean validCrystals = false;
-        if (!crystalAspects.isEmpty() && minecraft != null && minecraft.player != null && minecraft.level != null) {
+        if (!crystalAspects.isEmpty() && minecraft.player != null && minecraft.level != null) {
             validCrystals = true;
             List<ItemStack> stacks = new ArrayList<>();
             var registry = minecraft.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
             for (var entry : crystalAspects.entrySet()) {
                 ItemStack crystal = EssentiaCrystalFactory.of(registry.getOrThrow(entry.getKey()), entry.getValue());
                 stacks.add(crystal);
-                if (!carrying(crystal)) {
+                if (carrying(crystal)) {
                     validCrystals = false;
                 }
             }
             components = stacks;
         }
         gatherPartsList();
-        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
-        int playerLevel = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
+        boolean creative = minecraft.player != null && minecraft.player.getAbilities().instabuild;
+        int playerLevel = minecraft.player != null ? minecraft.player.experienceLevel : 0;
         valid = totalComplexity <= maxComplexity && !emptyNodes && validCrystals && (creative || costXp <= playerLevel);
         updateConfirmTooltip(emptyNodes, validCrystals, playerLevel);
         calcScrollBounds();
         clampScroll();
         rebuildSliders();
-        if (table.focusName.isEmpty() && !focus.isEmpty()) {
-            table.focusName = focus.getHoverName().getString();
-            if (nameField != null) {
-                nameField.setValue(table.focusName);
-            }
-        }
         if (sync) {
             sendData();
         }
@@ -1028,7 +1022,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             sliderSide = new FocusSlider(leftPos + SLIDER_SIDE_X, topPos + SLIDER_SIDE_Y, SLIDER_W, SLIDER_SIDE_H, 0.0F, (sMaxY - 3) * NODE_STEP_Y, scrollY, true, v -> scrollY = Math.round(v));
             addRenderableWidget(sliderSide);
         } else {
-            scrollY = Math.min(scrollY, Math.max(0, (sMaxY - 3) * NODE_STEP_Y));
+            scrollY = Math.clamp((sMaxY - 3) * NODE_STEP_Y, 0, scrollY);
         }
         if (sMinX * NODE_STEP_X >= -BOTTOM_SCROLL_RANGE && sMaxX * NODE_STEP_X <= BOTTOM_SCROLL_RANGE) {
             scrollX = Mth.clamp(scrollX, Math.min(0, sMinX * NODE_STEP_X), Math.max(0, sMaxX * NODE_STEP_X));
@@ -1067,7 +1061,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             }
             if (!validCrystals && components != null) {
                 for (ItemStack stack : components) {
-                    if (!carrying(stack)) {
+                    if (carrying(stack)) {
                         text.append(Component.literal("\n")
                                 .append(Component.translatable("gui.thaumaturge.wandtable.problem.crystal", stack.getCount(), stack.getHoverName()).withStyle(ChatFormatting.RED)));
                     }
@@ -1076,7 +1070,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             if (components == null || components.isEmpty()) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.no_effects"));
             }
-            if (costXp > playerLevel && !(minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild)) {
+            if (costXp > playerLevel && !(minecraft.player != null && minecraft.player.getAbilities().instabuild)) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.xp", costXp));
             }
             if (valid) {
@@ -1091,8 +1085,8 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     }
 
     private boolean carrying(ItemStack required) {
-        if (minecraft == null || minecraft.player == null) {
-            return false;
+        if (minecraft.player == null) {
+            return true;
         }
         int found = 0;
         var inv = minecraft.player.getInventory();
@@ -1101,10 +1095,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, required)) {
                 found += stack.getCount();
                 if (found >= required.getCount()) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 }
