@@ -12,9 +12,12 @@ public final class TCBlockTags {
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Block> SILVERWOOD_LOGS = key("silverwood_logs");
+    public static final TagKey<Block> PLANKS_GREATWOOD = common("planks/greatwood");
+    public static final TagKey<Block> PLANKS_SILVERWOOD = common("planks/silverwood");
 
     public static final TagKey<Block> ORES_AMBER = common("ores/amber");
     public static final TagKey<Block> ORES_CINNABAR = common("ores/cinnabar");
+    public static final TagKey<Block> ORES_QUARTZ = common("ores/quartz");
 
     public static final TagKey<Block> STORAGE_BLOCKS_BRASS = common("storage_blocks/brass");
     public static final TagKey<Block> STORAGE_BLOCKS_THAUMIUM = common("storage_blocks/thaumium");
