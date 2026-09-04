@@ -1,8 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
+import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -10,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.BlockHitResult;
@@ -25,6 +28,8 @@ public final class GogglesTextOverlay {
     private static final float TEXT_SCALE = 0.0125F;
     private static final float LINE_SPACING_DIVISOR = 5.5F;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
+    private static final float TAG_SCALE = 0.40F;
+    private static final float TAG_ALPHA = 0.75F;
 
     private GogglesTextOverlay() {}
 
@@ -52,7 +57,8 @@ public final class GogglesTextOverlay {
             return;
         }
         Component[] lines = display.getIGogglesText();
-        if (lines.length == 0) {
+        AspectList tags = display.getIGogglesTags();
+        if (lines.length == 0 && tags.isEmpty()) {
             return;
         }
         Vec3 offset = display.getIGogglesTextOffset();
@@ -61,6 +67,10 @@ public final class GogglesTextOverlay {
             float lineShift = (i - lines.length / 2.0F) / LINE_SPACING_DIVISOR;
             double y = pos.getY() + offset.y + (blockForm ? lineShift : -lineShift);
             drawTextInAir(event.getPoseStack(), mc, buffers, pos.getX() + offset.x, y, pos.getZ() + offset.z, lines[i]);
+        }
+        if (!tags.isEmpty()) {
+            double ty = pos.getY() + offset.y;
+            AspectTagWorldRenderer.renderTagCloud(event.getPoseStack(), mc, pos.getX(), ty, pos.getZ(), tags, Direction.UP, TAG_SCALE, TAG_ALPHA, aspect -> true, true, true);
         }
         buffers.endBatch();
     }
@@ -74,7 +84,7 @@ public final class GogglesTextOverlay {
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0F));
         poseStack.scale(-TEXT_SCALE, -TEXT_SCALE, TEXT_SCALE);
         int width = mc.font.width(text);
-        mc.font.drawInBatch(text, 1 - width / 2, 1.0F, TEXT_COLOR, true, poseStack.last().pose(), buffers, Font.DisplayMode.SEE_THROUGH, 0, LightCoordsUtil.FULL_BRIGHT);
+        mc.font.drawInBatch(text, 1 - (float) width / 2, 1.0F, TEXT_COLOR, true, poseStack.last().pose(), buffers, Font.DisplayMode.SEE_THROUGH, 0, LightCoordsUtil.FULL_BRIGHT);
         poseStack.popPose();
     }
 }

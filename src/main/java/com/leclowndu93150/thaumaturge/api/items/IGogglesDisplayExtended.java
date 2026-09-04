@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,6 +25,17 @@ public interface IGogglesDisplayExtended {
      * @return the lines to render; an empty array renders nothing
      */
     Component[] getIGogglesText();
+
+    /**
+     * Returns the aspect tags to render as world-space icons (with quantity badges) above the
+     * block, e.g. the remaining essentia of an active infusion. Rendered by the goggles overlay
+     * using {@code AspectTagWorldRenderer}, so it must be computed from client-synced state only.
+     *
+     * @return the aspects to display; an empty list renders nothing
+     */
+    default AspectList getIGogglesTags() {
+        return AspectList.EMPTY;
+    }
 
     /**
      * Returns the offset from the block position at which the text column is anchored.

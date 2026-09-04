@@ -45,6 +45,10 @@ public final class AspectTagWorldRenderer {
     }
 
     public static void renderTagCloud(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, @Nullable Direction dir, float tagScale, float alpha, Predicate<Holder<IAspect>> discovered, boolean showAmounts) {
+        renderTagCloud(poseStack, mc, x, y, z, aspects, dir, tagScale, alpha, discovered, showAmounts, false);
+    }
+
+    public static void renderTagCloud(PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, @Nullable Direction dir, float tagScale, float alpha, Predicate<Holder<IAspect>> discovered, boolean showAmounts, boolean seeThrough) {
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cam = camera.position();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
@@ -85,9 +89,12 @@ public final class AspectTagWorldRenderer {
             poseStack.translate(shift, rowShift, 0.0);
 
             boolean known = discovered.test(entry.aspect());
+            Identifier iconTex = known ? entry.aspect().value().texture() : UNKNOWN_TEXTURE;
+            RenderType iconType = seeThrough ? TCFlatRenderTypes.entityTranslucentFlatNoDepth(iconTex) : TCFlatRenderTypes.entityTranslucentFlat(iconTex);
+            Font.DisplayMode amountMode = seeThrough ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.NORMAL;
             poseStack.pushPose();
             poseStack.scale(tagScale, tagScale, tagScale);
-            renderQuad(poseStack, buffers.getBuffer(TCFlatRenderTypes.entityTranslucentFlat(known ? entry.aspect().value().texture() : UNKNOWN_TEXTURE)), entry.aspect(), known ? alpha : UNKNOWN_ALPHA,
+            renderQuad(poseStack, buffers.getBuffer(iconType), entry.aspect(), known ? alpha : UNKNOWN_ALPHA,
                     false, LightCoordsUtil.FULL_BRIGHT);
             poseStack.popPose();
 
@@ -97,9 +104,9 @@ public final class AspectTagWorldRenderer {
                 poseStack.pushPose();
                 poseStack.scale(tagScale * TEXT_SCALE, -tagScale * TEXT_SCALE, tagScale * TEXT_SCALE);
                 poseStack.translate(0.0, 6.0, -0.1);
-                font.drawInBatch(amount, 14 - width, 1, TEXT_SHADOW_COLOR, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, 0, LightCoordsUtil.FULL_BRIGHT);
+                font.drawInBatch(amount, 14 - width, 1, TEXT_SHADOW_COLOR, false, poseStack.last().pose(), buffers, amountMode, 0, LightCoordsUtil.FULL_BRIGHT);
                 poseStack.translate(0.0, 0.0, -0.1);
-                font.drawInBatch(amount, 13 - width, 0, TEXT_COLOR, false, poseStack.last().pose(), buffers, Font.DisplayMode.NORMAL, 0, LightCoordsUtil.FULL_BRIGHT);
+                font.drawInBatch(amount, 13 - width, 0, TEXT_COLOR, false, poseStack.last().pose(), buffers, amountMode, 0, LightCoordsUtil.FULL_BRIGHT);
                 poseStack.popPose();
             }
 
@@ -118,8 +125,11 @@ public final class AspectTagWorldRenderer {
     }
 
     public static void renderBillboard(PoseStack poseStack, MultiBufferSource buffers, Holder<IAspect> aspect, float scale, float alpha, boolean bw, int packedLight, AspectTagRenderer.BlendMode blend) {
-        if (aspect == null || aspect.value() == null)
+        if (aspect == null) {
             return;
+        } else {
+            aspect.value();
+        }
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         IAspect value = aspect.value();
         int color = AspectTagRenderer.colorOf(value, alpha, bw);
@@ -141,8 +151,11 @@ public final class AspectTagWorldRenderer {
     }
 
     public static void renderQuad(PoseStack.Pose pose, VertexConsumer buffer, Holder<IAspect> aspect, float alpha, boolean bw, int packedLight) {
-        if (aspect == null || aspect.value() == null)
+        if (aspect == null) {
             return;
+        } else {
+            aspect.value();
+        }
         IAspect value = aspect.value();
         int color = AspectTagRenderer.colorOf(value, alpha, bw);
         addQuadVertex(buffer, pose, -HALF_QUAD, -HALF_QUAD, 0.0F, 1.0F, color, packedLight);
