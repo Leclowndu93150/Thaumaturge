@@ -58,6 +58,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
     private static final float MIN_COST_MULT = 0.5F;
     private static final float ESSENTIA_STARVE_PENALTY = 0.25F;
     private static final int ESSENTIA_FX_RANGE_TICKS = 12;
+    private static final double GOGGLES_TEXT_Y_OFFSET = 1.50D;
 
     private static final DecimalFormat STABILITY_FORMAT = new DecimalFormat("#######.##");
     private static final String STABILITY_LANG_PREFIX = "gui.thaumaturge.infusion.stability.";
@@ -330,6 +331,11 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             return "stable";
         }
         return stability > -25.0F ? "unstable" : "very_unstable";
+    }
+
+    @Override
+    public Vec3 getIGogglesTextOffset() {
+        return new Vec3(0.0D, GOGGLES_TEXT_Y_OFFSET, 0.0D);
     }
 
     @Override

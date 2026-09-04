@@ -5,7 +5,9 @@ import com.leclowndu93150.thaumaturge.api.recipe.*;
 import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
+import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -66,6 +68,8 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     private static final int RESULT_SLOT_X = 118;
     private static final int RESULT_SLOT_Y = HEIGHT / 2 - 9;
 
+    private final BlockEntityInfusionMatrix matrixPreview = new BlockEntityInfusionMatrix(
+            BlockPos.ZERO, TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
     private int rotation = 0;
 
     public MultiblockCategory(IGuiHelper guiHelper) {
@@ -110,15 +114,15 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
                 .addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
         DustTrigger recipe = holder.value();
+        Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) recipe).blueprintId());
 
         ItemStack result = DustTriggerCategory.resultStack(recipe);
-        if (!result.isEmpty()) {
+        if (!result.isEmpty() && !isKeptBlueprintInput(blueprint, result)) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, RESULT_SLOT_X + 1, RESULT_SLOT_Y + 1)
                     .addItemStack(result);
         }
 
         Object2IntMap<BlueprintSource> inputMap = new Object2IntOpenHashMap<>();
-        Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) recipe).blueprintId());
         if (blueprint != null) {
             for (int y = 0; y < blueprint.ySize(); y++) {
                 for (int x = 0; x < blueprint.xSize(); x++) {
@@ -159,7 +163,11 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
             GuiGraphics guiGraphics,
             double mouseX,
             double mouseY) {
-        resultIcon.draw(guiGraphics, RESULT_SLOT_X - 6, RESULT_SLOT_Y - 6);
+        Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) holder.value()).blueprintId());
+        ItemStack result = DustTriggerCategory.resultStack(holder.value());
+        if (!result.isEmpty() && !isKeptBlueprintInput(blueprint, result)) {
+            resultIcon.draw(guiGraphics, RESULT_SLOT_X - 6, RESULT_SLOT_Y - 6);
+        }
         arrow.draw(guiGraphics, WIDTH / 2 - arrow.getWidth() / 2 - 20, 0);
         boolean doesPassGate = holder.value().doesPassGate(Minecraft.getInstance().player);
         if (!doesPassGate)
@@ -214,14 +222,42 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
             BlockPos blockPos = entry.getKey();
             pose.pushPose();
             pose.translate(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-            dispatcher.renderSingleBlock(
-                    entry.getValue(), pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            BlockState state = entry.getValue();
+            if (state.is(TCBlocks.INFUSION_MATRIX.get())) {
+                Minecraft.getInstance()
+                        .getBlockEntityRenderDispatcher()
+                        .renderItem(matrixPreview, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            } else {
+                dispatcher.renderSingleBlock(state, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
             pose.popPose();
         }
         buffers.endBatch();
         Lighting.setupForFlatItems();
         pose.popPose();
         rotation++;
+    }
+
+    private static boolean isKeptBlueprintInput(@Nullable Blueprint blueprint, ItemStack stack) {
+        if (blueprint == null || stack.isEmpty()) {
+            return false;
+        }
+        for (int y = 0; y < blueprint.ySize(); y++) {
+            for (int x = 0; x < blueprint.xSize(); x++) {
+                for (int z = 0; z < blueprint.zSize(); z++) {
+                    BlueprintPart part = blueprint.cell(y, x, z);
+                    if (part == null || !(part.target() instanceof BlueprintTarget.Keep)) {
+                        continue;
+                    }
+                    for (ItemStack representation : part.source().getRepresentations()) {
+                        if (ItemStack.isSameItemSameComponents(stack, representation)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private @Nullable Blueprint lookupBlueprint(ResourceLocation blueprintId) {
