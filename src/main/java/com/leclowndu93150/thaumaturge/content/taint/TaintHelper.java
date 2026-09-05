@@ -124,7 +124,7 @@ public final class TaintHelper {
         }
 
         RandomSource random = level.getRandom();
-        BlockPos target = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
+        BlockPos target = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 2, random.nextInt(3) - 1);
         if (target.equals(pos) || !level.hasChunkAt(target) || TaintBloomRegistry.isProtected(level, target)) {
             return;
         }

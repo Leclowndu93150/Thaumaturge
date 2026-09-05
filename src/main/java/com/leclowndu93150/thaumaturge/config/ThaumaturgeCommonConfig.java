@@ -10,6 +10,9 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
     public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
+    public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
+    public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
+    public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -59,6 +62,15 @@ public final class ThaumaturgeCommonConfig {
         TAINT_FROM_FLUX = builder.comment(
                         "Whether sufficiently deep, exposed Flux Goo can fester into Fibrous Taint and Tainted Lands. This is the Thaumcraft 4 pollution-catastrophe route and is enabled by default.")
                 .define("taintFromFlux", true);
+        PHYSICAL_FLUX_AURA_FLOOR = builder.comment(
+                        "Whether recently observed TC4-style physical Flux Goo/Gas sustains a capped minimum amount of numerical Aura Flux in the same chunk. This hybrid bridge is enabled by default; disabling it leaves physical Goo/Gas and their direct effects intact.")
+                .define("physicalFluxAuraFloor", true);
+        PHYSICAL_FLUX_TAINT_OUTBREAKS = builder.comment(
+                        "Whether sufficiently large accumulations of physical Flux Goo/Gas can independently establish a Tainted Lands/Fibrous Taint outbreak. This is separate from an individual deep Goo block's taintFromFlux roll and is enabled by default.")
+                .define("physicalFluxTaintOutbreaks", true);
+        FLUX_PRESSURE_EVENTS = builder.comment(
+                        "Whether high numerical Aura Flux can trigger the restored TC5-style Flux-pressure events alongside TC6-style Rifts. Enabled by default; disabling it affects only those pressure events and does not disable Rifts.")
+                .define("fluxPressureEvents", true);
         ENERGIZED_NODE_VIS_PER_POINT = builder.comment(
                         "Raw vis an energized node drains from the chunk aura to restore one aspect point. Normal nodes refine at 3.0 per point; higher values make energized nodes more wasteful. 0 makes their refill free.")
                 .defineInRange("energizedNodeVisPerPoint", 6.0, 0.0, 100.0);

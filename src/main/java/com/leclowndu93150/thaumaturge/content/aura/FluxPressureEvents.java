@@ -96,7 +96,7 @@ public final class FluxPressureEvents {
      * replace the earlier one, matching the old map-backed trigger.
      */
     public static void queueTrigger(ServerLevel level, ChunkPos chunkPos) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+        if (!ThaumaturgeCommonConfig.FLUX_PRESSURE_EVENTS.get() || ThaumaturgeCommonConfig.WUSS_MODE.get()) {
             return;
         }
         PENDING_EVENTS.put(level.dimension(), new BlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ()));
@@ -111,7 +111,7 @@ public final class FluxPressureEvents {
 
     /** Debug/test hook that executes the real event validation and Flux cost path. */
     public static boolean trigger(ServerLevel level, BlockPos origin, Kind kind) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+        if (!ThaumaturgeCommonConfig.FLUX_PRESSURE_EVENTS.get() || ThaumaturgeCommonConfig.WUSS_MODE.get()) {
             return false;
         }
         if (!kind.nearTaintAllowed && nearTaintOrMajorEvent(level, origin)) {

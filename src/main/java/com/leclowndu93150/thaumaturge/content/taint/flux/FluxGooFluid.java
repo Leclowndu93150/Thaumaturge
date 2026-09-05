@@ -49,7 +49,18 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
 
     @Override
     protected boolean isRandomlyTicking() {
-        return false;
+        return true;
+    }
+
+    @Override
+    protected void randomTick(Level level, BlockPos pos, FluidState fluidState, RandomSource random) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        FluidState current = serverLevel.getFluidState(pos);
+        if (!current.isEmpty() && current.getType().isSame(this)) {
+            lifecycleTick(serverLevel, pos, current, random);
+        }
     }
 
     @Override
@@ -62,15 +73,11 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         // capped local Aura Flux floor rather than generating Flux endlessly every tick.
         PhysicalFluxAuraContamination.observeGoo(serverLevel, pos, fluidState.getAmount());
 
-        // Keep finite-fluid movement and pollution lifecycle on one scheduled cadence. The previous
-        // implementation also ran the lifecycle from random ticks, which made probability constants
-        // much harsher than their TC4/TC5 counterparts.
+        // Finite-fluid movement remains on its normal scheduled cadence. TC4 lifecycle rolls
+        // (slime, taint and natural decay) run from randomTick instead, so their historical
+        // probabilities are not multiplied by this fluid's much faster movement tick rate.
         spreadTick(serverLevel, pos, fluidState, serverLevel.getRandom());
         FluidState current = serverLevel.getFluidState(pos);
-        if (!current.isEmpty() && current.getType().isSame(this)) {
-            lifecycleTick(serverLevel, pos, current, serverLevel.getRandom());
-        }
-        current = serverLevel.getFluidState(pos);
         if (!current.isEmpty() && current.getType().isSame(this)) {
             scheduleGooTick(serverLevel, pos);
         }
@@ -92,11 +99,13 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return;
         }
 
-        // TC4: large exposed pools persist rather than following the generic evaporation branch.
-        // They may hatch a larger slime, or (when enabled) fester directly into a Taint outbreak.
+        // TC4: large exposed pools may hatch a larger slime or (when enabled) fester directly
+        // into a Taint outbreak. If neither catastrophe fires, they still proceed to the ordinary
+        // one-level decay roll below; large pools are not permanently exempt from evaporation.
         if (meta >= SMALL_SLIME_META_MAX && airAbove) {
             if (rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
                 spawnSlime(level, pos, 2);
+                return;
             } else if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()
                     && !ThaumaturgeCommonConfig.WUSS_MODE.get()
                     && !TaintBloomRegistry.isProtected(level, pos)
@@ -113,8 +122,8 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                 // Modern aura integration: the physical disaster also leaves a small amount of
                 // numerical Flux behind, but the resulting Taint does not require it to survive.
                 AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
+                return;
             }
-            return;
         }
 
         // TC4 generic decay: one level evaporates on a 1/30 roll. The thinnest trace disappears;

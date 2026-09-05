@@ -199,6 +199,9 @@ public final class BlockFluxGas extends Block {
         BlockState old = level.getBlockState(pos);
         int clamped = Math.min(PhysicalFlux.MAX_QUANTA, amount);
         if (old.is(this) && old.getValue(AMOUNT) == clamped) {
+            // Enclosed/stable gas must keep ticking so its physical-pollution observation does
+            // not expire while the block is still visibly present in the world.
+            scheduleTick(level, pos);
             return;
         }
         if (!old.isAir() && !old.is(this) && old.getFluidState().isEmpty() && old.canBeReplaced()) {

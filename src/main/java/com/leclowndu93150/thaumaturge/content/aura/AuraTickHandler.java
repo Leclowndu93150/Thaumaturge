@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import java.util.Set;
@@ -147,7 +148,10 @@ public final class AuraTickHandler {
             AuraManager.queueRiftTrigger(level, new BlockPos(pos.x * 16, 0, pos.z * 16));
             riftQueued = true;
         }
-        if (!riftQueued && flux > base * RIFT_FLUX_RATIO && rand.nextFloat() < flux / (Math.max(1.0F, base) * 100.0F)) {
+        if (ThaumaturgeCommonConfig.FLUX_PRESSURE_EVENTS.get()
+                && !riftQueued
+                && flux > base * RIFT_FLUX_RATIO
+                && rand.nextFloat() < flux / (Math.max(1.0F, base) * 100.0F)) {
             FluxPressureEvents.queueTrigger(level, aura.getChunkPos());
         }
     }

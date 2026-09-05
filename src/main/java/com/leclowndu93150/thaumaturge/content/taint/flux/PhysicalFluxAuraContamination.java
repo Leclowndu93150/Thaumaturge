@@ -62,7 +62,9 @@ public final class PhysicalFluxAuraContamination {
     }
 
     private static void observe(ServerLevel level, BlockPos pos, int amount, boolean gas) {
-        if (amount <= 0) {
+        if (amount <= 0
+                || (!ThaumaturgeCommonConfig.PHYSICAL_FLUX_AURA_FLOOR.get()
+                        && !ThaumaturgeCommonConfig.PHYSICAL_FLUX_TAINT_OUTBREAKS.get())) {
             return;
         }
         long chunkKey = ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
@@ -87,6 +89,9 @@ public final class PhysicalFluxAuraContamination {
 
     /** Returns the sustained local Aura Flux target created by recently observed Goo/Gas. */
     public static float targetFlux(ServerLevel level, ChunkPos chunkPos, float auraBase) {
+        if (!ThaumaturgeCommonConfig.PHYSICAL_FLUX_AURA_FLOOR.get()) {
+            return 0.0F;
+        }
         Map<Long, Map<Long, Observation>> dimension = OBSERVATIONS.get(level.dimension());
         if (dimension == null) {
             return 0.0F;
@@ -129,7 +134,9 @@ public final class PhysicalFluxAuraContamination {
      * TC6 Rifts/Seeds remain a parallel escalation route rather than the sole bootstrap mechanism.
      */
     public static boolean tryTaintOutbreak(ServerLevel level, ChunkPos chunkPos, RandomSource random) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()) {
+        if (!ThaumaturgeCommonConfig.PHYSICAL_FLUX_TAINT_OUTBREAKS.get()
+                || ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || !ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()) {
             return false;
         }
 
