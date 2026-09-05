@@ -127,6 +127,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         buildAuraDeviceRecipes();
         buildConstructRecipes();
         buildDecorRecipes();
+        buildLegacyWardRecipes();
         buildNoiseDeviceRecipes();
         buildEssentiaMachineRecipes();
         buildFluxMachineRecipes();
@@ -394,6 +395,91 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .pattern("NNN")
                 .define('N', ingotTag)
                 .unlockedBy("has", has(ingotTag))
+                .save(output);
+    }
+
+    private void buildLegacyWardRecipes() {
+        arcaneShaped(new ItemStack(TCItems.WARDED_GLASS.get(), 8), 25)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 5)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern("GGG")
+                .pattern("WBW")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('W', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_DOOR.get()), 45)
+                .aspect(TCAspects.AQUA, 20)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern("TDT")
+                .pattern("DBD")
+                .pattern("TDT")
+                .define('T', TCItems.INGOT_THAUMIUM)
+                .define('D', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_PRESSURE_PLATE.get()), 45)
+                .aspect(TCAspects.AQUA, 20)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern(" B ")
+                .pattern("TDT")
+                .define('T', TCItems.INGOT_THAUMIUM)
+                .define('D', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.GOLEM_FETTER.get()), 10)
+                .aspect(TCAspects.TERRA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("SSS")
+                .pattern("IRI")
+                .pattern("BBB")
+                .define('S', TCItems.STONE_ARCANE)
+                .define('I', Items.IRON_INGOT)
+                .define('R', Items.BEACON)
+                .define('B', TCItems.STONE_ARCANE_BRICK)
+                .unlockedBy("has", has(Items.BEACON))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_KEY_IRON.get(), 2), 10)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("NNI")
+                .pattern("N  ")
+                .define('N', Items.IRON_NUGGET)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has", has(Items.IRON_INGOT))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_KEY_GOLD.get(), 2), 10)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("NNI")
+                .pattern("N  ")
+                .define('N', Items.GOLD_NUGGET)
+                .define('I', Items.GOLD_INGOT)
+                .unlockedBy("has", has(Items.GOLD_INGOT))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TCItems.TALLOW_BLOCK)
+                .pattern("TTT")
+                .pattern("TTT")
+                .pattern("TTT")
+                .define('T', TCItems.TALLOW)
+                .unlockedBy("has", has(TCItems.TALLOW))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TCItems.ITEM_GRATE)
+                .pattern("#")
+                .pattern("H")
+                .define('#', Items.IRON_BARS)
+                .define('H', Items.HOPPER)
+                .unlockedBy("has", has(Items.HOPPER))
                 .save(output);
     }
 

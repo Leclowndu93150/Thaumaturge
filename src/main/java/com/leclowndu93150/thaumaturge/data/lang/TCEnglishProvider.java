@@ -1728,6 +1728,20 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
         add("jade.thaumaturge.golem.rank", "Rank %s");
         add("jade.thaumaturge.golem.xp", "Experience: %s / %s");
+        add("block.thaumaturge.warded_glass", "Warded Glass");
+        add("block.thaumaturge.arcane_door", "Arcane Door");
+        add("block.thaumaturge.arcane_pressure_plate", "Arcane Pressure Plate");
+        add("block.thaumaturge.golem_fetter", "Golem Fetter");
+        add("block.thaumaturge.tallow_block", "Tallow Block");
+        add("block.thaumaturge.item_grate", "Item Grate");
+        add("item.thaumaturge.arcane_key_iron", "Iron Key");
+        add("item.thaumaturge.arcane_key_gold", "Gold Key");
+        add("message.thaumaturge.arcane_key_bound", "Key bound");
+        add("message.thaumaturge.arcane_pressure_plate_mode.0", "Arcane pressure plate: everyone");
+        add("message.thaumaturge.arcane_pressure_plate_mode.1", "Arcane pressure plate: owner and keys");
+        add(
+                "message.thaumaturge.arcane_pressure_plate_mode.2",
+                "Arcane pressure plate: everyone except owner and keys");
     }
 
     private void addJadeMode(String path, String label) {

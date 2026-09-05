@@ -352,6 +352,12 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.STABILIZER.get());
         dropSelf(TCBlocks.REDSTONE_RELAY.get());
         dropSelf(TCBlocks.ACTIVATOR_RAIL.get());
+        dropSelf(TCBlocks.WARDED_GLASS.get());
+        dropSelf(TCBlocks.ARCANE_DOOR.get());
+        dropSelf(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+        dropSelf(TCBlocks.GOLEM_FETTER.get());
+        dropSelf(TCBlocks.TALLOW_BLOCK.get());
+        dropSelf(TCBlocks.ITEM_GRATE.get());
         add(TCBlocks.SLAB_GREATWOOD.get(), this::createSlabItemTable);
         add(TCBlocks.SLAB_SILVERWOOD.get(), this::createSlabItemTable);
         add(TCBlocks.SLAB_ARCANE_STONE.get(), this::createSlabItemTable);

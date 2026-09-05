@@ -60,6 +60,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
@@ -1610,6 +1612,156 @@ public final class TCModelProvider implements DataProvider {
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
         paving(TCBlocks.PAVING_STONE_BARRIER.get(), "paving_stone_barrier");
+        cube(TCBlocks.WARDED_GLASS.get(), "warded_glass");
+        cube(TCBlocks.GOLEM_FETTER.get(), "golem_fetter");
+        cube(TCBlocks.TALLOW_BLOCK.get(), "tallow_block");
+        cube(TCBlocks.ITEM_GRATE.get(), "item_grate");
+        arcaneDoor();
+        arcanePressurePlate();
+    }
+
+    private void arcaneDoor() {
+        TextureMapping textures = new TextureMapping()
+                .put(TextureSlot.TOP, blockTexture("arcane_door_top"))
+                .put(TextureSlot.BOTTOM, blockTexture("arcane_door_bottom"));
+        ResourceLocation bottomLeft =
+                ModelTemplates.DOOR_BOTTOM_LEFT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomLeftOpen =
+                ModelTemplates.DOOR_BOTTOM_LEFT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomRight =
+                ModelTemplates.DOOR_BOTTOM_RIGHT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomRightOpen =
+                ModelTemplates.DOOR_BOTTOM_RIGHT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topLeft =
+                ModelTemplates.DOOR_TOP_LEFT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topLeftOpen =
+                ModelTemplates.DOOR_TOP_LEFT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topRight =
+                ModelTemplates.DOOR_TOP_RIGHT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topRightOpen =
+                ModelTemplates.DOOR_TOP_RIGHT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_DOOR.get())
+                .with(doorHalf(
+                        doorHalf(
+                                PropertyDispatch.properties(
+                                        BlockStateProperties.HORIZONTAL_FACING,
+                                        BlockStateProperties.DOUBLE_BLOCK_HALF,
+                                        BlockStateProperties.DOOR_HINGE,
+                                        BlockStateProperties.OPEN),
+                                DoubleBlockHalf.LOWER,
+                                bottomLeft,
+                                bottomLeftOpen,
+                                bottomRight,
+                                bottomRightOpen),
+                        DoubleBlockHalf.UPPER,
+                        topLeft,
+                        topLeftOpen,
+                        topRight,
+                        topRightOpen)));
+        flatItem(TCBlocks.ARCANE_DOOR.get().asItem());
+    }
+
+    private void arcanePressurePlate() {
+        TextureMapping textures = new TextureMapping().put(TextureSlot.TEXTURE, blockTexture("arcane_door_bottom"));
+        ResourceLocation up =
+                ModelTemplates.PRESSURE_PLATE_UP.create(TCBlocks.ARCANE_PRESSURE_PLATE.get(), textures, modelOutput);
+        ResourceLocation down =
+                ModelTemplates.PRESSURE_PLATE_DOWN.create(TCBlocks.ARCANE_PRESSURE_PLATE.get(), textures, modelOutput);
+        PropertyDispatch.C2<Boolean, Integer> states = PropertyDispatch.properties(
+                BlockStateProperties.POWERED,
+                com.leclowndu93150.thaumaturge.content.warding.BlockArcanePressurePlate.MODE);
+        for (int mode = 0; mode <= 2; mode++) {
+            states = states.select(false, mode, v(up)).select(true, mode, v(down));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_PRESSURE_PLATE.get())
+                .with(states));
+        delegateItem(TCBlocks.ARCANE_PRESSURE_PLATE.get().asItem(), up);
+    }
+
+    private static PropertyDispatch.C4<Direction, DoubleBlockHalf, DoorHingeSide, Boolean> doorHalf(
+            PropertyDispatch.C4<Direction, DoubleBlockHalf, DoorHingeSide, Boolean> properties,
+            DoubleBlockHalf half,
+            ResourceLocation left,
+            ResourceLocation leftOpen,
+            ResourceLocation right,
+            ResourceLocation rightOpen) {
+        return properties
+                .select(Direction.EAST, half, DoorHingeSide.LEFT, false, v(left))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.EAST, half, DoorHingeSide.RIGHT, false, v(right))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(
+                        Direction.EAST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.NORTH, half, DoorHingeSide.LEFT, true, v(leftOpen))
+                .select(
+                        Direction.EAST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.SOUTH, half, DoorHingeSide.RIGHT, true, v(rightOpen))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180));
     }
 
     private static ResourceLocation blockTexture(String name) {
