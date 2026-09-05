@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.warding;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardUpdatePayload;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,10 @@ public final class WardHandler {
         BlockState state = level.getBlockState(pos);
         return !state.isAir()
                 && !state.hasBlockEntity()
-                && state.isSolidRender(level, pos)
+                && (state.isSolidRender(level, pos)
+                        || state.is(TCBlocks.WARDED_GLASS.get())
+                        || state.is(TCBlocks.ARCANE_DOOR.get())
+                        || state.is(TCBlocks.ARCANE_PRESSURE_PLATE.get()))
                 && state.getDestroySpeed(level, pos) >= 0.0F;
     }
 

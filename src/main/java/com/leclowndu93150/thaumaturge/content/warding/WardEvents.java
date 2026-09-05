@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,15 +25,39 @@ public final class WardEvents {
 
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.BreakEvent event) {
-        if (WardHandler.isWarded(event.getLevel(), event.getPos())) {
-            event.setCanceled(true);
+        if (!WardHandler.isWarded(event.getLevel(), event.getPos())) {
+            return;
         }
+        if (event.getLevel() instanceof ServerLevel level
+                && isSelfWardingBlock(level, event.getPos())
+                && WardHandler.unward(level, event.getPos(), event.getPlayer().getUUID())) {
+            if (level.getBlockState(event.getPos()).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+                BlockPos otherHalf = level.getBlockState(event.getPos()).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
+                        ? event.getPos().above()
+                        : event.getPos().below();
+                WardHandler.unward(level, otherHalf, event.getPlayer().getUUID());
+            }
+            return;
+        }
+        event.setCanceled(true);
+    }
+
+    private static boolean isSelfWardingBlock(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.WARDED_GLASS.get())
+                || level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                || level.getBlockState(pos)
+                        .is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_PRESSURE_PLATE.get());
     }
 
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         event.getPosition().ifPresent(pos -> {
             if (WardHandler.isWarded(event.getEntity().level(), pos)) {
+                if (event.getEntity().level() instanceof ServerLevel level
+                        && isSelfWardingBlock(level, pos)
+                        && event.getEntity().getUUID().equals(WardHandler.owner(level, pos))) {
+                    return;
+                }
                 event.setCanceled(true);
             }
         });

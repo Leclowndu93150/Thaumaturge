@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import net.minecraft.core.Direction;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -34,6 +35,12 @@ public final class DeviceCapabilities {
                 (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, TCBlockEntities.HUNGRY_CHEST.get(), (be, side) -> new InvWrapper(be));
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TCBlockEntities.ITEM_GRATE.get(),
+                (be, side) -> side == Direction.UP && be.getBlockState().getValue(BlockItemGrate.OPEN)
+                        ? be.inventory()
+                        : null);
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK, TCBlockEntities.EVERFULL_URN.get(), (be, side) -> be.getTank());
         event.registerBlockEntity(

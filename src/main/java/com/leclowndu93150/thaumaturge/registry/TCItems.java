@@ -73,6 +73,7 @@ import com.leclowndu93150.thaumaturge.content.wands.ItemPrimalCharm;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandCap;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandRod;
+import com.leclowndu93150.thaumaturge.content.warding.ItemArcaneKey;
 import com.leclowndu93150.thaumaturge.content.warp.ItemSanitySoap;
 import com.leclowndu93150.thaumaturge.content.world.mound.LootBagItem;
 import java.util.EnumMap;
@@ -703,6 +704,17 @@ public final class TCItems {
     //
 
     public static final DeferredItem<BlockItem> STONE_ARCANE = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE);
+    public static final DeferredItem<BlockItem> WARDED_GLASS = ITEMS.registerSimpleBlockItem(TCBlocks.WARDED_GLASS);
+    public static final DeferredItem<BlockItem> ARCANE_DOOR = ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_DOOR);
+    public static final DeferredItem<BlockItem> ARCANE_PRESSURE_PLATE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> GOLEM_FETTER = ITEMS.registerSimpleBlockItem(TCBlocks.GOLEM_FETTER);
+    public static final DeferredItem<BlockItem> TALLOW_BLOCK = ITEMS.registerSimpleBlockItem(TCBlocks.TALLOW_BLOCK);
+    public static final DeferredItem<BlockItem> ITEM_GRATE = ITEMS.registerSimpleBlockItem(TCBlocks.ITEM_GRATE);
+    public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_IRON =
+            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_GOLD =
+            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> STONE_ARCANE_BRICK =
             ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE_BRICK);
     public static final DeferredItem<BlockItem> STONE_ANCIENT = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ANCIENT);

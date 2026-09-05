@@ -173,6 +173,11 @@ public final class TCDataComponents {
                     "mirror_link",
                     builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> ARCANE_KEY_LINK =
+            DATA_COMPONENTS.registerComponentType(
+                    "arcane_key_link",
+                    builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> NOTE_COMPLETE =
             DATA_COMPONENTS.registerComponentType(
                     "note_complete", builder -> builder.persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));

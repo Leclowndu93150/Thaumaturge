@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityDioptra;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
+import com.leclowndu93150.thaumaturge.content.device.BlockEntityItemGrate;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampGrowth;
@@ -511,6 +512,11 @@ public final class TCBlockEntities {
                     "ethereal_bloom",
                     () -> new BlockEntityType<>(
                             BlockEntityEtherealBloom::new, Set.of(TCBlocks.ETHEREAL_BLOOM.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityItemGrate>> ITEM_GRATE =
+            BLOCK_ENTITIES.register(
+                    "item_grate",
+                    () -> new BlockEntityType<>(BlockEntityItemGrate::new, Set.of(TCBlocks.ITEM_GRATE.get()), null));
 
     private TCBlockEntities() {}
 

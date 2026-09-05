@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockDioptra;
 import com.leclowndu93150.thaumaturge.content.device.BlockEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockHungryChest;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
+import com.leclowndu93150.thaumaturge.content.device.BlockItemGrate;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampGrowth;
@@ -83,6 +84,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeRestrict;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeValve;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEffectSap;
 import com.leclowndu93150.thaumaturge.content.focus.BlockHole;
+import com.leclowndu93150.thaumaturge.content.golem.BlockGolemFetter;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockPlaceholder;
@@ -108,6 +110,9 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEtherealBloom;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGoo;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooRefs;
+import com.leclowndu93150.thaumaturge.content.warding.BlockArcaneDoor;
+import com.leclowndu93150.thaumaturge.content.warding.BlockArcanePressurePlate;
+import com.leclowndu93150.thaumaturge.content.warding.BlockWardedGlass;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbenchCharger;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
@@ -143,6 +148,29 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TCIds.MODID);
+
+    public static final DeferredBlock<BlockWardedGlass> WARDED_GLASS = BLOCKS.registerBlock(
+            "warded_glass",
+            BlockWardedGlass::new,
+            BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.GLASS).noOcclusion());
+    public static final DeferredBlock<BlockArcaneDoor> ARCANE_DOOR = BLOCKS.registerBlock(
+            "arcane_door",
+            BlockArcaneDoor::new,
+            BlockBehaviour.Properties.of().strength(3.0F).sound(SoundType.WOOD).noOcclusion());
+    public static final DeferredBlock<BlockArcanePressurePlate> ARCANE_PRESSURE_PLATE = BLOCKS.registerBlock(
+            "arcane_pressure_plate",
+            BlockArcanePressurePlate::new,
+            BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.WOOD).noCollission());
+    public static final DeferredBlock<BlockGolemFetter> GOLEM_FETTER = BLOCKS.registerBlock(
+            "golem_fetter",
+            BlockGolemFetter::new,
+            BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.STONE));
+    public static final DeferredBlock<Block> TALLOW_BLOCK = BLOCKS.registerSimpleBlock(
+            "tallow_block", BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.HONEY_BLOCK));
+    public static final DeferredBlock<BlockItemGrate> ITEM_GRATE = BLOCKS.registerBlock(
+            "item_grate",
+            BlockItemGrate::new,
+            BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.METAL).noOcclusion());
 
     public static final DeferredBlock<BlockFocalManipulator> FOCAL_MANIPULATOR = BLOCKS.registerBlock(
             "focal_manipulator",
