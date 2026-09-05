@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -36,6 +37,11 @@ public final class BlockItemGrate extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityItemGrate(pos, state);
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(OPEN, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
     }
 
     @Override

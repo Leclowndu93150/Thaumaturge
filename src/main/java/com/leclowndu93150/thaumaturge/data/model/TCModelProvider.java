@@ -1612,10 +1612,10 @@ public final class TCModelProvider implements DataProvider {
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
         paving(TCBlocks.PAVING_STONE_BARRIER.get(), "paving_stone_barrier");
-        cube(TCBlocks.WARDED_GLASS.get(), "warded_glass");
-        cube(TCBlocks.GOLEM_FETTER.get(), "golem_fetter");
-        cube(TCBlocks.TALLOW_BLOCK.get(), "tallow_block");
-        cube(TCBlocks.ITEM_GRATE.get(), "item_grate");
+        translucentCube(TCBlocks.WARDED_GLASS.get());
+        golemFetter();
+        tallowBlock();
+        itemGrate();
         arcaneDoor();
         arcanePressurePlate();
     }
@@ -1658,24 +1658,77 @@ public final class TCModelProvider implements DataProvider {
                         topLeftOpen,
                         topRight,
                         topRightOpen)));
-        flatItem(TCBlocks.ARCANE_DOOR.get().asItem());
+        delegateItem(TCBlocks.ARCANE_DOOR.get().asItem(), bottomLeft);
+    }
+
+    private void golemFetter() {
+        TextureMapping normal = new TextureMapping()
+                .put(TextureSlot.BOTTOM, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.SIDE, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.TOP, blockTexture("golem_fetter"));
+        TextureMapping active = new TextureMapping()
+                .put(TextureSlot.BOTTOM, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.SIDE, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.TOP, blockTexture("golem_fetter_active"));
+        ResourceLocation off = ModelTemplates.CUBE_BOTTOM_TOP.create(TCBlocks.GOLEM_FETTER.get(), normal, modelOutput);
+        ResourceLocation on = ModelTemplates.CUBE_BOTTOM_TOP.createWithSuffix(
+                TCBlocks.GOLEM_FETTER.get(), "_powered", active, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.GOLEM_FETTER.get())
+                .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.golem.BlockGolemFetter.POWERED)
+                        .select(false, v(off))
+                        .select(true, v(on))));
+        delegateItem(TCBlocks.GOLEM_FETTER.get().asItem(), off);
+    }
+
+    private void tallowBlock() {
+        ResourceLocation model = ModelTemplates.CUBE_BOTTOM_TOP.create(
+                TCBlocks.TALLOW_BLOCK.get(),
+                new TextureMapping()
+                        .put(TextureSlot.BOTTOM, blockTexture("tallow_block"))
+                        .put(TextureSlot.SIDE, blockTexture("tallow_block"))
+                        .put(TextureSlot.TOP, blockTexture("tallow_block_top")),
+                modelOutput);
+        simpleBlock(TCBlocks.TALLOW_BLOCK.get(), model);
+        delegateItem(TCBlocks.TALLOW_BLOCK.get().asItem(), model);
+    }
+
+    private void itemGrate() {
+        ResourceLocation open = ModelTemplates.CUBE_ALL.create(
+                TCBlocks.ITEM_GRATE.get(),
+                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate")),
+                modelOutput);
+        ResourceLocation closed = ModelTemplates.CUBE_ALL.createWithSuffix(
+                TCBlocks.ITEM_GRATE.get(),
+                "_closed",
+                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate_closed")),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ITEM_GRATE.get())
+                .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.device.BlockItemGrate.OPEN)
+                        .select(true, v(open))
+                        .select(false, v(closed))));
+        delegateItem(TCBlocks.ITEM_GRATE.get().asItem(), open);
     }
 
     private void arcanePressurePlate() {
-        TextureMapping textures = new TextureMapping().put(TextureSlot.TEXTURE, blockTexture("arcane_door_bottom"));
-        ResourceLocation up =
-                ModelTemplates.PRESSURE_PLATE_UP.create(TCBlocks.ARCANE_PRESSURE_PLATE.get(), textures, modelOutput);
-        ResourceLocation down =
-                ModelTemplates.PRESSURE_PLATE_DOWN.create(TCBlocks.ARCANE_PRESSURE_PLATE.get(), textures, modelOutput);
+        ResourceLocation[] up = new ResourceLocation[3];
+        ResourceLocation[] down = new ResourceLocation[3];
+        for (int mode = 0; mode <= 2; mode++) {
+            TextureMapping textures =
+                    new TextureMapping().put(TextureSlot.TEXTURE, blockTexture("arcane_pressure_plate_" + mode));
+            up[mode] = ModelTemplates.PRESSURE_PLATE_UP.createWithSuffix(
+                    TCBlocks.ARCANE_PRESSURE_PLATE.get(), "_" + mode, textures, modelOutput);
+            down[mode] = ModelTemplates.PRESSURE_PLATE_DOWN.createWithSuffix(
+                    TCBlocks.ARCANE_PRESSURE_PLATE.get(), "_" + mode, textures, modelOutput);
+        }
         PropertyDispatch.C2<Boolean, Integer> states = PropertyDispatch.properties(
                 BlockStateProperties.POWERED,
                 com.leclowndu93150.thaumaturge.content.warding.BlockArcanePressurePlate.MODE);
         for (int mode = 0; mode <= 2; mode++) {
-            states = states.select(false, mode, v(up)).select(true, mode, v(down));
+            states = states.select(false, mode, v(up[mode])).select(true, mode, v(down[mode]));
         }
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_PRESSURE_PLATE.get())
                 .with(states));
-        delegateItem(TCBlocks.ARCANE_PRESSURE_PLATE.get().asItem(), up);
+        delegateItem(TCBlocks.ARCANE_PRESSURE_PLATE.get().asItem(), up[0]);
     }
 
     private static PropertyDispatch.C4<Direction, DoubleBlockHalf, DoorHingeSide, Boolean> doorHalf(
