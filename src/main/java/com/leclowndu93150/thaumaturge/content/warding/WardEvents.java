@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,10 +31,12 @@ public final class WardEvents {
         if (event.getLevel() instanceof ServerLevel level
                 && isSelfWardingBlock(level, event.getPos())
                 && WardHandler.unward(level, event.getPos(), event.getPlayer().getUUID())) {
-            if (level.getBlockState(event.getPos()).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
-                BlockPos otherHalf = level.getBlockState(event.getPos()).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
-                        ? event.getPos().above()
-                        : event.getPos().below();
+            if (level.getBlockState(event.getPos())
+                    .is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+                BlockPos otherHalf =
+                        level.getBlockState(event.getPos()).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
+                                ? event.getPos().above()
+                                : event.getPos().below();
                 WardHandler.unward(level, otherHalf, event.getPlayer().getUUID());
             }
             return;

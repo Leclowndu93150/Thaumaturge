@@ -40,6 +40,7 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.warp.WarpEvents;
 import com.leclowndu93150.thaumaturge.data.worldgen.feature.TCConfiguredFeatures;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
