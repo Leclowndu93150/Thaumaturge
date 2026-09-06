@@ -41,7 +41,8 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final double VIEW_DISTANCE = 64.0;
     private static final double THAUMOMETER_VIEW_DISTANCE = 48.0;
     private static final float BASE_LAYER_SCALE = 0.25F;
-    private static final float FAINT_ALPHA = 0.1F;
+    private static final int MAX_RENDERED_ASPECT_AMOUNT = 50;
+    private static final float FAINT_ALPHA = 0.0066F;
     // Iris routes this through its translucent particle program instead of the normal additive
     // path, so it needs a stronger source alpha to retain the same faint, unaided visibility.
     private static final float IRIS_FAINT_ALPHA = 0.4F;
@@ -63,6 +64,8 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final int TRANSLUCENT_BLEND = 771;
     private static final float TRANSLUCENT_ALPHA_BOOST = 1.5F;
     private static final float WHITE_ALPHA_CLAMP = 1.0F;
+    private static final float HIDDEN_BRIGHTNESS_MULTIPLIER = 0.2F;
+    private static final float REVEALED_BRIGHTNESS_MULTIPLIER = 0.5F;
     private static final float DRAIN_LINE_SPEED = -0.02F;
     private static final float DRAIN_LINE_WIDTH = 0.15F;
     private static final float ENERGIZED_SPIN_FACTOR = 2.0F;
@@ -112,20 +115,14 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             }
             return;
         }
-        if (IrisCompat.shadersActive()) {
-            poseStack.pushPose();
-            poseStack.translate(0.5F, 0.5F, 0.5F);
-            poseStack.mulPose(
-                    Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-            drawLayers(data, poseStack, buffers);
-            poseStack.popPose();
-            if (data.draining) {
-                LateWorldRenderQueue.enqueueBlockEntity(
-                        origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
-            }
-        } else {
+        poseStack.pushPose();
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        drawLayers(data, poseStack, buffers);
+        poseStack.popPose();
+        if (data.draining) {
             LateWorldRenderQueue.enqueueBlockEntity(
-                    origin, (latePose, lateBuffers) -> drawLate(data, latePose, lateBuffers));
+                    origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
         }
     }
 
@@ -213,10 +210,13 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     }
 
     public static void drawLayers(NodeRenderState state, PoseStack poseStack, MultiBufferSource buffers) {
+        float brightness = state.visible
+                ? (state.depthIgnore ? REVEALED_BRIGHTNESS_MULTIPLIER : 1.0F)
+                : HIDDEN_BRIGHTNESS_MULTIPLIER;
         forEachLayer(
                 state,
-                (index, type, angle, scale, alpha, color, strip, frame) ->
-                        drawLayer(poseStack, buffers, type, angle, scale, alpha, color, strip, frame));
+                (index, type, angle, scale, alpha, color, strip, frame) -> drawLayer(
+                        poseStack, buffers, type, angle, scale, alpha, scaleColor(color, brightness), strip, frame));
     }
 
     public interface LayerSink {
@@ -239,9 +239,12 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         float layerContraction = state.energized ? ENERGIZED_LAYER_CONTRACTION : 1.0F;
         float angle = 0.0F;
         for (NodeRenderState.AspectLayer layer : state.layers) {
-            average += layer.amount;
+            int displayAmount = Math.min(layer.amount, MAX_RENDERED_ASPECT_AMOUNT);
+            average += displayAmount;
             float scale = Mth.sin(state.ticks / (14.0F - count)) * BASE_LAYER_SCALE + BASE_LAYER_SCALE * 2.0F;
-            scale = (0.2F + scale * (layer.amount / 50.0F)) * state.size * layerContraction;
+            scale = (0.2F + scale * (displayAmount / (float) MAX_RENDERED_ASPECT_AMOUNT))
+                    * state.size
+                    * layerContraction;
             float period = LAYER_PERIOD_BASE + LAYER_PERIOD_STEP * count;
             angle = (clock % period) / period * Mth.TWO_PI;
             boolean translucent = layer.blend == TRANSLUCENT_BLEND;
@@ -292,16 +295,6 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         }
     }
 
-    private static void drawLate(NodeRenderState state, PoseStack poseStack, MultiBufferSource buffers) {
-        if (state.draining) {
-            drawDrainLine(state, poseStack, buffers);
-        }
-        poseStack.pushPose();
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-        drawLayers(state, poseStack, buffers);
-        poseStack.popPose();
-    }
-
     private static void drawDrainLine(NodeRenderState state, PoseStack poseStack, MultiBufferSource buffers) {
         FloatyLineRenderer.draw(
                 poseStack,
@@ -331,6 +324,12 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         }
         emitQuad(poseStack.last().pose(), buffers.getBuffer(renderType), scale, tint, strip, frame);
         poseStack.popPose();
+    }
+
+    private static int scaleColor(int color, float brightness) {
+        return ((int) (((color >> 16) & 0xFF) * brightness) << 16)
+                | ((int) (((color >> 8) & 0xFF) * brightness) << 8)
+                | (int) ((color & 0xFF) * brightness);
     }
 
     public static void emitQuad(Matrix4f mat, VertexConsumer buffer, float half, int tint, int strip, int frame) {
