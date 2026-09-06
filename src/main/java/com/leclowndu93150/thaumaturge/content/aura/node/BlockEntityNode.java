@@ -267,7 +267,9 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (energized && !this.energized) {
             aspectsBaseOriginal = aspectsBase;
             aspectsBase = decomposeToPrimals(aspectsBase);
-            aspects = decomposeToPrimals(aspects);
+            // Transducers consume the live store while charging; conversion restores the node's original capacity
+            // as primal vis rather than preserving only that depleted charging remainder.
+            aspects = aspectsBase;
         } else if (!energized && this.energized && aspectsBaseOriginal != null) {
             aspectsBase = aspectsBaseOriginal;
             aspectsBaseOriginal = null;
