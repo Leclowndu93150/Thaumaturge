@@ -301,6 +301,8 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.TUBE_FILTER.get());
         flatItem(TCItems.TUBE_ONEWAY.get());
         flatItem(TCItems.TUBE_BUFFER.get());
+        flatItem(TCItems.ARCANE_KEY_IRON.get());
+        flatItem(TCItems.ARCANE_KEY_GOLD.get());
         flatItem(TCItems.GOGGLES_REVEALING.get());
         flatItem(TCItems.SCRIBING_TOOLS.get());
         flatItem(TCItems.ALUMENTUM.get());
@@ -1612,7 +1614,7 @@ public final class TCModelProvider implements DataProvider {
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
         paving(TCBlocks.PAVING_STONE_BARRIER.get(), "paving_stone_barrier");
-        translucentCube(TCBlocks.WARDED_GLASS.get());
+        wardedGlass();
         golemFetter();
         tallowBlock();
         itemGrate();
@@ -1696,17 +1698,54 @@ public final class TCModelProvider implements DataProvider {
         ResourceLocation open = ModelTemplates.CUBE_ALL.create(
                 TCBlocks.ITEM_GRATE.get(),
                 new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate")),
-                modelOutput);
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
         ResourceLocation closed = ModelTemplates.CUBE_ALL.createWithSuffix(
                 TCBlocks.ITEM_GRATE.get(),
                 "_closed",
                 new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate_closed")),
-                modelOutput);
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ITEM_GRATE.get())
                 .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.device.BlockItemGrate.OPEN)
                         .select(true, v(open))
                         .select(false, v(closed))));
         delegateItem(TCBlocks.ITEM_GRATE.get().asItem(), open);
+    }
+
+    private void wardedGlass() {
+        ResourceLocation model = TCIds.rl("block/warded_glass");
+        modelOutput.accept(model, () -> wardedGlassModel());
+        simpleBlock(TCBlocks.WARDED_GLASS.get(), model);
+        ResourceLocation item = ModelTemplates.CUBE_ALL.createWithSuffix(
+                TCBlocks.WARDED_GLASS.get(),
+                "_item",
+                TextureMapping.cube(TCBlocks.WARDED_GLASS.get()),
+                (id, json) -> modelOutput.accept(id, () -> translucent(json.get())));
+        delegateItem(TCBlocks.WARDED_GLASS.get().asItem(), item);
+    }
+
+    private static JsonElement wardedGlassModel() {
+        JsonObject root = new JsonObject();
+        root.addProperty("loader", "thaumaturge:warded_glass");
+        root.addProperty("render_type", "minecraft:translucent");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("particle", "thaumaturge:block/warded_glass");
+        for (int i = 1; i <= 47; i++) {
+            textures.addProperty("ctm_" + i, "thaumaturge:block/warded_glass_" + i);
+        }
+        root.add("textures", textures);
+        return root;
+    }
+
+    private static JsonElement cutout(JsonElement json) {
+        JsonObject element = json.getAsJsonObject();
+        element.addProperty("render_type", "minecraft:cutout");
+        return element;
+    }
+
+    private static JsonElement translucent(JsonElement json) {
+        JsonObject element = json.getAsJsonObject();
+        element.addProperty("render_type", "minecraft:translucent");
+        return element;
     }
 
     private void arcanePressurePlate() {
