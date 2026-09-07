@@ -97,7 +97,9 @@ public final class BlockArcaneBore extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof BlockEntityArcaneBore bore) {
+        if (!movedByPiston
+                && !state.is(newState.getBlock())
+                && level.getBlockEntity(pos) instanceof BlockEntityArcaneBore bore) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, bore.takeTool());
         }
         super.onRemove(state, level, pos, newState, movedByPiston);

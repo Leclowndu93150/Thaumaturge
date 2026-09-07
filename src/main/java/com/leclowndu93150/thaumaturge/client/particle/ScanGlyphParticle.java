@@ -5,6 +5,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.RandomSource;
 
 public final class ScanGlyphParticle extends TCParticle {
@@ -36,6 +37,11 @@ public final class ScanGlyphParticle extends TCParticle {
         return this.additive
                 ? TCParticleLayers.additiveNoDepth(this.sheet)
                 : TCParticleLayers.translucentNoDepth(this.sheet);
+    }
+
+    @Override
+    protected int getLightColor(float partialTick) {
+        return LightTexture.FULL_BRIGHT;
     }
 
     public static final class Provider implements ParticleProvider<ScanGlyphParticleOptions> {
