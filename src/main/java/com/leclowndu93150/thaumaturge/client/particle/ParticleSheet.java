@@ -19,17 +19,19 @@ public final class ParticleSheet {
     private static final int PNG_DIMENSION_OFFSET = 16;
 
     public enum Mode {
-        ADDITIVE(true, true),
-        TRANSLUCENT(false, true),
-        ADDITIVE_NO_DEPTH(true, false),
-        TRANSLUCENT_NO_DEPTH(false, false);
+        ADDITIVE(true, true, true),
+        TRANSLUCENT(false, true, true),
+        ADDITIVE_NO_DEPTH(true, false, false),
+        TRANSLUCENT_NO_DEPTH(false, false, false);
 
         final boolean additive;
         final boolean depthMask;
+        final boolean depthTest;
 
-        Mode(boolean additive, boolean depthMask) {
+        Mode(boolean additive, boolean depthMask, boolean depthTest) {
             this.additive = additive;
             this.depthMask = depthMask;
+            this.depthTest = depthTest;
         }
     }
 
@@ -77,6 +79,11 @@ public final class ParticleSheet {
                 RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
             } else {
                 RenderSystem.defaultBlendFunc();
+            }
+            if (mode.depthTest) {
+                RenderSystem.enableDepthTest();
+            } else {
+                RenderSystem.disableDepthTest();
             }
             RenderSystem.depthMask(mode.depthMask);
             return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
