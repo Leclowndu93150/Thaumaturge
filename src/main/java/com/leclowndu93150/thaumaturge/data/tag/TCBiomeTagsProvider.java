@@ -35,7 +35,7 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.SUNFLOWER_PLAINS)
                 .add(Biomes.SWAMP)
                 .add(Biomes.MANGROVE_SWAMP);
-        tag(TCBiomeTags.HAS_SILVERWOOD).add(TCBiomes.MAGICAL_FOREST);
+        tag(TCBiomeTags.HAS_SILVERWOOD).add(Biomes.TAIGA).add(Biomes.JUNGLE);
         tag(TCBiomeTags.HAS_CINDERPEARL)
                 .add(Biomes.DESERT)
                 .add(Biomes.BADLANDS)
