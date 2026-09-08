@@ -11,21 +11,33 @@ import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapelessCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -41,6 +53,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jspecify.annotations.Nullable;
 
 public final class RecipeDisplayWidget {
@@ -105,6 +119,16 @@ public final class RecipeDisplayWidget {
     private static final int ITEM_HIT_SIZE = 16;
 
     private static final long CYCLE_SECONDS = 1000L;
+
+    private static final float CONSTRUCT_PREVIEW_CENTER_Y = -12.0F;
+    private static final float CONSTRUCT_PREVIEW_ROT_X = 25.0F;
+    private static final float CONSTRUCT_PREVIEW_DEPTH = 200.0F;
+    private static final float CONSTRUCT_PREVIEW_MAX_WIDTH = 96.0F;
+    private static final float CONSTRUCT_PREVIEW_MAX_HEIGHT = 100.0F;
+    private static final float CONSTRUCT_PREVIEW_MAX_SCALE = 16.0F;
+    private static final float CONSTRUCT_PREVIEW_ROTATION_PER_TICK = 0.5F;
+    private static final BlockEntityInfusionMatrix MATRIX_PREVIEW = new BlockEntityInfusionMatrix(
+            BlockPos.ZERO, TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
 
     private RecipeDisplayWidget() {}
 
@@ -527,13 +551,6 @@ public final class RecipeDisplayWidget {
     private static final int CONSTRUCT_INGREDIENT_STRIDE = 17;
     private static final int CONSTRUCT_INGREDIENT_Y = 90;
 
-    private static final int PREVIEW_HALF_WIDTH = 70;
-    private static final int PREVIEW_TOP = -60;
-    private static final int PREVIEW_BOTTOM = 84;
-    private static final int PREVIEW_CELL_STRIDE = 16;
-    private static final int PREVIEW_CELL_HALF_STRIDE = 8;
-    private static final int PREVIEW_LAYER_STRIDE = 24;
-
     private static final int ASPECT_CELL = 20;
     private static final int ASPECT_HALF_CELL = 10;
 
@@ -596,9 +613,17 @@ public final class RecipeDisplayWidget {
         drawSlotFrame(graphics, cx, cy);
         ItemStack result = display.result();
         if (!result.isEmpty()) {
-            graphics.renderItem(result, cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
+            renderDisplayItem(graphics, result, cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
         }
-        drawBlueprintPreview(graphics, cx, cy, display.blueprintId());
+        drawBlueprintPreview(
+                graphics,
+                cx,
+                cy + CONSTRUCT_PREVIEW_CENTER_Y,
+                display.blueprintId(),
+                CONSTRUCT_PREVIEW_MAX_WIDTH,
+                CONSTRUCT_PREVIEW_MAX_HEIGHT,
+                CONSTRUCT_PREVIEW_MAX_SCALE,
+                (System.currentTimeMillis() / 50L % 720L) * CONSTRUCT_PREVIEW_ROTATION_PER_TICK);
         List<ItemStack> ingredients = blueprintIngredients(display.blueprintId());
         for (int a = 0; a < ingredients.size(); a++) {
             int ix = cx + CONSTRUCT_INGREDIENT_X + a * CONSTRUCT_INGREDIENT_STRIDE;
@@ -607,55 +632,134 @@ public final class RecipeDisplayWidget {
         }
     }
 
-    private static void drawBlueprintPreview(GuiGraphics graphics, int cx, int cy, ResourceLocation blueprintId) {
+    public static void renderBookmarkIcon(
+            GuiGraphics graphics, int x, int y, Recipe<?> recipe, HolderLookup.Provider registries) {
+        if (recipe instanceof DustTriggerMultiblockRecipe multiblock) {
+            drawBlueprintPreview(graphics, x + 8, y + 8, multiblock.blueprintId(), 15.0F, 15.0F, 4.0F, -35.0F);
+            return;
+        }
+        ItemStack result = displayResultOf(recipe, registries);
+        if (!result.isEmpty()) {
+            renderDisplayItem(graphics, result, x, y);
+        }
+    }
+
+    public static void renderDisplayItem(GuiGraphics graphics, ItemStack stack, int x, int y) {
+        if (stack.is(TCBlocks.THAUMATORIUM.get().asItem())) {
+            renderBlockPreview(
+                    graphics,
+                    x + 8,
+                    y + 8,
+                    Map.of(
+                            BlockPos.ZERO,
+                            TCBlocks.THAUMATORIUM
+                                    .get()
+                                    .defaultBlockState()
+                                    .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST)),
+                    15.0F,
+                    15.0F,
+                    4.0F,
+                    -35.0F);
+            return;
+        }
+        graphics.renderItem(stack, x, y);
+    }
+
+    public static ItemStack displayResultOf(Recipe<?> recipe, HolderLookup.Provider registries) {
+        if (recipe instanceof IInfusionRecipe infusion) {
+            return infusion.resultItem();
+        }
+        return resultOf(recipe, registries);
+    }
+
+    private static void drawBlueprintPreview(
+            GuiGraphics graphics,
+            float centerX,
+            float centerY,
+            ResourceLocation blueprintId,
+            float maxWidth,
+            float maxHeight,
+            float maxScale,
+            float rotation) {
         Blueprint blueprint = lookupBlueprint(blueprintId);
         if (blueprint == null) {
             return;
         }
-        int dx = blueprint.xSize();
-        int dy = blueprint.ySize();
-        int dz = blueprint.zSize();
-        int minPy = -(dx - 1) * PREVIEW_CELL_HALF_STRIDE;
-        int maxPy = (dz - 1) * PREVIEW_CELL_HALF_STRIDE + (dy - 1) * PREVIEW_LAYER_STRIDE;
-        int unscaledWidth = (dx + dz - 1) * PREVIEW_CELL_STRIDE + PREVIEW_CELL_STRIDE;
-        int unscaledHeight = maxPy - minPy + PREVIEW_CELL_STRIDE;
-        float scale = Math.min(
-                1.0F,
-                Math.min(
-                        (float) (PREVIEW_HALF_WIDTH * 2) / unscaledWidth,
-                        (float) (PREVIEW_BOTTOM - PREVIEW_TOP) / unscaledHeight));
-        float originX = cx - unscaledWidth * scale / 2.0F;
-        float originY =
-                cy + PREVIEW_TOP + (PREVIEW_BOTTOM - PREVIEW_TOP - unscaledHeight * scale) / 2.0F - minPy * scale;
-        graphics.pose().pushPose();
-        graphics.pose().translate(originX, originY, 0);
-        graphics.pose().scale(scale, scale, 1F);
-        List<PreviewCell> layer = new ArrayList<>();
-        for (int j = 0; j < dy; j++) {
-            layer.clear();
-            for (int k = dz - 1; k >= 0; k--) {
-                for (int i = dx - 1; i >= 0; i--) {
-                    BlueprintPart part = blueprint.cell(j, i, k);
-                    if (part == null || part.source().getRepresentations().isEmpty()) {
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        for (int y = 0; y < blueprint.ySize(); y++) {
+            for (int x = 0; x < blueprint.xSize(); x++) {
+                for (int z = 0; z < blueprint.zSize(); z++) {
+                    BlueprintPart part = blueprint.cell(y, x, z);
+                    if (part == null) {
                         continue;
                     }
-                    int px = i * PREVIEW_CELL_STRIDE + k * PREVIEW_CELL_STRIDE;
-                    int py = -i * PREVIEW_CELL_HALF_STRIDE + k * PREVIEW_CELL_HALF_STRIDE + j * PREVIEW_LAYER_STRIDE;
-                    ItemStack stack = pickRotating(part.source().getRepresentations(), j * dx * dz + k * dx + i);
-                    if (!stack.isEmpty()) {
-                        layer.add(new PreviewCell(px, py, stack));
-                    }
+                    int previewY = -y + blueprint.ySize() - 1;
+                    blocks.put(new BlockPos(x, previewY, z), part.source().getState());
                 }
             }
-            layer.sort(Comparator.comparingInt(PreviewCell::py));
-            for (PreviewCell cell : layer) {
-                graphics.renderItem(cell.stack(), cell.px(), cell.py());
-            }
         }
-        graphics.pose().popPose();
+        if (blocks.isEmpty()) {
+            return;
+        }
+
+        renderBlockPreview(graphics, centerX, centerY, blocks, maxWidth, maxHeight, maxScale, rotation);
     }
 
-    private record PreviewCell(int px, int py, ItemStack stack) {}
+    public static void renderBlockPreview(
+            GuiGraphics graphics,
+            float centerX,
+            float centerY,
+            Map<BlockPos, BlockState> blocks,
+            float maxWidth,
+            float maxHeight,
+            float maxScale,
+            float rotation) {
+        if (blocks.isEmpty()) {
+            return;
+        }
+        int minX = blocks.keySet().stream().mapToInt(BlockPos::getX).min().orElseThrow();
+        int minY = blocks.keySet().stream().mapToInt(BlockPos::getY).min().orElseThrow();
+        int minZ = blocks.keySet().stream().mapToInt(BlockPos::getZ).min().orElseThrow();
+        int maxX = blocks.keySet().stream().mapToInt(BlockPos::getX).max().orElseThrow();
+        int maxY = blocks.keySet().stream().mapToInt(BlockPos::getY).max().orElseThrow();
+        int maxZ = blocks.keySet().stream().mapToInt(BlockPos::getZ).max().orElseThrow();
+        float structureCenterX = (minX + maxX + 1) / 2.0F;
+        float structureCenterY = (minY + maxY + 1) / 2.0F;
+        float structureCenterZ = (minZ + maxZ + 1) / 2.0F;
+        float width = maxX - minX + 1;
+        float height = maxY - minY + 1;
+        float depth = maxZ - minZ + 1;
+        float projectedWidth = (width + depth) * 0.71F;
+        float projectedHeight = height * 0.91F + (width + depth) * 0.3F;
+        float scale = Math.min(maxScale, Math.min(maxWidth / projectedWidth, maxHeight / projectedHeight));
+        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+        MultiBufferSource.BufferSource buffers = graphics.bufferSource();
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(centerX, centerY, CONSTRUCT_PREVIEW_DEPTH);
+        pose.scale(scale, -scale, scale);
+        pose.mulPose(Axis.XP.rotationDegrees(CONSTRUCT_PREVIEW_ROT_X));
+        pose.mulPose(Axis.YP.rotationDegrees(rotation));
+        pose.translate(-structureCenterX, -structureCenterY, -structureCenterZ);
+        Lighting.setupFor3DItems();
+        for (Map.Entry<BlockPos, BlockState> entry : blocks.entrySet()) {
+            BlockPos pos = entry.getKey();
+            pose.pushPose();
+            pose.translate(pos.getX(), pos.getY(), pos.getZ());
+            BlockState state = entry.getValue();
+            if (state.is(TCBlocks.INFUSION_MATRIX.get())) {
+                Minecraft.getInstance()
+                        .getBlockEntityRenderDispatcher()
+                        .renderItem(MATRIX_PREVIEW, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            } else {
+                dispatcher.renderSingleBlock(state, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
+            pose.popPose();
+        }
+        buffers.endBatch();
+        Lighting.setupForFlatItems();
+        pose.popPose();
+    }
 
     private static void drawKindLabel(GuiGraphics graphics, Font font, int cx, int cy, String key) {
         Component text = Component.translatable(key);

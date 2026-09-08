@@ -39,13 +39,17 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,7 +66,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
@@ -1101,7 +1109,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 slotY += space;
                 continue;
             }
-            ItemStack result = RecipeDisplayWidget.resultOf(displays.get(0).value(), minecraft.level.registryAccess());
+            Recipe<?> recipe = displays.get(0).value();
+            ItemStack result = RecipeDisplayWidget.displayResultOf(recipe, minecraft.level.registryAccess());
             int x = sw + RECIPE_BOOKMARK_OFFSET_X;
             int shJitter = rng.nextInt(3);
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
@@ -1131,11 +1140,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
-            if (!result.isEmpty()) {
-                graphics.renderItem(result, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le, slotY - 1);
-                if (hoverState) {
-                    DeferredTooltip.setItem(result, mouseX, mouseY);
-                }
+            RecipeDisplayWidget.renderBookmarkIcon(
+                    graphics,
+                    x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le,
+                    slotY - 1,
+                    recipe,
+                    minecraft.level.registryAccess());
+            if (hoverState && !result.isEmpty()) {
+                DeferredTooltip.setItem(result, mouseX, mouseY);
             }
             slotY += space;
         }
@@ -1169,10 +1181,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
-            ItemStack icon = entryIconStack();
-            if (!icon.isEmpty()) {
-                graphics.renderItem(icon, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le, slotY - 1);
-            }
+            renderConstructBookmark(
+                    graphics,
+                    stage.construct().orElseThrow(),
+                    x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le,
+                    slotY + 7);
             if (hoverState) {
                 DeferredTooltip.set(Component.translatable("recipe.type.construct"), mouseX, mouseY);
             }
@@ -1187,6 +1200,29 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    private static void renderConstructBookmark(
+            GuiGraphics graphics, ResearchConstruct construct, int centerX, int centerY) {
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        long gameTime = Minecraft.getInstance().level == null
+                ? 0L
+                : Minecraft.getInstance().level.getGameTime();
+        int count = 0;
+        for (int y = 0; y < construct.ySize(); y++) {
+            for (int z = construct.zSize() - 1; z >= 0; z--) {
+                for (int x = construct.xSize() - 1; x >= 0; x--) {
+                    ItemStack stack = resolveConstructCell(construct.cells().get(count++), gameTime);
+                    Block block = Block.byItem(stack.getItem());
+                    if (block != Blocks.AIR) {
+                        blocks.put(new BlockPos(x, construct.ySize() - y - 1, z), block.defaultBlockState());
+                    }
+                }
+            }
+        }
+        if (!blocks.isEmpty()) {
+            RecipeDisplayWidget.renderBlockPreview(graphics, centerX, centerY, blocks, 15.0F, 15.0F, 4.0F, -35.0F);
+        }
     }
 
     private void renderRecipePage(GuiGraphics graphics, int mouseX, int mouseY) {

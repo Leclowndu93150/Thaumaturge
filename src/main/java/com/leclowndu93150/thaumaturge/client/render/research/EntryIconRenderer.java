@@ -179,7 +179,7 @@ public final class EntryIconRenderer {
     public static void drawResearchIcon(GuiGraphics graphics, int iconX, int iconY, Object icon, boolean locked) {
         if (icon instanceof ItemStack stack) {
             if (stack.isEmpty()) return;
-            graphics.renderItem(stack, iconX, iconY);
+            RecipeDisplayWidget.renderDisplayItem(graphics, stack, iconX, iconY);
             if (locked) {
                 graphics.fill(iconX, iconY, iconX + ICON_TEX_SIZE, iconY + ICON_TEX_SIZE, LOCKED_ICON_OVERLAY);
             }
