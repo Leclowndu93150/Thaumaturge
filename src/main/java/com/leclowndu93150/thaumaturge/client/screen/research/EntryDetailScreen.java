@@ -39,13 +39,17 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,7 +66,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
@@ -291,6 +299,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private @Nullable ResourceLocation shownRecipe;
     private boolean showingConstruct;
     private int recipePage;
+    private float constructRotation = Float.NaN;
+    private float constructRotationOffset;
+    private int visibleConstructLayer = -1;
+    private boolean rotatingConstruct;
     private int aspectsPage;
     private boolean flagsCleared;
     private boolean hold;
@@ -1101,7 +1113,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 slotY += space;
                 continue;
             }
-            ItemStack result = RecipeDisplayWidget.resultOf(displays.get(0).value(), minecraft.level.registryAccess());
+            Recipe<?> recipe = displays.get(0).value();
+            ItemStack result = RecipeDisplayWidget.displayResultOf(recipe, minecraft.level.registryAccess());
             int x = sw + RECIPE_BOOKMARK_OFFSET_X;
             int shJitter = rng.nextInt(3);
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
@@ -1131,11 +1144,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
-            if (!result.isEmpty()) {
-                graphics.renderItem(result, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le, slotY - 1);
-                if (hoverState) {
-                    DeferredTooltip.setItem(result, mouseX, mouseY);
-                }
+            RecipeDisplayWidget.renderBookmarkIcon(
+                    graphics,
+                    x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le,
+                    slotY - 1,
+                    recipe,
+                    minecraft.level.registryAccess());
+            if (hoverState && !result.isEmpty()) {
+                DeferredTooltip.setItem(result, mouseX, mouseY);
             }
             slotY += space;
         }
@@ -1169,10 +1185,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
-            ItemStack icon = entryIconStack();
-            if (!icon.isEmpty()) {
-                graphics.renderItem(icon, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le, slotY - 1);
-            }
+            renderConstructBookmark(
+                    graphics,
+                    stage.construct().orElseThrow(),
+                    x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le,
+                    slotY + 7);
             if (hoverState) {
                 DeferredTooltip.set(Component.translatable("recipe.type.construct"), mouseX, mouseY);
             }
@@ -1187,6 +1204,29 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    private static void renderConstructBookmark(
+            GuiGraphics graphics, ResearchConstruct construct, int centerX, int centerY) {
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        long gameTime = Minecraft.getInstance().level == null
+                ? 0L
+                : Minecraft.getInstance().level.getGameTime();
+        int count = 0;
+        for (int y = 0; y < construct.ySize(); y++) {
+            for (int z = construct.zSize() - 1; z >= 0; z--) {
+                for (int x = construct.xSize() - 1; x >= 0; x--) {
+                    ItemStack stack = resolveConstructCell(construct.cells().get(count++), gameTime);
+                    Block block = Block.byItem(stack.getItem());
+                    if (block != Blocks.AIR) {
+                        blocks.put(new BlockPos(x, construct.ySize() - y - 1, z), block.defaultBlockState());
+                    }
+                }
+            }
+        }
+        if (!blocks.isEmpty()) {
+            RecipeDisplayWidget.renderBlockPreview(graphics, centerX, centerY, blocks, 15.0F, 15.0F, 4.0F, -35.0F);
+        }
     }
 
     private void renderRecipePage(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -1215,7 +1255,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int cy = paperY + 128;
         int gridW = RecipeDisplayWidget.width();
         int gridH = RecipeDisplayWidget.height();
-        RecipeDisplayWidget.renderCrafting(graphics, cx - gridW / 2, cy - gridH / 2, current, gameTime);
+        RecipeDisplayWidget.renderCrafting(
+                graphics,
+                cx - gridW / 2,
+                cy - gridH / 2,
+                current,
+                gameTime,
+                currentConstructRotation(),
+                visibleConstructLayer);
         ItemStack hover = RecipeDisplayWidget.hoverStackForDisplay(
                 cx - gridW / 2, cy - gridH / 2, current, gameTime, mouseX, mouseY);
         if (hover != null && !hover.isEmpty()) {
@@ -1917,10 +1964,32 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 return true;
             }
             if (shownRecipe != null) {
+                List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
+                if (!displays.isEmpty()) {
+                    Recipe<?> recipe = displays.get(Math.min(recipePage, displays.size() - 1))
+                            .value();
+                    int previewCenterX = (width - 256) / 2 + 128;
+                    int previewCenterY = (height - 256) / 2 + 128;
+                    int layerCount = RecipeDisplayWidget.multiblockLayerCount(recipe);
+                    int layerDelta = RecipeDisplayWidget.layerControlAt(
+                            previewCenterX, previewCenterY, visibleConstructLayer, layerCount, mx, my);
+                    if (layerDelta != 0 && layerCount > 1) {
+                        visibleConstructLayer =
+                                Math.floorMod(visibleConstructLayer + 1 + layerDelta, layerCount + 1) - 1;
+                        return true;
+                    }
+                    if (RecipeDisplayWidget.isMultiblockRecipe(recipe)
+                            && RecipeDisplayWidget.isMultiblockPreview(previewCenterX, previewCenterY, mx, my)) {
+                        rotatingConstruct = true;
+                        if (Float.isNaN(constructRotation)) {
+                            constructRotation = currentConstructRotation();
+                        }
+                        return true;
+                    }
+                }
                 int recipeNavLeftX = sw + 38;
                 int recipeNavRightX = sw + 205;
                 int recipeNavY = sh + 192;
-                List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
                 int max = displays.size() - 1;
                 if (recipePage > 0
                         && mx >= recipeNavLeftX
@@ -1928,6 +1997,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
                     recipePage--;
+                    resetConstructPreview();
                     playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
@@ -1937,6 +2007,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
                     recipePage++;
+                    resetConstructPreview();
                     playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
@@ -1950,6 +2021,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 } else {
                     shownRecipe = rid;
                 }
+                resetConstructPreview();
                 showingAspects = false;
                 showingKnowledge = false;
                 showingConstruct = false;
@@ -1981,6 +2053,43 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (button == 0 && rotatingConstruct) {
+            constructRotation += (float) dragX;
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0 && rotatingConstruct) {
+            rotatingConstruct = false;
+            constructRotationOffset = constructRotation - automaticConstructRotation();
+            constructRotation = Float.NaN;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    private void resetConstructPreview() {
+        constructRotation = Float.NaN;
+        constructRotationOffset = 0.0F;
+        visibleConstructLayer = -1;
+        rotatingConstruct = false;
+    }
+
+    private float currentConstructRotation() {
+        return Float.isNaN(constructRotation)
+                ? automaticConstructRotation() + constructRotationOffset
+                : constructRotation;
+    }
+
+    private static float automaticConstructRotation() {
+        return (System.currentTimeMillis() / 50L % 720L) * 0.5F;
     }
 
     private boolean handleRecipeIngredientClick(double mx, double my) {
