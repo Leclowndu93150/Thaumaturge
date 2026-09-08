@@ -55,8 +55,8 @@ public final class ThaumaturgeCommonConfig {
         builder.push("nodes");
 
         WILD_NODE_CHANCE = builder.comment(
-                        "Chance from 0 to 100 for a wild node placement attempt in each Overworld chunk. 4 means 4%, or about one attempt per 25 chunks. 0 disables this source.")
-                .defineInRange("wildSpawnChance", 4.0, 0.0, 100.0);
+                        "Chance from 0 to 100 for a wild node placement attempt in each Overworld chunk. 2.7778 means 2.7778%, or about one attempt per 36 chunks, matching Thaumcraft 4. 0 disables this source.")
+                .defineInRange("wildSpawnChance", 100.0 / 36.0, 0.0, 100.0);
         MAGICAL_NODE_CHANCE = builder.comment(
                         "Additional chance from 0 to 100 in each Magical Forest chunk. This stacks with wildSpawnChance. 8.333 means roughly one additional attempt per 12 chunks.")
                 .defineInRange("magicalBonusSpawnChance", 100.0 / 12.0, 0.0, 100.0);
@@ -64,22 +64,25 @@ public final class ThaumaturgeCommonConfig {
                         "Additional chance from 0 to 100 in each Eerie biome chunk. This stacks with wildSpawnChance and its node is always dark. 12.5 means one attempt per 8 chunks.")
                 .defineInRange("eerieBonusSpawnChance", 12.5, 0.0, 100.0);
         NETHER_NODE_CHANCE = builder.comment(
-                        "Chance from 0 to 100 for a node placement attempt in each Nether chunk. 2.5 means one attempt per 40 chunks. 0 disables Nether nodes.")
-                .defineInRange("netherSpawnChance", 2.5, 0.0, 100.0);
+                        "Chance from 0 to 100 for a node placement attempt in each Nether chunk. 2.7778 means one attempt per 36 chunks, matching Thaumcraft 4. 0 disables Nether nodes.")
+                .defineInRange("netherSpawnChance", 100.0 / 36.0, 0.0, 100.0);
 
         builder.comment(
-                        "The following values are percentages among ordinary random nodes. Their default total is 6.6667%, leaving 93.3333% normal nodes. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
+                        "The following values are percentages among ordinary random nodes. Their default total is 5.5556%, leaving 94.4444% normal nodes, matching Thaumcraft 4. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
                 .push("types");
 
-        DARK_NODE_CHANCE = builder.comment("Dark-node percentage, from 0 to 100. Default: 2%.")
-                .defineInRange("darkChance", 2.0, 0.0, 100.0);
-        UNSTABLE_NODE_CHANCE = builder.comment("Unstable-node percentage, from 0 to 100. Default: 2%.")
-                .defineInRange("unstableChance", 2.0, 0.0, 100.0);
-        PURE_NODE_CHANCE = builder.comment("Pure-node percentage, from 0 to 100. Default: 2%.")
-                .defineInRange("pureChance", 2.0, 0.0, 100.0);
+        DARK_NODE_CHANCE = builder.comment(
+                        "Dark-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+                .defineInRange("darkChance", 100.0 / 60.0, 0.0, 100.0);
+        UNSTABLE_NODE_CHANCE = builder.comment(
+                        "Unstable-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+                .defineInRange("unstableChance", 100.0 / 60.0, 0.0, 100.0);
+        PURE_NODE_CHANCE = builder.comment(
+                        "Pure-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+                .defineInRange("pureChance", 100.0 / 60.0, 0.0, 100.0);
         HUNGRY_NODE_CHANCE = builder.comment(
-                        "Hungry-node percentage, from 0 to 100. Default: 0.6667%, approximately one hungry node per 150 ordinary nodes.")
-                .defineInRange("hungryChance", 2.0 / 3.0, 0.0, 100.0);
+                        "Hungry-node percentage, from 0 to 100. Default: 0.5556%, approximately one hungry node per 180 ordinary nodes, matching Thaumcraft 4.")
+                .defineInRange("hungryChance", 100.0 / 180.0, 0.0, 100.0);
 
         builder.pop(2);
 
