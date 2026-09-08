@@ -1,0 +1,13 @@
+{
+  "family": "thaumaturge:greatwood",
+  "tapering": 0.3,
+  "signal_energy": 20.0,
+  "growth_rate": 0.7,
+  "leaves_properties": "thaumaturge:greatwood",
+  "preferred_climate": "temperate",
+  "climate_tolerance": 0.5,
+  "primitive_sapling": "thaumaturge:sapling_greatwood",
+  "lang_overrides": {
+    "seed": "Greatwood Seed"
+  }
+}

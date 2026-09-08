@@ -1,0 +1,13 @@
+{
+  "common_leaves": "thaumaturge:silverwood",
+  "common_species": "thaumaturge:silverwood",
+  "primitive_log": "thaumaturge:log_silverwood",
+  "primitive_stripped_log": "thaumaturge:stripped_log_silverwood",
+  "max_branch_radius": 8,
+  "texture_overrides": {
+    "branch": "thaumaturge:block/log_silverwood",
+    "branch_top": "thaumaturge:block/log_silverwood_top",
+    "stripped_branch": "thaumaturge:block/stripped_log_silverwood",
+    "stripped_branch_top": "thaumaturge:block/stripped_log_silverwood_top"
+  }
+}

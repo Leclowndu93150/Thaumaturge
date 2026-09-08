@@ -1,0 +1,13 @@
+{
+  "family": "thaumaturge:silverwood",
+  "tapering": 0.3,
+  "signal_energy": 14.0,
+  "growth_rate": 0.65,
+  "leaves_properties": "thaumaturge:silverwood",
+  "preferred_climate": "temperate",
+  "climate_tolerance": 0.45,
+  "primitive_sapling": "thaumaturge:sapling_silverwood",
+  "lang_overrides": {
+    "seed": "Silverwood Seed"
+  }
+}
