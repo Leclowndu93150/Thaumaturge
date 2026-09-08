@@ -28,7 +28,7 @@ import net.minecraft.world.level.material.Fluids;
 import org.jspecify.annotations.Nullable;
 
 public final class NodeGenerator {
-    public static final int DEFAULT_SPECIAL_RARITY = 15;
+    public static final int DEFAULT_SPECIAL_RARITY = 18;
     public static final int DEFAULT_BASE_AURA = 100;
 
     private static final int EXTRA_ASPECT_ROLLS = 3;
