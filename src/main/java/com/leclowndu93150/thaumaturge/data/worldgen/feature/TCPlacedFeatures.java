@@ -54,7 +54,7 @@ public final class TCPlacedFeatures {
     private static final int MAGIC_FOREST_EXTRA_TREE_COUNT = 1;
     private static final int GREATWOOD_RARITY = 25;
     private static final int GREATWOOD_RARE_RARITY = 125;
-    private static final int SILVERWOOD_RARITY = 80;
+    private static final int SILVERWOOD_RARITY = 60;
     private static final int CINDERPEARL_RARITY = 30;
     private static final int CINDERPEARL_TRIES = 18;
     private static final int CINDERPEARL_XZ_SPREAD = 8;
