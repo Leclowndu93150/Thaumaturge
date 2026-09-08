@@ -299,6 +299,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private @Nullable ResourceLocation shownRecipe;
     private boolean showingConstruct;
     private int recipePage;
+    private float constructRotation = Float.NaN;
+    private float constructRotationOffset;
+    private int visibleConstructLayer = -1;
+    private boolean rotatingConstruct;
     private int aspectsPage;
     private boolean flagsCleared;
     private boolean hold;
@@ -1251,7 +1255,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int cy = paperY + 128;
         int gridW = RecipeDisplayWidget.width();
         int gridH = RecipeDisplayWidget.height();
-        RecipeDisplayWidget.renderCrafting(graphics, cx - gridW / 2, cy - gridH / 2, current, gameTime);
+        RecipeDisplayWidget.renderCrafting(
+                graphics,
+                cx - gridW / 2,
+                cy - gridH / 2,
+                current,
+                gameTime,
+                currentConstructRotation(),
+                visibleConstructLayer);
         ItemStack hover = RecipeDisplayWidget.hoverStackForDisplay(
                 cx - gridW / 2, cy - gridH / 2, current, gameTime, mouseX, mouseY);
         if (hover != null && !hover.isEmpty()) {
@@ -1953,10 +1964,32 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 return true;
             }
             if (shownRecipe != null) {
+                List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
+                if (!displays.isEmpty()) {
+                    Recipe<?> recipe = displays.get(Math.min(recipePage, displays.size() - 1))
+                            .value();
+                    int previewCenterX = (width - 256) / 2 + 128;
+                    int previewCenterY = (height - 256) / 2 + 128;
+                    int layerCount = RecipeDisplayWidget.multiblockLayerCount(recipe);
+                    int layerDelta = RecipeDisplayWidget.layerControlAt(
+                            previewCenterX, previewCenterY, visibleConstructLayer, layerCount, mx, my);
+                    if (layerDelta != 0 && layerCount > 1) {
+                        visibleConstructLayer =
+                                Math.floorMod(visibleConstructLayer + 1 + layerDelta, layerCount + 1) - 1;
+                        return true;
+                    }
+                    if (RecipeDisplayWidget.isMultiblockRecipe(recipe)
+                            && RecipeDisplayWidget.isMultiblockPreview(previewCenterX, previewCenterY, mx, my)) {
+                        rotatingConstruct = true;
+                        if (Float.isNaN(constructRotation)) {
+                            constructRotation = currentConstructRotation();
+                        }
+                        return true;
+                    }
+                }
                 int recipeNavLeftX = sw + 38;
                 int recipeNavRightX = sw + 205;
                 int recipeNavY = sh + 192;
-                List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
                 int max = displays.size() - 1;
                 if (recipePage > 0
                         && mx >= recipeNavLeftX
@@ -1964,6 +1997,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
                     recipePage--;
+                    resetConstructPreview();
                     playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
@@ -1973,6 +2007,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
                     recipePage++;
+                    resetConstructPreview();
                     playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
@@ -1986,6 +2021,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 } else {
                     shownRecipe = rid;
                 }
+                resetConstructPreview();
                 showingAspects = false;
                 showingKnowledge = false;
                 showingConstruct = false;
@@ -2017,6 +2053,43 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (button == 0 && rotatingConstruct) {
+            constructRotation += (float) dragX;
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0 && rotatingConstruct) {
+            rotatingConstruct = false;
+            constructRotationOffset = constructRotation - automaticConstructRotation();
+            constructRotation = Float.NaN;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    private void resetConstructPreview() {
+        constructRotation = Float.NaN;
+        constructRotationOffset = 0.0F;
+        visibleConstructLayer = -1;
+        rotatingConstruct = false;
+    }
+
+    private float currentConstructRotation() {
+        return Float.isNaN(constructRotation)
+                ? automaticConstructRotation() + constructRotationOffset
+                : constructRotation;
+    }
+
+    private static float automaticConstructRotation() {
+        return (System.currentTimeMillis() / 50L % 720L) * 0.5F;
     }
 
     private boolean handleRecipeIngredientClick(double mx, double my) {

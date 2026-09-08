@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,8 +35,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -45,6 +50,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -127,6 +133,11 @@ public final class RecipeDisplayWidget {
     private static final float CONSTRUCT_PREVIEW_MAX_HEIGHT = 100.0F;
     private static final float CONSTRUCT_PREVIEW_MAX_SCALE = 16.0F;
     private static final float CONSTRUCT_PREVIEW_ROTATION_PER_TICK = 0.5F;
+    private static final int CONSTRUCT_LAYER_CONTROL_Y = 48;
+    private static final int CONSTRUCT_LAYER_CONTROL_W = 12;
+    private static final int CONSTRUCT_LAYER_CONTROL_H = 12;
+    private static final int CONSTRUCT_LAYER_CONTROL_PADDING = 10;
+    private static final int CONSTRUCT_LAYER_CONTROL_TEXT_COLOR = 0xFF000000;
     private static final BlockEntityInfusionMatrix MATRIX_PREVIEW = new BlockEntityInfusionMatrix(
             BlockPos.ZERO, TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
 
@@ -141,6 +152,17 @@ public final class RecipeDisplayWidget {
     }
 
     public static void renderCrafting(GuiGraphics graphics, int x, int y, RecipeHolder<?> holder, long gameTime) {
+        renderCrafting(graphics, x, y, holder, gameTime, Float.NaN, -1);
+    }
+
+    public static void renderCrafting(
+            GuiGraphics graphics,
+            int x,
+            int y,
+            RecipeHolder<?> holder,
+            long gameTime,
+            float constructRotation,
+            int visibleConstructLayer) {
         int cx = x + CENTER_OFFSET;
         int cy = y + CENTER_OFFSET;
         Recipe<?> recipeValue = holder.value();
@@ -153,7 +175,7 @@ public final class RecipeDisplayWidget {
             return;
         }
         if (recipeValue instanceof DustTriggerMultiblockRecipe multiblock) {
-            drawConstructPage(graphics, cx, cy, multiblock);
+            drawConstructPage(graphics, cx, cy, multiblock, constructRotation, visibleConstructLayer);
             return;
         }
         Layout layout = collect(holder, registries());
@@ -607,7 +629,13 @@ public final class RecipeDisplayWidget {
         graphics.drawString(font, text, cx - offset / 2, cy + INFUSION_INSTABILITY_Y, LABEL_COLOR, false);
     }
 
-    private static void drawConstructPage(GuiGraphics graphics, int cx, int cy, DustTriggerMultiblockRecipe display) {
+    private static void drawConstructPage(
+            GuiGraphics graphics,
+            int cx,
+            int cy,
+            DustTriggerMultiblockRecipe display,
+            float rotation,
+            int visibleLayer) {
         Font font = Minecraft.getInstance().font;
         drawKindLabel(graphics, font, cx, cy, "recipe.type.construct");
         drawSlotFrame(graphics, cx, cy);
@@ -623,7 +651,9 @@ public final class RecipeDisplayWidget {
                 CONSTRUCT_PREVIEW_MAX_WIDTH,
                 CONSTRUCT_PREVIEW_MAX_HEIGHT,
                 CONSTRUCT_PREVIEW_MAX_SCALE,
-                (System.currentTimeMillis() / 50L % 720L) * CONSTRUCT_PREVIEW_ROTATION_PER_TICK);
+                rotationForPreview(rotation),
+                visibleLayer);
+        renderLayerControls(graphics, cx, cy, visibleLayer, multiblockLayerCount(display));
         List<ItemStack> ingredients = blueprintIngredients(display.blueprintId());
         for (int a = 0; a < ingredients.size(); a++) {
             int ix = cx + CONSTRUCT_INGREDIENT_X + a * CONSTRUCT_INGREDIENT_STRIDE;
@@ -635,6 +665,10 @@ public final class RecipeDisplayWidget {
     public static void renderBookmarkIcon(
             GuiGraphics graphics, int x, int y, Recipe<?> recipe, HolderLookup.Provider registries) {
         if (recipe instanceof DustTriggerMultiblockRecipe multiblock) {
+            if (multiblock.result().is(TCBlocks.THAUMATORIUM.get().asItem())) {
+                renderDisplayItem(graphics, multiblock.result(), x, y);
+                return;
+            }
             drawBlueprintPreview(graphics, x + 8, y + 8, multiblock.blueprintId(), 15.0F, 15.0F, 4.0F, -35.0F);
             return;
         }
@@ -642,6 +676,39 @@ public final class RecipeDisplayWidget {
         if (!result.isEmpty()) {
             renderDisplayItem(graphics, result, x, y);
         }
+    }
+
+    public static boolean isMultiblockRecipe(Recipe<?> recipe) {
+        return recipe instanceof DustTriggerMultiblockRecipe;
+    }
+
+    public static int multiblockLayerCount(Recipe<?> recipe) {
+        return recipe instanceof DustTriggerMultiblockRecipe multiblock ? multiblockLayerCount(multiblock) : 0;
+    }
+
+    public static boolean isMultiblockPreview(int centerX, int centerY, double mouseX, double mouseY) {
+        return mouseX >= centerX - CONSTRUCT_PREVIEW_MAX_WIDTH / 2.0F
+                && mouseX < centerX + CONSTRUCT_PREVIEW_MAX_WIDTH / 2.0F
+                && mouseY >= centerY + CONSTRUCT_PREVIEW_CENTER_Y - CONSTRUCT_PREVIEW_MAX_HEIGHT / 2.0F
+                && mouseY < centerY + CONSTRUCT_PREVIEW_CENTER_Y + CONSTRUCT_PREVIEW_MAX_HEIGHT / 2.0F;
+    }
+
+    public static int layerControlAt(
+            int centerX, int centerY, int visibleLayer, int layerCount, double mouseX, double mouseY) {
+        int y = centerY + CONSTRUCT_LAYER_CONTROL_Y;
+        if (mouseY < y || mouseY >= y + CONSTRUCT_LAYER_CONTROL_H) {
+            return 0;
+        }
+        int labelWidth = Minecraft.getInstance().font.width(layerLabel(visibleLayer, layerCount));
+        int leftX = centerX - labelWidth / 2 - CONSTRUCT_LAYER_CONTROL_PADDING - CONSTRUCT_LAYER_CONTROL_W;
+        int rightX = centerX + (labelWidth + 1) / 2 + CONSTRUCT_LAYER_CONTROL_PADDING;
+        if (mouseX >= leftX && mouseX < leftX + CONSTRUCT_LAYER_CONTROL_W) {
+            return -1;
+        }
+        if (mouseX >= rightX && mouseX < rightX + CONSTRUCT_LAYER_CONTROL_W) {
+            return 1;
+        }
+        return 0;
     }
 
     public static void renderDisplayItem(GuiGraphics graphics, ItemStack stack, int x, int y) {
@@ -681,10 +748,24 @@ public final class RecipeDisplayWidget {
             float maxHeight,
             float maxScale,
             float rotation) {
+        drawBlueprintPreview(graphics, centerX, centerY, blueprintId, maxWidth, maxHeight, maxScale, rotation, -1);
+    }
+
+    private static void drawBlueprintPreview(
+            GuiGraphics graphics,
+            float centerX,
+            float centerY,
+            ResourceLocation blueprintId,
+            float maxWidth,
+            float maxHeight,
+            float maxScale,
+            float rotation,
+            int visibleLayer) {
         Blueprint blueprint = lookupBlueprint(blueprintId);
         if (blueprint == null) {
             return;
         }
+        Map<BlockPos, BlockState> allBlocks = new HashMap<>();
         Map<BlockPos, BlockState> blocks = new HashMap<>();
         for (int y = 0; y < blueprint.ySize(); y++) {
             for (int x = 0; x < blueprint.xSize(); x++) {
@@ -694,7 +775,12 @@ public final class RecipeDisplayWidget {
                         continue;
                     }
                     int previewY = -y + blueprint.ySize() - 1;
-                    blocks.put(new BlockPos(x, previewY, z), part.source().getState());
+                    BlockPos pos = new BlockPos(x, previewY, z);
+                    BlockState state = part.source().getState();
+                    allBlocks.put(pos, state);
+                    if (visibleLayer < 0 || y >= blueprint.ySize() - visibleLayer - 1) {
+                        blocks.put(pos, state);
+                    }
                 }
             }
         }
@@ -702,7 +788,52 @@ public final class RecipeDisplayWidget {
             return;
         }
 
-        renderBlockPreview(graphics, centerX, centerY, blocks, maxWidth, maxHeight, maxScale, rotation);
+        renderBlockPreview(
+                graphics, centerX, centerY, blocks, maxWidth, maxHeight, maxScale, rotation, boundsOf(allBlocks));
+    }
+
+    private static float rotationForPreview(float rotation) {
+        return Float.isNaN(rotation)
+                ? (System.currentTimeMillis() / 50L % 720L) * CONSTRUCT_PREVIEW_ROTATION_PER_TICK
+                : rotation;
+    }
+
+    private static int multiblockLayerCount(DustTriggerMultiblockRecipe multiblock) {
+        Blueprint blueprint = lookupBlueprint(multiblock.blueprintId());
+        return blueprint == null ? 0 : blueprint.ySize();
+    }
+
+    private static void renderLayerControls(GuiGraphics graphics, int cx, int cy, int visibleLayer, int layerCount) {
+        if (layerCount <= 1) {
+            return;
+        }
+        int y = cy + CONSTRUCT_LAYER_CONTROL_Y;
+        Font font = Minecraft.getInstance().font;
+        String label = layerLabel(visibleLayer, layerCount);
+        int labelWidth = font.width(label);
+        int leftX = cx - labelWidth / 2 - CONSTRUCT_LAYER_CONTROL_PADDING - CONSTRUCT_LAYER_CONTROL_W;
+        int rightX = cx + (labelWidth + 1) / 2 + CONSTRUCT_LAYER_CONTROL_PADDING;
+        graphics.fill(leftX, y, leftX + CONSTRUCT_LAYER_CONTROL_W, y + CONSTRUCT_LAYER_CONTROL_H, 0xFFB8B8B8);
+        graphics.fill(rightX, y, rightX + CONSTRUCT_LAYER_CONTROL_W, y + CONSTRUCT_LAYER_CONTROL_H, 0xFFB8B8B8);
+        graphics.drawString(
+                font,
+                "<",
+                leftX + (CONSTRUCT_LAYER_CONTROL_W - font.width("<")) / 2,
+                y + 2,
+                CONSTRUCT_LAYER_CONTROL_TEXT_COLOR,
+                false);
+        graphics.drawString(
+                font,
+                ">",
+                rightX + (CONSTRUCT_LAYER_CONTROL_W - font.width(">")) / 2,
+                y + 2,
+                CONSTRUCT_LAYER_CONTROL_TEXT_COLOR,
+                false);
+        graphics.drawString(font, label, cx - labelWidth / 2, y + 2, CONSTRUCT_LAYER_CONTROL_TEXT_COLOR, false);
+    }
+
+    private static String layerLabel(int visibleLayer, int layerCount) {
+        return visibleLayer < 0 ? "All layers" : "Layers 1-" + (visibleLayer + 1) + "/" + layerCount;
     }
 
     public static void renderBlockPreview(
@@ -717,18 +848,26 @@ public final class RecipeDisplayWidget {
         if (blocks.isEmpty()) {
             return;
         }
-        int minX = blocks.keySet().stream().mapToInt(BlockPos::getX).min().orElseThrow();
-        int minY = blocks.keySet().stream().mapToInt(BlockPos::getY).min().orElseThrow();
-        int minZ = blocks.keySet().stream().mapToInt(BlockPos::getZ).min().orElseThrow();
-        int maxX = blocks.keySet().stream().mapToInt(BlockPos::getX).max().orElseThrow();
-        int maxY = blocks.keySet().stream().mapToInt(BlockPos::getY).max().orElseThrow();
-        int maxZ = blocks.keySet().stream().mapToInt(BlockPos::getZ).max().orElseThrow();
-        float structureCenterX = (minX + maxX + 1) / 2.0F;
-        float structureCenterY = (minY + maxY + 1) / 2.0F;
-        float structureCenterZ = (minZ + maxZ + 1) / 2.0F;
-        float width = maxX - minX + 1;
-        float height = maxY - minY + 1;
-        float depth = maxZ - minZ + 1;
+        renderBlockPreview(
+                graphics, centerX, centerY, blocks, maxWidth, maxHeight, maxScale, rotation, boundsOf(blocks));
+    }
+
+    private static void renderBlockPreview(
+            GuiGraphics graphics,
+            float centerX,
+            float centerY,
+            Map<BlockPos, BlockState> blocks,
+            float maxWidth,
+            float maxHeight,
+            float maxScale,
+            float rotation,
+            int[] bounds) {
+        float structureCenterX = (bounds[0] + bounds[3] + 1) / 2.0F;
+        float structureCenterY = (bounds[1] + bounds[4] + 1) / 2.0F;
+        float structureCenterZ = (bounds[2] + bounds[5] + 1) / 2.0F;
+        float width = bounds[3] - bounds[0] + 1;
+        float height = bounds[4] - bounds[1] + 1;
+        float depth = bounds[5] - bounds[2] + 1;
         float projectedWidth = (width + depth) * 0.71F;
         float projectedHeight = height * 0.91F + (width + depth) * 0.3F;
         float scale = Math.min(maxScale, Math.min(maxWidth / projectedWidth, maxHeight / projectedHeight));
@@ -751,6 +890,8 @@ public final class RecipeDisplayWidget {
                 Minecraft.getInstance()
                         .getBlockEntityRenderDispatcher()
                         .renderItem(MATRIX_PREVIEW, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            } else if (!state.getFluidState().isEmpty() && Minecraft.getInstance().level != null) {
+                renderFluidPreview(buffers, pose, state);
             } else {
                 dispatcher.renderSingleBlock(state, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             }
@@ -759,6 +900,76 @@ public final class RecipeDisplayWidget {
         buffers.endBatch();
         Lighting.setupForFlatItems();
         pose.popPose();
+    }
+
+    private static void renderFluidPreview(MultiBufferSource.BufferSource buffers, PoseStack pose, BlockState state) {
+        TextureAtlasSprite sprite = state.getFluidState().is(FluidTags.LAVA)
+                ? ModelBakery.LAVA_FLOW.sprite()
+                : ModelBakery.WATER_FLOW.sprite();
+        VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS));
+        float minU = sprite.getU0();
+        float maxU = sprite.getU1();
+        float minV = sprite.getV0();
+        float maxV = sprite.getV1();
+        float height = 0.9F;
+        fluidQuad(consumer, pose, 0, height, 0, 0, height, 1, 1, height, 1, 1, height, 0, minU, minV, maxU, maxV);
+        fluidQuad(consumer, pose, 0, 0, 0, 1, 0, 0, 1, height, 0, 0, height, 0, minU, minV, maxU, maxV);
+        fluidQuad(consumer, pose, 1, 0, 0, 1, 0, 1, 1, height, 1, 1, height, 0, minU, minV, maxU, maxV);
+        fluidQuad(consumer, pose, 1, 0, 1, 0, 0, 1, 0, height, 1, 1, height, 1, minU, minV, maxU, maxV);
+        fluidQuad(consumer, pose, 0, 0, 1, 0, 0, 0, 0, height, 0, 0, height, 1, minU, minV, maxU, maxV);
+    }
+
+    private static void fluidQuad(
+            VertexConsumer consumer,
+            PoseStack pose,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float x3,
+            float y3,
+            float z3,
+            float x4,
+            float y4,
+            float z4,
+            float minU,
+            float minV,
+            float maxU,
+            float maxV) {
+        fluidVertex(consumer, pose, x1, y1, z1, minU, minV);
+        fluidVertex(consumer, pose, x2, y2, z2, minU, maxV);
+        fluidVertex(consumer, pose, x3, y3, z3, maxU, maxV);
+        fluidVertex(consumer, pose, x4, y4, z4, maxU, minV);
+    }
+
+    private static void fluidVertex(
+            VertexConsumer consumer, PoseStack pose, float x, float y, float z, float u, float v) {
+        consumer.addVertex(pose.last(), x, y, z)
+                .setColor(255, 255, 255, 255)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(LightTexture.FULL_BRIGHT)
+                .setNormal(pose.last(), 0.0F, 1.0F, 0.0F);
+    }
+
+    private static int[] boundsOf(Map<BlockPos, BlockState> blocks) {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        for (BlockPos pos : blocks.keySet()) {
+            minX = Math.min(minX, pos.getX());
+            minY = Math.min(minY, pos.getY());
+            minZ = Math.min(minZ, pos.getZ());
+            maxX = Math.max(maxX, pos.getX());
+            maxY = Math.max(maxY, pos.getY());
+            maxZ = Math.max(maxZ, pos.getZ());
+        }
+        return new int[] {minX, minY, minZ, maxX, maxY, maxZ};
     }
 
     private static void drawKindLabel(GuiGraphics graphics, Font font, int cx, int cy, String key) {
