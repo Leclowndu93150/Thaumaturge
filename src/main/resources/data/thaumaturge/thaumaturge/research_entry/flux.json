@@ -21,14 +21,6 @@
       "text": "research.thaumaturge.flux.stage_1"
     }
   ],
-  "addenda": [
-    {
-      "text": "research.thaumaturge.flux.addendum_0",
-      "required_research": [
-        "thaumaturge:f_toomuchflux"
-      ]
-    }
-  ],
   "note_aspects": [
     {
       "aspect": "thaumaturge:vitium",
