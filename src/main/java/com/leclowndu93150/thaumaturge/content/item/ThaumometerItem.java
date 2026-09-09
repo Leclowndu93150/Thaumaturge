@@ -54,6 +54,9 @@ public final class ThaumometerItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        if (player.isShiftKeyDown()) {
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
         return new InteractionResultHolder<>(beginScan(level, player, hand), player.getItemInHand(hand));
     }
 
