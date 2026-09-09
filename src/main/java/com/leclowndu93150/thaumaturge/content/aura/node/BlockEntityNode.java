@@ -26,6 +26,7 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.leclowndu93150.thaumaturge.registry.TCWandParts;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.FillBiomeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -670,6 +672,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             other.wait = other.regeneration / 2;
             other.setChanged();
             serverLevel.sendBlockUpdated(otherPos, other.getBlockState(), other.getBlockState(), 3);
+            serverLevel.playSound(
+                    null, otherPos, TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.1F, 1.0F + random.nextFloat() * 0.2F);
             Effects.arcBolt(serverLevel, Vec3.atCenterOf(otherPos))
                     .to(Vec3.atCenterOf(pos))
                     .width(ZAP_WIDTH)
