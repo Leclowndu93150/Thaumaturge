@@ -16,9 +16,9 @@ import org.jspecify.annotations.Nullable;
 
 public final class MenuResearchTable extends AbstractContainerMenu {
     public static final int SCRIBE_TOOLS_X = 14;
-    public static final int SCRIBE_TOOLS_Y = 10;
+    public static final int SCRIBE_TOOLS_Y = 5;
     public static final int NOTE_X = 70;
-    public static final int NOTE_Y = 10;
+    public static final int NOTE_Y = 5;
 
     public static final int PLAYER_GRID_X = 48;
     public static final int PLAYER_GRID_Y = 175;
