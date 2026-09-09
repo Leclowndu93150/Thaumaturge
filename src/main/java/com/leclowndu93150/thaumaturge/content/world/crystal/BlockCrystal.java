@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -127,6 +128,23 @@ public final class BlockCrystal extends Block {
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return hasSturdyNeighbour(level, pos);
+    }
+
+    @Override
+    protected BlockState updateShape(
+            BlockState state,
+            Direction direction,
+            BlockState neighbourState,
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighbourPos) {
+        if (hasSturdyNeighbour(level, pos)) {
+            return super.updateShape(state, direction, neighbourState, level, pos, neighbourPos);
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.destroyBlock(pos, true);
+        }
+        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
