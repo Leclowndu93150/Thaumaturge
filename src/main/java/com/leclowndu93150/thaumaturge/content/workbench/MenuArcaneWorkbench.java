@@ -32,6 +32,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     private static final int RESULT_SLOT = 0;
+    private static final int CRAFT_START = 1;
     private static final int CRYSTAL_START = 10;
     private static final int WAND_SLOT = 16;
     private static final int PLAYER_INV_START = 17;
@@ -259,7 +260,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
                     if (stack.isEmpty()) break;
                 }
             }
-            if (!stack.isEmpty()) {
+            if (!stack.isEmpty() && !this.moveItemStackTo(stack, CRAFT_START, CRYSTAL_START, false)) {
                 if (slotIndex < PLAYER_INV_END) {
                     if (!this.moveItemStackTo(stack, HOTBAR_START, HOTBAR_END, false)) {
                         return ItemStack.EMPTY;

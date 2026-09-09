@@ -2,17 +2,26 @@ package com.leclowndu93150.thaumaturge.content.world.plant;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfig> {
     private static final int GRASS_MIN_Y = 30;
     private static final int VISHROOM_MIN_Y = 50;
+    private static final int GIANT_MUSHROOM_GRID_SIZE = 4;
+    private static final int GIANT_MUSHROOM_CHANCE = 40;
     private static final int PLACE_FLAGS = 19;
+    private static final HugeMushroomFeatureConfiguration HUGE_BROWN_MUSHROOM = new HugeMushroomFeatureConfiguration(
+            BlockStateProvider.simple(Blocks.BROWN_MUSHROOM_BLOCK), BlockStateProvider.simple(Blocks.MUSHROOM_STEM), 3);
+    private static final HugeMushroomFeatureConfiguration HUGE_RED_MUSHROOM = new HugeMushroomFeatureConfiguration(
+            BlockStateProvider.simple(Blocks.RED_MUSHROOM_BLOCK), BlockStateProvider.simple(Blocks.MUSHROOM_STEM), 3);
 
     public MagicForestFloraFeature(Codec<MagicForestFloraConfig> codec) {
         super(codec);
@@ -25,6 +34,25 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         MagicForestFloraConfig config = context.config();
         BlockPos origin = context.origin();
         boolean any = false;
+
+        for (int x = 0; x < GIANT_MUSHROOM_GRID_SIZE; x++) {
+            for (int z = 0; z < GIANT_MUSHROOM_GRID_SIZE; z++) {
+                if (random.nextInt(GIANT_MUSHROOM_CHANCE) == 0) {
+                    int blockX = origin.getX() + x * 4 + 1 + random.nextInt(3);
+                    int blockZ = origin.getZ() + z * 4 + 1 + random.nextInt(3);
+                    int blockY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockX, blockZ);
+                    HugeMushroomFeatureConfiguration mushroom =
+                            random.nextBoolean() ? HUGE_BROWN_MUSHROOM : HUGE_RED_MUSHROOM;
+                    any |= (mushroom == HUGE_BROWN_MUSHROOM ? Feature.HUGE_BROWN_MUSHROOM : Feature.HUGE_RED_MUSHROOM)
+                            .place(
+                                    mushroom,
+                                    level,
+                                    context.chunkGenerator(),
+                                    random,
+                                    new BlockPos(blockX, blockY, blockZ));
+                }
+            }
+        }
 
         for (int a = 0; a < config.grassAttempts(); a++) {
             int x = origin.getX() + 4 + random.nextInt(8);
@@ -49,7 +77,10 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
             }
             BlockPos above = pos.above();
             var vishroom = config.vishroom().defaultBlockState();
-            if (level.getBlockState(above).canBeReplaced() && vishroom.canSurvive(level, above)) {
+            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
+                    && level.getBlockState(above).canBeReplaced()
+                    && vishroom.canSurvive(level, above)
+                    && isAdjacentToWood(level, above)) {
                 level.setBlock(above, vishroom, PLACE_FLAGS);
                 any = true;
             }
@@ -59,5 +90,14 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
         return new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
+    }
+
+    private static boolean isAdjacentToWood(WorldGenLevel level, BlockPos pos) {
+        for (BlockPos adjacentPos : BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 1, 1))) {
+            if (!adjacentPos.equals(pos) && level.getBlockState(adjacentPos).is(BlockTags.LOGS)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

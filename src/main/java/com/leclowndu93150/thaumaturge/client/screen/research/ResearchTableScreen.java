@@ -120,7 +120,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     private static final int INK_WARN_Y = 84;
 
     private static final int HELPER_X = 41;
-    private static final int HELPER_Y = 9;
+    private static final int HELPER_Y = 4;
     private static final int HELPER_SIZE = 16;
     private static final int HELPER_ROWS = 7;
     private static final int HELPER_ROW_START_Y = 10;
@@ -160,6 +160,9 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        if (hoveredSlot != null && hoveredSlot.hasItem()) {
+            graphics.renderTooltip(font, hoveredSlot.getItem(), mouseX, mouseY);
+        }
         DeferredTooltip.render(graphics, font);
     }
 

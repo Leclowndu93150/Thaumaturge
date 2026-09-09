@@ -38,6 +38,7 @@ public final class TCFluidTypes {
             () -> new PurifyingFluidType(FluidType.Properties.create()
                     .descriptionId("fluid_type.thaumaturge.purifying")
                     .lightLevel(5)
+                    .canSwim(true)
                     .canConvertToSource(false)
                     .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
                     .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
