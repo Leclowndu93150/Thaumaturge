@@ -6,6 +6,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -17,6 +18,9 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static final int VISHROOM_MIN_Y = 50;
     private static final int GIANT_MUSHROOM_GRID_SIZE = 4;
     private static final int GIANT_MUSHROOM_CHANCE = 40;
+    private static final int FLOWER_ATTEMPTS = 10;
+    private static final int TALL_GRASS_ATTEMPTS = 12;
+    private static final int MUSHROOM_ATTEMPTS = 6;
     private static final int PLACE_FLAGS = 19;
     private static final HugeMushroomFeatureConfiguration HUGE_BROWN_MUSHROOM = new HugeMushroomFeatureConfiguration(
             BlockStateProvider.simple(Blocks.BROWN_MUSHROOM_BLOCK), BlockStateProvider.simple(Blocks.MUSHROOM_STEM), 3);
@@ -51,6 +55,25 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
                                     random,
                                     new BlockPos(blockX, blockY, blockZ));
                 }
+            }
+        }
+
+        for (int a = 0; a < FLOWER_ATTEMPTS; a++) {
+            any |= placePlant(level, random, origin, Blocks.DANDELION.defaultBlockState());
+        }
+
+        for (int a = 0; a < TALL_GRASS_ATTEMPTS; a++) {
+            BlockState grass =
+                    random.nextInt(4) == 0 ? Blocks.FERN.defaultBlockState() : Blocks.TALL_GRASS.defaultBlockState();
+            any |= placePlant(level, random, origin, grass);
+        }
+
+        for (int a = 0; a < MUSHROOM_ATTEMPTS; a++) {
+            if (random.nextInt(4) == 0) {
+                any |= placePlant(level, random, origin, Blocks.BROWN_MUSHROOM.defaultBlockState());
+            }
+            if (random.nextInt(8) == 0) {
+                any |= placePlant(level, random, origin, Blocks.RED_MUSHROOM.defaultBlockState());
             }
         }
 
@@ -90,6 +113,15 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
         return new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
+    }
+
+    private static boolean placePlant(WorldGenLevel level, RandomSource random, BlockPos origin, BlockState state) {
+        int x = origin.getX() + random.nextInt(16);
+        int z = origin.getZ() + random.nextInt(16);
+        BlockPos pos = surfacePos(level, x, z);
+        return level.getBlockState(pos).canBeReplaced()
+                && state.canSurvive(level, pos)
+                && level.setBlock(pos, state, PLACE_FLAGS);
     }
 
     private static boolean isAdjacentToWood(WorldGenLevel level, BlockPos pos) {
