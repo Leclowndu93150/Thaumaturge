@@ -22,6 +22,8 @@ public final class FocusPouchScreen extends AbstractTCContainerScreen<MenuFocusP
 
     public FocusPouchScreen(MenuFocusPouch menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE, WIDTH, HEIGHT);
+        titleLabelY = 31;
+        inventoryLabelY = 137;
     }
 
     @Override
