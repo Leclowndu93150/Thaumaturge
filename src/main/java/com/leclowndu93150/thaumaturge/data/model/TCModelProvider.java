@@ -1261,6 +1261,8 @@ public final class TCModelProvider implements DataProvider {
     private void treeModels() {
         simpleFromExisting(TCBlocks.SAPLING_GREATWOOD.get(), "sapling_greatwood");
         simpleFromExisting(TCBlocks.SAPLING_SILVERWOOD.get(), "sapling_silverwood");
+        flowerPotCross(TCBlocks.POTTED_SAPLING_GREATWOOD.get(), TCBlocks.SAPLING_GREATWOOD.get());
+        flowerPotCross(TCBlocks.POTTED_SAPLING_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get());
         flatItemFromBlock(TCItems.SAPLING_GREATWOOD.get(), TCBlocks.SAPLING_GREATWOOD.get());
         flatItemFromBlock(TCItems.SAPLING_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get());
         simpleFromExisting(TCBlocks.PLANK_GREATWOOD.get(), "plank_greatwood");
@@ -1304,6 +1306,9 @@ public final class TCModelProvider implements DataProvider {
         cross(TCBlocks.PLANT_SHIMMERLEAF.get());
         cross(TCBlocks.PLANT_CINDERPEARL.get());
         cross(TCBlocks.PLANT_VISHROOM.get());
+        flowerPotCross(TCBlocks.POTTED_SHIMMERLEAF.get(), TCBlocks.PLANT_SHIMMERLEAF.get());
+        flowerPotCross(TCBlocks.POTTED_CINDERPEARL.get(), TCBlocks.PLANT_CINDERPEARL.get());
+        flowerPotCross(TCBlocks.POTTED_VISHROOM.get(), TCBlocks.PLANT_VISHROOM.get());
 
         flatItemFromBlock(TCItems.PLANT_SHIMMERLEAF.get(), TCBlocks.PLANT_SHIMMERLEAF.get());
         flatItemFromBlock(TCItems.PLANT_CINDERPEARL.get(), TCBlocks.PLANT_CINDERPEARL.get());
@@ -1331,6 +1336,18 @@ public final class TCModelProvider implements DataProvider {
                     return element;
                 }));
         simpleBlock(block, model);
+    }
+
+    private void flowerPotCross(Block pot, Block plant) {
+        ResourceLocation model = ModelTemplates.FLOWER_POT_CROSS.create(
+                pot,
+                TextureMapping.plant(plant),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        simpleBlock(pot, model);
     }
 
     private void taintModels() {
