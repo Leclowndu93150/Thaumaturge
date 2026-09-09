@@ -1319,7 +1319,7 @@ public final class TCBlocks {
             BlockNode::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.NONE)
-                    .strength(-1.0F, 3600000.0F)
+                    .strength(2.0F, 200.0F)
                     .noOcclusion()
                     .noLootTable()
                     .isValidSpawn((state, level, pos, type) -> false));
