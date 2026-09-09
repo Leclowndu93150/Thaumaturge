@@ -160,6 +160,9 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        if (hoveredSlot != null && hoveredSlot.hasItem()) {
+            graphics.renderTooltip(font, hoveredSlot.getItem(), mouseX, mouseY);
+        }
         DeferredTooltip.render(graphics, font);
     }
 
