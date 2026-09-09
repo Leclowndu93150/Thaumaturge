@@ -548,6 +548,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private static final int NEBULA_BACKGROUND_SIZE = 1024;
     private static final int NEBULA_OVERLAY_SIZE = 512;
+    private static final int BACKGROUND_TEXTURE_SPACE = 256;
 
     private void renderBackgroundLayers(GuiGraphics graphics, int locX, int locY) {
         if (activeCategory == null) return;
@@ -556,7 +557,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         int y = (int) ((START_Y - 2) * screenZoom);
         int w = (int) ((screenX + 4) * screenZoom);
         int h = (int) ((screenY + 4) * screenZoom);
-        blitTiled(
+        blitLegacyBackground(
                 graphics,
                 cat.background(),
                 x,
@@ -565,10 +566,9 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 h,
                 (float) (locX / 2.0),
                 (float) (locY / 2.0),
-                NEBULA_BACKGROUND_SIZE,
-                screenZoom);
+                NEBULA_BACKGROUND_SIZE);
         cat.overlayBackground()
-                .ifPresent(overlay -> blitTiled(
+                .ifPresent(overlay -> blitLegacyBackground(
                         graphics,
                         overlay,
                         x,
@@ -577,11 +577,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                         h,
                         (float) (locX / 1.5),
                         (float) (locY / 1.5),
-                        NEBULA_OVERLAY_SIZE,
-                        screenZoom));
+                        NEBULA_OVERLAY_SIZE));
     }
 
-    private static void blitTiled(
+    /**
+     * Reproduces TC6's research-map background coordinates. Its renderer used a fixed 256-unit texture
+     * space even though the nebula image itself is 1024px, so the full nebula was never enlarged past
+     * its native detail level.
+     */
+    private static void blitLegacyBackground(
             GuiGraphics graphics,
             ResourceLocation texture,
             int x,
@@ -590,19 +594,23 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             int h,
             float offsetU,
             float offsetV,
-            int size,
-            float screenZoom) {
-        float startU = Mth.positiveModulo(offsetU, (float) size);
-        float startV = Mth.positiveModulo(offsetV, (float) size);
+            int size) {
+        float startU = Mth.positiveModulo(offsetU, (float) BACKGROUND_TEXTURE_SPACE);
+        float startV = Mth.positiveModulo(offsetV, (float) BACKGROUND_TEXTURE_SPACE);
+        float scale = (float) BACKGROUND_TEXTURE_SPACE / size;
         RenderSystem.enableBlend();
-        graphics.enableScissor((int) (x / screenZoom), (int) (y / screenZoom), (int) ((x + w) / screenZoom), (int)
-                ((y + h) / screenZoom));
-        for (float ty = y - startV; ty < y + h; ty += size) {
-            for (float tx = x - startU; tx < x + w; tx += size) {
-                graphics.blit(texture, (int) tx, (int) ty, 0.0F, 0.0F, size, size, size, size);
-            }
-        }
-        graphics.disableScissor();
+        graphics.blit(
+                texture,
+                x,
+                y,
+                w,
+                h,
+                startU / scale,
+                startV / scale,
+                Mth.ceil(w / scale),
+                Mth.ceil(h / scale),
+                size,
+                size);
     }
 
     private void renderConnectors(GuiGraphics graphics, int locX, int locY) {
