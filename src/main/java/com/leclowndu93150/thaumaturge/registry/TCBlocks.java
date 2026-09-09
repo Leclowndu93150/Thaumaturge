@@ -116,6 +116,8 @@ import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -971,6 +973,11 @@ public final class TCBlocks {
                     .sound(SoundType.GRASS)
                     .pushReaction(PushReaction.DESTROY));
 
+    public static final DeferredBlock<FlowerPotBlock> POTTED_SAPLING_GREATWOOD =
+            pottedPlant("potted_sapling_greatwood", SAPLING_GREATWOOD);
+    public static final DeferredBlock<FlowerPotBlock> POTTED_SAPLING_SILVERWOOD =
+            pottedPlant("potted_sapling_silverwood", SAPLING_SILVERWOOD);
+
     public static final DeferredBlock<RotatedPillarBlock> LOG_GREATWOOD = BLOCKS.registerBlock(
             "log_greatwood",
             RotatedPillarBlock::new,
@@ -1125,6 +1132,12 @@ public final class TCBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
+    public static final DeferredBlock<FlowerPotBlock> POTTED_SHIMMERLEAF =
+            pottedPlant("potted_shimmerleaf", PLANT_SHIMMERLEAF);
+    public static final DeferredBlock<FlowerPotBlock> POTTED_CINDERPEARL =
+            pottedPlant("potted_cinderpearl", PLANT_CINDERPEARL);
+    public static final DeferredBlock<FlowerPotBlock> POTTED_VISHROOM = pottedPlant("potted_vishroom", PLANT_VISHROOM);
+
     public static final DeferredBlock<BlockGrassAmbient> GRASS_AMBIENT = BLOCKS.registerBlock(
             "grass_ambient",
             BlockGrassAmbient::new,
@@ -1133,6 +1146,22 @@ public final class TCBlocks {
                     .strength(0.6F)
                     .sound(SoundType.GRAVEL)
                     .randomTicks());
+
+    private static DeferredBlock<FlowerPotBlock> pottedPlant(String name, DeferredBlock<? extends Block> plant) {
+        return BLOCKS.registerBlock(
+                name,
+                properties -> new FlowerPotBlock(() -> (FlowerPotBlock) Blocks.FLOWER_POT, plant, properties),
+                BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_OAK_SAPLING));
+    }
+
+    private static void registerPottedPlants() {
+        FlowerPotBlock flowerPot = (FlowerPotBlock) Blocks.FLOWER_POT;
+        flowerPot.addPlant(SAPLING_GREATWOOD.getId(), POTTED_SAPLING_GREATWOOD);
+        flowerPot.addPlant(SAPLING_SILVERWOOD.getId(), POTTED_SAPLING_SILVERWOOD);
+        flowerPot.addPlant(PLANT_SHIMMERLEAF.getId(), POTTED_SHIMMERLEAF);
+        flowerPot.addPlant(PLANT_CINDERPEARL.getId(), POTTED_CINDERPEARL);
+        flowerPot.addPlant(PLANT_VISHROOM.getId(), POTTED_VISHROOM);
+    }
 
     //
 
@@ -1716,5 +1745,6 @@ public final class TCBlocks {
 
     public static void register(IEventBus modBus) {
         BLOCKS.register(modBus);
+        registerPottedPlants();
     }
 }

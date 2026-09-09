@@ -229,6 +229,8 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.STONE_ANCIENT_DOORWAY.get(), noDrop());
         dropSelf(TCBlocks.SAPLING_GREATWOOD.get());
         dropSelf(TCBlocks.SAPLING_SILVERWOOD.get());
+        add(TCBlocks.POTTED_SAPLING_GREATWOOD.get(), createPotFlowerItemTable(TCBlocks.SAPLING_GREATWOOD.get()));
+        add(TCBlocks.POTTED_SAPLING_SILVERWOOD.get(), createPotFlowerItemTable(TCBlocks.SAPLING_SILVERWOOD.get()));
         dropSelf(TCBlocks.LOG_GREATWOOD.get());
         dropSelf(TCBlocks.LOG_SILVERWOOD.get());
         dropSelf(TCBlocks.WOOD_GREATWOOD.get());
@@ -248,6 +250,9 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.PLANT_SHIMMERLEAF.get());
         dropSelf(TCBlocks.PLANT_CINDERPEARL.get());
         dropSelf(TCBlocks.PLANT_VISHROOM.get());
+        add(TCBlocks.POTTED_SHIMMERLEAF.get(), createPotFlowerItemTable(TCBlocks.PLANT_SHIMMERLEAF.get()));
+        add(TCBlocks.POTTED_CINDERPEARL.get(), createPotFlowerItemTable(TCBlocks.PLANT_CINDERPEARL.get()));
+        add(TCBlocks.POTTED_VISHROOM.get(), createPotFlowerItemTable(TCBlocks.PLANT_VISHROOM.get()));
         add(TCBlocks.GRASS_AMBIENT.get(), block -> createSingleItemTableWithSilkTouch(block, Blocks.DIRT));
         dropSelf(TCBlocks.TAINT_ROCK.get());
         dropSelf(TCBlocks.TAINT_SOIL.get());
