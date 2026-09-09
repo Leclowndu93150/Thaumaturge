@@ -100,7 +100,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
             poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-            poseStack.translate(-0.17F, 0.1F, -0.15F);
+            poseStack.translate(0.150F, 0.095F, -0.230F);
             poseStack.mulPose(Axis.YP.rotationDegrees(15.0F));
             poseStack.scale(0.5F, 0.5F, 0.5F);
             itemIn2D(poseStack.last(), buffers.getBuffer(RenderType.entityCutout(QUILL_TEXTURE)), light);
