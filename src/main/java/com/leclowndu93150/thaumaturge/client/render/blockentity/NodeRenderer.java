@@ -64,7 +64,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final int TRANSLUCENT_BLEND = 771;
     private static final float TRANSLUCENT_ALPHA_BOOST = 1.5F;
     private static final float WHITE_ALPHA_CLAMP = 1.0F;
-    private static final float HIDDEN_BRIGHTNESS_MULTIPLIER = 0.18F;
+    private static final float HIDDEN_BRIGHTNESS_MULTIPLIER = 0.10F;
     private static final float REVEALED_BRIGHTNESS_MULTIPLIER = 0.5F;
     private static final float DRAIN_LINE_SPEED = -0.02F;
     private static final float DRAIN_LINE_WIDTH = 0.15F;
