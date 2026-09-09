@@ -1314,7 +1314,13 @@ public final class TCModelProvider implements DataProvider {
         flatItemFromBlock(TCItems.PLANT_CINDERPEARL.get(), TCBlocks.PLANT_CINDERPEARL.get());
         flatItemFromBlock(TCItems.PLANT_VISHROOM.get(), TCBlocks.PLANT_VISHROOM.get());
 
-        ResourceLocation grassModel = ResourceLocation.withDefaultNamespace("block/grass_block");
+        ResourceLocation grassModel = TCIds.rl("block/grass_ambient");
+        modelOutput.accept(grassModel, () -> {
+            JsonObject model = new JsonObject();
+            model.addProperty("parent", "minecraft:block/grass_block");
+            model.addProperty("render_type", "minecraft:cutout_mipped");
+            return model;
+        });
         simpleBlock(TCBlocks.GRASS_AMBIENT.get(), grassModel);
         delegateItem(TCItems.GRASS_AMBIENT.get(), grassModel);
     }
