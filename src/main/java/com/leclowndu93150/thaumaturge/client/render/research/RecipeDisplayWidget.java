@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
+import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
@@ -426,6 +427,14 @@ public final class RecipeDisplayWidget {
         }
         if (recipe instanceof ArcaneShapelessCraftingRecipe arcane) {
             return collectArcaneShapeless(arcane, reg);
+        }
+        if (recipe instanceof SalisMundusRecipe) {
+            return new Layout(
+                    Kind.WORKBENCH_SHAPELESS,
+                    linearSlots(SalisMundusRecipe.displayIngredients()),
+                    resultOf(recipe, reg),
+                    0,
+                    List.of());
         }
         if (recipe instanceof ShapedRecipe shaped) {
             return collectShaped(shaped, reg);

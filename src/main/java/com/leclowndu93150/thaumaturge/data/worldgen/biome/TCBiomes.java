@@ -84,17 +84,12 @@ public final class TCBiomes {
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placed, carvers);
         globalGeneration(generation);
         generation.addFeature(GenerationStep.Decoration.LOCAL_MODIFICATIONS, MiscOverworldPlacements.FOREST_ROCK);
-        BiomeDefaultFeatures.addForestFlowers(generation);
-        BiomeDefaultFeatures.addFerns(generation);
         BiomeDefaultFeatures.addDefaultOres(generation);
         BiomeDefaultFeatures.addDefaultSoftDisks(generation);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.TREES_MAGIC_FOREST);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGIC_FOREST_FLORA);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MANA_PODS);
-        BiomeDefaultFeatures.addDefaultFlowers(generation);
-        BiomeDefaultFeatures.addForestGrass(generation);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_WATERLILY);
-        BiomeDefaultFeatures.addDefaultMushrooms(generation);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation);
 
         return new Biome.BiomeBuilder()

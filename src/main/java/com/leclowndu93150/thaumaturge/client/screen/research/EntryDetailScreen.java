@@ -112,6 +112,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int CHECKMARK_V = 207;
     private static final int CHECKMARK_SIZE = 10;
     private static final int CHECKMARK_OFFSET_X = 8;
+    private static final int CHECKMARK_DEPTH = 300;
 
     private static final int REQ_TOP_Y_OFFSET = 210 - 16;
     private static final int REQ_ROW_STEP = 18;
@@ -800,18 +801,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req);
             satisfied[i] = met;
             if (met) {
-                GuiBlend.blitTinted(
-                        graphics,
-                        TCScreenTextures.RESEARCH_BOOK,
-                        slotX + CHECKMARK_OFFSET_X,
-                        y,
-                        (float) CHECKMARK_U,
-                        (float) CHECKMARK_V,
-                        CHECKMARK_SIZE,
-                        CHECKMARK_SIZE,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE,
-                        0xFFFFFFFF);
+                renderCheckmark(graphics, slotX, y);
             }
             if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                 if (!stack.isEmpty()) {
@@ -844,24 +834,31 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean met = knowledge.isResearchComplete(prereq);
             satisfied[i] = met;
             if (met) {
-                GuiBlend.blitTinted(
-                        graphics,
-                        TCScreenTextures.RESEARCH_BOOK,
-                        slotX + CHECKMARK_OFFSET_X,
-                        y,
-                        (float) CHECKMARK_U,
-                        (float) CHECKMARK_V,
-                        CHECKMARK_SIZE,
-                        CHECKMARK_SIZE,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE,
-                        0xFFFFFFFF);
+                renderCheckmark(graphics, slotX, y);
             }
             if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                 DeferredTooltip.set(TCTooltips.prereqEntryName(prereq), mouseX, mouseY);
             }
             shift += spacing;
         }
+    }
+
+    private static void renderCheckmark(GuiGraphics graphics, int slotX, int y) {
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, CHECKMARK_DEPTH);
+        GuiBlend.blitTinted(
+                graphics,
+                TCScreenTextures.RESEARCH_BOOK,
+                slotX + CHECKMARK_OFFSET_X,
+                y,
+                (float) CHECKMARK_U,
+                (float) CHECKMARK_V,
+                CHECKMARK_SIZE,
+                CHECKMARK_SIZE,
+                TCScreenTextures.TEX_SIZE,
+                TCScreenTextures.TEX_SIZE,
+                0xFFFFFFFF);
+        graphics.pose().popPose();
     }
 
     private static int knowledgeSpacing(int rewardCount) {
@@ -934,18 +931,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     DeferredTooltip.set(lines, mouseX, mouseY);
                 }
                 if (met) {
-                    GuiBlend.blitTinted(
-                            graphics,
-                            TCScreenTextures.RESEARCH_BOOK,
-                            slotX + CHECKMARK_OFFSET_X,
-                            y,
-                            (float) CHECKMARK_U,
-                            (float) CHECKMARK_V,
-                            CHECKMARK_SIZE,
-                            CHECKMARK_SIZE,
-                            TCScreenTextures.TEX_SIZE,
-                            TCScreenTextures.TEX_SIZE,
-                            0xFFFFFFFF);
+                    renderCheckmark(graphics, slotX, y);
                 }
             } else {
                 met = observationAfford;
@@ -977,18 +963,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                             DeferredTooltip.set(lines, mouseX, mouseY);
                         }
                         if (have >= instance.amount()) {
-                            GuiBlend.blitTinted(
-                                    graphics,
-                                    TCScreenTextures.RESEARCH_BOOK,
-                                    chipX + CHECKMARK_OFFSET_X,
-                                    y,
-                                    (float) CHECKMARK_U,
-                                    (float) CHECKMARK_V,
-                                    CHECKMARK_SIZE,
-                                    CHECKMARK_SIZE,
-                                    TCScreenTextures.TEX_SIZE,
-                                    TCScreenTextures.TEX_SIZE,
-                                    0xFFFFFFFF);
+                            renderCheckmark(graphics, chipX, y);
                         }
                     } else {
                         GuiBlend.blitTinted(
@@ -1267,6 +1242,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 cx - gridW / 2, cy - gridH / 2, current, gameTime, mouseX, mouseY);
         if (hover != null && !hover.isEmpty()) {
             DeferredTooltip.setItem(hover, mouseX, mouseY);
+        }
+        Component popup =
+                RecipeDisplayWidget.hoverPopupForDisplay(cx - gridW / 2, cy - gridH / 2, current, mouseX, mouseY);
+        if (popup != null) {
+            DeferredTooltip.set(popup, mouseX, mouseY);
         }
         if (displays.size() > 1) {
             float bob = bob();

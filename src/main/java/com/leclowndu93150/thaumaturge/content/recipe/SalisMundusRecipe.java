@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeSerializers;
 import com.mojang.serialization.MapCodec;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -17,8 +18,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.Tags;
 
 public final class SalisMundusRecipe extends CustomRecipe {
     public static final SalisMundusRecipe INSTANCE = new SalisMundusRecipe();
@@ -31,6 +34,14 @@ public final class SalisMundusRecipe extends CustomRecipe {
     }
 
     private static final int REQUIRED_CRYSTALS = 3;
+    private static final Ingredient FLINT = Ingredient.of(Items.FLINT);
+    private static final Ingredient REDSTONE = Ingredient.of(Tags.Items.DUSTS_REDSTONE);
+    private static final Ingredient BOWL = Ingredient.of(Items.BOWL);
+    private static final Ingredient CRYSTAL = Ingredient.of(TCItems.ESSENTIA_CRYSTAL.get());
+
+    public static List<Ingredient> displayIngredients() {
+        return List.of(FLINT, BOWL, REDSTONE, CRYSTAL, CRYSTAL, CRYSTAL);
+    }
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
@@ -43,17 +54,17 @@ public final class SalisMundusRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.is(Items.BOWL)) {
+            if (BOWL.test(stack)) {
                 if (bowl) {
                     return false;
                 }
                 bowl = true;
-            } else if (stack.is(Items.FLINT)) {
+            } else if (FLINT.test(stack)) {
                 if (flint) {
                     return false;
                 }
                 flint = true;
-            } else if (stack.is(Items.REDSTONE)) {
+            } else if (REDSTONE.test(stack)) {
                 if (redstone) {
                     return false;
                 }
@@ -95,7 +106,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.is(Items.FLINT) || stack.is(Items.BOWL)) {
+            if (FLINT.test(stack) || BOWL.test(stack)) {
                 result.set(slot, stack.copyWithCount(1));
             } else if (stack.getItem().hasCraftingRemainingItem(stack)) {
                 result.set(slot, stack.getItem().getCraftingRemainingItem(stack));
