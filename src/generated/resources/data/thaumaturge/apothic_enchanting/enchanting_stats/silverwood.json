@@ -1,0 +1,16 @@
+{
+  "blocks": [
+    "thaumaturge:plank_silverwood",
+    "thaumaturge:slab_silverwood",
+    "thaumaturge:stairs_silverwood",
+    "thaumaturge:log_silverwood",
+    "thaumaturge:silverwood",
+    "thaumaturge:stripped_log_silverwood",
+    "thaumaturge:stripped_silverwood"
+  ],
+  "stats": {
+    "arcana": 3.0,
+    "eterna": 2.0,
+    "maxEterna": 45.0
+  }
+}

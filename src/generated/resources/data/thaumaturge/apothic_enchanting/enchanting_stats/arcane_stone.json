@@ -1,0 +1,16 @@
+{
+  "blocks": [
+    "thaumaturge:stone_arcane",
+    "thaumaturge:stone_arcane_brick",
+    "thaumaturge:slab_arcane_stone",
+    "thaumaturge:slab_arcane_brick",
+    "thaumaturge:stairs_arcane",
+    "thaumaturge:stairs_arcane_brick",
+    "thaumaturge:pillar_arcane",
+    "thaumaturge:pedestal_arcane"
+  ],
+  "stats": {
+    "eterna": 1.0,
+    "maxEterna": 40.0
+  }
+}

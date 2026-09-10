@@ -1,0 +1,17 @@
+{
+  "blocks": [
+    "thaumaturge:crystal_vitium",
+    "thaumaturge:taint_rock",
+    "thaumaturge:taint_soil",
+    "thaumaturge:taint_crust",
+    "thaumaturge:taint_geyser",
+    "thaumaturge:taint_log",
+    "thaumaturge:taint_fibre"
+  ],
+  "stats": {
+    "arcana": -10.0,
+    "eterna": -5.0,
+    "maxEterna": 0.0,
+    "quanta": 20.0
+  }
+}

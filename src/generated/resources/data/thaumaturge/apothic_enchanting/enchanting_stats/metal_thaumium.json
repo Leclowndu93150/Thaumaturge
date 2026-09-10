@@ -1,0 +1,8 @@
+{
+  "blocks": "thaumaturge:metal_thaumium",
+  "stats": {
+    "arcana": 3.0,
+    "eterna": 4.0,
+    "maxEterna": 60.0
+  }
+}

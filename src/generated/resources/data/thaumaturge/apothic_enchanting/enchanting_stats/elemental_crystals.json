@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    "thaumaturge:crystal_aer",
+    "thaumaturge:crystal_ignis",
+    "thaumaturge:crystal_aqua",
+    "thaumaturge:crystal_terra"
+  ],
+  "stats": {
+    "eterna": 3.0,
+    "maxEterna": 50.0,
+    "quanta": 3.0
+  }
+}

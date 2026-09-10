@@ -1,0 +1,19 @@
+{
+  "blocks": [
+    "thaumaturge:eldritch_stone",
+    "thaumaturge:eldritch_rock",
+    "thaumaturge:eldritch_crust",
+    "thaumaturge:stone_eldritch_tile",
+    "thaumaturge:slab_eldritch",
+    "thaumaturge:stairs_eldritch",
+    "thaumaturge:eldritch_door",
+    "thaumaturge:pillar_eldritch",
+    "thaumaturge:pedestal_eldritch"
+  ],
+  "stats": {
+    "arcana": 10.0,
+    "eterna": 10.0,
+    "maxEterna": 90.0,
+    "quanta": 5.0
+  }
+}
