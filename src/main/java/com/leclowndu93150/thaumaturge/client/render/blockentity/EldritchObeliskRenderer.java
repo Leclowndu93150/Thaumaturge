@@ -51,7 +51,7 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
         float base = COLUMN_BASE + bob;
         float top = base + COLUMN_HEIGHT;
 
-        VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.SURFACE);
+        VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.surface());
         PoseStack.Pose surfacePose = poseStack.last();
         EldritchPortalSurface.quad(
                 surfacePose,

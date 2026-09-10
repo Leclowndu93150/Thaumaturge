@@ -2,12 +2,15 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
@@ -34,7 +37,17 @@ public final class EldritchPortalSurface {
                     .setCullState(RenderStateShard.NO_CULL)
                     .createCompositeState(false));
 
+    private static final RenderType SHADER_FALLBACK_SURFACE = RenderType.entityTranslucent(PARTICLE_FIELD_TEXTURE);
+
     private EldritchPortalSurface() {}
+
+    /**
+     * The full portal uses two texture samplers. Shader packs cannot safely run that custom position-texture
+     * render type, so use Minecraft's Iris-recognised entity-translucent type with the dark particle field there.
+     */
+    public static RenderType surface() {
+        return IrisCompat.shadersActive() ? SHADER_FALLBACK_SURFACE : SURFACE;
+    }
 
     public static void quad(
             PoseStack.Pose pose,
@@ -63,14 +76,23 @@ public final class EldritchPortalSurface {
         float ny = Math.abs(e1z * e2x - e1x * e2z);
         float nz = Math.abs(e1x * e2y - e1y * e2x);
         int axis = ny >= nx && ny >= nz ? 1 : nx >= nz ? 0 : 2;
-        addVertex(buffer, mat, worldPos, axis, x1, y1, z1);
-        addVertex(buffer, mat, worldPos, axis, x2, y2, z2);
-        addVertex(buffer, mat, worldPos, axis, x3, y3, z3);
-        addVertex(buffer, mat, worldPos, axis, x4, y4, z4);
+        boolean shaderFallback = IrisCompat.shadersActive();
+        addVertex(buffer, pose, mat, worldPos, axis, x1, y1, z1, shaderFallback);
+        addVertex(buffer, pose, mat, worldPos, axis, x2, y2, z2, shaderFallback);
+        addVertex(buffer, pose, mat, worldPos, axis, x3, y3, z3, shaderFallback);
+        addVertex(buffer, pose, mat, worldPos, axis, x4, y4, z4, shaderFallback);
     }
 
     private static void addVertex(
-            VertexConsumer buffer, Matrix4f mat, BlockPos worldPos, int axis, float x, float y, float z) {
+            VertexConsumer buffer,
+            PoseStack.Pose pose,
+            Matrix4f mat,
+            BlockPos worldPos,
+            int axis,
+            float x,
+            float y,
+            float z,
+            boolean shaderFallback) {
         float wx = worldPos.getX() + x;
         float wy = worldPos.getY() + y;
         float wz = worldPos.getZ() + z;
@@ -86,6 +108,15 @@ public final class EldritchPortalSurface {
             u = wx;
             v = wy;
         }
-        buffer.addVertex(mat, x, y, z).setUv(u, v);
+        if (shaderFallback) {
+            buffer.addVertex(mat, x, y, z)
+                    .setColor(-1)
+                    .setUv(u, v)
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(LightTexture.FULL_BRIGHT)
+                    .setNormal(pose, 0.0F, 1.0F, 0.0F);
+        } else {
+            buffer.addVertex(mat, x, y, z).setUv(u, v);
+        }
     }
 }
