@@ -144,7 +144,7 @@ public final class TCPlacedFeatures {
                 MAGIC_FOREST_FLORA,
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_FLORA),
-                        List.of(InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP, BiomeFilter.biome())));
+                        List.of(PlacementUtils.HEIGHTMAP, BiomeFilter.biome())));
 
         context.register(
                 MANA_PODS,
