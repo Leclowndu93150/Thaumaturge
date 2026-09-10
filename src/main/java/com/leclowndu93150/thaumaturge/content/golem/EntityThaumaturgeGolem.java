@@ -4,6 +4,9 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemProperties;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
+import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
+import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryContext;
+import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryState;
 import com.leclowndu93150.thaumaturge.api.golems.parts.IGolemFunction;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -23,6 +26,8 @@ import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -87,6 +92,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             SynchedEntityData.defineId(EntityThaumaturgeGolem.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<String> ACCESSORIES =
             SynchedEntityData.defineId(EntityThaumaturgeGolem.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<CompoundTag> ACCESSORY_SYNC =
+            SynchedEntityData.defineId(EntityThaumaturgeGolem.class, EntityDataSerializers.COMPOUND_TAG);
 
     private static final int FLAG_FOLLOWING = 1 << 1;
     private static final int FLAG_COMBAT = 1 << 3;
@@ -99,6 +106,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final int EVENT_EMOTE_CONFUSED = 7;
     private static final int EVENT_EMOTE_STAY = 8;
     private static final int EVENT_EMOTE_RANKUP = 9;
+    private static final int MAX_ACCESSORY_STATE_CHARS = 16384;
+    private static final int MAX_ACCESSORY_SYNC_CHARS = 4096;
 
     public boolean redrawParts;
     public float wheelRotation;
@@ -107,6 +116,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     int rankXp;
     private boolean firstRun = true;
     private Task task;
+    private CompoundTag accessoryState = new CompoundTag();
 
     public EntityThaumaturgeGolem(EntityType<? extends EntityThaumaturgeGolem> type, Level level) {
         super(type, level);
@@ -131,6 +141,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         entityData.define(FLAGS, (byte) 0);
         entityData.define(CLIMBING, (byte) 0);
         entityData.define(ACCESSORIES, "");
+        entityData.define(ACCESSORY_SYNC, new CompoundTag());
     }
 
     public String getAccessoryString() {
@@ -152,7 +163,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         return accessories;
     }
 
-    private boolean addAccessory(GolemAccessory accessory) {
+    private boolean addAccessory(GolemAccessory accessory, ItemStack attachedStack) {
         List<GolemAccessory> current = getAccessories();
         for (GolemAccessory worn : current) {
             if (worn == accessory) {
@@ -164,6 +175,13 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         }
         String joined = entityData.get(ACCESSORIES);
         entityData.set(ACCESSORIES, joined.isEmpty() ? accessory.id().toString() : joined + "," + accessory.id());
+        accessoryState.remove(accessory.id().toString());
+        CompoundTag synchronizedState = entityData.get(ACCESSORY_SYNC).copy();
+        synchronizedState.remove(accessory.id().toString());
+        entityData.set(ACCESSORY_SYNC, synchronizedState);
+        if (accessory.behavior() != null) {
+            accessory.behavior().onAttach(accessoryContext(accessory), attachedStack.copyWithCount(1));
+        }
         updateEntityAttributes();
         return true;
     }
@@ -174,6 +192,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         }
         for (GolemAccessory accessory : getAccessories()) {
             ItemStack stack = ItemGolemAccessory.stackFor(accessory);
+            if (accessory.behavior() != null) {
+                accessory.behavior().onRemove(accessoryContext(accessory), stack);
+            }
+            if (stack.getCount() > 1) stack.setCount(1);
+            clearAccessoryState(accessory.id());
             if (!stack.isEmpty()) {
                 spawnAtLocation(stack, 0.5F);
             }
@@ -442,6 +465,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             if (props.hasTrait(TCGolemTraits.CLIMBER.get())) {
                 setBesideClimbableBlock(horizontalCollision);
             }
+            tickAccessoryBehaviors();
         } else {
             if (tickCount < 20 || tickCount % 20 == 0) {
                 redrawParts = true;
@@ -459,6 +483,97 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private void tickPartFunction(@Nullable IGolemFunction function) {
         if (function != null) {
             function.onUpdateTick(this);
+        }
+    }
+
+    private void tickAccessoryBehaviors() {
+        for (GolemAccessory accessory : getAccessories()) {
+            GolemAccessoryBehavior behavior = accessory.behavior();
+            if (behavior != null) behavior.serverTick(accessoryContext(accessory));
+        }
+    }
+
+    private GolemAccessoryContext accessoryContext(GolemAccessory accessory) {
+        return new GolemAccessoryContext(this, accessory, new AccessoryState(accessory.id()));
+    }
+
+    private void clearAccessoryState(ResourceLocation id) {
+        accessoryState.remove(id.toString());
+        CompoundTag synchronizedState = entityData.get(ACCESSORY_SYNC).copy();
+        synchronizedState.remove(id.toString());
+        entityData.set(ACCESSORY_SYNC, synchronizedState);
+    }
+
+    @Override
+    public Optional<UUID> ownerIdentity() {
+        return Optional.ofNullable(getOwnerUUID());
+    }
+
+    @Override
+    public boolean isInactive() {
+        return isRemoved() || !isAlive() || isNoAi();
+    }
+
+    @Override
+    public CompoundTag accessorySynchronizedData(ResourceLocation accessoryId) {
+        return entityData
+                .get(ACCESSORY_SYNC)
+                .getCompound(accessoryId.toString())
+                .copy();
+    }
+
+    private final class AccessoryState implements GolemAccessoryState {
+        private final ResourceLocation accessoryId;
+
+        private AccessoryState(ResourceLocation accessoryId) {
+            this.accessoryId = accessoryId;
+        }
+
+        @Override
+        public CompoundTag persistentData() {
+            return accessoryState.getCompound(accessoryId.toString()).copy();
+        }
+
+        @Override
+        public void setPersistentData(CompoundTag data) {
+            requireServer();
+            CompoundTag next = accessoryState.copy();
+            next.put(accessoryId.toString(), data.copy());
+            requireBounded(next, MAX_ACCESSORY_STATE_CHARS, "persistent");
+            accessoryState = next;
+        }
+
+        @Override
+        public CompoundTag synchronizedData() {
+            return accessorySynchronizedData(accessoryId);
+        }
+
+        @Override
+        public void setSynchronizedData(CompoundTag data) {
+            requireServer();
+            CompoundTag synchronizedState = entityData.get(ACCESSORY_SYNC).copy();
+            synchronizedState.put(accessoryId.toString(), data.copy());
+            requireBounded(synchronizedState, MAX_ACCESSORY_SYNC_CHARS, "synchronized");
+            entityData.set(ACCESSORY_SYNC, synchronizedState);
+        }
+
+        @Override
+        public void clear() {
+            requireServer();
+            clearAccessoryState(accessoryId);
+        }
+
+        private void requireServer() {
+            if (!(level() instanceof ServerLevel serverLevel)
+                    || !serverLevel.getServer().isSameThread()) {
+                throw new IllegalStateException("Accessory state is server-thread authoritative");
+            }
+        }
+
+        private void requireBounded(CompoundTag data, int maximum, String kind) {
+            if (data.toString().length() > maximum) {
+                throw new IllegalArgumentException("Accessory " + kind + " state exceeds its synchronization bound");
+            }
         }
     }
 
@@ -544,7 +659,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
             return InteractionResult.CONSUME;
         }
         if (player.getItemInHand(hand).getItem() instanceof ItemGolemAccessory accessoryItem) {
-            if (addAccessory(accessoryItem.accessory())) {
+            if (addAccessory(accessoryItem.accessory(), player.getItemInHand(hand))) {
                 playSound(TCSounds.CLACK.get(), 1.0F, 1.0F);
                 player.getItemInHand(hand).shrink(1);
                 player.swing(hand, true);
@@ -883,6 +998,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         output.putInt("rankXP", rankXp);
         output.putByte("color", getGolemColor());
         output.putString("accessories", entityData.get(ACCESSORIES));
+        output.put("accessoryState", accessoryState.copy());
+        output.put("accessorySync", entityData.get(ACCESSORY_SYNC).copy());
     }
 
     @Override
@@ -895,6 +1012,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         rankXp = input.getInt("rankXP");
         setGolemColor(input.getByte("color"));
         entityData.set(ACCESSORIES, input.getString("accessories"));
+        accessoryState = input.getCompound("accessoryState").copy();
+        entityData.set(ACCESSORY_SYNC, input.getCompound("accessorySync").copy());
         updateEntityAttributes();
     }
 

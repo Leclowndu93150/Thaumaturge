@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.content.essentia.item.SingleAspectItemStorage;
+import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -24,6 +26,14 @@ public final class JarCapabilities {
                 EssentiaCapabilities.TRANSPORT,
                 TCBlockEntities.JAR_VOID.get(),
                 (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.STORAGE,
+                TCBlockEntities.JAR.get(),
+                (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.STORAGE,
+                TCBlockEntities.JAR_VOID.get(),
+                (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
                 (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
@@ -46,6 +56,18 @@ public final class JarCapabilities {
                 (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
                 TCItems.JAR_NORMAL.get(),
                 TCItems.JAR_VOID.get());
+
+        event.registerItem(
+                EssentiaCapabilities.ITEM_STORAGE,
+                (stack, ctx) -> new SingleAspectItemStorage(
+                        stack, (IEssentiaContainerItem) stack.getItem(), BlockEntityJar.CAPACITY),
+                TCItems.JAR_NORMAL.get(),
+                TCItems.JAR_VOID.get());
+        event.registerItem(
+                EssentiaCapabilities.ITEM_STORAGE,
+                (stack, ctx) -> new SingleAspectItemStorage(
+                        stack, (IEssentiaContainerItem) stack.getItem(), PhialItem.BASE_AMOUNT),
+                TCItems.PHIAL.get());
 
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.JAR.get(), (be, side) -> be);
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.JAR_VOID.get(), (be, side) -> be);

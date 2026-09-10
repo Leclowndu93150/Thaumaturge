@@ -7,8 +7,10 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 /**
  * Registry-style holder for the aspect capability types.
  *
- * <p>{@link #CONTAINER} is the block capability for {@link IAspectContainer}; it requires
- * side context.
+ * <p>{@link #CONTAINER} is the block capability for {@link IAspectContainer}. Directional
+ * consumers supply a side, while infusion source discovery deliberately queries with a
+ * {@code null} context. Providers implementing {@link IAspectSource} for infusion must support
+ * that null-side query.
  *
  * @since 1.0.0
  */

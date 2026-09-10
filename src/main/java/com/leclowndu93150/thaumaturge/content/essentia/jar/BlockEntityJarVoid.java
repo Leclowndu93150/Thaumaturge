@@ -48,6 +48,11 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
     }
 
     @Override
+    protected int storageInsertLimit(Holder<IAspect> aspect, int requested) {
+        return requested;
+    }
+
+    @Override
     public int getSuctionAmount(Direction face) {
         return aspectFilterKey() != null && amount() < CAPACITY ? 48 : 32;
     }

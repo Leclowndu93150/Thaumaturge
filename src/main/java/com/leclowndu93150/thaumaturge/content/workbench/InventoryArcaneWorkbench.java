@@ -92,4 +92,8 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
     public ArcaneCraftingInput asArcaneCraftInput() {
         return ArcaneCraftingInput.of(3, 3, getItems());
     }
+
+    public ArcaneCraftingInput.Positioned asPositionedArcaneCraftInput() {
+        return ArcaneCraftingInput.ofPositioned(3, 3, getItems());
+    }
 }

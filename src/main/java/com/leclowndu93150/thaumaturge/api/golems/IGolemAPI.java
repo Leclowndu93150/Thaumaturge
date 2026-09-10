@@ -1,6 +1,10 @@
 package com.leclowndu93150.thaumaturge.api.golems;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -94,4 +98,19 @@ public interface IGolemAPI {
      * @return whether the golem currently has an attack target
      */
     boolean isInCombat();
+
+    /** Stable owner identity, including while the owner is offline. */
+    default Optional<UUID> ownerIdentity() {
+        return Optional.empty();
+    }
+
+    /** Whether behavior should treat the golem as disabled, dead, or otherwise inactive. */
+    default boolean isInactive() {
+        return false;
+    }
+
+    /** Defensive bounded client-visible state for one accessory namespace. */
+    default CompoundTag accessorySynchronizedData(ResourceLocation accessoryId) {
+        return new CompoundTag();
+    }
 }
