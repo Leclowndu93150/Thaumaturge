@@ -659,6 +659,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add(
                 "jei.thaumaturge.deconstruction.info",
                 "Place any item that carries aspects on the Deconstruction Table and it will slowly break the item down. Each work cycle has a chance to shake loose a single research point of a random primal aspect; the richer the item's aspects, the better the odds. Click the floating aspect to collect it.");
+        add("jei.thaumaturge.category.infernal_furnace", "Infernal Furnace");
+        add("jei.thaumaturge.infernal_furnace.count", "Count: %s");
 
         add("item.thaumaturge.celestial_notes", "Celestial Notes");
         add("item.thaumaturge.celestial_notes.sun.text", "Solar");

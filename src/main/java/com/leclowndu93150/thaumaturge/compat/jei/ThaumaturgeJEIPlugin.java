@@ -8,9 +8,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.client.screen.casters.FocalManipulatorScreen;
 import com.leclowndu93150.thaumaturge.compat.jei.category.*;
+import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategory.InfernalBonusWrapper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientHelper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
+import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
@@ -168,6 +170,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         categories.add(new AspectCompositionCategory(helpers.getGuiHelper(), pickIconAspect()));
         categories.add(new AspectFromStacksCategory(helpers.getGuiHelper()));
         categories.add(new MultiblockCategory(helpers.getGuiHelper()));
+        categories.add(new InfernalFurnaceCategory(helpers.getGuiHelper()));
         registration.addRecipeCategories(categories.toArray(new IRecipeCategory<?>[0]));
     }
 
@@ -199,6 +202,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 MultiblockCategory.RECIPE_TYPE,
                 TCRecipeTypes.DUST_TRIGGER.get(),
                 r -> r.value() instanceof DustTriggerMultiblockRecipe);
+        addInfernalFurnaceBonuses(registration);
         registerAspectInfoPages(registration);
         registerAspectFromStacksPages(registration);
     }
@@ -239,6 +243,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addRecipeCatalysts(CrucibleCategory.RECIPE_TYPE, TCItems.CRUCIBLE.get());
         registration.addRecipeCatalysts(AspectCompositionCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
         registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
+        registration.addRecipeCatalysts(InfernalFurnaceCategory.RECIPE_TYPE, TCItems.INFERNAL_FURNACE.get());
     }
 
     @Override
@@ -359,6 +364,39 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             holders = holders.stream().filter(filter).toList();
         }
         registration.addRecipes(type, holders);
+    }
+
+    private static void addInfernalFurnaceBonuses(IRecipeRegistration registration) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+
+        List<RecipeHolder<SmeltingRecipe>> smeltingRecipes =
+                level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
+        List<InfernalBonusWrapper> bonuses = registration.getIngredientManager().getAllItemStacks().stream()
+                .map(stack -> infernalFurnaceBonus(level, smeltingRecipes, stack))
+                .filter(Objects::nonNull)
+                .toList();
+        registration.addRecipes(InfernalFurnaceCategory.RECIPE_TYPE, bonuses);
+    }
+
+    @Nullable
+    private static InfernalBonusWrapper infernalFurnaceBonus(
+            ClientLevel level, List<RecipeHolder<SmeltingRecipe>> smeltingRecipes, ItemStack stack) {
+        List<InfernalBonus> bonuses = stack.getItemHolder().getData(InfernalBonus.DATA_MAP);
+        if (bonuses == null || bonuses.isEmpty()) {
+            return null;
+        }
+        SingleRecipeInput input = new SingleRecipeInput(stack);
+        return smeltingRecipes.stream()
+                .filter(recipe -> recipe.value().matches(input, level))
+                .findFirst()
+                .map(recipe -> new InfernalBonusWrapper(
+                        Ingredient.of(stack.getItem()),
+                        recipe.value().assemble(input, level.registryAccess()),
+                        bonuses))
+                .orElse(null);
     }
 
     public static RegistryAccess clientRegistryAccess() {
