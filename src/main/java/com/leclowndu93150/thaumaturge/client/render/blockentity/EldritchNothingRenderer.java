@@ -29,7 +29,7 @@ public final class EldritchNothingRenderer implements BlockEntityRenderer<BlockE
         if (level == null) {
             return;
         }
-        VertexConsumer buffer = buffers.getBuffer(EldritchPortalSurface.SURFACE);
+        VertexConsumer buffer = buffers.getBuffer(EldritchPortalSurface.surface());
         PoseStack.Pose pose = poseStack.last();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (Direction dir : Direction.values()) {

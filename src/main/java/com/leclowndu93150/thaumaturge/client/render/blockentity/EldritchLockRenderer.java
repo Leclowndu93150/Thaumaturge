@@ -124,7 +124,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
 
     private static void renderDoorFace(
             Direction facing, BlockPos worldPos, PoseStack poseStack, MultiBufferSource buffers) {
-        VertexConsumer buffer = buffers.getBuffer(EldritchPortalSurface.SURFACE);
+        VertexConsumer buffer = buffers.getBuffer(EldritchPortalSurface.surface());
         PoseStack.Pose pose = poseStack.last();
         if (facing.getAxis() == Direction.Axis.Z) {
             EldritchPortalSurface.quad(

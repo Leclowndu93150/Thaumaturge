@@ -93,7 +93,7 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
         poseStack.popPose();
 
         if (linked && inRange) {
-            VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.SURFACE);
+            VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.surface());
             portalWindow(poseStack.last(), surface, mirror.getBlockPos());
         }
         RenderType paneType = RenderType.entityTranslucent(linked && inRange ? PANE_TRANS_TEXTURE : PANE_TEXTURE);
