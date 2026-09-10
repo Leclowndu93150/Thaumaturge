@@ -154,21 +154,19 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         ArcaneCraftingInput input = craftingInventory.asArcaneCraftInput();
         RecipeHolder<?> recipeToStore = null;
 
-        IArcaneRecipe arcane = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(level, input, sp);
-        if (arcane != null) {
-            tile.refreshAura();
-            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp);
-            if (WorkbenchPayment.canCraft(plan, tile)) {
-                result = arcane.assemble(input, level.registryAccess());
-            }
-        }
-
         CraftingInput vanillaInput = craftingInventory.asCraftInput();
-        if (result.isEmpty()) {
-            Optional<RecipeHolder<CraftingRecipe>> vanilla = findVanillaRecipe(level, vanillaInput);
-            if (vanilla.isPresent()) {
-                result = vanilla.get().value().assemble(vanillaInput, level.registryAccess());
-                recipeToStore = vanilla.get();
+        Optional<RecipeHolder<CraftingRecipe>> vanilla = findVanillaRecipe(level, vanillaInput);
+        if (vanilla.isPresent()) {
+            result = vanilla.get().value().assemble(vanillaInput, level.registryAccess());
+            recipeToStore = vanilla.get();
+        } else {
+            IArcaneRecipe arcane = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(level, input, sp);
+            if (arcane != null) {
+                tile.refreshAura();
+                WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp);
+                if (WorkbenchPayment.canCraft(plan, tile)) {
+                    result = arcane.assemble(input, level.registryAccess());
+                }
             }
         }
 

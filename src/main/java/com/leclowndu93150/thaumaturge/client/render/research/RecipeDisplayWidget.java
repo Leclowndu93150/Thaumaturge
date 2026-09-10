@@ -696,6 +696,10 @@ public final class RecipeDisplayWidget {
     }
 
     public static boolean isMultiblockPreview(int centerX, int centerY, double mouseX, double mouseY) {
+        return isBlockPreview(centerX, centerY, mouseX, mouseY);
+    }
+
+    public static boolean isBlockPreview(int centerX, int centerY, double mouseX, double mouseY) {
         return mouseX >= centerX - CONSTRUCT_PREVIEW_MAX_WIDTH / 2.0F
                 && mouseX < centerX + CONSTRUCT_PREVIEW_MAX_WIDTH / 2.0F
                 && mouseY >= centerY + CONSTRUCT_PREVIEW_CENTER_Y - CONSTRUCT_PREVIEW_MAX_HEIGHT / 2.0F
@@ -812,7 +816,7 @@ public final class RecipeDisplayWidget {
         return blueprint == null ? 0 : blueprint.ySize();
     }
 
-    private static void renderLayerControls(GuiGraphics graphics, int cx, int cy, int visibleLayer, int layerCount) {
+    public static void renderLayerControls(GuiGraphics graphics, int cx, int cy, int visibleLayer, int layerCount) {
         if (layerCount <= 1) {
             return;
         }

@@ -37,7 +37,6 @@ import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -266,18 +265,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private static final int CONSTRUCT_PAGE_Y = 26;
     private static final int CONSTRUCT_TITLE_COLOR = 0xFF505050;
-    private static final int CONSTRUCT_STRUCT_Y = 108;
-    private static final int CONSTRUCT_LAYER_STRIDE = 50;
-    private static final int CONSTRUCT_LAYER_HALF_STRIDE = 25;
-    private static final float CONSTRUCT_SHRINK_PER_LAYER = 0.2F;
-    private static final int CONSTRUCT_BACKDROP_Y_BASE = -119;
-    private static final float CONSTRUCT_BACKDROP_U = 0.0F;
-    private static final float CONSTRUCT_BACKDROP_V = 144.0F;
-    private static final int CONSTRUCT_BACKDROP_W = 128;
-    private static final int CONSTRUCT_BACKDROP_H = 88;
-    private static final int CONSTRUCT_BACKDROP_DRAW_W = 64;
-    private static final int CONSTRUCT_BACKDROP_DRAW_H = 44;
-    private static final float CONSTRUCT_BACKDROP_ALPHA = 0.5F;
     private static final float CONSTRUCT_WAND_U = 136.0F;
     private static final float CONSTRUCT_WAND_V = 152.0F;
     private static final int CONSTRUCT_WAND_SIZE = 24;
@@ -477,9 +464,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         renderTextPages(graphics, pageBaseY, pageMouseX, pageMouseY);
         renderRequirements(graphics, stage, sw, pageMouseX, pageMouseY);
         renderWarpIndicator(graphics, stage, sw, sh + CONTENT_Y_OFFSET + TITLE_Y_ADVANCE, pageMouseX, pageMouseY);
+        graphics.flush();
         if (knowsResearch(KNOWLEDGETYPES_RESEARCH) && entryId.equals(KNOWLEDGETYPES_RESEARCH)) {
             drawKnowledges(graphics, sw, sh + KNOW_INPAGE_INSERT_INPAGE_Y_OFFSET - 16, pageMouseX, pageMouseY, true);
         }
+        graphics.pose().pushPose();
+        graphics.pose().translate(0.0F, 0.0F, 200.0F);
         if (showingAspects) {
             renderAspectsInsert(graphics, mouseX, mouseY);
         } else if (showingKnowledge) {
@@ -489,6 +479,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         } else if (shownRecipe != null) {
             renderRecipePage(graphics, mouseX, mouseY);
         }
+        graphics.pose().popPose();
         renderBookmarks(graphics, mouseX, mouseY);
         renderRecipeBookmarks(graphics, stage, mouseX, mouseY);
         drawNavigation(graphics, mouseX, mouseY);
@@ -1300,75 +1291,19 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int pageY = paperY + CONSTRUCT_PAGE_Y;
         Component title = Component.translatable("recipe.type.construct");
         graphics.drawString(font, title, centerX - font.width(title) / 2, pageY, CONSTRUCT_TITLE_COLOR, false);
-        int dx = construct.xSize();
-        int dy = construct.ySize();
-        int dz = construct.zSize();
-        int structWidth = (dx + dz - 1) * 16;
-        int yoff = -dy * CONSTRUCT_LAYER_HALF_STRIDE;
-        float shrink = dy > 3 ? (dy - 3) * CONSTRUCT_SHRINK_PER_LAYER : 0.0F;
-        float structScale = 1.0F - shrink;
-        float originX = centerX - structWidth * structScale / 2.0F;
-        float originY = pageY + CONSTRUCT_STRUCT_Y + yoff * structScale;
-        graphics.pose().pushPose();
-        graphics.pose().translate(originX, originY, 0);
-        graphics.pose().scale(structScale, structScale, 1F);
-        graphics.pose().pushPose();
-        graphics.pose()
-                .translate(
-                        structWidth / 2.0F - CONSTRUCT_BACKDROP_DRAW_W,
-                        CONSTRUCT_BACKDROP_Y_BASE
-                                + Math.max(3 - dx, 3 - dz) * 8
-                                + dx * 4
-                                + dz * 4
-                                + dy * CONSTRUCT_LAYER_STRIDE,
-                        0);
-        graphics.pose().scale(2.0F, 2.0F, 1F);
-        GuiBlend.blitTinted(
-                graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
-                0,
-                0,
-                CONSTRUCT_BACKDROP_DRAW_W,
-                CONSTRUCT_BACKDROP_DRAW_H,
-                CONSTRUCT_BACKDROP_U,
-                CONSTRUCT_BACKDROP_V,
-                CONSTRUCT_BACKDROP_W,
-                CONSTRUCT_BACKDROP_H,
-                OVERLAY_TEX_SIZE,
-                OVERLAY_TEX_SIZE,
-                alphaTint(CONSTRUCT_BACKDROP_ALPHA));
-        graphics.pose().popPose();
-        ItemStack hover = ItemStack.EMPTY;
-        List<ConstructCellDraw> layer = new ArrayList<>();
-        int count = 0;
-        for (int j = 0; j < dy; j++) {
-            layer.clear();
-            for (int k = dz - 1; k >= 0; k--) {
-                for (int i = dx - 1; i >= 0; i--) {
-                    int px = i * 16 + k * 16;
-                    int py = -i * 8 + k * 8 + j * CONSTRUCT_LAYER_STRIDE;
-                    ItemStack stack = resolveConstructCell(construct.cells().get(count), gameTime);
-                    count++;
-                    if (!stack.isEmpty()) {
-                        layer.add(new ConstructCellDraw(px, py, stack));
-                    }
+        Map<BlockPos, BlockState> blocks = constructBlocks(construct, gameTime);
+        if (!blocks.isEmpty()) {
+            Map<BlockPos, BlockState> visibleBlocks = new HashMap<>();
+            for (Map.Entry<BlockPos, BlockState> entry : blocks.entrySet()) {
+                if (visibleConstructLayer < 0 || entry.getKey().getY() <= visibleConstructLayer) {
+                    visibleBlocks.put(entry.getKey(), entry.getValue());
                 }
             }
-            layer.sort(Comparator.comparingInt(ConstructCellDraw::py));
-            for (ConstructCellDraw cell : layer) {
-                graphics.renderItem(cell.stack(), cell.px(), cell.py());
-                if (mouseInside(
-                        (int) (originX + cell.px() * structScale),
-                        (int) (originY + cell.py() * structScale),
-                        (int) (16 * structScale),
-                        (int) (16 * structScale),
-                        mouseX,
-                        mouseY)) {
-                    hover = cell.stack();
-                }
-            }
+            RecipeDisplayWidget.renderBlockPreview(
+                    graphics, centerX, paperY + 118, visibleBlocks, 96.0F, 100.0F, 16.0F, currentConstructRotation());
+            RecipeDisplayWidget.renderLayerControls(
+                    graphics, centerX, paperY + 130, visibleConstructLayer, construct.ySize());
         }
-        graphics.pose().popPose();
         AspectList cost = construct.cost();
         if (!cost.isEmpty()) {
             List<AspectInstance> entries = cost.entries();
@@ -1397,12 +1332,24 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 tagIndex++;
             }
         }
-        if (!hover.isEmpty()) {
-            DeferredTooltip.setItem(hover, mouseX, mouseY);
-        }
     }
 
-    private record ConstructCellDraw(int px, int py, ItemStack stack) {}
+    private static Map<BlockPos, BlockState> constructBlocks(ResearchConstruct construct, long gameTime) {
+        Map<BlockPos, BlockState> blocks = new HashMap<>();
+        int index = 0;
+        for (int y = 0; y < construct.ySize(); y++) {
+            for (int z = construct.zSize() - 1; z >= 0; z--) {
+                for (int x = construct.xSize() - 1; x >= 0; x--) {
+                    ItemStack stack = resolveConstructCell(construct.cells().get(index++), gameTime);
+                    Block block = Block.byItem(stack.getItem());
+                    if (block != Blocks.AIR) {
+                        blocks.put(new BlockPos(x, construct.ySize() - y - 1, z), block.defaultBlockState());
+                    }
+                }
+            }
+        }
+        return blocks;
+    }
 
     private static ItemStack resolveConstructCell(String spec, long gameTime) {
         if (spec.isEmpty()) {
@@ -1942,6 +1889,28 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
             if (shownRecipe != null && handleRecipeIngredientClick(mx, my)) {
                 return true;
+            }
+            if (showingConstruct) {
+                IResearchStage stage = entry.value().stages().get(currentStageIndex());
+                ResearchConstruct construct = stage.construct().orElse(null);
+                if (construct != null) {
+                    int previewCenterX = (width - 256) / 2 + 128;
+                    int previewCenterY = (height - 256) / 2 + 130;
+                    int layerDelta = RecipeDisplayWidget.layerControlAt(
+                            previewCenterX, previewCenterY, visibleConstructLayer, construct.ySize(), mx, my);
+                    if (layerDelta != 0 && construct.ySize() > 1) {
+                        visibleConstructLayer =
+                                Math.floorMod(visibleConstructLayer + 1 + layerDelta, construct.ySize() + 1) - 1;
+                        return true;
+                    }
+                    if (RecipeDisplayWidget.isBlockPreview(previewCenterX, previewCenterY, mx, my)) {
+                        rotatingConstruct = true;
+                        if (Float.isNaN(constructRotation)) {
+                            constructRotation = currentConstructRotation();
+                        }
+                        return true;
+                    }
+                }
             }
             if (shownRecipe != null) {
                 List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
