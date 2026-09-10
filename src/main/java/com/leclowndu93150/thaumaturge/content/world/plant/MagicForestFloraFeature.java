@@ -41,13 +41,14 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         RandomSource random = context.random();
         MagicForestFloraConfig config = context.config();
         BlockPos origin = context.origin();
+        BlockPos chunkOrigin = new BlockPos(origin.getX() & ~15, origin.getY(), origin.getZ() & ~15);
         boolean any = false;
 
         for (int x = 0; x < GIANT_MUSHROOM_GRID_SIZE; x++) {
             for (int z = 0; z < GIANT_MUSHROOM_GRID_SIZE; z++) {
                 if (random.nextInt(GIANT_MUSHROOM_CHANCE) == 0) {
-                    int blockX = origin.getX() + x * 4 + 1 + random.nextInt(3);
-                    int blockZ = origin.getZ() + z * 4 + 1 + random.nextInt(3);
+                    int blockX = chunkOrigin.getX() + 3 + x * 3;
+                    int blockZ = chunkOrigin.getZ() + 3 + z * 3;
                     int blockY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, blockX, blockZ);
                     HugeMushroomFeatureConfiguration mushroom =
                             random.nextBoolean() ? HUGE_BROWN_MUSHROOM : HUGE_RED_MUSHROOM;
@@ -63,33 +64,33 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         }
 
         for (int a = 0; a < FLOWER_ATTEMPTS; a++) {
-            any |= placePlant(level, random, origin, Blocks.DANDELION.defaultBlockState());
+            any |= placePlant(level, random, chunkOrigin, Blocks.DANDELION.defaultBlockState());
         }
 
         for (int a = 0; a < TALL_GRASS_ATTEMPTS; a++) {
-            any |= placePlant(level, random, origin, Blocks.TALL_GRASS.defaultBlockState());
+            any |= placePlant(level, random, chunkOrigin, Blocks.TALL_GRASS.defaultBlockState());
         }
 
         for (int a = 0; a < SHORT_GRASS_ATTEMPTS; a++) {
-            any |= placePlant(level, random, origin, Blocks.SHORT_GRASS.defaultBlockState());
+            any |= placePlant(level, random, chunkOrigin, Blocks.SHORT_GRASS.defaultBlockState());
         }
 
         for (int a = 0; a < FERN_ATTEMPTS; a++) {
-            any |= placePlant(level, random, origin, Blocks.FERN.defaultBlockState());
+            any |= placePlant(level, random, chunkOrigin, Blocks.FERN.defaultBlockState());
         }
 
         for (int a = 0; a < MUSHROOM_ATTEMPTS; a++) {
             if (random.nextInt(4) == 0) {
-                any |= placePlant(level, random, origin, Blocks.BROWN_MUSHROOM.defaultBlockState());
+                any |= placePlant(level, random, chunkOrigin, Blocks.BROWN_MUSHROOM.defaultBlockState());
             }
             if (random.nextInt(8) == 0) {
-                any |= placePlant(level, random, origin, Blocks.RED_MUSHROOM.defaultBlockState());
+                any |= placePlant(level, random, chunkOrigin, Blocks.RED_MUSHROOM.defaultBlockState());
             }
         }
 
         for (int a = 0; a < config.grassAttempts(); a++) {
-            int x = origin.getX() + 4 + random.nextInt(8);
-            int z = origin.getZ() + 4 + random.nextInt(8);
+            int x = chunkOrigin.getX() + 4 + random.nextInt(8);
+            int z = chunkOrigin.getZ() + 4 + random.nextInt(8);
             BlockPos grass = findGrass(level, x, z, GRASS_MIN_Y);
             if (grass != null) {
                 level.setBlock(grass, config.ambientGrass().defaultBlockState(), PLACE_FLAGS);
@@ -98,8 +99,8 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         }
 
         for (int a = 0; a < config.vishroomAttempts(); a++) {
-            int x = origin.getX() + random.nextInt(16);
-            int z = origin.getZ() + random.nextInt(16);
+            int x = chunkOrigin.getX() + random.nextInt(16);
+            int z = chunkOrigin.getZ() + random.nextInt(16);
             BlockPos grass = findGrass(level, x, z, VISHROOM_MIN_Y);
             if (grass == null) continue;
             BlockPos above = grass.above();
