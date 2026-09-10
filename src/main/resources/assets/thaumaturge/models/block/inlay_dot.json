@@ -1,5 +1,6 @@
 {
   "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
   "textures": {
     "under": "thaumaturge:block/inlay_connect_under",
     "under2": "thaumaturge:block/inlay_connect_under2",

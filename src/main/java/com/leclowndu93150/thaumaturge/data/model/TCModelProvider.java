@@ -1660,7 +1660,10 @@ public final class TCModelProvider implements DataProvider {
                         topLeftOpen,
                         topRight,
                         topRightOpen)));
-        delegateItem(TCBlocks.ARCANE_DOOR.get().asItem(), bottomLeft);
+        ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCBlocks.ARCANE_DOOR.get().asItem()),
+                TextureMapping.layer0(TCIds.rl("item/arcane_door")),
+                modelOutput);
     }
 
     private void golemFetter() {
