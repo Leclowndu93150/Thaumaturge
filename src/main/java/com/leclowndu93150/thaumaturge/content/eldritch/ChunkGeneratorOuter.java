@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -22,10 +23,12 @@ import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
 public final class ChunkGeneratorOuter extends ChunkGenerator {
     public static final MapCodec<ChunkGeneratorOuter> CODEC = RecordCodecBuilder.mapCodec(
@@ -77,6 +80,17 @@ public final class ChunkGeneratorOuter extends ChunkGenerator {
             StructureManager structureManager,
             ChunkAccess chunk,
             GenerationStep.Carving step) {}
+
+    @Override
+    public void createStructures(
+            RegistryAccess registryAccess,
+            ChunkGeneratorStructureState structureState,
+            StructureManager structureManager,
+            ChunkAccess chunk,
+            StructureTemplateManager structureTemplateManager) {}
+
+    @Override
+    public void createReferences(WorldGenLevel level, StructureManager structureManager, ChunkAccess chunk) {}
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion region) {}
