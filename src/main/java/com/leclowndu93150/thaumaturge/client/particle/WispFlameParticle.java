@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.particle.WispFlameParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.util.RandomSource;
+import net.minecraft.client.particle.ParticleRenderType;
 
 public final class WispFlameParticle extends TCParticle {
     private static final int FRAME_COUNT = 8;
@@ -41,6 +41,11 @@ public final class WispFlameParticle extends TCParticle {
         this.quadSize = Keyframes.sample(progress(), this.startSize, this.endSize);
     }
 
+    @Override
+    public ParticleRenderType getRenderType() {
+        return TCParticleLayers.additive(this.sheet);
+    }
+
     public static final class Provider implements ParticleProvider<WispFlameParticleOptions> {
         private static final ParticleSheet SHEET = TCParticleSheets.sheet("wisp_flame");
 
@@ -54,7 +59,6 @@ public final class WispFlameParticle extends TCParticle {
                 double vx,
                 double vy,
                 double vz) {
-            RandomSource random = level.getRandom();
             return new WispFlameParticle(level, x, y, z, vx, vy, vz, options, SHEET);
         }
     }

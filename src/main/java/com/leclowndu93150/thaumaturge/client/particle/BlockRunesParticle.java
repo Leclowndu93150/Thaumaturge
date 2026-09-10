@@ -6,6 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -49,6 +50,11 @@ public final class BlockRunesParticle extends TCParticle {
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTickTime) {
         renderRotatedQuad(buffer, camera, new Quaternionf(this.faceRotation), partialTickTime);
+    }
+
+    @Override
+    public ParticleRenderType getRenderType() {
+        return TCParticleLayers.additive(this.sheet);
     }
 
     @Override
