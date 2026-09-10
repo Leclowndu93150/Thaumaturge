@@ -22,6 +22,8 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static final int GIANT_MUSHROOM_CHANCE = 40;
     private static final int FLOWER_ATTEMPTS = 10;
     private static final int TALL_GRASS_ATTEMPTS = 12;
+    private static final int SHORT_GRASS_ATTEMPTS = 10;
+    private static final int FERN_ATTEMPTS = 6;
     private static final int MUSHROOM_ATTEMPTS = 6;
     private static final int PLACE_FLAGS = 19;
     private static final HugeMushroomFeatureConfiguration HUGE_BROWN_MUSHROOM = new HugeMushroomFeatureConfiguration(
@@ -65,9 +67,15 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         }
 
         for (int a = 0; a < TALL_GRASS_ATTEMPTS; a++) {
-            BlockState grass =
-                    random.nextInt(4) == 0 ? Blocks.FERN.defaultBlockState() : Blocks.TALL_GRASS.defaultBlockState();
-            any |= placePlant(level, random, origin, grass);
+            any |= placePlant(level, random, origin, Blocks.TALL_GRASS.defaultBlockState());
+        }
+
+        for (int a = 0; a < SHORT_GRASS_ATTEMPTS; a++) {
+            any |= placePlant(level, random, origin, Blocks.SHORT_GRASS.defaultBlockState());
+        }
+
+        for (int a = 0; a < FERN_ATTEMPTS; a++) {
+            any |= placePlant(level, random, origin, Blocks.FERN.defaultBlockState());
         }
 
         for (int a = 0; a < MUSHROOM_ATTEMPTS; a++) {

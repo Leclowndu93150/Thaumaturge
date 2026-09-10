@@ -22,6 +22,9 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
     private static final int FLOWER_ATTEMPTS = 18;
     private static final int FLOWER_XZ_SPREAD = 8;
     private static final int FLOWER_Y_SPREAD = 4;
+    private static final int WORLDGEN_CLEARANCE_RADIUS = 12;
+    private static final int WORLDGEN_CLEARANCE_BELOW = 8;
+    private static final int WORLDGEN_CLEARANCE_ABOVE = 8;
 
     public SilverwoodTreeFeature(Codec<SilverwoodTreeConfig> codec) {
         super(codec);
@@ -67,6 +70,12 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
         }
         BlockState soil = level.getBlockState(origin.below());
         if (!soil.is(BlockTags.DIRT) && !soil.is(Blocks.FARMLAND)) {
+            return false;
+        }
+        if (config.node() && hasNearbySilverwood(level, origin, height, config.log())) {
+            return false;
+        }
+        if (config.node() && hasTreeInCanopySpace(level, origin, height)) {
             return false;
         }
 
@@ -177,6 +186,39 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
         TreeLeafUpdater.run(level, placedLogs, placedLeaves, freshLeaves);
         config.flower().ifPresent(flower -> generateFlowers(level, random, origin, flower));
         return true;
+    }
+
+    /** Keeps naturally generated Silverwoods, including Magical Forest trees, from joining their canopies. */
+    private static boolean hasNearbySilverwood(WorldGenLevel level, BlockPos origin, int height, Block log) {
+        for (int x = -WORLDGEN_CLEARANCE_RADIUS; x <= WORLDGEN_CLEARANCE_RADIUS; x++) {
+            for (int z = -WORLDGEN_CLEARANCE_RADIUS; z <= WORLDGEN_CLEARANCE_RADIUS; z++) {
+                if (x == 0 && z == 0) continue;
+                for (int y = -WORLDGEN_CLEARANCE_BELOW; y <= height + WORLDGEN_CLEARANCE_ABOVE; y++) {
+                    if (level.getBlockState(origin.offset(x, y, z)).is(log)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Prevents naturally generated Silverwoods from replacing existing Magical Forest tree canopies. */
+    private static boolean hasTreeInCanopySpace(WorldGenLevel level, BlockPos origin, int height) {
+        int canopyStart = height - 5;
+        int canopyEnd = height + 5;
+        for (int x = -5; x <= 5; x++) {
+            for (int z = -5; z <= 5; z++) {
+                for (int y = -1; y <= canopyEnd; y++) {
+                    if (y < canopyStart && x * x + z * z > 4) continue;
+                    BlockState state = level.getBlockState(origin.offset(x, y, z));
+                    if (state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private static void placeLog(
