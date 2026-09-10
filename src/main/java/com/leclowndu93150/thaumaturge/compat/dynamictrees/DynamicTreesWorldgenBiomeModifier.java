@@ -1,10 +1,9 @@
 package com.leclowndu93150.thaumaturge.compat.dynamictrees;
 
+import com.dtteam.dynamictrees.config.DTConfigs;
 import com.leclowndu93150.thaumaturge.data.worldgen.feature.TCPlacedFeatures;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeModifierSerializers;
 import com.mojang.serialization.MapCodec;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -18,8 +17,8 @@ import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
 /**
  * Replaces only Thaumaturge's native tree placed features when Dynamic Trees has its own world generation enabled.
  *
- * <p>No Dynamic Trees classes are linked directly. If it is absent, changes its config API, or disables world
- * generation, this modifier does nothing and Thaumaturge's normal tree generation remains intact.</p>
+ * <p>Dynamic Trees is an optional compile-only dependency. If it is absent or has world generation disabled, this
+ * modifier does nothing and Thaumaturge's normal tree generation remains intact.</p>
  */
 public final class DynamicTreesWorldgenBiomeModifier implements BiomeModifier {
     private static final Set<ResourceKey<PlacedFeature>> NATIVE_TREE_FEATURES = Set.of(
@@ -44,21 +43,6 @@ public final class DynamicTreesWorldgenBiomeModifier implements BiomeModifier {
     }
 
     private static boolean isDynamicTreesWorldgenEnabled() {
-        if (!ModList.get().isLoaded("dynamictrees")) return false;
-
-        try {
-            Class<?> configs = Class.forName(
-                    "com.dtteam.dynamictrees.config.DTConfigs",
-                    false,
-                    DynamicTreesWorldgenBiomeModifier.class.getClassLoader());
-            Field server = configs.getField("SERVER");
-            Object serverConfig = server.get(null);
-            Field worldgen = configs.getField("worldGen");
-            Object setting = worldgen.get(serverConfig);
-            Method get = setting.getClass().getMethod("get");
-            return Boolean.TRUE.equals(get.invoke(setting));
-        } catch (ReflectiveOperationException | LinkageError | RuntimeException ignored) {
-            return false;
-        }
+        return ModList.get().isLoaded("dynamictrees") && DTConfigs.SERVER.worldGen.get();
     }
 }
