@@ -1,0 +1,10 @@
+{
+  "blocks": "thaumaturge:crystal_ordo",
+  "stats": {
+    "arcana": 5.0,
+    "clues": 1,
+    "eterna": 3.0,
+    "maxEterna": 55.0,
+    "quanta": -5.0
+  }
+}

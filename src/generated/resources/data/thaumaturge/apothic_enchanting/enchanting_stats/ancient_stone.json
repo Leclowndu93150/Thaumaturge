@@ -1,0 +1,19 @@
+{
+  "blocks": [
+    "thaumaturge:stone_ancient",
+    "thaumaturge:stone_ancient_tile",
+    "thaumaturge:stone_ancient_rock",
+    "thaumaturge:stone_ancient_glyphed",
+    "thaumaturge:stone_ancient_doorway",
+    "thaumaturge:slab_ancient",
+    "thaumaturge:stairs_ancient",
+    "thaumaturge:pillar_ancient",
+    "thaumaturge:pedestal_ancient"
+  ],
+  "stats": {
+    "arcana": 5.0,
+    "eterna": 6.0,
+    "maxEterna": 75.0,
+    "quanta": 3.0
+  }
+}

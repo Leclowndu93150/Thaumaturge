@@ -1,0 +1,9 @@
+{
+  "blocks": "thaumaturge:metal_void",
+  "stats": {
+    "arcana": 8.0,
+    "eterna": 4.0,
+    "maxEterna": 65.0,
+    "quanta": 5.0
+  }
+}

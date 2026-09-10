@@ -1,0 +1,10 @@
+{
+  "blocks": "thaumaturge:jar_node",
+  "stats": {
+    "arcana": 20.0,
+    "clues": 1,
+    "eterna": 15.0,
+    "maxEterna": 100.0,
+    "quanta": 10.0
+  }
+}

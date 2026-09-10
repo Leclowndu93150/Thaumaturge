@@ -1,0 +1,10 @@
+{
+  "blocks": "thaumaturge:eldritch_crust_glowing",
+  "stats": {
+    "arcana": 12.0,
+    "clues": 1,
+    "eterna": 12.0,
+    "maxEterna": 95.0,
+    "quanta": 5.0
+  }
+}
