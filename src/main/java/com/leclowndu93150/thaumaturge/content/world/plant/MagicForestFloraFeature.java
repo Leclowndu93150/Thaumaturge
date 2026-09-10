@@ -6,12 +6,14 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.HugeMushroomFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import org.jspecify.annotations.Nullable;
 
 public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfig> {
     private static final int GRASS_MIN_Y = 30;
@@ -80,28 +82,21 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         for (int a = 0; a < config.grassAttempts(); a++) {
             int x = origin.getX() + 4 + random.nextInt(8);
             int z = origin.getZ() + 4 + random.nextInt(8);
-            BlockPos pos = surfacePos(level, x, z);
-            while (pos.getY() > GRASS_MIN_Y && !level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
-                pos = pos.below();
-            }
-            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
-                level.setBlock(pos, config.ambientGrass().defaultBlockState(), PLACE_FLAGS);
+            BlockPos grass = findGrass(level, x, z, GRASS_MIN_Y);
+            if (grass != null) {
+                level.setBlock(grass, config.ambientGrass().defaultBlockState(), PLACE_FLAGS);
                 any = true;
-                break;
             }
         }
 
         for (int a = 0; a < config.vishroomAttempts(); a++) {
             int x = origin.getX() + random.nextInt(16);
             int z = origin.getZ() + random.nextInt(16);
-            BlockPos pos = surfacePos(level, x, z);
-            while (pos.getY() > VISHROOM_MIN_Y && !level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) {
-                pos = pos.below();
-            }
-            BlockPos above = pos.above();
+            BlockPos grass = findGrass(level, x, z, VISHROOM_MIN_Y);
+            if (grass == null) continue;
+            BlockPos above = grass.above();
             var vishroom = config.vishroom().defaultBlockState();
-            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)
-                    && level.getBlockState(above).canBeReplaced()
+            if (level.getBlockState(above).canBeReplaced()
                     && vishroom.canSurvive(level, above)
                     && isAdjacentToWood(level, above)) {
                 level.setBlock(above, vishroom, PLACE_FLAGS);
@@ -118,10 +113,25 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static boolean placePlant(WorldGenLevel level, RandomSource random, BlockPos origin, BlockState state) {
         int x = origin.getX() + random.nextInt(16);
         int z = origin.getZ() + random.nextInt(16);
+        BlockPos grass = findGrass(level, x, z, GRASS_MIN_Y);
+        if (grass == null) return false;
+        BlockPos pos = grass.above();
+        if (!level.getBlockState(pos).canBeReplaced() || !state.canSurvive(level, pos)) return false;
+        if (state.getBlock() instanceof DoublePlantBlock) {
+            if (!level.getBlockState(pos.above()).canBeReplaced()) return false;
+            DoublePlantBlock.placeAt(level, state, pos, PLACE_FLAGS);
+            return true;
+        }
+        return level.setBlock(pos, state, PLACE_FLAGS);
+    }
+
+    private static @Nullable BlockPos findGrass(WorldGenLevel level, int x, int z, int minimumY) {
         BlockPos pos = surfacePos(level, x, z);
-        return level.getBlockState(pos).canBeReplaced()
-                && state.canSurvive(level, pos)
-                && level.setBlock(pos, state, PLACE_FLAGS);
+        while (pos.getY() > minimumY) {
+            if (level.getBlockState(pos).is(Blocks.GRASS_BLOCK)) return pos;
+            pos = pos.below();
+        }
+        return null;
     }
 
     private static boolean isAdjacentToWood(WorldGenLevel level, BlockPos pos) {
