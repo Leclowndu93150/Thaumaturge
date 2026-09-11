@@ -72,16 +72,43 @@ public final class NodeGenerator {
      * instead of fabricating a weaker post-hoc type conversion.
      */
     public static boolean createGuaranteedTaintedNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
+        return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.TAINTED);
+    }
+
+    /**
+     * Places a specifically Hungry natural node while retaining the ordinary Tainted-Lands
+     * aura/aspect roll. This is used for the single hungry-node landmark in each natural Tainted
+     * Lands patch; it does not affect the configured chance for all other nodes.
+     */
+    public static boolean createGuaranteedHungryNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
+        return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.HUNGRY);
+    }
+
+    private static boolean createGuaranteedNaturalNodeAt(
+            ServerLevelAccessor level, BlockPos pos, RandomSource random, NodeType requiredType) {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.getBiome(pos).is(TCBiomes.TAINTED_LANDS)) {
             return false;
         }
         for (int attempt = 0; attempt < 64; attempt++) {
             NodeData data = rollRandomNodeData(
                     level, pos, random, false, false, false, DEFAULT_SPECIAL_RARITY, DEFAULT_BASE_AURA);
-            if (data == null || data.type() != NodeType.TAINTED) {
+            if (data == null) {
                 continue;
             }
-            if (!createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects())) {
+            if (requiredType == NodeType.TAINTED && data.type() != NodeType.TAINTED) {
+                continue;
+            }
+            if (requiredType == NodeType.HUNGRY && data.type() != NodeType.NORMAL) {
+                continue;
+            }
+
+            AspectList aspects = data.aspects();
+            if (requiredType == NodeType.HUNGRY) {
+                HolderLookup.RegistryLookup<IAspect> aspectRegistry =
+                        level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+                aspects = addTypeFlavor(aspectRegistry, aspects, NodeType.HUNGRY, random);
+            }
+            if (!createNodeAt(level, pos, requiredType, data.modifier().orElse(null), aspects)) {
                 return false;
             }
             if (level.getBlockEntity(pos) instanceof BlockEntityNode node) {

@@ -2,7 +2,7 @@
   "category": "thaumaturge:alchemy",
   "name": "research.thaumaturge.ethereal_bloom.title",
   "parents": [
-    "thaumaturge:bottle_taint",
+    "thaumaturge:hedge_alchemy",
     "~thaumaturge:plants"
   ],
   "column": -8,

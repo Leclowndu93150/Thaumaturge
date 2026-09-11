@@ -95,6 +95,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
         }
         if (isNaturalPatchAnchor(level, chunk)) {
             any |= placeGuaranteedTaintedNode(level, random, chunk);
+            any |= placeGuaranteedHungryNode(level, random, chunk);
             any |= placeGuaranteedTaintacle(level, random, chunk);
         }
         return any;
@@ -192,6 +193,22 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
         taintacle.setPersistenceRequired();
         level.addFreshEntityWithPassengers(taintacle);
         return true;
+    }
+
+    private static boolean placeGuaranteedHungryNode(WorldGenLevel level, RandomSource random, ChunkPos chunk) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+            return false;
+        }
+        BlockPos surface = findTaintedSurface(level, random, chunk, false);
+        if (surface == null) {
+            return false;
+        }
+        BlockPos nodePos = surface;
+        if (!level.getBlockState(nodePos).isAir()
+                && !level.getBlockState(nodePos).canBeReplaced()) {
+            nodePos = nodePos.above();
+        }
+        return NodeGenerator.createGuaranteedHungryNodeAt(level, nodePos, random);
     }
 
     private static BlockPos findTaintedSurface(

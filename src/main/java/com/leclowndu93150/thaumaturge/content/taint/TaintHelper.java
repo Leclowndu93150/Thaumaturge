@@ -259,7 +259,9 @@ public final class TaintHelper {
             return false;
         }
         float saturation = Math.max(0.0F, Math.min(2.0F, AuraHelper.getFluxSaturation(level, pos)));
-        float acceleration = 1.0F + saturation * 1.5F;
+        // Keep the TC4 base roll intact. Flux can still make an established outbreak more active,
+        // but it must not turn the 1 / (rate * 5) frontier into a four-times-faster takeover.
+        float acceleration = 1.0F + Math.min(0.5F, saturation * 0.5F);
         int denominator = Math.max(1, Math.round(spreadRate * 5.0F / acceleration));
         if (random.nextInt(denominator) != 0) {
             return false;
