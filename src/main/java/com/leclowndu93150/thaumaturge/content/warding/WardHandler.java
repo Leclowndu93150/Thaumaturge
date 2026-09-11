@@ -33,6 +33,25 @@ public final class WardHandler {
         return data == null ? null : data.owner(pos);
     }
 
+    public static boolean canAccess(ServerLevel level, BlockPos pos, UUID player) {
+        WardChunkData data = existing(level, pos);
+        return player.equals(owner(level, pos)) || (data != null && data.canAccess(pos, player));
+    }
+
+    public static boolean canDelegateIron(ServerLevel level, BlockPos pos, UUID player) {
+        WardChunkData data = existing(level, pos);
+        return player.equals(owner(level, pos)) || (data != null && data.canDelegateIron(pos, player));
+    }
+
+    public static boolean grantAccess(ServerLevel level, BlockPos pos, UUID player, boolean gold) {
+        WardChunkData data = existing(level, pos);
+        if (data == null || !data.contains(pos) || !data.grantAccess(pos, player, gold)) {
+            return false;
+        }
+        level.getChunkAt(pos).setUnsaved(true);
+        return true;
+    }
+
     public static boolean canWard(BlockGetter level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return !state.isAir()

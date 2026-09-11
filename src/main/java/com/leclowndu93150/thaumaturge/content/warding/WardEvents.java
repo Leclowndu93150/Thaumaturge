@@ -25,41 +25,22 @@ public final class WardEvents {
 
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.BreakEvent event) {
-        if (!WardHandler.isWarded(event.getLevel(), event.getPos())) {
+        if (event.getPlayer().getAbilities().instabuild && event.getLevel() instanceof ServerLevel level) {
+            clearWard(level, event.getPos());
             return;
         }
-        if (event.getLevel() instanceof ServerLevel level
-                && isSelfWardingBlock(level, event.getPos())
-                && WardHandler.unward(level, event.getPos(), event.getPlayer().getUUID())) {
-            if (level.getBlockState(event.getPos())
-                    .is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
-                BlockPos otherHalf =
-                        level.getBlockState(event.getPos()).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
-                                ? event.getPos().above()
-                                : event.getPos().below();
-                WardHandler.unward(level, otherHalf, event.getPlayer().getUUID());
-            }
-            return;
+        if (WardHandler.isWarded(event.getLevel(), event.getPos())) {
+            event.setCanceled(true);
         }
-        event.setCanceled(true);
-    }
-
-    private static boolean isSelfWardingBlock(ServerLevel level, BlockPos pos) {
-        return level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.WARDED_GLASS.get())
-                || level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
-                || level.getBlockState(pos)
-                        .is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_PRESSURE_PLATE.get());
     }
 
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        if (event.getEntity().getAbilities().instabuild) {
+            return;
+        }
         event.getPosition().ifPresent(pos -> {
             if (WardHandler.isWarded(event.getEntity().level(), pos)) {
-                if (event.getEntity().level() instanceof ServerLevel level
-                        && isSelfWardingBlock(level, pos)
-                        && event.getEntity().getUUID().equals(WardHandler.owner(level, pos))) {
-                    return;
-                }
                 event.setCanceled(true);
             }
         });
@@ -114,6 +95,23 @@ public final class WardEvents {
         BlockPos origin = event.getPos().getWorldPosition();
         if (event.getLevel().hasChunkAt(origin)) {
             WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
+        }
+    }
+
+    private static void clearWard(ServerLevel level, BlockPos pos) {
+        java.util.UUID owner = WardHandler.owner(level, pos);
+        if (owner == null) {
+            return;
+        }
+        WardHandler.unward(level, pos, owner);
+        if (!level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+            return;
+        }
+        BlockPos otherHalf =
+                level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        java.util.UUID otherOwner = WardHandler.owner(level, otherHalf);
+        if (otherOwner != null) {
+            WardHandler.unward(level, otherHalf, otherOwner);
         }
     }
 }

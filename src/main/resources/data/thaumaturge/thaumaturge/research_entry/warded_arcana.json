@@ -1,0 +1,12 @@
+{
+  "category": "thaumaturge:artifice",
+  "name": "research.thaumaturge.warded_arcana.title",
+  "parents": ["thaumaturge:base_artifice"],
+  "column": -5,
+  "row": -4,
+  "icons": ["thaumaturge:arcane_door"],
+  "stages": [
+    {"text": "research.thaumaturge.warded_arcana.stage_0", "recipes": ["thaumaturge:arcane_workbench/arcane_door", "thaumaturge:arcane_workbench/arcane_key_iron", "thaumaturge:arcane_workbench/arcane_key_gold", "thaumaturge:arcane_workbench/arcane_pressure_plate", "thaumaturge:arcane_workbench/warded_glass"]}
+  ],
+  "complexity": 1
+}

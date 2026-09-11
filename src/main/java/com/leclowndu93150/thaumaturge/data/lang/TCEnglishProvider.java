@@ -1743,6 +1743,12 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.arcane_key_iron", "Iron Key");
         add("item.thaumaturge.arcane_key_gold", "Gold Key");
         add("message.thaumaturge.arcane_key_bound", "Key bound");
+        add("message.thaumaturge.arcane_key_no_access", "You cannot bind a key to this lock");
+        add("message.thaumaturge.arcane_key_wrong_lock", "This key is bound to another lock");
+        add("message.thaumaturge.arcane_key_already_bound", "This key is already bound to this lock");
+        add("message.thaumaturge.arcane_key_already_access", "You already have access to this lock");
+        add("message.thaumaturge.arcane_key_granted_iron", "You can now open this lock");
+        add("message.thaumaturge.arcane_key_granted_gold", "You can now open this lock and grant Iron Key access");
         add("message.thaumaturge.arcane_pressure_plate_mode.0", "Arcane pressure plate: everyone");
         add("message.thaumaturge.arcane_pressure_plate_mode.1", "Arcane pressure plate: owner and keys");
         add(

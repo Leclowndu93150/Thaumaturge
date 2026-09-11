@@ -135,7 +135,9 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
             if (level.isClientSide()) {
                 return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
             }
-            FocusEngine.cast(player, core);
+            if (!FocusEffectWard.castStandalone(player, core)) {
+                FocusEngine.cast(player, core);
+            }
             player.swing(hand);
             return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
         }

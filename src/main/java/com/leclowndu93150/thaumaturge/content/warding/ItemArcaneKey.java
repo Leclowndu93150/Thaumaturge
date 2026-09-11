@@ -27,12 +27,52 @@ public final class ItemArcaneKey extends Item {
         if (level.getBlockState(pos).is(TCBlocks.ARCANE_DOOR.get())
                 && level.getBlockState(pos).getValue(net.minecraft.world.level.block.DoorBlock.HALF)
                         == DoubleBlockHalf.UPPER) pos = pos.below();
-        if (player == null
-                || !(level instanceof ServerLevel server)
-                || !isLock(level, pos)
-                || !ArcaneAccess.canAccess(server, pos, player)) return InteractionResult.PASS;
-        stack.set(TCDataComponents.ARCANE_KEY_LINK.get(), GlobalPos.of(level.dimension(), pos));
-        player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_bound"));
+        if (player == null || !isLock(level, pos)) {
+            return InteractionResult.PASS;
+        }
+        if (!(level instanceof ServerLevel server)) {
+            return InteractionResult.SUCCESS;
+        }
+
+        GlobalPos target = GlobalPos.of(level.dimension(), pos);
+        GlobalPos link = stack.get(TCDataComponents.ARCANE_KEY_LINK.get());
+        boolean gold = stack.is(com.leclowndu93150.thaumaturge.registry.TCItems.ARCANE_KEY_GOLD.get());
+        if (link == null) {
+            if (!ArcaneAccess.canBind(server, pos, player, gold)) {
+                player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_no_access"));
+                return InteractionResult.FAIL;
+            }
+            ItemStack boundKey = stack.copyWithCount(1);
+            boundKey.set(TCDataComponents.ARCANE_KEY_LINK.get(), target);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
+            if (!player.getInventory().add(boundKey)) {
+                player.drop(boundKey, false);
+            }
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_bound"));
+            return InteractionResult.SUCCESS;
+        }
+        if (!link.equals(target)) {
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_wrong_lock"));
+            return InteractionResult.SUCCESS;
+        }
+        if (player.getUUID().equals(WardHandler.owner(server, pos))) {
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_already_bound"));
+            return InteractionResult.SUCCESS;
+        }
+        if (ArcaneAccess.canAccess(server, pos, player)) {
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_already_access"));
+            return InteractionResult.SUCCESS;
+        }
+        if (!WardHandler.grantAccess(server, pos, player.getUUID(), gold)) {
+            return InteractionResult.FAIL;
+        }
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
+        }
+        player.sendSystemMessage(Component.translatable(
+                gold ? "message.thaumaturge.arcane_key_granted_gold" : "message.thaumaturge.arcane_key_granted_iron"));
         return InteractionResult.SUCCESS;
     }
 

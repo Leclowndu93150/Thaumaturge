@@ -29,6 +29,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -63,7 +65,7 @@ public final class FocusEffectWard implements FocusEffect {
      * wand bypass its otherwise up-front focus cost without granting that exemption to mixed-effect foci.
      */
     public static boolean removesOwnedWard(Player player, FocusPackage focus) {
-        if (!FocusEngine.effectIds(focus).equals(List.of(ID))) {
+        if (!isWardOnlyFocus(focus)) {
             return false;
         }
         HitResult target = player.pick(player.blockInteractionRange(), 0.0F, false);
@@ -75,6 +77,28 @@ public final class FocusEffectWard implements FocusEffect {
             return player.getUUID().equals(WardHandler.owner(level, pos));
         }
         return WardHandler.isWarded(player.level(), pos) && ClientWardHolder.isOwned(pos);
+    }
+
+    /**
+     * A Ward-only focus has no targeting medium, so it uses the block under the caster's
+     * crosshair directly. Composed foci still use their normal focus-medium pipeline.
+     */
+    public static boolean castStandalone(Player player, FocusPackage focus) {
+        if (!isStandaloneWardFocus(focus) || !(player.level() instanceof ServerLevel level)) {
+            return false;
+        }
+        HitResult target = player.pick(player.blockInteractionRange(), 0.0F, false);
+        return target instanceof BlockHitResult blockHit && applyAt(level, player, blockHit.getBlockPos());
+    }
+
+    private static boolean isWardOnlyFocus(FocusPackage focus) {
+        return FocusEngine.effectIds(focus).equals(List.of(ID));
+    }
+
+    private static boolean isStandaloneWardFocus(FocusPackage focus) {
+        return focus.units().size() == 1
+                && focus.units().getFirst().element().equals(ID)
+                && focus.units().getFirst().branches().isEmpty();
     }
 
     @Override
@@ -101,27 +125,49 @@ public final class FocusEffectWard implements FocusEffect {
         if (!(ctx.caster() instanceof Player player)) {
             return false;
         }
-        BlockPos pos = blockHit.getBlockPos();
+        return applyAt(level, player, blockHit.getBlockPos());
+    }
+
+    private static boolean applyAt(ServerLevel level, Player player, BlockPos pos) {
+        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.below();
+        }
         UUID owner = player.getUUID();
         if (WardHandler.isWarded(level, pos)) {
             if (!WardHandler.unward(level, pos, owner)) {
                 return false;
             }
-            FocusFX.impact(level, Vec3.atCenterOf(pos), id());
+            if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+                BlockPos otherHalf = level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
+                        ? pos.above()
+                        : pos.below();
+                WardHandler.unward(level, otherHalf, owner);
+            }
+            FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
             level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
             return true;
         }
         if (!WardHandler.canWard(level, pos)) {
             return false;
         }
-        if (!WandVisHelper.consumeVisFromHotbar(player, VIS_COST_PER_BLOCK, false)) {
+        BlockPos otherHalf =
+                level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                        ? pos.above()
+                        : null;
+        float visCost = otherHalf == null ? VIS_COST_PER_BLOCK : VIS_COST_PER_BLOCK * 2.0F;
+        if (!WandVisHelper.consumeVisFromHotbar(player, visCost, false)) {
             return false;
         }
         if (!WardHandler.ward(level, pos, owner)) {
             return false;
         }
-        WandVisHelper.consumeVisFromHotbar(player, VIS_COST_PER_BLOCK, true);
-        FocusFX.impact(level, Vec3.atCenterOf(pos), id());
+        if (otherHalf != null && !WardHandler.ward(level, otherHalf, owner)) {
+            WardHandler.unward(level, pos, owner);
+            return false;
+        }
+        WandVisHelper.consumeVisFromHotbar(player, visCost, true);
+        FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
         level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
         return true;
     }
