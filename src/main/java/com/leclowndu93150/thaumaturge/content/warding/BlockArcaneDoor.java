@@ -33,6 +33,7 @@ public final class BlockArcaneDoor extends DoorBlock {
         if (level instanceof ServerLevel server && placer instanceof Player player) {
             WardHandler.ward(server, pos, player.getUUID());
             WardHandler.ward(server, pos.above(), player.getUUID());
+            ArcaneAccess.lock(server, pos, player.getUUID());
         }
     }
 

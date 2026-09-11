@@ -38,6 +38,7 @@ public final class BlockArcanePressurePlate extends PressurePlateBlock {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level instanceof ServerLevel server && placer instanceof Player player) {
             WardHandler.ward(server, pos, player.getUUID());
+            ArcaneAccess.lock(server, pos, player.getUUID());
         }
     }
 

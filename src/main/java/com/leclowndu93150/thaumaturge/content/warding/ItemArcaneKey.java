@@ -57,7 +57,7 @@ public final class ItemArcaneKey extends Item {
             player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_wrong_lock"));
             return InteractionResult.SUCCESS;
         }
-        if (player.getUUID().equals(WardHandler.owner(server, pos))) {
+        if (player.getUUID().equals(ArcaneAccess.owner(server, pos))) {
             player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_already_bound"));
             return InteractionResult.SUCCESS;
         }
@@ -65,7 +65,7 @@ public final class ItemArcaneKey extends Item {
             player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_already_access"));
             return InteractionResult.SUCCESS;
         }
-        if (!WardHandler.grantAccess(server, pos, player.getUUID(), gold)) {
+        if (!ArcaneAccess.grantAccess(server, pos, player.getUUID(), gold)) {
             return InteractionResult.FAIL;
         }
         if (!player.getAbilities().instabuild) {

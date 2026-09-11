@@ -27,10 +27,15 @@ public final class WardEvents {
     public static void onBreakBlock(BlockEvent.BreakEvent event) {
         if (event.getPlayer().getAbilities().instabuild && event.getLevel() instanceof ServerLevel level) {
             clearWard(level, event.getPos());
+            clearLock(level, event.getPos());
             return;
         }
         if (WardHandler.isWarded(event.getLevel(), event.getPos())) {
             event.setCanceled(true);
+            return;
+        }
+        if (event.getLevel() instanceof ServerLevel level) {
+            clearLock(level, event.getPos());
         }
     }
 
@@ -113,5 +118,16 @@ public final class WardEvents {
         if (otherOwner != null) {
             WardHandler.unward(level, otherHalf, otherOwner);
         }
+    }
+
+    private static void clearLock(ServerLevel level, BlockPos pos) {
+        if (!ArcaneAccess.isLock(level, pos)) {
+            return;
+        }
+        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.below();
+        }
+        ArcaneAccess.removeLock(level, pos);
     }
 }
