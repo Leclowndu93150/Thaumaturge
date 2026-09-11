@@ -20,6 +20,7 @@ public final class ParticleSheet {
 
     public enum Mode {
         ADDITIVE(true, true, true),
+        ADDITIVE_SOFT(true, false, true),
         TRANSLUCENT(false, true, true),
         ADDITIVE_NO_DEPTH(true, false, false),
         TRANSLUCENT_NO_DEPTH(false, false, false);

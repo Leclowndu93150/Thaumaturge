@@ -43,7 +43,7 @@ public final class WispFlameParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.additive(this.sheet);
+        return TCParticleLayers.additiveSoft(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<WispFlameParticleOptions> {
