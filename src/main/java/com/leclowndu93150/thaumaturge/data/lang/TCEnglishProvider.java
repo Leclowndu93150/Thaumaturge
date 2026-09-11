@@ -18,6 +18,7 @@ public final class TCEnglishProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add("itemGroup.thaumaturge", "Thaumaturge");
+        add("treePack.thaumaturge.name", "Thaumaturge");
         addJade();
 
         aspect("aer", "Aer", "Air", "air");

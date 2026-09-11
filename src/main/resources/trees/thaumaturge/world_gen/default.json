@@ -1,0 +1,59 @@
+[
+  {
+    "select": "thaumaturge:magical_forest",
+    "apply": {
+      "species": {
+        "random": {
+          "oak": 31,
+          "thaumaturge:greatwood": 3,
+          "thaumaturge:silverwood": 2
+        }
+      },
+      "density": 0.35,
+      "chance": 1.0,
+      "forestness": 1.0
+    }
+  },
+  {
+    "select": {
+      "tag": "#thaumaturge:has_greatwood"
+    },
+    "apply": {
+      "species": {
+        "method": "SPLICE_BEFORE",
+        "random": {
+          "...": 24,
+          "thaumaturge:greatwood": 1
+        }
+      }
+    }
+  },
+  {
+    "select": {
+      "tag": "#thaumaturge:has_greatwood_rare"
+    },
+    "apply": {
+      "species": {
+        "method": "SPLICE_BEFORE",
+        "random": {
+          "...": 124,
+          "thaumaturge:greatwood": 1
+        }
+      }
+    }
+  },
+  {
+    "select": {
+      "tag": "#thaumaturge:has_silverwood"
+    },
+    "apply": {
+      "species": {
+        "method": "SPLICE_BEFORE",
+        "random": {
+          "...": 79,
+          "thaumaturge:silverwood": 1
+        }
+      }
+    }
+  }
+]

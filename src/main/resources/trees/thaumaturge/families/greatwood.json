@@ -1,0 +1,13 @@
+{
+  "common_leaves": "thaumaturge:greatwood",
+  "common_species": "thaumaturge:greatwood",
+  "primitive_log": "thaumaturge:log_greatwood",
+  "primitive_stripped_log": "thaumaturge:stripped_log_greatwood",
+  "max_branch_radius": 8,
+  "texture_overrides": {
+    "branch": "thaumaturge:block/log_greatwood",
+    "branch_top": "thaumaturge:block/log_greatwood_top",
+    "stripped_branch": "thaumaturge:block/stripped_log_greatwood",
+    "stripped_branch_top": "thaumaturge:block/stripped_log_greatwood_top"
+  }
+}

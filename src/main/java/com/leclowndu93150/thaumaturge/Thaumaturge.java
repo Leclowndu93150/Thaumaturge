@@ -73,6 +73,7 @@ public final class Thaumaturge {
         TCMobEffects.register(modBus);
         TCAttributes.register(modBus);
         TCChunkGenerators.register(modBus);
+        TCBiomeModifierSerializers.register(modBus);
         TCPlacementModifiers.register(modBus);
         TCGolemTraits.register(modBus);
         TCFocusElements.register(modBus);

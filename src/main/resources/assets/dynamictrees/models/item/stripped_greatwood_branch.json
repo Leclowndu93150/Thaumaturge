@@ -1,0 +1,7 @@
+{
+  "parent": "dynamictrees:item/branch",
+  "textures": {
+    "bark": "thaumaturge:block/stripped_log_greatwood",
+    "rings": "thaumaturge:block/stripped_log_greatwood_top"
+  }
+}
