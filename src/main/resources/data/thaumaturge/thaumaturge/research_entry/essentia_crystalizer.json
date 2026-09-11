@@ -15,18 +15,15 @@
   "stages": [
     {
       "text": "research.thaumaturge.essentia_crystalizer.stage_0",
+      "recipes": [
+        "thaumaturge:arcane_workbench/essentia_crystalizer"
+      ],
       "required_knowledge": [
         {
           "type": "theory",
           "category": "thaumaturge:alchemy",
           "amount": 1
         }
-      ]
-    },
-    {
-      "text": "research.thaumaturge.essentia_crystalizer.stage_1",
-      "recipes": [
-        "thaumaturge:arcane_workbench/essentia_crystalizer"
       ]
     }
   ],

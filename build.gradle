@@ -130,6 +130,15 @@ neoForge {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+// Hand-authored model overrides are listed before datagen output and must win when both describe one item.
+tasks.named('processResources') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named('sourcesJar') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 tasks.register('generateData', Exec) {
     workingDir projectDir
     if (System.getProperty('os.name').toLowerCase().contains('windows')) {

@@ -33,7 +33,6 @@ public final class TaintHelper {
     private static final float SEED_FLUX_THRESHOLD = 5.0F;
     private static final float SEED_FLUX_COST = 5.0F;
     private static final double SEED_SPAWN_RATE_FACTOR = 0.01;
-    private static final float FEATURE_ON_LEAVES_CHANCE = 0.6F;
     private static final double SEED_VALIDATION_RANGE = 1.0;
     private static final float MAX_SPREAD_HARDNESS = 10.0F;
     private static final float MAX_CONVERT_HARDNESS = 5.0F;
@@ -158,26 +157,15 @@ public final class TaintHelper {
         }
 
         if (isLeaves) {
-            Direction logFace =
-                    random.nextFloat() < FEATURE_ON_LEAVES_CHANCE ? findAdjacentTaintLog(level, target) : null;
-            if (logFace != null) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
+            Direction taintLogDirection = adjacentTaintLog(level, target);
+            if (taintLogDirection != null && random.nextFloat() < 0.6F) {
                 level.setBlock(
                         target,
                         TCBlocks.TAINT_FEATURE
                                 .get()
                                 .defaultBlockState()
-                                .setValue(DirectionalBlock.FACING, logFace.getOpposite()),
+                                .setValue(DirectionalBlock.FACING, taintLogDirection.getOpposite()),
                         Block.UPDATE_ALL);
-                addConversionPressure(level, target);
-            } else {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
-                level.setBlock(target, BlockTaintFibre.stateForWorld(level, target), Block.UPDATE_ALL);
-                addConversionPressure(level, target);
             }
             return;
         }
@@ -234,6 +222,15 @@ public final class TaintHelper {
         // Keep TC6 Seed reproduction as an escalation mechanic, but only for an outbreak that
         // already has a Seed edge. It is deliberately not the foundation of ordinary TC4 spread.
         trySpawnTaintSeed(level, target, targetState, random);
+    }
+
+    private static Direction adjacentTaintLog(LevelReader level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            if (level.getBlockState(pos.relative(direction)).is(TCBlocks.TAINT_LOG.get())) {
+                return direction;
+            }
+        }
+        return null;
     }
 
     private static boolean ensureTargetBiome(
@@ -377,15 +374,5 @@ public final class TaintHelper {
 
     private static boolean isRockConvertible(BlockState state) {
         return state.is(TCBlockTags.TAINT_CONVERTIBLE_ROCK);
-    }
-
-    private static Direction findAdjacentTaintLog(ServerLevel level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            BlockState neighborState = level.getBlockState(pos.relative(direction));
-            if (neighborState.is(TCBlocks.TAINT_LOG.get())) {
-                return direction;
-            }
-        }
-        return null;
     }
 }

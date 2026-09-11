@@ -15,6 +15,9 @@
   "stages": [
     {
       "text": "research.thaumaturge.flux_scrubber.stage_0",
+      "recipes": [
+        "thaumaturge:arcane_workbench/flux_scrubber"
+      ],
       "required_knowledge": [
         {
           "type": "observation",
@@ -26,12 +29,6 @@
           "category": "thaumaturge:artifice",
           "amount": 1
         }
-      ]
-    },
-    {
-      "text": "research.thaumaturge.flux_scrubber.stage_1",
-      "recipes": [
-        "thaumaturge:arcane_workbench/flux_scrubber"
       ]
     }
   ],

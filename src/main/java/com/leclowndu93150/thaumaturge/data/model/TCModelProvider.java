@@ -57,7 +57,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
@@ -327,7 +326,6 @@ public final class TCModelProvider implements DataProvider {
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(
                         TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), vName("advanced_alchemical_furnace_base"))
                 .with(horizontalDispatch()));
-        delegateItem(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get(), BEWLR_BLOCK_PARENT);
 
         blockModels.createTrivialCube(TCBlocks.METAL_BRASS_BLOCK.get());
         blockModels.createTrivialCube(TCBlocks.METAL_THAUMIUM_BLOCK.get());
@@ -1442,7 +1440,6 @@ public final class TCModelProvider implements DataProvider {
         translucentCube(TCBlocks.FLUX_GAS.get());
         simpleFromExisting(TCBlocks.TAINT_GEYSER.get(), "taint_geyser");
         registerTaintLog();
-        registerTaintFeature();
         registerTaintFibre();
         registerTaintSporeStalk();
 
@@ -1517,32 +1514,6 @@ public final class TCModelProvider implements DataProvider {
                     .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90));
         }
         return entries.toArray(Variant[]::new);
-    }
-
-    private void registerTaintFeature() {
-        Variant[] orbs = new Variant[] {vName("taint_orb_0"), vName("taint_orb_1"), vName("taint_orb_2")};
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.TAINT_FEATURE.get(), orbs)
-                .with(PropertyDispatch.property(DirectionalBlock.FACING)
-                        .select(Direction.UP, Variant.variant())
-                        .select(
-                                Direction.DOWN,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-                        .select(
-                                Direction.NORTH,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
-                        .select(
-                                Direction.SOUTH,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.WEST,
-                                Variant.variant()
-                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.EAST,
-                                Variant.variant()
-                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))));
     }
 
     private void registerTaintFibre() {
@@ -1634,14 +1605,10 @@ public final class TCModelProvider implements DataProvider {
                 ModelTemplates.DOOR_BOTTOM_RIGHT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
         ResourceLocation bottomRightOpen =
                 ModelTemplates.DOOR_BOTTOM_RIGHT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
-        ResourceLocation topLeft =
-                ModelTemplates.DOOR_TOP_LEFT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
-        ResourceLocation topLeftOpen =
-                ModelTemplates.DOOR_TOP_LEFT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
-        ResourceLocation topRight =
-                ModelTemplates.DOOR_TOP_RIGHT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
-        ResourceLocation topRightOpen =
-                ModelTemplates.DOOR_TOP_RIGHT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topLeft = TCIds.rl("block/arcane_door_top_left");
+        ResourceLocation topLeftOpen = TCIds.rl("block/arcane_door_top_left_open");
+        ResourceLocation topRight = TCIds.rl("block/arcane_door_top_right");
+        ResourceLocation topRightOpen = TCIds.rl("block/arcane_door_top_right_open");
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_DOOR.get())
                 .with(doorHalf(
                         doorHalf(
@@ -1914,9 +1881,9 @@ public final class TCModelProvider implements DataProvider {
         cube(TCBlocks.ELDRITCH_STONE_INERT.get(), "eldritch_stone");
         cube(TCBlocks.ELDRITCH_ROCK.get(), "eldritch_rock");
         cube(TCBlocks.ELDRITCH_CRUST.get(), "eldritch_crust");
-        insetBlock(TCBlocks.ELDRITCH_CRUST_GLOWING.get(), "eldritch_crust_glowing");
+        insetBlock(TCBlocks.ELDRITCH_CRUST_GLOWING.get(), "eldritch_crust_glowing", true);
         cube(TCBlocks.ELDRITCH_DOOR.get(), "eldritch_door");
-        insetBlock(TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), "eldritch_stone_crystal");
+        insetBlock(TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), "eldritch_stone_crystal", false);
         eldritchLock();
         crabSpawner();
         column(TCBlocks.ELDRITCH_PEDESTAL.get(), "eldritch_pedestal_side", "eldritch_stone");
@@ -1969,13 +1936,15 @@ public final class TCModelProvider implements DataProvider {
     private static final int INSET_DEPTH = 2;
     private static final int INSET_ALL_EXPOSED = 63;
 
-    private void insetBlock(Block block, String textureName) {
+    private void insetBlock(Block block, String textureName, boolean staticAllExposedModel) {
         ResourceLocation texture = TCIds.rl("block/" + textureName);
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block);
         for (int mask = 0; mask <= INSET_ALL_EXPOSED; mask++) {
             ResourceLocation model = TCIds.rl("block/" + textureName + "_inset_" + mask);
             int finalMask = mask;
-            modelOutput.accept(model, () -> insetModel(texture, finalMask));
+            if (!staticAllExposedModel || mask != INSET_ALL_EXPOSED) {
+                modelOutput.accept(model, () -> insetModel(texture, finalMask));
+            }
             Condition.TerminalCondition condition = Condition.condition();
             for (Direction dir : Direction.values()) {
                 condition = condition.term(BlockEldritchInset.EXPOSED.get(dir), insetExposed(mask, dir));

@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
@@ -120,6 +121,12 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
             tag.putString(AREA, "flux_scrubber");
             tag.putInt("ScrubberCharges", scrubber.charges());
             tag.putFloat("ScrubberPower", scrubber.power());
+            return;
+        }
+        if (blockEntity instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
+            writeStorage(tag, furnace.aspects(), BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
+            tag.putString(AREA, "advanced_alchemical_furnace");
+            tag.putBoolean(ACTIVE, furnace.assembled());
             return;
         }
         if (blockEntity instanceof IAspectContainer container) {

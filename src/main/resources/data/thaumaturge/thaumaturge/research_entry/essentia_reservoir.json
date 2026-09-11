@@ -14,6 +14,9 @@
   "stages": [
     {
       "text": "research.thaumaturge.essentia_reservoir.stage_0",
+      "recipes": [
+        "thaumaturge:infusion/essentia_reservoir"
+      ],
       "required_knowledge": [
         {
           "type": "theory",
@@ -25,12 +28,6 @@
           "category": "thaumaturge:alchemy",
           "amount": 1
         }
-      ]
-    },
-    {
-      "text": "research.thaumaturge.essentia_reservoir.stage_1",
-      "recipes": [
-        "thaumaturge:infusion/essentia_reservoir"
       ]
     }
   ],
