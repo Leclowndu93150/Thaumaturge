@@ -16,7 +16,7 @@ public final class WardFlashParticle extends TCParticle {
     private static final int AGE_JITTER = 5;
     private static final float BASE_SCALE = 1.4F;
     private static final float SCALE_JITTER = 0.3F;
-    private static final float FACE_OFFSET = 0.505F;
+    private static final float FACE_OFFSET = 0.005F;
     private static final float HIT_JITTER = 0.2F;
     private static final float HIT_CLAMP = 0.4F;
     private static final float RAMP_PORTION = 5.0F;
@@ -28,9 +28,12 @@ public final class WardFlashParticle extends TCParticle {
             ClientLevel level, double x, double y, double z, WardFlashParticleOptions options, ParticleSheet sheet) {
         super(level, x, y, z, 0.0, 0.0, 0.0, sheet);
         Direction face = options.face();
-        float sx = Mth.clamp(options.hitX() - 0.6F + this.random.nextFloat() * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
-        float sy = Mth.clamp(options.hitY() - 0.6F + this.random.nextFloat() * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
-        float sz = Mth.clamp(options.hitZ() - 0.6F + this.random.nextFloat() * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
+        float sx =
+                Mth.clamp(options.hitX() - 0.5F + (this.random.nextFloat() - 0.5F) * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
+        float sy =
+                Mth.clamp(options.hitY() - 0.5F + (this.random.nextFloat() - 0.5F) * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
+        float sz =
+                Mth.clamp(options.hitZ() - 0.5F + (this.random.nextFloat() - 0.5F) * HIT_JITTER, -HIT_CLAMP, HIT_CLAMP);
         if (face.getStepX() != 0) {
             sx = 0.0F;
         }
