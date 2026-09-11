@@ -9,6 +9,10 @@ public final class TCParticleLayers {
         return sheet.layer(ParticleSheet.Mode.ADDITIVE);
     }
 
+    public static ParticleRenderType additiveSoft(ParticleSheet sheet) {
+        return sheet.layer(ParticleSheet.Mode.ADDITIVE_SOFT);
+    }
+
     public static ParticleRenderType translucent(ParticleSheet sheet) {
         return sheet.layer(ParticleSheet.Mode.TRANSLUCENT);
     }

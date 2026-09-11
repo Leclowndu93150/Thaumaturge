@@ -8,6 +8,7 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -20,7 +21,7 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static final int VISHROOM_MIN_Y = 50;
     private static final int GIANT_MUSHROOM_GRID_SIZE = 4;
     private static final int GIANT_MUSHROOM_CHANCE = 40;
-    private static final int FLOWER_ATTEMPTS = 10;
+    private static final int FLOWER_ATTEMPTS = 5;
     private static final int TALL_GRASS_ATTEMPTS = 12;
     private static final int SHORT_GRASS_ATTEMPTS = 10;
     private static final int FERN_ATTEMPTS = 6;
@@ -128,7 +129,8 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         if (!level.getBlockState(pos).canBeReplaced() || !state.canSurvive(level, pos)) return false;
         if (state.getBlock() instanceof DoublePlantBlock) {
             if (!level.getBlockState(pos.above()).canBeReplaced()) return false;
-            DoublePlantBlock.placeAt(level, state, pos, PLACE_FLAGS);
+            DoublePlantBlock.placeAt(
+                    level, state.setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER), pos, PLACE_FLAGS);
             return true;
         }
         return level.setBlock(pos, state, PLACE_FLAGS);
