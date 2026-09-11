@@ -41,7 +41,13 @@ public class BlockSmelterAux extends Block {
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        Direction face = context.getClickedFace();
+        if (!face.getAxis().isHorizontal()) {
+            return null;
+        }
+        // The port faces into the smelter. Deriving this from the clicked face, rather than the
+        // player's look direction, also makes side placement deterministic from every angle.
+        return defaultBlockState().setValue(FACING, face.getOpposite());
     }
 
     @Override
