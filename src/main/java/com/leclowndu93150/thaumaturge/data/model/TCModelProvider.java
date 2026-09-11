@@ -126,6 +126,7 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private static final Set<String> CHECKED_IN_ITEM_MODELS = Set.of(
+            "advanced_alchemical_furnace",
             "bellows",
             "flux_scrubber",
             "leaves_greatwood",
