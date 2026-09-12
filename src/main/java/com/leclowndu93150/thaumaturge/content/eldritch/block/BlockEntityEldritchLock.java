@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
@@ -9,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchGolem;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchWarden;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityTaintacleGiant;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
@@ -360,8 +362,12 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         int y = 50;
         int z = cz * 16 + 16;
         RandomSource rand = level.getRandom();
+        BlockPos roomCenter = new BlockPos(x, y + 2, z);
+        AuraHelper.polluteAura(
+                level, roomCenter, Math.max(100.0F, AuraHelper.getAuraBase(level, roomCenter)) * 4.0F, true);
         for (int a = -12; a <= 12; a++) {
             for (int b = -12; b <= 12; b++) {
+                TaintBiomeManager.taintColumn(level, new BlockPos(x + b, y + 2, z + a));
                 for (int c = 0; c < 9; c++) {
                     BlockPos target = new BlockPos(x + b, y + 2 + c, z + a);
                     if (level.isEmptyBlock(target) && isAdjacentToSolid(level, target) && rand.nextInt(3) != 0) {

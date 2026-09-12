@@ -73,6 +73,7 @@ import com.leclowndu93150.thaumaturge.content.wands.ItemPrimalCharm;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandCap;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandRod;
+import com.leclowndu93150.thaumaturge.content.warding.ItemArcaneKey;
 import com.leclowndu93150.thaumaturge.content.warp.ItemSanitySoap;
 import com.leclowndu93150.thaumaturge.content.world.mound.LootBagItem;
 import java.util.EnumMap;
@@ -151,6 +152,12 @@ public final class TCItems {
 
     public static final DeferredItem<BlockItem> TUBE_BUFFER = ITEMS.registerSimpleBlockItem(TCBlocks.TUBE_BUFFER);
 
+    public static final DeferredItem<BlockItem> ESSENTIA_RESERVOIR =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ESSENTIA_RESERVOIR);
+
+    public static final DeferredItem<BlockItem> ESSENTIA_CRYSTALIZER =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ESSENTIA_CRYSTALIZER);
+
     public static final DeferredItem<BlockItem> TAINT_ROCK = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_ROCK);
     public static final DeferredItem<BlockItem> TAINT_SOIL = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_SOIL);
     public static final DeferredItem<BlockItem> TAINT_CRUST = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_CRUST);
@@ -158,6 +165,9 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> TAINT_LOG = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_LOG);
     public static final DeferredItem<BlockItem> TAINT_FEATURE = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_FEATURE);
     public static final DeferredItem<BlockItem> TAINT_FIBRE = ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_FIBRE);
+    public static final DeferredItem<BlockItem> TAINT_SPORE_STALK =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TAINT_SPORE_STALK);
+    public static final DeferredItem<BlockItem> ETHEREAL_BLOOM = ITEMS.registerSimpleBlockItem(TCBlocks.ETHEREAL_BLOOM);
 
     public static final DeferredItem<BucketItem> BUCKET_LIQUID_DEATH = ITEMS.registerItem(
             "liquid_death_bucket",
@@ -205,6 +215,7 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> THAUMATORIUM = ITEMS.registerSimpleBlockItem(TCBlocks.THAUMATORIUM);
     public static final DeferredItem<BlockItem> BRAIN_BOX = ITEMS.registerSimpleBlockItem(TCBlocks.BRAIN_BOX);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(TCBlocks.CONDENSER);
+    public static final DeferredItem<BlockItem> FLUX_SCRUBBER = ITEMS.registerSimpleBlockItem(TCBlocks.FLUX_SCRUBBER);
     public static final DeferredItem<BlockItem> CONDENSER_LATTICE =
             ITEMS.registerSimpleBlockItem(TCBlocks.CONDENSER_LATTICE);
     public static final DeferredItem<BlockItem> CONDENSER_LATTICE_DIRTY =
@@ -693,6 +704,17 @@ public final class TCItems {
     //
 
     public static final DeferredItem<BlockItem> STONE_ARCANE = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE);
+    public static final DeferredItem<BlockItem> WARDED_GLASS = ITEMS.registerSimpleBlockItem(TCBlocks.WARDED_GLASS);
+    public static final DeferredItem<BlockItem> ARCANE_DOOR = ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_DOOR);
+    public static final DeferredItem<BlockItem> ARCANE_PRESSURE_PLATE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_PRESSURE_PLATE);
+    public static final DeferredItem<BlockItem> GOLEM_FETTER = ITEMS.registerSimpleBlockItem(TCBlocks.GOLEM_FETTER);
+    public static final DeferredItem<BlockItem> TALLOW_BLOCK = ITEMS.registerSimpleBlockItem(TCBlocks.TALLOW_BLOCK);
+    public static final DeferredItem<BlockItem> ITEM_GRATE = ITEMS.registerSimpleBlockItem(TCBlocks.ITEM_GRATE);
+    public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_IRON =
+            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+    public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_GOLD =
+            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> STONE_ARCANE_BRICK =
             ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE_BRICK);
     public static final DeferredItem<BlockItem> STONE_ANCIENT = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ANCIENT);
@@ -757,8 +779,12 @@ public final class TCItems {
 
     public static final DeferredItem<BlockItem> ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_CONSTRUCT);
+    public static final DeferredItem<BlockItem> ALCHEMICAL_FURNACE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_FURNACE);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT);
+    public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_FURNACE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE);
 
     public static final DeferredItem<BlockItem> METAL_THAUMIUM_BLOCK =
             ITEMS.registerSimpleBlockItem(TCBlocks.METAL_THAUMIUM_BLOCK);

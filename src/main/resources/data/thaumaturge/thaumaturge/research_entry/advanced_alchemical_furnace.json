@@ -1,0 +1,12 @@
+{
+  "category": "thaumaturge:eldritch",
+  "name": "research.thaumaturge.advanced_alchemical_furnace.title",
+  "parents": ["thaumaturge:base_eldritch", "thaumaturge:essentia_smelter_void"],
+  "column": -2,
+  "row": 6,
+  "icons": ["thaumaturge:advanced_alchemical_furnace"],
+  "stages": [
+    {"text": "research.thaumaturge.advanced_alchemical_furnace.stage_0", "recipes": ["thaumaturge:arcane_workbench/advanced_alchemical_construct", "thaumaturge:dust_trigger/advanced_alchemical_furnace"]}
+  ],
+  "complexity": 3
+}

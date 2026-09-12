@@ -1,0 +1,12 @@
+{
+  "category": "thaumaturge:artifice",
+  "name": "research.thaumaturge.item_grate.title",
+  "parents": ["thaumaturge:base_artifice"],
+  "column": 2,
+  "row": -1,
+  "icons": ["thaumaturge:item_grate"],
+  "stages": [
+    {"text": "research.thaumaturge.item_grate.stage_0", "recipes": ["thaumaturge:item_grate"]}
+  ],
+  "complexity": 1
+}

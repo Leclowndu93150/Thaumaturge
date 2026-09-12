@@ -1,7 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
@@ -10,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -28,8 +34,9 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 public abstract class FluxGooFluid extends BaseFlowingFluid {
     private static final int QUANTA_PER_BLOCK = 8;
     private static final int GOO_DENSITY = 8;
-    private static final int SLIME_SPAWN_CHANCE = 50;
-    private static final int DECAY_ROLL_CHANCE = 4;
+    private static final int SLIME_SPAWN_CHANCE = 25;
+    private static final int TAINT_CONVERSION_CHANCE = 50;
+    private static final int DECAY_ROLL_CHANCE = 30;
     private static final int SMALL_SLIME_META_MIN = 2;
     private static final int SMALL_SLIME_META_MAX = 6;
     private static final int VIS_EXHAUST_DURATION = 600;
@@ -46,47 +53,89 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
     }
 
     @Override
-    public void tick(Level level, BlockPos pos, FluidState fluidState) {
-        if (level instanceof ServerLevel serverLevel) {
-            updateTick(serverLevel, pos, fluidState, serverLevel.getRandom());
+    protected void randomTick(Level level, BlockPos pos, FluidState fluidState, RandomSource random) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
-        super.tick(level, pos, fluidState);
+        FluidState current = serverLevel.getFluidState(pos);
+        if (!current.isEmpty() && current.getType().isSame(this)) {
+            lifecycleTick(serverLevel, pos, current, random);
+        }
     }
 
     @Override
-    protected void randomTick(Level level, BlockPos pos, FluidState state, RandomSource random) {
-        if (level instanceof ServerLevel serverLevel) {
-            updateTick(serverLevel, pos, state, random);
+    public void tick(Level level, BlockPos pos, FluidState fluidState) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        // Report the physical pollution before it moves/decays. These observations establish a
+        // capped local Aura Flux floor rather than generating Flux endlessly every tick.
+        PhysicalFluxAuraContamination.observeGoo(serverLevel, pos, fluidState.getAmount());
+        spreadTick(serverLevel, pos, fluidState, serverLevel.getRandom());
+        FluidState current = serverLevel.getFluidState(pos);
+        if (!current.isEmpty() && current.getType().isSame(this)) {
+            scheduleGooTick(serverLevel, pos);
         }
     }
 
-    private void updateTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource rand) {
+    private void lifecycleTick(ServerLevel level, BlockPos pos, FluidState state, RandomSource rand) {
         if (!level.getFluidState(pos).getType().isSame(this)) {
             return;
         }
         int meta = state.getAmount() - 1;
         boolean airAbove = level.getBlockState(pos.above()).isAir();
+
+        // TC4: medium exposed pools occasionally hatch a small thaumic slime.
         if (meta >= SMALL_SLIME_META_MIN
                 && meta < SMALL_SLIME_META_MAX
                 && airAbove
                 && rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
             spawnSlime(level, pos, 1);
-        } else if (meta >= SMALL_SLIME_META_MAX && airAbove && rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
-            spawnSlime(level, pos, 2);
-        } else if (rand.nextInt(DECAY_ROLL_CHANCE) == 0) {
-            if (meta == 0) {
-                if (rand.nextBoolean()) {
-                    AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                } else {
-                    level.setBlock(pos, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
+            return;
+        }
+
+        // TC4: large exposed pools may hatch a larger slime or (when enabled) fester directly
+        // into a Taint outbreak. If neither catastrophe fires, they still proceed to the ordinary
+        // one-level decay roll below; large pools are not permanently exempt from evaporation.
+        if (meta >= SMALL_SLIME_META_MAX && airAbove) {
+            if (rand.nextInt(SLIME_SPAWN_CHANCE) == 0) {
+                spawnSlime(level, pos, 2);
+                return;
+            } else if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()
+                    && !ThaumaturgeCommonConfig.WUSS_MODE.get()
+                    && !TaintBloomRegistry.isProtected(level, pos)
+                    && rand.nextInt(TAINT_CONVERSION_CHANCE) == 0
+                    && (TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.taintColumn(level, pos))) {
+                level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
+                TaintEcology.addPressure(level, pos, 0.16F);
+                // A TC4 Goo catastrophe should be visibly ecological, not a lonely fibre that is
+                // easy to miss. Seed a few initial conversion attempts; normal spread rules take
+                // over immediately afterward and no Seed/Flux life-support is required.
+                for (int i = 0; i < 6; i++) {
+                    com.leclowndu93150.thaumaturge.content.taint.TaintHelper.spreadFibres(level, pos, true);
                 }
-            } else {
-                setGoo(level, pos, meta, Block.UPDATE_CLIENTS);
+                // Modern aura integration: the physical disaster also leaves a small amount of
+                // numerical Flux behind, but the resulting Taint does not require it to survive.
                 AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
+                return;
             }
-        } else {
-            spreadTick(level, pos, state, rand);
+        }
+
+        // TC4 generic decay: one level evaporates on a 1/30 roll. The thinnest trace disappears;
+        // thicker Goo may emit one quantum of visible Flux Gas above itself. It does not randomly
+        // turn into Taint or silently collapse into aura Flux.
+        if (rand.nextInt(DECAY_ROLL_CHANCE) != 0) {
+            return;
+        }
+        if (meta == 0) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            return;
+        }
+
+        setGoo(level, pos, meta, Block.UPDATE_CLIENTS);
+        if (airAbove && rand.nextBoolean()) {
+            PhysicalFlux.placeGas(level, pos.above(), 1);
         }
     }
 
@@ -194,7 +243,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return amtToInput;
         }
 
-        if (densityOther < GOO_DENSITY) {
+        if (densityOther < GOO_DENSITY || isDisplaceableVanillaFluid(level.getFluidState(other))) {
             BlockState displaced = level.getBlockState(other);
             setGoo(level, other, amtToInput, Block.UPDATE_ALL);
             level.setBlock(pos, displaced, Block.UPDATE_ALL);
@@ -244,7 +293,8 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             if (fluidState.getType().isSame(this)) {
                 return false;
             }
-            return GOO_DENSITY > fluidState.getFluidType().getDensity();
+            return isDisplaceableVanillaFluid(fluidState)
+                    || GOO_DENSITY > fluidState.getFluidType().getDensity();
         }
         if (state.is(TCBlocks.TAINT_FIBRE.get())) {
             return true;
@@ -264,6 +314,10 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             }
         }
         return canDisplace;
+    }
+
+    private static boolean isDisplaceableVanillaFluid(FluidState state) {
+        return state.is(FluidTags.WATER) || state.is(FluidTags.LAVA);
     }
 
     private void setGoo(Level level, BlockPos pos, int quanta, int flags) {

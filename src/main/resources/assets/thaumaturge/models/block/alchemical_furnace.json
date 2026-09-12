@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top": "thaumaturge:block/al_furnace_top",
+    "bottom": "thaumaturge:block/base_metal",
+    "side": "thaumaturge:block/al_furnace_side",
+    "front": "thaumaturge:block/al_furnace_front_off"
+  }
+}

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.core.BlockPos;
@@ -83,7 +84,31 @@ public class BlockPlaceholder extends Block {
                 }
             }
         }
+        if (!level.isClientSide() && isAdvancedFurnacePart(state)) {
+            restoreAdvancedFurnace:
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 0; y++) {
+                    for (int z = -1; z <= 1; z++) {
+                        BlockPos controllerPos = pos.offset(x, y, z);
+                        if (level.getBlockState(controllerPos).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
+                            BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, controllerPos, pos);
+                            level.setBlock(
+                                    controllerPos,
+                                    TCBlocks.ALCHEMICAL_FURNACE.get().defaultBlockState(),
+                                    Block.UPDATE_ALL);
+                            break restoreAdvancedFurnace;
+                        }
+                    }
+                }
+            }
+        }
         super.destroy(level, pos, state);
+    }
+
+    private static boolean isAdvancedFurnacePart(BlockState state) {
+        return state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
+                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
     }
 
     @Override

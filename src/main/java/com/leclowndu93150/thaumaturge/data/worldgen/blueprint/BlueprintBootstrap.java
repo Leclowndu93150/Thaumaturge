@@ -68,6 +68,43 @@ public final class BlueprintBootstrap {
 
         register(
                 ctx,
+                "advanced_alchemical_furnace",
+                new Blueprint(
+                        3,
+                        2,
+                        3,
+                        Map.of(
+                                'A',
+                                        part(
+                                                block(TCBlocks.ALEMBIC.get()),
+                                                toBlock(
+                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER
+                                                                .get())),
+                                'C',
+                                        part(
+                                                block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(
+                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER
+                                                                .get())),
+                                'V',
+                                        part(
+                                                block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(
+                                                        TCBlocks
+                                                                .ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER
+                                                                .get())),
+                                'N',
+                                        part(
+                                                block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())),
+                                'F',
+                                        part(
+                                                block(TCBlocks.ALCHEMICAL_FURNACE.get()),
+                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()))),
+                        List.of(List.of("ACA", "C C", "ACA"), List.of("VNV", "NFN", "VNV"))));
+
+        register(
+                ctx,
                 "thaumatorium",
                 new Blueprint(
                         1,

@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -117,11 +116,11 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     @Override
-    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level.getBlockEntity(pos) instanceof BlockEntityCrucible crucible) {
             crucible.spillRemnants();
         }
-        super.destroy(level, pos, state);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TCEntityTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,13 +19,22 @@ public final class TCEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(TCEntityTags.TAINT_CONVERSION_IMMUNE);
+        tag(TCEntityTags.TAINT_LEGACY_CREEPER).add(key(EntityType.CREEPER));
+        tag(TCEntityTags.TAINT_LEGACY_COW).add(key(EntityType.COW));
+        tag(TCEntityTags.TAINT_LEGACY_PIG).add(key(EntityType.PIG));
+        tag(TCEntityTags.TAINT_LEGACY_CHICKEN).add(key(EntityType.CHICKEN));
+        tag(TCEntityTags.TAINT_LEGACY_SHEEP).add(key(EntityType.SHEEP));
+        tag(TCEntityTags.TAINT_LEGACY_VILLAGER).add(key(EntityType.VILLAGER));
         tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
                 .add(key(TCEntities.CULTIST_LEADER.get()))
                 .add(key(TCEntities.CULTIST_PORTAL_GREATER.get()))
                 .add(key(TCEntities.ELDRITCH_GOLEM.get()))
                 .add(key(TCEntities.ELDRITCH_WARDEN.get()))
                 .add(key(TCEntities.TAINTACLE_GIANT.get()));
-        tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS).add(key(TCEntities.ELDRITCH_CRAB.get()));
+        tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS)
+                .add(key(TCEntities.ELDRITCH_CRAB.get()))
+                .add(key(TCEntities.TAINT_SPIDER.get()));
         tag(EntityTypeTags.UNDEAD)
                 .add(key(TCEntities.ELDRITCH_GUARDIAN.get()))
                 .add(key(TCEntities.INHABITED_ZOMBIE.get()))

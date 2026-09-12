@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.client.network.StreamEffectClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.TubeEventClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.WispZapClientHandler;
 import com.leclowndu93150.thaumaturge.client.screen.ThaumatoriumClientHandler;
+import com.leclowndu93150.thaumaturge.client.taint.TaintEnvironmentClientHandler;
 import com.leclowndu93150.thaumaturge.client.warding.WardClientHandler;
 import com.leclowndu93150.thaumaturge.client.warp.WarpFXClientHandler;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
@@ -193,5 +194,9 @@ public final class TCPayloads {
                 ClientboundWardUpdatePayload.TYPE,
                 ClientboundWardUpdatePayload.STREAM_CODEC,
                 (payload, context) -> WardClientHandler.handleUpdate(payload, context));
+        registrar.playToClient(
+                ClientboundTaintEnvironmentPayload.TYPE,
+                ClientboundTaintEnvironmentPayload.STREAM_CODEC,
+                TaintEnvironmentClientHandler::handle);
     }
 }

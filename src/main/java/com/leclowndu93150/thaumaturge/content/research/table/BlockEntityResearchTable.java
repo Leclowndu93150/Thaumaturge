@@ -142,6 +142,12 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
     }
 
     private @Nullable ResourceKey<IAspect> bonusFor(BlockState state, RandomSource random) {
+        if (state.is(Blocks.BOOKSHELF) && random.nextInt(300) == 0) {
+            return TCAspects.PRIMALS.get(random.nextInt(TCAspects.PRIMALS.size()));
+        }
+        if (state.is(TCBlocks.JAR_BRAIN.get()) && random.nextInt(200) == 0) {
+            return TCAspects.PRIMALS.get(random.nextInt(TCAspects.PRIMALS.size()));
+        }
         if (state.is(TCBlocks.CRYSTAL_AER.get()) && random.nextInt(10) == 0) return TCAspects.AER;
         if (state.is(TCBlocks.CRYSTAL_IGNIS.get()) && random.nextInt(10) == 0) return TCAspects.IGNIS;
         if (state.is(TCBlocks.CRYSTAL_AQUA.get()) && random.nextInt(10) == 0) return TCAspects.AQUA;

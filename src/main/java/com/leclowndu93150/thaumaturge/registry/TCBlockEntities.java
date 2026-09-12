@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityDioptra;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
+import com.leclowndu93150.thaumaturge.content.device.BlockEntityItemGrate;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampGrowth;
@@ -25,6 +26,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
+import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorEssentia;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
@@ -39,11 +41,15 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritch
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchTrap;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityEssentiaPort;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnaceNozzle;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
+import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarBrain;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarVoid;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
@@ -64,6 +70,7 @@ import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockEntityNitor;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEntityEtherealBloom;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockEntityArcaneWorkbench;
 import java.util.HashSet;
 import java.util.Set;
@@ -174,7 +181,24 @@ public final class TCBlockEntities {
                             Set.of(
                                     TCBlocks.SMELTER_BASIC.get(),
                                     TCBlocks.SMELTER_THAUMIUM.get(),
-                                    TCBlocks.SMELTER_VOID.get()),
+                                    TCBlocks.SMELTER_VOID.get(),
+                                    TCBlocks.ALCHEMICAL_FURNACE.get()),
+                            null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>>
+            ADVANCED_ALCHEMICAL_FURNACE = BLOCK_ENTITIES.register(
+                    "advanced_alchemical_furnace",
+                    () -> new BlockEntityType<>(
+                            BlockEntityAdvancedAlchemicalFurnace::new,
+                            Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()),
+                            null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnaceNozzle>>
+            ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = BLOCK_ENTITIES.register(
+                    "advanced_alchemical_furnace_nozzle",
+                    () -> new BlockEntityType<>(
+                            BlockEntityAdvancedAlchemicalFurnaceNozzle::new,
+                            Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get()),
                             null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAlembic>> ALEMBIC =
@@ -283,6 +307,24 @@ public final class TCBlockEntities {
             BLOCK_ENTITIES.register(
                     "centrifuge",
                     () -> new BlockEntityType<>(BlockEntityCentrifuge::new, Set.of(TCBlocks.CENTRIFUGE.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEssentiaReservoir>>
+            ESSENTIA_RESERVOIR = BLOCK_ENTITIES.register(
+                    "essentia_reservoir",
+                    () -> new BlockEntityType<>(
+                            BlockEntityEssentiaReservoir::new, Set.of(TCBlocks.ESSENTIA_RESERVOIR.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEssentiaCrystalizer>>
+            ESSENTIA_CRYSTALIZER = BLOCK_ENTITIES.register(
+                    "essentia_crystalizer",
+                    () -> new BlockEntityType<>(
+                            BlockEntityEssentiaCrystalizer::new, Set.of(TCBlocks.ESSENTIA_CRYSTALIZER.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityFluxScrubber>> FLUX_SCRUBBER =
+            BLOCK_ENTITIES.register(
+                    "flux_scrubber",
+                    () -> new BlockEntityType<>(
+                            BlockEntityFluxScrubber::new, Set.of(TCBlocks.FLUX_SCRUBBER.get()), null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHungryChest>> HUNGRY_CHEST =
             BLOCK_ENTITIES.register(
@@ -464,6 +506,17 @@ public final class TCBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityHole>> HOLE =
             BLOCK_ENTITIES.register(
                     "hole", () -> new BlockEntityType<>(BlockEntityHole::new, Set.of(TCBlocks.HOLE.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEtherealBloom>> ETHEREAL_BLOOM =
+            BLOCK_ENTITIES.register(
+                    "ethereal_bloom",
+                    () -> new BlockEntityType<>(
+                            BlockEntityEtherealBloom::new, Set.of(TCBlocks.ETHEREAL_BLOOM.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityItemGrate>> ITEM_GRATE =
+            BLOCK_ENTITIES.register(
+                    "item_grate",
+                    () -> new BlockEntityType<>(BlockEntityItemGrate::new, Set.of(TCBlocks.ITEM_GRATE.get()), null));
 
     private TCBlockEntities() {}
 

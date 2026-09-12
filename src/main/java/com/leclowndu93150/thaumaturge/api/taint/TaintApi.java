@@ -65,16 +65,37 @@ public final class TaintApi {
     }
 
     /**
-     * Runs one taint spread attempt from the given position, identical to the random-tick spread
-     * performed by taint blocks. Honours the wuss-mode and spread-rate configuration unless
-     * {@code force} is set.
+     * Runs one local fibre/terrain colonisation attempt from the given position. Ordinary calls only
+     * colonise Tainted Lands, matching TC4. Explicit outbreak sources may pass {@code force} to
+     * establish Tainted Lands at a viable target before placing/converting taint there. The separate
+     * TC4 biome-frontier probability is not bypassed because it is not part of this method.
      *
      * @param level the level to mutate
      * @param pos   the spread origin
-     * @param force when true, bypasses the configured rate and wuss-mode gates
+     * @param force when true, allows a viable target to bootstrap its column into Tainted Lands
      */
     public static void spreadFibres(ServerLevel level, BlockPos pos, boolean force) {
         bindingOrThrow().spreadFibres(level, pos, force);
+    }
+
+    public static float getEcologicalPressure(Level level, BlockPos pos) {
+        return bindingOrThrow().getEcologicalPressure(level, pos);
+    }
+
+    public static boolean isTainted(Level level, BlockPos pos) {
+        return bindingOrThrow().isTainted(level, pos);
+    }
+
+    public static boolean hasActiveSource(Level level, BlockPos pos) {
+        return bindingOrThrow().hasActiveSource(level, pos);
+    }
+
+    public static void addEcologicalPressure(ServerLevel level, BlockPos pos, float amount) {
+        bindingOrThrow().addEcologicalPressure(level, pos, amount);
+    }
+
+    public static void cleanEcologicalPressure(ServerLevel level, BlockPos pos, float amount) {
+        bindingOrThrow().cleanEcologicalPressure(level, pos, amount);
     }
 
     /**
@@ -115,5 +136,15 @@ public final class TaintApi {
         boolean isAtTaintSeedEdge(Level level, BlockPos pos);
 
         void spreadFibres(ServerLevel level, BlockPos pos, boolean force);
+
+        float getEcologicalPressure(Level level, BlockPos pos);
+
+        boolean isTainted(Level level, BlockPos pos);
+
+        boolean hasActiveSource(Level level, BlockPos pos);
+
+        void addEcologicalPressure(ServerLevel level, BlockPos pos, float amount);
+
+        void cleanEcologicalPressure(ServerLevel level, BlockPos pos, float amount);
     }
 }

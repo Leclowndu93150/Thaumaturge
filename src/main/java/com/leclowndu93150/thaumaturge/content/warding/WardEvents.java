@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -23,13 +25,25 @@ public final class WardEvents {
 
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.BreakEvent event) {
+        if (event.getPlayer().getAbilities().instabuild && event.getLevel() instanceof ServerLevel level) {
+            clearWard(level, event.getPos());
+            clearLock(level, event.getPos());
+            return;
+        }
         if (WardHandler.isWarded(event.getLevel(), event.getPos())) {
             event.setCanceled(true);
+            return;
+        }
+        if (event.getLevel() instanceof ServerLevel level) {
+            clearLock(level, event.getPos());
         }
     }
 
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
+        if (event.getEntity().getAbilities().instabuild) {
+            return;
+        }
         event.getPosition().ifPresent(pos -> {
             if (WardHandler.isWarded(event.getEntity().level(), pos)) {
                 event.setCanceled(true);
@@ -87,5 +101,33 @@ public final class WardEvents {
         if (event.getLevel().hasChunkAt(origin)) {
             WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
         }
+    }
+
+    private static void clearWard(ServerLevel level, BlockPos pos) {
+        java.util.UUID owner = WardHandler.owner(level, pos);
+        if (owner == null) {
+            return;
+        }
+        WardHandler.unward(level, pos, owner);
+        if (!level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+            return;
+        }
+        BlockPos otherHalf =
+                level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        java.util.UUID otherOwner = WardHandler.owner(level, otherHalf);
+        if (otherOwner != null) {
+            WardHandler.unward(level, otherHalf, otherOwner);
+        }
+    }
+
+    private static void clearLock(ServerLevel level, BlockPos pos) {
+        if (!ArcaneAccess.isLock(level, pos)) {
+            return;
+        }
+        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.below();
+        }
+        ArcaneAccess.removeLock(level, pos);
     }
 }

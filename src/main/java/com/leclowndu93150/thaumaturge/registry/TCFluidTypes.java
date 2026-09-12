@@ -25,7 +25,7 @@ public final class TCFluidTypes {
                     .density(8)
                     .canSwim(false)
                     .canDrown(false)
-                    .canPushEntity(true)
+                    .canPushEntity(false)
                     .canExtinguish(false)
                     .canConvertToSource(false)
                     .sound(SoundActions.BUCKET_FILL, TCSounds.GORE.get())

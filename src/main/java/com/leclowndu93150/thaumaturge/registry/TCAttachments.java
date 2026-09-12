@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemTasks;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
+import com.leclowndu93150.thaumaturge.content.warding.ArcaneLockChunkData;
 import com.leclowndu93150.thaumaturge.content.warding.WardChunkData;
 import com.leclowndu93150.thaumaturge.content.warp.WarpData;
 import java.util.Set;
@@ -98,6 +99,12 @@ public final class TCAttachments {
             "wards",
             () -> AttachmentType.builder(WardChunkData::new)
                     .serialize(WardChunkData.CODEC.codec())
+                    .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<ArcaneLockChunkData>> ARCANE_LOCKS = register(
+            "arcane_locks",
+            () -> AttachmentType.builder(ArcaneLockChunkData::new)
+                    .serialize(ArcaneLockChunkData.CODEC.codec())
                     .build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<GolemTasks>> GOLEM_TASKS = register(

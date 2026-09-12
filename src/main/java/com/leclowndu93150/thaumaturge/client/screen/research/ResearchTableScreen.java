@@ -133,6 +133,8 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     private int helperPage;
 
     private @Nullable Holder<IAspect> draggedAspect;
+    private double aspectDragStartX;
+    private double aspectDragStartY;
     private @Nullable Holder<IAspect> select1;
     private @Nullable Holder<IAspect> select2;
     private int page;
@@ -763,12 +765,18 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                         if (components.size() == 2) {
                             select1 = components.get(0);
                             select2 = components.get(1);
-                            playSound(TCSounds.HHON.get(), 0.2F, 1.0F);
+                            if (hasAvailableComponents(select1, select2)) {
+                                combineSelectedAspects();
+                            } else {
+                                playSound(TCSounds.HHON.get(), 0.2F, 1.0F);
+                            }
                             return true;
                         }
                     }
                 if (availableOf(palette) > 0) {
                     draggedAspect = palette;
+                    aspectDragStartX = mx;
+                    aspectDragStartY = my;
                     playSound(TCSounds.HHOFF.get(), 0.2F, 1.0F);
                 }
                 return true;
@@ -797,7 +805,9 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
             double my = mouseY;
             HexGrid.Hex hex = hexAt(mx, my);
             ResearchNoteData data = noteData();
-            if (hex != null && data != null && !data.complete()) {
+            if (isAspectClick(mx, my)) {
+                selectPaletteAspect(draggedAspect);
+            } else if (hex != null && data != null && !data.complete()) {
                 ResearchNoteData.Cell cell = data.cellAt(hex);
                 if (cell != null && cell.type() == ResearchNoteData.TYPE_BLANK) {
                     PacketDistributor.sendToServer(new ServerboundTablePlaceAspectPayload(
@@ -815,6 +825,20 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
             return true;
         }
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    private boolean isAspectClick(double mouseX, double mouseY) {
+        double dx = mouseX - aspectDragStartX;
+        double dy = mouseY - aspectDragStartY;
+        return dx * dx + dy * dy <= 4.0;
+    }
+
+    private void selectPaletteAspect(Holder<IAspect> aspect) {
+        if (select1 == null) {
+            select1 = aspect;
+        } else {
+            select2 = aspect;
+        }
     }
 
     private boolean handleHelperArrows(double mx, double my) {
@@ -856,8 +880,20 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                 || !inRect(mx, my, leftPos + COMBINE_X, topPos + COMBINE_Y, COMBINE_W, COMBINE_H)) {
             return false;
         }
-        if (System.currentTimeMillis() < combineCooldownUntil) {
-            return true;
+        combineSelectedAspects();
+        return true;
+    }
+
+    private boolean hasAvailableComponents(Holder<IAspect> first, Holder<IAspect> second) {
+        if (first.equals(second)) {
+            return availableOf(first) >= 2;
+        }
+        return availableOf(first) > 0 && availableOf(second) > 0;
+    }
+
+    private boolean combineSelectedAspects() {
+        if (select1 == null || select2 == null || System.currentTimeMillis() < combineCooldownUntil) {
+            return false;
         }
         combineCooldownUntil = System.currentTimeMillis() + COMBINE_COOLDOWN_MS;
         BlockEntityResearchTable table = table();

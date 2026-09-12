@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.champion;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionModifier;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -47,7 +48,7 @@ public final class TaintedSwirlLayer<T extends LivingEntity, M extends EntityMod
             float ageInTicks,
             float netHeadYaw,
             float headPitch) {
-        if (ChampionHelper.championType(entity) != ChampionModifier.TAINTED) {
+        if (!(entity instanceof ITaintedMob) && ChampionHelper.championType(entity) != ChampionModifier.TAINTED) {
             return;
         }
         int id = entity.getId();

@@ -1,21 +1,79 @@
 {
-    "ambientocclusion": false,
-    "textures": {
-        "particle": "thaumaturge:block/taint_growth_3",
-        "blob": "thaumaturge:block/taint_growth_3"
-    },
-    "elements": [
-        {
-            "from": [4, 0, 4],
-            "to": [12, 5, 12],
-            "faces": {
-                "down": {"uv": [4, 4, 12, 12], "texture": "#blob", "cullface": "down"},
-                "up": {"uv": [4, 4, 12, 12], "texture": "#blob"},
-                "north": {"uv": [4, 11, 12, 16], "texture": "#blob"},
-                "south": {"uv": [4, 11, 12, 16], "texture": "#blob"},
-                "west": {"uv": [4, 11, 12, 16], "texture": "#blob"},
-                "east": {"uv": [4, 11, 12, 16], "texture": "#blob"}
-            }
+  "render_type": "minecraft:cutout",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "thaumaturge:block/taint_growth_3",
+    "blob": "thaumaturge:block/taint_growth_3"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        5,
+        12
+      ],
+      "faces": {
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#blob",
+          "cullface": "down"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#blob"
+        },
+        "north": {
+          "uv": [
+            4,
+            11,
+            12,
+            16
+          ],
+          "texture": "#blob"
+        },
+        "south": {
+          "uv": [
+            4,
+            11,
+            12,
+            16
+          ],
+          "texture": "#blob"
+        },
+        "west": {
+          "uv": [
+            4,
+            11,
+            12,
+            16
+          ],
+          "texture": "#blob"
+        },
+        "east": {
+          "uv": [
+            4,
+            11,
+            12,
+            16
+          ],
+          "texture": "#blob"
         }
-    ]
+      }
+    }
+  ]
 }

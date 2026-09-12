@@ -16,12 +16,14 @@ public final class WardChunkData {
             Entry.CODEC.listOf().optionalFieldOf("wards", List.of()).xmap(WardChunkData::new, WardChunkData::entries);
 
     private final Map<BlockPos, UUID> owners = new ConcurrentHashMap<>();
+    private final Map<BlockPos, Access> access = new ConcurrentHashMap<>();
 
     public WardChunkData() {}
 
     private WardChunkData(List<Entry> entries) {
         for (Entry entry : entries) {
             owners.put(entry.pos(), entry.owner());
+            access.put(entry.pos(), new Access(entry.ironAccess(), entry.goldAccess()));
         }
     }
 
@@ -42,7 +44,23 @@ public final class WardChunkData {
     }
 
     public boolean remove(BlockPos pos) {
+        access.remove(pos);
         return owners.remove(pos) != null;
+    }
+
+    public boolean canAccess(BlockPos pos, UUID player) {
+        Access entry = access.get(pos);
+        return entry != null && (entry.iron().contains(player) || entry.gold().contains(player));
+    }
+
+    public boolean canDelegateIron(BlockPos pos, UUID player) {
+        Access entry = access.get(pos);
+        return entry != null && entry.gold().contains(player);
+    }
+
+    public boolean grantAccess(BlockPos pos, UUID player, boolean gold) {
+        Access entry = access.computeIfAbsent(pos.immutable(), ignored -> new Access(List.of(), List.of()));
+        return (gold ? entry.gold() : entry.iron()).add(player);
     }
 
     public Map<BlockPos, UUID> owners() {
@@ -51,14 +69,37 @@ public final class WardChunkData {
 
     private List<Entry> entries() {
         return owners.entrySet().stream()
-                .map(entry -> new Entry(entry.getKey(), entry.getValue()))
+                .map(entry -> {
+                    Access entryAccess = access.get(entry.getKey());
+                    return new Entry(
+                            entry.getKey(),
+                            entry.getValue(),
+                            entryAccess == null ? List.of() : List.copyOf(entryAccess.iron()),
+                            entryAccess == null ? List.of() : List.copyOf(entryAccess.gold()));
+                })
                 .toList();
     }
 
-    private record Entry(BlockPos pos, UUID owner) {
+    private record Access(java.util.Set<UUID> iron, java.util.Set<UUID> gold) {
+        private Access(List<UUID> iron, List<UUID> gold) {
+            this(ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet());
+            this.iron().addAll(iron);
+            this.gold().addAll(gold);
+        }
+    }
+
+    private record Entry(BlockPos pos, UUID owner, List<UUID> ironAccess, List<UUID> goldAccess) {
         private static final Codec<Entry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
                         BlockPos.CODEC.fieldOf("pos").forGetter(Entry::pos),
-                        UUIDUtil.CODEC.fieldOf("owner").forGetter(Entry::owner))
+                        UUIDUtil.CODEC.fieldOf("owner").forGetter(Entry::owner),
+                        UUIDUtil.CODEC
+                                .listOf()
+                                .optionalFieldOf("iron_access", List.of())
+                                .forGetter(Entry::ironAccess),
+                        UUIDUtil.CODEC
+                                .listOf()
+                                .optionalFieldOf("gold_access", List.of())
+                                .forGetter(Entry::goldAccess))
                 .apply(inst, Entry::new));
     }
 }

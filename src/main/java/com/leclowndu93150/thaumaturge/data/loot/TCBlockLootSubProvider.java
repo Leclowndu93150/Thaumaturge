@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.data.loot;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
@@ -38,6 +39,8 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     private static final float AMBER_CURIO_CHANCE = 0.1F;
     private static final float[] VENT_CURIO_CHANCES = {0.01F, 0.01F, 0.02F, 0.03F};
+    // TC5's Taint Rock rolled a Flux crystal at 1/15, plus another 1/15 for each Fortune level.
+    private static final float[] TAINT_ROCK_CRYSTAL_CHANCES = {1.0F / 15.0F, 2.0F / 15.0F, 3.0F / 15.0F, 4.0F / 15.0F};
 
     private LootTable.Builder dropSelfWithoutExplosion(Block block) {
         return LootTable.lootTable()
@@ -61,6 +64,30 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(entry));
+    }
+
+    private LootTable.Builder taintRockTable() {
+        Holder<IAspect> vitium = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM);
+        LootItem.Builder<?> crystal = LootItem.lootTableItem(TCItems.ESSENTIA_CRYSTAL.get())
+                .apply(SetComponentsFunction.setComponent(
+                        TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, 1)));
+        return LootTable.lootTable()
+                .withPool(this.applyExplosionCondition(
+                        TCBlocks.TAINT_ROCK.get(),
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(TCBlocks.TAINT_ROCK.get()))))
+                .withPool(this.applyExplosionCondition(
+                        TCBlocks.TAINT_ROCK.get(),
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .when(this.doesNotHaveSilkTouch())
+                                .when(BonusLevelTableCondition.bonusLevelFlatChance(
+                                        lookupProvider
+                                                .lookupOrThrow(Registries.ENCHANTMENT)
+                                                .getOrThrow(Enchantments.FORTUNE),
+                                        TAINT_ROCK_CRYSTAL_CHANCES))
+                                .add(crystal)));
     }
 
     private static final float SECOND_BEAN_CHANCE = 0.67F;
@@ -204,6 +231,9 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.TUBE_FILTER.get());
         dropSelf(TCBlocks.TUBE_ONEWAY.get());
         dropSelf(TCBlocks.TUBE_BUFFER.get());
+        dropSelf(TCBlocks.ESSENTIA_RESERVOIR.get());
+        dropSelf(TCBlocks.ESSENTIA_CRYSTALIZER.get());
+        dropSelf(TCBlocks.FLUX_SCRUBBER.get());
 
         for (DyeColor dye : DyeColor.values()) {
             dropSelf(TCBlocks.NITORS.get(dye).get());
@@ -248,19 +278,21 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                 TCBlocks.LEAVES_SILVERWOOD.get(),
                 createLeavesDrops(TCBlocks.LEAVES_SILVERWOOD.get(), TCBlocks.SAPLING_SILVERWOOD.get()));
         dropSelf(TCBlocks.PLANT_SHIMMERLEAF.get());
+        dropSelf(TCBlocks.ETHEREAL_BLOOM.get());
         dropSelf(TCBlocks.PLANT_CINDERPEARL.get());
         dropSelf(TCBlocks.PLANT_VISHROOM.get());
         add(TCBlocks.POTTED_SHIMMERLEAF.get(), createPotFlowerItemTable(TCBlocks.PLANT_SHIMMERLEAF.get()));
         add(TCBlocks.POTTED_CINDERPEARL.get(), createPotFlowerItemTable(TCBlocks.PLANT_CINDERPEARL.get()));
         add(TCBlocks.POTTED_VISHROOM.get(), createPotFlowerItemTable(TCBlocks.PLANT_VISHROOM.get()));
         add(TCBlocks.GRASS_AMBIENT.get(), block -> createSingleItemTableWithSilkTouch(block, Blocks.DIRT));
-        dropSelf(TCBlocks.TAINT_ROCK.get());
+        add(TCBlocks.TAINT_ROCK.get(), block -> taintRockTable());
         dropSelf(TCBlocks.TAINT_SOIL.get());
         dropSelf(TCBlocks.TAINT_CRUST.get());
         dropSelf(TCBlocks.TAINT_GEYSER.get());
         dropSelf(TCBlocks.TAINT_LOG.get());
         dropSelf(TCBlocks.TAINT_FEATURE.get());
         add(TCBlocks.TAINT_FIBRE.get(), noDrop());
+        add(TCBlocks.TAINT_SPORE_STALK.get(), noDrop());
     }
 
     private LootTable.Builder createLeavesDrops(Block leaves, Block sapling) {
@@ -307,7 +339,15 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        dropSelf(TCBlocks.ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.ALCHEMICAL_FURNACE.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), TCBlocks.ALEMBIC.get());
+        dropOther(
+                TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        dropOther(
+                TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get(),
+                TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.INFUSION_MATRIX.get());
 
         dropSelf(TCBlocks.METAL_BRASS_BLOCK.get());
@@ -339,6 +379,12 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.STABILIZER.get());
         dropSelf(TCBlocks.REDSTONE_RELAY.get());
         dropSelf(TCBlocks.ACTIVATOR_RAIL.get());
+        dropSelf(TCBlocks.WARDED_GLASS.get());
+        add(TCBlocks.ARCANE_DOOR.get(), this::createDoorTable);
+        dropSelf(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+        dropSelf(TCBlocks.GOLEM_FETTER.get());
+        dropSelf(TCBlocks.TALLOW_BLOCK.get());
+        dropSelf(TCBlocks.ITEM_GRATE.get());
         add(TCBlocks.SLAB_GREATWOOD.get(), this::createSlabItemTable);
         add(TCBlocks.SLAB_SILVERWOOD.get(), this::createSlabItemTable);
         add(TCBlocks.SLAB_ARCANE_STONE.get(), this::createSlabItemTable);

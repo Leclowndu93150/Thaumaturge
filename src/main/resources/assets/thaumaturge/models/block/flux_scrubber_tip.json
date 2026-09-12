@@ -1,0 +1,17 @@
+{
+  "loader": "neoforge:obj",
+  "model": "thaumaturge:models/block/flux_scrubber.obj",
+  "textures": {
+    "texture0": "thaumaturge:block/flux_scrubber",
+    "particle": "thaumaturge:block/al_furnace_side"
+  },
+  "automatic_culling": false,
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "visibility": {
+    "Cap": false,
+    "Tip": true
+  }
+}

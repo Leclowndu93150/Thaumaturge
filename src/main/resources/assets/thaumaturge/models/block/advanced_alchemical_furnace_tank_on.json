@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "neoforge:obj",
+  "gui_light": "side",
+  "model": "thaumaturge:models/block/advanced_alchemical_furnace.obj",
+  "textures": {
+    "texture0": "thaumaturge:block/advanced_alchemical_furnace_tank_on",
+    "particle": "thaumaturge:block/advanced_alchemical_furnace_tank_on"
+  },
+  "automatic_culling": false,
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "flip_v": true,
+  "visibility": {
+    "Base": false,
+    "Tank": true
+  }
+}

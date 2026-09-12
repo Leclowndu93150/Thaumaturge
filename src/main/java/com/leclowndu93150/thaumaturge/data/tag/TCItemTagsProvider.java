@@ -33,6 +33,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
         copy(BlockTags.LEAVES, ItemTags.LEAVES);
         copy(BlockTags.SAPLINGS, ItemTags.SAPLINGS);
         copy(BlockTags.PLANKS, ItemTags.PLANKS);
+        copy(BlockTags.WOODEN_SLABS, ItemTags.WOODEN_SLABS);
         copy(BlockTags.FLOWERS, ItemTags.FLOWERS);
         copy(TCBlockTags.MAGICAL_PLANTS, TCItemTags.MAGICAL_PLANTS);
         copy(TCBlockTags.GREATWOOD_LOGS, TCItemTags.GREATWOOD_LOGS);

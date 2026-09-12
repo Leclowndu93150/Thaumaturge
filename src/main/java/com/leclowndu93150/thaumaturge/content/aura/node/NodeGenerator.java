@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
 import java.util.ArrayList;
@@ -54,7 +55,68 @@ public final class NodeGenerator {
         if (data == null) {
             return false;
         }
-        return createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
+        boolean placed = createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
+        if (placed
+                && data.type() == NodeType.TAINTED
+                && !(level instanceof net.minecraft.server.level.ServerLevel)
+                && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
+            node.markNaturalTaintBootstrap();
+        }
+        return placed;
+    }
+
+    /**
+     * Places a specifically Tainted natural node while preserving the normal TC4 Tainted-Lands
+     * aura/aspect roll. The ordinary generator already makes roughly half of non-Pure nodes in
+     * Tainted Lands TAINTED; retrying the data roll here keeps those exact 2.25x-strength semantics
+     * instead of fabricating a weaker post-hoc type conversion.
+     */
+    public static boolean createGuaranteedTaintedNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
+        return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.TAINTED);
+    }
+
+    /**
+     * Places a specifically Hungry natural node while retaining the ordinary Tainted-Lands
+     * aura/aspect roll. This is used for the single hungry-node landmark in each natural Tainted
+     * Lands patch; it does not affect the configured chance for all other nodes.
+     */
+    public static boolean createGuaranteedHungryNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random) {
+        return createGuaranteedNaturalNodeAt(level, pos, random, NodeType.HUNGRY);
+    }
+
+    private static boolean createGuaranteedNaturalNodeAt(
+            ServerLevelAccessor level, BlockPos pos, RandomSource random, NodeType requiredType) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.getBiome(pos).is(TCBiomes.TAINTED_LANDS)) {
+            return false;
+        }
+        for (int attempt = 0; attempt < 64; attempt++) {
+            NodeData data = rollRandomNodeData(
+                    level, pos, random, false, false, false, DEFAULT_SPECIAL_RARITY, DEFAULT_BASE_AURA);
+            if (data == null) {
+                continue;
+            }
+            if (requiredType == NodeType.TAINTED && data.type() != NodeType.TAINTED) {
+                continue;
+            }
+            if (requiredType == NodeType.HUNGRY && data.type() != NodeType.NORMAL) {
+                continue;
+            }
+
+            AspectList aspects = data.aspects();
+            if (requiredType == NodeType.HUNGRY) {
+                HolderLookup.RegistryLookup<IAspect> aspectRegistry =
+                        level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+                aspects = addTypeFlavor(aspectRegistry, aspects, NodeType.HUNGRY, random);
+            }
+            if (!createNodeAt(level, pos, requiredType, data.modifier().orElse(null), aspects)) {
+                return false;
+            }
+            if (level.getBlockEntity(pos) instanceof BlockEntityNode node) {
+                node.markNaturalTaintBootstrap();
+            }
+            return true;
+        }
+        return false;
     }
 
     public static @Nullable NodeData rollRandomNodeData(
@@ -102,6 +164,17 @@ public final class NodeGenerator {
         Holder<Biome> biome = level.getBiome(pos);
         BiomeAuraModifier auraModifier = biome.getData(TCDataMaps.BIOME_AURA_MODIFIER);
         int biomeAura = (int) (baseAura * (auraModifier == null ? 1.0F : auraModifier.value()));
+        // TC4 gave every non-Pure node generated in Tainted Lands 1.5x biome aura. Half of those
+        // nodes were then converted to TAINTED and received another 1.5x multiplier (2.25x total).
+        // Keep later globally-rolled Tainted Nodes as a hybrid feature, but preserve the TC4 biome
+        // bias so naturally generated Tainted Lands visibly contains stronger, often-tainted nodes.
+        if (type != NodeType.PURE && biome.is(TCBiomes.TAINTED_LANDS)) {
+            biomeAura = Math.round(biomeAura * 1.5F);
+            if (!ThaumaturgeCommonConfig.WUSS_MODE.get() && random.nextBoolean()) {
+                type = NodeType.TAINTED;
+                biomeAura = Math.round(biomeAura * 1.5F);
+            }
+        }
         if (silverwood || small) {
             biomeAura /= 4;
         }
@@ -155,8 +228,10 @@ public final class NodeGenerator {
         double dark = ThaumaturgeCommonConfig.DARK_NODE_CHANCE.get();
         double unstable = ThaumaturgeCommonConfig.UNSTABLE_NODE_CHANCE.get();
         double pure = ThaumaturgeCommonConfig.PURE_NODE_CHANCE.get();
+        double tainted =
+                ThaumaturgeCommonConfig.WUSS_MODE.get() ? 0.0 : ThaumaturgeCommonConfig.TAINTED_NODE_CHANCE.get();
         double hungry = ThaumaturgeCommonConfig.HUNGRY_NODE_CHANCE.get();
-        double specialTotal = dark + unstable + pure + hungry;
+        double specialTotal = dark + unstable + pure + tainted + hungry;
         double roll = random.nextDouble() * Math.max(100.0, specialTotal);
         if ((roll -= dark) < 0.0) {
             return NodeType.DARK;
@@ -166,6 +241,9 @@ public final class NodeGenerator {
         }
         if ((roll -= pure) < 0.0) {
             return NodeType.PURE;
+        }
+        if ((roll -= tainted) < 0.0) {
+            return NodeType.TAINTED;
         }
         if (roll < hungry) {
             return NodeType.HUNGRY;
@@ -204,6 +282,12 @@ public final class NodeGenerator {
 
     private static @Nullable Holder<IAspect> randomBiomeAspect(
             HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome, RandomSource random) {
+        // TC4 registered Tainted Lands as both MAGICAL (no fixed aspect) and WASTELAND
+        // (Perditio). getRandomBiomeTag therefore produced Perditio about half the time and fell
+        // back to a random aspect combination the other half.
+        if (biome.is(TCBiomes.TAINTED_LANDS)) {
+            return random.nextBoolean() ? registry.get(TCAspects.PERDITIO).orElse(null) : null;
+        }
         BiomeAspects aspects = biome.getData(TCDataMaps.BIOME_ASPECTS);
         if (aspects == null || aspects.aspects().isEmpty()) {
             return null;

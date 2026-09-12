@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.model;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshGeometry;
 import com.leclowndu93150.thaumaturge.client.render.crystal.CrystalUnbakedModel;
+import com.leclowndu93150.thaumaturge.client.render.warding.WardedGlassUnbakedModel;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -28,6 +29,7 @@ public final class TCModelsHandlers {
     public static final ResourceLocation CELESTIAL_BODY_PROPERTY_ID = TCIds.rl("celestial_body");
     public static final ResourceLocation MESH_LOADER_ID = TCIds.rl("mesh");
     public static final ResourceLocation CRYSTAL_LOADER_ID = TCIds.rl("crystal");
+    public static final ResourceLocation WARDED_GLASS_LOADER_ID = TCIds.rl("warded_glass");
 
     private TCModelsHandlers() {}
 
@@ -35,6 +37,7 @@ public final class TCModelsHandlers {
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
         event.register(MESH_LOADER_ID, TCMeshGeometry.Loader.INSTANCE);
         event.register(CRYSTAL_LOADER_ID, CrystalUnbakedModel.Loader.INSTANCE);
+        event.register(WARDED_GLASS_LOADER_ID, WardedGlassUnbakedModel.Loader.INSTANCE);
     }
 
     @SubscribeEvent

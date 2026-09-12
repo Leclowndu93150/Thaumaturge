@@ -1,5 +1,6 @@
 {
   "ambientocclusion": false,
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "thaumaturge:block/inlay_under",
     "under": "thaumaturge:block/inlay_under",

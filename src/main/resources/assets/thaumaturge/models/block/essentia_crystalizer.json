@@ -1,0 +1,22 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "neoforge:obj",
+  "gui_light": "side",
+  "model": "thaumaturge:models/block/essentia_crystalizer.obj",
+  "textures": {
+    "texture0": "thaumaturge:block/essentia_crystalizer",
+    "particle": "thaumaturge:block/tube"
+  },
+  "automatic_culling": false,
+  "render_type": "minecraft:cutout",
+  "shade_quads": true,
+  "flip_v": true,
+  "emissive_ambient": false,
+  "transform": {
+    "translation": [
+      0.5,
+      0.5,
+      0.0
+    ]
+  }
+}

@@ -127,6 +127,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         buildAuraDeviceRecipes();
         buildConstructRecipes();
         buildDecorRecipes();
+        buildLegacyWardRecipes();
         buildNoiseDeviceRecipes();
         buildEssentiaMachineRecipes();
         buildFluxMachineRecipes();
@@ -394,6 +395,91 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .pattern("NNN")
                 .define('N', ingotTag)
                 .unlockedBy("has", has(ingotTag))
+                .save(output);
+    }
+
+    private void buildLegacyWardRecipes() {
+        arcaneShaped(new ItemStack(TCItems.WARDED_GLASS.get(), 8), 25)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 5)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern("GGG")
+                .pattern("WBW")
+                .pattern("GGG")
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('W', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_DOOR.get()), 45)
+                .aspect(TCAspects.AQUA, 20)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern("TDT")
+                .pattern("DBD")
+                .pattern("TDT")
+                .define('T', TCItems.INGOT_THAUMIUM)
+                .define('D', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_PRESSURE_PLATE.get()), 45)
+                .aspect(TCAspects.AQUA, 20)
+                .aspect(TCAspects.ORDO, 10)
+                .aspect(TCAspects.TERRA, 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .pattern(" B ")
+                .pattern("TDT")
+                .define('T', TCItems.INGOT_THAUMIUM)
+                .define('D', TCItems.PLANK_GREATWOOD)
+                .define('B', TCItems.BRAIN)
+                .unlockedBy("has", has(TCItems.BRAIN))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.GOLEM_FETTER.get()), 10)
+                .aspect(TCAspects.TERRA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("SSS")
+                .pattern("IRI")
+                .pattern("BBB")
+                .define('S', TCItems.STONE_ARCANE)
+                .define('I', Items.IRON_INGOT)
+                .define('R', Items.BEACON)
+                .define('B', TCItems.STONE_ARCANE_BRICK)
+                .unlockedBy("has", has(Items.BEACON))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_KEY_IRON.get(), 2), 10)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("NNI")
+                .pattern("N  ")
+                .define('N', Items.IRON_NUGGET)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has", has(Items.IRON_INGOT))
+                .save(output);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_KEY_GOLD.get(), 2), 10)
+                .aspect(TCAspects.AQUA, 5)
+                .aspect(TCAspects.ORDO, 5)
+                .pattern("NNI")
+                .pattern("N  ")
+                .define('N', Items.GOLD_NUGGET)
+                .define('I', Items.GOLD_INGOT)
+                .unlockedBy("has", has(Items.GOLD_INGOT))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TCItems.TALLOW_BLOCK)
+                .pattern("TTT")
+                .pattern("TTT")
+                .pattern("TTT")
+                .define('T', TCItems.TALLOW)
+                .unlockedBy("has", has(TCItems.TALLOW))
+                .save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, TCItems.ITEM_GRATE)
+                .pattern("#")
+                .pattern("H")
+                .define('#', Items.IRON_BARS)
+                .define('H', Items.HOPPER)
+                .unlockedBy("has", has(Items.HOPPER))
                 .save(output);
     }
 
@@ -1190,6 +1276,19 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
+                        new ItemStack(TCItems.ETHEREAL_BLOOM.get()),
+                        Ingredient.of(TCItems.PLANT_SHIMMERLEAF.get()))
+                .aspect(TCAspects.LUX, 8)
+                .aspect(TCAspects.HERBA, 16)
+                .aspect(TCAspects.VICTUS, 16)
+                .aspect(TCAspects.VITIUM, 16)
+                .gate(gate("ethereal_bloom"))
+                .unlockedBy("has", has(TCItems.PLANT_SHIMMERLEAF.get()))
+                .save(output);
+
+        new CrucibleRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
                         new ItemStack(TCItems.BATH_SALTS.get()),
                         Ingredient.of(TCItems.SALIS_MUNDUS))
                 .aspect(TCAspects.COGNITIO, 40)
@@ -1440,8 +1539,41 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
-                        new ItemStack(Items.LAVA_BUCKET),
-                        Ingredient.of(Tags.Items.BUCKETS_EMPTY))
+                        new ItemStack(Blocks.MOSSY_COBBLESTONE),
+                        Ingredient.of(Blocks.COBBLESTONE))
+                .aspect(TCAspects.HERBA, 2)
+                .aspect(TCAspects.PRAECANTATIO, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.COBBLESTONE))
+                .save(output, TCIds.MODID + ":crucible/mossy_cobblestone");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.PACKED_ICE))
+                .aspect(TCAspects.ORDO, 1)
+                .aspect(TCAspects.GELUM, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.PACKED_ICE))
+                .save(output, TCIds.MODID + ":crucible/ice");
+
+        new CrucibleRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
+                        new ItemStack(Blocks.CRACKED_STONE_BRICKS),
+                        Ingredient.of(Blocks.STONE_BRICKS))
+                .aspect(TCAspects.PERDITIO, 2)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.STONE_BRICKS))
+                .save(output, TCIds.MODID + ":crucible/cracked_stone_bricks");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Items.BONE_MEAL, 4), Ingredient.of(Items.BONE))
+                .aspect(TCAspects.PERDITIO, 1)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Items.BONE))
+                .save(output, TCIds.MODID + ":crucible/bone_meal");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Items.LAVA_BUCKET), Ingredient.of(Items.BUCKET))
                 .aspect(TCAspects.IGNIS, 15)
                 .aspect(TCAspects.TERRA, 5)
                 .gate(gate("hedge_alchemy", 2))
@@ -1533,6 +1665,9 @@ public final class TCRecipeProvider extends RecipeProvider {
         clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
+        transmutationRecipe(Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
+        transmutationRecipe(Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
+
         new CrucibleRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
@@ -1554,6 +1689,21 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("metal_purification"))
                 .unlockedBy("has", has(oreTag))
                 .save(output.withConditions(new NotCondition(new TagEmptyCondition(oreTag))));
+    }
+
+    private void transmutationRecipe(ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
+        HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
+        CrucibleRecipeBuilder builder = new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(result, 3), Ingredient.of(catalyst))
+                .aspect(TCAspects.METALLUM, 2)
+                .gate(gate("metal_purification"));
+        builder.unlockedBy("has", has(catalyst));
+        for (ResourceKey<IAspect> cost : costs) {
+            if (!cost.equals(TCAspects.METALLUM)) {
+                builder.aspect(cost, 1);
+            }
+        }
+        builder.save(output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))));
     }
 
     private void buildArcaneWorkbenchRecipes() {
@@ -1767,14 +1917,32 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
                 .save(output);
 
-        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get()), 200)
-                .aspect(TCAspects.TERRA)
-                .aspect(TCAspects.IGNIS)
-                .pattern(" A ")
-                .pattern("VPV")
-                .pattern(" A ")
+        // TC4 DISTILESSENTIA / AlchemyFurnace.
+        arcaneShaped(new ItemStack(TCItems.ALCHEMICAL_FURNACE.get()), 10)
+                .aspect(TCAspects.IGNIS, 5)
+                .aspect(TCAspects.AQUA, 5)
+                .pattern("SCS")
+                .pattern("SFS")
+                .pattern("SSS")
+                .define('S', TCItems.STONE_ARCANE)
+                .define('C', TCItems.CRUCIBLE)
+                .define('F', Items.FURNACE)
+                .gate(gate("essentia_smelter"))
+                .unlockedBy("has", has(TCItems.CRUCIBLE))
+                .save(output);
+
+        // TC4 ADVALCHEMYFURNACE / AdvAlchemyConstruct.
+        // The original used typed wand vis; retain both its total cost and each primal requirement
+        // through the modern generic-vis and crystal payment model.
+        arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get(), 4), 50)
+                .aspect(TCAspects.AQUA, 10)
+                .aspect(TCAspects.ORDO, 30)
+                .aspect(TCAspects.TERRA, 10)
+                .pattern("VAV")
+                .pattern("APA")
+                .pattern("VAV")
                 .define('A', TCItems.ALCHEMICAL_CONSTRUCT)
-                .define('V', TCItemTags.PLATES_VOID_METAL)
+                .define('V', TCItems.INGOT_VOID)
                 .define('P', TCItems.PRIMORDIAL_PEARL)
                 .gate(gate("essentia_smelter_void", 0))
                 .unlockedBy("has", has(TCItems.ALCHEMICAL_CONSTRUCT))
@@ -2390,9 +2558,66 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("essentia_transport"))
                 .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
                 .save(output);
+
+        // TC4 ESSENTIACRYSTAL: the balanced shard role is represented by Salis Mundus in modern Thaumaturge.
+        arcaneShaped(new ItemStack(TCItems.ESSENTIA_CRYSTALIZER.get()), 125)
+                .aspect(TCAspects.AQUA, 1)
+                .aspect(TCAspects.TERRA, 3)
+                .aspect(TCAspects.ORDO, 1)
+                .pattern("IDI")
+                .pattern("QCQ")
+                .pattern("WTW")
+                .define('I', Tags.Items.INGOTS_IRON)
+                .define('D', Items.DIAMOND_BLOCK)
+                .define('Q', TCItems.SALIS_MUNDUS)
+                .define('C', TCItems.ALCHEMICAL_CONSTRUCT)
+                .define('W', ItemTags.PLANKS)
+                .define('T', TCItems.TUBE)
+                .gate(gate("essentia_crystalizer"))
+                .unlockedBy("has", has(TCItems.SALIS_MUNDUS))
+                .save(output);
+
+        // TC4 ESSENTIARESERVOIR: direct infusion backport with the original catalyst/components/aspects.
+        new InfusionRecipeBuilder(
+                        aspects,
+                        RecipeCategory.MISC,
+                        new ItemStack(TCItems.ESSENTIA_RESERVOIR.get()),
+                        Ingredient.of(TCItems.TUBE_BUFFER.get()))
+                .component(Ingredient.of(TCItems.INGOT_VOID.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.INGOT_VOID.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .component(Ingredient.of(TCItems.JAR_NORMAL.get()))
+                .aspect(TCAspects.AQUA, 8)
+                .aspect(TCAspects.VACUOS, 8)
+                .aspect(TCAspects.PRAECANTATIO, 8)
+                .aspect(TCAspects.PERMUTATIO, 8)
+                .instability(6)
+                .gate(gate("essentia_reservoir"))
+                .unlockedBy("has", has(TCItems.TUBE_BUFFER.get()))
+                .save(output);
     }
 
     private void buildFluxMachineRecipes() {
+
+        // TC4 FLUXSCRUB. Typed Aer CV no longer exists, so the crafting cost is expressed in modern vis + primal
+        // crystals.
+        arcaneShaped(new ItemStack(TCItems.FLUX_SCRUBBER.get()), 200)
+                .aspect(TCAspects.AQUA, 2)
+                .aspect(TCAspects.ORDO, 2)
+                .aspect(TCAspects.AER, 1)
+                .pattern(" B ")
+                .pattern("GOG")
+                .pattern("STS")
+                .define('B', TCItems.BELLOWS)
+                .define('G', Items.IRON_BARS)
+                .define('O', TCItems.FILTER)
+                .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('T', TCItems.TUBE)
+                .gate(gate("flux_scrubber"))
+                .unlockedBy("has", has(TCItems.BELLOWS))
+                .save(output);
 
         arcaneShaped(new ItemStack(TCItems.BRAIN_BOX.get()), 50)
                 .aspect(TCAspects.TERRA, 1)
@@ -3285,6 +3510,12 @@ public final class TCRecipeProvider extends RecipeProvider {
                         TCIds.rl("golem_press"),
                         new ItemStack(TCBlocks.GOLEM_BUILDER.get().asItem()),
                         Optional.of(gate("mind_clockwork"))));
+        dustTrigger(
+                "advanced_alchemical_furnace",
+                new DustTriggerMultiblockRecipe(
+                        TCIds.rl("advanced_alchemical_furnace"),
+                        new ItemStack(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get().asItem()),
+                        Optional.of(gate("essentia_smelter_void"))));
         dustTrigger(
                 "infernal_furnace",
                 new DustTriggerMultiblockRecipe(

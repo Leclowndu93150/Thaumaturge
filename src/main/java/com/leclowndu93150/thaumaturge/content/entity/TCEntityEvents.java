@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
+import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
@@ -35,7 +36,8 @@ public final class TCEntityEvents {
                 TCEntities.BRAINY_ZOMBIE.get(),
                 SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                Monster::checkMonsterSpawnRules,
+                (type, level, reason, pos, random) -> !level.getBiome(pos).is(TCBiomeTags.IS_TAINTED)
+                        && Monster.checkMonsterSpawnRules(type, level, reason, pos, random),
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(
                 TCEntities.BRAINY_HUSK.get(),
@@ -97,6 +99,12 @@ public final class TCEntityEvents {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 ThaumicSlime::checkSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(
+                TCEntities.TAINTACLE.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                AbstractTaintacle::checkTaintacleSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     @SubscribeEvent
@@ -138,6 +146,29 @@ public final class TCEntityEvents {
         event.put(
                 TCEntities.TAINT_CRAWLER.get(),
                 EntityTaintCrawler.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_SPIDER.get(),
+                EntityTaintSpider.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_CREEPER.get(),
+                EntityTaintCreeper.createAttributes().build());
+        event.put(TCEntities.TAINT_COW.get(), EntityTaintCow.createAttributes().build());
+        event.put(TCEntities.TAINT_PIG.get(), EntityTaintPig.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_CHICKEN.get(),
+                EntityTaintChicken.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_SHEEP.get(),
+                EntityTaintSheep.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_VILLAGER.get(),
+                EntityTaintVillager.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_SPORE.get(),
+                EntityTaintSpore.createAttributes().build());
+        event.put(
+                TCEntities.TAINT_SPORE_SWARMER.get(),
+                EntityTaintSporeSwarmer.createAttributes().build());
         event.put(
                 TCEntities.TAINT_SEED.get(), EntityTaintSeed.createAttributes().build());
         event.put(

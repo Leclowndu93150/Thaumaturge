@@ -1,13 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
-import com.leclowndu93150.thaumaturge.content.taint.block.AbstractTaintBlock;
+import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -16,7 +20,9 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     private static final int SUBSTRATE_CHECK_INTERVAL = 20;
@@ -72,13 +78,42 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
             }
             return;
         }
-        if (this.tickCount % SUBSTRATE_CHECK_INTERVAL == 0) {
-            BlockState below = server.getBlockState(this.blockPosition().below());
-            BlockState here = server.getBlockState(this.blockPosition());
-            if (!(below.getBlock() instanceof AbstractTaintBlock) && !(here.getBlock() instanceof AbstractTaintBlock)) {
-                this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
-            }
+        if (this.tickCount % SUBSTRATE_CHECK_INTERVAL == 0
+                && !server.getBiome(this.blockPosition()).is(TCBiomeTags.IS_TAINTED)) {
+            this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
         }
+    }
+
+    /**
+     * TC4 natural taintacles only spawned in Tainted Lands and on fibrous taint or taint soil.
+     * The biome spawn list alone is not sufficient because otherwise vanilla can choose ordinary
+     * grass/dirt inside the biome and create a taintacle that immediately fails its habitat rules.
+     */
+    public static boolean checkTaintacleSpawnRules(
+            EntityType<? extends AbstractTaintacle> type,
+            ServerLevelAccessor level,
+            MobSpawnType spawnType,
+            BlockPos pos,
+            RandomSource random) {
+        if (!level.getBiome(pos).is(TCBiomeTags.IS_TAINTED)) {
+            return false;
+        }
+
+        BlockState here = level.getBlockState(pos);
+        BlockState below = level.getBlockState(pos.below());
+        boolean onTaint = here.is(TCBlocks.TAINT_FIBRE.get())
+                || below.is(TCBlocks.TAINT_FIBRE.get())
+                || here.is(TCBlocks.TAINT_SOIL.get())
+                || below.is(TCBlocks.TAINT_SOIL.get());
+        if (!onTaint) {
+            return false;
+        }
+        // TC4 rejected a natural spawn when another normal Taintacle was already nearby.
+        if (!level.getEntitiesOfClass(EntityTaintacle.class, new AABB(pos).inflate(24.0, 8.0, 24.0))
+                .isEmpty()) {
+            return false;
+        }
+        return Monster.checkMonsterSpawnRules(type, level, spawnType, pos, random);
     }
 
     @Override

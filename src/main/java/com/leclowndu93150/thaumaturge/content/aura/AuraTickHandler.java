@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -34,6 +36,7 @@ public final class AuraTickHandler {
     private static final float DEGRADE_CHANCE = 0.1F;
     private static final float RIFT_FLUX_RATIO = 0.75F;
     private static final float RIFT_CHANCE_DIVISOR = 5000.0F;
+    private static final float PHYSICAL_FLUX_SEEP_CAP = 0.5F;
 
     private AuraTickHandler() {}
 
@@ -71,6 +74,10 @@ public final class AuraTickHandler {
                 continue;
             }
             AuraData data = chunk.getData(TCAttachments.AURA.get());
+            // Physical Flux is a TC4 ecological system in its own right. Evaluate its direct
+            // Taint route for every loaded chunk, even when that dimension/chunk has no modern
+            // Aura base. Numeric Aura/Rift processing below remains conditional on Aura support.
+            PhysicalFluxAuraContamination.tryTaintOutbreak(level, pos, rand);
             if (data.getBase() == 0) {
                 continue;
             }
@@ -86,6 +93,12 @@ public final class AuraTickHandler {
         float vis = aura.getVis();
         float flux = aura.getFlux();
         boolean dirty = false;
+
+        float physicalFluxFloor = PhysicalFluxAuraContamination.targetFlux(level, aura.getChunkPos(), aura.getBase());
+        if (flux < physicalFluxFloor) {
+            flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
+            dirty = true;
+        }
 
         Sink visSink = neighbours.visSink();
         if (visSink != null) {
@@ -130,9 +143,17 @@ public final class AuraTickHandler {
             chunk.setUnsaved(true);
         }
 
+        boolean riftQueued = false;
         if (flux > base * RIFT_FLUX_RATIO && rand.nextFloat() < flux / RIFT_CHANCE_DIVISOR) {
             ChunkPos pos = aura.getChunkPos();
             AuraManager.queueRiftTrigger(level, new BlockPos(pos.x * 16, 0, pos.z * 16));
+            riftQueued = true;
+        }
+        if (ThaumaturgeCommonConfig.FLUX_PRESSURE_EVENTS.get()
+                && !riftQueued
+                && flux > base * RIFT_FLUX_RATIO
+                && rand.nextFloat() < flux / (Math.max(1.0F, base) * 100.0F)) {
+            FluxPressureEvents.queueTrigger(level, aura.getChunkPos());
         }
     }
 

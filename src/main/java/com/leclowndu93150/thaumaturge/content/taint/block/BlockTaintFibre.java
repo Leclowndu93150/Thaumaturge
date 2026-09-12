@@ -1,7 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
@@ -14,6 +19,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -143,6 +149,19 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         return computeState(state, level, pos);
     }
 
+    public static BlockState stateForWorld(LevelReader level, BlockPos pos) {
+        return computeState(TCBlocks.TAINT_FIBRE.get().defaultBlockState(), level, pos);
+    }
+
+    public static boolean hasSolidAttachment(LevelReader level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            if (canAttachTo(level, pos.relative(direction), direction.getOpposite())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static BlockState computeState(BlockState state, LevelReader level, BlockPos pos) {
         boolean north = canAttachTo(level, pos.north(), Direction.SOUTH);
         boolean east = canAttachTo(level, pos.east(), Direction.WEST);
@@ -189,6 +208,9 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        // TC4 advanced the biome boundary from active taint blocks before checking whether the
+        // current fibre was allowed to survive outside Tainted Lands.
+        TaintHelper.trySpreadTaintedBiome(level, pos, random);
         boolean hasGrowth = state.getValue(GROWTH1)
                 || state.getValue(GROWTH2)
                 || state.getValue(GROWTH3)
@@ -197,11 +219,35 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
             die(level, pos, state);
             return;
         }
-        if (!TaintHelper.isNearTaintSeed(level, pos)) {
+        if (!TaintHelper.isEcologicallySustained(level, pos)) {
             die(level, pos, state);
             return;
         }
+        if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
+                && state.getValue(GROWTH3)
+                && !TaintBloomRegistry.isProtected(level, pos)
+                && TaintEcology.isTainted(level, pos)) {
+            // TC4's growth metadata 3 was already the immature spore stalk. The earlier
+            // hybrid port added an extra 1/80 promotion roll before creating the separate
+            // stalk block, making spores take vastly longer to appear than the legacy
+            // lifecycle. A growth-3 fibre is now the stalk candidate and promotes on its
+            // next random tick; BlockTaintSporeStalk retains TC4's 1/10 maturation roll.
+            BlockState stalk = TCBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
+            if (stalk.canSurvive(level, pos)) {
+                level.setBlock(pos, stalk, Block.UPDATE_ALL);
+                TaintEcology.addPressure(level, pos, 0.02F);
+                return;
+            }
+        }
         TaintHelper.spreadFibres(level, pos, false);
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level instanceof ServerLevel serverLevel && state.getValue(GROWTH3)) {
+            AuraHelper.polluteAura(serverLevel, pos, 3 + serverLevel.getRandom().nextInt(3), true);
+        }
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

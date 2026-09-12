@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import java.util.HashSet;
 import java.util.Map;
@@ -174,6 +175,7 @@ public final class AuraManager {
         if (set != null) {
             set.remove(pos);
         }
+        PhysicalFluxAuraContamination.forgetChunk(level, pos);
     }
 
     public static Set<ChunkPos> loadedChunksSnapshot(ServerLevel level) {

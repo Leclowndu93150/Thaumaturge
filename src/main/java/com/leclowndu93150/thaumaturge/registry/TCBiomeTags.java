@@ -28,6 +28,7 @@ public final class TCBiomeTags {
     public static final TagKey<Biome> HAS_BRAINY_HUSK = biome("has_spawn/brainy_husk");
     public static final TagKey<Biome> IS_MAGICAL = biome("is_magical");
     public static final TagKey<Biome> IS_SPOOKY = biome("is_spooky");
+    public static final TagKey<Biome> IS_TAINTED = biome("is_tainted");
 
     private static TagKey<Biome> biome(String path) {
         return TagKey.create(Registries.BIOME, TCIds.rl(path));

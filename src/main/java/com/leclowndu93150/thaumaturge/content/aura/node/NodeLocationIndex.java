@@ -70,6 +70,17 @@ public final class NodeLocationIndex extends SavedData {
                 .map(BlockPos::of);
     }
 
+    /** Returns the nearest indexed node of any type within {@code maxDistance}. */
+    public Optional<BlockPos> findNearestAny(BlockPos origin, double maxDistance) {
+        double maxDistanceSq = maxDistance * maxDistance;
+        return nodes.values().stream()
+                .flatMap(Set::stream)
+                .distinct()
+                .filter(pos -> BlockPos.of(pos).distSqr(origin) <= maxDistanceSq)
+                .min(Comparator.comparingDouble(pos -> BlockPos.of(pos).distSqr(origin)))
+                .map(BlockPos::of);
+    }
+
     private static NodeLocationIndex load(CompoundTag tag, HolderLookup.Provider registries) {
         NodeLocationIndex index = new NodeLocationIndex();
         if (tag.contains("LegacyMigrationComplete")) {

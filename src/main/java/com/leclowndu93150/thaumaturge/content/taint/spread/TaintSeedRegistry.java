@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -57,6 +58,12 @@ public final class TaintSeedRegistry extends SavedData {
 
     public void removeSeed(BlockPos pos) {
         if (seeds.remove(pos)) {
+            setDirty();
+        }
+    }
+
+    public void removeSeeds(Collection<BlockPos> positions) {
+        if (!positions.isEmpty() && seeds.removeAll(positions)) {
             setDirty();
         }
     }

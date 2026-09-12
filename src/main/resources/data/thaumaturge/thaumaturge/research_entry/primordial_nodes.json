@@ -1,0 +1,45 @@
+{
+  "category": "thaumaturge:eldritch",
+  "name": "research.thaumaturge.primordial_nodes.title",
+  "parents": [
+    "thaumaturge:base_eldritch",
+    "thaumaturge:primordial_pearl"
+  ],
+  "column": 0,
+  "row": 6,
+  "icons": [
+    "thaumaturge:primordial_pearl"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.primordial_nodes.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        }
+      ],
+      "warp": 1
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:auram",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:perditio",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

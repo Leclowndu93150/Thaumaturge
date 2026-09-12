@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
-import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
+import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -10,7 +11,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -27,6 +27,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,14 +39,12 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
     private static final int ATTACK_COOLDOWN = 25;
     private static final int WEAKNESS_DURATION = 100;
     private static final float SELF_DAMAGE_SUMMONED = 5.0F;
-    private static final int SWARM_PARTICLES_PER_TICK = 3;
-    private static final float SWARM_PARTICLE_SCALE = 0.22F;
-    private static final float SWARM_PARTICLE_R = 0.7F;
-    private static final float SWARM_PARTICLE_G = 0.0F;
-    private static final float SWARM_PARTICLE_B = 1.0F;
+    // TC4/TC5 rendered no swarm model: its body was a cloud of roughly thirty attached particles.
+    private static final int SWARM_PARTICLES_PER_TICK = 1;
 
     private int damBonus;
     private int attackTicks;
+    private BlockPos flightTarget;
 
     public EntityTaintSwarm(EntityType<? extends EntityTaintSwarm> type, Level level) {
         super(type, level);
@@ -59,7 +58,9 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
                 .add(Attributes.ATTACK_DAMAGE, 2.0)
                 .add(Attributes.FLYING_SPEED, 0.6)
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
-                .add(Attributes.FOLLOW_RANGE, 32.0);
+                // Original swarms only acquired a nearby victim (12 blocks), rather than hunting
+                // across the whole geyser activation radius.
+                .add(Attributes.FOLLOW_RANGE, 12.0);
     }
 
     @Override
@@ -107,23 +108,8 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
                 double x = box.minX + this.random.nextDouble() * (box.maxX - box.minX);
                 double y = box.minY + this.random.nextDouble() * (box.maxY - box.minY);
                 double z = box.minZ + this.random.nextDouble() * (box.maxZ - box.minZ);
-                TaintFumeParticleOptions data = new TaintFumeParticleOptions(
-                        ARGB32.colorFromFloat(1.0F, SWARM_PARTICLE_R, SWARM_PARTICLE_G, SWARM_PARTICLE_B),
-                        SWARM_PARTICLE_SCALE);
-                this.level()
-                        .addParticle(
-                                data,
-                                x,
-                                y,
-                                z,
-                                this.getDeltaMovement().x,
-                                this.getDeltaMovement().y,
-                                this.getDeltaMovement().z);
+                this.level().addParticle(new TaintSwarmParticleOptions(this.getId()), x, y, z, 0.0, 0.0, 0.0);
             }
-            return;
-        }
-        if (isSummoned()) {
-            this.hurt(server.damageSources().generic(), SELF_DAMAGE_SUMMONED);
             return;
         }
         if (attackTicks > 0) {
@@ -131,8 +117,18 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
         }
         LivingEntity target = this.getTarget();
         if (target == null) {
+            if (isSummoned()) {
+                this.hurt(server.damageSources().generic(), SELF_DAMAGE_SUMMONED);
+                return;
+            }
+            updateTaintedFreeFlight(server);
             return;
         }
+
+        // TC4 swarms actively flew toward their victim; merely assigning a target is insufficient
+        // with a FlyingMoveControl and no pathing attack goal.
+        this.moveControl.setWantedPosition(
+                target.getX(), target.getY() + target.getEyeHeight() * 0.5, target.getZ(), 0.65);
         if (attackTicks > 0) {
             return;
         }
@@ -142,6 +138,41 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
             this.doHurtTarget(target);
             target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
         }
+    }
+
+    private void updateTaintedFreeFlight(ServerLevel server) {
+        if (!isValidFlightTarget(server, flightTarget)
+                || random.nextInt(30) == 0
+                || flightTarget.distSqr(blockPosition()) < 4.0) {
+            flightTarget = null;
+            for (int attempt = 0; attempt < 12; attempt++) {
+                BlockPos candidate = blockPosition()
+                        .offset(
+                                random.nextInt(7) - random.nextInt(7),
+                                random.nextInt(6) - 2,
+                                random.nextInt(7) - random.nextInt(7));
+                if (isValidFlightTarget(server, candidate)) {
+                    flightTarget = candidate;
+                    break;
+                }
+            }
+        }
+        if (flightTarget != null) {
+            moveControl.setWantedPosition(
+                    flightTarget.getX() + 0.5, flightTarget.getY() + 0.1, flightTarget.getZ() + 0.5, 0.55);
+        }
+    }
+
+    private static boolean isValidFlightTarget(ServerLevel level, BlockPos pos) {
+        if (pos == null || !level.hasChunkAt(pos) || !level.getBlockState(pos).isAir()) {
+            return false;
+        }
+        if (pos.getY() < level.getMinBuildHeight() + 1
+                || pos.getY()
+                        > level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) + 8) {
+            return false;
+        }
+        return TaintBiomeManager.isTainted(level, pos);
     }
 
     public float effectiveAttackDamage() {

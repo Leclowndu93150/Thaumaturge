@@ -49,7 +49,8 @@
       "text": "research.thaumaturge.essentia_smelter_void.stage_1",
       "recipes": [
         "thaumaturge:arcane_workbench/advanced_alchemical_construct",
-        "thaumaturge:arcane_workbench/smelter_void"
+        "thaumaturge:arcane_workbench/smelter_void",
+        "thaumaturge:dust_trigger/advanced_alchemical_furnace"
       ]
     }
   ],

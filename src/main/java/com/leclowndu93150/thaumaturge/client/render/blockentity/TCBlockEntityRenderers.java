@@ -30,6 +30,11 @@ public final class TCBlockEntityRenderers {
         event.registerBlockEntityRenderer(TCBlockEntities.JAR_BRAIN.get(), JarBrainRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.DIOPTRA.get(), DioptraRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.CENTRIFUGE.get(), CentrifugeRenderer::new);
+        event.registerBlockEntityRenderer(TCBlockEntities.ESSENTIA_RESERVOIR.get(), EssentiaReservoirRenderer::new);
+        event.registerBlockEntityRenderer(TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), EssentiaCrystalizerRenderer::new);
+        event.registerBlockEntityRenderer(
+                TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), AdvancedAlchemicalFurnaceRenderer::new);
+        event.registerBlockEntityRenderer(TCBlockEntities.FLUX_SCRUBBER.get(), FluxScrubberRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.GOLEM_BUILDER.get(), GolemBuilderRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.HUNGRY_CHEST.get(), HungryChestRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.CRUCIBLE.get(), CrucibleRenderer::new);
@@ -78,5 +83,11 @@ public final class TCBlockEntityRenderers {
         event.register(MirrorRenderer.FRAME_MODEL_ID);
         event.register(MirrorRenderer.FRAME_ESSENTIA_MODEL_ID);
         event.register(TubeValveRenderer.MODEL_ID);
+        event.register(EssentiaCrystalizerRenderer.CRYSTAL_MODEL_ID);
+        event.register(AdvancedAlchemicalFurnaceRenderer.BASE_MODEL_ID);
+        event.register(AdvancedAlchemicalFurnaceRenderer.BASE_ON_MODEL_ID);
+        event.register(AdvancedAlchemicalFurnaceRenderer.TANK_MODEL_ID);
+        event.register(AdvancedAlchemicalFurnaceRenderer.TANK_ON_MODEL_ID);
+        event.register(FluxScrubberRenderer.TIP_MODEL_ID);
     }
 }

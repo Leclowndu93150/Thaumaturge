@@ -20,6 +20,7 @@ public final class TCParticleProviders {
         event.registerSpecial(TCParticles.CURLY_WISP.get(), new CurlyWispParticle.Provider());
         event.registerSpecial(TCParticles.WISP_FLAME.get(), new WispFlameParticle.Provider());
         event.registerSpecial(TCParticles.TAINT_FUME.get(), new TaintFumeParticle.Provider());
+        event.registerSpecial(TCParticles.TAINT_SWARM.get(), new TaintSwarmParticle.Provider());
         event.registerSpecial(TCParticles.LIGHTNING_FLASH.get(), new LightningFlashParticle.Provider());
         event.registerSpecial(TCParticles.STABILIZER_RUNE.get(), new StabilizerRuneParticle.Provider());
         event.registerSpecial(TCParticles.BUBBLE.get(), new BubbleParticle.Provider());

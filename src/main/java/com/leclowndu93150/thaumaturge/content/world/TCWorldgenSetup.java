@@ -12,6 +12,9 @@ public final class TCWorldgenSetup {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> Regions.register(new TCOverworldRegion(TCIds.rl("overworld"))));
+        event.enqueueWork(() -> {
+            Regions.register(new TCOverworldRegion(TCIds.rl("overworld")));
+            Regions.register(new TCTaintedLandsRegion(TCIds.rl("tainted_lands")));
+        });
     }
 }

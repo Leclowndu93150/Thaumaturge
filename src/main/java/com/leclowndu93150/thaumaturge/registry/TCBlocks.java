@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockDioptra;
 import com.leclowndu93150.thaumaturge.content.device.BlockEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockHungryChest;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
+import com.leclowndu93150.thaumaturge.content.device.BlockItemGrate;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampGrowth;
@@ -42,6 +43,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
+import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockPotionSprayer;
@@ -58,10 +60,15 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchTrap;
 import com.leclowndu93150.thaumaturge.content.equipment.BlockEffectGlimmer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnaceNozzle;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
+import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJarBrain;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJarVoid;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelterAux;
@@ -77,6 +84,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeRestrict;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeValve;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEffectSap;
 import com.leclowndu93150.thaumaturge.content.focus.BlockHole;
+import com.leclowndu93150.thaumaturge.content.golem.BlockGolemFetter;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockPlaceholder;
@@ -97,8 +105,14 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintGeyser;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintLog;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintRock;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSoil;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEtherealBloom;
+import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGoo;
 import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooRefs;
+import com.leclowndu93150.thaumaturge.content.warding.BlockArcaneDoor;
+import com.leclowndu93150.thaumaturge.content.warding.BlockArcanePressurePlate;
+import com.leclowndu93150.thaumaturge.content.warding.BlockWardedGlass;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbenchCharger;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
@@ -134,6 +148,29 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TCIds.MODID);
+
+    public static final DeferredBlock<BlockWardedGlass> WARDED_GLASS = BLOCKS.registerBlock(
+            "warded_glass",
+            BlockWardedGlass::new,
+            BlockBehaviour.Properties.of().strength(0.3F).sound(SoundType.GLASS).noOcclusion());
+    public static final DeferredBlock<BlockArcaneDoor> ARCANE_DOOR = BLOCKS.registerBlock(
+            "arcane_door",
+            BlockArcaneDoor::new,
+            BlockBehaviour.Properties.of().strength(3.0F).sound(SoundType.WOOD).noOcclusion());
+    public static final DeferredBlock<BlockArcanePressurePlate> ARCANE_PRESSURE_PLATE = BLOCKS.registerBlock(
+            "arcane_pressure_plate",
+            BlockArcanePressurePlate::new,
+            BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.WOOD).noCollission());
+    public static final DeferredBlock<BlockGolemFetter> GOLEM_FETTER = BLOCKS.registerBlock(
+            "golem_fetter",
+            BlockGolemFetter::new,
+            BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.STONE));
+    public static final DeferredBlock<Block> TALLOW_BLOCK = BLOCKS.registerSimpleBlock(
+            "tallow_block", BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.HONEY_BLOCK));
+    public static final DeferredBlock<BlockItemGrate> ITEM_GRATE = BLOCKS.registerBlock(
+            "item_grate",
+            BlockItemGrate::new,
+            BlockBehaviour.Properties.of().strength(2.0F).sound(SoundType.METAL).noOcclusion());
 
     public static final DeferredBlock<BlockFocalManipulator> FOCAL_MANIPULATOR = BLOCKS.registerBlock(
             "focal_manipulator",
@@ -299,6 +336,24 @@ public final class TCBlocks {
     public static final DeferredBlock<BlockTubeBuffer> TUBE_BUFFER =
             BLOCKS.registerBlock("tube_buffer", BlockTubeBuffer::new, tubeProps());
 
+    public static final DeferredBlock<BlockEssentiaReservoir> ESSENTIA_RESERVOIR = BLOCKS.registerBlock(
+            "essentia_reservoir",
+            BlockEssentiaReservoir::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0F, 17.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion());
+
+    public static final DeferredBlock<BlockEssentiaCrystalizer> ESSENTIA_CRYSTALIZER = BLOCKS.registerBlock(
+            "essentia_crystalizer",
+            BlockEssentiaCrystalizer::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0F, 10.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion());
+
     public static final DeferredBlock<BlockFluxGoo> FLUX_GOO = BLOCKS.registerBlock(
             "flux_goo",
             props -> new BlockFluxGoo(FluxGooRefs.sourceFluid(), props),
@@ -310,8 +365,21 @@ public final class TCBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .sound(TCSoundTypes.GORE)
                     .noLootTable()
-                    .liquid()
-                    .randomTicks());
+                    .liquid());
+
+    public static final DeferredBlock<BlockFluxGas> FLUX_GAS = BLOCKS.registerBlock(
+            "flux_gas",
+            BlockFluxGas::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PINK)
+                    .replaceable()
+                    .noCollission()
+                    .noOcclusion()
+                    .strength(100.0F)
+                    .pushReaction(PushReaction.DESTROY)
+                    .lightLevel(state -> 7)
+                    .sound(TCSoundTypes.GORE)
+                    .noLootTable());
 
     public static final DeferredBlock<BlockPurifyingFluid> PURIFYING_FLUID = BLOCKS.registerBlock(
             "purifying_fluid",
@@ -399,12 +467,32 @@ public final class TCBlocks {
                         return 0;
                     }));
 
+    public static final DeferredBlock<BlockTaintSporeStalk> TAINT_SPORE_STALK = BLOCKS.registerBlock(
+            "taint_spore_stalk",
+            BlockTaintSporeStalk::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.4F)
+                    .sound(TCSoundTypes.GORE)
+                    .noOcclusion()
+                    .noCollission()
+                    .pushReaction(PushReaction.DESTROY)
+                    .randomTicks()
+                    .lightLevel(state -> state.getValue(BlockTaintSporeStalk.MATURE) ? 10 : 0));
+
     private static BlockBehaviour.Properties pressPlaceholderProps() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
                 .strength(2.5F, 3600000.0F)
                 .sound(SoundType.STONE)
                 .noLootTable();
+    }
+
+    private static BlockBehaviour.Properties advancedFurnacePlaceholderProps() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.METAL)
+                .strength(2.5F, 3600000.0F)
+                .sound(SoundType.METAL);
     }
 
     private static BlockBehaviour.Properties pedestalProps() {
@@ -673,6 +761,30 @@ public final class TCBlocks {
     public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_TABLE =
             BLOCKS.registerBlock("placeholder_table", BlockPlaceholder::new, pressPlaceholderProps());
 
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_alembic_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
+
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_construct_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
+
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_advanced_construct_placeholder",
+                    BlockPlaceholder::new,
+                    advancedFurnacePlaceholderProps());
+
+    public static final DeferredBlock<BlockAdvancedAlchemicalFurnaceNozzle> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace_nozzle",
+                    BlockAdvancedAlchemicalFurnaceNozzle::new,
+                    advancedFurnacePlaceholderProps().noLootTable().noOcclusion());
+
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ANCIENT =
             BLOCKS.registerBlock("pedestal_ancient", BlockPedestal::new, pedestalProps());
 
@@ -824,6 +936,15 @@ public final class TCBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(2.0F, 10.0F)
                     .sound(SoundType.METAL)
+                    .noOcclusion());
+
+    public static final DeferredBlock<BlockFluxScrubber> FLUX_SCRUBBER = BLOCKS.registerBlock(
+            "flux_scrubber",
+            BlockFluxScrubber::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.0F, 10.0F)
+                    .sound(SoundType.STONE)
                     .noOcclusion());
 
     public static final DeferredBlock<BlockCondenserLattice> CONDENSER_LATTICE = BLOCKS.registerBlock(
@@ -1108,6 +1229,18 @@ public final class TCBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
+    public static final DeferredBlock<BlockEtherealBloom> ETHEREAL_BLOOM = BLOCKS.registerBlock(
+            "ethereal_bloom",
+            BlockEtherealBloom::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.GRASS)
+                    .lightLevel(state -> 12)
+                    .pushReaction(PushReaction.DESTROY)
+                    .noOcclusion());
+
     public static final DeferredBlock<BlockPlantCinderpearl> PLANT_CINDERPEARL = BLOCKS.registerBlock(
             "cinderpearl",
             BlockPlantCinderpearl::new,
@@ -1157,8 +1290,6 @@ public final class TCBlocks {
         flowerPot.addPlant(PLANT_VISHROOM.getId(), POTTED_VISHROOM);
     }
 
-    //
-
     public static final DeferredBlock<BlockMetalTC> ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
             "alchemical_construct",
             BlockMetalTC::new,
@@ -1166,6 +1297,15 @@ public final class TCBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(4.0F, 10.0F)
                     .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<BlockAlchemicalFurnace> ALCHEMICAL_FURNACE = BLOCKS.registerBlock(
+            "alchemical_furnace",
+            BlockAlchemicalFurnace::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(3.0F, 17.0F)
+                    .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
     public static final DeferredBlock<BlockMetalTC> ADVANCED_ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
@@ -1176,6 +1316,17 @@ public final class TCBlocks {
                     .strength(4.0F, 10.0F)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<BlockAdvancedAlchemicalFurnace> ADVANCED_ALCHEMICAL_FURNACE =
+            BLOCKS.registerBlock(
+                    "advanced_alchemical_furnace",
+                    BlockAdvancedAlchemicalFurnace::new,
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(5.0F, 12.0F)
+                            .sound(SoundType.METAL)
+                            .requiresCorrectToolForDrops()
+                            .lightLevel(state -> state.getValue(BlockAdvancedAlchemicalFurnace.LIT) ? 10 : 0));
 
     public static final DeferredBlock<BlockMetalTC> METAL_THAUMIUM_BLOCK = BLOCKS.registerBlock(
             "metal_thaumium",
