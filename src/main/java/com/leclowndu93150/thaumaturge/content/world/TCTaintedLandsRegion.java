@@ -34,6 +34,7 @@ public final class TCTaintedLandsRegion extends Region {
         this.addModifiedVanillaOverworldBiomes(mapper, builder -> {
             builder.replaceBiome(Biomes.FOREST, TCBiomes.TAINTED_LANDS);
             builder.replaceBiome(Biomes.FLOWER_FOREST, TCBiomes.TAINTED_LANDS);
+            builder.replaceBiome(Biomes.BEACH, TCBiomes.TAINTED_LANDS);
         });
     }
 }
