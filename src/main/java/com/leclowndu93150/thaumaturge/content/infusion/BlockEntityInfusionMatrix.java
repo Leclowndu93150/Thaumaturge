@@ -122,6 +122,10 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         return environment;
     }
 
+    MatrixEnvironment environmentSnapshot(ServerLevel level) {
+        return environment != null && !checkSurroundings ? environment : MatrixEnvironment.survey(level, worldPosition);
+    }
+
     private void tickServer(ServerLevel level) {
         count++;
         MatrixEnvironment env = environment(level);
@@ -204,7 +208,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             return;
         }
         InfusionInput input = new InfusionInput(catalyst, components);
-        float costMult = Math.max(MIN_COST_MULT, env.costMult());
+        float costMult = effectiveCostMultiplier(env);
         Optional<RecipeHolder<InfusionRecipe>> match = level.getRecipeManager()
                 .getRecipeFor(TCRecipeTypes.INFUSION.get(), input, level)
                 .filter(holder -> ResearchManager.doesPassGate(
@@ -261,7 +265,11 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         syncToClient();
     }
 
-    private static AspectList scaleByEnvironment(AspectList aspects, float costMult) {
+    static float effectiveCostMultiplier(MatrixEnvironment environment) {
+        return Math.max(MIN_COST_MULT, environment.costMult());
+    }
+
+    static AspectList scaleByEnvironment(AspectList aspects, float costMult) {
         AspectList scaled = AspectList.EMPTY;
         for (AspectInstance instance : aspects.entries()) {
             int amount = (int) (instance.amount() * costMult);
@@ -429,15 +437,8 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             syncToClient();
             return;
         }
-        ItemStack result = job.result().copy();
         ItemStack catalyst = pedestal.getItem();
-        if (catalyst.isDamageableItem()
-                && catalyst.getDamageValue() > 0
-                && result.isDamageableItem()
-                && result.getDamageValue() == 0) {
-            float damageRatio = (float) catalyst.getDamageValue() / catalyst.getMaxDamage();
-            result.setDamageValue((int) (result.getMaxDamage() * damageRatio));
-        }
+        ItemStack result = preserveCatalystDamage(job.result(), catalyst);
         pedestal.setItem(result);
         Optional<InfusionCraftJob> finished = Optional.ofNullable(job);
         job = null;
@@ -448,6 +449,18 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
+    }
+
+    static ItemStack preserveCatalystDamage(ItemStack result, ItemStack catalyst) {
+        ItemStack preserved = result.copy();
+        if (catalyst.isDamageableItem()
+                && catalyst.getDamageValue() > 0
+                && preserved.isDamageableItem()
+                && preserved.getDamageValue() == 0) {
+            float damageRatio = (float) catalyst.getDamageValue() / catalyst.getMaxDamage();
+            preserved.setDamageValue((int) (preserved.getMaxDamage() * damageRatio));
+        }
+        return preserved;
     }
 
     private void awardCraft(ServerPlayer player, ItemStack result) {
