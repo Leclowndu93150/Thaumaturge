@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -27,6 +29,7 @@ class ArcaneCraftingTransactionTest {
         remainder.setCount(64);
         assertDefensive(result::output, result::remainders);
         assertDefensive(inspection::output, inspection::remainders);
+        assertEquals(ResearchStatus.UNLOCKED, inspection.researchStatus());
     }
 
     @Test
@@ -51,6 +54,17 @@ class ArcaneCraftingTransactionTest {
                         null,
                         UUID.randomUUID(),
                         ArcaneWorkbenchContext.Kind.VIRTUAL));
+    }
+
+    @Test
+    void paymentSummaryUsesEvaluatedCost() {
+        ArcaneCraftCost cost = new ArcaneCraftCost(false, Map.of(), AspectList.EMPTY, 23, false);
+        ArcaneCraftingTransaction.Result result = new ArcaneCraftingTransaction.Result(
+                false, false, ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE, ItemStack.EMPTY, List.of(), cost);
+
+        ArcanePaymentSummary summary = result.paymentSummary();
+        assertEquals(23, summary.auraVisRequired());
+        assertEquals(false, summary.affordable());
     }
 
     private static void assertDefensive(

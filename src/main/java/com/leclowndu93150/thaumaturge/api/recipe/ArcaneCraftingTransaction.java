@@ -74,6 +74,11 @@ public final class ArcaneCraftingTransaction {
         public AspectList crystals() {
             return cost == null ? AspectList.EMPTY : cost.crystalsNeeded();
         }
+
+        /** Present for evaluated previews and successful commits; raw inspection has no payment context. */
+        public @Nullable ArcanePaymentSummary paymentSummary() {
+            return cost == null ? null : ArcanePaymentSummary.from(cost);
+        }
     }
 
     public enum Failure {
@@ -96,15 +101,36 @@ public final class ArcaneCraftingTransaction {
             @Nullable ResourceLocation recipeId,
             ItemStack output,
             List<ItemStack> remainders,
-            @Nullable Requirements requirements) {
+            @Nullable Requirements requirements,
+            ResearchStatus researchStatus) {
         public Inspection {
             Objects.requireNonNull(failure, "failure");
+            Objects.requireNonNull(researchStatus, "researchStatus");
             output = output.copy();
             remainders = remainders.stream().map(ItemStack::copy).toList();
         }
 
+        /** Retained for source and binary compatibility with the original inspection shape. */
+        public Inspection(
+                boolean successful,
+                Failure failure,
+                @Nullable ResourceLocation recipeId,
+                ItemStack output,
+                List<ItemStack> remainders,
+                @Nullable Requirements requirements) {
+            this(
+                    successful,
+                    failure,
+                    recipeId,
+                    output,
+                    remainders,
+                    requirements,
+                    successful ? ResearchStatus.UNLOCKED : ResearchStatus.INVALID);
+        }
+
         public static Inspection failure(Failure failure) {
-            return new Inspection(false, failure, null, ItemStack.EMPTY, List.of(), null);
+            ResearchStatus status = failure == Failure.RESEARCH_LOCKED ? ResearchStatus.LOCKED : ResearchStatus.INVALID;
+            return new Inspection(false, failure, null, ItemStack.EMPTY, List.of(), null, status);
         }
 
         @Override
