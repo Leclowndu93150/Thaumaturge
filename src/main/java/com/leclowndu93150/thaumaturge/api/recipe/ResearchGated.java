@@ -10,4 +10,8 @@ public interface ResearchGated {
     default boolean doesPassGate(Player player) {
         return ResearchGate.passes(player, researchGate().orElse(null));
     }
+
+    default ResearchStatus researchStatus(Player player) {
+        return ResearchStatus.evaluate(player, researchGate());
+    }
 }
