@@ -102,6 +102,15 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         }
         final NodeRenderState data = build(node, partialTick, player);
         final Vec3 origin = Vec3.atCenterOf(node.getBlockPos());
+        if (data.depthIgnore && !IrisCompat.shadersActive()) {
+            LateWorldRenderQueue.enqueueBlockEntityOverlay(
+                    origin, (latePose, lateBuffers) -> drawDepthIgnoredLayers(data, latePose, lateBuffers));
+            if (data.draining) {
+                LateWorldRenderQueue.enqueueBlockEntity(
+                        origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
+            }
+            return;
+        }
         if (data.jarred) {
             poseStack.pushPose();
             poseStack.translate(0.5F, JARRED_HEIGHT, 0.5F);
@@ -124,6 +133,14 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             LateWorldRenderQueue.enqueueBlockEntity(
                     origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
         }
+    }
+
+    private static void drawDepthIgnoredLayers(NodeRenderState data, PoseStack poseStack, MultiBufferSource buffers) {
+        if (data.jarred) {
+            poseStack.translate(0.0F, JARRED_HEIGHT - 0.5F, 0.0F);
+        }
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        drawLayers(data, poseStack, buffers);
     }
 
     private static NodeRenderState build(BlockEntityNode node, float partialTicks, LocalPlayer player) {

@@ -5,8 +5,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.HolderLookup;
@@ -22,15 +23,27 @@ import org.jspecify.annotations.Nullable;
 
 public final class ResearchLinkData extends SavedData {
 
+    public record Progress(int stage, boolean complete) {
+        static final Codec<Progress> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                        Codec.INT.optionalFieldOf("stage", 0).forGetter(Progress::stage),
+                        Codec.BOOL.optionalFieldOf("complete", false).forGetter(Progress::complete))
+                .apply(instance, Progress::new));
+
+        Progress merge(Progress other) {
+            return new Progress(Math.max(stage, other.stage), complete || other.complete);
+        }
+    }
+
     public static final class Link {
         final UUID first;
         final UUID second;
-        final Set<ResourceLocation> union;
+        final Map<ResourceLocation, Progress> progress;
 
-        Link(UUID first, UUID second, Set<ResourceLocation> union) {
+        Link(UUID first, UUID second, Set<ResourceLocation> legacyUnion, Map<ResourceLocation, Progress> progress) {
             this.first = first;
             this.second = second;
-            this.union = new LinkedHashSet<>(union);
+            this.progress = new LinkedHashMap<>(progress);
+            legacyUnion.forEach(id -> this.progress.putIfAbsent(id, new Progress(0, true)));
         }
 
         public UUID first() {
@@ -41,8 +54,8 @@ public final class ResearchLinkData extends SavedData {
             return second;
         }
 
-        public Set<ResourceLocation> union() {
-            return union;
+        public Map<ResourceLocation, Progress> progress() {
+            return progress;
         }
 
         public boolean involves(UUID player) {
@@ -54,9 +67,12 @@ public final class ResearchLinkData extends SavedData {
                         UUIDUtil.CODEC.fieldOf("second").forGetter(link -> link.second),
                         LegacyIds.IDENTIFIER_CODEC
                                 .listOf()
-                                .fieldOf("union")
-                                .xmap(list -> (Set<ResourceLocation>) new LinkedHashSet<>(list), List::copyOf)
-                                .forGetter(link -> link.union))
+                                .optionalFieldOf("union", List.of())
+                                .xmap(Set::copyOf, List::copyOf)
+                                .forGetter(link -> Set.of()),
+                        Codec.unboundedMap(LegacyIds.IDENTIFIER_CODEC, Progress.CODEC)
+                                .optionalFieldOf("progress", Map.of())
+                                .forGetter(link -> link.progress))
                 .apply(builder, Link::new));
     }
 
@@ -110,7 +126,7 @@ public final class ResearchLinkData extends SavedData {
         if (existing != null) {
             return existing;
         }
-        Link link = new Link(a, b, Set.of());
+        Link link = new Link(a, b, Set.of(), Map.of());
         links.add(link);
         setDirty();
         return link;
