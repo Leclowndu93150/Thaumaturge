@@ -12,6 +12,7 @@ public final class TCBlockTags {
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Block> SILVERWOOD_LOGS = key("silverwood_logs");
+    public static final TagKey<Block> PLANKS = common("planks");
     public static final TagKey<Block> PLANKS_GREATWOOD = common("planks/greatwood");
     public static final TagKey<Block> PLANKS_SILVERWOOD = common("planks/silverwood");
 
