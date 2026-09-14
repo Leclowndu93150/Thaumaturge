@@ -18,6 +18,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyZombie;
 import com.leclowndu93150.thaumaturge.content.particle.BoreDebrisParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
@@ -777,7 +778,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     private static void spreadTaintedBiomeColumn(ServerLevel serverLevel, BlockPos origin, int range) {
         BlockPos target = randomBiomeTarget(serverLevel, origin, range);
-        if (target != null) {
+        if (target != null && !TaintBloomRegistry.isProtected(serverLevel, target)) {
             TaintBiomeManager.taintColumn(serverLevel, target);
         }
     }
