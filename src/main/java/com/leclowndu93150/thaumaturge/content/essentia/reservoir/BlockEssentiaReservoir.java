@@ -176,6 +176,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
         Direction facing = player.isShiftKeyDown() ? side.getOpposite() : side;
         if (state.getValue(BlockStateProperties.FACING) != facing) {
             level.setBlock(pos, state.setValue(BlockStateProperties.FACING, facing), Block.UPDATE_ALL);
+            level.invalidateCapabilities(pos);
             BlockEssentiaTransport.refreshConnectionsAround(level, pos);
         }
         player.swing(hand);

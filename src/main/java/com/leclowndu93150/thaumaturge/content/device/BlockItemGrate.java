@@ -60,6 +60,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         level.setBlock(pos, state.cycle(OPEN), UPDATE_CLIENTS);
+        level.invalidateCapabilities(pos);
         if (!level.isClientSide()
                 && !state.getValue(OPEN)
                 && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) {
@@ -85,6 +86,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
         boolean powered = level.hasNeighborSignal(pos);
         if (powered != state.getValue(POWERED)) {
             level.setBlock(pos, state.setValue(OPEN, powered).setValue(POWERED, powered), UPDATE_CLIENTS);
+            level.invalidateCapabilities(pos);
             if (powered && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) grate.eject();
         }
     }

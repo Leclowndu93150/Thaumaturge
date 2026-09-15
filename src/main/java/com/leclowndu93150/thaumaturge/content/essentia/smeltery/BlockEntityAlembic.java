@@ -68,8 +68,14 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     }
 
     public void setFacing(Direction facing) {
+        if (this.facing == facing) {
+            return;
+        }
         this.facing = facing;
         setChanged();
+        if (level != null) {
+            level.invalidateCapabilities(worldPosition);
+        }
         syncToClient();
     }
 
