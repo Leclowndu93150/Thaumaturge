@@ -23,7 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-/** Dedicated TC5-style tainted cow: hostile livestock rather than a cosmetic champion. */
+/** Dedicated tainted cow: hostile livestock rather than a cosmetic champion. */
 public final class EntityTaintCow extends Cow implements ITaintedMob {
     public EntityTaintCow(EntityType<? extends Cow> type, Level level) {
         super(type, level);

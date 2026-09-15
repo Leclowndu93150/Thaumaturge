@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 /**
  * Canonical research-key layout for knowledge gained by scanning. Scanned subjects are recorded
  * in the player's research list under stable identifiers in the {@code thaumaturge} namespace
- * with a {@code scanned/} path prefix, replacing the legacy {@code "!"}-prefixed string keys.
+ * with a {@code scanned/} path prefix.
  *
  * @since 1.0.0
  */

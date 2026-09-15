@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 
-/** Faithful modern reconstruction of TC4's two-cube translucent Taint Spore model. */
+/** Two-cube translucent Taint Spore model. */
 public final class TaintSporeModel<T extends EntityTaintSpore> extends HierarchicalModel<T> {
     private static final int TEXTURE_SIZE = 64;
     private final ModelPart root;

@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.level.Level;
 
-/** TC4 spore-burst spiderling. Kept deliberately small and fragile. */
+/** Spore-burst spiderling. Kept deliberately small and fragile. */
 public final class EntityTaintSpider extends Spider implements ITaintedMob {
     public EntityTaintSpider(EntityType<? extends Spider> type, Level level) {
         super(type, level);

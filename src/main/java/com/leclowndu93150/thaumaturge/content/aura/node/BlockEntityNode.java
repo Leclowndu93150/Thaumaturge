@@ -177,7 +177,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
     }
 
-    /** Marks a world-generated TC5-style tainted node for its one-time pollution hotspot bootstrap. */
+    /** Marks a world-generated tainted node for its one-time pollution hotspot bootstrap. */
     public void markNaturalTaintBootstrap() {
         naturalTaintBootstrapPending = true;
         setChanged();
@@ -748,7 +748,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         RandomSource random = serverLevel.getRandom();
 
-        // TC4 feedback loop: an ordinary node engulfed by Tainted Lands can itself become tainted.
+        // An ordinary node engulfed by Tainted Lands can itself become tainted.
         if (count % TAINTED_NODE_CONVERSION_INTERVAL == 0
                 && nodeType != NodeType.PURE
                 && nodeType != NodeType.TAINTED
@@ -768,7 +768,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         } else if (nodeType == NodeType.PURE) {
             BlockPos target = randomBiomeTarget(serverLevel, pos, PURE_BIOME_SPREAD_RANGE);
             if (target != null && TaintBiomeManager.isTainted(serverLevel, target)) {
-                // TC4 Pure Nodes reclaimed Tainted Lands specifically into Magical Forest.
+                // Pure Nodes reclaim Tainted Lands specifically into Magical Forest.
                 TaintBiomeManager.replaceColumn(serverLevel, target, TCBiomes.MAGICAL_FOREST);
             } else if (nearSilverwood(serverLevel, pos)) {
                 spreadBiomeColumn(serverLevel, pos, PURE_BIOME_SPREAD_RANGE, TCBiomes.MAGICAL_FOREST);

@@ -20,7 +20,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-/** TC5-style hostile villager that keeps vanilla age/pose state but disables its trading brain. */
+/** Hostile villager that keeps vanilla age/pose state but disables its trading brain. */
 public final class EntityTaintVillager extends Villager implements ITaintedMob {
     public EntityTaintVillager(EntityType<? extends Villager> type, Level level) {
         super(type, level);
@@ -47,7 +47,7 @@ public final class EntityTaintVillager extends Villager implements ITaintedMob {
 
     @Override
     protected void customServerAiStep() {
-        // The legacy tainted villager used ordinary hostile goals, not the villager POI/trade brain.
+        // The tainted villager uses ordinary hostile goals, not the villager POI/trade brain.
     }
 
     @Override

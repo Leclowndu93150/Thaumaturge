@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-/** Renders the TC4 reservoir's aspect-cycling mixed essentia volume. */
+/** Renders the reservoir's aspect-cycling mixed essentia volume. */
 public final class EssentiaReservoirRenderer implements BlockEntityRenderer<BlockEntityEssentiaReservoir> {
     public EssentiaReservoirRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -21,7 +21,7 @@ public final class EssentiaReservoirRenderer implements BlockEntityRenderer<Bloc
         int amount = reservoir.getStoredAmount();
         if (amount <= 0) return;
 
-        // JarRenderer's fluid prism is widened and lifted to the TC4 reservoir's 3/16..13/16 bounds.
+        // JarRenderer's fluid prism is widened and lifted to the reservoir's 3/16..13/16 bounds.
         poseStack.pushPose();
         poseStack.translate(0.5F, 2.0F / 16.0F, 0.5F);
         poseStack.scale(1.25F, 1.0F, 1.25F);

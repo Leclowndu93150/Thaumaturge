@@ -16,7 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Sheep;
 
-/** Single router for specialized legacy replacements and the modern generic tainted fallback. */
+/** Single router for specialized replacements and the generic tainted fallback. */
 public final class TaintMobConversion {
     private static final float LEGACY_REPLACEMENT_PRESSURE = 0.04F;
     private static final float GENERIC_REPLACEMENT_PRESSURE = 0.01F;

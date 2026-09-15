@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-/** Automated TC4 essentia-to-crystal endpoint. */
+/** Automated essentia-to-crystal endpoint. */
 public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     public static final MapCodec<BlockEssentiaCrystalizer> CODEC = simpleCodec(BlockEssentiaCrystalizer::new);
     private static final Map<Direction, VoxelShape> SHAPES =

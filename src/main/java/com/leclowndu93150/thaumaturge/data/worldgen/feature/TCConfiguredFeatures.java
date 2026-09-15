@@ -143,9 +143,6 @@ public final class TCConfiguredFeatures {
                                                 MAGIC_FOREST_GREATWOOD_CHANCE)),
                                 placed.getOrThrow(TCPlacedFeatures.BIG_MAGIC_CHECKED))));
 
-        // TC4 BiomeGenTaint selected its old WorldGenBigMagicTree one time in eight and otherwise
-        // delegated to the vanilla biome tree generator. WorldGenBigMagicTree itself used oak
-        // logs/leaves, so a fancy/big oak plus ordinary oak is the faithful modern equivalent.
         context.register(
                 TAINTED_LANDS_TREES,
                 new ConfiguredFeature<>(

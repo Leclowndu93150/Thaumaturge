@@ -10,8 +10,7 @@ import net.minecraft.resources.ResourceLocation;
  *
  * <p>The serialized form is a single string. Strings prefixed with {@code focus:} name a focus
  * element whose tinted part icon is rendered; strings ending in {@code .png} are treated as
- * texture paths; anything else is treated as an item identifier, matching the legacy research
- * JSON convention.
+ * texture paths; anything else is treated as an item identifier.
  *
  * @param id the texture path, item identifier, or focus element identifier
  * @param kind how {@link #id} is resolved when the icon is rendered

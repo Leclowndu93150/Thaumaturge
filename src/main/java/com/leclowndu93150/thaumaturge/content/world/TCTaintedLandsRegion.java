@@ -14,7 +14,7 @@ import terrablender.api.Region;
 import terrablender.api.RegionType;
 
 /**
- * Rare TC4-style natural Tainted Lands region.
+ * Rare natural Tainted Lands region.
  *
  * <p>The low region weight makes these much rarer than Magical Forests. Replacing the same forest
  * climate points gives each occurrence a coherent vanilla-biome-sized footprint rather than

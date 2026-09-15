@@ -61,7 +61,7 @@ public final class FocusEffectWard implements FocusEffect {
     }
 
     /**
-     * Whether this exact cast only removes a ward owned by the caster. TC4 made owner unwarding free; this lets the
+     * Whether this exact cast only removes a ward owned by the caster. This lets the
      * wand bypass its otherwise up-front focus cost without granting that exemption to mixed-effect foci.
      */
     public static boolean removesOwnedWard(Player player, FocusPackage focus) {

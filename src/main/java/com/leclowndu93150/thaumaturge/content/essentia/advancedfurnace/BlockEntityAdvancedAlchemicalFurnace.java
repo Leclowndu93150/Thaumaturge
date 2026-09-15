@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Controller state for the TC4-style Advanced Alchemical Furnace.
+ * Controller state for the Advanced Alchemical Furnace.
  *
  * <p>The surrounding casing is deliberately checked only through already-loaded neighbouring
  * blocks. It never requests chunks while validating or drawing node charge.

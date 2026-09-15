@@ -21,7 +21,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
-/** Renders the original TC4 Advanced Alchemical Furnace model around its modern controller. */
+/** Renders the Advanced Alchemical Furnace model around its modern controller. */
 public final class AdvancedAlchemicalFurnaceRenderer
         implements BlockEntityRenderer<BlockEntityAdvancedAlchemicalFurnace> {
     public static final ModelResourceLocation BASE_MODEL_ID =

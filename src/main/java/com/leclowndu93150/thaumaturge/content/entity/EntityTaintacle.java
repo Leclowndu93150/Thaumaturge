@@ -72,7 +72,7 @@ public final class EntityTaintacle extends AbstractTaintacle {
                 0.0F);
         level.addFreshEntity(small);
 
-        // TC4 let a Taintacle attack in Eldritch terrain establish a tiny Tainted Lands foothold.
+        // A Taintacle attack in Eldritch terrain can establish a tiny Tainted Lands foothold.
         if (eldritch
                 && level.getBlockState(pos).canBeReplaced()
                 && TaintHelper.isAdjacentToSolidBlock(level, pos)

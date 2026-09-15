@@ -30,8 +30,7 @@ public final class InvHelper {
     private InvHelper() {}
 
     /**
-     * Comparison flags for filter matching. Damage maps the legacy metadata toggle, tags
-     * replace the ore dictionary toggle and mod matches by item namespace.
+     * Comparison flags for filter matching.
      *
      * @since 1.0.0
      */
@@ -464,7 +463,7 @@ public final class InvHelper {
         }
     }
 
-    /** Matches by item identity or shared tag, like the legacy ore dictionary base filter. */
+    /** Matches by item identity or shared tag. */
     public static final InvFilter BASE_TAGS = new InvFilter(false, false, true, false);
 
     /**

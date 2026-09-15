@@ -139,8 +139,8 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
     }
 
     private void scatterHybridGoo(ServerLevel server) {
-        // Later-era physical-pollution flourish: keep a few small Goo spatters around the direct
-        // TC4 tainting effect, without replacing the bottle's primary Tainted Lands behavior.
+        // Keep a few small Goo spatters around the direct
+        // tainting effect, without replacing the bottle's primary Tainted Lands behavior.
         BlockPos center = this.blockPosition();
         for (int attempt = 0; attempt < HYBRID_GOO_ATTEMPTS; attempt++) {
             int xx = this.random.nextInt(5) - 2;

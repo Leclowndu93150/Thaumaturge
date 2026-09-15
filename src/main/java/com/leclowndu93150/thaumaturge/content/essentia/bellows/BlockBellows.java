@@ -44,8 +44,8 @@ public class BlockBellows extends BaseEntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
-                // Bellows point toward the block face they were attached to, as in the legacy
-                // placement rule; player pitch must not change a side attachment's direction.
+                // Bellows point toward the block face they were attached to; player pitch must not change
+                // a side attachment's direction.
                 .setValue(FACING, context.getClickedFace().getOpposite())
                 .setValue(ENABLED, true);
     }

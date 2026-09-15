@@ -85,7 +85,7 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     }
 
     /**
-     * TC4 natural taintacles only spawned in Tainted Lands and on fibrous taint or taint soil.
+     * Natural taintacles only spawn in Tainted Lands and on fibrous taint or taint soil.
      * The biome spawn list alone is not sufficient because otherwise vanilla can choose ordinary
      * grass/dirt inside the biome and create a taintacle that immediately fails its habitat rules.
      */
@@ -108,7 +108,7 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
         if (!onTaint) {
             return false;
         }
-        // TC4 rejected a natural spawn when another normal Taintacle was already nearby.
+        // Reject a natural spawn when another normal Taintacle is already nearby.
         if (!level.getEntitiesOfClass(EntityTaintacle.class, new AABB(pos).inflate(24.0, 8.0, 24.0))
                 .isEmpty()) {
             return false;

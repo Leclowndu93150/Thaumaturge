@@ -30,7 +30,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private static final int DIAMETER = RADIUS * 2 + 1;
     private static final int SCAN_VOLUME = DIAMETER * DIAMETER * DIAMETER;
     private static final int CHECKS_PER_TICK = 16;
-    // TC4 VisNetHandler stored vis in centivis; 5/10 legacy units are 0.05/0.10 modern aura vis.
+    // 5/10 centivis are 0.05/0.10 aura vis.
     private static final float WORK_VIS = 0.05F;
     private static final float VIS_REFILL_REQUEST = 0.10F;
 
@@ -99,7 +99,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityFluxScrubber scrubber) {
-        // TC4 assigned each tile a random phase offset so nearby scrubbers did not bob in lockstep.
+        // Assign each tile a random phase offset so nearby scrubbers do not bob in lockstep.
         if (scrubber.animationOffset == 0)
             scrubber.animationOffset = level.getRandom().nextInt(1000);
     }
@@ -126,7 +126,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
                         .color(0xDD / 255.0F, 0.0F, 1.0F)
                         .scale(0.8F)
                         .send();
-                return; // TC4 stopped the 16-position scan immediately after one successful cleanup.
+                return; // Stop the 16-position scan immediately after one successful cleanup.
             }
         }
     }

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
-/** TC4 Swarmer variant: a permanent mature spore that periodically emits Taint Swarms. */
+/** Swarmer variant: a permanent mature spore that periodically emits Taint Swarms. */
 public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
     private static final int EMIT_INTERVAL = 500;
 
@@ -28,7 +28,7 @@ public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
 
     @Override
     protected boolean requiresStalkSupport() {
-        // TC4 Swarmers were free-standing mature spores; unlike ordinary spores they did not
+        // Swarmers are free-standing mature spores; unlike ordinary spores they do not
         // depend on a fibrous spore-stalk block beneath them.
         return false;
     }

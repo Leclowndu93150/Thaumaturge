@@ -66,9 +66,9 @@ public final class TaintApi {
 
     /**
      * Runs one local fibre/terrain colonisation attempt from the given position. Ordinary calls only
-     * colonise Tainted Lands, matching TC4. Explicit outbreak sources may pass {@code force} to
+     * colonise Tainted Lands. Explicit outbreak sources may pass {@code force} to
      * establish Tainted Lands at a viable target before placing/converting taint there. The separate
-     * TC4 biome-frontier probability is not bypassed because it is not part of this method.
+     * biome-frontier probability is not bypassed because it is not part of this method.
      *
      * @param level the level to mutate
      * @param pos   the spread origin

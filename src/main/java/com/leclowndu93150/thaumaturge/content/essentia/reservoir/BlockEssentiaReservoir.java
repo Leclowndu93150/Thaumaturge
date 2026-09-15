@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-/** TC4 essentia reservoir: a 256-unit mixed-aspect store with one configurable tube face. */
+/** Essentia reservoir: a 256-unit mixed-aspect store with one configurable tube face. */
 public final class BlockEssentiaReservoir extends BaseEntityBlock implements IInteractWithCaster {
     public static final MapCodec<BlockEssentiaReservoir> CODEC = simpleCodec(BlockEssentiaReservoir::new);
     private static final float RUPTURE_AURA_FLUX_PER_ESSENTIA = 0.25F;
@@ -138,14 +138,14 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
         int releases = stored / 16;
         if (stored <= 0) return;
 
-        // Preserve the TC4 physical rupture and add a bounded TC6 Aura consequence proportional
+        // Preserve the physical rupture and add a bounded Aura consequence proportional
         // to the stored essentia. This is a catastrophic containment failure, not routine leakage.
         AuraHelper.polluteAura(
                 level, pos, Math.min(stored * RUPTURE_AURA_FLUX_PER_ESSENTIA, MAX_RUPTURE_AURA_FLUX), true);
         if (releases <= 0) return;
 
-        // TC4 physically ruptured a loaded reservoir: full-strength Flux Goo formed below the
-        // tank and full-strength Flux Gas formed at/above it. Keep the original 50-attempt search
+        // A loaded reservoir ruptures physically: full-strength Flux Goo formed below the
+        // tank and full-strength Flux Gas formed at/above it. Keep the 50-attempt search
         // and post-increment release limit, but route placement through the shared modern helper.
         level.explode(
                 null, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 1.0F, Level.ExplosionInteraction.NONE);
@@ -163,7 +163,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
             } else {
                 PhysicalFlux.placeGas(level, target, PhysicalFlux.MAX_QUANTA);
             }
-            // Preserve TC4's post-increment check: a value N can release up to N+1 pockets.
+            // The post-increment check allows a value N to release up to N+1 pockets.
             if (placed++ >= releases) break;
         }
     }

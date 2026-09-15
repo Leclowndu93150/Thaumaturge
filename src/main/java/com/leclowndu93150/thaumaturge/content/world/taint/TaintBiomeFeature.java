@@ -24,7 +24,7 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/** TC4-inspired initial infection placed inside naturally generated Tainted Lands. */
+/** Initial infection placed inside naturally generated Tainted Lands. */
 public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
     private static final int GRASS_FIBRE_ATTEMPTS = 10;
     private static final int GENERAL_FIBRE_ATTEMPTS = 8;
@@ -57,7 +57,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             any |= placeCrustBlob(level, random, x, z);
         }
 
-        // TC4 first made ten surface attempts biased toward grass/replaceable growth.
+        // Make ten surface attempts biased toward grass/replaceable growth.
         for (int i = 0; i < GRASS_FIBRE_ATTEMPTS; i++) {
             int x = chunkMinX + random.nextInt(16);
             int z = chunkMinZ + random.nextInt(16);
@@ -76,8 +76,8 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             any = true;
         }
 
-        // TC4 then made eight general uncovered-surface attempts. The old generator also smeared
-        // the biome boundary here; omit that one worldgen-time smear in modern quart-biome storage
+        // Then make eight general uncovered-surface attempts. Omit biome-boundary smearing in
+        // quart-biome storage
         // so rare natural patches do not inflate before the active gameplay frontier starts.
         for (int i = 0; i < GENERAL_FIBRE_ATTEMPTS; i++) {
             int x = chunkMinX + random.nextInt(16);

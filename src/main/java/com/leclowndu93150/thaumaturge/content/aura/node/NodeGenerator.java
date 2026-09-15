@@ -66,7 +66,7 @@ public final class NodeGenerator {
     }
 
     /**
-     * Places a specifically Tainted natural node while preserving the normal TC4 Tainted-Lands
+     * Places a specifically Tainted natural node while preserving the normal Tainted-Lands
      * aura/aspect roll. The ordinary generator already makes roughly half of non-Pure nodes in
      * Tainted Lands TAINTED; retrying the data roll here keeps those exact 2.25x-strength semantics
      * instead of fabricating a weaker post-hoc type conversion.
@@ -164,9 +164,9 @@ public final class NodeGenerator {
         Holder<Biome> biome = level.getBiome(pos);
         BiomeAuraModifier auraModifier = biome.getData(TCDataMaps.BIOME_AURA_MODIFIER);
         int biomeAura = (int) (baseAura * (auraModifier == null ? 1.0F : auraModifier.value()));
-        // TC4 gave every non-Pure node generated in Tainted Lands 1.5x biome aura. Half of those
-        // nodes were then converted to TAINTED and received another 1.5x multiplier (2.25x total).
-        // Keep later globally-rolled Tainted Nodes as a hybrid feature, but preserve the TC4 biome
+        // Every non-Pure node generated in Tainted Lands gets 1.5x biome aura. Half of those
+        // nodes are then converted to TAINTED and receive another 1.5x multiplier (2.25x total).
+        // Keep globally-rolled Tainted Nodes, but preserve the biome
         // bias so naturally generated Tainted Lands visibly contains stronger, often-tainted nodes.
         if (type != NodeType.PURE && biome.is(TCBiomes.TAINTED_LANDS)) {
             biomeAura = Math.round(biomeAura * 1.5F);
@@ -282,7 +282,7 @@ public final class NodeGenerator {
 
     private static @Nullable Holder<IAspect> randomBiomeAspect(
             HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome, RandomSource random) {
-        // TC4 registered Tainted Lands as both MAGICAL (no fixed aspect) and WASTELAND
+        // Tainted Lands are registered as both MAGICAL (no fixed aspect) and WASTELAND
         // (Perditio). getRandomBiomeTag therefore produced Perditio about half the time and fell
         // back to a random aspect combination the other half.
         if (biome.is(TCBiomes.TAINTED_LANDS)) {

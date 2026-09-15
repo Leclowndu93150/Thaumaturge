@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Lightweight bridge between TC4-style physical Flux and modern numerical aura Flux.
+ * Lightweight bridge between physical Flux and numerical aura Flux.
  *
  * <p>Physical Goo/Gas does not add Flux every tick. Instead, active physical Flux blocks report
  * their finite quanta here and establish a capped local aura-Flux floor. If the aura is cleaner
@@ -35,8 +35,8 @@ public final class PhysicalFluxAuraContamination {
     private static final float ABSOLUTE_TARGET_CAP = 30.0F;
     private static final float BASE_TARGET_CAP_RATIO = 0.30F;
 
-    // TC4-first ecological weighting. Goo is dense local corruption; Gas is dangerous but diffuse.
-    // This route deliberately outranks the TC6 Rift/Seed path for sustained physical pollution,
+    // Ecological weighting. Goo is dense local corruption; Gas is dangerous but diffuse.
+    // This route deliberately outranks the Rift/Seed path for sustained physical pollution,
     // while still requiring a real accumulation rather than a stray droplet or wisp.
     private static final float GOO_TAINT_WEIGHT_PER_QUANTUM = 1.0F;
     private static final float GAS_TAINT_WEIGHT_PER_QUANTUM = 0.35F;
@@ -125,13 +125,13 @@ public final class PhysicalFluxAuraContamination {
     }
 
     /**
-     * Gives sustained TC4-style physical Flux a direct route into persistent Taint.
+     * Gives sustained physical Flux a direct route into persistent Taint.
      *
      * <p>This is intentionally separate from numerical Aura Flux: dense Goo can still fester on
      * its own, while a larger diffuse Goo/Gas mess accumulates weighted ecological pressure here.
      * The roll runs once per aura tick (normally once per second), is capped, and establishes one
-     * real Tainted Lands/Fibre foothold. From there ordinary TC4-style Taint ecology takes over.
-     * TC6 Rifts/Seeds remain a parallel escalation route rather than the sole bootstrap mechanism.
+     * real Tainted Lands/Fibre foothold. From there ordinary Taint ecology takes over.
+     * Rifts/Seeds remain a parallel escalation route rather than the sole bootstrap mechanism.
      */
     public static boolean tryTaintOutbreak(ServerLevel level, ChunkPos chunkPos, RandomSource random) {
         if (!ThaumaturgeCommonConfig.PHYSICAL_FLUX_TAINT_OUTBREAKS.get()
@@ -246,8 +246,8 @@ public final class PhysicalFluxAuraContamination {
     private static BlockPos findOutbreakTarget(ServerLevel level, ActiveObservation observation) {
         BlockPos source = observation.pos();
 
-        // Dense Goo already occupies the ground-level pollution site in the common case. Replacing
-        // it with Fibre is the closest modern equivalent to TC4 Goo festering into Tainted Lands.
+        // Dense Goo already occupies the ground-level pollution site in the common case. Replace
+        // it with Fibre when festering into Tainted Lands.
         if (!observation.gas() && TaintHelper.isAdjacentToSolidBlock(level, source)) {
             return source;
         }

@@ -1923,7 +1923,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
                 .save(output);
 
-        // TC4 DISTILESSENTIA / AlchemyFurnace.
         arcaneShaped(new ItemStack(TCItems.ALCHEMICAL_FURNACE.get()), 10)
                 .aspect(TCAspects.IGNIS, 5)
                 .aspect(TCAspects.AQUA, 5)
@@ -1937,8 +1936,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.CRUCIBLE))
                 .save(output);
 
-        // TC4 ADVALCHEMYFURNACE / AdvAlchemyConstruct.
-        // The original used typed wand vis; retain both its total cost and each primal requirement
+        // Retain both the total cost and each primal requirement
         // through the modern generic-vis and crystal payment model.
         arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get(), 4), 50)
                 .aspect(TCAspects.AQUA, 10)
@@ -2565,7 +2563,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
                 .save(output);
 
-        // TC4 ESSENTIACRYSTAL: the balanced shard role is represented by Salis Mundus in modern Thaumaturge.
         arcaneShaped(new ItemStack(TCItems.ESSENTIA_CRYSTALIZER.get()), 125)
                 .aspect(TCAspects.AQUA, 1)
                 .aspect(TCAspects.TERRA, 3)
@@ -2583,7 +2580,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.SALIS_MUNDUS))
                 .save(output);
 
-        // TC4 ESSENTIARESERVOIR: direct infusion backport with the original catalyst/components/aspects.
         new InfusionRecipeBuilder(
                         aspects,
                         RecipeCategory.MISC,
@@ -2607,8 +2603,6 @@ public final class TCRecipeProvider extends RecipeProvider {
 
     private void buildFluxMachineRecipes() {
 
-        // TC4 FLUXSCRUB. Typed Aer CV no longer exists, so the crafting cost is expressed in modern vis + primal
-        // crystals.
         arcaneShaped(new ItemStack(TCItems.FLUX_SCRUBBER.get()), 200)
                 .aspect(TCAspects.AQUA, 2)
                 .aspect(TCAspects.ORDO, 2)

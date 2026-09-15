@@ -42,12 +42,10 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 /**
- * TC5-style pressure outlets for heavily polluted aura chunks.
+ * Pressure outlets for heavily polluted aura chunks.
  *
- * <p>Thaumaturge keeps TC6 Flux Rifts as the primary catastrophic outlet. These events restore the
- * smaller TC5 anomalies that used to turn numerical Flux back into visible world pollution and
- * creature hazards. Event costs and weights come from TC5 {@code TaintEvents}; costs are drained
- * only after an event finds a valid target and succeeds.
+ * <p>These events turn numerical Flux into visible world pollution and creature hazards. Costs are
+ * drained only after an event finds a valid target and succeeds.
  */
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class FluxPressureEvents {
@@ -88,12 +86,10 @@ public final class FluxPressureEvents {
     }
 
     /**
-     * Queues one TC5-style pressure event candidate for this dimension.
+     * Queues one pressure event candidate for this dimension.
      *
-     * <p>TC5 stored a single trigger position per dimension and consumed it on the next 20-tick
-     * server event pass. Keeping the same one-slot pressure valve prevents a large set of dirty
-     * loaded chunks from firing many anomalies in the same second. Later candidates intentionally
-     * replace the earlier one, matching the old map-backed trigger.
+     * <p>The one-slot pressure valve prevents a large set of dirty loaded chunks from firing many
+     * anomalies in the same second. Later candidates intentionally replace the earlier one.
      */
     public static void queueTrigger(ServerLevel level, ChunkPos chunkPos) {
         if (!ThaumaturgeCommonConfig.FLUX_PRESSURE_EVENTS.get() || ThaumaturgeCommonConfig.WUSS_MODE.get()) {

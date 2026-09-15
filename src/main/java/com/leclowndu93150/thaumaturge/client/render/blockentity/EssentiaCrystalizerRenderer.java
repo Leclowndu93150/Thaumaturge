@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
-/** Faithful four-crystal spinner from the TC4 crystalizer renderer. */
+/** Four-crystal spinner. */
 public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<BlockEntityEssentiaCrystalizer> {
     public static final ModelResourceLocation CRYSTAL_MODEL_ID =
             ModelResourceLocation.standalone(TCIds.rl("block/crystalizer_crystal"));

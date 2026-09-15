@@ -5,7 +5,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 
-/** Shared TC5-style combat infection behavior for dedicated tainted fauna. */
+/** Shared combat infection behavior for dedicated tainted fauna. */
 public final class TaintMobCombat {
     private TaintMobCombat() {}
 

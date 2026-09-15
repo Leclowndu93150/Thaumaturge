@@ -80,7 +80,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
             return;
         }
 
-        // TC4 made a stressed-metal creak increasingly likely as the reservoir filled.
+        // Make a stressed-metal creak increasingly likely as the reservoir fills.
         if (level.getRandom().nextInt(500 - stored) == 0) {
             level.playLocalSound(
                     pos.getX() + 0.5D,
@@ -158,8 +158,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
 
     @Override
     public @Nullable Holder<IAspect> getEssentiaType(Direction face) {
-        // TC4 used ForgeDirection.UNKNOWN as its wildcard extraction query. Modern transport
-        // always supplies the connected side, so expose the first compartment on that side.
+        // Transport always supplies the connected side, so expose the first compartment on that side.
         if (!canOutputTo(face)) return null;
         List<AspectInstance> entries = contents.entries();
         return entries.isEmpty() ? null : entries.getFirst().aspect();

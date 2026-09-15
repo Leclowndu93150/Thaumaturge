@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Iris's translucent-particle program uses a 0.1 alpha test. Thaumcraft nodes deliberately use alpha 0.1 for their
- * unrevealed aura and contain still softer texels in the revealed aspect layer, so the stock Iris cutoff erases those
+ * Iris's translucent-particle program uses a 0.1 alpha test. The node atlas deliberately uses alpha 0.1 for its
+ * unrevealed aura and contains still softer texels in the revealed aspect layer, so the stock Iris cutoff erases those
  * parts. Shader packs may also replace the RenderType's blend mode after it has been configured.
  *
  * <p>This compatibility hook is texture-scoped to Thaumaturge's node atlas. It therefore leaves ordinary particles

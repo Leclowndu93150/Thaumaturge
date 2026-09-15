@@ -8,8 +8,8 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.world.entity.Entity;
 
 /**
- * A short-lived member of a taint swarm. Taint Swarms have no model in the legacy versions: their
- * visible body is a persistent cloud of particles which steer back toward the entity.
+ * A short-lived member of a taint swarm. The visible body is a persistent cloud of particles
+ * which steer back toward the entity.
  */
 public final class TaintSwarmParticle extends TCParticle {
     private static final float SPEED = 0.22F;

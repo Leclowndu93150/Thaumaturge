@@ -18,11 +18,11 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
- * Applies and restores the TC4-style Tainted Lands biome without force-loading chunks.
+ * Applies and restores the Tainted Lands biome without force-loading chunks.
  *
- * <p>Modern Minecraft stores biomes at quart resolution (4x4x4 cells), so one legacy x/z biome
+ * <p>Minecraft stores biomes at quart resolution (4x4x4 cells), so one x/z biome
  * column maps to one 4x4 quart column here. Infection deliberately replaces that quart column at
- * every biome Y layer, preserving TC4's two-dimensional "land takeover" semantics. Restoration
+ * every biome Y layer. Restoration
  * asks the active chunk generator's biome source what each Y layer originally should have been,
  * which also preserves modded/TerraBlender biome choices instead of blindly restoring Plains.
  */
@@ -41,7 +41,7 @@ public final class TaintBiomeManager {
         if (isTainted(level, pos)) {
             return false;
         }
-        // Keep rivers as natural firebreaks. TC4's fibre already struggled to cross open water;
+        // Keep rivers as natural firebreaks. Fibre struggles to cross open water;
         // preserving modern river biomes makes that containment behavior explicit and prevents
         // natural/dynamic Tainted Lands from painting over river channels.
         if (level.getBiome(pos).is(BiomeTags.IS_RIVER)) {

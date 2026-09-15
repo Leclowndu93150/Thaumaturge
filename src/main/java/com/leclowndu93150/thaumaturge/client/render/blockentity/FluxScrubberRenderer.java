@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
-/** Animates the separate Tip group of the original TC4 obelisk-cap scrubber model. */
+/** Animates the separate Tip group of the obelisk-cap scrubber model. */
 public final class FluxScrubberRenderer implements BlockEntityRenderer<BlockEntityFluxScrubber> {
     public static final ModelResourceLocation TIP_MODEL_ID =
             ModelResourceLocation.standalone(TCIds.rl("block/flux_scrubber_tip"));

@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
 
-/** Outer shell of TC4's Taint Spore Swarmer; its glowing inner core is rendered as a separate layer. */
+/** Outer shell of the Taint Spore Swarmer; its glowing inner core is rendered as a separate layer. */
 public final class TaintSporeSwarmerModel extends HierarchicalModel<EntityTaintSporeSwarmer> {
     private static final int TEXTURE_SIZE = 64;
     private final ModelPart root;

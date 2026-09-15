@@ -181,19 +181,19 @@ public final class TCBiomes {
                 .build();
     }
     /**
-     * TC4-style Tainted Lands. It may occur naturally through the small TerraBlender taint region
+     * Tainted Lands. It may occur naturally through the small TerraBlender taint region
      * and can also overwrite already-generated terrain when an active infestation expands.
      */
     private static Biome taintedLands(
             HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers) {
         MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
-        // Modern-TC4 hybrid: use the vanilla farm-animal pool as spawn *attempts*, then
+        // Use the vanilla farm-animal pool as spawn *attempts*, then
         // TaintNaturalSpawnEvents immediately replaces cows/pigs/chickens/sheep with their
-        // dedicated tainted variants. TC4 itself cleared passive creatures here, but retaining
+        // dedicated tainted variants. Retaining
         // tainted native fauna makes naturally generated Tainted Lands feel inhabited rather than
         // requiring ordinary animals to wander across the biome border first.
         BiomeDefaultFeatures.farmAnimals(mobs);
-        // TC4 inherited the cave-creature list, so bats remained.
+        // Bats remain in the cave-creature list.
         mobs.addSpawn(MobCategory.AMBIENT, new MobSpawnSettings.SpawnerData(EntityType.BAT, 10, 8, 8));
         mobs.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(TCEntities.TAINTACLE.get(), 1, 1, 1));
 
@@ -203,12 +203,12 @@ public final class TCBiomes {
         BiomeDefaultFeatures.addDefaultSoftDisks(generation);
         generation.addFeature(
                 GenerationStep.Decoration.VEGETAL_DECORATION, placed.getOrThrow(TCPlacedFeatures.TREES_TAINTED_LANDS));
-        // TC4 suppressed flowers and mushrooms but still made exactly two grass decoration
+        // Suppress flowers and mushrooms but still make exactly two grass decoration
         // attempts per chunk. Reuse vanilla's grass patch configuration with our own explicit
         // two-attempt placement instead of inheriting the modern Plains placement density.
         generation.addFeature(
                 GenerationStep.Decoration.VEGETAL_DECORATION, placed.getOrThrow(TCPlacedFeatures.GRASS_TAINTED_LANDS));
-        // The TC4 biome disabled flowers and mushrooms, but the normal decorator still supplied
+        // The biome disables flowers and mushrooms, but the normal decorator still supplies
         // sparse reeds and pumpkins. This helper restores those vanilla extra-vegetation pieces.
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation);
         generation.addFeature(

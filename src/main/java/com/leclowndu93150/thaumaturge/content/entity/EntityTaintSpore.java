@@ -27,10 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 /**
- * TC4-style Taint Spore restored around the modern Seed/ecology system.
- *
- * <p>The legacy Spore synchronized its growth size to clients and eased the displayed model size toward the new
- * value. Keep that split here so the renderer can reproduce the old slow swelling instead of snapping whenever the
+ * <p>The Spore synchronizes its growth size to clients and eases the displayed model size toward the new
+ * value. Keep that split here so the renderer keeps the slow swelling instead of snapping whenever the
  * 1200-tick growth step fires.</p>
  */
 public class EntityTaintSpore extends Monster
@@ -72,7 +70,7 @@ public class EntityTaintSpore extends Monster
 
         float target = getSporeSize();
         if (displaySize < 0.0F) {
-            // TC4 sent the current size as spawn data so a newly observed spore did not grow from zero.
+            // Send the current size as spawn data so a newly observed spore does not grow from zero.
             displaySize = target;
             oldDisplaySize = target;
             return;
@@ -102,7 +100,7 @@ public class EntityTaintSpore extends Monster
             setSporeSize(getSporeSize() + 1);
         }
         if (!TaintBiomeManager.isTainted(server, blockPosition())) {
-            // TC4 spores slowly starved outside literal Tainted Lands instead of treating an
+            // Spores slowly starve outside literal Tainted Lands instead of treating an
             // abstract pollution scalar as their habitat permission.
             hurt(server.damageSources().starve(), 1.0F);
             if (isRemoved()) {

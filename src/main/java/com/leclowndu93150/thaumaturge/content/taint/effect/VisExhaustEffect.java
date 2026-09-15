@@ -14,7 +14,7 @@ public final class VisExhaustEffect extends MobEffect {
 
     @Override
     public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
-        // Thaumcraft's Flux Goo/Gas explicitly cleared curative items from Vis Exhaust. Keep that
+        // Flux Goo/Gas explicitly clears curative items from Vis Exhaust. Keep that
         // property on the effect itself so every source behaves consistently in modern NeoForge.
     }
 

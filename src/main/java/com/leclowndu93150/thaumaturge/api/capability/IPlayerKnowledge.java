@@ -18,8 +18,8 @@ import net.minecraft.server.level.ServerPlayer;
  * observable change, {@code false} otherwise. Callers that mutate must invoke {@link #sync(ServerPlayer)}
  * to publish the new state to the owner.
  *
- * <p>Research is identified by {@link ResourceLocation}. The legacy stage gate notation {@code "id@2"}
- * is replaced by separate {@link #researchStage(ResourceLocation)} queries; see {@link #isResearchKnown(ResourceLocation, int)}.
+ * <p>Research is identified by {@link ResourceLocation}. Query staged progress through
+ * {@link #researchStage(ResourceLocation)}; see {@link #isResearchKnown(ResourceLocation, int)}.
  *
  * @since 1.0.0
  */

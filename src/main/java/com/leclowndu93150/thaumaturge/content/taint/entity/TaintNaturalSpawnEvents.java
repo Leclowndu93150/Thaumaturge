@@ -14,7 +14,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 
-/** Converts legacy passive fauna that naturally originates inside Tainted Lands. */
+/** Converts passive fauna that naturally originates inside Tainted Lands. */
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TaintNaturalSpawnEvents {
     private static final String NATURAL_TAINT_SPAWN = TCIds.MODID + ":natural_taint_spawn";

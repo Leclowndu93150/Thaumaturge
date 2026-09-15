@@ -24,7 +24,7 @@ import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
-/** TC4's forty-seven-texture connected model, evaluated from neighbouring warded glass blocks. */
+/** Forty-seven-texture connected model, evaluated from neighbouring warded glass blocks. */
 public final class WardedGlassBakedModel implements IDynamicBakedModel {
     public static final int TEXTURE_COUNT = 47;
     private static final ModelProperty<int[]> CONNECTIONS = new ModelProperty<>();

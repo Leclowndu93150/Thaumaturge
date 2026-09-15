@@ -77,7 +77,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
         }
         TaintHelper.spreadFibres(level, pos, false);
 
-        // TC4 exposed crust occasionally uprooted itself into a Swarmer.
+        // Exposed crust occasionally uproots itself into a Swarmer.
         if (level.isEmptyBlock(pos.above())
                 && random.nextInt(SWARMER_CHANCE) == 0
                 && level.getEntitiesOfClass(EntityTaintSporeSwarmer.class, new AABB(pos).inflate(16.0))

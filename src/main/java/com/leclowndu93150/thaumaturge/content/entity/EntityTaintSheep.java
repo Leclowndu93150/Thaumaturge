@@ -77,7 +77,7 @@ public final class EntityTaintSheep extends Sheep implements ITaintedMob {
         return false;
     }
 
-    /** TC4 AIConvertGrass: roughly 1/250 AI checks, 40-tick grazing animation, then Fibre + Tainted Lands. */
+    /** Roughly 1/250 AI checks, 40-tick grazing animation, then Fibre + Tainted Lands. */
     private static final class ConvertGrassGoal extends Goal {
         private final EntityTaintSheep sheep;
         private int timer;

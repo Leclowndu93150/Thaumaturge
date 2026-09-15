@@ -39,7 +39,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
     private static final int ATTACK_COOLDOWN = 25;
     private static final int WEAKNESS_DURATION = 100;
     private static final float SELF_DAMAGE_SUMMONED = 5.0F;
-    // TC4/TC5 rendered no swarm model: its body was a cloud of roughly thirty attached particles.
+    // No swarm model: its body is a cloud of roughly thirty attached particles.
     private static final int SWARM_PARTICLES_PER_TICK = 1;
 
     private int damBonus;
@@ -58,7 +58,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
                 .add(Attributes.ATTACK_DAMAGE, 2.0)
                 .add(Attributes.FLYING_SPEED, 0.6)
                 .add(Attributes.MOVEMENT_SPEED, 0.3)
-                // Original swarms only acquired a nearby victim (12 blocks), rather than hunting
+                // Swarms only acquire a nearby victim (12 blocks), rather than hunting
                 // across the whole geyser activation radius.
                 .add(Attributes.FOLLOW_RANGE, 12.0);
     }
@@ -125,7 +125,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
             return;
         }
 
-        // TC4 swarms actively flew toward their victim; merely assigning a target is insufficient
+        // Swarms actively fly toward their victim; merely assigning a target is insufficient
         // with a FlyingMoveControl and no pathing attack goal.
         this.moveControl.setWantedPosition(
                 target.getX(), target.getY() + target.getEyeHeight() * 0.5, target.getZ(), 0.65);

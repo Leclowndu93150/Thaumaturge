@@ -88,7 +88,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
     private static CrystalClusterConfig.@Nullable Entry biomeEntry(
             WorldGenLevel level, BlockPos pos, RandomSource random, List<CrystalClusterConfig.Entry> entries) {
         Holder<Biome> biome = level.getBiome(pos);
-        // TC4 registered Tainted Lands as MAGICAL + WASTELAND. One of those biome types had
+        // Tainted Lands count as MAGICAL + WASTELAND. One of those biome types had
         // no fixed aspect and the other supplied Perditio, so biome influence only selected
         // Perditio about half the time rather than making every influenced cluster Perditio.
         if (biome.is(TCBiomes.TAINTED_LANDS) && random.nextBoolean()) {

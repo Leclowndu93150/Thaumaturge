@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** TC4-style finite Flux Gas implemented as an upward-moving modern block. */
+/** Finite Flux Gas implemented as an upward-moving modern block. */
 public final class BlockFluxGas extends Block {
     public static final MapCodec<BlockFluxGas> CODEC = simpleCodec(BlockFluxGas::new);
     public static final IntegerProperty AMOUNT = IntegerProperty.create("amount", 1, PhysicalFlux.MAX_QUANTA);

@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Scannable subject matching entities either by exact {@link EntityType} or by class hierarchy.
- * An optional extra filter narrows matches further; it replaces the legacy NBT matcher.
+ * An optional extra filter narrows matches further.
  *
  * @since 1.0.0
  */

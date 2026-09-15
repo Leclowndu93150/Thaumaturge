@@ -82,8 +82,8 @@ public final class TaintHelper {
     }
 
     public static boolean isEcologicallySustained(ServerLevel level, BlockPos pos) {
-        // TC4 taint survives because the land itself is tainted, not because a Seed or aura Flux
-        // continuously grants permission. Seeds remain a later-era bootstrap/accelerant and are
+        // Taint survives because the land itself is tainted, not because a Seed or aura Flux
+        // continuously grants permission. Seeds remain a bootstrap/accelerant and are
         // accepted as a temporary source while they establish Tainted Lands around themselves.
         return TaintBiomeManager.isTainted(level, pos) || isNearTaintSeed(level, pos);
     }
@@ -128,8 +128,8 @@ public final class TaintHelper {
             return;
         }
 
-        // TC4 only allowed ordinary fibre/terrain colonisation inside Tainted Lands. Later-era
-        // explicit outbreak sources (Seed/debug/API force calls) may establish the target biome,
+        // Ordinary fibre/terrain colonisation only occurs inside Tainted Lands. Explicit
+        // outbreak sources (Seed/debug/API force calls) may establish the target biome,
         // but only once they have found a viable placement/conversion target.
         boolean targetBiomeTainted = TaintBiomeManager.isTainted(level, target);
         if (!targetBiomeTainted && !force) {
@@ -171,7 +171,7 @@ public final class TaintHelper {
         }
 
         if (hardness < MAX_CONVERT_HARDNESS) {
-            // TC4 used two distinct pressure thresholds at the infection front: wood/gourd/cactus-
+            // The infection front uses two distinct pressure thresholds: wood/gourd/cactus-
             // like material converted with two adjacent taint blocks, while ordinary ground/rock
             // needed three. Preserve that brake instead of letting one isolated fibre digest solid
             // terrain. Modern tags keep the rule extensible to modded blocks.
@@ -219,8 +219,8 @@ public final class TaintHelper {
             }
         }
 
-        // Keep TC6 Seed reproduction as an escalation mechanic, but only for an outbreak that
-        // already has a Seed edge. It is deliberately not the foundation of ordinary TC4 spread.
+        // Keep Seed reproduction as an escalation mechanic, but only for an outbreak that
+        // already has a Seed edge. It is deliberately not the foundation of ordinary spread.
         trySpawnTaintSeed(level, target, targetState, random);
     }
 
@@ -242,7 +242,7 @@ public final class TaintHelper {
     }
 
     /**
-     * TC4 biome-frontier rule. The biome itself is passive: an active taint block at the edge must
+     * The biome itself is passive: an active taint block at the edge must
      * win a rare roll and have at least two adjacent taint blocks before one neighbouring quart
      * column becomes Tainted Lands. Modern aura Flux accelerates this roll but is never required.
      */
@@ -259,7 +259,7 @@ public final class TaintHelper {
             return false;
         }
         float saturation = Math.max(0.0F, Math.min(2.0F, AuraHelper.getFluxSaturation(level, pos)));
-        // Keep the TC4 base roll intact. Flux can still make an established outbreak more active,
+        // Keep the base roll intact. Flux can still make an established outbreak more active,
         // but it must not turn the 1 / (rate * 5) frontier into a four-times-faster takeover.
         float acceleration = 1.0F + Math.min(0.5F, saturation * 0.5F);
         int denominator = Math.max(1, Math.round(spreadRate * 5.0F / acceleration));
@@ -292,7 +292,7 @@ public final class TaintHelper {
     }
 
     /**
-     * Bounded reproduction hook for mature TC4-style spore colonies. Satellite outbreaks reuse
+     * Bounded reproduction hook for mature spore colonies. Satellite outbreaks reuse
      * the same Seed collision, spacing, Flux threshold, and Flux cost rules as ordinary spread.
      */
     public static boolean trySpawnSatelliteSeed(ServerLevel level, BlockPos origin, RandomSource random) {
@@ -316,7 +316,7 @@ public final class TaintHelper {
 
     private static void addConversionPressure(ServerLevel level, BlockPos pos) {
         // The pressure layer is retained for modern atmosphere/fauna escalation, but it no longer
-        // grants biome takeover. TC4-style active taint blocks advance the frontier themselves.
+        // grants biome takeover. Active taint blocks advance the frontier themselves.
         TaintEcology.addPressure(level, pos, ECOLOGY_PRESSURE_PER_CONVERSION);
     }
 

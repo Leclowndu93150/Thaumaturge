@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
-/** TC4 flux scrubber: consumes aura vis to remove nearby physical Flux and yields Praecantatio. */
+/** Flux scrubber: consumes aura vis to remove nearby physical Flux and yields Praecantatio. */
 public final class BlockFluxScrubber extends BaseEntityBlock {
     public static final MapCodec<BlockFluxScrubber> CODEC = simpleCodec(BlockFluxScrubber::new);
     private static final Map<Direction, VoxelShape> SHAPES =

@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
  * A reference from a research entry to one of its parent entries.
  *
  * <p>The serialized form is a single string: {@code "namespace:path"} requires the parent to be
- * fully complete, {@code "namespace:path@2"} requires the parent to have reached legacy stage 2
- * (one-based, matching the original research JSON convention: {@code @1} means merely started), and a
+ * fully complete, {@code "namespace:path@2"} requires the parent to have reached stage 2
+ * (one-based: {@code @1} means merely started), and a
  * leading {@code "~"} marks the reference as inherit-only, suppressing the connector line in the
  * Thaumonomicon while keeping the progression requirement.
  *

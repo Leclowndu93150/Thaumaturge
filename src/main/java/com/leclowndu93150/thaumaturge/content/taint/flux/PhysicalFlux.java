@@ -16,9 +16,8 @@ import net.minecraft.world.level.material.FluidState;
 /**
  * Shared compatibility surface for physical Flux pollution.
  *
- * <p>TC4 represented much of its magical waste as finite Flux Goo and Flux Gas. Modern Thaumaturge
- * also has TC6-style numerical aura Flux. This helper deliberately covers only the physical layer so
- * machines such as the Flux Scrubber do not need to hard-code every physical Flux implementation.
+ * <p>This helper deliberately covers only the physical layer so machines such as the Flux Scrubber
+ * do not need to hard-code every physical Flux implementation.
  */
 public final class PhysicalFlux {
     public static final int MAX_QUANTA = 8;
@@ -132,7 +131,7 @@ public final class PhysicalFlux {
     }
 
     /**
-     * Performs one TC4-style containment spill attempt near a machine.
+     * Performs one containment spill attempt near a machine.
      *
      * <p>The first choice is the block above the machine, followed by a bounded local search. Goo
      * and Gas are chosen independently for each candidate. This intentionally does not force-load
@@ -155,7 +154,7 @@ public final class PhysicalFlux {
     }
 
     private static boolean trySpillAt(ServerLevel level, BlockPos target, RandomSource random) {
-        // TC4 repeatedly thickened an existing Flux pocket instead of rerolling its phase and
+        // Repeatedly thicken an existing Flux pocket instead of rerolling its phase and
         // scattering the failed half of the spills elsewhere. Preserve that behavior so sustained
         // pollution naturally builds dangerous Goo/Gas concentrations.
         BlockState existing = level.getBlockState(target);

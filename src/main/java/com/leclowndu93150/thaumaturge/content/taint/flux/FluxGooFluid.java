@@ -86,7 +86,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         int meta = state.getAmount() - 1;
         boolean airAbove = level.getBlockState(pos.above()).isAir();
 
-        // TC4: medium exposed pools occasionally hatch a small thaumic slime.
+        // Medium exposed pools occasionally hatch a small thaumic slime.
         if (meta >= SMALL_SLIME_META_MIN
                 && meta < SMALL_SLIME_META_MAX
                 && airAbove
@@ -95,7 +95,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             return;
         }
 
-        // TC4: large exposed pools may hatch a larger slime or (when enabled) fester directly
+        // Large exposed pools may hatch a larger slime or (when enabled) fester directly
         // into a Taint outbreak. If neither catastrophe fires, they still proceed to the ordinary
         // one-level decay roll below; large pools are not permanently exempt from evaporation.
         if (meta >= SMALL_SLIME_META_MAX && airAbove) {
@@ -109,7 +109,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                     && (TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.taintColumn(level, pos))) {
                 level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
                 TaintEcology.addPressure(level, pos, 0.16F);
-                // A TC4 Goo catastrophe should be visibly ecological, not a lonely fibre that is
+                // A Goo catastrophe should be visibly ecological, not a lonely fibre that is
                 // easy to miss. Seed a few initial conversion attempts; normal spread rules take
                 // over immediately afterward and no Seed/Flux life-support is required.
                 for (int i = 0; i < 6; i++) {
@@ -122,7 +122,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             }
         }
 
-        // TC4 generic decay: one level evaporates on a 1/30 roll. The thinnest trace disappears;
+        // Generic decay: one level evaporates on a 1/30 roll. The thinnest trace disappears;
         // thicker Goo may emit one quantum of visible Flux Gas above itself. It does not randomly
         // turn into Taint or silently collapse into aura Flux.
         if (rand.nextInt(DECAY_ROLL_CHANCE) != 0) {

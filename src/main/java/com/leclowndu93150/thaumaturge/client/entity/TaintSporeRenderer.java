@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-/** TC4-style translucent, slowly swelling Taint Spore renderer. */
+/** Translucent, slowly swelling Taint Spore renderer. */
 public final class TaintSporeRenderer extends MobRenderer<EntityTaintSpore, TaintSporeModel<EntityTaintSpore>> {
     static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/taint_spore.png");
     private static final float SHADOW = 0.25F;

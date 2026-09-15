@@ -109,8 +109,8 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
             if (!level.hasChunkAt(column)) {
                 continue;
             }
-            // TC5's Ethereal Bloom reset the biome as part of the same cleansing operation. The
-            // modern equivalent restores this quart column from the active generator biome source.
+            // The Ethereal Bloom resets the biome as part of the same cleansing operation. The
+            // quart column is restored from the active generator biome source.
             worked |= TaintBiomeManager.restoreColumn(level, column);
 
             for (int y = VERTICAL_SAMPLE_RANGE; y >= -VERTICAL_SAMPLE_RANGE; y--) {

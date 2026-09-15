@@ -77,8 +77,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
         }
 
         int requestedCentivis = Math.min(MAX_VIS_DRAIN, Math.max(1, (TARGET_PROGRESS - crystalizer.progress) / 2));
-        // TC4's vis network stored 100 internal units per displayed vis. The modern aura uses
-        // displayed vis units directly, so convert the legacy Terra-vis request to preserve cost.
+        // Convert centivis to displayed aura vis units.
         float drainedVis = AuraHelper.drainVis(level, pos, requestedCentivis / 100.0F, false);
         int drainedCentivis = Math.round(drainedVis * 100.0F);
         crystalizer.progress += 1 + drainedCentivis * 2;
@@ -153,7 +152,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
             entity.setDeltaMovement(
                     outputFace.getStepX() * 0.04D, outputFace.getStepY() * 0.04D, outputFace.getStepZ() * 0.04D);
             if (level instanceof net.minecraft.server.level.ServerLevel server) {
-                // TC4 fired the vent event as part of the ejection attempt, before spawning the item.
+                // Fire the vent event as part of the ejection attempt, before spawning the item.
                 server.blockEvent(pos, getBlockState().getBlock(), VENT_EVENT, 0);
             }
             level.addFreshEntity(entity);

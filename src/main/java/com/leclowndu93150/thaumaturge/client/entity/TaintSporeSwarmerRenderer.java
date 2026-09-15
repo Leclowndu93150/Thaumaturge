@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-/** TC4-style Swarmer shell renderer with a separately blended/full-bright pulsing core. */
+/** Swarmer shell renderer with a separately blended/full-bright pulsing core. */
 public final class TaintSporeSwarmerRenderer extends MobRenderer<EntityTaintSporeSwarmer, TaintSporeSwarmerModel> {
     private static final float SHADOW = 0.25F;
 

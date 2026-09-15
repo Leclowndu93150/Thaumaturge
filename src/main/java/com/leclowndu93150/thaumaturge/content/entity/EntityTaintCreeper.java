@@ -8,7 +8,7 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 
-/** Legacy-specialized ecological creeper; its explosion consequences are handled centrally. */
+/** Specialized ecological creeper; its explosion consequences are handled centrally. */
 public final class EntityTaintCreeper extends Creeper implements ITaintedMob {
     public EntityTaintCreeper(EntityType<? extends Creeper> type, Level level) {
         super(type, level);

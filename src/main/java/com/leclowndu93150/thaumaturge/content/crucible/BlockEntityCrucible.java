@@ -290,8 +290,8 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
         int total = aspects.totalAmount();
         if (tank.getFluidAmount() > 0 || total > 0) {
             tank.setFluid(FluidStack.EMPTY);
-            // Each discarded essentia has one consequence: a TC4-style physical spill or one unit
-            // of TC6 Aura Flux. Physical Flux therefore does not double-count as Aura Flux.
+            // Each discarded essentia has one consequence: a physical spill or one unit
+            // of Aura Flux. Physical Flux therefore does not double-count as Aura Flux.
             int successfulPhysicalSpills = 0;
             for (int i = 0; i < total; i++) {
                 if (serverLevel.getRandom().nextInt(4) == 0
@@ -336,8 +336,8 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
                     .get(level.getRandom().nextInt(aspects.size()))
                     .aspect();
             aspects = aspects.reduce(randAspect, 1);
-            // Slow neglect should first look like a TC4 leak. Only an actual physical leak adds a
-            // very small TC6 Aura consequence; blocked leak attempts do not become free Flux.
+            // Slow neglect should first look like a leak. Only an actual physical leak adds a
+            // very small Aura consequence; blocked leak attempts do not become free Flux.
             if (level.getRandom().nextInt(4) != 0
                     && PhysicalFlux.spill((ServerLevel) level, getBlockPos(), level.getRandom())) {
                 AuraHelper.polluteAura(level, getBlockPos(), 0.25F, true);

@@ -208,7 +208,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // TC4 advanced the biome boundary from active taint blocks before checking whether the
+        // Advance the biome boundary from active taint blocks before checking whether the
         // current fibre was allowed to survive outside Tainted Lands.
         TaintHelper.trySpreadTaintedBiome(level, pos, random);
         boolean hasGrowth = state.getValue(GROWTH1)
@@ -227,11 +227,8 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 && state.getValue(GROWTH3)
                 && !TaintBloomRegistry.isProtected(level, pos)
                 && TaintEcology.isTainted(level, pos)) {
-            // TC4's growth metadata 3 was already the immature spore stalk. The earlier
-            // hybrid port added an extra 1/80 promotion roll before creating the separate
-            // stalk block, making spores take vastly longer to appear than the legacy
-            // lifecycle. A growth-3 fibre is now the stalk candidate and promotes on its
-            // next random tick; BlockTaintSporeStalk retains TC4's 1/10 maturation roll.
+            // A growth-3 fibre is the stalk candidate and promotes on its next random tick;
+            // BlockTaintSporeStalk uses a 1/10 maturation roll.
             BlockState stalk = TCBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
             if (stalk.canSurvive(level, pos)) {
                 level.setBlock(pos, stalk, Block.UPDATE_ALL);

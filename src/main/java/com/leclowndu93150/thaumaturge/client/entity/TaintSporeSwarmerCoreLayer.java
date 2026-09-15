@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
 
-/** Full-bright inner cube used by the legacy Swarmer model. */
+/** Full-bright inner cube used by the Swarmer model. */
 final class TaintSporeSwarmerCoreLayer extends RenderLayer<EntityTaintSporeSwarmer, TaintSporeSwarmerModel> {
     private static final float SIZE_SCALE = 0.07F;
     private static final float PULSE_SCALE = 0.025F;
@@ -50,7 +50,7 @@ final class TaintSporeSwarmerCoreLayer extends RenderLayer<EntityTaintSporeSwarm
         float vertical = Math.max(0.01F, base - pulse);
 
         poseStack.pushPose();
-        // Preserve the TC4 core transform: a lifted, pulsing cube inside the stationary outer shell.
+        // Preserve the core transform: a lifted, pulsing cube inside the stationary outer shell.
         poseStack.translate(0.0F, LEGACY_LIFT, 0.0F);
         poseStack.scale(horizontal, vertical, horizontal);
         poseStack.translate(0.0F, -vertical / 2.0F, 0.0F);

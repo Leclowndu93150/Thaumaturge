@@ -121,7 +121,7 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
 
         float saturation = Math.max(0.0F, AuraHelper.getFluxSaturation(server, pos));
         if (saturation <= 0.0F) {
-            // The later-era Seed itself is Flux-fed and eventually starves, but the TC4-style
+            // The Seed itself is Flux-fed and eventually starves, but the
             // Tainted Lands it established remains a self-sustaining ecological problem.
             this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
             AuraHelper.polluteAura(server, pos, STARVE_POLLUTION, false);
