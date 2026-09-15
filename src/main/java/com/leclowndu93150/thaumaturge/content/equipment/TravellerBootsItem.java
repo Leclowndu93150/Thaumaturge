@@ -56,10 +56,8 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
             }
             stack.set(TCDataComponents.ENERGY.get(), energy);
         }
-        boolean active = RechargeAccess.getCharge(stack) > 0
-                && !player.getAbilities().flying
-                && player.getKnownMovement().horizontalDistanceSqr() > 0.0
-                && !player.isShiftKeyDown();
+        boolean active =
+                RechargeAccess.getCharge(stack) > 0 && !player.getAbilities().flying && !player.isShiftKeyDown();
         AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
         AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
         if (stepHeight != null) {
