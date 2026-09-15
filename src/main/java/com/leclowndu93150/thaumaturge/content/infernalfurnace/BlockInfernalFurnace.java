@@ -166,16 +166,12 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
         if (entity.getZ() > pos.getZ() + 0.7F)
             entity.setDeltaMovement(entity.getDeltaMovement().add(0, 0, -1.0E-4F));
 
-        if (!level.isClientSide() && entity.tickCount % 10 == 0) {
-            if (entity instanceof ItemEntity it) {
-                entity.setDeltaMovement(entity.getDeltaMovement().with(Direction.Axis.Y, 0.025F));
-                if (entity.onGround()) {
-                    BlockEntityInfernalFurnace furnace = (BlockEntityInfernalFurnace) level.getBlockEntity(pos);
-                    if (furnace != null) {
-                        it.setItem(furnace.addItemsToInventory(it.getItem()));
-                    }
-                }
-            } else if (entity instanceof LivingEntity lv && !lv.fireImmune()) {
+        if (!level.isClientSide() && entity instanceof ItemEntity itemEntity) {
+            if (level.getBlockEntity(pos) instanceof BlockEntityInfernalFurnace furnace) {
+                itemEntity.setItem(furnace.addItemsToInventory(itemEntity.getItem()));
+            }
+        } else if (!level.isClientSide() && entity.tickCount % 10 == 0) {
+            if (entity instanceof LivingEntity lv && !lv.fireImmune()) {
                 entity.lavaHurt();
                 lv.igniteForSeconds(10);
             }
