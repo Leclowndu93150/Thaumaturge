@@ -399,6 +399,7 @@ public final class TCRecipeProvider extends RecipeProvider {
     }
 
     private void buildLegacyWardRecipes() {
+        ResearchGate wardedArcanaGate = gate("warded_arcana");
         arcaneShaped(new ItemStack(TCItems.WARDED_GLASS.get(), 8), 25)
                 .aspect(TCAspects.AQUA, 5)
                 .aspect(TCAspects.ORDO, 10)
@@ -410,6 +411,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('G', Tags.Items.GLASS_BLOCKS)
                 .define('W', TCItems.PLANK_GREATWOOD)
                 .define('B', TCItems.BRAIN)
+                .gate(wardedArcanaGate)
                 .unlockedBy("has", has(TCItems.BRAIN))
                 .save(output);
         arcaneShaped(new ItemStack(TCItems.ARCANE_DOOR.get()), 45)
@@ -423,6 +425,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('T', TCItems.INGOT_THAUMIUM)
                 .define('D', TCItems.PLANK_GREATWOOD)
                 .define('B', TCItems.BRAIN)
+                .gate(wardedArcanaGate)
                 .unlockedBy("has", has(TCItems.BRAIN))
                 .save(output);
         arcaneShaped(new ItemStack(TCItems.ARCANE_PRESSURE_PLATE.get()), 45)
@@ -435,6 +438,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('T', TCItems.INGOT_THAUMIUM)
                 .define('D', TCItems.PLANK_GREATWOOD)
                 .define('B', TCItems.BRAIN)
+                .gate(wardedArcanaGate)
                 .unlockedBy("has", has(TCItems.BRAIN))
                 .save(output);
         arcaneShaped(new ItemStack(TCItems.GOLEM_FETTER.get()), 10)
@@ -456,6 +460,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .pattern("N  ")
                 .define('N', Items.IRON_NUGGET)
                 .define('I', Items.IRON_INGOT)
+                .gate(wardedArcanaGate)
                 .unlockedBy("has", has(Items.IRON_INGOT))
                 .save(output);
         arcaneShaped(new ItemStack(TCItems.ARCANE_KEY_GOLD.get(), 2), 10)
@@ -465,6 +470,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .pattern("N  ")
                 .define('N', Items.GOLD_NUGGET)
                 .define('I', Items.GOLD_INGOT)
+                .gate(wardedArcanaGate)
                 .unlockedBy("has", has(Items.GOLD_INGOT))
                 .save(output);
         ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, TCItems.TALLOW_BLOCK)

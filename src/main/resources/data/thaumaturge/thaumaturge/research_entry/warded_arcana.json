@@ -1,7 +1,7 @@
 {
   "category": "thaumaturge:artifice",
   "name": "research.thaumaturge.warded_arcana.title",
-  "parents": ["thaumaturge:base_artifice"],
+  "parents": ["thaumaturge:base_artifice", "thaumaturge:focus_ward"],
   "column": -5,
   "row": -4,
   "icons": ["thaumaturge:arcane_door"],
