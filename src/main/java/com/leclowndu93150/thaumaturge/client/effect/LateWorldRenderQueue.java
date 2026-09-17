@@ -28,7 +28,7 @@ public final class LateWorldRenderQueue {
     private record Entry(Vec3 origin, Source source, LateDraw draw) {}
 
     private static final List<Entry> QUEUE = new ArrayList<>();
-    private static final List<Entry> BLOCK_ENTITY_OVERLAYS = new ArrayList<>();
+    private static final List<Entry> AFTER_BLOCK_ENTITIES = new ArrayList<>();
 
     private LateWorldRenderQueue() {}
 
@@ -44,15 +44,19 @@ public final class LateWorldRenderQueue {
         QUEUE.add(new Entry(origin, Source.BLOCK_ENTITY, draw));
     }
 
+    public static void enqueueBlockEntityAfterGeometry(Vec3 origin, LateDraw draw) {
+        AFTER_BLOCK_ENTITIES.add(new Entry(origin, Source.BLOCK_ENTITY, draw));
+    }
+
     public static void enqueueBlockEntityOverlay(Vec3 origin, LateDraw draw) {
-        BLOCK_ENTITY_OVERLAYS.add(new Entry(origin, Source.BLOCK_ENTITY_OVERLAY, draw));
+        AFTER_BLOCK_ENTITIES.add(new Entry(origin, Source.BLOCK_ENTITY_OVERLAY, draw));
     }
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-                render(event, BLOCK_ENTITY_OVERLAYS);
+                render(event, AFTER_BLOCK_ENTITIES);
             }
             return;
         }

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
@@ -19,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 /** Renders the Advanced Alchemical Furnace model around its modern controller. */
@@ -32,6 +34,10 @@ public final class AdvancedAlchemicalFurnaceRenderer
             ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_tank"));
     public static final ModelResourceLocation TANK_ON_MODEL_ID =
             ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_tank_on"));
+
+    private static final int VENT_FIRE_LIGHT = LightTexture.pack(14, 0);
+    private static final int VENT_BACKING_LIGHT = LightTexture.pack(9, 0);
+    private static final int TANK_GOO_LIGHT = LightTexture.pack(12, 0);
 
     private final RandomSource random = RandomSource.create();
 
@@ -77,18 +83,25 @@ public final class AdvancedAlchemicalFurnaceRenderer
             renderModel(state, tank, random, poseStack, buffers, light, overlay);
             poseStack.popPose();
         }
+        if (charged) {
+            renderStoredEssentia(furnace.aspects().totalAmount(), poseStack, buffers);
+        }
         if (hot) {
-            renderHeatVents(furnace.heat(), poseStack, buffers, light);
+            renderHeatVents(furnace.heat(), poseStack, buffers);
         }
         poseStack.popPose();
     }
 
     /** The original OBJ leaves these four sloped openings to the renderer for animated fire. */
-    private static void renderHeatVents(int heat, PoseStack poseStack, MultiBufferSource buffers, int light) {
+    private static void renderHeatVents(int heat, PoseStack poseStack, MultiBufferSource buffers) {
         TextureAtlasSprite fire = Minecraft.getInstance()
                 .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                 .apply(ResourceLocation.withDefaultNamespace("block/fire_0"));
-        VertexConsumer buffer = fire.wrap(buffers.getBuffer(Sheets.translucentCullBlockSheet()));
+        TextureAtlasSprite backing = Minecraft.getInstance()
+                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .apply(TCIds.rl("block/base_metal"));
+        VertexConsumer fireBuffer = buffers.getBuffer(Sheets.translucentCullBlockSheet());
+        VertexConsumer backingBuffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
         float base = 1.0F - Math.min(1.0F, heat / (float) BlockEntityAdvancedAlchemicalFurnace.MAX_POWER);
         for (int rotation = 0; rotation < 4; rotation++) {
             poseStack.pushPose();
@@ -97,27 +110,92 @@ public final class AdvancedAlchemicalFurnaceRenderer
             poseStack.mulPose(Axis.XP.rotationDegrees(135.0F));
             poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
             poseStack.translate(-0.5F, 0.0F, -1.0F);
-            heatQuad(buffer, poseStack.last(), fire, base, light);
+            spriteQuad(fireBuffer, poseStack.last(), fire, base, VENT_FIRE_LIGHT);
+            spriteQuadBackface(fireBuffer, poseStack.last(), fire, base, VENT_FIRE_LIGHT);
+            poseStack.translate(0.0F, 0.0F, 0.05F);
+            spriteQuad(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
+            spriteQuadBackface(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
             poseStack.popPose();
         }
     }
 
-    private static void heatQuad(
+    /** Restores the TC4 liquid/window pass omitted by the initial model port. */
+    private static void renderStoredEssentia(int stored, PoseStack poseStack, MultiBufferSource buffers) {
+        TextureAtlasSprite goo = Minecraft.getInstance()
+                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .apply(TCIds.rl("block/flux_goo"));
+        TextureAtlasSprite backing = Minecraft.getInstance()
+                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .apply(TCIds.rl("block/base_metal"));
+        VertexConsumer gooBuffer = buffers.getBuffer(Sheets.translucentCullBlockSheet());
+        VertexConsumer backingBuffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
+        float fillBase = 1.0F - Math.min(1.0F, stored / (float) BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
+
+        // Liquid surface visible in the central opening.
+        poseStack.pushPose();
+        poseStack.translate(0.5F, -0.5F, 1.1F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        spriteQuad(gooBuffer, poseStack.last(), goo, 0.0F, TANK_GOO_LIGHT);
+        spriteQuadBackface(gooBuffer, poseStack.last(), goo, 0.0F, TANK_GOO_LIGHT);
+        poseStack.popPose();
+
+        // Each corner tank has two window faces. The on-texture intentionally leaves
+        // these slits transparent so this backing + animated fill can be seen through them.
+        for (int rotation = 0; rotation < 4; rotation++) {
+            poseStack.pushPose();
+
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * rotation));
+            poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
+            poseStack.translate(0.85F, -1.8F, -1.4F);
+            poseStack.scale(0.3F, 0.6F, 1.0F);
+            spriteQuad(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
+            spriteQuadBackface(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
+            poseStack.translate(0.0F, 0.0F, -0.01F);
+            spriteQuad(gooBuffer, poseStack.last(), goo, fillBase, TANK_GOO_LIGHT);
+            spriteQuadBackface(gooBuffer, poseStack.last(), goo, fillBase, TANK_GOO_LIGHT);
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.ZN.rotationDegrees(90.0F * rotation));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            poseStack.translate(1.15F, 1.8F, -1.4F);
+            poseStack.scale(-0.3F, -0.6F, -1.0F);
+            spriteQuad(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
+            spriteQuadBackface(backingBuffer, poseStack.last(), backing, 0.0F, VENT_BACKING_LIGHT);
+            poseStack.translate(0.0F, 0.0F, 0.01F);
+            spriteQuad(gooBuffer, poseStack.last(), goo, fillBase, TANK_GOO_LIGHT);
+            spriteQuadBackface(gooBuffer, poseStack.last(), goo, fillBase, TANK_GOO_LIGHT);
+            poseStack.popPose();
+
+            poseStack.popPose();
+        }
+    }
+
+    private static void spriteQuad(
             VertexConsumer buffer, PoseStack.Pose pose, TextureAtlasSprite sprite, float base, int light) {
-        vertex(buffer, pose, 0.0F, 1.0F, sprite.getU0(), sprite.getV0(), light);
-        vertex(buffer, pose, 1.0F, 1.0F, sprite.getU1(), sprite.getV0(), light);
-        vertex(buffer, pose, 1.0F, base, sprite.getU1(), sprite.getV1(), light);
-        vertex(buffer, pose, 0.0F, base, sprite.getU0(), sprite.getV1(), light);
+        vertex(buffer, pose, 0.0F, 1.0F, sprite.getU0(), sprite.getV0(), light, 1.0F);
+        vertex(buffer, pose, 1.0F, 1.0F, sprite.getU1(), sprite.getV0(), light, 1.0F);
+        vertex(buffer, pose, 1.0F, base, sprite.getU1(), sprite.getV1(), light, 1.0F);
+        vertex(buffer, pose, 0.0F, base, sprite.getU0(), sprite.getV1(), light, 1.0F);
+    }
+
+    private static void spriteQuadBackface(
+            VertexConsumer buffer, PoseStack.Pose pose, TextureAtlasSprite sprite, float base, int light) {
+        vertex(buffer, pose, 0.0F, 1.0F, sprite.getU0(), sprite.getV0(), light, -1.0F);
+        vertex(buffer, pose, 0.0F, base, sprite.getU0(), sprite.getV1(), light, -1.0F);
+        vertex(buffer, pose, 1.0F, base, sprite.getU1(), sprite.getV1(), light, -1.0F);
+        vertex(buffer, pose, 1.0F, 1.0F, sprite.getU1(), sprite.getV0(), light, -1.0F);
     }
 
     private static void vertex(
-            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light) {
+            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int light, float normalZ) {
         buffer.addVertex(pose, x, y, 0.0F)
                 .setColor(0xFFFFFFFF)
                 .setUv(u, v)
                 .setOverlay(0)
                 .setLight(light)
-                .setNormal(pose, 0.0F, 0.0F, 1.0F);
+                .setNormal(pose, 0.0F, 0.0F, normalZ);
     }
 
     private static void renderModel(
@@ -144,6 +222,12 @@ public final class AdvancedAlchemicalFurnaceRenderer
                     ModelData.EMPTY,
                     renderType);
         }
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityAdvancedAlchemicalFurnace furnace) {
+        var pos = furnace.getBlockPos();
+        return new AABB(pos.getX() - 1, pos.getY(), pos.getZ() - 1, pos.getX() + 2, pos.getY() + 2, pos.getZ() + 2);
     }
 
     @Override

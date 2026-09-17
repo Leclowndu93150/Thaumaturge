@@ -64,6 +64,14 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
 
     @Override
     public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
+        BlockEntityAdvancedAlchemicalFurnace advancedFurnace = AdvancedFurnaceJadeAccess.resolve(accessor);
+        if (advancedFurnace != null) {
+            writeStorage(tag, advancedFurnace.aspects(), BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
+            tag.putString(AREA, "advanced_alchemical_furnace");
+            tag.putBoolean(ACTIVE, advancedFurnace.assembled());
+            return;
+        }
+
         BlockEntity blockEntity = accessor.getBlockEntity();
         if (blockEntity instanceof BlockEntityNode) return;
 
@@ -121,12 +129,6 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
             tag.putString(AREA, "flux_scrubber");
             tag.putInt("ScrubberCharges", scrubber.charges());
             tag.putFloat("ScrubberPower", scrubber.power());
-            return;
-        }
-        if (blockEntity instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
-            writeStorage(tag, furnace.aspects(), BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
-            tag.putString(AREA, "advanced_alchemical_furnace");
-            tag.putBoolean(ACTIVE, furnace.assembled());
             return;
         }
         if (blockEntity instanceof IAspectContainer container) {

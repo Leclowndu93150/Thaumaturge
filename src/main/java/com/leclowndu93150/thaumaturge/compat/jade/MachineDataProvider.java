@@ -1,9 +1,11 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
@@ -33,7 +35,45 @@ public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
     @Override
     public void appendServerData(CompoundTag tag, BlockAccessor accessor) {
         BlockEntity machine = resolveMachine(accessor);
-        if (machine instanceof BlockEntitySmelter smelter) {
+        if (machine instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
+            tag.putString(AREA, "advanced_alchemical_furnace");
+            tag.putInt("Heat", furnace.heat());
+            tag.putInt("Perditio", furnace.perditio());
+            tag.putInt("Aqua", furnace.aqua());
+            tag.putInt("PowerMax", BlockEntityAdvancedAlchemicalFurnace.MAX_POWER);
+            tag.putInt("Cooldown", furnace.cooldown());
+            tag.putInt("CycleDuration", furnace.cycleDuration());
+
+            boolean hasInput = !furnace.input().isEmpty();
+            int aspectCost = 0;
+            if (hasInput) {
+                tag.put("Input", furnace.input().save(accessor.getLevel().registryAccess()));
+                aspectCost =
+                        AspectIndexAccess.index().of(furnace.input().copy()).totalAmount();
+                tag.putInt("InputAspectCost", aspectCost);
+            }
+
+            String status;
+            if (!furnace.assembled()) {
+                status = "unformed";
+            } else if (furnace.cooldown() > 0) {
+                status = "processing";
+            } else if (furnace.aspects().totalAmount() >= BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA
+                    || (hasInput
+                            && furnace.aspects().totalAmount() + aspectCost
+                                    > BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA)) {
+                status = "storage_full";
+            } else if (!hasInput) {
+                status = "ready";
+            } else if (furnace.heat() < aspectCost * 2
+                    || furnace.perditio() < aspectCost
+                    || furnace.aqua() < aspectCost) {
+                status = "waiting_vis";
+            } else {
+                status = "ready";
+            }
+            tag.putString("Status", status);
+        } else if (machine instanceof BlockEntitySmelter smelter) {
             tag.putString(AREA, "smelter");
             tag.putInt("SmeltProgress", smelter.getCookProgressScaled(PERCENT));
             tag.putInt("BurnRemaining", smelter.getBurnTimeRemainingScaled(PERCENT));
@@ -87,6 +127,9 @@ public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
     }
 
     private static BlockEntity resolveMachine(BlockAccessor accessor) {
+        BlockEntityAdvancedAlchemicalFurnace advancedFurnace = AdvancedFurnaceJadeAccess.resolve(accessor);
+        if (advancedFurnace != null) return advancedFurnace;
+
         BlockEntity direct = accessor.getBlockEntity();
         if (direct != null) return direct;
 

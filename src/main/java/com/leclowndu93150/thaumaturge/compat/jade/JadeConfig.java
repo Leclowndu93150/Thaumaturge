@@ -17,6 +17,7 @@ final class JadeConfig {
     static final ResourceLocation VIS_RELAYS = option("vis_relays");
     static final ResourceLocation NODE_TRANSDUCERS = option("node_transducers");
     static final ResourceLocation SMELTERS = option("smelters");
+    static final ResourceLocation ADVANCED_ALCHEMICAL_FURNACES = option("advanced_alchemical_furnaces");
     static final ResourceLocation JARS = option("jars");
     static final ResourceLocation ALEMBICS = option("alembics");
     static final ResourceLocation CRUCIBLES = option("crucibles");
@@ -45,6 +46,7 @@ final class JadeConfig {
             VIS_RELAYS,
             NODE_TRANSDUCERS,
             SMELTERS,
+            ADVANCED_ALCHEMICAL_FURNACES,
             JARS,
             ALEMBICS,
             CRUCIBLES,

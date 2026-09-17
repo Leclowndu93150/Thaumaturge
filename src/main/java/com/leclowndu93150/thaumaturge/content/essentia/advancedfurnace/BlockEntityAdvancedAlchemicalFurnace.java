@@ -53,6 +53,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     private int perditio;
     private int aqua;
     private int cooldown;
+    private int cycleDuration;
     private int ticks;
     private boolean assembled;
 
@@ -81,6 +82,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         }
         if (cooldown > 0) {
             cooldown--;
+            if (cooldown == 0) cycleDuration = 0;
             changed = true;
         }
         if (cooldown == 0 && !input.isEmpty()) {
@@ -222,6 +224,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         aspects = aspects.add(inputAspects);
         input.shrink(1);
         cooldown = 5 + Math.round((1.0F - heat / (float) MAX_POWER) * 100.0F);
+        cycleDuration = cooldown;
         return true;
     }
 
@@ -261,6 +264,18 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
 
     public int aqua() {
         return aqua;
+    }
+
+    public ItemStack input() {
+        return input;
+    }
+
+    public int cooldown() {
+        return cooldown;
+    }
+
+    public int cycleDuration() {
+        return cycleDuration;
     }
 
     public void dropContents() {
@@ -367,6 +382,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         output.putInt("Perditio", perditio);
         output.putInt("Aqua", aqua);
         output.putInt("Cooldown", cooldown);
+        output.putInt("CycleDuration", cycleDuration);
         output.putBoolean("Assembled", assembled);
     }
 
@@ -381,6 +397,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         perditio = Math.min(MAX_POWER, inputTag.getInt("Perditio"));
         aqua = Math.min(MAX_POWER, inputTag.getInt("Aqua"));
         cooldown = Math.max(0, inputTag.getInt("Cooldown"));
+        cycleDuration = Math.max(cooldown, inputTag.getInt("CycleDuration"));
         assembled = inputTag.getBoolean("Assembled");
     }
 

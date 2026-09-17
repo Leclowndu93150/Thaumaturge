@@ -1636,6 +1636,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         addJadeMode("vis_relays", "Vis Relays");
         addJadeMode("node_transducers", "Node Transducers");
         addJadeMode("smelters", "Essentia Smelters");
+        addJadeMode("advanced_alchemical_furnaces", "Advanced Alchemical Furnaces");
         addJadeMode("jars", "Essentia Jars and Tanks");
         addJadeMode("alembics", "Alembics");
         addJadeMode("crucibles", "Crucibles");
@@ -1724,6 +1725,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.focal.no_focus", "No focus inserted");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
+        add("jade.thaumaturge.advanced_furnace.status.unformed", "Incomplete multiblock");
+        add("jade.thaumaturge.advanced_furnace.status.ready", "Ready");
+        add("jade.thaumaturge.advanced_furnace.status.processing", "Processing");
+        add("jade.thaumaturge.advanced_furnace.status.waiting_vis", "Waiting for vis");
+        add("jade.thaumaturge.advanced_furnace.status.storage_full", "Essentia storage full");
+        add("jade.thaumaturge.advanced_furnace.input", "Input: %s");
+        add("jade.thaumaturge.advanced_furnace.input_cost", "Input cost: %s Ignis, %s Perditio, %s Aqua");
+        add("jade.thaumaturge.advanced_furnace.ignis", "Ignis: %s / %s");
+        add("jade.thaumaturge.advanced_furnace.perditio", "Perditio: %s / %s");
+        add("jade.thaumaturge.advanced_furnace.aqua", "Aqua: %s / %s");
         add("jade.thaumaturge.transducer.status.0", "No node below");
         add("jade.thaumaturge.transducer.status.1", "Transducing");
         add("jade.thaumaturge.transducer.status.2", "Node energized");

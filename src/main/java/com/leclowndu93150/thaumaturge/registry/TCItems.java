@@ -38,6 +38,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.bauble.TrinketItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
@@ -784,7 +785,7 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_FURNACE =
-            ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE);
+            registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE, ItemAdvancedAlchemicalFurnace::new);
 
     public static final DeferredItem<BlockItem> METAL_THAUMIUM_BLOCK =
             ITEMS.registerSimpleBlockItem(TCBlocks.METAL_THAUMIUM_BLOCK);

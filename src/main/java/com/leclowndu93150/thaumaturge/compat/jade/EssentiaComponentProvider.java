@@ -205,6 +205,7 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
     private static ResourceLocation optionFor(String area) {
         return switch (area) {
             case "jar" -> JadeConfig.JARS;
+            case "advanced_alchemical_furnace" -> JadeConfig.ADVANCED_ALCHEMICAL_FURNACES;
             case "alembic" -> JadeConfig.ALEMBICS;
             case "crucible" -> JadeConfig.CRUCIBLES;
             case "tube" -> JadeConfig.TUBES;

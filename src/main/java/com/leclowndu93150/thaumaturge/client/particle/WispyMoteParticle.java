@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -54,6 +55,11 @@ public final class WispyMoteParticle extends TCParticle {
         if (this.targetEntityId != WispyMoteParticleOptions.NO_ENTITY) {
             seekTarget();
         }
+    }
+
+    @Override
+    public ParticleRenderType getRenderType() {
+        return TCParticleLayers.additiveSoft(this.sheet);
     }
 
     private void seekTarget() {

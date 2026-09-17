@@ -124,15 +124,19 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             }
             return;
         }
-        poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-        drawLayers(data, poseStack, buffers);
-        poseStack.popPose();
+        // Node layers do not write depth. Defer them until block-entity geometry has flushed so
+        // a later cutout renderer cannot paint over a node that is actually closer to the camera.
+        LateWorldRenderQueue.enqueueBlockEntityAfterGeometry(
+                origin, (latePose, lateBuffers) -> drawDeferredLayers(data, latePose, lateBuffers));
         if (data.draining) {
             LateWorldRenderQueue.enqueueBlockEntity(
                     origin, (latePose, lateBuffers) -> drawDrainLine(data, latePose, lateBuffers));
         }
+    }
+
+    private static void drawDeferredLayers(NodeRenderState data, PoseStack poseStack, MultiBufferSource buffers) {
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        drawLayers(data, poseStack, buffers);
     }
 
     private static void drawDepthIgnoredLayers(NodeRenderState data, PoseStack poseStack, MultiBufferSource buffers) {
