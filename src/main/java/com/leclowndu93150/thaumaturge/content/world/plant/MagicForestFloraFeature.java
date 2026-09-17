@@ -21,7 +21,8 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static final int VISHROOM_MIN_Y = 50;
     private static final int GIANT_MUSHROOM_GRID_SIZE = 4;
     private static final int GIANT_MUSHROOM_CHANCE = 40;
-    private static final int FLOWER_ATTEMPTS = 5;
+    private static final int DANDELION_ATTEMPTS = 3;
+    private static final int POPPY_ATTEMPTS = 2;
     private static final int TALL_GRASS_ATTEMPTS = 12;
     private static final int SHORT_GRASS_ATTEMPTS = 10;
     private static final int FERN_ATTEMPTS = 6;
@@ -64,8 +65,12 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
             }
         }
 
-        for (int a = 0; a < FLOWER_ATTEMPTS; a++) {
+        for (int a = 0; a < DANDELION_ATTEMPTS; a++) {
             any |= placePlant(level, random, chunkOrigin, Blocks.DANDELION.defaultBlockState());
+        }
+
+        for (int a = 0; a < POPPY_ATTEMPTS; a++) {
+            any |= placePlant(level, random, chunkOrigin, Blocks.POPPY.defaultBlockState());
         }
 
         for (int a = 0; a < TALL_GRASS_ATTEMPTS; a++) {

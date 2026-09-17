@@ -71,7 +71,7 @@ public final class TCConfiguredFeatures {
     private static final int CRYSTAL_MAX_TOTAL = 64;
     private static final int CRYSTAL_BIOME_ASPECT_CHANCE = 3;
     private static final int FLORA_GRASS_ATTEMPTS = 3;
-    private static final int FLORA_VISHROOM_ATTEMPTS = 4;
+    private static final int FLORA_VISHROOM_ATTEMPTS = 5;
 
     private TCConfiguredFeatures() {}
 
