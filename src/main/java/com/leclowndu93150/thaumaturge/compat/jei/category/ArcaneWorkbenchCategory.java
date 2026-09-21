@@ -26,6 +26,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
@@ -172,11 +173,12 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
             if (isAdded) {
                 IRecipeSlotBuilder slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + index * CRYSTAL_SPACING);
                 AspectInstance instance = aspects.get(index);
-                slot.addItemStack(EssentiaCrystalFactory.of(instance.aspect(), instance.amount()));
+                ItemStack crystal = EssentiaCrystalFactory.of(instance.aspect(), instance.amount());
+                slot.addItemStack(crystal).addIngredients(Ingredient.of(crystal));
                 index++;
                 if (index >= aspects.size()) break;
             } else {
-                builder.addInputSlot(BARRIER_X, BARRIER_Y);
+                builder.addSlot(RecipeIngredientRole.RENDER_ONLY, BARRIER_X, BARRIER_Y);
             }
         }
     }

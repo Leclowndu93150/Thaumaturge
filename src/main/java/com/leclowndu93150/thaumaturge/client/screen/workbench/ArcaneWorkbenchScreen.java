@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandTooltips;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
+import com.leclowndu93150.thaumaturge.content.workbench.SlotCrystalEssentia;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.mojang.math.Axis;
 import java.text.DecimalFormat;
@@ -23,6 +24,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneWorkbench> {
     private static final ResourceLocation WAND_SLOT_TEXTURE = TCIds.rl("textures/gui/workbench_wand_slot.png");
@@ -49,6 +51,14 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         wandTooltip = null;
         super.render(graphics, mouseX, mouseY, partialTick);
+        if (hoveredSlot != null && hoveredSlot.hasItem()) {
+            ItemStack stack = hoveredSlot.getItem();
+            if (hoveredSlot instanceof SlotCrystalEssentia) {
+                graphics.renderTooltip(font, stack.getHoverName(), mouseX, mouseY);
+            } else {
+                graphics.renderTooltip(font, stack, mouseX, mouseY);
+            }
+        }
         if (wandTooltip != null) {
             graphics.renderTooltip(font, wandTooltip, mouseX, mouseY);
         }
