@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.extensions;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.client.model.AdvancedAlchemicalFurnaceItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.CentrifugeItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.DeconTableItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.GolemBuilderItemSpecialRenderer;
@@ -32,6 +33,7 @@ public final class TCItemRenderExtensions {
         register(event, JarBrainItemSpecialRenderer::new, TCItems.JAR_BRAIN);
         register(event, JarNodeItemSpecialRenderer::new, TCItems.JAR_NODE);
         register(event, CentrifugeItemSpecialRenderer::new, TCItems.CENTRIFUGE);
+        register(event, AdvancedAlchemicalFurnaceItemSpecialRenderer::new, TCItems.ADVANCED_ALCHEMICAL_FURNACE);
         register(event, GolemBuilderItemSpecialRenderer::new, TCItems.GOLEM_BUILDER);
         register(event, DeconTableItemSpecialRenderer::new, TCItems.DECONSTRUCTION_TABLE);
         register(event, WandItemSpecialRenderer::new, TCItems.WAND);

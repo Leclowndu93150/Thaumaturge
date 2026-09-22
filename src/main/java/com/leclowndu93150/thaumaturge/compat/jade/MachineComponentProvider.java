@@ -4,8 +4,10 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
@@ -77,6 +79,10 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
             tooltip.replace(
                     JadeIds.CORE_OBJECT_NAME,
                     IThemeHelper.get().title(Component.translatable("block.thaumaturge.infernal_furnace")));
+        } else if ("advanced_alchemical_furnace".equals(area)) {
+            tooltip.replace(
+                    JadeIds.CORE_OBJECT_NAME,
+                    IThemeHelper.get().title(Component.translatable("block.thaumaturge.advanced_alchemical_furnace")));
         }
 
         if (!"smelter".equals(area)) {
@@ -98,6 +104,11 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
 
     private static void appendMachineState(
             ITooltip tooltip, BlockAccessor accessor, CompoundTag data, String area, boolean detailed) {
+        if ("advanced_alchemical_furnace".equals(area)) {
+            appendAdvancedAlchemicalFurnace(tooltip, accessor, data, detailed);
+            return;
+        }
+
         int progress = data.getInt("Progress");
         int maximum = data.getInt("ProgressMax");
         if ("golem_builder".equals(area)) {
@@ -156,9 +167,43 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
         }
     }
 
+    private static void appendAdvancedAlchemicalFurnace(
+            ITooltip tooltip, BlockAccessor accessor, CompoundTag data, boolean detailed) {
+        String status = data.getString("Status");
+        if (status.isEmpty()) status = "unformed";
+        tooltip.add(Component.translatable("jade.thaumaturge.advanced_furnace.status." + status));
+
+        if (!detailed) return;
+
+        int cooldown = data.getInt("Cooldown");
+        int duration = data.getInt("CycleDuration");
+        if (cooldown > 0 && duration > 0) {
+            int progress = Math.min(100, Math.max(0, (duration - cooldown) * 100 / duration));
+            tooltip.add(Component.translatable("jade.thaumaturge.machine.progress", progress));
+        }
+
+        if (data.contains("Input", Tag.TAG_COMPOUND)) {
+            ItemStack input = ItemStack.parse(accessor.getLevel().registryAccess(), data.getCompound("Input"))
+                    .orElse(ItemStack.EMPTY);
+            if (!input.isEmpty()) {
+                tooltip.add(Component.translatable("jade.thaumaturge.advanced_furnace.input", input.getHoverName()));
+                int aspectCost = data.getInt("InputAspectCost");
+                tooltip.add(Component.translatable(
+                        "jade.thaumaturge.advanced_furnace.input_cost", aspectCost * 2, aspectCost, aspectCost));
+            }
+        }
+
+        int maximum = data.getInt("PowerMax");
+        tooltip.add(Component.translatable("jade.thaumaturge.advanced_furnace.ignis", data.getInt("Heat"), maximum));
+        tooltip.add(
+                Component.translatable("jade.thaumaturge.advanced_furnace.perditio", data.getInt("Perditio"), maximum));
+        tooltip.add(Component.translatable("jade.thaumaturge.advanced_furnace.aqua", data.getInt("Aqua"), maximum));
+    }
+
     private static ResourceLocation machineOption(String area) {
         return switch (area) {
             case "smelter" -> JadeConfig.SMELTERS;
+            case "advanced_alchemical_furnace" -> JadeConfig.ADVANCED_ALCHEMICAL_FURNACES;
             case "golem_builder" -> JadeConfig.GOLEM_BUILDERS;
             case "void_siphon" -> JadeConfig.VOID_SIPHONS;
             case "deconstruction_table" -> JadeConfig.DECONSTRUCTION_TABLES;

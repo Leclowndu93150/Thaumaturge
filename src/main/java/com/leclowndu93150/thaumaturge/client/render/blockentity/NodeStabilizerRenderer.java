@@ -34,8 +34,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final ResourceLocation TRANSDUCER_OVERLAY_TEXTURE =
             TCIds.rl("textures/block/node_converter_over.png");
     private static final RenderType TRANSDUCER_BASE = RenderType.entityCutout(TRANSDUCER_TEXTURE);
-    private static final RenderType TRANSDUCER_OVERLAY =
-            RenderType.entityTranslucentEmissive(TRANSDUCER_OVERLAY_TEXTURE);
+    private static final RenderType TRANSDUCER_OVERLAY = RenderType.entityCutout(TRANSDUCER_OVERLAY_TEXTURE);
     private static final int TRANSDUCER_EXTEND_CAP = 50;
     private static final float TRANSDUCER_EXTEND_DIVISOR = 137.0F;
     private static final int TRANSDUCER_TINT_IDLE = 0xFF80FF80;

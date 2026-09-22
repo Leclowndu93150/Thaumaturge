@@ -1,0 +1,22 @@
+{
+  "ambientocclusion": false,
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "tank": "thaumaturge:block/essentia_reservoir",
+    "particle": "thaumaturge:block/essentia_reservoir"
+  },
+  "elements": [
+    {
+      "from": [2, 2, 2],
+      "to": [14, 14, 14],
+      "faces": {
+        "down": { "texture": "#tank" },
+        "up": { "texture": "#tank" },
+        "north": { "texture": "#tank" },
+        "south": { "texture": "#tank" },
+        "west": { "texture": "#tank" },
+        "east": { "texture": "#tank" }
+      }
+    }
+  ]
+}

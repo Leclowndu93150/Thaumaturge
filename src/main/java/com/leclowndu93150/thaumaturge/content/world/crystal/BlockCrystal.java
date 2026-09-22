@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.world.crystal;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -163,6 +164,7 @@ public final class BlockCrystal extends Block {
                 } else if (touchingSameCrystal(level, pos)) {
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
                     AuraHelper.addVis(level, pos, VIS_THRESHOLD);
+                    AuraHelper.addFlux(level, pos, 1.0F);
                 }
             } else if (vis > AuraHelper.getAuraBase(level, pos) + VIS_THRESHOLD) {
                 if (growth < 3 && growth < 5 - generation + Math.floorMod(pos.asLong(), 3L)) {
@@ -179,6 +181,21 @@ public final class BlockCrystal extends Block {
                         level.setBlockAndUpdate(
                                 spreadTo, defaultBlockState().setValue(GENERATION, childGeneration + 1));
                     }
+                }
+            } else {
+                float ambientFlux = AuraHelper.getFlux(level, pos);
+                float base = AuraHelper.getAuraBase(level, pos);
+                int conversionCost = growth + 1;
+                if (ambientFlux > vis
+                        && ambientFlux > base / 2.0F
+                        && AuraHelper.drainFlux(level, pos, conversionCost, false) >= conversionCost - 0.001F) {
+                    level.setBlockAndUpdate(
+                            pos,
+                            TCBlocks.CRYSTAL_VITIUM
+                                    .get()
+                                    .defaultBlockState()
+                                    .setValue(SIZE, growth)
+                                    .setValue(GENERATION, generation));
                 }
             }
         } else {

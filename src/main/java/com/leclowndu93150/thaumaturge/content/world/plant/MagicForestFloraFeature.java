@@ -1,10 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
 import com.mojang.serialization.Codec;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +28,7 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
     private static final int VISHROOM_MIN_Y = 50;
     private static final int GIANT_MUSHROOM_GRID_SIZE = 4;
     private static final int GIANT_MUSHROOM_CHANCE = 40;
-    private static final int FLOWER_ATTEMPTS = 5;
+    private static final int FLOWER_ATTEMPTS = 10;
     private static final int TALL_GRASS_ATTEMPTS = 12;
     private static final int SHORT_GRASS_ATTEMPTS = 10;
     private static final int FERN_ATTEMPTS = 6;
@@ -44,6 +51,10 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         BlockPos origin = context.origin();
         BlockPos chunkOrigin = new BlockPos(origin.getX() & ~15, origin.getY(), origin.getZ() & ~15);
         boolean any = false;
+        List<Block> flowers = new ArrayList<>();
+        for (Holder<Block> flower : BuiltInRegistries.BLOCK.getTagOrEmpty(BlockTags.SMALL_FLOWERS)) {
+            flowers.add(flower.value());
+        }
 
         for (int x = 0; x < GIANT_MUSHROOM_GRID_SIZE; x++) {
             for (int z = 0; z < GIANT_MUSHROOM_GRID_SIZE; z++) {
@@ -65,7 +76,7 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
         }
 
         for (int a = 0; a < FLOWER_ATTEMPTS; a++) {
-            any |= placePlant(level, random, chunkOrigin, Blocks.DANDELION.defaultBlockState());
+            any |= placeTaggedFlower(level, random, chunkOrigin, flowers);
         }
 
         for (int a = 0; a < TALL_GRASS_ATTEMPTS; a++) {
@@ -118,6 +129,28 @@ public final class MagicForestFloraFeature extends Feature<MagicForestFloraConfi
 
     private static BlockPos surfacePos(WorldGenLevel level, int x, int z) {
         return new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
+    }
+
+    private static boolean placeTaggedFlower(
+            WorldGenLevel level, RandomSource random, BlockPos origin, List<Block> flowers) {
+        int x = origin.getX() + random.nextInt(16);
+        int z = origin.getZ() + random.nextInt(16);
+        BlockPos grass = findGrass(level, x, z, GRASS_MIN_Y);
+        if (grass == null) return false;
+        BlockPos pos = grass.above();
+        BlockState flower = taggedFlowerAt(pos, flowers);
+        if (!level.getBlockState(pos).canBeReplaced() || !flower.canSurvive(level, pos)) return false;
+        return level.setBlock(pos, flower, PLACE_FLAGS);
+    }
+
+    @SuppressWarnings("removal")
+    private static BlockState taggedFlowerAt(BlockPos pos, List<Block> flowers) {
+        if (flowers.isEmpty()) return Blocks.DANDELION.defaultBlockState();
+        double sample = Mth.clamp(
+                (1.0 + Biome.BIOME_INFO_NOISE.getValue(pos.getX() / 48.0, pos.getZ() / 48.0, false)) / 2.0,
+                0.0,
+                0.9999);
+        return flowers.get((int) (sample * flowers.size())).defaultBlockState();
     }
 
     private static boolean placePlant(WorldGenLevel level, RandomSource random, BlockPos origin, BlockState state) {

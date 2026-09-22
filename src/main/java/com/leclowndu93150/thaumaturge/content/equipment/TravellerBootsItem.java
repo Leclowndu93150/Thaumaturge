@@ -17,7 +17,11 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public final class TravellerBootsItem extends ArmorItem implements IRechargable {
     private static final int MAX_CHARGE = 240;
     private static final int ENERGY_PER_CHARGE = 60;
@@ -39,6 +43,20 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
         super(TCMaterials.ARMOR_TRAVELLER, ArmorItem.Type.BOOTS, properties);
     }
 
+    @SubscribeEvent
+    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
+        if (event.getSlot() != EquipmentSlot.FEET
+                || !(event.getEntity() instanceof ServerPlayer player)
+                || !(event.getFrom().getItem() instanceof TravellerBootsItem)
+                || event.getTo().getItem() instanceof TravellerBootsItem) {
+            return;
+        }
+        AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
+        AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
+        if (stepHeight != null) stepHeight.removeModifier(STEP_MODIFIER.id());
+        if (jumpHeight != null) jumpHeight.removeModifier(JUMP_MODIFIER.id());
+    }
+
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
@@ -56,10 +74,8 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
             }
             stack.set(TCDataComponents.ENERGY.get(), energy);
         }
-        boolean active = RechargeAccess.getCharge(stack) > 0
-                && !player.getAbilities().flying
-                && player.getKnownMovement().horizontalDistanceSqr() > 0.0
-                && !player.isShiftKeyDown();
+        boolean active =
+                RechargeAccess.getCharge(stack) > 0 && !player.getAbilities().flying && !player.isShiftKeyDown();
         AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);
         AttributeInstance jumpHeight = player.getAttribute(Attributes.JUMP_STRENGTH);
         if (stepHeight != null) {

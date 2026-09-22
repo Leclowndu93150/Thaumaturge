@@ -1,6 +1,7 @@
 {
-    "parent": "block/cross",
-    "textures": {
-        "cross": "thaumaturge:block/taint_growth_4"
-    }
+  "parent": "block/cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "thaumaturge:block/taint_growth_4"
+  }
 }

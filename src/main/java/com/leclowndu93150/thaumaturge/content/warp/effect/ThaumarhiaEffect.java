@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp.effect;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -29,7 +29,7 @@ public final class ThaumarhiaEffect extends MobEffect {
         ServerLevel level = (ServerLevel) mob.level();
         BlockPos pos = mob.blockPosition();
         if (level.getRandom().nextInt(GOO_CHANCE) == 0 && level.isEmptyBlock(pos)) {
-            level.setBlockAndUpdate(pos, TCBlocks.FLUX_GOO.get().defaultBlockState());
+            PhysicalFlux.placeGoo(level, pos, 1);
         }
         return true;
     }

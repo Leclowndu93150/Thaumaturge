@@ -581,9 +581,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     }
 
     /**
-     * Reproduces TC6's research-map background coordinates. Its renderer used a fixed 256-unit texture
-     * space even though the nebula image itself is 1024px, so the full nebula was never enlarged past
-     * its native detail level.
+     * The renderer uses a fixed 256-unit texture space even though the nebula image itself is 1024px,
+     * so the full nebula is never enlarged past its native detail level.
      */
     private static void blitLegacyBackground(
             GuiGraphics graphics,

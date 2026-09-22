@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import net.minecraft.core.Direction;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -21,7 +22,25 @@ public final class DeviceCapabilities {
                 EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ESSENTIA_RESERVOIR.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.ESSENTIA_CRYSTALIZER.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT,
+                TCBlockEntities.FLUX_SCRUBBER.get(),
+                (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, TCBlockEntities.HUNGRY_CHEST.get(), (be, side) -> new InvWrapper(be));
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TCBlockEntities.ITEM_GRATE.get(),
+                (be, side) -> side == Direction.UP && be.getBlockState().getValue(BlockItemGrate.OPEN)
+                        ? be.inventory()
+                        : null);
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK, TCBlockEntities.EVERFULL_URN.get(), (be, side) -> be.getTank());
         event.registerBlockEntity(

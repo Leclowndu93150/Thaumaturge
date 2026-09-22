@@ -735,11 +735,11 @@ public final class RecipeDisplayWidget {
                             TCBlocks.THAUMATORIUM
                                     .get()
                                     .defaultBlockState()
-                                    .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST)),
+                                    .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST)),
                     15.0F,
                     15.0F,
                     4.0F,
-                    -35.0F);
+                    55.0F);
             return;
         }
         graphics.renderItem(stack, x, y);

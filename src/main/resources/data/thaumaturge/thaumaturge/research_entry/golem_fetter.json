@@ -1,0 +1,12 @@
+{
+  "category": "thaumaturge:golemancy",
+  "name": "research.thaumaturge.golem_fetter.title",
+  "parents": ["thaumaturge:mind_clockwork"],
+  "column": 4,
+  "row": 8,
+  "icons": ["thaumaturge:golem_fetter"],
+  "stages": [
+    {"text": "research.thaumaturge.golem_fetter.stage_0", "recipes": ["thaumaturge:arcane_workbench/golem_fetter"]}
+  ],
+  "complexity": 1
+}

@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "neoforge:composite",
+  "ambientocclusion": false,
+  "gui_light": "side",
+  "textures": {
+    "particle": "thaumaturge:block/essentia_reservoir"
+  },
+  "children": {
+    "tank": {
+      "parent": "thaumaturge:block/essentia_reservoir_tank"
+    },
+    "fitting": {
+      "parent": "thaumaturge:block/essentia_reservoir_fitting"
+    }
+  },
+  "item_render_order": [
+    "tank",
+    "fitting"
+  ]
+}

@@ -20,6 +20,8 @@ import com.leclowndu93150.thaumaturge.client.model.entity.PechModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.TCBannerModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSeedModel;
+import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeModel;
+import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeSwarmerModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintacleModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
@@ -58,6 +60,9 @@ public final class TCEntityRenderers {
         event.registerLayerDefinition(
                 TCModelLayers.TAINTACLE_SMALL, () -> TaintacleModel.createLayer(TaintacleModel.TAINTACLE_SMALL_LENGTH));
         event.registerLayerDefinition(TCModelLayers.TAINT_SEED, TaintSeedModel::createLayer);
+        event.registerLayerDefinition(TCModelLayers.TAINT_SPORE, TaintSporeModel::createLayer);
+        event.registerLayerDefinition(TCModelLayers.TAINT_SPORE_SWARMER, TaintSporeSwarmerModel::createShellLayer);
+        event.registerLayerDefinition(TCModelLayers.TAINT_SPORE_SWARMER_CORE, TaintSporeSwarmerModel::createCoreLayer);
         event.registerLayerDefinition(TCModelLayers.FIRE_BAT, FireBatModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.TC_BANNER, TCBannerModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.BRAIN, BrainModel::createLayer);
@@ -97,6 +102,15 @@ public final class TCEntityRenderers {
         event.registerEntityRenderer(TCEntities.MIND_SPIDER.get(), MindSpiderRenderer::new);
         event.registerEntityRenderer(TCEntities.THAUMIC_SLIME.get(), ThaumicSlimeRenderer::new);
         event.registerEntityRenderer(TCEntities.TAINT_CRAWLER.get(), TaintCrawlerRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_SPIDER.get(), TaintSpiderRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_CREEPER.get(), TaintCreeperRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_COW.get(), TaintCowRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_PIG.get(), TaintPigRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_CHICKEN.get(), TaintChickenRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_SHEEP.get(), TaintSheepRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_VILLAGER.get(), TaintVillagerRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_SPORE.get(), TaintSporeRenderer::new);
+        event.registerEntityRenderer(TCEntities.TAINT_SPORE_SWARMER.get(), TaintSporeSwarmerRenderer::new);
         event.registerEntityRenderer(
                 TCEntities.TAINT_SEED.get(), context -> new TaintSeedRenderer(context, TAINT_SEED_SHADOW));
         event.registerEntityRenderer(

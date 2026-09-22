@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
+import com.leclowndu93150.thaumaturge.content.eldritch.gen.MazeChunkStamper;
+import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
@@ -10,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -80,20 +83,124 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         if (outer == null) {
             return;
         }
-        ChunkPos anchor = linkedMaze(from, portalPos);
-        Vec3 target = new Vec3(anchor.getMiddleBlockX() + 0.5, OuterLands.MAZE_Y + 4, anchor.getMiddleBlockZ() + 0.5);
+
+        BlockEntityEldritchAltar altar =
+                from.getBlockEntity(portalPos.below()) instanceof BlockEntityEldritchAltar found ? found : null;
+        MazeTarget maze = linkedMaze(from, portalPos, altar);
+        BlockPos targetPos = prepareSafeEntry(outer, maze);
+        if (targetPos == null) {
+            maze = freshMaze(from, portalPos, altar);
+            targetPos = prepareSafeEntry(outer, maze);
+        }
+
+        Vec3 target = new Vec3(targetPos.getX() + 0.5, targetPos.getY(), targetPos.getZ() + 0.5);
         player.changeDimension(new DimensionTransition(
                 outer, target, Vec3.ZERO, player.getYRot(), player.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND));
         player.setPortalCooldown(PORTAL_COOLDOWN);
     }
 
-    private static ChunkPos linkedMaze(ServerLevel from, BlockPos portalPos) {
-        if (from.getBlockEntity(portalPos.below()) instanceof BlockEntityEldritchAltar altar
-                && BlockEntityEldritchAltar.isLinkedMaze(altar.getMazeChunk())) {
-            return new ChunkPos(altar.getMazeChunk());
+    private static MazeTarget linkedMaze(ServerLevel from, BlockPos portalPos, BlockEntityEldritchAltar altar) {
+        if (altar != null) {
+            ChunkPos linked = altar.findMazeLink(from);
+            return linked != null ? new MazeTarget(linked, false) : freshMaze(from, portalPos, altar);
         }
-        return new ChunkPos(portalPos);
+
+        MazeSavedData maze = MazeSavedData.get(from);
+        ChunkPos local = new ChunkPos(portalPos);
+        MazeCell cell = maze.getCell(local.x, local.z);
+        return cell != null && cell.feature == MazeCell.FEATURE_PORTAL
+                ? new MazeTarget(local, false)
+                : freshMaze(from, portalPos, null);
     }
+
+    private static MazeTarget freshMaze(ServerLevel from, BlockPos portalPos, BlockEntityEldritchAltar altar) {
+        if (altar != null) {
+            return new MazeTarget(altar.replaceMazeLink(from), true);
+        }
+
+        MazeSavedData maze = MazeSavedData.get(from);
+        ChunkPos fresh = BlockEntityEldritchAltar.createFreshMaze(from, maze);
+        maze.setReturn(fresh, portalPos.below());
+        return new MazeTarget(fresh, true);
+    }
+
+    private static BlockPos prepareSafeEntry(ServerLevel outer, MazeTarget maze) {
+        ChunkPos anchor = maze.anchor();
+        outer.getChunk(anchor.x, anchor.z, ChunkStatus.FULL, true);
+
+        BlockPos destinationPortal =
+                new BlockPos(anchor.getMiddleBlockX(), OuterLands.MAZE_Y + 3, anchor.getMiddleBlockZ());
+        boolean hasPortal = outer.getBlockState(destinationPortal).is(TCBlocks.ELDRITCH_PORTAL.get());
+        BlockPos safe = hasPortal ? findSafeArrival(outer, destinationPortal) : null;
+        if (safe != null) {
+            return safe;
+        }
+
+        if (!maze.freshlyAllocated()) {
+            return null;
+        }
+
+        MazeCell cell = MazeSavedData.get(outer).getCell(anchor.x, anchor.z);
+        if (cell != null && cell.feature == MazeCell.FEATURE_PORTAL) {
+            long seed = outer.getSeed() + anchor.x * 341873128712L + anchor.z * 132897987541L;
+            MazeChunkStamper.stamp(outer, RandomSource.create(seed), anchor.x, anchor.z, cell);
+        }
+
+        if (!outer.getBlockState(destinationPortal).is(TCBlocks.ELDRITCH_PORTAL.get())) {
+            outer.setBlock(
+                    destinationPortal.below(), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+            outer.setBlock(destinationPortal, TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
+        }
+
+        safe = findSafeArrival(outer, destinationPortal);
+        return safe != null ? safe : createEmergencyLanding(outer, destinationPortal);
+    }
+
+    private static BlockPos createEmergencyLanding(ServerLevel level, BlockPos portal) {
+        BlockPos center = new BlockPos(portal.getX() + 3, OuterLands.MAZE_Y + 1, portal.getZ());
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                BlockPos support = center.offset(dx, 0, dz);
+                level.setBlock(support, TCBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
+                level.removeBlock(support.above(), false);
+                level.removeBlock(support.above(2), false);
+            }
+        }
+        return center.above();
+    }
+
+    private static BlockPos findSafeArrival(ServerLevel level, BlockPos portal) {
+        for (int radius = 1; radius <= 4; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != radius) {
+                        continue;
+                    }
+                    int x = portal.getX() + dx;
+                    int z = portal.getZ() + dz;
+                    for (int y = portal.getY() + 1; y >= OuterLands.MAZE_Y + 1; y--) {
+                        BlockPos feet = new BlockPos(x, y, z);
+                        BlockPos support = feet.below();
+                        if (!level.getBlockState(support).isSolidRender(level, support)
+                                || !level.getBlockState(feet)
+                                        .getCollisionShape(level, feet)
+                                        .isEmpty()
+                                || !level.getBlockState(feet.above())
+                                        .getCollisionShape(level, feet.above())
+                                        .isEmpty()
+                                || !level.getFluidState(feet).isEmpty()
+                                || !level.getFluidState(feet.above()).isEmpty()) {
+                            continue;
+                        }
+                        return feet;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private record MazeTarget(ChunkPos anchor, boolean freshlyAllocated) {}
 
     private static void teleportToOverworld(ServerLevel from, ServerPlayer player, BlockPos portalPos) {
         ServerLevel overworld = from.getServer().overworld();

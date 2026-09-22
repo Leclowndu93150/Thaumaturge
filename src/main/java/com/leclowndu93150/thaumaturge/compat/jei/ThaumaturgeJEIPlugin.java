@@ -240,10 +240,14 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addRecipeCatalysts(InfusionCategory.RUNIC_RECIPE_TYPE, TCItems.INFUSION_MATRIX.get());
         registration.addRecipeCatalysts(DustTriggerCategory.RECIPE_TYPE, TCItems.SALIS_MUNDUS.get());
         registration.addRecipeCatalysts(MultiblockCategory.RECIPE_TYPE, TCItems.SALIS_MUNDUS.get());
+        registration.addRecipeCatalysts(MultiblockCategory.RECIPE_TYPE, TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
         registration.addRecipeCatalysts(CrucibleCategory.RECIPE_TYPE, TCItems.CRUCIBLE.get());
         registration.addRecipeCatalysts(AspectCompositionCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
         registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
         registration.addRecipeCatalysts(InfernalFurnaceCategory.RECIPE_TYPE, TCItems.INFERNAL_FURNACE.get());
+        registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TCItems.ALCHEMICAL_FURNACE.get());
+        registration.addRecipeCatalysts(
+                AspectFromStacksCategory.RECIPE_TYPE, TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
     }
 
     @Override

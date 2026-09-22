@@ -1,0 +1,19 @@
+{
+  "loader": "neoforge:obj",
+  "model": "thaumaturge:models/block/crystalizer_crystal.obj",
+  "textures": {
+    "texture0": "thaumaturge:block/crystalizer_crystal",
+    "particle": "thaumaturge:block/tube"
+  },
+  "automatic_culling": false,
+  "shade_quads": false,
+  "flip_v": true,
+  "emissive_ambient": true,
+  "render_type": "minecraft:cutout",
+  "visibility": {
+    "Crystal": true,
+    "RingFloat": false,
+    "RingBase": false,
+    "Support": false
+  }
+}

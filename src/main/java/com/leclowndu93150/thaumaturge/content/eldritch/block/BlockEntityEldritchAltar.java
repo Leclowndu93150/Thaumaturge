@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
+import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistKnight;
@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityEldritchAltar extends BlockEntity {
     public static final byte SPAWN_CULTIST = 0;
@@ -201,22 +202,56 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         MazeSavedData maze = MazeSavedData.get(serverLevel);
         ChunkPos anchor;
         if (mazeChunk == UNLINKED_MAZE) {
-            anchor = new ChunkPos(worldPosition);
+            ChunkPos local = new ChunkPos(worldPosition);
+            MazeCell localCell = maze.getCell(local.x, local.z);
+            anchor = localCell != null && localCell.feature == MazeCell.FEATURE_PORTAL
+                    ? local
+                    : createFreshMaze(serverLevel, maze);
         } else {
-            int w = mazeSpan(serverLevel);
-            int h = mazeSpan(serverLevel);
-            ChunkPos fresh = maze.allocateRegion(w, h);
-            if (fresh == null) {
-                Thaumaturge.LOGGER.error(
-                        "No free labyrinth region left for the eldritch altar at {}, reopening the previous labyrinth",
-                        worldPosition);
-                return;
-            }
-            maze.generateMaze(fresh.x, fresh.z, w, h, serverLevel.getRandom().nextLong());
-            anchor = fresh;
+            anchor = createFreshMaze(serverLevel, maze);
         }
+        setMazeLink(maze, anchor);
+    }
+
+    public @Nullable ChunkPos findMazeLink(ServerLevel serverLevel) {
+        MazeSavedData maze = MazeSavedData.get(serverLevel);
+        if (isLinkedMaze(mazeChunk)) {
+            ChunkPos current = new ChunkPos(mazeChunk);
+            MazeCell cell = maze.getCell(current.x, current.z);
+            if (cell != null && cell.feature == MazeCell.FEATURE_PORTAL) {
+                maze.setReturn(current, worldPosition);
+                return current;
+            }
+        }
+
+        ChunkPos local = new ChunkPos(worldPosition);
+        MazeCell localCell = maze.getCell(local.x, local.z);
+        if (localCell != null && localCell.feature == MazeCell.FEATURE_PORTAL) {
+            setMazeLink(maze, local);
+            return local;
+        }
+        return null;
+    }
+
+    public ChunkPos replaceMazeLink(ServerLevel serverLevel) {
+        MazeSavedData maze = MazeSavedData.get(serverLevel);
+        ChunkPos fresh = createFreshMaze(serverLevel, maze);
+        setMazeLink(maze, fresh);
+        return fresh;
+    }
+
+    private void setMazeLink(MazeSavedData maze, ChunkPos anchor) {
         mazeChunk = anchor.toLong();
         maze.setReturn(anchor, worldPosition);
+        setChanged();
+    }
+
+    static ChunkPos createFreshMaze(ServerLevel serverLevel, MazeSavedData maze) {
+        int w = mazeSpan(serverLevel);
+        int h = mazeSpan(serverLevel);
+        ChunkPos fresh = maze.allocateRegion(w, h);
+        maze.generateMaze(fresh.x, fresh.z, w, h, serverLevel.getRandom().nextLong());
+        return fresh;
     }
 
     public long getMazeChunk() {

@@ -24,7 +24,8 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.BIRCH_FOREST)
                 .add(Biomes.OLD_GROWTH_BIRCH_FOREST)
                 .add(Biomes.DARK_FOREST)
-                .add(TCBiomes.MAGICAL_FOREST);
+                .add(TCBiomes.MAGICAL_FOREST)
+                .add(TCBiomes.TAINTED_LANDS);
         tag(TCBiomeTags.HAS_GREATWOOD_RARE)
                 .add(Biomes.TAIGA)
                 .add(Biomes.OLD_GROWTH_PINE_TAIGA)
@@ -44,10 +45,16 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
         tag(BiomeTags.IS_OVERWORLD)
                 .add(TCBiomes.MAGICAL_FOREST)
                 .add(TCBiomes.EERIE)
-                .add(TCBiomes.ELDRITCH);
+                .add(TCBiomes.ELDRITCH)
+                .add(TCBiomes.TAINTED_LANDS);
         tag(BiomeTags.IS_FOREST).add(TCBiomes.MAGICAL_FOREST);
-        tag(TCBiomeTags.IS_MAGICAL).add(TCBiomes.MAGICAL_FOREST).add(TCBiomes.EERIE);
+        tag(TCBiomeTags.IS_MAGICAL)
+                .add(TCBiomes.MAGICAL_FOREST)
+                .add(TCBiomes.EERIE)
+                .add(TCBiomes.ELDRITCH)
+                .add(TCBiomes.TAINTED_LANDS);
         tag(TCBiomeTags.IS_SPOOKY).add(Biomes.DARK_FOREST).add(TCBiomes.EERIE);
+        tag(TCBiomeTags.IS_TAINTED).add(TCBiomes.TAINTED_LANDS);
         tag(TCBiomeTags.HAS_ELDRITCH_OBELISK)
                 .add(Biomes.PLAINS)
                 .add(Biomes.SUNFLOWER_PLAINS)

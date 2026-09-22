@@ -18,6 +18,7 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.content.aura.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
@@ -33,6 +34,8 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.link.ResearchLinkData;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
+import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
+import com.leclowndu93150.thaumaturge.content.taint.flux.FluxGooFluid;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.warp.WarpEvents;
 import com.leclowndu93150.thaumaturge.data.worldgen.feature.TCConfiguredFeatures;
@@ -110,6 +113,12 @@ public final class TCCommands {
             (ctx, builder) -> SharedSuggestionProvider.suggest(
                     TCFocusElements.registry().keySet().stream().map(ResourceLocation::toString), builder);
 
+    private static final SuggestionProvider<CommandSourceStack> FLUX_EVENTS =
+            (ctx, builder) -> SharedSuggestionProvider.suggest(
+                    Arrays.stream(FluxPressureEvents.Kind.values())
+                            .map(kind -> kind.name().toLowerCase(Locale.ROOT)),
+                    builder);
+
     private static final SuggestionProvider<CommandSourceStack> CHAMPION_MODS =
             (ctx, builder) -> SharedSuggestionProvider.suggest(
                     Stream.concat(ChampionModifier.MODS.stream().map(ChampionModifier::name), Stream.of("random")),
@@ -150,6 +159,15 @@ public final class TCCommands {
                         .then(Commands.literal("set")
                                 .then(Commands.argument("level", IntegerArgumentType.integer(1, 8))
                                         .executes(TCCommands::setFluxGoo))))
+                .then(Commands.literal("flux_gas")
+                        .then(Commands.literal("set")
+                                .then(Commands.argument("level", IntegerArgumentType.integer(1, 8))
+                                        .executes(TCCommands::setFluxGas))))
+                .then(Commands.literal("flux_event")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .suggests(FLUX_EVENTS)
+                                .executes(TCCommands::triggerFluxEvent)))
                 .then(Commands.literal("effect")
                         .then(Commands.literal("vis_exhaust").executes(ctx -> giveEffect(ctx, "vis_exhaust")))
                         .then(Commands.literal("infectious_vis_exhaust")
@@ -629,10 +647,59 @@ public final class TCCommands {
             int level = IntegerArgumentType.getInteger(ctx, "level");
             BlockPos pos = player.blockPosition();
             ServerLevel serverLevel = (ServerLevel) player.level();
-            var state = TCBlocks.FLUX_GOO.get().defaultBlockState();
-            serverLevel.setBlock(pos, state, Block.UPDATE_ALL);
+            serverLevel.setBlock(pos, FluxGooFluid.gooBlockState(level), Block.UPDATE_ALL);
+            serverLevel.scheduleTick(
+                    pos,
+                    serverLevel.getFluidState(pos).getType(),
+                    serverLevel.getFluidState(pos).getType().getTickDelay(serverLevel));
             ctx.getSource().sendSuccess(() -> Component.literal("Placed flux goo at level " + level), false);
             return Command.SINGLE_SUCCESS;
+        } catch (Exception e) {
+            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int setFluxGas(CommandContext<CommandSourceStack> ctx) {
+        try {
+            ServerPlayer player = ctx.getSource().getPlayerOrException();
+            int level = IntegerArgumentType.getInteger(ctx, "level");
+            BlockPos pos = player.blockPosition();
+            ServerLevel serverLevel = (ServerLevel) player.level();
+            serverLevel.setBlock(pos, BlockFluxGas.gasBlockState(level), Block.UPDATE_ALL);
+            BlockFluxGas.scheduleTick(serverLevel, pos);
+            ctx.getSource().sendSuccess(() -> Component.literal("Placed flux gas at level " + level), false);
+            return Command.SINGLE_SUCCESS;
+        } catch (Exception e) {
+            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int triggerFluxEvent(CommandContext<CommandSourceStack> ctx) {
+        try {
+            ServerPlayer player = ctx.getSource().getPlayerOrException();
+            String raw = StringArgumentType.getString(ctx, "type").toUpperCase(Locale.ROOT);
+            FluxPressureEvents.Kind kind = FluxPressureEvents.Kind.valueOf(raw);
+            ServerLevel level = (ServerLevel) player.level();
+            BlockPos pos = player.blockPosition();
+            if (!FluxPressureEvents.trigger(level, pos, kind)) {
+                ctx.getSource()
+                        .sendFailure(
+                                Component.literal("Flux event " + kind.name().toLowerCase(Locale.ROOT)
+                                        + " could not trigger here (needs " + kind.cost()
+                                        + " local Flux and a valid target)"));
+                return 0;
+            }
+            ctx.getSource()
+                    .sendSuccess(
+                            () -> Component.literal("Triggered Flux event "
+                                    + kind.name().toLowerCase(Locale.ROOT) + " for " + kind.cost() + " Flux"),
+                            false);
+            return Command.SINGLE_SUCCESS;
+        } catch (IllegalArgumentException e) {
+            ctx.getSource().sendFailure(Component.literal("Unknown Flux event type"));
+            return 0;
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
             return 0;

@@ -24,7 +24,7 @@ public final class MazeSavedData extends SavedData {
     private static final Codec<Map<Long, BlockPos>> RETURNS_CODEC =
             Codec.unboundedMap(Codec.STRING.xmap(Long::parseLong, String::valueOf), BlockPos.CODEC);
     private static final int REGION_STRIDE_CHUNKS = 64;
-    private static final int MAX_ALLOCATION_ATTEMPTS = 4096;
+    private static final int MAX_LOCAL_ALLOCATION_ATTEMPTS = 64;
 
     public static final Codec<MazeSavedData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                     CELLS_CODEC.fieldOf("cells").forGetter(data -> data.cells),
@@ -105,16 +105,72 @@ public final class MazeSavedData extends SavedData {
         return false;
     }
 
-    public @Nullable ChunkPos allocateRegion(int w, int h) {
-        for (int attempt = 0; attempt < MAX_ALLOCATION_ATTEMPTS; attempt++) {
-            ChunkPos candidate = spiral(allocCursor + attempt);
+    public ChunkPos allocateRegion(int w, int h) {
+        int attempts = 0;
+        while (attempts < MAX_LOCAL_ALLOCATION_ATTEMPTS) {
+            long index = (long) allocCursor + attempts;
+            if (index > Integer.MAX_VALUE) {
+                break;
+            }
+            ChunkPos candidate = spiral((int) index);
             if (!mazesInRange(candidate.x, candidate.z, w, h)) {
-                allocCursor += attempt + 1;
+                advanceAllocCursor(attempts + 1);
                 setDirty();
                 return candidate;
             }
+            attempts++;
         }
-        return null;
+
+        advanceAllocCursor(attempts);
+        ChunkPos fallback = allocatePastOccupiedBounds(w, h);
+        setDirty();
+        return fallback;
+    }
+
+    private ChunkPos allocatePastOccupiedBounds(int w, int h) {
+        if (cells.isEmpty()) {
+            return new ChunkPos(0, 0);
+        }
+
+        int minX = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        int maxZ = Integer.MIN_VALUE;
+        for (long packed : cells.keySet()) {
+            int x = (int) packed;
+            int z = (int) (packed >> 32);
+            minX = Math.min(minX, x);
+            maxX = Math.max(maxX, x);
+            minZ = Math.min(minZ, z);
+            maxZ = Math.max(maxZ, z);
+        }
+
+        long east = (long) maxX + w + 1L;
+        if (east <= Integer.MAX_VALUE) {
+            return new ChunkPos((int) east, 0);
+        }
+        long west = (long) minX - w - 1L;
+        if (west >= Integer.MIN_VALUE) {
+            return new ChunkPos((int) west, 0);
+        }
+        long south = (long) maxZ + h + 1L;
+        if (south <= Integer.MAX_VALUE) {
+            return new ChunkPos(0, (int) south);
+        }
+        long north = (long) minZ - h - 1L;
+        if (north >= Integer.MIN_VALUE) {
+            return new ChunkPos(0, (int) north);
+        }
+
+        throw new IllegalStateException("Labyrinth allocation exhausted the ChunkPos coordinate range");
+    }
+
+    private void advanceAllocCursor(int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        long next = (long) allocCursor + amount;
+        allocCursor = next > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) next;
     }
 
     public void setReturn(ChunkPos anchor, BlockPos overworldPos) {

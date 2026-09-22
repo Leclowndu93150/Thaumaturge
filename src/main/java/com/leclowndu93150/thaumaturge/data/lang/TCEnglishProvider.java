@@ -367,7 +367,15 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.ore_quartz", "Quartz Ore");
 
         add("block.thaumaturge.alchemical_construct", "Alchemical Construct");
+        add("block.thaumaturge.alchemical_furnace", "Alchemical Furnace");
         add("block.thaumaturge.advanced_alchemical_construct", "Advanced Alchemical Construct");
+        add("block.thaumaturge.advanced_alchemical_furnace", "Advanced Alchemical Furnace");
+        add("block.thaumaturge.advanced_alchemical_furnace_nozzle", "Advanced Alchemical Furnace Nozzle");
+        add("block.thaumaturge.advanced_alchemical_furnace_alembic_placeholder", "Alembic");
+        add("block.thaumaturge.advanced_alchemical_furnace_construct_placeholder", "Alchemical Construct");
+        add(
+                "block.thaumaturge.advanced_alchemical_furnace_advanced_construct_placeholder",
+                "Advanced Alchemical Construct");
 
         add("block.thaumaturge.metal_thaumium", "Thaumium Block");
         add("block.thaumaturge.metal_brass", "Alchemical Brass Block");
@@ -550,12 +558,14 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void langEPlants() {
 
         add("block.thaumaturge.shimmerleaf", "Shimmerleaf");
+        add("block.thaumaturge.ethereal_bloom", "Ethereal Bloom");
         add("block.thaumaturge.cinderpearl", "Cinderpearl");
         add("block.thaumaturge.vishroom", "Vishroom");
         add("block.thaumaturge.grass_ambient", "Ambient Grass Block");
         add("biome.thaumaturge.magical_forest", "Magical Forest");
         add("biome.thaumaturge.eerie", "Eerie");
         add("biome.thaumaturge.eldritch", "Eldritch");
+        add("biome.thaumaturge.tainted_lands", "Tainted Lands");
     }
 
     private void langMAuraHud() {
@@ -576,6 +586,7 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void langTaint() {
 
         add("block.thaumaturge.flux_goo", "Flux Goo");
+        add("block.thaumaturge.flux_gas", "Flux Gas");
         add("fluid_type.thaumaturge.flux_goo", "Flux Goo");
 
         add("block.thaumaturge.taint_rock", "Tainted Rock");
@@ -585,6 +596,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.taint_log", "Tainted Log");
         add("block.thaumaturge.taint_feature", "Taint Feature");
         add("block.thaumaturge.taint_fibre", "Taint Fibre");
+        add("block.thaumaturge.taint_spore_stalk", "Taint Spore Stalk");
+        add("entity.thaumaturge.taint_spore", "Taint Spore");
+        add("entity.thaumaturge.taint_spore_swarmer", "Taint Spore Swarmer");
+        add("entity.thaumaturge.taint_creeper", "Tainted Creeper");
+        add("entity.thaumaturge.taint_cow", "Tainted Cow");
+        add("entity.thaumaturge.taint_pig", "Tainted Pig");
+        add("entity.thaumaturge.taint_chicken", "Tainted Chicken");
+        add("entity.thaumaturge.taint_sheep", "Tainted Sheep");
+        add("entity.thaumaturge.taint_villager", "Tainted Villager");
+        add("entity.thaumaturge.taint_spider", "Tainted Crawler");
 
         add("effect.thaumaturge.vis_exhaust", "Vis Exhaust");
         add("effect.thaumaturge.infectious_vis_exhaust", "Flux Phage");
@@ -818,6 +839,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.lamp_growth", "Lamp of Growth");
         add("block.thaumaturge.lamp_fertility", "Lamp of Fertility");
         add("block.thaumaturge.centrifuge", "Essentia Centrifuge");
+        add("block.thaumaturge.essentia_reservoir", "Essentia Reservoir");
+        add("block.thaumaturge.essentia_crystalizer", "Essentia Crystallizer");
+        add("block.thaumaturge.flux_scrubber", "Flux Scrubber");
         add("block.thaumaturge.hungry_chest", "Hungry Chest");
         add("block.thaumaturge.everfull_urn", "Everfull Urn");
         add("block.thaumaturge.vis_generator", "Vis Generator");
@@ -867,6 +891,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("warp.thaumaturge.text.16", "The faint sound of chanting can be heard nearby.");
         add("warp.thaumaturge.text.hunger.1", "Your hunger cannot be satisfied with normal food.");
         add("warp.thaumaturge.text.hunger.2", "Your hunger begins to fade.");
+        add(
+                "warp.thaumaturge.fluxevent.1",
+                "The nearby aura suddenly twists and warps, leaving your thoughts in a shambles.");
         add("warp.thaumaturge.fluxevent.2", "You feel something invading your mind and sapping your will.");
         add("warp.thaumaturge.fluxevent.3", "You feel a sudden release of magical tension nearby.");
         add("entity.thaumaturge.flux_rift", "Flux Rift");
@@ -1610,6 +1637,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         addJadeMode("vis_relays", "Vis Relays");
         addJadeMode("node_transducers", "Node Transducers");
         addJadeMode("smelters", "Essentia Smelters");
+        addJadeMode("advanced_alchemical_furnaces", "Advanced Alchemical Furnaces");
         addJadeMode("jars", "Essentia Jars and Tanks");
         addJadeMode("alembics", "Alembics");
         addJadeMode("crucibles", "Crucibles");
@@ -1628,6 +1656,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         addJadeMode("everfull_urns", "Everfull Urns");
         addJadeMode("infernal_furnaces", "Infernal Furnaces");
         addJadeMode("focal_manipulators", "Focal Manipulators");
+        addJadeMode("flux_scrubbers", "Flux Scrubbers");
+        addJadeMode("crystalizers", "Essentia Crystalizers");
+        addJadeMode("reservoirs", "Essentia Reservoirs");
         add("config.jade.plugin_thaumaturge.node", "Aura Node Info");
         add("config.jade.plugin_thaumaturge.essentia", "Essentia Contents");
         add("config.jade.plugin_thaumaturge.machine", "Machine Progress");
@@ -1679,6 +1710,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.direction.east", "East");
         add("jade.thaumaturge.thaumatorium.recipes", "Recipes: %s / %s");
         add("jade.thaumaturge.centrifuge.state", "Centrifuge: %s");
+        add("jade.thaumaturge.flux_scrubber.charges", "Charges: %s");
+        add("jade.thaumaturge.flux_scrubber.power", "Power: %s%%");
         add("jade.thaumaturge.state.idle", "Idle");
         add("jade.thaumaturge.state.processing", "Processing");
         add("jade.thaumaturge.machine.output", "Output items: %s");
@@ -1693,6 +1726,16 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.focal.no_focus", "No focus inserted");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
+        add("jade.thaumaturge.advanced_furnace.status.unformed", "Incomplete multiblock");
+        add("jade.thaumaturge.advanced_furnace.status.ready", "Ready");
+        add("jade.thaumaturge.advanced_furnace.status.processing", "Processing");
+        add("jade.thaumaturge.advanced_furnace.status.waiting_vis", "Waiting for vis");
+        add("jade.thaumaturge.advanced_furnace.status.storage_full", "Essentia storage full");
+        add("jade.thaumaturge.advanced_furnace.input", "Input: %s");
+        add("jade.thaumaturge.advanced_furnace.input_cost", "Input cost: %s Ignis, %s Perditio, %s Aqua");
+        add("jade.thaumaturge.advanced_furnace.ignis", "Ignis: %s / %s");
+        add("jade.thaumaturge.advanced_furnace.perditio", "Perditio: %s / %s");
+        add("jade.thaumaturge.advanced_furnace.aqua", "Aqua: %s / %s");
         add("jade.thaumaturge.transducer.status.0", "No node below");
         add("jade.thaumaturge.transducer.status.1", "Transducing");
         add("jade.thaumaturge.transducer.status.2", "Node energized");
@@ -1703,6 +1746,26 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
         add("jade.thaumaturge.golem.rank", "Rank %s");
         add("jade.thaumaturge.golem.xp", "Experience: %s / %s");
+        add("block.thaumaturge.warded_glass", "Warded Glass");
+        add("block.thaumaturge.arcane_door", "Arcane Door");
+        add("block.thaumaturge.arcane_pressure_plate", "Arcane Pressure Plate");
+        add("block.thaumaturge.golem_fetter", "Golem Fetter");
+        add("block.thaumaturge.tallow_block", "Tallow Block");
+        add("block.thaumaturge.item_grate", "Item Grate");
+        add("item.thaumaturge.arcane_key_iron", "Iron Key");
+        add("item.thaumaturge.arcane_key_gold", "Gold Key");
+        add("message.thaumaturge.arcane_key_bound", "Key bound");
+        add("message.thaumaturge.arcane_key_no_access", "You cannot bind a key to this lock");
+        add("message.thaumaturge.arcane_key_wrong_lock", "This key is bound to another lock");
+        add("message.thaumaturge.arcane_key_already_bound", "This key is already bound to this lock");
+        add("message.thaumaturge.arcane_key_already_access", "You already have access to this lock");
+        add("message.thaumaturge.arcane_key_granted_iron", "You can now open this lock");
+        add("message.thaumaturge.arcane_key_granted_gold", "You can now open this lock and grant Iron Key access");
+        add("message.thaumaturge.arcane_pressure_plate_mode.0", "Arcane pressure plate: everyone");
+        add("message.thaumaturge.arcane_pressure_plate_mode.1", "Arcane pressure plate: owner and keys");
+        add(
+                "message.thaumaturge.arcane_pressure_plate_mode.2",
+                "Arcane pressure plate: everyone except owner and keys");
     }
 
     private void addJadeMode(String path, String label) {

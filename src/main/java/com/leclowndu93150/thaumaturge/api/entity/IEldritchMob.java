@@ -1,6 +1,3 @@
-/*
- * Thaumaturge rewrite for modern Minecraft.
- */
 package com.leclowndu93150.thaumaturge.api.entity;
 
 /**

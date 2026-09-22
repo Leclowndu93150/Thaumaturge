@@ -21,8 +21,7 @@ import net.minecraft.resources.ResourceKey;
 /**
  * An immutable, ordered list of aspect quantities.
  *
- * <p>Iteration order is insertion order, matching the legacy {@code LinkedHashMap}-backed
- * collection that mods relied on. Two instances are equal when they contain the same
+ * <p>Iteration order is insertion order. Two instances are equal when they contain the same
  * (aspect, amount) entries in the same order.
  *
  * <p>All mutating operations return a new instance and leave the receiver untouched. Empty
@@ -117,7 +116,7 @@ public final class AspectList {
     }
 
     /**
-     * Total amount across all entries, in vis units. Corresponds to legacy {@code visSize()}.
+     * Total amount across all entries, in vis units.
      *
      * @return the sum of all amounts
      */
@@ -255,7 +254,7 @@ public final class AspectList {
 
     /**
      * Returns an aspect list whose entries are the maximum of this list's amounts and the
-     * given list's amounts. The legacy operation was named {@code merge}.
+     * given list's amounts.
      *
      * @param other the other list
      * @return the merged aspect list

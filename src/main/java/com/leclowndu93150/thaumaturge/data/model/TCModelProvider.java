@@ -9,12 +9,14 @@ import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
+import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalBlockstateGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalItemModelGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.EssentiaCrystalModelGenerator;
@@ -55,9 +57,10 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
@@ -123,7 +126,14 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private static final Set<String> CHECKED_IN_ITEM_MODELS = Set.of(
-            "bellows", "leaves_greatwood", "leaves_silverwood", "plank_greatwood", "plank_silverwood", "thaumometer");
+            "advanced_alchemical_furnace",
+            "bellows",
+            "flux_scrubber",
+            "leaves_greatwood",
+            "leaves_silverwood",
+            "plank_greatwood",
+            "plank_silverwood",
+            "thaumometer");
 
     private void autoBlockItems() {
         for (Item item : BuiltInRegistries.ITEM) {
@@ -159,6 +169,9 @@ public final class TCModelProvider implements DataProvider {
         registerAuraDevices(blockModels);
         registerNoiseDevices();
         TubeModels.register(blockStateOutput);
+        legacyNorthFacingBlock(TCBlocks.ESSENTIA_RESERVOIR.get(), "essentia_reservoir");
+        legacyNorthFacingBlock(TCBlocks.ESSENTIA_CRYSTALIZER.get(), "essentia_crystalizer");
+        legacyNorthFacingBlock(TCBlocks.FLUX_SCRUBBER.get(), "flux_scrubber");
         simpleFromExisting(TCBlocks.CRUCIBLE.get(), "crucible");
         mirrorBlockState(TCBlocks.MIRROR.get());
         mirrorBlockState(TCBlocks.MIRROR_ESSENTIA.get());
@@ -288,6 +301,8 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.TUBE_FILTER.get());
         flatItem(TCItems.TUBE_ONEWAY.get());
         flatItem(TCItems.TUBE_BUFFER.get());
+        flatItem(TCItems.ARCANE_KEY_IRON.get());
+        flatItem(TCItems.ARCANE_KEY_GOLD.get());
         flatItem(TCItems.GOGGLES_REVEALING.get());
         flatItem(TCItems.SCRIBING_TOOLS.get());
         flatItem(TCItems.ALUMENTUM.get());
@@ -307,7 +322,11 @@ public final class TCModelProvider implements DataProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        registerAlchemicalFurnace();
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(
+                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), vName("advanced_alchemical_furnace_base"))
+                .with(horizontalDispatch()));
 
         blockModels.createTrivialCube(TCBlocks.METAL_BRASS_BLOCK.get());
         blockModels.createTrivialCube(TCBlocks.METAL_THAUMIUM_BLOCK.get());
@@ -540,6 +559,23 @@ public final class TCModelProvider implements DataProvider {
         };
     }
 
+    private void legacyNorthFacingBlock(Block block, String modelName) {
+        PropertyDispatch.C1<Direction> dispatch = PropertyDispatch.property(BlockStateProperties.FACING);
+        dispatch = dispatch.select(Direction.NORTH, Variant.variant());
+        dispatch = dispatch.select(
+                Direction.SOUTH, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180));
+        dispatch = dispatch.select(
+                Direction.WEST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270));
+        dispatch = dispatch.select(
+                Direction.EAST, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90));
+        dispatch = dispatch.select(
+                Direction.UP, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270));
+        dispatch = dispatch.select(
+                Direction.DOWN, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90));
+        blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(block, vName(modelName)).with(dispatch));
+    }
+
     private static PropertyDispatch upBaseFacingDispatch() {
         PropertyDispatch.C1<Direction> dispatch = PropertyDispatch.property(BlockStateProperties.FACING);
         for (Direction direction : Direction.values()) {
@@ -761,6 +797,22 @@ public final class TCModelProvider implements DataProvider {
         delegateItem(block.asItem(), TCIds.rl("block/" + modelName + "_off"));
     }
 
+    private void registerAlchemicalFurnace() {
+        ResourceLocation model = TCIds.rl("block/alchemical_furnace");
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ALCHEMICAL_FURNACE.get(), v(model))
+                .with(PropertyDispatch.properties(BlockAlchemicalFurnace.LIT, BlockStateProperties.HORIZONTAL_FACING)
+                        .generate((lit, facing) -> switch (facing) {
+                            case EAST ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
+                            case SOUTH ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180);
+                            case WEST ->
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270);
+                            default -> Variant.variant();
+                        })));
+        delegateItem(TCItems.ALCHEMICAL_FURNACE.get(), model);
+    }
+
     private void registerDeconstructionTable() {
         registerInvisibleBlock(TCBlocks.DECONSTRUCTION_TABLE.get());
         delegateItem(TCBlocks.DECONSTRUCTION_TABLE.get().asItem(), TCIds.rl("item/deconstruction_table_base"));
@@ -915,6 +967,10 @@ public final class TCModelProvider implements DataProvider {
         registerInvisibleBlock(TCBlocks.PLACEHOLDER_CAULDRON.get());
         registerInvisibleBlock(TCBlocks.PLACEHOLDER_ANVIL.get());
         registerInvisibleBlock(TCBlocks.PLACEHOLDER_TABLE.get());
+        registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get());
+        registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get());
+        registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
+        registerInvisibleBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get());
     }
 
     private void registerConstructs() {
@@ -1321,6 +1377,20 @@ public final class TCModelProvider implements DataProvider {
             model.addProperty("render_type", "minecraft:cutout_mipped");
             return model;
         });
+        ResourceLocation bloomModel = ModelTemplates.CROSS.create(
+                TCBlocks.ETHEREAL_BLOOM.get(),
+                TextureMapping.cross(TCBlocks.PLANT_SHIMMERLEAF.get()),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        simpleBlock(TCBlocks.ETHEREAL_BLOOM.get(), bloomModel);
+        ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCItems.ETHEREAL_BLOOM.get()),
+                TextureMapping.layer0(TextureMapping.getBlockTexture(TCBlocks.PLANT_SHIMMERLEAF.get())),
+                modelOutput);
+
         simpleBlock(TCBlocks.GRASS_AMBIENT.get(), grassModel);
         delegateItem(TCItems.GRASS_AMBIENT.get(), grassModel);
     }
@@ -1368,10 +1438,11 @@ public final class TCModelProvider implements DataProvider {
                         new String[] {"taint_crust_0", "taint_crust_1", "taint_crust_2"}, new int[] {8, 1, 1})));
 
         simpleFromExisting(TCBlocks.FLUX_GOO.get(), "flux_goo");
+        translucentCube(TCBlocks.FLUX_GAS.get());
         simpleFromExisting(TCBlocks.TAINT_GEYSER.get(), "taint_geyser");
         registerTaintLog();
-        registerTaintFeature();
         registerTaintFibre();
+        registerTaintSporeStalk();
 
         delegateItem(TCBlocks.TAINT_ROCK.asItem(), TCIds.rl("block/taint_rock"));
         delegateItem(TCBlocks.TAINT_SOIL.asItem(), TCIds.rl("block/taint_soil_0"));
@@ -1380,6 +1451,33 @@ public final class TCModelProvider implements DataProvider {
         delegateItem(TCBlocks.TAINT_LOG.asItem(), TCIds.rl("block/taint_log"));
         delegateItem(TCBlocks.TAINT_FEATURE.asItem(), TCIds.rl("block/taint_orb_0"));
         delegateItem(TCBlocks.TAINT_FIBRE.asItem(), TCIds.rl("block/taint_fibre"));
+        delegateItem(TCBlocks.TAINT_SPORE_STALK.asItem(), TCIds.rl("block/taint_spore_stalk_immature"));
+    }
+
+    private void registerTaintSporeStalk() {
+        Block stalk = TCBlocks.TAINT_SPORE_STALK.get();
+        ResourceLocation immature = ModelTemplates.CROSS.createWithSuffix(
+                stalk,
+                "_immature",
+                TextureMapping.cross(TCIds.rl("block/taint_spore_stalk_1")),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        ResourceLocation mature = ModelTemplates.CROSS.createWithSuffix(
+                stalk,
+                "_mature",
+                TextureMapping.cross(TCIds.rl("block/taint_spore_stalk_2")),
+                (id, json) -> modelOutput.accept(id, () -> {
+                    JsonElement element = json.get();
+                    element.getAsJsonObject().addProperty("render_type", "minecraft:cutout");
+                    return element;
+                }));
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(stalk)
+                .with(PropertyDispatch.property(BlockTaintSporeStalk.MATURE)
+                        .select(false, v(immature))
+                        .select(true, v(mature))));
     }
 
     private void registerTaintLog() {
@@ -1417,32 +1515,6 @@ public final class TCModelProvider implements DataProvider {
                     .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90));
         }
         return entries.toArray(Variant[]::new);
-    }
-
-    private void registerTaintFeature() {
-        Variant[] orbs = new Variant[] {vName("taint_orb_0"), vName("taint_orb_1"), vName("taint_orb_2")};
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.TAINT_FEATURE.get(), orbs)
-                .with(PropertyDispatch.property(DirectionalBlock.FACING)
-                        .select(Direction.UP, Variant.variant())
-                        .select(
-                                Direction.DOWN,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-                        .select(
-                                Direction.NORTH,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
-                        .select(
-                                Direction.SOUTH,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.WEST,
-                                Variant.variant()
-                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.EAST,
-                                Variant.variant()
-                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))));
     }
 
     private void registerTaintFibre() {
@@ -1514,6 +1586,245 @@ public final class TCModelProvider implements DataProvider {
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
         paving(TCBlocks.PAVING_STONE_BARRIER.get(), "paving_stone_barrier");
+        wardedGlass();
+        golemFetter();
+        tallowBlock();
+        itemGrate();
+        arcaneDoor();
+        arcanePressurePlate();
+    }
+
+    private void arcaneDoor() {
+        TextureMapping textures = new TextureMapping()
+                .put(TextureSlot.TOP, blockTexture("arcane_door_top"))
+                .put(TextureSlot.BOTTOM, blockTexture("arcane_door_bottom"));
+        ResourceLocation bottomLeft =
+                ModelTemplates.DOOR_BOTTOM_LEFT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomLeftOpen =
+                ModelTemplates.DOOR_BOTTOM_LEFT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomRight =
+                ModelTemplates.DOOR_BOTTOM_RIGHT.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation bottomRightOpen =
+                ModelTemplates.DOOR_BOTTOM_RIGHT_OPEN.create(TCBlocks.ARCANE_DOOR.get(), textures, modelOutput);
+        ResourceLocation topLeft = TCIds.rl("block/arcane_door_top_left");
+        ResourceLocation topLeftOpen = TCIds.rl("block/arcane_door_top_left_open");
+        ResourceLocation topRight = TCIds.rl("block/arcane_door_top_right");
+        ResourceLocation topRightOpen = TCIds.rl("block/arcane_door_top_right_open");
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_DOOR.get())
+                .with(doorHalf(
+                        doorHalf(
+                                PropertyDispatch.properties(
+                                        BlockStateProperties.HORIZONTAL_FACING,
+                                        BlockStateProperties.DOUBLE_BLOCK_HALF,
+                                        BlockStateProperties.DOOR_HINGE,
+                                        BlockStateProperties.OPEN),
+                                DoubleBlockHalf.LOWER,
+                                bottomLeft,
+                                bottomLeftOpen,
+                                bottomRight,
+                                bottomRightOpen),
+                        DoubleBlockHalf.UPPER,
+                        topLeft,
+                        topLeftOpen,
+                        topRight,
+                        topRightOpen)));
+        ModelTemplates.FLAT_ITEM.create(
+                ModelLocationUtils.getModelLocation(TCBlocks.ARCANE_DOOR.get().asItem()),
+                TextureMapping.layer0(TCIds.rl("item/arcane_door")),
+                modelOutput);
+    }
+
+    private void golemFetter() {
+        TextureMapping normal = new TextureMapping()
+                .put(TextureSlot.BOTTOM, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.SIDE, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.TOP, blockTexture("golem_fetter"));
+        TextureMapping active = new TextureMapping()
+                .put(TextureSlot.BOTTOM, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.SIDE, blockTexture("golem_fetter_side"))
+                .put(TextureSlot.TOP, blockTexture("golem_fetter_active"));
+        ResourceLocation off = ModelTemplates.CUBE_BOTTOM_TOP.create(TCBlocks.GOLEM_FETTER.get(), normal, modelOutput);
+        ResourceLocation on = ModelTemplates.CUBE_BOTTOM_TOP.createWithSuffix(
+                TCBlocks.GOLEM_FETTER.get(), "_powered", active, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.GOLEM_FETTER.get())
+                .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.golem.BlockGolemFetter.POWERED)
+                        .select(false, v(off))
+                        .select(true, v(on))));
+        delegateItem(TCBlocks.GOLEM_FETTER.get().asItem(), off);
+    }
+
+    private void tallowBlock() {
+        ResourceLocation model = ModelTemplates.CUBE_BOTTOM_TOP.create(
+                TCBlocks.TALLOW_BLOCK.get(),
+                new TextureMapping()
+                        .put(TextureSlot.BOTTOM, blockTexture("tallow_block"))
+                        .put(TextureSlot.SIDE, blockTexture("tallow_block"))
+                        .put(TextureSlot.TOP, blockTexture("tallow_block_top")),
+                modelOutput);
+        simpleBlock(TCBlocks.TALLOW_BLOCK.get(), model);
+        delegateItem(TCBlocks.TALLOW_BLOCK.get().asItem(), model);
+    }
+
+    private void itemGrate() {
+        ResourceLocation open = ModelTemplates.CUBE_ALL.create(
+                TCBlocks.ITEM_GRATE.get(),
+                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate")),
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
+        ResourceLocation closed = ModelTemplates.CUBE_ALL.createWithSuffix(
+                TCBlocks.ITEM_GRATE.get(),
+                "_closed",
+                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate_closed")),
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ITEM_GRATE.get())
+                .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.device.BlockItemGrate.OPEN)
+                        .select(true, v(open))
+                        .select(false, v(closed))));
+        delegateItem(TCBlocks.ITEM_GRATE.get().asItem(), open);
+    }
+
+    private void wardedGlass() {
+        ResourceLocation model = TCIds.rl("block/warded_glass");
+        modelOutput.accept(model, () -> wardedGlassModel());
+        simpleBlock(TCBlocks.WARDED_GLASS.get(), model);
+        ResourceLocation item = ModelTemplates.CUBE_ALL.createWithSuffix(
+                TCBlocks.WARDED_GLASS.get(),
+                "_item",
+                TextureMapping.cube(TCBlocks.WARDED_GLASS.get()),
+                (id, json) -> modelOutput.accept(id, () -> translucent(json.get())));
+        delegateItem(TCBlocks.WARDED_GLASS.get().asItem(), item);
+    }
+
+    private static JsonElement wardedGlassModel() {
+        JsonObject root = new JsonObject();
+        root.addProperty("loader", "thaumaturge:warded_glass");
+        root.addProperty("render_type", "minecraft:translucent");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("particle", "thaumaturge:block/warded_glass");
+        for (int i = 1; i <= 47; i++) {
+            textures.addProperty("ctm_" + i, "thaumaturge:block/warded_glass_" + i);
+        }
+        root.add("textures", textures);
+        return root;
+    }
+
+    private static JsonElement cutout(JsonElement json) {
+        JsonObject element = json.getAsJsonObject();
+        element.addProperty("render_type", "minecraft:cutout");
+        return element;
+    }
+
+    private static JsonElement translucent(JsonElement json) {
+        JsonObject element = json.getAsJsonObject();
+        element.addProperty("render_type", "minecraft:translucent");
+        return element;
+    }
+
+    private void arcanePressurePlate() {
+        ResourceLocation[] up = new ResourceLocation[3];
+        ResourceLocation[] down = new ResourceLocation[3];
+        for (int mode = 0; mode <= 2; mode++) {
+            TextureMapping textures =
+                    new TextureMapping().put(TextureSlot.TEXTURE, blockTexture("arcane_pressure_plate_" + mode));
+            up[mode] = ModelTemplates.PRESSURE_PLATE_UP.createWithSuffix(
+                    TCBlocks.ARCANE_PRESSURE_PLATE.get(), "_" + mode, textures, modelOutput);
+            down[mode] = ModelTemplates.PRESSURE_PLATE_DOWN.createWithSuffix(
+                    TCBlocks.ARCANE_PRESSURE_PLATE.get(), "_" + mode, textures, modelOutput);
+        }
+        PropertyDispatch.C2<Boolean, Integer> states = PropertyDispatch.properties(
+                BlockStateProperties.POWERED,
+                com.leclowndu93150.thaumaturge.content.warding.BlockArcanePressurePlate.MODE);
+        for (int mode = 0; mode <= 2; mode++) {
+            states = states.select(false, mode, v(up[mode])).select(true, mode, v(down[mode]));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ARCANE_PRESSURE_PLATE.get())
+                .with(states));
+        delegateItem(TCBlocks.ARCANE_PRESSURE_PLATE.get().asItem(), up[0]);
+    }
+
+    private static PropertyDispatch.C4<Direction, DoubleBlockHalf, DoorHingeSide, Boolean> doorHalf(
+            PropertyDispatch.C4<Direction, DoubleBlockHalf, DoorHingeSide, Boolean> properties,
+            DoubleBlockHalf half,
+            ResourceLocation left,
+            ResourceLocation leftOpen,
+            ResourceLocation right,
+            ResourceLocation rightOpen) {
+        return properties
+                .select(Direction.EAST, half, DoorHingeSide.LEFT, false, v(left))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        false,
+                        v(left).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.EAST, half, DoorHingeSide.RIGHT, false, v(right))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        false,
+                        v(right).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(
+                        Direction.EAST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.SOUTH,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.LEFT,
+                        true,
+                        v(leftOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.NORTH, half, DoorHingeSide.LEFT, true, v(leftOpen))
+                .select(
+                        Direction.EAST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.SOUTH, half, DoorHingeSide.RIGHT, true, v(rightOpen))
+                .select(
+                        Direction.WEST,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(
+                        Direction.NORTH,
+                        half,
+                        DoorHingeSide.RIGHT,
+                        true,
+                        v(rightOpen).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180));
     }
 
     private static ResourceLocation blockTexture(String name) {
@@ -1571,9 +1882,9 @@ public final class TCModelProvider implements DataProvider {
         cube(TCBlocks.ELDRITCH_STONE_INERT.get(), "eldritch_stone");
         cube(TCBlocks.ELDRITCH_ROCK.get(), "eldritch_rock");
         cube(TCBlocks.ELDRITCH_CRUST.get(), "eldritch_crust");
-        insetBlock(TCBlocks.ELDRITCH_CRUST_GLOWING.get(), "eldritch_crust_glowing");
+        insetBlock(TCBlocks.ELDRITCH_CRUST_GLOWING.get(), "eldritch_crust_glowing", true);
         cube(TCBlocks.ELDRITCH_DOOR.get(), "eldritch_door");
-        insetBlock(TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), "eldritch_stone_crystal");
+        insetBlock(TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), "eldritch_stone_crystal", false);
         eldritchLock();
         crabSpawner();
         column(TCBlocks.ELDRITCH_PEDESTAL.get(), "eldritch_pedestal_side", "eldritch_stone");
@@ -1626,13 +1937,15 @@ public final class TCModelProvider implements DataProvider {
     private static final int INSET_DEPTH = 2;
     private static final int INSET_ALL_EXPOSED = 63;
 
-    private void insetBlock(Block block, String textureName) {
+    private void insetBlock(Block block, String textureName, boolean staticAllExposedModel) {
         ResourceLocation texture = TCIds.rl("block/" + textureName);
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block);
         for (int mask = 0; mask <= INSET_ALL_EXPOSED; mask++) {
             ResourceLocation model = TCIds.rl("block/" + textureName + "_inset_" + mask);
             int finalMask = mask;
-            modelOutput.accept(model, () -> insetModel(texture, finalMask));
+            if (!staticAllExposedModel || mask != INSET_ALL_EXPOSED) {
+                modelOutput.accept(model, () -> insetModel(texture, finalMask));
+            }
             Condition.TerminalCondition condition = Condition.condition();
             for (Direction dir : Direction.values()) {
                 condition = condition.term(BlockEldritchInset.EXPOSED.get(dir), insetExposed(mask, dir));

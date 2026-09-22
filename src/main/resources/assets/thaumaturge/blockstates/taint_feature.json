@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=down": [
+      { "model": "thaumaturge:block/taint_orb_0", "x": 180 },
+      { "model": "thaumaturge:block/taint_orb_1", "x": 180 },
+      { "model": "thaumaturge:block/taint_orb_2", "x": 180 }
+    ],
+    "facing=east": [
+      { "model": "thaumaturge:block/taint_orb_0", "x": 90, "y": 90 },
+      { "model": "thaumaturge:block/taint_orb_1", "x": 90, "y": 90 },
+      { "model": "thaumaturge:block/taint_orb_2", "x": 90, "y": 90 }
+    ],
+    "facing=north": [
+      { "model": "thaumaturge:block/taint_orb_0", "x": 270, "y": 180 },
+      { "model": "thaumaturge:block/taint_orb_1", "x": 270, "y": 180 },
+      { "model": "thaumaturge:block/taint_orb_2", "x": 270, "y": 180 }
+    ],
+    "facing=south": [
+      { "model": "thaumaturge:block/taint_orb_0", "x": 90, "y": 180 },
+      { "model": "thaumaturge:block/taint_orb_1", "x": 90, "y": 180 },
+      { "model": "thaumaturge:block/taint_orb_2", "x": 90, "y": 180 }
+    ],
+    "facing=up": [
+      { "model": "thaumaturge:block/taint_orb_0" },
+      { "model": "thaumaturge:block/taint_orb_1" },
+      { "model": "thaumaturge:block/taint_orb_2" }
+    ],
+    "facing=west": [
+      { "model": "thaumaturge:block/taint_orb_0", "x": 90, "y": 270 },
+      { "model": "thaumaturge:block/taint_orb_1", "x": 90, "y": 270 },
+      { "model": "thaumaturge:block/taint_orb_2", "x": 90, "y": 270 }
+    ]
+  }
+}

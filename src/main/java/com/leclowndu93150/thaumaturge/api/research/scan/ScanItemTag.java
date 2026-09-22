@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Scannable subject matching any item in an item tag, whether held, dropped, or placed as the
- * scanned block's item form. Modern replacement for the legacy ore-dictionary scan.
+ * scanned block's item form.
  *
  * @since 1.0.0
  */
