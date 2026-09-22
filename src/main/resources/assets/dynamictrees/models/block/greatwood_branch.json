@@ -1,0 +1,7 @@
+{
+  "loader": "dynamictrees:branch",
+  "textures": {
+    "bark": "thaumaturge:block/log_greatwood",
+    "rings": "thaumaturge:block/log_greatwood_top"
+  }
+}
