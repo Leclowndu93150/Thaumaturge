@@ -26,7 +26,6 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.ChatFormatting;
@@ -136,12 +135,17 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         int width = recipe.getWidth();
         int height = recipe.getHeight();
         List<Optional<Ingredient>> ingredients = recipe.optionalIngredients();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Optional<Ingredient> ingredient = ingredients.get(x + y * width);
+        // Keep all nine crafting positions in the JEI slot list. The transfer
+        // handler maps those positions directly to the workbench's fixed grid,
+        // followed by its six fixed primal-crystal slots.
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
                 IRecipeSlotBuilder slot =
                         builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
-                if (ingredient.isPresent()) slot.addIngredients(ingredient.get());
+                if (x < width && y < height) {
+                    Optional<Ingredient> ingredient = ingredients.get(x + y * width);
+                    if (ingredient.isPresent()) slot.addIngredients(ingredient.get());
+                }
             }
         }
     }
@@ -168,17 +172,14 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
                         k -> MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(k.aspect().getKey())))
                 .toList();
         for (int i = 0; i < 6; i++) {
-            boolean isAdded =
-                    Objects.equals(aspects.get(index).aspect().getKey(), MenuArcaneWorkbench.PRIMAL_ORDER.get(i));
+            IRecipeSlotBuilder slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + i * CRYSTAL_SPACING);
+            boolean isAdded = index < aspects.size()
+                    && Objects.equals(aspects.get(index).aspect().getKey(), MenuArcaneWorkbench.PRIMAL_ORDER.get(i));
             if (isAdded) {
-                IRecipeSlotBuilder slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + index * CRYSTAL_SPACING);
                 AspectInstance instance = aspects.get(index);
                 ItemStack crystal = EssentiaCrystalFactory.of(instance.aspect(), instance.amount());
                 slot.addItemStack(crystal).addIngredients(Ingredient.of(crystal));
                 index++;
-                if (index >= aspects.size()) break;
-            } else {
-                builder.addSlot(RecipeIngredientRole.RENDER_ONLY, BARRIER_X, BARRIER_Y);
             }
         }
     }
