@@ -90,7 +90,7 @@ public final class ThaumaturgeCommonConfig {
         builder.push("nodes");
 
         WILD_NODE_CHANCE = builder.comment(
-                        "Chance (%) of a wild node placement attempt per Overworld chunk. Default: ~2.8% (1 in 36 chunks). 0 disables wild node generation.")
+                        "Chance (%) of a wild node placement attempt per Overworld chunk. Default: ~2.7778% (1 in 36 chunks). 0 disables wild node generation.")
                 .defineInRange("wildSpawnChance", 100.0 / 36.0, 0.0, 100.0);
         MAGICAL_NODE_CHANCE = builder.comment(
                         "Additional node spawn chance (%) per Magical Forest chunk. Stacks with wild node chance. Default: 0%.")
@@ -99,24 +99,25 @@ public final class ThaumaturgeCommonConfig {
                         "Additional node spawn chance (%) per Eerie biome chunk. Stacks with wild node chance. These nodes are always dark. Default: 12.5%.")
                 .defineInRange("eerieBonusSpawnChance", 12.5, 0.0, 100.0);
         NETHER_NODE_CHANCE = builder.comment(
-                        "Chance (%) of a node placement attempt per Nether chunk. Default: ~2.8% (1 in 36 chunks). 0 disables Nether nodes.")
+                        "Chance (%) of a node placement attempt per Nether chunk. Default: ~2.7778% (1 in 36 chunks). 0 disables Nether nodes.")
                 .defineInRange("netherSpawnChance", 100.0 / 36.0, 0.0, 100.0);
 
         builder.comment(
-                        "Node type percentages. Defaults leave ~94% normal nodes. Above 100% total, values become relative weights and normal nodes cannot spawn.")
+                        "Node type percentages for ordinary random nodes. Defaults leave ~93.3333% normal nodes. Above 100% total, values become relative weights and normal nodes cannot spawn.")
                 .push("types");
 
-        DARK_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be dark. Default: ~1.7%.")
+        DARK_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be dark. Default: ~1.6667%.")
                 .defineInRange("darkChance", 100.0 / 60.0, 0.0, 100.0);
-        UNSTABLE_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be unstable. Default: ~1.7%.")
+        UNSTABLE_NODE_CHANCE = builder.comment(
+                        "Chance (%) for ordinary random nodes to be unstable. Default: ~1.6667%.")
                 .defineInRange("unstableChance", 100.0 / 60.0, 0.0, 100.0);
-        PURE_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be pure. Default: ~1.7%.")
+        PURE_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be pure. Default: ~1.6667%.")
                 .defineInRange("pureChance", 100.0 / 60.0, 0.0, 100.0);
         TAINTED_NODE_CHANCE = builder.comment(
-                        "Chance (%) for ordinary random nodes to be tainted. Default: ~1.1%. Disabled by Wuss Mode.")
+                        "Chance (%) for ordinary random nodes to be tainted. Default: ~1.1111%. Disabled by Wuss Mode.")
                 .defineInRange("taintedChance", 10.0 / 9.0, 0.0, 100.0);
         HUNGRY_NODE_CHANCE = builder.comment(
-                        "Chance (%) for ordinary random nodes to be hungry. Default: ~0.6% (1 in 180 nodes).")
+                        "Chance (%) for ordinary random nodes to be hungry. Default: ~0.5556% (1 in 180 nodes).")
                 .defineInRange("hungryChance", 100.0 / 180.0, 0.0, 100.0);
 
         builder.pop(2);
