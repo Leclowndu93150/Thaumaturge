@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import com.mojang.datafixers.util.Pair;
 import java.util.function.Consumer;
@@ -13,10 +14,8 @@ import terrablender.api.Region;
 import terrablender.api.RegionType;
 
 public final class TCOverworldRegion extends Region {
-    public static final int WEIGHT = 6;
-
     public TCOverworldRegion(ResourceLocation name) {
-        super(name, RegionType.OVERWORLD, WEIGHT);
+        super(name, RegionType.OVERWORLD, ThaumaturgeCommonConfig.MAGICAL_FOREST_REGION_WEIGHT.get());
     }
 
     @Override
