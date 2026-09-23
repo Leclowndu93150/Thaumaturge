@@ -99,6 +99,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.ELDRITCH_CRAB_SPAWNER.get())
                 .add(TCBlocks.ELDRITCH_TRAP.get());
 
+        tag(BlockTags.NEEDS_DIAMOND_TOOL)
+                .add(TCBlocks.OBSIDIAN_TILE.get())
+                .add(TCBlocks.OBSIDIAN_TOTEM.get())
+                .add(TCBlocks.OBSIDIAN_TOTEM_CHARGED.get());
+
         tag(BlockTags.RAILS).add(TCBlocks.ACTIVATOR_RAIL.get());
 
         tag(BlockTags.BEACON_BASE_BLOCKS)

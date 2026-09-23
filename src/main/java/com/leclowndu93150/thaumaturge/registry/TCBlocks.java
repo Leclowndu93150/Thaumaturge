@@ -1571,7 +1571,7 @@ public final class TCBlocks {
             Block::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
-                    .strength(2.0F, 10.0F)
+                    .strength(50.0F, 1200.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
@@ -1580,7 +1580,7 @@ public final class TCBlocks {
             BlockObsidianTotem::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
-                    .strength(2.0F, 10.0F)
+                    .strength(50.0F, 1200.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
@@ -1589,7 +1589,7 @@ public final class TCBlocks {
             BlockObsidianTotemCharged::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
-                    .strength(2.0F, 10.0F)
+                    .strength(50.0F, 1200.0F)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 

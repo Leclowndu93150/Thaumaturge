@@ -13,6 +13,8 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
     public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
+    public static final ModConfigSpec.IntValue MAGICAL_FOREST_REGION_WEIGHT;
+    public static final ModConfigSpec.IntValue TAINTED_LANDS_REGION_WEIGHT;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -48,145 +50,134 @@ public final class ThaumaturgeCommonConfig {
 
         builder.push("world");
 
-        WUSS_MODE = builder.comment("Setting this to true disables Warp, Taint spread and similar mechanics. You wuss.")
+        MAGICAL_FOREST_REGION_WEIGHT = builder.comment(
+                        "Controls Magical Forest spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
+                .defineInRange("magicalForestRegionWeight", 6, 1, 100);
+        TAINTED_LANDS_REGION_WEIGHT = builder.comment(
+                        "Controls Tainted Lands spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
+                .defineInRange("taintedLandsRegionWeight", 1, 1, 100);
+
+        WUSS_MODE = builder.comment("Disables Warp, Taint spread, and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
-                        "TC4-style Tainted Lands frontier spread interval. Fibres attempt to expand the biome with probability 1 / (taintSpreadRate * 5) per relevant random tick, and only with at least two adjacent taint blocks. Higher is slower; 0 disables biome takeover while leaving existing taint active.")
+                        "Controls Tainted Lands spread speed. Higher values slow spreading; 0 disables biome takeover. Requires two adjacent taint blocks.")
                 .defineInRange("taintSpreadRate", 200, 0, 100000);
         TAINT_SPREAD_AREA = builder.comment(
-                        "Legacy TC6 Taint Seed influence radius. Seeds are optional outbreak accelerants and are no longer required for ordinary TC4-style taint spread.")
+                        "Taint Seed influence radius in blocks. Seeds accelerate outbreaks but are not required for ordinary taint spread.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
         GENERATE_TAINTED_LANDS = builder.comment(
-                        "Whether rare Tainted Lands can occur naturally in Overworld world generation, matching Thaumcraft 4. Dynamically created Tainted Lands from Flux Goo, Bottled Taint, nodes, or Seeds are unaffected.")
+                        "Allows natural Tainted Lands generation. Does not affect Tainted Lands created through taint spread or outbreaks.")
                 .define("generateTaintedLands", true);
         TAINT_FROM_FLUX = builder.comment(
-                        "Whether sufficiently deep, exposed Flux Goo can fester into Fibrous Taint and Tainted Lands. This is the Thaumcraft 4 pollution-catastrophe route and is enabled by default.")
+                        "Allows deep, exposed Flux Goo to develop into Fibrous Taint and Tainted Lands.")
                 .define("taintFromFlux", true);
         PHYSICAL_FLUX_AURA_FLOOR = builder.comment(
-                        "Whether recently observed TC4-style physical Flux Goo/Gas sustains a capped minimum amount of numerical Aura Flux in the same chunk. This hybrid bridge is enabled by default; disabling it leaves physical Goo/Gas and their direct effects intact.")
+                        "Allows physical Flux Goo and Gas to sustain a capped minimum Aura Flux in their chunk. Disabling this does not remove physical Flux.")
                 .define("physicalFluxAuraFloor", true);
         PHYSICAL_FLUX_TAINT_OUTBREAKS = builder.comment(
-                        "Whether sufficiently large accumulations of physical Flux Goo/Gas can independently establish a Tainted Lands/Fibrous Taint outbreak. This is separate from an individual deep Goo block's taintFromFlux roll and is enabled by default.")
+                        "Allows large accumulations of Flux Goo and Gas to trigger taint outbreaks independently of individual Goo blocks.")
                 .define("physicalFluxTaintOutbreaks", true);
         FLUX_PRESSURE_EVENTS = builder.comment(
-                        "Whether high numerical Aura Flux can trigger the restored TC5-style Flux-pressure events alongside TC6-style Rifts. Enabled by default; disabling it affects only those pressure events and does not disable Rifts.")
+                        "Allows high Aura Flux to trigger Flux-pressure events. Disabling this does not affect Flux Rifts.")
                 .define("fluxPressureEvents", true);
         ENERGIZED_NODE_VIS_PER_POINT = builder.comment(
-                        "Raw vis an energized node drains from the chunk aura to restore one aspect point. Normal nodes refine at 3.0 per point; higher values make energized nodes more wasteful. 0 makes their refill free.")
+                        "Aura Vis consumed per aspect point restored by an energized node. Higher values increase consumption; 0 makes recharging free.")
                 .defineInRange("energizedNodeVisPerPoint", 6.0, 0.0, 100.0);
         CRIMSON_PORTAL_RARITY = builder.comment(
-                        "Average number of chunks per wild lesser crimson portal. Higher is rarer. 0 disables wild portals entirely.")
+                        "Average chunks per naturally generated lesser Crimson Portal. Higher values make portals rarer; 0 disables natural generation.")
                 .defineInRange("crimsonPortalRarity", 500, 0, 1000000);
 
         builder.push("nodes");
 
         WILD_NODE_CHANCE = builder.comment(
-                        "Chance from 0 to 100 for a wild node placement attempt in each Overworld chunk. 2.7778 means 2.7778%, or about one attempt per 36 chunks, matching Thaumcraft 4. 0 disables this source.")
+                        "Chance (%) of a wild node placement attempt per Overworld chunk. Default: ~2.8% (1 in 36 chunks). 0 disables wild node generation.")
                 .defineInRange("wildSpawnChance", 100.0 / 36.0, 0.0, 100.0);
         MAGICAL_NODE_CHANCE = builder.comment(
-                        "Additional chance from 0 to 100 in each Magical Forest chunk. This stacks with wildSpawnChance. Thaumcraft 4 did not add a Magical Forest bonus, so the default is 0.")
+                        "Additional node spawn chance (%) per Magical Forest chunk. Stacks with wild node chance. Default: 0%.")
                 .defineInRange("magicalBonusSpawnChance", 0.0, 0.0, 100.0);
         EERIE_NODE_CHANCE = builder.comment(
-                        "Additional chance from 0 to 100 in each Eerie biome chunk. This stacks with wildSpawnChance and its node is always dark. 12.5 means one attempt per 8 chunks.")
+                        "Additional node spawn chance (%) per Eerie biome chunk. Stacks with wild node chance. These nodes are always dark. Default: 12.5%.")
                 .defineInRange("eerieBonusSpawnChance", 12.5, 0.0, 100.0);
         NETHER_NODE_CHANCE = builder.comment(
-                        "Chance from 0 to 100 for a node placement attempt in each Nether chunk. 2.7778 means one attempt per 36 chunks, matching Thaumcraft 4. 0 disables Nether nodes.")
+                        "Chance (%) of a node placement attempt per Nether chunk. Default: ~2.8% (1 in 36 chunks). 0 disables Nether nodes.")
                 .defineInRange("netherSpawnChance", 100.0 / 36.0, 0.0, 100.0);
 
         builder.comment(
-                        "The following values are percentages among ordinary random nodes. Their default total is 6.1111%, leaving 93.8889% normal nodes. If their total exceeds 100, they are treated as relative weights and normal nodes become 0%.")
+                        "Node type percentages. Defaults leave ~94% normal nodes. Above 100% total, values become relative weights and normal nodes cannot spawn.")
                 .push("types");
 
-        DARK_NODE_CHANCE = builder.comment(
-                        "Dark-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+        DARK_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be dark. Default: ~1.7%.")
                 .defineInRange("darkChance", 100.0 / 60.0, 0.0, 100.0);
-        UNSTABLE_NODE_CHANCE = builder.comment(
-                        "Unstable-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+        UNSTABLE_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be unstable. Default: ~1.7%.")
                 .defineInRange("unstableChance", 100.0 / 60.0, 0.0, 100.0);
-        PURE_NODE_CHANCE = builder.comment(
-                        "Pure-node percentage, from 0 to 100. Default: 1.6667%, matching Thaumcraft 4.")
+        PURE_NODE_CHANCE = builder.comment("Chance (%) for ordinary random nodes to be pure. Default: ~1.7%.")
                 .defineInRange("pureChance", 100.0 / 60.0, 0.0, 100.0);
         TAINTED_NODE_CHANCE = builder.comment(
-                        "Tainted-node percentage among ordinary random nodes. Default: 1.1111%, matching TC5's effective natural tainted-node chance after its one-third rejection roll. Wuss Mode suppresses this type.")
+                        "Chance (%) for ordinary random nodes to be tainted. Default: ~1.1%. Disabled by Wuss Mode.")
                 .defineInRange("taintedChance", 10.0 / 9.0, 0.0, 100.0);
         HUNGRY_NODE_CHANCE = builder.comment(
-                        "Hungry-node percentage, from 0 to 100. Default: 0.5556%, approximately one hungry node per 180 ordinary nodes, matching Thaumcraft 4.")
+                        "Chance (%) for ordinary random nodes to be hungry. Default: ~0.6% (1 in 180 nodes).")
                 .defineInRange("hungryChance", 100.0 / 180.0, 0.0, 100.0);
 
         builder.pop(2);
 
         HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
-                        "Maximum length in blocks of a hungry node's random block-eating ray.",
-                        "Default: 16. Range: 1 to 64. A larger area gives each attempt more possible targets; it does not guarantee a distant block will be selected.",
-                        "This setting does not change entity or dropped-item pulling range.")
+                        "Maximum block-eating ray length in blocks. Higher values increase reach, not entity or item pulling range.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
         SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER = builder.comment(
-                        "Whether a hungry node's block-eating range scales with its current modifier (quality).",
-                        "False: hungryNodeBlockEatRange is always used. True: the minimum/maximum settings below override hungryNodeBlockEatRange.",
-                        "Fading uses the minimum, pale and normal are evenly spaced between them, and bright uses the maximum.")
+                        "Scales hungry node block-eating range by quality. Uses the minimum and maximum ranges below instead of the fixed range.")
                 .define("scaleHungryNodeBlockEatRangeByModifier", false);
         HUNGRY_NODE_MINIMUM_BLOCK_EAT_RANGE = builder.comment(
-                        "Block-eating range of a fading hungry node when modifier scaling is enabled.",
-                        "Default: 16. Range: 1 to 64. This setting does nothing while scaleHungryNodeBlockEatRangeByModifier is false.")
+                        "Block-eating range for fading hungry nodes when quality scaling is enabled. Ignored when scaling is disabled.")
                 .defineInRange("hungryNodeMinimumBlockEatRange", 16, 1, 64);
         HUNGRY_NODE_MAXIMUM_BLOCK_EAT_RANGE = builder.comment(
-                        "Block-eating range of a bright hungry node when modifier scaling is enabled.",
-                        "Default: 32. Range: 1 to 64. This overrides hungryNodeBlockEatRange while scaling is enabled.",
-                        "If set below the minimum range, the minimum is used for every modifier.")
+                        "Block-eating range for bright hungry nodes when quality scaling is enabled. Values below the minimum use the minimum for all qualities.")
                 .defineInRange("hungryNodeMaximumBlockEatRange", 32, 1, 64);
         HUNGRY_NODE_BLOCK_HARDNESS = builder.comment(
-                        "Maximum block hardness a hungry node can eat. The comparison is strictly below this value, not equal to it.",
-                        "Examples: dirt 0.5, stone 1.5, most logs 2, ores/deepslate 3, iron and diamond blocks 5, obsidian 50.",
-                        "Default: 5.0, so it can eat ordinary terrain and ores, but not hardness-5 metal/gem blocks or obsidian.",
-                        "Range: 0 to 100. 0 disables block destruction. Unbreakable blocks such as bedrock have negative hardness and are never eaten.")
+                        "Maximum edible block hardness (exclusive). Default: 5; obsidian is 50. 0 disables block destruction. Unbreakable blocks are excluded.")
                 .defineInRange("hungryNodeBlockEatHardness", 5.0, 0.0, 100.0);
         HUNGRY_NODE_BLOCK_EAT_INTERVAL = builder.comment(
-                        "Ticks between hungry-node block-eating attempts. Minecraft normally runs at 20 ticks per second; lower values are faster.",
-                        "Examples: 1 = 20 attempts/second, 20 = once/second, 50 = once/2.5 seconds, 1200 = once/minute.",
-                        "Default: 50. Range: 1 to 12000. An attempt may miss or hit an ineligible block, so this is not a guaranteed destruction interval.")
+                        "Ticks between hungry node block-eating attempts. Lower values are faster; 20 ticks = 1 second. Attempts may miss.")
                 .defineInRange("hungryNodeBlockEatInterval", 50, 1, 12000);
-        SHIELD_RECHARGE = builder.comment("Ticks between each point of runic shielding recharge.")
+        SHIELD_RECHARGE = builder.comment(
+                        "Ticks between each point of runic shielding recharge. Lower values recharge faster.")
                 .defineInRange("shieldRecharge", 40, 1, 12000);
-        SHIELD_WAIT = builder.comment("Ticks runic shielding waits before recharging after being fully depleted.")
+        SHIELD_WAIT = builder.comment("Ticks before runic shielding begins recharging after being fully depleted.")
                 .defineInRange("shieldWait", 80, 0, 12000);
         SHIELD_COST = builder.comment(
-                        "Vis drained from the local aura per point of runic shielding recharged. 0 makes recharging free.")
+                        "Aura Vis consumed per point of runic shielding restored. 0 makes recharging free.")
                 .defineInRange("shieldCost", 1.0, 0.0, 100.0);
-        ALLOW_CHAMPION_MOBS = builder.comment("Setting this to false will disable spawning champion mobs.")
-                .define("allowChampionMobs", true);
-        NO_SLEEP = builder.comment(
-                        "Setting this to true will make you get the recipe book for salis mundus without having to sleep first.")
+        ALLOW_CHAMPION_MOBS = builder.comment("Allows champion mobs to spawn.").define("allowChampionMobs", true);
+        NO_SLEEP = builder.comment("Unlocks the Salis Mundus recipe without sleeping first.")
                 .define("noSleep", false);
 
         builder.pop();
         builder.push("sounds");
 
-        NO_STRESS = builder.comment(
-                        "Set to true to disable anxiety triggers like the heartbeat sound and warp-event jump scares.")
+        NO_STRESS = builder.comment("Disables anxiety effects such as heartbeat sounds and Warp-event jump scares.")
                 .define("nostress", false);
 
         builder.pop();
         builder.push("golems");
 
         SHOW_GOLEM_EMOTES = builder.comment(
-                        "Will golems display emote particles if they receive orders or encounter problems.")
+                        "Displays golem emote particles when receiving orders or encountering problems.")
                 .define("showGolemEmotes", true);
 
         builder.pop();
         builder.push("fluxScrubber");
 
         FLUX_SCRUBBER_CHARGES_PER_ROLL = builder.comment(
-                        "Physical Flux quanta (Goo or Gas) the scrubber must clean before it rolls for Praecantatio.",
-                        "Lower values make Praecantatio recovery faster.")
+                        "Flux Goo or Gas units cleaned per Praecantatio recovery attempt. Lower values increase recovery frequency.")
                 .defineInRange("chargesPerRoll", 2, 1, 64);
         FLUX_SCRUBBER_ESSENTIA_CHANCE = builder.comment(
-                        "Chance (0 to 1) a roll succeeds and yields Praecantatio. 1.0 = always.")
+                        "Chance (0-1) of recovering Praecantatio per roll. 1.0 guarantees recovery.")
                 .defineInRange("essentiaChance", 0.8, 0.0, 1.0);
         FLUX_SCRUBBER_ESSENTIA_PER_ROLL = builder.comment(
-                        "Praecantatio produced per successful roll. Raise essentiaCapacity so large rolls accumulate before a pipe drains them.")
+                        "Praecantatio produced per successful recovery roll. Increase capacity to accommodate larger amounts.")
                 .defineInRange("essentiaPerRoll", 1, 0, 64);
         FLUX_SCRUBBER_ESSENTIA_CAPACITY = builder.comment(
-                        "Max Praecantatio the scrubber holds before it must be drained by an attached pipe/jar. TC4 held 'a little'.")
+                        "Maximum Praecantatio stored before the scrubber must be drained by an attached pipe or jar.")
                 .defineInRange("essentiaCapacity", 16, 1, 1024);
 
         builder.pop();
