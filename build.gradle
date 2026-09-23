@@ -135,7 +135,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // Mirror only the tree pack into that directory for development runs; the normal resources output
 // remains the sole copy packaged in release jars.
 // Removal note: delete this wiring, compat/dynamictrees, TCBiomeModifierSerializers and its
-// registration/data file, plus assets/dynamictrees and trees/thaumaturge. Native tree generation
+// registration/data file, plus resourcepacks/dynamictrees and trees/thaumaturge. Native tree generation
 // needs no restoration: the modifier removes it only while Dynamic Trees is present and enabled.
 def syncDynamicTreesTreePack = tasks.register('syncDynamicTreesTreePack', Sync) {
     from(sourceSets.main.resources)
