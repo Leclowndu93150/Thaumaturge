@@ -13,6 +13,8 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
     public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
+    public static final ModConfigSpec.IntValue MAGICAL_FOREST_REGION_WEIGHT;
+    public static final ModConfigSpec.IntValue TAINTED_LANDS_REGION_WEIGHT;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -48,7 +50,14 @@ public final class ThaumaturgeCommonConfig {
 
         builder.push("world");
 
-        WUSS_MODE = builder.comment("Setting this to true disables Warp, Taint spread and similar mechanics. You wuss.")
+        MAGICAL_FOREST_REGION_WEIGHT = builder.comment(
+                        "Controls Magical Forest spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
+                .defineInRange("magicalForestRegionWeight", 6, 1, 100);
+        TAINTED_LANDS_REGION_WEIGHT = builder.comment(
+                        "Controls Tainted Lands spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
+                .defineInRange("taintedLandsRegionWeight", 1, 1, 100);
+
+        WUSS_MODE = builder.comment("Disables Warp, Taint spread, and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
                         "TC4-style Tainted Lands frontier spread interval. Fibres attempt to expand the biome with probability 1 / (taintSpreadRate * 5) per relevant random tick, and only with at least two adjacent taint blocks. Higher is slower; 0 disables biome takeover while leaving existing taint active.")
