@@ -22,10 +22,8 @@ import terrablender.api.RegionType;
  * of worldgen.
  */
 public final class TCTaintedLandsRegion extends Region {
-    public static final int WEIGHT = 1;
-
     public TCTaintedLandsRegion(ResourceLocation name) {
-        super(name, RegionType.OVERWORLD, WEIGHT);
+        super(name, RegionType.OVERWORLD, ThaumaturgeCommonConfig.TAINTED_LANDS_REGION_WEIGHT.get());
     }
 
     @Override
