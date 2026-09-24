@@ -24,7 +24,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.Slot;
 
 public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneWorkbench> {
     private static final ResourceLocation WAND_SLOT_TEXTURE = TCIds.rl("textures/gui/workbench_wand_slot.png");
@@ -51,16 +51,17 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         wandTooltip = null;
         super.render(graphics, mouseX, mouseY, partialTick);
-        if (hoveredSlot != null && hoveredSlot.hasItem()) {
-            ItemStack stack = hoveredSlot.getItem();
-            if (hoveredSlot instanceof SlotCrystalEssentia) {
-                graphics.renderTooltip(font, stack.getHoverName(), mouseX, mouseY);
-            } else {
-                graphics.renderTooltip(font, stack, mouseX, mouseY);
-            }
-        }
         if (wandTooltip != null) {
             graphics.renderTooltip(font, wandTooltip, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    protected void renderSlotTooltip(GuiGraphics graphics, Slot slot, int mouseX, int mouseY) {
+        if (slot instanceof SlotCrystalEssentia) {
+            graphics.renderTooltip(font, slot.getItem().getHoverName(), mouseX, mouseY);
+        } else {
+            super.renderSlotTooltip(graphics, slot, mouseX, mouseY);
         }
     }
 
