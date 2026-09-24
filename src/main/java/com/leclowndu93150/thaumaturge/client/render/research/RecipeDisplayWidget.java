@@ -230,7 +230,7 @@ public final class RecipeDisplayWidget {
         return null;
     }
 
-    public static @Nullable Component hoverPopupForDisplay(
+    public static @Nullable List<Component> hoverPopupForDisplay(
             int x, int y, RecipeHolder<?> holder, double mouseX, double mouseY) {
         int cx = x + CENTER_OFFSET;
         int cy = y + CENTER_OFFSET;
@@ -252,7 +252,7 @@ public final class RecipeDisplayWidget {
         int popupX = cx - costWidth / 2 + VIS_POPUP_OFFSET_X;
         int popupY = cy + VIS_POPUP_OFFSET_Y;
         if (mouseX >= popupX && mouseX < popupX + VIS_POPUP_W && mouseY >= popupY && mouseY < popupY + VIS_POPUP_H) {
-            return Component.translatable("wandtable.text1");
+            return List.of(Component.translatable("wandtable.text1"));
         }
         return null;
     }
@@ -1141,7 +1141,7 @@ public final class RecipeDisplayWidget {
         return mouseX >= x && mouseX < x + ITEM_HIT_SIZE && mouseY >= y && mouseY < y + ITEM_HIT_SIZE;
     }
 
-    private static @Nullable Component hoverAspectGrid(
+    private static @Nullable List<Component> hoverAspectGrid(
             int sx, int sy, List<AspectInstance> sorted, int perRow, double mouseX, double mouseY) {
         int rows = (sorted.size() - 1) / perRow;
         int startY = sy - ASPECT_HALF_CELL * rows;
@@ -1149,9 +1149,8 @@ public final class RecipeDisplayWidget {
             int[] pos = aspectCell(sx, startY, index, sorted.size(), perRow, rows);
             if (hitItem(pos[0], pos[1], mouseX, mouseY)) {
                 AspectInstance instance = sorted.get(index);
-                return AspectComponents.name(instance.aspect())
-                        .append("\n")
-                        .append(AspectComponents.description(instance.aspect()));
+                return List.of(
+                        AspectComponents.name(instance.aspect()), AspectComponents.description(instance.aspect()));
             }
         }
         return null;

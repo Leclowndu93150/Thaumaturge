@@ -1234,7 +1234,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (hover != null && !hover.isEmpty()) {
             DeferredTooltip.setItem(hover, mouseX, mouseY);
         }
-        Component popup =
+        List<Component> popup =
                 RecipeDisplayWidget.hoverPopupForDisplay(cx - gridW / 2, cy - gridH / 2, current, mouseX, mouseY);
         if (popup != null) {
             DeferredTooltip.set(popup, mouseX, mouseY);
