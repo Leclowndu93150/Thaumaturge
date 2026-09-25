@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -58,6 +59,15 @@ public final class BlockNode extends Block implements EntityBlock {
     protected VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        ItemStack stack = new ItemStack(TCItems.CREATIVE_NODE_PLACER.get());
+        if (level instanceof Level world && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
+            node.saveToItem(stack, world.registryAccess());
+        }
+        return stack;
     }
 
     @Override

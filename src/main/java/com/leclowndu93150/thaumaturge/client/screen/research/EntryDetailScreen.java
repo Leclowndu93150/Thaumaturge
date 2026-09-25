@@ -1234,7 +1234,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (hover != null && !hover.isEmpty()) {
             DeferredTooltip.setItem(hover, mouseX, mouseY);
         }
-        Component popup =
+        List<Component> popup =
                 RecipeDisplayWidget.hoverPopupForDisplay(cx - gridW / 2, cy - gridH / 2, current, mouseX, mouseY);
         if (popup != null) {
             DeferredTooltip.set(popup, mouseX, mouseY);
@@ -1801,6 +1801,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 1) {
+            onClose();
+            return true;
+        }
         if (button == 0) {
             double mx = mouseX;
             double my = mouseY;
@@ -2257,15 +2261,25 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     @Override
     public void onClose() {
-        if (shownRecipe != null || showingAspects || showingKnowledge) {
+        if (shownRecipe != null || showingAspects || showingKnowledge || showingConstruct) {
             shownRecipe = null;
             showingAspects = false;
             showingKnowledge = false;
+            showingConstruct = false;
             history.clear();
             playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
             return;
         }
         if (minecraft != null) minecraft.setScreen(parent);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (minecraft != null && minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+            onClose();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

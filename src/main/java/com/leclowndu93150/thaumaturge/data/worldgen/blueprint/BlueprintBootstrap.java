@@ -118,7 +118,8 @@ public final class BlueprintBootstrap {
                                 'M',
                                         part(
                                                 block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
-                                                toBlock(TCBlocks.THAUMATORIUM.get())),
+                                                new BlueprintTarget.BlockTarget(
+                                                        TCBlocks.THAUMATORIUM.get(), true, false)),
                                 'B', part(block(TCBlocks.CRUCIBLE.get()), BlueprintTarget.Keep.INSTANCE)),
                         List.of(List.of("T"), List.of("M"), List.of("B"))));
 

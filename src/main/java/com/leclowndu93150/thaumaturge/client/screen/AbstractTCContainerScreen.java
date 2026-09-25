@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 
 public abstract class AbstractTCContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     private final ResourceLocation background;
@@ -42,6 +43,18 @@ public abstract class AbstractTCContainerScreen<T extends AbstractContainerMenu>
         this.backgroundHeight = imageHeight;
         this.backgroundTextureWidth = textureWidth;
         this.backgroundTextureHeight = textureHeight;
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
+        if (hoveredSlot != null && hoveredSlot.hasItem()) {
+            renderSlotTooltip(graphics, hoveredSlot, mouseX, mouseY);
+        }
+    }
+
+    protected void renderSlotTooltip(GuiGraphics graphics, Slot slot, int mouseX, int mouseY) {
+        graphics.renderTooltip(font, slot.getItem(), mouseX, mouseY);
     }
 
     @Override
