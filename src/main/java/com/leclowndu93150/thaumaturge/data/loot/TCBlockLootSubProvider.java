@@ -412,7 +412,16 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), createSingleItemTable(TCItems.CURIO_KNOWLEDGE.get()));
         dropSelf(TCBlocks.ELDRITCH_DOOR.get());
         dropSelf(TCBlocks.VOID_SIPHON.get());
-        dropOther(TCBlocks.THAUMATORIUM.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());
+        add(
+                TCBlocks.THAUMATORIUM.get(),
+                LootTable.lootTable()
+                        .withPool(this.applyExplosionCondition(
+                                TCBlocks.THAUMATORIUM.get(),
+                                LootPool.lootPool()
+                                        .setRolls(ConstantValue.exactly(1))
+                                        .add(LootItem.lootTableItem(TCBlocks.ALCHEMICAL_CONSTRUCT.get())
+                                                .apply(SetItemCountFunction.setCount(
+                                                        ConstantValue.exactly(2), false))))));
         dropSelf(TCBlocks.BRAIN_BOX.get());
         dropSelf(TCBlocks.VIS_BATTERY.get());
         dropSelf(TCBlocks.MATRIX_SPEED.get());
