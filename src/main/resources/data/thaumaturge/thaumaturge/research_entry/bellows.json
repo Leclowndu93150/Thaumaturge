@@ -17,6 +17,11 @@
           "items": [
             "thaumaturge:essentia_crystal"
           ],
+          "components": {
+            "thaumaturge:crystal_aspect": {
+              "aspect": "thaumaturge:aer"
+            }
+          },
           "amount": 1
         }
       ],

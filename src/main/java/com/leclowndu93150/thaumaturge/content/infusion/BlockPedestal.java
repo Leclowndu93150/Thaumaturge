@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -117,6 +119,14 @@ public final class BlockPedestal extends BaseEntityBlock {
             pedestal.setItem(held.copyWithCount(1));
             held.consume(1, player);
         }
+        float pitch = (level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F;
+        level.playSound(
+                null,
+                pos,
+                SoundEvents.ITEM_PICKUP,
+                SoundSource.BLOCKS,
+                0.2F,
+                pitch * (current.isEmpty() ? 1.6F : 1.5F));
         return InteractionResult.SUCCESS;
     }
 

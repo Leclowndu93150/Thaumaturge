@@ -150,7 +150,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Tags.Items.GLASS_PANES))
                 .save(output, TCIds.MODID + ":scribing_tools_alt");
 
-        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TCItems.LABEL)
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, TCItems.LABEL, 4)
                 .requires(Tags.Items.DYES_BLACK)
                 .requires(Tags.Items.SLIME_BALLS)
                 .requires(Items.PAPER, 4)
