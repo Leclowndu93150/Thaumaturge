@@ -42,6 +42,17 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(Blocks.PIGLIN_WALL_HEAD);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(TCBlocks.TUBE.get())
+                .add(TCBlocks.TUBE_VALVE.get())
+                .add(TCBlocks.TUBE_RESTRICT.get())
+                .add(TCBlocks.TUBE_FILTER.get())
+                .add(TCBlocks.TUBE_ONEWAY.get())
+                .add(TCBlocks.TUBE_BUFFER.get())
+                .add(TCBlocks.ESSENTIA_INPUT.get())
+                .add(TCBlocks.ESSENTIA_OUTPUT.get())
+                .add(TCBlocks.FOCAL_MANIPULATOR.get())
+                .add(TCBlocks.INFUSION_MATRIX.get())
+                .add(TCBlocks.FLUX_SCRUBBER.get())
                 .add(TCBlocks.SLAB_ARCANE_STONE.get())
                 .add(TCBlocks.SLAB_ARCANE_BRICK.get())
                 .add(TCBlocks.SLAB_ANCIENT.get())
@@ -52,6 +63,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.AMBER_BRICK.get());
 
         tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(TCBlocks.CENTRIFUGE.get())
+                .add(TCBlocks.ALEMBIC.get())
+                .add(TCBlocks.ARCANE_WORKBENCH.get())
+                .add(TCBlocks.RESEARCH_TABLE.get())
+                .add(TCBlocks.ARCANE_WORKBENCH_CHARGER.get())
                 .add(TCBlocks.SLAB_GREATWOOD.get())
                 .add(TCBlocks.SLAB_SILVERWOOD.get())
                 .add(TCBlocks.STAIRS_GREATWOOD.get())
@@ -197,7 +213,6 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.SMELTER_AUX.get())
                 .add(TCBlocks.SMELTER_VENT.get())
                 .add(TCBlocks.SPA.get())
-                .add(TCBlocks.ARCANE_WORKBENCH_CHARGER.get())
                 .add(TCBlocks.PEDESTAL_ARCANE.get())
                 .add(TCBlocks.PEDESTAL_ANCIENT.get())
                 .add(TCBlocks.PEDESTAL_ELDRITCH.get())
@@ -205,7 +220,6 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(TCBlocks.INFUSION_MATRIX.get())
                 .add(TCBlocks.MATRIX_SPEED.get())
                 .add(TCBlocks.MATRIX_COST.get())
                 .add(TCBlocks.STABILIZER.get())
