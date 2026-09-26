@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
 import com.leclowndu93150.thaumaturge.network.ClientboundTaintEnvironmentPayload;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -16,7 +17,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TaintEnvironmentEvents {
-    private static final int SYNC_INTERVAL = 20;
+    private static final int SYNC_INTERVAL = 10;
+    private static final int BIOME_BLEND_RADIUS = 12;
+    private static final int[][] BIOME_SAMPLES = {
+        {0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+    };
     private static final float NATURAL_TAINT_AMBIENCE = 0.35F;
     private static final float DYNAMIC_TAINT_AMBIENCE = 0.55F;
     private static final float SEVERE_ECOLOGY = 0.85F;
@@ -29,13 +34,7 @@ public final class TaintEnvironmentEvents {
             return;
         }
         float ecologyPressure = TaintEcology.getSaturation(player.serverLevel(), player.blockPosition());
-        float ambience = ecologyPressure;
-        if (TaintBiomeManager.isTainted(player.serverLevel(), player.blockPosition())) {
-            float biomeBaseline = TaintBiomeManager.isDynamicallyTainted(player.serverLevel(), player.blockPosition())
-                    ? DYNAMIC_TAINT_AMBIENCE
-                    : NATURAL_TAINT_AMBIENCE;
-            ambience = Math.max(ambience, biomeBaseline);
-        }
+        float ambience = Math.max(ecologyPressure, biomeAmbience(player.serverLevel(), player.blockPosition()));
         PacketDistributor.sendToPlayer(player, new ClientboundTaintEnvironmentPayload(ambience));
         if (ecologyPressure >= SEVERE_ECOLOGY
                 && !ThaumaturgeCommonConfig.WUSS_MODE.get()
@@ -44,6 +43,30 @@ public final class TaintEnvironmentEvents {
                 && player.getRandom().nextInt(4) == 0) {
             trySpawnAmbientTaint(player);
         }
+    }
+
+    private static float biomeAmbience(ServerLevel level, BlockPos center) {
+        BlockPos.MutableBlockPos sample = new BlockPos.MutableBlockPos();
+        float weightedPressure = 0.0F;
+        int totalWeight = 0;
+        for (int[] offset : BIOME_SAMPLES) {
+            sample.set(
+                    center.getX() + offset[0] * BIOME_BLEND_RADIUS,
+                    center.getY(),
+                    center.getZ() + offset[1] * BIOME_BLEND_RADIUS);
+            if (!level.hasChunkAt(sample)) {
+                continue;
+            }
+            int weight = offset[0] == 0 && offset[1] == 0 ? 4 : 1;
+            totalWeight += weight;
+            if (TaintBiomeManager.isTainted(level, sample)) {
+                weightedPressure += weight
+                        * (TaintBiomeManager.isDynamicallyTainted(level, sample)
+                                ? DYNAMIC_TAINT_AMBIENCE
+                                : NATURAL_TAINT_AMBIENCE);
+            }
+        }
+        return totalWeight == 0 ? 0.0F : weightedPressure / totalWeight;
     }
 
     private static void trySpawnAmbientTaint(ServerPlayer player) {
