@@ -30,6 +30,11 @@ public final class TCCapabilities {
         researchTable(event);
         spa(event);
         workbench(event);
+        infusion(event);
+    }
+
+    private static void infusion(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.INFUSION_MATRIX.get(), (be, side) -> be);
     }
 
     private static void crucible(RegisterCapabilitiesEvent event) {
