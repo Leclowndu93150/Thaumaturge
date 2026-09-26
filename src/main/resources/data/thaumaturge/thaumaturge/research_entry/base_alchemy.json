@@ -18,7 +18,6 @@
       "text": "research.thaumaturge.base_alchemy.stage_0",
       "recipes": [
         "thaumaturge:crucible/nitor_yellow",
-        "thaumaturge:crucible/nitor_yellow",
         "thaumaturge:crucible/vis_crystal/aer",
         "thaumaturge:phial",
         "thaumaturge:arcane_workbench/filter",
