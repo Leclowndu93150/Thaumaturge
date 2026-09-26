@@ -55,6 +55,7 @@ public final class Thaumaturge {
 
     public Thaumaturge(IEventBus modBus, ModContainer container) {
         NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
+        NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
         TCFluidTypes.register(modBus);
         TCFluids.register(modBus);
         TCBlocks.register(modBus);
