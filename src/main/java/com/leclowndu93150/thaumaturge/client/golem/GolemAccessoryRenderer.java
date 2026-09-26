@@ -39,7 +39,7 @@ public final class GolemAccessoryRenderer {
             return;
         }
         int light = state.lightCoords;
-        VertexConsumer buffer = buffers.getBuffer(RenderType.entityCutout(TEXTURE));
+        VertexConsumer buffer = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         PoseStack.Pose pose = poseStack.last();
         if (fez) {
             BoxGeometry.box(
