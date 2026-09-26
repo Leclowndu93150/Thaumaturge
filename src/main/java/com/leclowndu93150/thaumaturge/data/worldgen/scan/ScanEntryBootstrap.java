@@ -208,6 +208,13 @@ public final class ScanEntryBootstrap {
         register(ctx, "orblock2", "scanned/orblock2", blocks(blockReg, TCBlocks.STONE_ELDRITCH_TILE.get()), null, null);
         register(
                 ctx,
+                "orblock3",
+                "scanned/orblock3",
+                blocks(blockReg, TCBlocks.STONE_ANCIENT_GLYPHED.get()),
+                null,
+                null);
+        register(
+                ctx,
                 "outer_revelations",
                 "outer_revelations",
                 blocks(blockReg, TCBlocks.ELDRITCH_STONE_CRYSTAL.get(), TCBlocks.ELDRITCH_CRUST_GLOWING.get()),

@@ -48,6 +48,7 @@ import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.press.ItemGolemPress;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.ItemInfernalFurnace;
+import com.leclowndu93150.thaumaturge.content.item.BathSaltsItem;
 import com.leclowndu93150.thaumaturge.content.item.CausalityCollapserItem;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
 import com.leclowndu93150.thaumaturge.content.item.CelestialNotesItem;
@@ -173,6 +174,11 @@ public final class TCItems {
     public static final DeferredItem<BucketItem> BUCKET_LIQUID_DEATH = ITEMS.registerItem(
             "liquid_death_bucket",
             props -> new BucketItem(TCFluids.LIQUID_DEATH_SOURCE.get(), props),
+            new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).rarity(Rarity.RARE));
+
+    public static final DeferredItem<BucketItem> BUCKET_PURIFYING = ITEMS.registerItem(
+            "purifying_bucket",
+            props -> new BucketItem(TCFluids.PURIFYING_SOURCE.get(), props),
             new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).rarity(Rarity.RARE));
 
     public static final DeferredItem<JarBraceItem> JAR_BRACE = ITEMS.registerItem("jar_brace", JarBraceItem::new);
@@ -663,7 +669,7 @@ public final class TCItems {
     public static final DeferredItem<Item> MODULE_VISION = ITEMS.registerSimpleItem("module_vision");
     public static final DeferredItem<Item> MODULE_AGGRESSION = ITEMS.registerSimpleItem("module_aggression");
     public static final DeferredItem<Item> MORPHIC_RESONATOR = ITEMS.registerSimpleItem("morphic_resonator");
-    public static final DeferredItem<Item> BATH_SALTS = ITEMS.registerSimpleItem("bath_salts");
+    public static final DeferredItem<BathSaltsItem> BATH_SALTS = ITEMS.registerItem("bath_salts", BathSaltsItem::new);
     public static final DeferredItem<ItemSanitySoap> SANITY_SOAP =
             ITEMS.registerItem("sanity_soap", ItemSanitySoap::new);
 

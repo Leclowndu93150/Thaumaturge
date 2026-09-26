@@ -30,6 +30,7 @@ import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayWorkbenchSource;
 import com.leclowndu93150.thaumaturge.content.equipment.TCMaterials;
 import com.leclowndu93150.thaumaturge.content.golem.GolemBindings;
+import com.leclowndu93150.thaumaturge.content.item.BathSaltsEvents;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyRegistryAliases;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolBindings;
@@ -44,6 +45,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,8 @@ public final class Thaumaturge {
     public static final Logger LOGGER = LoggerFactory.getLogger(TCIds.MODID);
 
     public Thaumaturge(IEventBus modBus, ModContainer container) {
+        NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
+        NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
         TCFluidTypes.register(modBus);
         TCFluids.register(modBus);
         TCBlocks.register(modBus);

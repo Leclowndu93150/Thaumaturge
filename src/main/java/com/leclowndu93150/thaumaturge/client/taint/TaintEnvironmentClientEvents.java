@@ -15,6 +15,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber(value = Dist.CLIENT, modid = TCIds.MODID)
 public final class TaintEnvironmentClientEvents {
     private static final int FUME_COLOR = ARGB32.color(0xD0, 0x75, 0x18, 0x91);
+    private static final float MAX_SANE_FOG_PLANE = 4096.0F;
+    private static final float FALLBACK_FAR_PLANE = 512.0F;
+    private static final float FALLBACK_NEAR_PLANE = 256.0F;
 
     private TaintEnvironmentClientEvents() {}
 
@@ -38,13 +41,19 @@ public final class TaintEnvironmentClientEvents {
     @SubscribeEvent
     public static void onFog(ViewportEvent.RenderFog event) {
         float pressure = TaintEnvironmentClientState.pressure();
-        if (pressure < 0.3F) {
+        if (pressure <= 0.0F) {
             return;
         }
-        float intensity = Mth.clamp((pressure - 0.3F) / 0.7F, 0.0F, 0.75F);
-        event.setFarPlaneDistance(Mth.lerp(intensity, event.getFarPlaneDistance(), 28.0F));
-        event.setNearPlaneDistance(Mth.lerp(intensity, event.getNearPlaneDistance(), 2.0F));
+        float intensity = Mth.clamp(pressure / 0.4F, 0.0F, 0.95F);
+        event.setFarPlaneDistance(
+                Mth.lerp(intensity, usablePlane(event.getFarPlaneDistance(), FALLBACK_FAR_PLANE), 28.0F));
+        event.setNearPlaneDistance(
+                Mth.lerp(intensity, usablePlane(event.getNearPlaneDistance(), FALLBACK_NEAR_PLANE), 2.0F));
         event.setCanceled(true);
+    }
+
+    private static float usablePlane(float plane, float fallback) {
+        return !Float.isFinite(plane) || plane > MAX_SANE_FOG_PLANE ? fallback : plane;
     }
 
     @SubscribeEvent

@@ -50,6 +50,15 @@ public interface IScanThing {
     default void onSuccess(Player player, @Nullable Object target) {}
 
     /**
+     * Allows a matching subject to run its success hook again after its research key is already
+     * known. Implementations should return true only when the repeated scan can still teach
+     * something; ordinary research scans remain one-time.
+     */
+    default boolean canScanAfterResearchKnown(Player player, @Nullable Object target) {
+        return false;
+    }
+
+    /**
      * Returns why a matching target cannot be scanned yet, or {@code null} when scanning may
      * proceed. When non-null, the scan attempt fails without recording the research key or
      * calling {@link #onSuccess onSuccess}, the message is shown to the player, and the target
