@@ -72,8 +72,8 @@ public final class TCCapabilities {
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.TUBE_ONEWAY.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.TUBE_BUFFER.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.ASPECT_QUERY, TCBlockEntities.TUBE_FILTER.get(), (be, side) -> be);
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR.get(), (be, side) -> be);
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR_VOID.get(), (be, side) -> be);
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.JAR_VOID.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.JAR.get(), (be, side) -> be);
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.JAR_VOID.get(), (be, side) -> be);
     }
