@@ -367,12 +367,12 @@ public final class TCRecipeProvider extends RecipeProvider {
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(oreTag), RecipeCategory.MISC, item, xp, 200)
                 .group(group)
                 .unlockedBy("has", this.has(oreTag))
-                .save(this.output, getItemName(item) + "_from_ore");
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_from_ore");
 
         SimpleCookingRecipeBuilder.blasting(Ingredient.of(oreTag), RecipeCategory.MISC, item, xp, 100)
                 .group(group)
                 .unlockedBy("has", this.has(oreTag))
-                .save(this.output, getItemName(item) + "_blasting_from_ore");
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_ore");
     }
 
     private void clusterSmelting(ItemLike item, ItemLike cluster, String group) {
@@ -381,13 +381,13 @@ public final class TCRecipeProvider extends RecipeProvider {
                         Ingredient.of(cluster), RecipeCategory.MISC, new ItemStack(item.asItem(), 2), 1F, 200)
                 .group(group)
                 .unlockedBy("has", this.has(cluster))
-                .save(this.output, getItemName(item) + "_from_cluster");
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_from_cluster");
 
         SimpleCookingRecipeBuilder.blasting(
                         Ingredient.of(cluster), RecipeCategory.MISC, new ItemStack(item.asItem(), 2), 1F, 100)
                 .group(group)
                 .unlockedBy("has", this.has(cluster))
-                .save(this.output, getItemName(item) + "_blasting_from_cluster");
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_cluster");
     }
 
     private void plateRecipe(ItemLike plate, TagKey<Item> ingotTag) {
