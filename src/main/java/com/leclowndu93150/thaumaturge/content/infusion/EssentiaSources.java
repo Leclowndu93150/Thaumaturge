@@ -87,19 +87,38 @@ public final class EssentiaSources {
         if (sources == null) {
             sources = scan(level);
         }
+        List<BlockPos> emptySources = new ArrayList<>();
         for (BlockPos sourcePos : sources) {
             IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
-            if (container instanceof IAspectSource source && !source.isBlocked() && source.doesContainerAccept(aspect) && source.addToContainer(aspect, 1) == 0) {
-                BlockEntity be = level.getBlockEntity(sourcePos);
-                if (be != null)
-                    be.setChanged();
-                EffectDispatch.spawnEssentiaStream(level, Vec3.atCenterOf(center), Vec3.atCenterOf(sourcePos), aspect.value().color(), 0, level.getRandom().nextInt(8), 0.1F, fxExtendTicks, 0.0);
+            if (!(container instanceof IAspectSource source) || source.isBlocked() || !source.doesContainerAccept(aspect)) {
+                continue;
+            }
+            if (source.getAspects().isEmpty()) {
+                emptySources.add(sourcePos);
+            } else if (insertInto(level, aspect, fxExtendTicks, sourcePos, source)) {
+                return true;
+            }
+        }
+        for (BlockPos sourcePos : emptySources) {
+            IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
+            if (container instanceof IAspectSource source && !source.isBlocked() && source.doesContainerAccept(aspect) && insertInto(level, aspect, fxExtendTicks, sourcePos, source)) {
                 return true;
             }
         }
         sources = null;
         retryAt = level.getGameTime() + RETRY_DELAY_TICKS;
         return false;
+    }
+
+    private boolean insertInto(ServerLevel level, Holder<IAspect> aspect, int fxExtendTicks, BlockPos sourcePos, IAspectSource source) {
+        if (source.addToContainer(aspect, 1) != 0) {
+            return false;
+        }
+        BlockEntity be = level.getBlockEntity(sourcePos);
+        if (be != null)
+            be.setChanged();
+        EffectDispatch.spawnEssentiaStream(level, Vec3.atCenterOf(center), Vec3.atCenterOf(sourcePos), aspect.value().color(), 0, level.getRandom().nextInt(8), 0.1F, fxExtendTicks, 0.0);
+        return true;
     }
 
     private List<BlockPos> scan(ServerLevel level) {
