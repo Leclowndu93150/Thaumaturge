@@ -36,6 +36,7 @@ public final class TCBlockEntityRenderers {
         event.registerBlockEntityRenderer(TCBlockEntities.ALEMBIC.get(), AlembicRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.BANNER.get(), BannerRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.BELLOWS.get(), BellowsRenderer::new);
+        event.registerBlockEntityRenderer(TCBlockEntities.TUBE_VALVE.get(), TubeValveRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.ELDRITCH_OBELISK.get(), EldritchObeliskRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.RESEARCH_TABLE.get(), ResearchTableRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.DECONSTRUCTION_TABLE.get(), DeconstructionTableRenderer::new);
@@ -66,6 +67,7 @@ public final class TCBlockEntityRenderers {
             event.register(BellowsRenderer.MODEL_KEYS[i], SimpleUnbakedStandaloneModel.blockStateModel(modelId));
         }
         event.register(MirrorRenderer.FRAME_MODEL, SimpleUnbakedStandaloneModel.blockStateModel(MirrorRenderer.FRAME_MODEL_ID));
+        event.register(TubeValveRenderer.MODEL, SimpleUnbakedStandaloneModel.blockStateModel(TubeValveRenderer.MODEL_ID));
         event.register(MirrorRenderer.FRAME_ESSENTIA_MODEL, SimpleUnbakedStandaloneModel.blockStateModel(MirrorRenderer.FRAME_ESSENTIA_MODEL_ID));
     }
 }

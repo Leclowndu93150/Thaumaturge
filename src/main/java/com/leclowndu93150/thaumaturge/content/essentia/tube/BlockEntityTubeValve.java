@@ -18,6 +18,7 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
 
     private boolean allowFlow = true;
     private boolean wasPoweredLastTick;
+    private float previousRotation;
     private float rotation;
 
     public BlockEntityTubeValve(BlockPos pos, BlockState state) {
@@ -30,6 +31,10 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
 
     public float rotation() {
         return rotation;
+    }
+
+    public float rotation(float partialTick) {
+        return previousRotation + (rotation - previousRotation) * partialTick;
     }
 
     public void setAllowFlow(boolean allow) {
@@ -66,11 +71,29 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
     }
 
     public void tickClient(Level level, BlockPos pos, BlockState state) {
+        previousRotation = rotation;
         if (!allowFlow && rotation < ROTATION_MAX) {
             rotation += ROTATION_STEP;
         } else if (allowFlow && rotation > 0.0F) {
             rotation -= ROTATION_STEP;
         }
+    }
+
+    @Override
+    public boolean rotateFacing() {
+        if (level == null)
+            return false;
+        Direction[] directions = Direction.values();
+        int start = facing().ordinal();
+        for (int offset = 1; offset < directions.length; offset++) {
+            Direction candidate = directions[(start + offset) % directions.length];
+            if (hasTransportNeighbour(candidate))
+                continue;
+            setFacing(candidate);
+            BlockEssentiaTransport.refreshConnectionsAround(level, getBlockPos());
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -107,10 +107,15 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
             if (Arrays.stream(ignored).anyMatch(d -> d == direction))
                 continue;
             cursor.setWithOffset(pos, direction);
-            boolean connect = canConnectTo(lvl, cursor.immutable(), direction.getOpposite());
+            boolean connect = canConnectFrom(lvl, pos, direction) && canConnectTo(lvl, cursor.immutable(), direction.getOpposite());
             next = next.setValue(propertyFor(direction), connect);
         }
         return next;
+    }
+
+    private static boolean canConnectFrom(Level level, BlockPos pos, Direction face) {
+        IEssentiaTransport local = level.getCapability(EssentiaCapabilities.TRANSPORT, pos, face);
+        return local == null || local.isConnectable(face);
     }
 
     public static boolean canConnectTo(Level level, BlockPos neighbourPos, Direction faceFromNeighbour) {
@@ -121,7 +126,7 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     @Override
     protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
         if (level instanceof Level lvl) {
-            boolean connect = canConnectTo(lvl, neighbourPos, directionToNeighbour.getOpposite());
+            boolean connect = canConnectFrom(lvl, pos, directionToNeighbour) && canConnectTo(lvl, neighbourPos, directionToNeighbour.getOpposite());
             return state.setValue(propertyFor(directionToNeighbour), connect);
         }
         return state;
@@ -165,6 +170,13 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
             double oy = pos.getY() + 0.33 + rand.nextFloat() * 0.33;
             double oz = pos.getZ() + 0.33 + rand.nextFloat() * 0.33;
             Effects.vent2(server, new Vec3(ox, oy, oz)).motion(0.0, 0.1 + rand.nextFloat() * 0.2, 0.0).color(0x800080).scale(FLUX_VENT_SCALE).withFlame().send();
+        }
+    }
+
+    public static void refreshConnectionsAround(LevelAccessor level, BlockPos pos) {
+        refreshConnections(level, pos);
+        for (Direction direction : Direction.values()) {
+            refreshConnections(level, pos.relative(direction));
         }
     }
 

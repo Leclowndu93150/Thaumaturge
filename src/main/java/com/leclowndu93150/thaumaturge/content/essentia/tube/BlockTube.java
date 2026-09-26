@@ -24,8 +24,6 @@ public class BlockTube extends BlockEssentiaTransport {
 
     private static final double CORE_MIN = 5.0 / 16.0;
     private static final double CORE_MAX = 11.0 / 16.0;
-    private static final double CENTRE = 0.5;
-    private static final double CENTRE_TOLERANCE = 1.0 / 16.0;
 
     public BlockTube(BlockBehaviour.Properties properties) {
         super(properties);
@@ -58,6 +56,7 @@ public class BlockTube extends BlockEssentiaTransport {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof BlockEntityTube tube) {
             tube.setFacingForPlacement(placer);
+            refreshConnectionsAround(level, pos);
         }
     }
 
@@ -83,24 +82,18 @@ public class BlockTube extends BlockEssentiaTransport {
 
     public static int resolveSubHit(BlockHitResult hit, BlockPos pos) {
         Vec3 local = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
-        double dx = local.x - CENTRE;
-        double dy = local.y - CENTRE;
-        double dz = local.z - CENTRE;
-        if (Math.abs(dx) < CENTRE_TOLERANCE && Math.abs(dy) < CENTRE_TOLERANCE && Math.abs(dz) < CENTRE_TOLERANCE) {
-            return 6;
-        }
-        if (local.y <= CORE_MIN)
+        if (local.y < CORE_MIN)
             return Direction.DOWN.ordinal();
-        if (local.y >= CORE_MAX)
+        if (local.y > CORE_MAX)
             return Direction.UP.ordinal();
-        if (local.z <= CORE_MIN)
+        if (local.z < CORE_MIN)
             return Direction.NORTH.ordinal();
-        if (local.z >= CORE_MAX)
+        if (local.z > CORE_MAX)
             return Direction.SOUTH.ordinal();
-        if (local.x <= CORE_MIN)
+        if (local.x < CORE_MIN)
             return Direction.WEST.ordinal();
-        if (local.x >= CORE_MAX)
+        if (local.x > CORE_MAX)
             return Direction.EAST.ordinal();
-        return hit.getDirection().ordinal();
+        return 6;
     }
 }
