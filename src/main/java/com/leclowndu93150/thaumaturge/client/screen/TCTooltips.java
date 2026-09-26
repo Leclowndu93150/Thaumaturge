@@ -41,7 +41,7 @@ public final class TCTooltips {
     }
 
     public static Component knowledgeLabel(KnowledgeType type, ResourceKey<IResearchCategory> category) {
-        return Component.translatable("tc.knowledge.tooltip", Component.translatable("knowledge_type.thaumaturge." + type.getSerializedName()), CategoryComponents.name(category));
+        return Component.translatable("tc.knowledge.tooltip", Component.translatable(type.translationKey()), CategoryComponents.name(category));
     }
 
     public static Component need(String which) {

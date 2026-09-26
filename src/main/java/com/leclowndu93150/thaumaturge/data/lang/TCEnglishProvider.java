@@ -282,6 +282,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.nitor_black", "Black Nitor");
 
         ResearchTextEn.addAll(this::add);
+        CommandTextEn.addAll(this::add);
 
         add("key.thaumaturge.thaumonomicon", "Open Thaumonomicon");
         add("gui.thaumaturge.entry.advance", "Mark As Read");

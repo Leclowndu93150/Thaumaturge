@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
@@ -10,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ClientboundKnowledgeGainPayload;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -86,5 +88,21 @@ public final class ResearchGrants {
         }
         AspectPools.grantAllForCommand(player, AspectPools.SOFT_CAP);
         return granted;
+    }
+
+    public static void discoverAspects(ServerPlayer player, Collection<Holder.Reference<IAspect>> aspects) {
+        AspectPools.discoverForCommand(player, aspects);
+        for (Holder.Reference<IAspect> aspect : aspects) {
+            ResearchManager.unlock(player, ScanKeys.aspect(aspect.key()));
+        }
+    }
+
+    public static void forgetAspects(ServerPlayer player) {
+        AspectPools.resetForCommand(player);
+        IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
+        for (Holder.Reference<IAspect> aspect : player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().toList()) {
+            knowledge.removeResearch(ScanKeys.aspect(aspect.key()));
+        }
+        knowledge.sync(player);
     }
 }
