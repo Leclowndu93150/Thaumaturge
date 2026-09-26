@@ -9,9 +9,11 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.client.recipes.TCClientRecipes;
 import com.leclowndu93150.thaumaturge.client.screen.casters.FocalManipulatorScreen;
 import com.leclowndu93150.thaumaturge.compat.jei.category.*;
+import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategory.InfernalBonusWrapper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientHelper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
+import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
@@ -20,10 +22,8 @@ import com.leclowndu93150.thaumaturge.content.research.note.NoteGenerator;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.*;
+
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +50,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 @JeiPlugin
@@ -153,6 +154,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         categories.add(new AspectCompositionCategory(helpers.getGuiHelper(), pickIconAspect()));
         categories.add(new AspectFromStacksCategory(helpers.getGuiHelper()));
         categories.add(new MultiblockCategory(helpers.getGuiHelper()));
+        categories.add(new InfernalFurnaceCategory(helpers.getGuiHelper()));
         registration.addRecipeCategories(categories.toArray(new IRecipeCategory<?>[0]));
     }
 
@@ -173,8 +175,33 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         addTypedRecipes(registration, DustTriggerCategory.RECIPE_TYPE, TCRecipeTypes.DUST_TRIGGER.get(),
                 r -> r.value() instanceof DustTriggerSimpleRecipe || r.value() instanceof DustTriggerTagRecipe);
         addTypedRecipes(registration, MultiblockCategory.RECIPE_TYPE, TCRecipeTypes.DUST_TRIGGER.get(), r -> r.value() instanceof DustTriggerMultiblockRecipe);
+        addInfernalFurnaceBonuses(registration);
         registerAspectInfoPages(registration);
         registerAspectFromStacksPages(registration);
+    }
+
+    private void addInfernalFurnaceBonuses(IRecipeRegistration registration) {
+        if (Minecraft.getInstance().level == null) {
+            return;
+        }
+
+        Level level = Minecraft.getInstance().level;
+
+        RecipeMap recipes = TCClientRecipes.getRecipeMapForType(level, RecipeType.SMELTING);
+
+        List<RecipeHolder<SmeltingRecipe>> smeltingRecipes = List.copyOf(recipes.byType(RecipeType.SMELTING));
+
+        List<InfernalBonusWrapper> bonuses = registration.getIngredientManager().getAllItemStacks().stream().map(stack -> {
+            List<InfernalBonus> itemBonuses = stack.getData(InfernalBonus.DATA_MAP);
+            if (itemBonuses == null) {
+                return null;
+            }
+            SingleRecipeInput input = new SingleRecipeInput(stack);
+            return smeltingRecipes.stream().filter(recipe -> recipe.value().matches(input, level)).findFirst()
+                    .map(recipe -> new InfernalBonusWrapper(Ingredient.of(stack.getItem()), recipe.value().assemble(input), itemBonuses)).orElse(null);
+        }).filter(Objects::nonNull).toList();
+
+        registration.addRecipes(InfernalFurnaceCategory.RECIPE_TYPE, bonuses);
     }
 
     @Override
@@ -213,6 +240,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addCraftingStation(CrucibleCategory.RECIPE_TYPE, TCItems.CRUCIBLE.get());
         registration.addCraftingStation(AspectCompositionCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
         registration.addCraftingStation(AspectFromStacksCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
+        registration.addCraftingStation(InfernalFurnaceCategory.RECIPE_TYPE, TCItems.INFERNAL_FURNACE.get());
     }
 
     @Override

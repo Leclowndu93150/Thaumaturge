@@ -8,6 +8,7 @@ public final class TCScreenTextures {
 
     public static final Identifier ARCANE_WORKBENCH = gui("arcane_workbench.png");
     public static final Identifier GUI_BASE = gui("gui_base.png");
+    public static final Identifier GUI_LOGISTICS = gui("gui_logistics.png");
     public static final Identifier RESEARCH_BROWSER = gui("gui_research_browser.png");
     public static final Identifier RESEARCH_BOOK = gui("gui_researchbook.png");
     public static final Identifier RESEARCH_BOOK_OVERLAY = gui("gui_researchbook_overlay.png");

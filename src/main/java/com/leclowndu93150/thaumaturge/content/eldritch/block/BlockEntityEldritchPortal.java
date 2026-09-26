@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
+import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -69,16 +71,23 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         if (outer == null) {
             return;
         }
-        int chunkX = portalPos.getX() >> 4;
-        int chunkZ = portalPos.getZ() >> 4;
-        Vec3 target = new Vec3(chunkX * 16 + 8.5, OuterLands.MAZE_Y + 4, chunkZ * 16 + 8.5);
+        ChunkPos anchor = linkedMaze(from, portalPos);
+        Vec3 target = new Vec3(anchor.getMiddleBlockX() + 0.5, OuterLands.MAZE_Y + 4, anchor.getMiddleBlockZ() + 0.5);
         player.teleport(new TeleportTransition(outer, target, Vec3.ZERO, player.getYRot(), player.getXRot(), TeleportTransition.PLAY_PORTAL_SOUND));
         player.setPortalCooldown(PORTAL_COOLDOWN);
     }
 
+    private static ChunkPos linkedMaze(ServerLevel from, BlockPos portalPos) {
+        if (from.getBlockEntity(portalPos.below()) instanceof BlockEntityEldritchAltar altar && altar.getMazeChunk() != ChunkPos.INVALID_CHUNK_POS) {
+            return ChunkPos.unpack(altar.getMazeChunk());
+        }
+        return ChunkPos.containing(portalPos);
+    }
+
     private static void teleportToOverworld(ServerLevel from, ServerPlayer player, BlockPos portalPos) {
         ServerLevel overworld = from.getServer().overworld();
-        BlockPos found = findPortalColumn(overworld, portalPos);
+        BlockPos altar = MazeSavedData.get(from).getReturn(portalPos.getX() >> 4, portalPos.getZ() >> 4);
+        BlockPos found = altar != null ? altar.above() : findPortalColumn(overworld, portalPos);
         Vec3 target;
         if (found != null) {
             target = new Vec3(found.getX() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1), found.getY(), found.getZ() + 0.5 + (overworld.getRandom().nextBoolean() ? 1 : -1));

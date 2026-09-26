@@ -108,6 +108,11 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityEldritchObelisk obelisk) {
         return new AABB(obelisk.getBlockPos()).inflate(0.5, 0.0, 0.5).expandTowards(0.0, 5.0, 0.0);
     }

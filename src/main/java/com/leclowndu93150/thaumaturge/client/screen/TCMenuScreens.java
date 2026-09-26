@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.client.screen.construct.ArcaneBoreScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.TurretAdvancedScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.TurretBasicScreen;
 import com.leclowndu93150.thaumaturge.client.screen.golem.GolemBuilderScreen;
+import com.leclowndu93150.thaumaturge.client.screen.golem.GolemLogisticsScreen;
 import com.leclowndu93150.thaumaturge.client.screen.golem.SealScreen;
 import com.leclowndu93150.thaumaturge.client.screen.pip.BlockPreviewRenderState;
 import com.leclowndu93150.thaumaturge.client.screen.pip.BlockPreviewRenderer;
@@ -36,6 +37,7 @@ public final class TCMenuScreens {
         event.register(TCMenus.FOCAL_MANIPULATOR.get(), FocalManipulatorScreen::new);
         event.register(TCMenus.GOLEM_BUILDER.get(), GolemBuilderScreen::new);
         event.register(TCMenus.SEAL.get(), SealScreen::new);
+        event.register(TCMenus.GOLEM_LOGISTICS.get(), GolemLogisticsScreen::new);
         event.register(TCMenus.VOID_SIPHON.get(), VoidSiphonScreen::new);
         event.register(TCMenus.THAUMATORIUM.get(), ThaumatoriumScreen::new);
         event.register(TCMenus.PECH.get(), PechScreen::new);

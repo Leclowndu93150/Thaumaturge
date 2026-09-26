@@ -7,7 +7,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,6 +22,8 @@ public final class EssentiaSources {
 
     private final BlockPos center;
     private final int range;
+    private @Nullable Direction facing;
+    private @Nullable Predicate<BlockEntity> ignored;
     private @Nullable Vec3 drainEffectTarget;
     private @Nullable List<BlockPos> sources;
     private long retryAt;
@@ -36,6 +40,16 @@ public final class EssentiaSources {
     public void invalidate() {
         this.sources = null;
         this.retryAt = 0L;
+    }
+
+    public EssentiaSources facing(Direction direction) {
+        this.facing = direction;
+        return this;
+    }
+
+    public EssentiaSources ignoring(Predicate<BlockEntity> filter) {
+        this.ignored = filter;
+        return this;
     }
 
     public EssentiaSources drainEffectTarget(Vec3 target) {
@@ -91,15 +105,20 @@ public final class EssentiaSources {
     private List<BlockPos> scan(ServerLevel level) {
         List<BlockPos> found = new ArrayList<>();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int y = -range; y <= range; y++) {
-            for (int x = -range; x <= range; x++) {
-                for (int z = -range; z <= range; z++) {
-                    cursor.set(center.getX() + x, center.getY() + y, center.getZ() + z);
+        int alongMin = facing == null ? -range : 0;
+        int alongMax = facing == null ? range : range - 1;
+        for (int across = -range; across <= range; across++) {
+            for (int up = -range; up <= range; up++) {
+                for (int along = alongMin; along <= alongMax; along++) {
+                    if (across == 0 && up == 0 && along == 0) {
+                        continue;
+                    }
+                    place(cursor, across, up, along);
                     if (!level.isLoaded(cursor)) {
                         continue;
                     }
                     IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, cursor, null);
-                    if (container instanceof IAspectSource) {
+                    if (container instanceof IAspectSource && !isIgnored(level, cursor)) {
                         found.add(cursor.immutable());
                     }
                 }
@@ -107,5 +126,29 @@ public final class EssentiaSources {
         }
         found.sort((a, b) -> Double.compare(a.distSqr(center), b.distSqr(center)));
         return found;
+    }
+
+    private boolean isIgnored(ServerLevel level, BlockPos pos) {
+        if (ignored == null) {
+            return false;
+        }
+        BlockEntity be = level.getBlockEntity(pos);
+        return be != null && ignored.test(be);
+    }
+
+    private void place(BlockPos.MutableBlockPos cursor, int across, int up, int along) {
+        if (facing == null) {
+            cursor.set(center.getX() + across, center.getY() + along, center.getZ() + up);
+            return;
+        }
+        if (facing.getStepY() != 0) {
+            cursor.set(center.getX() + across, center.getY() + along * facing.getStepY(), center.getZ() + up);
+            return;
+        }
+        if (facing.getStepX() == 0) {
+            cursor.set(center.getX() + across, center.getY() + up, center.getZ() + along * facing.getStepZ());
+            return;
+        }
+        cursor.set(center.getX() + along * facing.getStepX(), center.getY() + across, center.getZ() + up);
     }
 }

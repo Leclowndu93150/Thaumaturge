@@ -35,6 +35,8 @@ public final class TCEntityLootSubProvider extends EntityLootSubProvider {
     @Override
     public void generate() {
         add(TCEntities.BRAINY_ZOMBIE.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
+        add(TCEntities.BRAINY_DROWNED.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
+        add(TCEntities.BRAINY_HUSK.get(), LootTable.lootTable().withPool(fleshPool()).withPool(zombieRareDropsPool()).withPool(brainPool()));
         add(TCEntities.MIND_SPIDER.get(), LootTable.lootTable());
         add(TCEntities.FIRE_BAT.get(), LootTable.lootTable());
         add(TCEntities.GIANT_BRAINY_ZOMBIE.get(),

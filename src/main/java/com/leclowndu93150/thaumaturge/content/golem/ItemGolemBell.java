@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.content.golem;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsGuiOpener;
+import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
@@ -45,6 +47,10 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
             }
             return InteractionResult.FAIL;
         }
+        if (LogisticsGuiOpener.canOpen(player)) {
+            LogisticsGuiOpener.open(player, null);
+            return InteractionResult.FAIL;
+        }
         return super.use(level, player, hand);
     }
 
@@ -57,7 +63,15 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         Level level = context.getLevel();
         ISealEntity seal = SealHandler.getSealEntity(level, new SealPos(context.getClickedPos(), context.getClickedFace()));
         if (seal == null) {
-            return InteractionResult.PASS;
+            if (!LogisticsGuiOpener.canOpen(player)) {
+                return InteractionResult.PASS;
+            }
+            player.swing(context.getHand(), true);
+            if (level.isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
+            LogisticsGuiOpener.open(player, new LogisticsTarget(context.getClickedPos(), context.getClickedFace()));
+            return InteractionResult.SUCCESS_SERVER;
         }
         player.swing(context.getHand(), true);
         if (level.isClientSide()) {

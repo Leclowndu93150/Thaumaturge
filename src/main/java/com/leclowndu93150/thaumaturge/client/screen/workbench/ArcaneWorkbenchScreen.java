@@ -32,6 +32,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     private static final int WAND_COST_Y_OFFSET = 129;
     private static final int WAND_COST_HOVER_HEIGHT = 6;
     private static final int WAND_COST_HOVER_MIN_HALF_WIDTH = 10;
+    private static final int SLOT_SIZE = 16;
     private static final DecimalFormat WAND_COST_FORMAT = new DecimalFormat("#.##");
 
     public ArcaneWorkbenchScreen(MenuArcaneWorkbench menu, Inventory inventory, Component title) {
@@ -60,12 +61,17 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
             for (AspectInstance instance : plan.crystalsToConsume().entries()) {
                 int color = instance.aspect().value().color();
                 int index = MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(instance.aspect().getKey());
+                int slotX = x + MenuArcaneWorkbench.CRYSTAL_X[index];
+                int slotY = y + MenuArcaneWorkbench.CRYSTAL_Y[index];
                 graphics.pose().pushMatrix();
-                graphics.pose().translate(x + MenuArcaneWorkbench.CRYSTAL_X[index] + 7.5F, y + MenuArcaneWorkbench.CRYSTAL_Y[index] + 8F);
+                graphics.pose().translate(slotX + 7.5F, slotY + 8F);
                 graphics.pose().rotate(index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) % 360);
                 graphics.pose().scale(0.5f);
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.ARCANE_WORKBENCH, -32, -32, 192, 0, 64, 64, 256, 256, ARGB.color(128, color));
                 graphics.pose().popMatrix();
+                if (mouseX >= slotX && mouseX < slotX + SLOT_SIZE && mouseY >= slotY && mouseY < slotY + SLOT_SIZE) {
+                    graphics.setTooltipForNextFrame(font, Component.translatable("gui.thaumaturge.arcane_workbench.crystal_needed.tooltip", WandEconomy.CRYSTAL_SUBSTITUTE_VIS), mouseX, mouseY);
+                }
             }
         }
 

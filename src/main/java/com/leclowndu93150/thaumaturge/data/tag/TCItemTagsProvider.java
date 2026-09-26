@@ -95,6 +95,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(ItemTags.AXES).add(TCItems.THAUMIUM_AXE.get(), TCItems.VOID_AXE.get(), TCItems.ELEMENTAL_AXE.get());
         tag(ItemTags.SHOVELS).add(TCItems.THAUMIUM_SHOVEL.get(), TCItems.VOID_SHOVEL.get(), TCItems.ELEMENTAL_SHOVEL.get());
         tag(ItemTags.HOES).add(TCItems.THAUMIUM_HOE.get(), TCItems.VOID_HOE.get(), TCItems.ELEMENTAL_HOE.get());
+        tag(ItemTags.SPEARS).add(TCItems.THAUMIUM_SPEAR.get(), TCItems.VOID_SPEAR.get(), TCItems.ELEMENTAL_SPEAR.get());
 
         tag(ItemTags.HEAD_ARMOR).add(TCItems.THAUMIUM_HELM.get(), TCItems.VOID_HELM.get(), TCItems.VOID_ROBE_HELM.get(), TCItems.FORTRESS_HELM.get(), TCItems.CRIMSON_PLATE_HELM.get(),
                 TCItems.CRIMSON_ROBE_HELM.get(), TCItems.CRIMSON_PRAETOR_HELM.get(), TCItems.GOGGLES_REVEALING.get());
@@ -105,7 +106,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(ItemTags.FOOT_ARMOR).add(TCItems.THAUMIUM_BOOTS.get(), TCItems.VOID_BOOTS.get(), TCItems.TRAVELLER_BOOTS.get(), TCItems.CLOTH_BOOTS.get(), TCItems.CRIMSON_BOOTS.get());
 
         tag(Tags.Items.MELEE_WEAPON_TOOLS).add(TCItems.THAUMIUM_SWORD.get(), TCItems.VOID_SWORD.get(), TCItems.ELEMENTAL_SWORD.get(), TCItems.CRIMSON_BLADE.get(), TCItems.THAUMIUM_AXE.get(),
-                TCItems.VOID_AXE.get(), TCItems.ELEMENTAL_AXE.get());
+                TCItems.VOID_AXE.get(), TCItems.ELEMENTAL_AXE.get(), TCItems.THAUMIUM_SPEAR.get(), TCItems.VOID_SPEAR.get(), TCItems.ELEMENTAL_SPEAR.get());
         tag(Tags.Items.MINING_TOOL_TOOLS).add(TCItems.THAUMIUM_PICKAXE.get(), TCItems.VOID_PICKAXE.get(), TCItems.ELEMENTAL_PICKAXE.get(), TCItems.PRIMAL_CRUSHER.get());
     }
 }

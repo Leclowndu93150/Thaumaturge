@@ -184,6 +184,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.arcane_workbench.required_vis_discount", "%s vis (%s%% discount)");
         add("gui.thaumaturge.arcane_workbench.required_vis_crude", "%s vis (unfocused)");
         add("gui.thaumaturge.arcane_workbench.wand_pay.tooltip", "Primal vis the wand will contribute in place of crystals (%s per crystal)");
+        add("gui.thaumaturge.arcane_workbench.crystal_needed.tooltip", "Needs a vis crystal, or %s vis of this primal from a wand in the wand slot");
         add("button.thaumaturge.create_theory", "Create Theory");
         add("button.thaumaturge.complete_theory", "Complete Theory");
         add("button.thaumaturge.scrap_theory", "Scrap Theory");
@@ -307,10 +308,12 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jei.thaumaturge.category.multiblock_dust_trigger", "Multiblock Trigger");
         add("jei.thaumaturge.category.aspect_composition", "Aspect Composition");
         add("jei.thaumaturge.category.aspect_from_stacks", "Aspect from ItemStack");
+        add("jei.thaumaturge.category.infernal_furnace", "Infernal Furnace");
         add("jei.thaumaturge.dust_trigger.usage", "Right-click the target block with Salis Mundus to trigger this transmutation.");
         add("jei.thaumaturge.dust_trigger.target.tag", "Any block in tag %1$s");
         add("jei.thaumaturge.dust_trigger.target.multiblock", "Right-click any block of the multiblock to trigger this transmutation.");
         add("jei.thaumaturge.research.missing_research", "Missing research: ");
+        add("jei.thaumaturge.infernal_furnace.count", "Count: %s");
         add("tooltip.thaumaturge.aspects.header", "Aspects:");
 
         // Resources
@@ -570,6 +573,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
+        add("entity.thaumaturge.brainy_drowned", "Angry Drowned");
+        add("entity.thaumaturge.brainy_husk", "Angry Husk");
         add("entity.thaumaturge.giant_brainy_zombie", "Furious Zombie");
         add("entity.thaumaturge.firebat", "Firebat");
         add("entity.thaumaturge.mind_spider", "Mind Spider");
@@ -577,6 +582,8 @@ public final class TCEnglishProvider extends LanguageProvider {
 
         add("item.thaumaturge.brainy_zombie_spawn_egg", "Angry Zombie Spawn Egg");
         add("item.thaumaturge.giant_brainy_zombie_spawn_egg", "Furious Zombie Spawn Egg");
+        add("item.thaumaturge.brainy_drowned_spawn_egg", "Angry Drowned Spawn Egg");
+        add("item.thaumaturge.brainy_husk_spawn_egg", "Angry Husk Spawn Egg");
         add("item.thaumaturge.firebat_spawn_egg", "Firebat Spawn Egg");
         add("item.thaumaturge.mind_spider_spawn_egg", "Mind Spider Spawn Egg");
         add("item.thaumaturge.wisp_spawn_egg", "Wisp Spawn Egg");
@@ -697,7 +704,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("research.thaumaturge.oculus.stage_0",
                 "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
         add("research.thaumaturge.oculus.stage_1",
-                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
+                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>The eyes are spent in the opening, and a keystone left empty will take four more. Seat them and channel again and the door swings onto somewhere else entirely - an altar already used is not an altar exhausted.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
         add("research.thaumaturge.enter_outer_lands.stage_0",
                 "You are not quite sure what you were expecting when you stepped through the Oculus, but this strange structure of crumbling stone and twisted passageways was not it.<BR>Something is not quite right here - this structure was not designed for any practical purpose you can discern... unless that purpose was for it to be a deadly maze.<BR>Strange energies abound and your magic seems to act strangely in this alien environment. Even the other denizens you encounter seem out of place here.");
@@ -801,6 +808,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.thaumium_axe", "Thaumium Axe");
         add("item.thaumaturge.thaumium_shovel", "Thaumium Shovel");
         add("item.thaumaturge.thaumium_hoe", "Thaumium Hoe");
+        add("item.thaumaturge.thaumium_spear", "Thaumium Spear");
         add("item.thaumaturge.thaumium_helm", "Thaumium Helm");
         add("item.thaumaturge.thaumium_chest", "Thaumium Chestplate");
         add("item.thaumaturge.thaumium_legs", "Thaumium Greaves");
@@ -810,6 +818,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.void_axe", "Void Axe");
         add("item.thaumaturge.void_shovel", "Void Shovel");
         add("item.thaumaturge.void_hoe", "Void Hoe");
+        add("item.thaumaturge.void_spear", "Void Spear");
         add("item.thaumaturge.void_helm", "Void Helm");
         add("item.thaumaturge.void_chest", "Void Chestplate");
         add("item.thaumaturge.void_legs", "Void Greaves");
@@ -819,6 +828,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.elemental_axe", "Axe of the Stream");
         add("item.thaumaturge.elemental_shovel", "Shovel of the Earthmover");
         add("item.thaumaturge.elemental_hoe", "Hoe of Growth");
+        add("item.thaumaturge.elemental_spear", "Spear of the Firmament");
         add("item.thaumaturge.primal_crusher", "Primal Crusher");
         add("item.thaumaturge.traveller_boots", "Boots of the Traveller");
         add("item.thaumaturge.cloth_chest", "Apprentice's Robes");
@@ -905,6 +915,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.focus_pouch.count", "Holds %1$s/%2$s foci");
         add("tc.wand.notenoughvis", "The wand does not hold enough vis");
         add("tc.node.name", "Aura Node");
+        add("tc.node.name.energized", "Energized Aura Node");
         add("tc.node.jar.aspect", "%1$s %2$s");
         add("tc.node.typemod", "%1$s, %2$s");
         add("nodetype.thaumaturge.normal", "Normal");
@@ -1216,6 +1227,21 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("golem.prop.leave", "Always leave at least 1 item");
         add("golem.prop.silk", "Use Silk Touch");
         add("gui.thaumaturge.seal", "Seal");
+        add("gui.thaumaturge.logistics", "Golem Logistics");
+        add("gui.thaumaturge.logistics.request", "Request");
+        add("gui.thaumaturge.logistics.search", "Search");
+        add("gui.thaumaturge.logistics.scroll_up", "Scroll Up");
+        add("gui.thaumaturge.logistics.scroll_down", "Scroll Down");
+        add("gui.thaumaturge.logistics.count_down", "Fewer");
+        add("gui.thaumaturge.logistics.count_up", "More");
+        add("gui.thaumaturge.seal.priority_down", "Lower Priority");
+        add("gui.thaumaturge.seal.priority_up", "Raise Priority");
+        add("gui.thaumaturge.seal.color_previous", "Previous Colour");
+        add("gui.thaumaturge.seal.color_next", "Next Colour");
+        add("gui.thaumaturge.seal.area_shrink", "Shrink Area (%s)");
+        add("gui.thaumaturge.seal.area_grow", "Grow Area (%s)");
+        add("gui.thaumaturge.golem_builder.previous", "Previous");
+        add("gui.thaumaturge.golem_builder.next", "Next");
         add("golem.prop.blacklist", "Blacklist");
         add("golem.prop.whitelist", "Whitelist");
         add("button.category.0", "Priority/Locking");
@@ -1252,9 +1278,11 @@ public final class TCEnglishProvider extends LanguageProvider {
 
     private void langConstructs() {
         add("block.thaumaturge.activator_rail", "Arcane Activator Rail");
+        add("gui.thaumaturge.scan.scanning", "Scanning");
+        add("tooltip.thaumaturge.thaumometer.inventory_scan", "Hold on the cursor and hover an item to scan it");
         add("item.thaumaturge.turret_basic", "Automated Crossbow");
         add("item.thaumaturge.turret_advanced", "Advanced Automated Crossbow");
-        add("item.thaumaturge.turret_bore", "Arcane Bore");
+        add("block.thaumaturge.arcane_bore", "Arcane Bore");
         add("item.thaumaturge.grapple_gun", "Arcane Grappler");
         add("item.thaumaturge.grapple_gun_tip", "Grappler Head");
         add("item.thaumaturge.grapple_gun_spool", "Grappler Spool");
@@ -1451,6 +1479,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.essentia.empty", "Empty");
         add("jade.thaumaturge.essentia.fill", "%s: %s / %s");
         add("jade.thaumaturge.essentia.contents", "Essentia: %s");
+        add("jade.thaumaturge.essentia.filter", "Filtering: %s");
+        add("jade.thaumaturge.essentia.unfiltered", "No filter set");
         add("jade.thaumaturge.machine.progress", "Progress: %s%%");
         add("jade.thaumaturge.machine.heat", "Heat: %s%%");
         add("jade.thaumaturge.transducer.status.0", "No node below");

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import com.leclowndu93150.thaumaturge.api.items.IChanneledItem;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
 import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
@@ -27,7 +28,7 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public final class ElementalSwordItem extends Item {
+public final class ElementalSwordItem extends Item implements IChanneledItem {
     private static final int USE_DURATION = 72000;
     private static final double PULL_RANGE = 2.5;
     private static final int SMOKE_COLOR = 14540253;

@@ -119,7 +119,15 @@ public final class Effects {
     }
 
     public static void boreDig(ServerLevel level, BlockPos target, Entity bore, int delay) {
-        PacketDistributor.sendToPlayersNear(level, null, target.getX(), target.getY(), target.getZ(), BORE_DIG_RADIUS, new ClientboundBoreDigPayload(target, bore.getId(), delay));
+        sendBoreDig(level, target, bore.getId(), bore.blockPosition(), delay);
+    }
+
+    public static void boreDig(ServerLevel level, BlockPos target, BlockPos bore, int delay) {
+        sendBoreDig(level, target, BoreDebrisParticleOptions.NO_ENTITY, bore, delay);
+    }
+
+    private static void sendBoreDig(ServerLevel level, BlockPos target, int boreEntityId, BlockPos borePos, int delay) {
+        PacketDistributor.sendToPlayersNear(level, null, target.getX(), target.getY(), target.getZ(), BORE_DIG_RADIUS, new ClientboundBoreDigPayload(target, boreEntityId, borePos, delay));
     }
 
     public static BoreStream boreStream(ServerLevel level, Vec3 source, Entity target) {

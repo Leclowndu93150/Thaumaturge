@@ -25,7 +25,8 @@ public final class NodeTransducerRenderer implements BlockEntityRenderer<BlockEn
     @Override
     public void extractRenderState(BlockEntityNodeTransducer transducer, NodeTransducerRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(transducer, state, partialTicks, cameraPosition, breakProgress);
-        state.chargeFraction = transducer.getCount() / (float) BlockEntityNodeTransducer.CHARGE_TARGET;
+        state.count = transducer.getCount();
+        state.status = transducer.getStatus();
         LocalPlayer player = Minecraft.getInstance().player;
         state.ticks = player == null ? 0.0F : player.tickCount + partialTicks;
         state.light = state.lightCoords;
@@ -36,7 +37,7 @@ public final class NodeTransducerRenderer implements BlockEntityRenderer<BlockEn
         poseStack.pushPose();
         poseStack.translate(0.5F, 1.0F, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        NodeStabilizerRenderer.submitTransducerParts(state.chargeFraction, state.ticks, poseStack, collector, state.light);
+        NodeStabilizerRenderer.submitTransducerParts(state.count, state.status, state.ticks, poseStack, collector, state.light);
         poseStack.popPose();
     }
 }

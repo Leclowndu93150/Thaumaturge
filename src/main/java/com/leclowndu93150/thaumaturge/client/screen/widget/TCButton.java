@@ -23,6 +23,7 @@ public abstract class TCButton extends AbstractButton {
         super(x, y, width, height, message);
         this.tintColor = COLOR_WHITE;
         this.onPress = onPress;
+        refreshTooltip();
     }
 
     public static int centerToTopLeftX(int centerX, int width) {

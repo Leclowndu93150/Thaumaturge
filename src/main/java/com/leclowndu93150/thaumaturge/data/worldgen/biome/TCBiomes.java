@@ -127,7 +127,6 @@ public final class TCBiomes {
         mobs.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(TCEntities.INHABITED_ZOMBIE.get(), 1, 1));
         mobs.addSpawn(MobCategory.MONSTER, 1, new MobSpawnSettings.SpawnerData(TCEntities.ELDRITCH_GUARDIAN.get(), 1, 1));
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placed, carvers);
-        globalGeneration(generation);
 
         return new Biome.BiomeBuilder().hasPrecipitation(true).temperature(ELDRITCH_TEMPERATURE).downfall(ELDRITCH_DOWNFALL)
                 .setAttribute(EnvironmentAttributes.SKY_COLOR, OverworldBiomes.calculateSkyColor(ELDRITCH_TEMPERATURE))

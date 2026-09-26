@@ -248,6 +248,7 @@ public final class TCCreativeTabs {
                     output.accept(PhialItem.makeFilled(aspect));
                 }
                 output.accept(TCItems.THAUMIUM_SWORD.get());
+                output.accept(TCItems.THAUMIUM_SPEAR.get());
                 output.accept(TCItems.THAUMIUM_PICKAXE.get());
                 output.accept(TCItems.THAUMIUM_AXE.get());
                 output.accept(TCItems.THAUMIUM_SHOVEL.get());
@@ -257,6 +258,7 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.THAUMIUM_LEGS.get());
                 output.accept(TCItems.THAUMIUM_BOOTS.get());
                 output.accept(TCItems.VOID_SWORD.get());
+                output.accept(TCItems.VOID_SPEAR.get());
                 output.accept(TCItems.VOID_PICKAXE.get());
                 output.accept(TCItems.VOID_AXE.get());
                 output.accept(TCItems.VOID_SHOVEL.get());
@@ -268,6 +270,9 @@ public final class TCCreativeTabs {
                 ItemStack elementalSword = new ItemStack(TCItems.ELEMENTAL_SWORD.get());
                 InfusionEnchantmentHelper.add(elementalSword, InfusionEnchantment.ARCING, 2);
                 output.accept(elementalSword);
+                ItemStack elementalSpear = new ItemStack(TCItems.ELEMENTAL_SPEAR.get());
+                InfusionEnchantmentHelper.add(elementalSpear, InfusionEnchantment.ESSENCE, 2);
+                output.accept(elementalSpear);
                 ItemStack elementalPickaxe = new ItemStack(TCItems.ELEMENTAL_PICKAXE.get());
                 InfusionEnchantmentHelper.add(elementalPickaxe, InfusionEnchantment.REFINING, 1);
                 InfusionEnchantmentHelper.add(elementalPickaxe, InfusionEnchantment.SOUNDING, 2);
@@ -332,7 +337,7 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.RUNED_TABLET.get());
                 output.accept(TCItems.TURRET_BASIC.get());
                 output.accept(TCItems.TURRET_ADVANCED.get());
-                output.accept(TCItems.TURRET_BORE.get());
+                output.accept(TCItems.ARCANE_BORE.get());
                 output.accept(TCItems.GRAPPLE_GUN.get());
                 output.accept(TCItems.GRAPPLE_GUN_TIP.get());
                 output.accept(TCItems.GRAPPLE_GUN_SPOOL.get());
@@ -376,6 +381,8 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.WISP_SPAWN_EGG.get());
                 output.accept(TCItems.BRAINY_ZOMBIE_SPAWN_EGG.get());
                 output.accept(TCItems.GIANT_BRAINY_ZOMBIE_SPAWN_EGG.get());
+                output.accept(TCItems.BRAINY_DROWNED_SPAWN_EGG.get());
+                output.accept(TCItems.BRAINY_HUSK_SPAWN_EGG.get());
                 output.accept(TCItems.FIREBAT_SPAWN_EGG.get());
                 output.accept(TCItems.MIND_SPIDER_SPAWN_EGG.get());
                 output.accept(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());

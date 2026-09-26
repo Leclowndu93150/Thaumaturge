@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.ResourceHandler;
@@ -40,6 +42,11 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     private static final float MAX_REFILL_VIS = 0.1F;
     private static final int ZONE_XZ = 5;
     private static final int ZONE_Y = 3;
+    private static final int TRAIL_COLOR = 0x286FF6;
+    private static final double TRAIL_SOURCE_Y = 0.66;
+    private static final float TRAIL_SCALE = 0.1F;
+    private static final int TRAIL_EXTEND = 0;
+    private static final double TRAIL_UPWARD = 0.2;
 
     private final FluidStacksResourceHandler tank = new FluidStacksResourceHandler(1, CAPACITY) {
         @Override
@@ -110,12 +117,12 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
                 if (targetState.is(Blocks.CAULDRON)) {
                     server.setBlock(target, Blocks.WATER_CAULDRON.defaultBlockState(), Block.UPDATE_CLIENTS);
                     urn.drainWater(CAULDRON_COST);
-                    urn.splashAt(server, target);
+                    urn.pourInto(server, target);
                 } else if (targetState.getValue(LayeredCauldronBlock.LEVEL) < LayeredCauldronBlock.MAX_FILL_LEVEL) {
                     server.setBlock(target, targetState.cycle(LayeredCauldronBlock.LEVEL), Block.UPDATE_CLIENTS);
                     server.updateNeighbourForOutputSignal(target, targetState.getBlock());
                     urn.drainWater(CAULDRON_COST);
-                    urn.splashAt(server, target);
+                    urn.pourInto(server, target);
                 }
             } else {
                 int moved;
@@ -127,7 +134,7 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
                 }
                 if (moved > 0) {
                     urn.drainWater(moved);
-                    urn.splashAt(server, target);
+                    urn.pourInto(server, target);
                     break;
                 }
             }
@@ -160,7 +167,9 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
         return state.is(Blocks.CAULDRON) || state.is(Blocks.WATER_CAULDRON);
     }
 
-    private void splashAt(ServerLevel server, BlockPos target) {
+    private void pourInto(ServerLevel server, BlockPos target) {
+        Vec3 from = new Vec3(getBlockPos().getX() + 0.5, getBlockPos().getY() + TRAIL_SOURCE_Y, getBlockPos().getZ() + 0.5);
+        EffectDispatch.spawnEssentiaStream(server, from, Vec3.atCenterOf(target), TRAIL_COLOR, 0, counter, TRAIL_SCALE, TRAIL_EXTEND, TRAIL_UPWARD);
         server.sendParticles(ParticleTypes.SPLASH, target.getX() + 0.5, target.getY() + 1.0, target.getZ() + 0.5, 4, 0.2, 0.1, 0.2, 0.0);
     }
 

@@ -18,9 +18,11 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -36,6 +38,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private static final int QUILL_TEXELS = 16;
     private static final int PARCHMENT_COUNT = 6;
     private static final float RIBBON_SCALE = 1.2F;
+    private static final double BOUNDS_MARGIN = 0.5;
 
     private final ResearchTableModel model;
 
@@ -49,8 +52,16 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityResearchTable table) {
-        return new AABB(table.getBlockPos()).inflate(1.0);
+        BlockPos pos = table.getBlockPos();
+        BlockState state = table.getBlockState();
+        Direction facing = state.hasProperty(BlockResearchTable.FACING) ? state.getValue(BlockResearchTable.FACING) : Direction.NORTH;
+        return new AABB(pos).minmax(new AABB(pos.relative(facing))).inflate(BOUNDS_MARGIN);
     }
 
     @Override

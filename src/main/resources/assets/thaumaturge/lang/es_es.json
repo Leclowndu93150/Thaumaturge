@@ -1138,6 +1138,8 @@
   "jei.thaumaturge.arcane_workbench.vis_cost_aura": "Consumir cristales en su lugar resulta en una retiradada del aura de: %s Vis",
   "jei.thaumaturge.arcane_workbench.vis_cost_wand": "La varita ranurada descarga energía en cada fabricación: se aplica un descuento máximo y puede pagar %s de Vis por cada cristal requerido en lugar de consumirlos.",
   "jei.thaumaturge.category.arcane_workbench": "Mesa de trabajo arcano",
+  "jei.thaumaturge.category.infernal_furnace": "Horno infernal",
+  "jei.thaumaturge.infernal_furnace.count": "Cantidad: %s",
   "jei.thaumaturge.category.aspect_composition": "Composición de aspectos",
   "jei.thaumaturge.category.aspect_from_stacks": "Fuentes de este aspecto",
   "jei.thaumaturge.category.crucible": "Crisol",

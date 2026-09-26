@@ -68,6 +68,11 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityEldritchPortal portal) {
         return new AABB(portal.getBlockPos()).inflate(1.5);
     }

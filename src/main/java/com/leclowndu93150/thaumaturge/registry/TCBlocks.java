@@ -26,6 +26,7 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
 import com.leclowndu93150.thaumaturge.content.device.BlockArcaneEar;
+import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.BlockCondenser;
 import com.leclowndu93150.thaumaturge.content.device.BlockCondenserLattice;
 import com.leclowndu93150.thaumaturge.content.device.BlockDioptra;
@@ -327,7 +328,7 @@ public final class TCBlocks {
     //
 
     public static final DeferredBlock<BlockInfusionMatrix> INFUSION_MATRIX = BLOCKS.registerBlock("infusion_matrix", BlockInfusionMatrix::new,
-            props -> props.mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).noLootTable().noOcclusion().lightLevel(s -> 15));
+            props -> props.mapColor(MapColor.STONE).strength(1.5F, 1.2F).sound(SoundType.STONE).noOcclusion().lightLevel(s -> 15));
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ARCANE = BLOCKS.registerBlock("pedestal_arcane", props -> new BlockPedestal(BlockPedestal.Variant.ARCANE, props),
             TCBlocks::pedestalProps);
@@ -338,7 +339,7 @@ public final class TCBlocks {
             props -> props.mapColor(MapColor.METAL).strength(0.5F).sound(SoundType.METAL).noOcclusion().noCollision().lightLevel(state -> 1));
 
     public static final DeferredBlock<BlockPatternCrafter> PATTERN_CRAFTER = BLOCKS.registerBlock("pattern_crafter", BlockPatternCrafter::new,
-            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion());
+            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion().isRedstoneConductor((state, level, pos) -> false));
 
     public static final DeferredBlock<BlockPotionSprayer> POTION_SPRAYER = BLOCKS.registerBlock("potion_sprayer", BlockPotionSprayer::new,
             props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL));
@@ -348,6 +349,9 @@ public final class TCBlocks {
 
     public static final DeferredBlock<BlockGolemBuilder> GOLEM_BUILDER = BLOCKS.registerBlock("golem_builder", BlockGolemBuilder::new,
             props -> props.mapColor(MapColor.STONE).strength(2.0F, 20.0F).sound(SoundType.STONE).noOcclusion());
+
+    public static final DeferredBlock<BlockArcaneBore> ARCANE_BORE = BLOCKS.registerBlock("arcane_bore", BlockArcaneBore::new,
+            props -> props.mapColor(MapColor.METAL).strength(2.0F, 20.0F).sound(SoundType.METAL).noOcclusion());
 
     public static final DeferredBlock<BlockPlaceholder> PLACEHOLDER_IRON_BARS = BLOCKS.registerBlock("placeholder_iron_bars", BlockPlaceholder::new, TCBlocks::pressPlaceholderProps);
 

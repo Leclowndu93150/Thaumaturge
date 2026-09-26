@@ -27,6 +27,8 @@ public final class TCEntityEvents {
     public static void onSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(TCEntities.WISP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WispEntity::checkWispSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(TCEntities.BRAINY_HUSK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(TCEntities.BRAINY_ZOMBIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
         event.register(TCEntities.GIANT_BRAINY_ZOMBIE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Monster::checkMonsterSpawnRules,
@@ -58,6 +60,8 @@ public final class TCEntityEvents {
         event.put(TCEntities.ELDRITCH_WARDEN.get(), EntityEldritchWarden.createAttributes().build());
         event.put(TCEntities.TAINTACLE_GIANT.get(), EntityTaintacleGiant.createAttributes().build());
         event.put(TCEntities.BRAINY_ZOMBIE.get(), EntityBrainyZombie.createAttributes().build());
+        event.put(TCEntities.BRAINY_DROWNED.get(), EntityBrainyDrowned.createAttributes().build());
+        event.put(TCEntities.BRAINY_HUSK.get(), EntityBrainyHusk.createAttributes().build());
         event.put(TCEntities.FIRE_BAT.get(), EntityFireBat.createAttributes().build());
         event.put(TCEntities.MIND_SPIDER.get(), EntityMindSpider.createAttributes().build());
         event.put(TCEntities.GIANT_BRAINY_ZOMBIE.get(), EntityGiantBrainyZombie.createAttributes().build());

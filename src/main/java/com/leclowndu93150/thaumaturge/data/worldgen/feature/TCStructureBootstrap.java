@@ -20,11 +20,11 @@ public final class TCStructureBootstrap {
     public static final ResourceKey<Structure> ELDRITCH_OBELISK = ResourceKey.create(Registries.STRUCTURE, TCIds.rl("eldritch_obelisk"));
     public static final ResourceKey<StructureSet> ELDRITCH_OBELISK_SET = ResourceKey.create(Registries.STRUCTURE_SET, TCIds.rl("eldritch_obelisks"));
 
-    private static final int MOUND_SPACING = 10;
-    private static final int MOUND_SEPARATION = 5;
+    private static final int MOUND_SPACING = 20;
+    private static final int MOUND_SEPARATION = 10;
     private static final int MOUND_SALT = 41626157;
-    private static final int OBELISK_SPACING = 14;
-    private static final int OBELISK_SEPARATION = 7;
+    private static final int OBELISK_SPACING = 32;
+    private static final int OBELISK_SEPARATION = 12;
     private static final int OBELISK_SALT = 46186246;
 
     private TCStructureBootstrap() {}

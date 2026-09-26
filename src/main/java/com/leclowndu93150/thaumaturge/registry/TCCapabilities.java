@@ -20,6 +20,7 @@ public final class TCCapabilities {
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         crucible(event);
+        nodes(event);
         devices(event);
         essentiaTransport(event);
         essentiaItems(event);
@@ -34,6 +35,11 @@ public final class TCCapabilities {
     private static void crucible(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.CRUCIBLE.get(), (be, side) -> be);
         event.registerBlockEntity(Capabilities.Fluid.BLOCK, TCBlockEntities.CRUCIBLE.get(), (be, side) -> be.getTank());
+    }
+
+    private static void nodes(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.NODE.get(), (be, side) -> be);
+        event.registerBlockEntity(AspectCapabilities.CONTAINER, TCBlockEntities.JAR_NODE.get(), (be, side) -> be);
     }
 
     private static void devices(RegisterCapabilitiesEvent event) {

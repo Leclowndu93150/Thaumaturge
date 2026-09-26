@@ -31,6 +31,12 @@ public final class TCEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyZombie>> BRAINY_ZOMBIE = register("brainy_zombie",
             () -> EntityType.Builder.of(EntityBrainyZombie::new, MobCategory.MONSTER).sized(0.6F, 1.95F).eyeHeight(1.74F).notInPeaceful().clientTrackingRange(8).updateInterval(3));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyDrowned>> BRAINY_DROWNED = register("brainy_drowned",
+            () -> EntityType.Builder.of(EntityBrainyDrowned::new, MobCategory.MONSTER).sized(0.6F, 1.95F).eyeHeight(1.74F).notInPeaceful().clientTrackingRange(8).updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityBrainyHusk>> BRAINY_HUSK = register("brainy_husk",
+            () -> EntityType.Builder.of(EntityBrainyHusk::new, MobCategory.MONSTER).sized(0.6F, 1.95F).eyeHeight(1.74F).notInPeaceful().clientTrackingRange(8).updateInterval(3));
+
     public static final DeferredHolder<EntityType<?>, EntityType<EntityGiantBrainyZombie>> GIANT_BRAINY_ZOMBIE = register("giant_brainy_zombie",
             () -> EntityType.Builder.of(EntityGiantBrainyZombie::new, MobCategory.MONSTER).sized(0.6F, 1.95F).eyeHeight(1.74F).notInPeaceful().clientTrackingRange(8).updateInterval(3));
 

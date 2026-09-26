@@ -224,6 +224,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
+        dropSelf(TCBlocks.INFUSION_MATRIX.get());
 
         dropSelf(TCBlocks.METAL_BRASS_BLOCK.get());
         dropSelf(TCBlocks.METAL_THAUMIUM_BLOCK.get());
@@ -242,6 +243,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.LAMP_GROWTH.get());
         dropSelf(TCBlocks.LAMP_FERTILITY.get());
         dropSelf(TCBlocks.CENTRIFUGE.get());
+        dropSelf(TCBlocks.ARCANE_BORE.get());
         dropSelf(TCBlocks.HUNGRY_CHEST.get());
         dropSelf(TCBlocks.EVERFULL_URN.get());
         dropSelf(TCBlocks.VIS_GENERATOR.get());

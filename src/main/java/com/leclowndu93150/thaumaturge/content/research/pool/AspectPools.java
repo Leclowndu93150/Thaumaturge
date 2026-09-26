@@ -14,6 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -115,12 +116,19 @@ public final class AspectPools {
     }
 
     public static void notifyMissingComponent(ServerPlayer player, Holder<IAspect> aspect) {
+        MutableComponent message = missingComponentHint(player, aspect);
+        if (message != null) {
+            player.sendSystemMessage(message.withStyle(ChatFormatting.DARK_PURPLE));
+        }
+    }
+
+    public static @Nullable MutableComponent missingComponentHint(Player player, Holder<IAspect> aspect) {
         for (Holder<IAspect> component : aspect.value().components()) {
             if (!isDiscovered(player, component)) {
-                player.sendSystemMessage(missingComponentMessage(player, component).withStyle(ChatFormatting.DARK_PURPLE));
-                return;
+                return missingComponentMessage(player, component);
             }
         }
+        return null;
     }
 
     public static MutableComponent missingComponentMessage(Player player, Holder<IAspect> component) {

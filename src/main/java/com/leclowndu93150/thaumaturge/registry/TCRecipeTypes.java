@@ -11,6 +11,8 @@ import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeDisp
 import com.leclowndu93150.thaumaturge.content.recipe.dust.MultiblockRecipeDisplay;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipeDisplay;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.core.registries.Registries;
@@ -90,7 +92,8 @@ public final class TCRecipeTypes {
     }
 
     public static void registerSynchronizedRecipes(OnDatapackSyncEvent event) {
-        List<RecipeType<?>> types = RECIPE_TYPES.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toUnmodifiableList());
+        List<RecipeType<?>> types = new ArrayList<>(RECIPE_TYPES.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toUnmodifiableList()));
+        types.add(RecipeType.SMELTING);
         event.sendRecipes(types);
     }
 }

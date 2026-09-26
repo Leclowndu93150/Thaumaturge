@@ -1,0 +1,45 @@
+{
+    "ambientocclusion": false,
+    "textures": {
+        "side": "thaumaturge:block/tube",
+        "particle": "thaumaturge:block/base_metal"
+    },
+    "elements": [
+        {
+            "from": [6, 1.76, 6],
+            "to": [10, 5.76, 10],
+            "faces": {
+                "up": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                },
+                "down": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                },
+                "west": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                },
+                "east": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                },
+                "north": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                },
+                "south": {
+                    "uv": [12, 11, 16, 15],
+                    "texture": "#side",
+                    "tintindex": 0
+                }
+            }
+        }
+    ]
+}

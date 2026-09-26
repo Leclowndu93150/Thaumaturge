@@ -137,6 +137,8 @@ public final class EntityAspectsProvider extends DataMapProvider {
         add(b, TCEntities.FIRE_BAT.get(), list(TCAspects.BESTIA, 5, TCAspects.VOLATUS, 5, TCAspects.IGNIS, 10));
         add(b, TCEntities.MIND_SPIDER.get(), list(TCAspects.VITIUM, 5, TCAspects.IGNIS, 5));
         add(b, TCEntities.BRAINY_ZOMBIE.get(), list(TCAspects.EXANIMIS, 20, TCAspects.HUMANUS, 10, TCAspects.COGNITIO, 5, TCAspects.AVERSIO, 5));
+        add(b, TCEntities.BRAINY_DROWNED.get(), list(TCAspects.EXANIMIS, 20, TCAspects.HUMANUS, 10, TCAspects.COGNITIO, 5, TCAspects.AQUA, 10));
+        add(b, TCEntities.BRAINY_HUSK.get(), list(TCAspects.EXANIMIS, 20, TCAspects.HUMANUS, 10, TCAspects.COGNITIO, 5, TCAspects.TERRA, 10));
         add(b, TCEntities.GIANT_BRAINY_ZOMBIE.get(), list(TCAspects.EXANIMIS, 25, TCAspects.HUMANUS, 15, TCAspects.COGNITIO, 5, TCAspects.AVERSIO, 10));
         add(b, TCEntities.PECH.get(), list(TCAspects.HUMANUS, 10, TCAspects.AURAM, 5, TCAspects.PERMUTATIO, 10, TCAspects.DESIDERIUM, 5));
         add(b, TCEntities.ELDRITCH_GUARDIAN.get(), list(TCAspects.ALIENIS, 20, TCAspects.MORTUUS, 20, TCAspects.EXANIMIS, 20));

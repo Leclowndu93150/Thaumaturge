@@ -68,7 +68,7 @@ public final class TCPlacedFeatures {
     private static final int CINDERPEARL_Y_SPREAD = 4;
     private static final int ORE_CINNABAR_COUNT = 18;
     private static final int ORE_QUARTZ_COUNT = 18;
-    private static final int ORE_AMBER_COUNT = 20;
+    private static final int ORE_AMBER_COUNT = 12;
     private static final int CINNABAR_MAX_Y = 12;
     private static final int QUARTZ_MAX_Y = 32;
     private static final int AMBER_MAX_DEPTH_BELOW_SURFACE = 16;

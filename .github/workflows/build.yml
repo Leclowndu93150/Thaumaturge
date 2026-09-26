@@ -31,6 +31,10 @@ jobs:
           cache-disabled: ${{ inputs.is-release }}
           cache-read-only: false
 
+      - name: Apply Spotless
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: ./gradlew spotlessApply
+
       - name: Data Generation
         run: ./gradlew runData
 

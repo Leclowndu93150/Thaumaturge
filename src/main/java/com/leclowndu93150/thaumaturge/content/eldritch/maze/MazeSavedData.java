@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -17,26 +18,32 @@ import org.jspecify.annotations.Nullable;
 
 public final class MazeSavedData extends SavedData {
     private static final Codec<Map<Long, Short>> CELLS_CODEC = Codec.unboundedMap(Codec.STRING.xmap(Long::parseLong, String::valueOf), Codec.SHORT);
+    private static final Codec<Map<Long, BlockPos>> RETURNS_CODEC = Codec.unboundedMap(Codec.STRING.xmap(Long::parseLong, String::valueOf), BlockPos.CODEC);
 
-    public static final Codec<MazeSavedData> CODEC = RecordCodecBuilder.create(
-            builder -> builder.group(CELLS_CODEC.fieldOf("cells").forGetter(data -> data.cells), Codec.INT.fieldOf("boss_count").forGetter(data -> data.bossCount)).apply(builder, MazeSavedData::new));
+    private static final int REGION_STRIDE_CHUNKS = 64;
+    private static final int MAX_ALLOCATION_ATTEMPTS = 4096;
+
+    public static final Codec<MazeSavedData> CODEC = RecordCodecBuilder.create(builder -> builder
+            .group(CELLS_CODEC.fieldOf("cells").forGetter(data -> data.cells), Codec.INT.fieldOf("boss_count").forGetter(data -> data.bossCount),
+                    RETURNS_CODEC.optionalFieldOf("returns", Map.of()).forGetter(data -> data.returns), Codec.INT.optionalFieldOf("alloc_cursor", 0).forGetter(data -> data.allocCursor))
+            .apply(builder, MazeSavedData::new));
 
     public static final SavedDataType<MazeSavedData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "labyrinth"), MazeSavedData::new, CODEC, DataFixTypes.LEVEL);
 
     private final Map<Long, Short> cells;
+    private final Map<Long, BlockPos> returns;
     private int bossCount;
+    private int allocCursor;
 
     public MazeSavedData() {
-        this(new ConcurrentHashMap<>());
+        this(new ConcurrentHashMap<>(), 0, Map.of(), 0);
     }
 
-    private MazeSavedData(Map<Long, Short> cells) {
+    private MazeSavedData(Map<Long, Short> cells, int bossCount, Map<Long, BlockPos> returns, int allocCursor) {
         this.cells = new ConcurrentHashMap<>(cells);
-    }
-
-    private MazeSavedData(Map<Long, Short> cells, int bossCount) {
-        this(cells);
+        this.returns = new ConcurrentHashMap<>(returns);
         this.bossCount = bossCount;
+        this.allocCursor = allocCursor;
     }
 
     public static MazeSavedData get(ServerLevel anyLevel) {
@@ -79,6 +86,44 @@ public final class MazeSavedData extends SavedData {
             }
         }
         return false;
+    }
+
+    public @Nullable ChunkPos allocateRegion(int w, int h) {
+        for (int attempt = 0; attempt < MAX_ALLOCATION_ATTEMPTS; attempt++) {
+            ChunkPos candidate = spiral(allocCursor + attempt);
+            if (!mazesInRange(candidate.x(), candidate.z(), w, h)) {
+                allocCursor += attempt + 1;
+                setDirty();
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    public void setReturn(ChunkPos anchor, BlockPos overworldPos) {
+        returns.put(ChunkPos.pack(anchor.x(), anchor.z()), overworldPos);
+        setDirty();
+    }
+
+    public @Nullable BlockPos getReturn(int chunkX, int chunkZ) {
+        return returns.get(ChunkPos.pack(chunkX, chunkZ));
+    }
+
+    private static ChunkPos spiral(int index) {
+        int x = 0;
+        int z = 0;
+        int dx = 0;
+        int dz = -1;
+        for (int step = 0; step < index; step++) {
+            if (x == z || (x < 0 && x == -z) || (x > 0 && x == 1 - z)) {
+                int swap = dx;
+                dx = -dz;
+                dz = swap;
+            }
+            x += dx;
+            z += dz;
+        }
+        return new ChunkPos(x * REGION_STRIDE_CHUNKS, z * REGION_STRIDE_CHUNKS);
     }
 
     public boolean generateMaze(int chunkX, int chunkZ, int w, int h, long seed) {

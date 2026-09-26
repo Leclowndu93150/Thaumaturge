@@ -12,7 +12,8 @@
     "thaumaturge:elemental_sword",
     "thaumaturge:elemental_pickaxe",
     "thaumaturge:elemental_shovel",
-    "thaumaturge:elemental_hoe"
+    "thaumaturge:elemental_hoe",
+    "thaumaturge:elemental_spear"
   ],
   "stages": [
     {
@@ -47,6 +48,12 @@
             "thaumaturge:thaumium_hoe"
           ],
           "amount": 1
+        },
+        {
+          "items": [
+            "thaumaturge:thaumium_spear"
+          ],
+          "amount": 1
         }
       ],
       "required_knowledge": [
@@ -69,7 +76,8 @@
         "thaumaturge:infusion/elemental_sword",
         "thaumaturge:infusion/elemental_pickaxe",
         "thaumaturge:infusion/elemental_shovel",
-        "thaumaturge:infusion/elemental_hoe"
+        "thaumaturge:infusion/elemental_hoe",
+        "thaumaturge:infusion/elemental_spear"
       ]
     }
   ],

@@ -175,6 +175,9 @@ public final class TCRecipeProvider extends RecipeProvider {
         oreSmelting(TCItems.AMBER, TCItemTags.ORES_AMBER, 1F, "amber");
         oreSmelting(Items.QUARTZ, Tags.Items.ORES_QUARTZ, 0.2F, "quartz");
 
+        SimpleCookingRecipeBuilder.smoking(Ingredient.of(Items.RESIN_CLUMP), RecipeCategory.MISC, TCItems.AMBER.get(), AMBER_FROM_RESIN_XP, AMBER_FROM_RESIN_TIME).group("amber")
+                .unlockedBy("has", has(Items.RESIN_CLUMP)).save(output, ResourceKey.create(Registries.RECIPE, TCIds.rl("amber_from_resin")));
+
         block3x3(TCItems.METAL_BRASS_BLOCK, TCItemTags.INGOTS_BRASS, TCItems.INGOT_BRASS, TCItemTags.STORAGE_BLOCKS_BRASS);
         block3x3(TCItems.METAL_THAUMIUM_BLOCK, TCItemTags.INGOTS_THAUMIUM, TCItems.INGOT_THAUMIUM, TCItemTags.STORAGE_BLOCKS_THAUMIUM);
         block3x3(TCItems.METAL_VOID_BLOCK, TCItemTags.INGOTS_VOID_METAL, TCItems.INGOT_VOID, TCItemTags.STORAGE_BLOCKS_VOID_METAL);
@@ -320,7 +323,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStackTemplate(TCItems.TURRET_ADVANCED), 150).aspect(TCAspects.AER, 2).pattern("PMP").pattern("PTP").define('T', TCItems.TURRET_BASIC).define('P', TCItemTags.PLATES_IRON)
                 .define('M', TCItems.MIND_BIOTHAUMIC).gate(gate("advanced_turret")).unlockedBy("has", has(TCItems.MIND_BIOTHAUMIC)).save(output);
 
-        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.TOOLS, new ItemStackTemplate(TCItems.TURRET_BORE), Ingredient.of(TCItems.TURRET_BASIC.get()))
+        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.TOOLS, new ItemStackTemplate(TCItems.ARCANE_BORE), Ingredient.of(TCItems.TURRET_BASIC.get()))
                 .component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get())).component(Ingredient.of(TCBlocks.PLANK_GREATWOOD.get())).component(Ingredient.of(TCItems.MECHANISM_COMPLEX.get()))
                 .component(Ingredient.of(registries.lookupOrThrow(Registries.ITEM).getOrThrow(TCItemTags.PLATES_BRASS))).component(Ingredient.of(Items.DIAMOND_PICKAXE))
                 .component(Ingredient.of(Items.DIAMOND_SHOVEL)).component(Ingredient.of(TCItems.MORPHIC_RESONATOR.get())).component(Ingredient.of(TCItems.RARE_EARTH.get()))
@@ -374,6 +377,10 @@ public final class TCRecipeProvider extends RecipeProvider {
                 Ingredient.of(TCItems.THAUMIUM_SWORD.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
                 .component(Ingredient.of(TCItems.NUGGET_QUARTZ.get())).component(Ingredient.of(TCItems.PLANK_GREATWOOD.get())).aspect(TCAspects.AER, 30).aspect(TCAspects.MOTUS, 30)
                 .aspect(TCAspects.AVERSIO, 30).instability(1).gate(gate).unlockedBy("has", has(TCItems.THAUMIUM_SWORD)).save(output);
+        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.COMBAT, enchantedTool(TCItems.ELEMENTAL_SPEAR.get(), Map.of(InfusionEnchantment.ESSENCE, 2)),
+                Ingredient.of(TCItems.THAUMIUM_SPEAR.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
+                .component(Ingredient.of(TCItems.NUGGET_QUARTZ.get())).component(Ingredient.of(TCItems.PLANK_GREATWOOD.get())).aspect(TCAspects.MOTUS, 60).aspect(TCAspects.AER, 30)
+                .aspect(TCAspects.POTENTIA, 30).instability(1).gate(gate).unlockedBy("has", has(TCItems.THAUMIUM_SPEAR)).save(output);
         new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.TOOLS, enchantedTool(TCItems.ELEMENTAL_SHOVEL.get(), Map.of(InfusionEnchantment.DESTRUCTIVE, 1)),
                 Ingredient.of(TCItems.THAUMIUM_SHOVEL.get())).component(Ingredient.of(TCItems.CRYSTAL_TERRA.get())).component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
                 .component(Ingredient.of(TCItems.NUGGET_QUARTZ.get())).component(Ingredient.of(TCItems.PLANK_GREATWOOD.get())).aspect(TCAspects.TERRA, 60).aspect(TCAspects.FABRICO, 30).instability(1)
@@ -437,8 +444,9 @@ public final class TCRecipeProvider extends RecipeProvider {
 
     private void buildGearRecipes() {
         toolRecipes("thaumium", TCItemTags.INGOTS_THAUMIUM, TCItems.THAUMIUM_SWORD.get(), TCItems.THAUMIUM_PICKAXE.get(), TCItems.THAUMIUM_AXE.get(), TCItems.THAUMIUM_SHOVEL.get(),
-                TCItems.THAUMIUM_HOE.get());
-        toolRecipes("void", TCItemTags.INGOTS_VOID_METAL, TCItems.VOID_SWORD.get(), TCItems.VOID_PICKAXE.get(), TCItems.VOID_AXE.get(), TCItems.VOID_SHOVEL.get(), TCItems.VOID_HOE.get());
+                TCItems.THAUMIUM_HOE.get(), TCItems.THAUMIUM_SPEAR.get());
+        toolRecipes("void", TCItemTags.INGOTS_VOID_METAL, TCItems.VOID_SWORD.get(), TCItems.VOID_PICKAXE.get(), TCItems.VOID_AXE.get(), TCItems.VOID_SHOVEL.get(), TCItems.VOID_HOE.get(),
+                TCItems.VOID_SPEAR.get());
         armorRecipes("thaumium", TCItemTags.INGOTS_THAUMIUM, TCItems.THAUMIUM_HELM.get(), TCItems.THAUMIUM_CHEST.get(), TCItems.THAUMIUM_LEGS.get(), TCItems.THAUMIUM_BOOTS.get());
         armorRecipes("void", TCItemTags.INGOTS_VOID_METAL, TCItems.VOID_HELM.get(), TCItems.VOID_CHEST.get(), TCItems.VOID_LEGS.get(), TCItems.VOID_BOOTS.get());
         robeDyeRecipe(TCItems.CLOTH_CHEST.get());
@@ -455,12 +463,13 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy(getHasName(target), has(target)).group("cloth_robes").save(output, TCIds.MODID + ":" + BuiltInRegistries.ITEM.getKey(target).getPath() + "_dyed");
     }
 
-    private void toolRecipes(String name, TagKey<Item> ingot, Item sword, Item pickaxe, Item axe, Item shovel, Item hoe) {
+    private void toolRecipes(String name, TagKey<Item> ingot, Item sword, Item pickaxe, Item axe, Item shovel, Item hoe, Item spear) {
         shaped(RecipeCategory.COMBAT, sword).pattern("I").pattern("I").pattern("S").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
         shaped(RecipeCategory.TOOLS, pickaxe).pattern("III").pattern(" S ").pattern(" S ").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
         shaped(RecipeCategory.TOOLS, axe).pattern("II").pattern("IS").pattern(" S").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
         shaped(RecipeCategory.TOOLS, shovel).pattern("I").pattern("S").pattern("S").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
         shaped(RecipeCategory.TOOLS, hoe).pattern("II").pattern(" S").pattern(" S").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
+        shaped(RecipeCategory.COMBAT, spear).pattern("  I").pattern(" S ").pattern("S  ").define('I', ingot).define('S', Tags.Items.RODS_WOODEN).unlockedBy("has_ingot", has(ingot)).save(output);
     }
 
     private void armorRecipes(String name, TagKey<Item> ingot, Item helm, Item chest, Item legs, Item boots) {
@@ -953,6 +962,8 @@ public final class TCRecipeProvider extends RecipeProvider {
 
     private static final TagKey<Item> NUGGETS_COPPER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "nuggets/copper"));
     private static final TagKey<Item> NUGGETS_SILVER = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("c", "nuggets/silver"));
+    private static final float AMBER_FROM_RESIN_XP = 0.2F;
+    private static final int AMBER_FROM_RESIN_TIME = 100;
     private static final int WAND_CAP_GOLD_VIS = 9;
     private static final int WAND_CAP_COPPER_VIS = 6;
     private static final int WAND_CAP_SILVER_VIS = 12;

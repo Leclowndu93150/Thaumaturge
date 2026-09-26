@@ -37,11 +37,13 @@ public final class TCBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_NETHER_FIREBATS = key("add_nether_firebats");
     public static final ResourceKey<BiomeModifier> ADD_OVERWORLD_BRAINY_ZOMBIES = key("add_overworld_brainy_zombies");
     public static final ResourceKey<BiomeModifier> ADD_PECHS = key("add_pechs");
+    public static final ResourceKey<BiomeModifier> ADD_DESERT_BRAINY_HUSKS = key("add_desert_brainy_husks");
 
     private static final int NETHER_WISP_WEIGHT = 5;
     private static final int NETHER_FIREBAT_WEIGHT = 10;
     private static final int OVERWORLD_BRAINY_ZOMBIE_WEIGHT = 10;
     private static final int PECH_WEIGHT = 10;
+    private static final int DESERT_BRAINY_HUSK_WEIGHT = 2;
 
     private TCBiomeModifiers() {}
 
@@ -102,6 +104,9 @@ public final class TCBiomeModifiers {
 
         context.register(ADD_OVERWORLD_BRAINY_ZOMBIES, new BiomeModifiers.AddSpawnsBiomeModifier(biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
                 WeightedList.<MobSpawnSettings.SpawnerData>builder().add(new MobSpawnSettings.SpawnerData(TCEntities.BRAINY_ZOMBIE.get(), 1, 1), OVERWORLD_BRAINY_ZOMBIE_WEIGHT).build()));
+
+        context.register(ADD_DESERT_BRAINY_HUSKS, new BiomeModifiers.AddSpawnsBiomeModifier(biomes.getOrThrow(TCBiomeTags.HAS_BRAINY_HUSK),
+                WeightedList.<MobSpawnSettings.SpawnerData>builder().add(new MobSpawnSettings.SpawnerData(TCEntities.BRAINY_HUSK.get(), 1, 1), DESERT_BRAINY_HUSK_WEIGHT).build()));
 
         context.register(ADD_PECHS, new BiomeModifiers.AddSpawnsBiomeModifier(biomes.getOrThrow(TCBiomeTags.IS_MAGICAL),
                 WeightedList.<MobSpawnSettings.SpawnerData>builder().add(new MobSpawnSettings.SpawnerData(TCEntities.PECH.get(), 1, 1), PECH_WEIGHT).build()));

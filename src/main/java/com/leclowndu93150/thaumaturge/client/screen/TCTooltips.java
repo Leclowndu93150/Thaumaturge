@@ -12,14 +12,25 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 public final class TCTooltips {
     private static final String SCANNED_ASPECT_PREFIX = "scanned/aspect/";
+    private static final int SCAN_DOTS = 3;
 
     private TCTooltips() {}
+
+    public static Component scanning(float progress) {
+        int dots = Mth.clamp((int) (progress * SCAN_DOTS) + 1, 1, SCAN_DOTS);
+        return Component.translatable("gui.thaumaturge.scan.scanning").append(".".repeat(dots)).withStyle(ChatFormatting.GOLD);
+    }
+
+    public static Component inventoryScanHint() {
+        return Component.translatable("tooltip.thaumaturge.thaumometer.inventory_scan").withStyle(ChatFormatting.DARK_AQUA);
+    }
 
     public static Component categoryName(ResourceKey<IResearchCategory> key) {
         return CategoryComponents.name(key);

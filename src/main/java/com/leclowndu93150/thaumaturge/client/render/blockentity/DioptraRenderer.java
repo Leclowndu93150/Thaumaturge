@@ -155,6 +155,11 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
     }
 
     @Override
+    public boolean shouldRenderOffScreen() {
+        return true;
+    }
+
+    @Override
     public AABB getRenderBoundingBox(BlockEntityDioptra blockEntity) {
         BlockPos pos = blockEntity.getBlockPos();
         return new AABB(pos.getX() - 0.3, pos.getY() - 0.3, pos.getZ() - 0.3, pos.getX() + 1.3, pos.getY() + 2.3, pos.getZ() + 1.3);

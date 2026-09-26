@@ -5,12 +5,12 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanEntry;
+import com.leclowndu93150.thaumaturge.compat.apothicenchanting.data.EnchantingStatsProvider;
 import com.leclowndu93150.thaumaturge.compat.curio.data.TCCurioProvider;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.data.damagetype.TCDamageTypeBootstrap;
 import com.leclowndu93150.thaumaturge.data.datamap.*;
 import com.leclowndu93150.thaumaturge.data.lang.TCEnglishProvider;
-import com.leclowndu93150.thaumaturge.data.lang.TCSimplifiedChineseProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCEntityLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGameplayLootSubProvider;
@@ -60,7 +60,6 @@ public final class TCDataGenerators {
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TCEnglishProvider::new);
-        event.createProvider(TCSimplifiedChineseProvider::new);
 
         event.createProvider(TCModelProvider::new);
         event.createProvider(TCRecipeProvider.Runner::new);
@@ -71,6 +70,7 @@ public final class TCDataGenerators {
         event.createProvider(StrippingProvider::new);
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(TCCurioProvider::new);
+        event.createProvider(EnchantingStatsProvider::new);
 
         event.createBlockAndItemTags(TCBlockTagsProvider::new, TCItemTagsProvider::new);
         event.createProvider(TCDamageTypeTagsProvider::new);

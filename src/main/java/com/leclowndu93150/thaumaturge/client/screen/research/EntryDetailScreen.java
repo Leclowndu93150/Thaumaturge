@@ -49,8 +49,6 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentGetter;
-import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -304,6 +302,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final long HOLD_TIMEOUT_TICKS = 60;
     private int rhash;
     private boolean isComplete;
+    private int renderedStage = -1;
+    private boolean renderedComplete;
+    private int renderedAddenda = -1;
     private final Deque<Identifier> history = new ArrayDeque<>();
 
     public EntryDetailScreen(Holder<IResearchEntry> entry, Identifier entryId, @Nullable Screen parent) {
@@ -346,6 +347,19 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
         parsedPages = PageParser.parse(font, entryId, stage.textKey(), addendaKeys, activeKnowledgeRowCount(), isComplete, !stage.requiredResearch().isEmpty(), !stage.obtain().isEmpty(),
                 !stage.craft().isEmpty(), !stage.requiredKnowledge().isEmpty());
+        renderedStage = currentStageIndex;
+        renderedComplete = isComplete;
+        renderedAddenda = addendaKeys.size();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        int stageIndex = currentStageIndex();
+        if (stageIndex != renderedStage || isComplete != renderedComplete || unlockedAddenda().size() != renderedAddenda) {
+            rebuildPages();
+            currentPage = clampPage(currentPage);
+        }
     }
 
     private List<ResearchAddendum> unlockedAddenda() {
@@ -1389,22 +1403,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             ItemStack stack = inv.getItem(i);
             if (stack.isEmpty())
                 continue;
-            if (req.items().contains(stack.getItem().builtInRegistryHolder()) && testComponents(req.components(), stack)) {
+            if (req.matches(stack)) {
                 total += stack.getCount();
             }
         }
         return total;
-    }
-
-    private boolean testComponents(DataComponentPatch components, DataComponentGetter getter) {
-        for (var entry : components.entrySet()) {
-            var type = entry.getKey();
-            var value = entry.getValue();
-            if (value.isEmpty() && getter.has(type) || value.isPresent() && !value.get().equals(getter.get(type))) {
-                return false; // One of the patch entries doesn't match
-            }
-        }
-        return true; // Empty patch always matches or all components match
     }
 
     @Override

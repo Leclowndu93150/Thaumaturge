@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemHandMirror;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
@@ -17,6 +18,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.ElementalAxeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalHoeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalPickaxeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalShovelItem;
+import com.leclowndu93150.thaumaturge.content.equipment.ElementalSpearItem;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalSwordItem;
 import com.leclowndu93150.thaumaturge.content.equipment.FortressArmorItem;
 import com.leclowndu93150.thaumaturge.content.equipment.GrappleGunItem;
@@ -218,6 +220,8 @@ public final class TCItems {
     public static final DeferredItem<Item> THAUMIUM_AXE = ITEMS.registerItem("thaumium_axe", Item::new, props -> props.axe(TCMaterials.TOOL_THAUMIUM, 4.5F, -3.0F));
     public static final DeferredItem<Item> THAUMIUM_SHOVEL = ITEMS.registerItem("thaumium_shovel", Item::new, props -> props.shovel(TCMaterials.TOOL_THAUMIUM, 1.5F, -3.0F));
     public static final DeferredItem<HoeItem> THAUMIUM_HOE = ITEMS.registerItem("thaumium_hoe", props -> new HoeItem(TCMaterials.TOOL_THAUMIUM, -3.0F, 0.0F, props));
+    public static final DeferredItem<Item> THAUMIUM_SPEAR = ITEMS.registerItem("thaumium_spear", Item::new,
+            props -> props.spear(TCMaterials.TOOL_THAUMIUM, 1.0F, 1.0F, 0.55F, 3.0F, 10.5F, 6.5F, 5.1F, 10.5F, 4.6F));
     public static final DeferredItem<Item> THAUMIUM_HELM = ITEMS.registerItem("thaumium_helm", Item::new, props -> props.humanoidArmor(TCMaterials.ARMOR_THAUMIUM, ArmorType.HELMET));
     public static final DeferredItem<Item> THAUMIUM_CHEST = ITEMS.registerItem("thaumium_chest", Item::new, props -> props.humanoidArmor(TCMaterials.ARMOR_THAUMIUM, ArmorType.CHESTPLATE));
     public static final DeferredItem<Item> THAUMIUM_LEGS = ITEMS.registerItem("thaumium_legs", Item::new, props -> props.humanoidArmor(TCMaterials.ARMOR_THAUMIUM, ArmorType.LEGGINGS));
@@ -228,6 +232,8 @@ public final class TCItems {
     public static final DeferredItem<VoidGearItem> VOID_AXE = ITEMS.registerItem("void_axe", VoidGearItem::new, props -> props.axe(TCMaterials.TOOL_VOID, 4.0F, -3.0F));
     public static final DeferredItem<VoidGearItem> VOID_SHOVEL = ITEMS.registerItem("void_shovel", VoidGearItem::new, props -> props.shovel(TCMaterials.TOOL_VOID, 1.5F, -3.0F));
     public static final DeferredItem<VoidHoeItem> VOID_HOE = ITEMS.registerItem("void_hoe", props -> new VoidHoeItem(TCMaterials.TOOL_VOID, -3.0F, 0.0F, props));
+    public static final DeferredItem<VoidGearItem> VOID_SPEAR = ITEMS.registerItem("void_spear", VoidGearItem::new,
+            props -> props.spear(TCMaterials.TOOL_VOID, 1.05F, 1.075F, 0.5F, 3.0F, 10.0F, 6.5F, 5.1F, 10.0F, 4.6F));
     public static final DeferredItem<VoidGearItem> VOID_HELM = ITEMS.registerItem("void_helm", VoidGearItem::new, props -> props.humanoidArmor(TCMaterials.ARMOR_VOID, ArmorType.HELMET));
     public static final DeferredItem<VoidGearItem> VOID_CHEST = ITEMS.registerItem("void_chest", VoidGearItem::new, props -> props.humanoidArmor(TCMaterials.ARMOR_VOID, ArmorType.CHESTPLATE));
     public static final DeferredItem<VoidGearItem> VOID_LEGS = ITEMS.registerItem("void_legs", VoidGearItem::new, props -> props.humanoidArmor(TCMaterials.ARMOR_VOID, ArmorType.LEGGINGS));
@@ -243,6 +249,8 @@ public final class TCItems {
             props -> props.shovel(TCMaterials.TOOL_ELEMENTAL, 1.5F, -3.0F).rarity(Rarity.RARE));
     public static final DeferredItem<ElementalHoeItem> ELEMENTAL_HOE = ITEMS.registerItem("elemental_hoe", props -> new ElementalHoeItem(TCMaterials.TOOL_ELEMENTAL, -3.0F, 0.0F, props),
             props -> props.rarity(Rarity.RARE));
+    public static final DeferredItem<ElementalSpearItem> ELEMENTAL_SPEAR = ITEMS.registerItem("elemental_spear", ElementalSpearItem::new,
+            props -> props.spear(TCMaterials.TOOL_ELEMENTAL, 1.1F, 1.15F, 0.45F, 2.75F, 9.5F, 6.0F, 5.1F, 9.5F, 4.6F).rarity(Rarity.RARE));
     public static final DeferredItem<PrimalCrusherItem> PRIMAL_CRUSHER = ITEMS.registerItem("primal_crusher", PrimalCrusherItem::new,
             props -> props.pickaxe(TCMaterials.TOOL_PRIMAL_VOID, 3.5F, -2.8F).rarity(Rarity.RARE));
 
@@ -321,6 +329,8 @@ public final class TCItems {
 
     public static final DeferredItem<SpawnEggItem> BRAINY_ZOMBIE_SPAWN_EGG = registerSpawnEgg("brainy_zombie_spawn_egg", TCEntities.BRAINY_ZOMBIE);
     public static final DeferredItem<SpawnEggItem> GIANT_BRAINY_ZOMBIE_SPAWN_EGG = registerSpawnEgg("giant_brainy_zombie_spawn_egg", TCEntities.GIANT_BRAINY_ZOMBIE);
+    public static final DeferredItem<SpawnEggItem> BRAINY_DROWNED_SPAWN_EGG = registerSpawnEgg("brainy_drowned_spawn_egg", TCEntities.BRAINY_DROWNED);
+    public static final DeferredItem<SpawnEggItem> BRAINY_HUSK_SPAWN_EGG = registerSpawnEgg("brainy_husk_spawn_egg", TCEntities.BRAINY_HUSK);
     public static final DeferredItem<SpawnEggItem> FIREBAT_SPAWN_EGG = registerSpawnEgg("firebat_spawn_egg", TCEntities.FIRE_BAT);
     public static final DeferredItem<SpawnEggItem> MIND_SPIDER_SPAWN_EGG = registerSpawnEgg("mind_spider_spawn_egg", TCEntities.MIND_SPIDER);
     public static final DeferredItem<SpawnEggItem> WISP_SPAWN_EGG = registerSpawnEgg("wisp_spawn_egg", TCEntities.WISP);
@@ -633,8 +643,8 @@ public final class TCItems {
             props -> props.humanoidArmor(TCMaterials.ARMOR_CULTIST_LEADER, ArmorType.LEGGINGS).rarity(Rarity.RARE));
 
     public static final int TRINKET_APPRENTICE_DISCOUNT = 5;
-    private static final int AMULET_VIS_FOUND_INTERVAL = 40;
-    private static final int AMULET_VIS_CRAFTED_INTERVAL = 5;
+    private static final int AMULET_VIS_FOUND_INTERVAL = 100;
+    private static final int AMULET_VIS_CRAFTED_INTERVAL = 20;
 
     public static final DeferredItem<TrinketItem> AMULET_MUNDANE = ITEMS.registerItem("amulet_mundane", TrinketItem::new, props -> props.stacksTo(1));
     public static final DeferredItem<TrinketItem> RING_MUNDANE = ITEMS.registerItem("ring_mundane", TrinketItem::new, props -> props.stacksTo(1));
@@ -694,8 +704,9 @@ public final class TCItems {
             props -> new TurretPlacerItem(props, level -> new EntityTurretCrossbow(TCEntities.TURRET_CROSSBOW.get(), level)), props -> props.stacksTo(16));
     public static final DeferredItem<TurretPlacerItem> TURRET_ADVANCED = ITEMS.registerItem("turret_advanced",
             props -> new TurretPlacerItem(props, level -> new EntityTurretCrossbowAdvanced(TCEntities.TURRET_CROSSBOW_ADVANCED.get(), level)), props -> props.stacksTo(16));
-    public static final DeferredItem<TurretPlacerItem> TURRET_BORE = ITEMS.registerItem("turret_bore",
-            props -> new TurretPlacerItem(props, level -> new EntityArcaneBore(TCEntities.ARCANE_BORE.get(), level)), props -> props.stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<ArcaneBoreItem> ARCANE_BORE = ITEMS.registerItem("arcane_bore",
+            props -> new ArcaneBoreItem(TCBlocks.ARCANE_BORE.get(), props, level -> new EntityArcaneBore(TCEntities.ARCANE_BORE.get(), level)),
+            props -> props.stacksTo(16).rarity(Rarity.UNCOMMON).useBlockDescriptionPrefix());
     public static final DeferredItem<GrappleGunItem> GRAPPLE_GUN = ITEMS.registerItem("grapple_gun", GrappleGunItem::new, props -> props.stacksTo(1).rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> GRAPPLE_GUN_TIP = ITEMS.registerSimpleItem("grapple_gun_tip");
     public static final DeferredItem<Item> GRAPPLE_GUN_SPOOL = ITEMS.registerSimpleItem("grapple_gun_spool");

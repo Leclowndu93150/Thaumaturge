@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
@@ -50,6 +51,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -786,8 +788,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             double distanceSq = target.distanceToSqr(center);
             if (distanceSq < HUNGRY_EAT_RANGE_SQ) {
                 target.hurtServer(serverLevel, serverLevel.damageSources().fellOutOfWorld(), 1.0F);
-                if (!target.isAlive() && target instanceof LivingEntity living) {
-                    devour(serverLevel, living);
+                if (!target.isAlive() && devour(serverLevel, target)) {
                     change = true;
                 }
             }
@@ -803,14 +804,14 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         return change;
     }
 
-    private void devour(ServerLevel serverLevel, LivingEntity living) {
-        AspectList entityAspects = EntityAspects.of(living);
-        if (entityAspects.isEmpty()) {
-            return;
+    private boolean devour(ServerLevel serverLevel, Entity target) {
+        AspectList devoured = devouredAspects(target);
+        if (devoured.isEmpty()) {
+            return false;
         }
-        Map<ResourceKey<IAspect>, Integer> primals = WandChargingEvents.reduceToPrimals(entityAspects);
+        Map<ResourceKey<IAspect>, Integer> primals = WandChargingEvents.reduceToPrimals(devoured);
         if (primals.isEmpty()) {
-            return;
+            return false;
         }
         RandomSource random = serverLevel.getRandom();
         List<ResourceKey<IAspect>> keys = new ArrayList<>(primals.keySet());
@@ -822,6 +823,17 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             aspectsBase = raiseBase(aspectsBase, holder, 1);
         }
         nodeChange();
+        return true;
+    }
+
+    private static AspectList devouredAspects(Entity target) {
+        if (target instanceof ItemEntity item) {
+            return AspectIndexAccess.of(item.getItem().copyWithCount(1));
+        }
+        if (target instanceof LivingEntity living) {
+            return EntityAspects.of(living);
+        }
+        return AspectList.EMPTY;
     }
 
     private void eatBlock(ServerLevel serverLevel, BlockPos pos, RandomSource random) {

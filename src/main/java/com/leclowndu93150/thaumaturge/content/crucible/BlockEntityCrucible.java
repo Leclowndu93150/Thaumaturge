@@ -158,7 +158,7 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
             float r = c.getRed() / 255.0F;
             float g = c.getGreen() / 255.0F;
             float b = c.getBlue() / 255.0F;
-            Effects.crucibleBubble(level, new Vec3(getBlockPos().getX() + x / 32.0F + 1 / 64F, getBlockPos().getY() + 0.05F + getFluidHeight(), getBlockPos().getX() + x / 32.0F + 1 / 64F))
+            Effects.crucibleBubble(level, new Vec3(getBlockPos().getX() + x / 32.0F + 1 / 64F, getBlockPos().getY() + 0.05F + getFluidHeight(), getBlockPos().getZ() + y / 32.0F + 1 / 64F))
                     .color(r, g, b).send();
         }
     }

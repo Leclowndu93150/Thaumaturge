@@ -20,12 +20,22 @@
           "items": [
             "minecraft:enchanted_book"
           ],
+          "components": {
+            "minecraft:stored_enchantments": {
+              "minecraft:silk_touch": 1
+            }
+          },
           "amount": 1
         },
         {
           "items": [
             "minecraft:enchanted_book"
           ],
+          "components": {
+            "minecraft:stored_enchantments": {
+              "minecraft:fortune": 1
+            }
+          },
           "amount": 1
         }
       ],
