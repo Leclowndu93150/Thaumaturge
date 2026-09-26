@@ -5532,6 +5532,78 @@
         "amount": 10
       }
     ],
+    "thaumaturge:crimson_boots": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_praetor_chest": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 10
+      }
+    ],
+    "thaumaturge:crimson_praetor_helm": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 10
+      }
+    ],
+    "thaumaturge:crimson_praetor_legs": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 10
+      }
+    ],
+    "thaumaturge:crimson_plate_chest": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_plate_helm": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_plate_legs": [
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_robe_chest": [
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_robe_helm": [
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:crimson_robe_legs": [
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 5
+      }
+    ],
     "thaumaturge:crucible": [
       {
         "aspect": "thaumaturge:alkimia",
@@ -6026,6 +6098,16 @@
       {
         "aspect": "thaumaturge:vitium",
         "amount": 5
+      }
+    ],
+    "thaumaturge:taint_spore_stalk": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:vitium",
+        "amount": 10
       }
     ],
     "thaumaturge:thaumometer": [

@@ -53,6 +53,16 @@ public final class ScanGeneric implements IScanThing {
     }
 
     @Override
+    public boolean canScanAfterResearchKnown(Player player, @Nullable Object target) {
+        for (AspectInstance instance : aspectsOf(player, target).entries()) {
+            if (!AspectPools.isDiscovered(player, instance.aspect())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public @Nullable ResourceLocation getResearchKey(Player player, @Nullable Object target) {
         if (target instanceof Entity entity && !(target instanceof ItemEntity)) {
             return ScanKeys.entity(entity.getType());

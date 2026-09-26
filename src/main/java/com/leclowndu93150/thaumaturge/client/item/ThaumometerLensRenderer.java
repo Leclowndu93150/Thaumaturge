@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
@@ -74,12 +75,11 @@ public final class ThaumometerLensRenderer {
                 }
             } else {
                 BlockState state = mc.level.getBlockState(pos);
-                ItemStack pick = new ItemStack(state.getBlock().asItem());
-                if (pick.isEmpty()) {
-                    return;
-                }
-                name = pick.getHoverName();
-                if (KnowledgeAccess.of(player).isResearchKnown(ScanKeys.item(pick.getItem()))) {
+                ItemStack pick = ScanningManager.getItemFromParms(player, pos);
+                name = state.getFluidState().isEmpty() && !pick.isEmpty()
+                        ? pick.getHoverName()
+                        : state.getBlock().getName();
+                if (!pick.isEmpty() && KnowledgeAccess.of(player).isResearchKnown(ScanKeys.item(pick.getItem()))) {
                     aspects = AspectIndexAccess.index().of(pick);
                 }
             }
