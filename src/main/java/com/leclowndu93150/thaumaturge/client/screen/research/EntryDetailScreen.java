@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
@@ -820,8 +821,18 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         for (int i = 0; i < prereqs.size(); i++) {
             ResourceLocation prereq = prereqs.get(i);
             int slotX = innerX + shift;
-            graphics.drawString(
-                    font, Component.literal("?").withStyle(ChatFormatting.GOLD), slotX + 5, y + 4, 0xFFFFFFFF, true);
+            Holder<IAspect> aspect = aspectPrerequisite(prereq);
+            if (aspect != null) {
+                AspectTagRenderer.render(graphics, slotX, y, aspect);
+            } else {
+                graphics.drawString(
+                        font,
+                        Component.literal("?").withStyle(ChatFormatting.GOLD),
+                        slotX + 5,
+                        y + 4,
+                        0xFFFFFFFF,
+                        true);
+            }
             boolean met = knowledge.isResearchComplete(prereq);
             satisfied[i] = met;
             if (met) {
@@ -832,6 +843,28 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
             shift += spacing;
         }
+    }
+
+    private @Nullable Holder<IAspect> aspectPrerequisite(ResourceLocation researchId) {
+        String prefix = "scanned/aspect/";
+        String path = researchId.getPath();
+        if (minecraft == null || minecraft.level == null || !path.startsWith(prefix)) {
+            return null;
+        }
+
+        String aspectId = path.substring(prefix.length());
+        int namespaceSeparator = aspectId.indexOf('/');
+        if (namespaceSeparator <= 0 || namespaceSeparator == aspectId.length() - 1) {
+            return null;
+        }
+
+        ResourceLocation id = ResourceLocation.tryParse(
+                aspectId.substring(0, namespaceSeparator) + ":" + aspectId.substring(namespaceSeparator + 1));
+        if (id == null) {
+            return null;
+        }
+
+        return Aspects.resolve(minecraft.level, ResourceKey.create(IAspect.REGISTRY_KEY, id));
     }
 
     private static void renderCheckmark(GuiGraphics graphics, int slotX, int y) {
