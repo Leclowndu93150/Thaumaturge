@@ -10,6 +10,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.neoforged.neoforge.common.Tags;
 
 public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
     public TCBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
@@ -36,7 +37,12 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.SUNFLOWER_PLAINS)
                 .add(Biomes.SWAMP)
                 .add(Biomes.MANGROVE_SWAMP);
-        tag(TCBiomeTags.HAS_SILVERWOOD).add(Biomes.TAIGA).add(Biomes.JUNGLE);
+        tag(TCBiomeTags.HAS_SILVERWOOD)
+                .add(Biomes.FOREST)
+                .add(Biomes.BIRCH_FOREST)
+                .addTag(TCBiomeTags.IS_MAGICAL)
+                .addOptionalTag(Tags.Biomes.IS_MAGICAL)
+                .remove(TCBiomes.MAGICAL_FOREST, TCBiomes.TAINTED_LANDS);
         tag(TCBiomeTags.HAS_CINDERPEARL)
                 .add(Biomes.DESERT)
                 .add(Biomes.BADLANDS)
