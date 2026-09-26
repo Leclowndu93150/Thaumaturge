@@ -47,10 +47,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.FillBiomeCommand;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -1014,15 +1016,17 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                     change = true;
                 }
             }
-            Vec3 delta = center.subtract(target.position()).scale(1.0 / pullRange);
-            double length = delta.length();
-            double power = 1.0 - length;
-            if (power > 0.0) {
-                power *= power;
-                Vec3 pull = delta.normalize();
-                target.setDeltaMovement(target.getDeltaMovement()
-                        .add(pull.x * power * 0.15, pull.y * power * 0.25, pull.z * power * 0.15));
-                target.hasImpulse = true;
+            Vec3 delta = center.subtract(target.position());
+            double distance = delta.length();
+            if (distance < 1.0E-6) {
+                continue;
+            }
+            double pullStrength = 1.0 - distance / pullRange;
+            pullStrength = pullStrength * pullStrength * 0.15;
+            target.setDeltaMovement(target.getDeltaMovement().add(delta.scale(pullStrength / distance)));
+            target.hasImpulse = true;
+            if (target instanceof ServerPlayer player) {
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
             }
         }
         return change;
