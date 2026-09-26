@@ -40,3 +40,7 @@ nv-gametest.log
 # Local credentials (never commit)
 .env
 build-datagen
+
+tools/assetaudit/conf/assetaudit.env
+tools/assetaudit/audit.db*
+tools/assetaudit/uploads/

@@ -62,4 +62,14 @@ public enum KnowledgeType implements StringRepresentable {
     public int progression() {
         return progression;
     }
+
+    /**
+     * Translation key of the display name, for example {@code knowledge_type.thaumaturge.theory}.
+     *
+     * @return the translation key, never empty
+     * @since 1.0.0
+     */
+    public String translationKey() {
+        return "knowledge_type.thaumaturge." + name;
+    }
 }

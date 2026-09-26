@@ -1,11 +1,94 @@
 ------------------------------------------------------
-Version unspecified
+Version 0.2.0
 ------------------------------------------------------
 Additions
-- None
+- add thaumium, void and elemental spears
+- add angry drowned and angry husk
+- add golem logistics
+- add block warding focus effect
+- add golem press placer item
+- add golem press stat and craft button tooltips
+- add donator list
+- finish liquid death
+- Introduce proper marked labels
+- Infernal Furnace category
+- give thaumaturge blocks apothic enchanting stats
+- Port PR #180 to 26.1, for scanning entities with interactions
+- scan items by hovering them with the thaumometer
+- smoke resin clumps into amber
+- show tooltips on buttons
 
 Changes
-- None
+- make the arcane bore a placeable block, keeping the entity for rails
+- let an adjacent arcane lamp light the tunnel the bore digs
+- make the arcane lamp actually place glimmers and react to redstone
+- let a spent eldritch obelisk open a fresh labyrinth
+- make elemental wand cores worth using
+- thin out amber ore now that resin makes amber
+- expose node aspects through the container capability
+- name energized nodes in the thaumometer readout
+- flash warded blocks when projectiles hit them
+- match tc4 node transducer pistons, tint and extension
+- match tc4 ward rune brightness with additive texenv shader
+- draw wand runes from both sides
+- show the one-way tube's direction marker and let it be rotated
+- show the filter tube's aspect through its tint, goggles and jade
+- search for jars in front of essentia transfusers and mirrors
+- make the runic matrix breakable
+- let hungry nodes grow from the items they eat
+- say on the workbench that a wand can pay a crystal cost
+- mist distant horizons terrain along with vanilla terrain
+- map our render pipelines to iris shader programs
+- make unkown aspect system generalized
+- Update ru_ru.json, contributed and proofread by ReallSteel, Black-Moss and YuRaNnNzZZ
+- add german, french, spanish, brazilian portuguese, japanese, korean, polish and ukrainian translations
 
 Bug Fixes
-- None
+- give the everfull urn back its water trail
+- restore the voidseer charm's blink timing
+- slow the candle flicker down
+- spawn crucible bubbles over the crucible instead of on the diagonal
+- refresh the entry text when a research stage advances
+- use the declared name key for research titles
+- give research item requirements back their enchantments and aspects
+- count picked up items toward craft research
+- grant projectile research when hit
+- drop gauntlet leftovers from auromancy research
+- cover both halves of the research table in its render bounds
+- give node and beam renderers a bounding box that covers what they draw
+- render expanded block entity visuals when their chunk section is off screen
+- fix magical forest flora reading a stale heightmap
+- spread out mounds and eldritch obelisks
+- keep other structures out of the outer lands
+- give arcane and ancient stone blocks their mining tags
+- give ancient and eldritch pedestals their own collision shape
+- apply armor stand poses to custom armor models
+- stop the pattern crafter sealing chests
+- fix hand mirror not sending items through
+- stop golems voiding their stack when replanting
+- fix essentia dupe when filling a stack of jars
+- keep combine selections until the aspect runs out
+- align theory note hitbox with its drawn slot
+- fix invisible gui text from missing alpha
+- fix golem xp showing 0 in jade
+- cap hellbat summons and drop firebat loot
+- stop traveller boots building speed while paused
+- stop channeled items running while a gui is open
+- stop the particle alpha cutoff eating faint fx pixels
+- fix liquid death bubble particles and bucket texture
+- prevent thaumometer in offhand
+- stop thaumometer particles while the game is paused
+- scan with the thaumometer before block interaction
+- register essentia mirror as an aspect container
+- fix enchantability on tools and armor
+- use copper instead of iron for alchemical brass
+- add missing warp text lang lines
+- add missing death message lang lines
+- fix golem torso being dim
+- Fix Arcane workbench voiding contents when broken
+- Fix Provider seal deleting itself on tick
+- Open seal config GUI from Golem Bell before block interaction
+- Guard Runic Shielding curio scan when Curios is absent
+- fix ctm texture paths and remove references to missing files
+- scale down infernal furnace hand and ground item transforms
+- aim the bore's tunnel lighting inside the tunnel it actually digs
