@@ -22,6 +22,7 @@ import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TCFluids;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCMenus;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
@@ -36,6 +37,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.*;
@@ -51,6 +53,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidType;
 import org.jspecify.annotations.Nullable;
 
 @JeiPlugin
@@ -111,6 +115,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             }
         }
         registration.addExtraItemStacks(notes);
+        registration.addExtraIngredients(
+                NeoForgeTypes.FLUID_STACK,
+                List.of(
+                        new FluidStack(TCFluids.FLUX_GOO_SOURCE.get(), FluidType.BUCKET_VOLUME),
+                        new FluidStack(TCFluids.PURIFYING_SOURCE.get(), FluidType.BUCKET_VOLUME),
+                        new FluidStack(TCFluids.LIQUID_DEATH_SOURCE.get(), FluidType.BUCKET_VOLUME)));
     }
 
     private static ItemStack displayNote(ResourceLocation entry, int ordinal, int color, boolean complete) {

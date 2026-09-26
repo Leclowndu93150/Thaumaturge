@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -107,8 +107,7 @@ public final class ThaumometerAspectOverlay {
                     Direction.UP);
             return;
         }
-        BlockState state = mc.level.getBlockState(pos);
-        ItemStack pick = new ItemStack(state.getBlock().asItem());
+        ItemStack pick = ScanningManager.getItemFromParms(mc.player, pos);
         if (pick.isEmpty()) {
             resetAnimation();
             return;

@@ -547,6 +547,7 @@
   },
   "zap": {
     "category": "master",
+    "subtitle": "subtitles.thaumaturge.zap",
     "sounds": [
       "thaumaturge:zap1",
       "thaumaturge:zap2"

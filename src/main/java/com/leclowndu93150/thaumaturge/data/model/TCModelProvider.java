@@ -883,6 +883,7 @@ public final class TCModelProvider implements DataProvider {
         simpleBlock(TCBlocks.PURIFYING_FLUID.get(), TCIds.rl("block/purifying_fluid"));
         simpleBlock(TCBlocks.LIQUID_DEATH.get(), TCIds.rl("block/liquid_death"));
         flatItem(TCItems.BUCKET_LIQUID_DEATH.get());
+        flatItem(TCItems.BUCKET_PURIFYING.get());
     }
 
     private void registerGolemancy() {
