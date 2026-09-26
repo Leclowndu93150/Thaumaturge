@@ -245,7 +245,11 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport, 
         if (!(player.pick(player.blockInteractionRange(), 0.0F, false) instanceof BlockHitResult hit) || !hit.getBlockPos().equals(pos)) {
             return false;
         }
-        if (!handleCasterClick(BlockTube.resolveSubHit(hit, pos))) {
+        int subHit = BlockTube.resolveSubHit(hit, pos);
+        if (subHit == 6 && !isSideOpen(hit.getDirection())) {
+            subHit = hit.getDirection().ordinal();
+        }
+        if (!handleCasterClick(subHit)) {
             return false;
         }
         playToolSound(level, pos);

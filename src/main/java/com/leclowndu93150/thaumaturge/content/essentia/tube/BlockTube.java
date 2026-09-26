@@ -70,6 +70,9 @@ public class BlockTube extends BlockEssentiaTransport {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTube tube))
             return InteractionResult.PASS;
         int subHit = resolveSubHit(hit, pos);
+        if (subHit == 6 && !tube.isSideOpen(hit.getDirection())) {
+            subHit = hit.getDirection().ordinal();
+        }
         if (tube.handleCasterClick(subHit)) {
             tube.playToolSound(level, pos);
             player.swing(player.getUsedItemHand());
