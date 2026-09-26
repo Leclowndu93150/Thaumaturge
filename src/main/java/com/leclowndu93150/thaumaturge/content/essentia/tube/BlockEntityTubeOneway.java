@@ -23,6 +23,33 @@ public final class BlockEntityTubeOneway extends BlockEntityTube {
     }
 
     @Override
+    public boolean canInputFrom(Direction face) {
+        return face != facing().getOpposite() && super.canInputFrom(face);
+    }
+
+    @Override
+    public boolean canOutputTo(Direction face) {
+        return face == facing().getOpposite() && super.canOutputTo(face);
+    }
+
+    @Override
+    public boolean rotateFacing() {
+        if (level == null)
+            return false;
+        Direction[] directions = Direction.values();
+        int start = facing().ordinal();
+        for (int offset = 1; offset < directions.length; offset++) {
+            Direction candidate = directions[(start + offset) % directions.length];
+            Direction output = candidate.getOpposite();
+            if (isSideOpen(output) && hasTransportNeighbour(output)) {
+                setFacing(candidate);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     protected void setFacing(Direction direction) {
         if (level == null) {
             return;
