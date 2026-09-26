@@ -176,6 +176,11 @@ public final class TCItems {
             props -> new BucketItem(TCFluids.LIQUID_DEATH_SOURCE.get(), props),
             new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).rarity(Rarity.RARE));
 
+    public static final DeferredItem<BucketItem> BUCKET_PURIFYING = ITEMS.registerItem(
+            "purifying_bucket",
+            props -> new BucketItem(TCFluids.PURIFYING_SOURCE.get(), props),
+            new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).rarity(Rarity.RARE));
+
     public static final DeferredItem<JarBraceItem> JAR_BRACE = ITEMS.registerItem("jar_brace", JarBraceItem::new);
 
     public static final DeferredItem<LabelItem> LABEL = ITEMS.registerItem("label", LabelItem::new);

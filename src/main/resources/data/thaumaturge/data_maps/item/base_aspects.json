@@ -6161,6 +6161,24 @@
         "aspect": "thaumaturge:perditio",
         "amount": 1
       }
+    ],
+    "thaumaturge:purifying_bucket": [
+      {
+        "aspect": "thaumaturge:vacuos",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 3
+      },
+      {
+        "aspect": "thaumaturge:cognitio",
+        "amount": 15
+      },
+      {
+        "aspect": "thaumaturge:ordo",
+        "amount": 15
+      }
     ]
   }
 }

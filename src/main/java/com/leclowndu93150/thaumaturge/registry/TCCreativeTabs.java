@@ -118,6 +118,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ESSENTIA_INPUT.get());
                         output.accept(TCItems.ESSENTIA_OUTPUT.get());
                         output.accept(TCItems.BUCKET_LIQUID_DEATH.get());
+                        output.accept(TCItems.BUCKET_PURIFYING.get());
                         output.accept(TCItems.JAR_BRACE.get());
                         output.accept(TCItems.JAR_NORMAL.get());
                         output.accept(TCItems.JAR_VOID.get());
