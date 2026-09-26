@@ -25,15 +25,15 @@ public final class NodeTests {
     private NodeTests() {}
 
     public static void register(TCTestRegistrar r) {
-        r.add("node/unbreakable_by_hand", 20, helper -> {
+        r.add("node/breakable_by_hand", 20, helper -> {
             BlockEntityNode node = placeVitiumNode(helper);
             if (node == null) {
                 return;
             }
             BlockPos pos = helper.absolutePos(NODE_POS);
             float speed = helper.getLevel().getBlockState(pos).getDestroySpeed(helper.getLevel(), pos);
-            if (speed >= 0.0F) {
-                helper.fail("Node block is breakable (destroy speed " + speed + "); TC nodes are unbreakable");
+            if (speed < 0.0F) {
+                helper.fail("Node block is unbreakable (destroy speed " + speed + "); nodes break by hand and burst into aspect orbs");
                 return;
             }
             helper.succeed();

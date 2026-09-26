@@ -623,7 +623,7 @@ public final class TCBlocks {
             .noOcclusion().randomTicks().pushReaction(PushReaction.DESTROY).lightLevel(state -> state.getValue(BlockManaPod.AGE)).isValidSpawn((state, level, pos, type) -> false));
 
     public static final DeferredBlock<BlockNode> NODE = BLOCKS.registerBlock("node", BlockNode::new,
-            props -> props.mapColor(MapColor.NONE).strength(-1.0F, 3600000.0F).noOcclusion().noLootTable().isValidSpawn((state, level, pos, type) -> false));
+            props -> props.mapColor(MapColor.NONE).strength(5.0F, 3600000.0F).noOcclusion().noLootTable().isValidSpawn((state, level, pos, type) -> false));
 
     public static final DeferredBlock<BlockJarNode> JAR_NODE = BLOCKS.registerBlock("jar_node", BlockJarNode::new,
             props -> props.mapColor(MapColor.NONE).strength(0.3F).sound(TCSoundTypes.JAR.get()).noOcclusion());
