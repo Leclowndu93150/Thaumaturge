@@ -293,6 +293,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.triple_meat_treat", "Triple Meat Treat");
         add("attributes.thaumaturge.vis_discount", "Vis Discount");
         add("subtitles.thaumaturge.jar", "Jar clinks");
+        add("subtitles.thaumaturge.zap", "Magic crackles");
         add("subtitles.thaumaturge.creak", "Tube creaks");
         add("subtitles.thaumaturge.key", "Filter clicks");
         add("subtitles.thaumaturge.pump", "Essentia pumps");

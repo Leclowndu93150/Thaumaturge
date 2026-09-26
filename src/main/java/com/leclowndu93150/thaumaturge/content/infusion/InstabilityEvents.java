@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -143,13 +144,19 @@ public final class InstabilityEvents {
             }
             EffectDispatch.spawnArc(
                     level, Vec3.atCenterOf(matrixPos), Vec3.atCenterOf(pedestalPos.above()), ARC_COLOR, 0.0F);
+            playZapSound(level, matrixPos);
             return;
         }
     }
 
     private static void zap(ServerLevel level, BlockPos matrixPos, boolean all) {
         RandomSource rand = level.getRandom();
+        boolean playedSound = false;
         for (LivingEntity target : nearbyLiving(level, matrixPos)) {
+            if (!playedSound) {
+                playZapSound(level, matrixPos);
+                playedSound = true;
+            }
             EffectDispatch.spawnArc(
                     level,
                     Vec3.atCenterOf(matrixPos),
@@ -161,6 +168,16 @@ public final class InstabilityEvents {
                 return;
             }
         }
+    }
+
+    private static void playZapSound(ServerLevel level, BlockPos pos) {
+        level.playSound(
+                null,
+                pos,
+                TCSounds.ZAP.get(),
+                SoundSource.BLOCKS,
+                0.1F,
+                1.0F + level.getRandom().nextFloat() * 0.2F);
     }
 
     private static void harm(ServerLevel level, BlockPos matrixPos, boolean all) {
