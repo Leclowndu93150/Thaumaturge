@@ -210,6 +210,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         nameField.setBordered(false);
         nameField.setMaxLength(NAME_MAX);
         nameField.setResponder(this::onNameChanged);
+        addRenderableWidget(nameField);
         if (table != null) {
             if (table.focusName.isEmpty() && !menu.getSlot(0).getItem().isEmpty()) {
                 table.focusName = menu.getSlot(0).getItem().getHoverName().getString();
@@ -523,9 +524,14 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         double mouseX = event.x();
         double mouseY = event.y();
         int button = event.button();
-        if (nameField != null && nameField.mouseClicked(event, doubleClick)) {
-            setFocused(nameField);
-            return true;
+        if (nameField != null) {
+            if (nameField.mouseClicked(event, doubleClick)) {
+                setFocused(nameField);
+                return true;
+            }
+            if (getFocused() == nameField) {
+                setFocused(null);
+            }
         }
         if (table != null && table.vis <= 0.0F && !table.data.isEmpty()) {
             if (lastNodeHover >= 0) {
@@ -918,13 +924,16 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             addRenderableWidget(buttonConfirm);
         }
         if (nameField != null) {
-            removeWidget(nameField);
-            if (table != null && !table.data.isEmpty()) {
-                addRenderableWidget(nameField);
+            nameField.visible = table != null && !table.data.isEmpty();
+            if (!nameField.visible && getFocused() == nameField) {
+                setFocused(null);
             }
         }
         if (table == null) {
             return;
+        }
+        if (nameField != null) {
+            table.focusName = nameField.getValue();
         }
         FocusElementNode selected = table.data.get(selectedNode);
         FocusElement selectedElement = selected != null ? selected.resolve() : null;
@@ -995,7 +1004,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         calcScrollBounds();
         clampScroll();
         rebuildSliders();
-        if (table.focusName.isEmpty() && !focus.isEmpty()) {
+        if (table.focusName.isEmpty() && !focus.isEmpty() && (nameField == null || !nameField.isFocused())) {
             table.focusName = focus.getHoverName().getString();
             if (nameField != null) {
                 nameField.setValue(table.focusName);
