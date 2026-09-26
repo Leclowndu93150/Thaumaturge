@@ -858,7 +858,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.void_siphon", "Void Siphon");
         add("block.thaumaturge.thaumatorium", "Thaumatorium");
         add("block.thaumaturge.thaumatorium_top", "Thaumatorium");
-        add("block.thaumaturge.brain_box", "Brain Box");
+        add("block.thaumaturge.brain_box", "Mnemonic Matrix");
         add("item.thaumaturge.tallow", "Magic Tallow");
         add("block.thaumaturge.placeholder_obsidian", "Infernal Furnace");
         add("block.thaumaturge.placeholder_nether_bricks", "Infernal Furnace");
