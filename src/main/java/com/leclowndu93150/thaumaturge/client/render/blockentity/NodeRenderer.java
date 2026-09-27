@@ -102,7 +102,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         }
         final NodeRenderState data = build(node, partialTick, player);
         final Vec3 origin = Vec3.atCenterOf(node.getBlockPos());
-        if (data.depthIgnore && !IrisCompat.shadersActive()) {
+        if (data.depthIgnore) {
             LateWorldRenderQueue.enqueueBlockEntityOverlay(
                     origin, (latePose, lateBuffers) -> drawDepthIgnoredLayers(data, latePose, lateBuffers));
             if (data.draining) {
@@ -124,9 +124,9 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
             }
             return;
         }
-        // Node layers do not write depth. Defer them until block-entity geometry has flushed so
-        // a later cutout renderer cannot paint over a node that is actually closer to the camera.
-        LateWorldRenderQueue.enqueueBlockEntityAfterGeometry(
+        // These layers retain depth testing, but do not write depth. Draw after water so
+        // it cannot paint over a faint node that is closer to the camera.
+        LateWorldRenderQueue.enqueueBlockEntity(
                 origin, (latePose, lateBuffers) -> drawDeferredLayers(data, latePose, lateBuffers));
         if (data.draining) {
             LateWorldRenderQueue.enqueueBlockEntity(

@@ -49,7 +49,8 @@ public final class LateWorldRenderQueue {
     }
 
     public static void enqueueBlockEntityOverlay(Vec3 origin, LateDraw draw) {
-        AFTER_BLOCK_ENTITIES.add(new Entry(origin, Source.BLOCK_ENTITY_OVERLAY, draw));
+        List<Entry> queue = IrisCompat.shadersActive() ? QUEUE : AFTER_BLOCK_ENTITIES;
+        queue.add(new Entry(origin, Source.BLOCK_ENTITY_OVERLAY, draw));
     }
 
     @SubscribeEvent

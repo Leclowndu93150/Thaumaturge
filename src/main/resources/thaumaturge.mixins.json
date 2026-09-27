@@ -21,6 +21,7 @@
     "client.renderer.entity.LivingEntityRendererMixin",
     "client.iris.ExtendedShaderMixin",
     "client.iris.FallbackShaderMixin",
+    "client.iris.HandRendererMixin",
     "client.iris.ShaderInstanceMixin"
   ],
   "injectors": {

@@ -21,6 +21,10 @@ public final class IrisCompat {
         return invokeBoolean("shadersActive", NO_ARGUMENTS, NO_VALUES);
     }
 
+    public static boolean isSolidHandPass() {
+        return invokeBoolean("isSolidHandPass", NO_ARGUMENTS, NO_VALUES);
+    }
+
     /**
      * Gets Iris's translucent particle program for Thaumaturge's particle-format effects. This is the 1.21.1
      * equivalent of assigning {@code IrisProgram.PARTICLES_TRANSLUCENT} to a modern render pipeline.

@@ -7,6 +7,7 @@ import net.irisshaders.iris.layer.BlockEntityRenderStateShard;
 import net.irisshaders.iris.layer.BufferSourceWrapper;
 import net.irisshaders.iris.layer.EntityRenderStateShard;
 import net.irisshaders.iris.layer.OuterWrappedRenderType;
+import net.irisshaders.iris.pathways.HandRenderer;
 import net.irisshaders.iris.pipeline.programs.ShaderAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,6 +23,10 @@ public final class IrisCompatImpl {
 
     public static boolean shadersActive() {
         return IrisApi.getInstance().isShaderPackInUse();
+    }
+
+    public static boolean isSolidHandPass() {
+        return shadersActive() && HandRenderer.INSTANCE.isActive() && HandRenderer.INSTANCE.isRenderingSolid();
     }
 
     public static ShaderInstance particleTranslucentShader() {
