@@ -918,6 +918,7 @@ public final class Effects {
         private Vec3 to = null;
         private int color = 0xFFFFFF;
         private float width = 1.0F;
+        private int sourceEntityId = -1;
 
         ArcBolt(ServerLevel level, Vec3 from) {
             this.level = level;
@@ -939,9 +940,14 @@ public final class Effects {
             return this;
         }
 
+        public ArcBolt sourceEntity(int entityId) {
+            this.sourceEntityId = entityId;
+            return this;
+        }
+
         public void send() {
             if (to == null) return;
-            EffectDispatch.spawnBolt(level, from, to, color, width);
+            EffectDispatch.spawnBolt(level, from, to, color, width, sourceEntityId);
         }
     }
 

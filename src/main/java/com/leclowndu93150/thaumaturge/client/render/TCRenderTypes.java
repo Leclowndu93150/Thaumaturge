@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.function.Function;
@@ -14,6 +15,19 @@ public final class TCRenderTypes {
     private static final int BUFFER = 1536;
     private static final float NON_ZERO_ALPHA_TEST = 0.0001F;
     private static final float IRIS_PARTICLE_ALPHA_TEST = 0.1F;
+
+    private static final RenderStateShard.DepthTestStateShard REVEALED_NODE_DEPTH =
+            new RenderStateShard.DepthTestStateShard("tc_revealed_node", 519) {
+                @Override
+                public void setupRenderState() {
+                    RenderSystem.disableDepthTest();
+                }
+
+                @Override
+                public void clearRenderState() {
+                    RenderSystem.enableDepthTest();
+                }
+            };
 
     private static final RenderStateShard.ShaderStateShard PARTICLE_SHADER =
             new RenderStateShard.ShaderStateShard(TCShaders::fx);
@@ -76,7 +90,7 @@ public final class TCRenderTypes {
             "tc_fx_additive_no_depth",
             texture,
             RenderStateShard.ADDITIVE_TRANSPARENCY,
-            RenderStateShard.NO_DEPTH_TEST,
+            REVEALED_NODE_DEPTH,
             RenderStateShard.COLOR_WRITE,
             false));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_NO_DEPTH =
@@ -84,7 +98,7 @@ public final class TCRenderTypes {
                     "tc_fx_translucent_no_depth",
                     texture,
                     RenderStateShard.TRANSLUCENT_TRANSPARENCY,
-                    RenderStateShard.NO_DEPTH_TEST,
+                    REVEALED_NODE_DEPTH,
                     RenderStateShard.COLOR_WRITE,
                     true));
     private static final Function<ResourceLocation, RenderType> FX_TRANSLUCENT_DEPTH = Util.memoize(texture -> particle(
