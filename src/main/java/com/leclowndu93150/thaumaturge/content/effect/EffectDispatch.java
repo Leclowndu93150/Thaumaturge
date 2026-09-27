@@ -63,8 +63,12 @@ public final class EffectDispatch {
     }
 
     public static void spawnBolt(ServerLevel level, Vec3 from, Vec3 to, int color, float width) {
+        spawnBolt(level, from, to, color, width, -1);
+    }
+
+    public static void spawnBolt(ServerLevel level, Vec3 from, Vec3 to, int color, float width, int entityId) {
         ClientboundStreamEffectPayload payload =
-                ClientboundStreamEffectPayload.bolt(from.x, from.y, from.z, to.x, to.y, to.z, color, width);
+                ClientboundStreamEffectPayload.bolt(from.x, from.y, from.z, to.x, to.y, to.z, color, width, entityId);
         PacketDistributor.sendToPlayersNear(level, null, from.x, from.y, from.z, DEFAULT_RADIUS, payload);
     }
 

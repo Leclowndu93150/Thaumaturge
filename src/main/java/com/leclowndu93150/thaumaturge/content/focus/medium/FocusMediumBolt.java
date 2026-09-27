@@ -83,6 +83,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
             b /= effects.size();
             Effects.arcBolt(level, trajectory.source())
                     .to(end)
+                    .sourceEntity(ctx.caster().getId())
                     .color((r << 16) | (g << 8) | b)
                     .width(ctx.power() * BOLT_WIDTH_FACTOR)
                     .send();
