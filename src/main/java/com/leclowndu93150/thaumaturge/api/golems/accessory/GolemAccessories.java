@@ -4,12 +4,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /**
  * Registry of {@link GolemAccessory} definitions. Accessories register during mod
- * construction or common setup and are looked up by id when golems load or render.
+ * construction or common setup and are looked up by id when golems load or render, and through
+ * {@link #forItem} when a player uses an item on a golem.
  *
  * <p>Registration is not thread safe; register from a single mod initialization path.
  *
@@ -42,6 +45,19 @@ public final class GolemAccessories {
      */
     public static @Nullable GolemAccessory get(ResourceLocation id) {
         return REGISTRY.get(id);
+    }
+
+    /**
+     * Finds the accessory an item puts on a golem, through the {@link GolemAccessoryItem#DATA_MAP}
+     * entry of the stack's item.
+     *
+     * @param stack the item stack
+     * @return the accessory, or empty when the item has no entry or its entry names an accessory
+     *         that is not registered
+     */
+    public static Optional<GolemAccessory> forItem(ItemStack stack) {
+        GolemAccessoryItem entry = stack.getItem().builtInRegistryHolder().getData(GolemAccessoryItem.DATA_MAP);
+        return entry == null ? Optional.empty() : Optional.ofNullable(REGISTRY.get(entry.accessory()));
     }
 
     /**

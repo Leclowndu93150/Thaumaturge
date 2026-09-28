@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.client.golems.GolemAccessoryAnchor;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPartModel;
 import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
@@ -36,8 +37,11 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
     private static final float GHOST_ALPHA = 0.15F;
     private static final int XRAY_COLOR = ARGB32.colorFromFloat(0.25F, 0.25F, 0.25F, 0.25F);
 
+    private final GolemAccessoryRenderTable accessoryRenderers;
+
     public GolemRenderer(EntityRendererProvider.Context context) {
         super(context);
+        this.accessoryRenderers = GolemAccessoryRenderTable.collect(context);
         this.shadowRadius = 0.3F;
     }
 
@@ -113,7 +117,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
         state.haulingItem = !hauled.isEmpty();
         state.haulerItemIsBlock = hauled.getItem() instanceof BlockItem;
         state.haulerItem = hauled;
-        state.accessories = entity.getAccessoryString();
+        state.accessories = entity.getAccessories();
+        state.accessoryStates = entity.syncedAccessoryStates();
         return state;
     }
 
@@ -176,7 +181,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
             renderPartModel(state, part, GolemPartModel.LimbSide.MIDDLE, poseStack, buffers, matTexture, xray, color);
         }
         if (!xray) {
-            GolemAccessoryRenderer.submitBody(state, poseStack, buffers);
+            accessoryRenderers.render(GolemAccessoryAnchor.BODY, state, poseStack, buffers);
         }
         poseStack.popPose();
 
@@ -189,7 +194,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
         }
         renderNamedPart(base, "head", poseStack, buffers, matTexture, xray, color, state, matTexture);
         if (!xray) {
-            GolemAccessoryRenderer.submitHead(state, poseStack, buffers);
+            accessoryRenderers.render(GolemAccessoryAnchor.HEAD, state, poseStack, buffers);
         }
         poseStack.popPose();
 

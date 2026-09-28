@@ -42,7 +42,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvan
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
-import com.leclowndu93150.thaumaturge.content.golem.ItemGolemAccessory;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemBell;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
@@ -448,16 +447,11 @@ public final class TCItems {
     public static final DeferredItem<ItemGolemBell> GOLEM_BELL =
             ITEMS.registerItem("golem_bell", ItemGolemBell::new, new Item.Properties().stacksTo(1));
 
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_TOP_HAT =
-            ITEMS.registerItem("golem_top_hat", props -> new ItemGolemAccessory(TCGolemAccessories.TOP_HAT, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_FEZ =
-            ITEMS.registerItem("golem_fez", props -> new ItemGolemAccessory(TCGolemAccessories.FEZ, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_GLASSES =
-            ITEMS.registerItem("golem_glasses", props -> new ItemGolemAccessory(TCGolemAccessories.GLASSES, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_BOWTIE =
-            ITEMS.registerItem("golem_bowtie", props -> new ItemGolemAccessory(TCGolemAccessories.BOWTIE, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_VISOR =
-            ITEMS.registerItem("golem_visor", props -> new ItemGolemAccessory(TCGolemAccessories.VISOR, props));
+    public static final DeferredItem<Item> GOLEM_TOP_HAT = ITEMS.registerSimpleItem("golem_top_hat");
+    public static final DeferredItem<Item> GOLEM_FEZ = ITEMS.registerSimpleItem("golem_fez");
+    public static final DeferredItem<Item> GOLEM_GLASSES = ITEMS.registerSimpleItem("golem_glasses");
+    public static final DeferredItem<Item> GOLEM_BOWTIE = ITEMS.registerSimpleItem("golem_bowtie");
+    public static final DeferredItem<Item> GOLEM_VISOR = ITEMS.registerSimpleItem("golem_visor");
 
     public static final DeferredItem<ItemSealPlacer> SEAL_BLANK = sealItem("seal_blank", null);
     public static final DeferredItem<ItemSealPlacer> SEAL_PICKUP = sealItem("seal_pickup", "pickup");
