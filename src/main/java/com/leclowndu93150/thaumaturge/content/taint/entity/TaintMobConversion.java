@@ -15,6 +15,7 @@ import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.npc.Villager;
 
 /** Single router for specialized replacements and the generic tainted fallback. */
 public final class TaintMobConversion {
@@ -85,6 +86,9 @@ public final class TaintMobConversion {
         if (source instanceof Sheep sourceSheep && replacement instanceof EntityTaintSheep replacementSheep) {
             replacementSheep.setColor(sourceSheep.getColor());
             replacementSheep.setSheared(sourceSheep.isSheared());
+        }
+        if (source instanceof Villager sourceVillager && replacement instanceof Villager replacementVillager) {
+            replacementVillager.setVillagerData(sourceVillager.getVillagerData());
         }
 
         float healthRatio = source.getMaxHealth() <= 0.0F ? 1.0F : source.getHealth() / source.getMaxHealth();

@@ -9,6 +9,8 @@ import net.minecraft.world.level.Level;
 
 /** Spore-burst spiderling. Kept deliberately small and fragile. */
 public final class EntityTaintSpider extends Spider implements ITaintedMob {
+    private static final double SCALE = 0.4;
+
     public EntityTaintSpider(EntityType<? extends Spider> type, Level level) {
         super(type, level);
         this.xpReward = 2;
@@ -18,6 +20,7 @@ public final class EntityTaintSpider extends Spider implements ITaintedMob {
         return Spider.createAttributes()
                 .add(Attributes.MAX_HEALTH, 5.0)
                 .add(Attributes.ATTACK_DAMAGE, 2.0)
-                .add(Attributes.FOLLOW_RANGE, 12.0);
+                .add(Attributes.FOLLOW_RANGE, 12.0)
+                .add(Attributes.SCALE, SCALE);
     }
 }

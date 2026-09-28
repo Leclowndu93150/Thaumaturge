@@ -17,6 +17,9 @@
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
+    "client.model.AgeableListModelMixin",
+    "client.model.HierarchicalModelMixin",
+    "client.model.ListModelMixin",
     "client.particle.ParticleEngineMixin",
     "client.renderer.entity.LivingEntityRendererMixin",
     "client.iris.ExtendedShaderMixin",

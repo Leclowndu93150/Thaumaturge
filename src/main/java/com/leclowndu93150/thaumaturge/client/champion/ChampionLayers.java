@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.champion;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.client.taint.overlay.TaintOverlayLayer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.api.distmarker.Dist;
@@ -23,6 +24,6 @@ public final class ChampionLayers {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addTaintedLayer(LivingEntityRenderer<?, ?> renderer) {
-        renderer.addLayer(new TaintedSwirlLayer(renderer));
+        renderer.addLayer(new TaintOverlayLayer(renderer));
     }
 }

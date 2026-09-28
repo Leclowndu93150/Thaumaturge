@@ -102,8 +102,8 @@ public final class TCEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTaintSpider>> TAINT_SPIDER = register(
             "taint_spider",
             () -> EntityType.Builder.of(EntityTaintSpider::new, MobCategory.MONSTER)
-                    .sized(0.4F, 0.3F)
-                    .eyeHeight(0.1F)
+                    .sized(1.4F, 0.9F)
+                    .eyeHeight(0.65F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
 

@@ -20,6 +20,14 @@ public final class TCEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         tag(TCEntityTags.TAINT_CONVERSION_IMMUNE);
+        tag(TCEntityTags.TAINT_OVERLAY)
+                .add(key(TCEntities.TAINT_CREEPER.get()))
+                .add(key(TCEntities.TAINT_SPIDER.get()))
+                .add(key(TCEntities.TAINT_COW.get()))
+                .add(key(TCEntities.TAINT_PIG.get()))
+                .add(key(TCEntities.TAINT_CHICKEN.get()))
+                .add(key(TCEntities.TAINT_SHEEP.get()))
+                .add(key(TCEntities.TAINT_VILLAGER.get()));
         tag(TCEntityTags.TAINT_LEGACY_CREEPER).add(key(EntityType.CREEPER));
         tag(TCEntityTags.TAINT_LEGACY_COW).add(key(EntityType.COW));
         tag(TCEntityTags.TAINT_LEGACY_PIG).add(key(EntityType.PIG));

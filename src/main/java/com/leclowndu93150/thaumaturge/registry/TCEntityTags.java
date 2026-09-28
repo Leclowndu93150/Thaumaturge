@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityType;
 
 public final class TCEntityTags {
     public static final TagKey<EntityType<?>> TAINT_CONVERSION_IMMUNE = key("taint_conversion/immune");
+    public static final TagKey<EntityType<?>> TAINT_OVERLAY = key("taint_overlay");
     public static final TagKey<EntityType<?>> TAINT_LEGACY_CREEPER = key("taint_conversion/legacy_creeper");
     public static final TagKey<EntityType<?>> TAINT_LEGACY_COW = key("taint_conversion/legacy_cow");
     public static final TagKey<EntityType<?>> TAINT_LEGACY_PIG = key("taint_conversion/legacy_pig");
