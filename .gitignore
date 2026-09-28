@@ -21,6 +21,9 @@ hs_err_pid*
 
 # Common working directory
 run
+run-gametest
+run-gametest/config
+
 
 # Reference sources (decompiled, not part of build)
 sources/
