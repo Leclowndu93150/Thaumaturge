@@ -63,7 +63,7 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 context.lightCoords(),
-                false);
+                true);
     }
 
     private static void topHat(PoseStack poseStack, MultiBufferSource buffers, GolemAccessoryRenderContext context) {
@@ -88,7 +88,7 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 light,
-                false);
+                true);
         BoxGeometry.box(
                 pose,
                 buffer,
@@ -107,7 +107,7 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 light,
-                false);
+                true);
     }
 
     private static void glasses(PoseStack poseStack, MultiBufferSource buffers, GolemAccessoryRenderContext context) {
@@ -130,7 +130,7 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 context.lightCoords(),
-                false);
+                true);
     }
 
     private static void visor(PoseStack poseStack, MultiBufferSource buffers, GolemAccessoryRenderContext context) {
@@ -153,7 +153,7 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 context.lightCoords(),
-                false);
+                true);
     }
 
     private static void bowtie(PoseStack poseStack, MultiBufferSource buffers, GolemAccessoryRenderContext context) {
@@ -176,6 +176,6 @@ public final class TCGolemAccessoryRenderers {
                 TEX_SIZE,
                 WHITE,
                 context.lightCoords(),
-                false);
+                true);
     }
 }

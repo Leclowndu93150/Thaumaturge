@@ -99,7 +99,7 @@ public final class BoxGeometry {
             {uA / texW, vB / texH},
             {uB / texW, vB / texH}
         };
-        if (mirror) {
+        if (!mirror) {
             float[][] rv = {verts[3], verts[2], verts[1], verts[0]};
             float[][] ru = {uvs[3], uvs[2], uvs[1], uvs[0]};
             verts = rv;
