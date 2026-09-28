@@ -5,7 +5,9 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import java.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class InfusionStabilitySurvey {
@@ -50,13 +52,13 @@ public final class InfusionStabilitySurvey {
             Block mirroredBlock = level.getBlockState(mirrored).getBlock();
             float amount = stabilizationAmount(level, pos);
             float mirroredAmount = stabilizationAmount(level, mirrored);
-            if (block == mirroredBlock && amount == mirroredAmount) {
+            if (symmetryKey(block) == symmetryKey(mirroredBlock) && amount == mirroredAmount) {
                 if (block instanceof IInfusionStabiliser stabiliser
                         && stabiliser.hasSymmetryPenalty(level, pos, mirrored)) {
                     replenish -= stabiliser.getSymmetryPenalty(level, pos);
                     problems.add(pos);
                 } else {
-                    replenish += diminishingReturns(countedByType, block, amount);
+                    replenish += diminishingReturns(countedByType, symmetryKey(block), amount);
                 }
             } else {
                 replenish -= Math.max(amount, mirroredAmount);
@@ -73,6 +75,10 @@ public final class InfusionStabilitySurvey {
         }
         return state.getBlock() instanceof IInfusionStabiliser stabiliser
                 && stabiliser.canStabiliseInfusion(level, pos);
+    }
+
+    private static Block symmetryKey(Block block) {
+        return block instanceof AbstractSkullBlock ? Blocks.SKELETON_SKULL : block;
     }
 
     private static float stabilizationAmount(Level level, BlockPos pos) {
