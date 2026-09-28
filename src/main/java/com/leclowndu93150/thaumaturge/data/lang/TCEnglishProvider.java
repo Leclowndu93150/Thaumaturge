@@ -329,8 +329,12 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("key.thaumaturge.thaumonomicon", "Open Thaumonomicon");
         add("gui.thaumaturge.entry.advance", "Mark As Read");
         add("tc.stage.complete", "Complete");
+        add("tc.stage.completed", "Completed");
         add("tc.stage.hold", "Completing...");
         add("tc.research.complete", "Research Complete!");
+        add("tc.research.stage.history", "Stage %1$d / %2$d");
+        add("tc.research.previous_stage", "Previous stage");
+        add("tc.research.next_stage", "Next stage");
         add("tc.aspect.name", "Aspects of Essentia");
         add("tc.knowledge.name", "Knowledge Totals");
         add("tc.aspect.primal", "Primal Aspect");

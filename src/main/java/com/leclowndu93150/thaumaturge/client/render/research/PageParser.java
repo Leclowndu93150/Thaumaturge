@@ -19,7 +19,8 @@ public final class PageParser {
     private static final int KNOWLEDGETYPES_ROW_STEP = 20;
     private static final int KNOWLEDGETYPES_DIVIDER = 12;
     private static final int REQUIREMENT_ROW = 18;
-    private static final int REQUIREMENT_DIVIDER = 15;
+    private static final int REQUIREMENT_DIVIDER = 24;
+    private static final int STAGE_HISTORY_FOOTER_GAP = 5;
     private static final float BONUS_BREAK_FRACTION = 0.66F;
     private static final int IMAGE_GAP = 2;
 
@@ -43,7 +44,8 @@ public final class PageParser {
             boolean hasRequiredResearch,
             boolean hasObtain,
             boolean hasCraft,
-            boolean hasKnowledge) {
+            boolean hasKnowledge,
+            boolean reserveStageHistoryGap) {
         int heightRemaining = BASE_HEIGHT_REMAINING;
         int dividerSpace = 0;
         if (entryId != null && entryId.equals(KNOWLEDGETYPES_ID)) {
@@ -70,6 +72,9 @@ public final class PageParser {
             }
         }
         heightRemaining -= dividerSpace;
+        if (reserveStageHistoryGap) {
+            heightRemaining -= STAGE_HISTORY_FOOTER_GAP;
+        }
         return paginate(font, stageTextKey, addendaTextKeys, heightRemaining);
     }
 
