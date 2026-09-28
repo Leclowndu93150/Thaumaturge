@@ -1662,9 +1662,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.VOID_SEED.get()))
                 .save(output, TCIds.MODID + ":crucible/void_ingot");
 
-        clusterRecipe(TCItems.CLUSTER_IRON, Tags.Items.ORES_IRON);
-        clusterRecipe(TCItems.CLUSTER_GOLD, Tags.Items.ORES_GOLD);
-        clusterRecipe(TCItems.CLUSTER_COPPER, Tags.Items.ORES_COPPER);
+        clusterRecipe(TCItems.CLUSTER_IRON, Tags.Items.RAW_MATERIALS_IRON);
+        clusterRecipe(TCItems.CLUSTER_GOLD, Tags.Items.RAW_MATERIALS_GOLD);
+        clusterRecipe(TCItems.CLUSTER_COPPER, Tags.Items.RAW_MATERIALS_COPPER);
         clusterRecipe(TCItems.CLUSTER_TIN, TCItemTags.ORES_TIN);
         clusterRecipe(TCItems.CLUSTER_SILVER, TCItemTags.ORES_SILVER);
         clusterRecipe(TCItems.CLUSTER_LEAD, TCItemTags.ORES_LEAD);
