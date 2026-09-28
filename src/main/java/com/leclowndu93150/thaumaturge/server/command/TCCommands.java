@@ -19,9 +19,7 @@ import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.aura.FluxPressureEvents;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
@@ -40,9 +38,7 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.warp.WarpEvents;
 import com.leclowndu93150.thaumaturge.data.worldgen.feature.TCConfiguredFeatures;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
 import com.mojang.brigadier.Command;
@@ -67,14 +63,11 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -87,7 +80,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -109,10 +101,6 @@ public final class TCCommands {
             (ctx, builder) -> SharedSuggestionProvider.suggest(
                     Arrays.stream(WarpType.values()).map(t -> t.name().toLowerCase(Locale.ROOT)), builder);
 
-    private static final SuggestionProvider<CommandSourceStack> FOCUS_ELEMENTS =
-            (ctx, builder) -> SharedSuggestionProvider.suggest(
-                    TCFocusElements.registry().keySet().stream().map(ResourceLocation::toString), builder);
-
     private static final SuggestionProvider<CommandSourceStack> FLUX_EVENTS =
             (ctx, builder) -> SharedSuggestionProvider.suggest(
                     Arrays.stream(FluxPressureEvents.Kind.values())
@@ -130,12 +118,10 @@ public final class TCCommands {
             new DynamicCommandExceptionType((value) -> Component.literal("Unknown Research Entry : " + value));
     private static final DynamicCommandExceptionType ERROR_INVALID_ASPECT =
             new DynamicCommandExceptionType((value) -> Component.literal("Unknown Aspect : " + value));
-    private static final DynamicCommandExceptionType ERROR_INVALID_NODE_TYPE =
-            new DynamicCommandExceptionType((value) -> Component.literal("Unknown node type: " + value));
 
     @SubscribeEvent
     public static void onRegister(RegisterCommandsEvent event) {
-        LiteralArgumentBuilder<CommandSourceStack> tc = Commands.literal("tc")
+        LiteralArgumentBuilder<CommandSourceStack> tc = TCCommandRoot.root()
                 .then(Commands.literal("table").executes(TCCommands::giveResearchTable))
                 .then(Commands.literal("outermaze")
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -147,19 +133,18 @@ public final class TCCommands {
                                                 IntegerArgumentType.getInteger(ctx, "width"),
                                                 IntegerArgumentType.getInteger(ctx, "height"))))))
                 .then(Commands.literal("book").executes(TCCommands::giveThaumonomicon))
-                .then(Commands.literal("build")
-                        .requires(source -> source.getEntity() instanceof ServerPlayer player && player.isCreative())
-                        .then(Commands.literal("infusion_altar").executes(TCCommands::buildInfusionAltar)))
                 .then(Commands.literal("particle")
                         .then(Commands.literal("list").executes(TCCommands::listParticles))
                         .then(Commands.argument("name", StringArgumentType.word())
                                 .suggests(PARTICLE_NAMES)
                                 .executes(TCCommands::runParticle)))
                 .then(Commands.literal("flux_goo")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("level", IntegerArgumentType.integer(1, 8))
                                         .executes(TCCommands::setFluxGoo))))
                 .then(Commands.literal("flux_gas")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("level", IntegerArgumentType.integer(1, 8))
                                         .executes(TCCommands::setFluxGas))))
@@ -169,11 +154,13 @@ public final class TCCommands {
                                 .suggests(FLUX_EVENTS)
                                 .executes(TCCommands::triggerFluxEvent)))
                 .then(Commands.literal("effect")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("vis_exhaust").executes(ctx -> giveEffect(ctx, "vis_exhaust")))
                         .then(Commands.literal("infectious_vis_exhaust")
                                 .executes(ctx -> giveEffect(ctx, "infectious_vis_exhaust")))
                         .then(Commands.literal("flux_taint").executes(ctx -> giveEffect(ctx, "flux_taint"))))
                 .then(Commands.literal("entity")
+                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("thaumic_slime").executes(ctx -> spawnEntity(ctx, "thaumic_slime")))
                         .then(Commands.literal("taint_crawler").executes(ctx -> spawnEntity(ctx, "taint_crawler")))
                         .then(Commands.literal("taint_seed").executes(ctx -> spawnEntity(ctx, "taint_seed")))
@@ -233,7 +220,7 @@ public final class TCCommands {
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.argument("tier", IntegerArgumentType.integer(1, 3))
                                 .then(Commands.argument("elements", StringArgumentType.greedyString())
-                                        .suggests(FOCUS_ELEMENTS)
+                                        .suggests(FocusElementArguments.SUGGESTIONS)
                                         .executes(TCCommands::giveFocus))))
                 .then(Commands.literal("warp")
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -300,62 +287,8 @@ public final class TCCommands {
                                 .executes(ctx -> grantAspect(ctx, AspectPools.SOFT_CAP))
                                 .then(Commands.argument("amount", IntegerArgumentType.integer(1, 10000))
                                         .executes(ctx ->
-                                                grantAspect(ctx, IntegerArgumentType.getInteger(ctx, "amount"))))))
-                .then(Commands.literal("locate")
-                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .then(Commands.literal("node")
-                                .then(Commands.argument("type", StringArgumentType.word())
-                                        .suggests(NODE_LOCATE_TYPES)
-                                        .executes(TCCommands::locateNode))));
+                                                grantAspect(ctx, IntegerArgumentType.getInteger(ctx, "amount"))))));
         event.getDispatcher().register(tc);
-    }
-
-    private static int locateNode(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ServerPlayer player = ctx.getSource().getPlayerOrException();
-        ServerLevel level = player.serverLevel();
-        String typeName = StringArgumentType.getString(ctx, "type");
-        NodeType type = Arrays.stream(NodeType.values())
-                .filter(candidate -> candidate.getSerializedName().equalsIgnoreCase(typeName))
-                .findFirst()
-                .orElseThrow(() -> ERROR_INVALID_NODE_TYPE.create(typeName));
-
-        NodeLocationIndex index = NodeLocationIndex.get(level);
-        BlockPos origin = player.blockPosition();
-        Optional<BlockPos> result;
-        while ((result = index.findNearest(origin, type)).isPresent()) {
-            BlockPos candidate = result.get();
-            if (!level.hasChunkAt(candidate)) {
-                break;
-            }
-            if (level.getBlockEntity(candidate) instanceof BlockEntityNode node && node.getNodeType() == type) {
-                break;
-            }
-            index.remove(candidate);
-        }
-        if (result.isEmpty()) {
-            ctx.getSource()
-                    .sendFailure(Component.literal("No known "
-                            + type.getSerializedName()
-                            + " node found; nodes in legacy chunks are indexed when those chunks load"));
-            return 0;
-        }
-
-        BlockPos pos = result.get();
-        String teleport = "/tp @s " + pos.getX() + " " + pos.getY() + " " + pos.getZ();
-        Component coordinates = Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]")
-                .withStyle(style -> style.withColor(ChatFormatting.GREEN)
-                        .withUnderlined(true)
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, teleport))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT, Component.literal("Click to copy " + teleport))));
-        int distance = (int) Math.round(Math.sqrt(pos.distSqr(origin)));
-        ctx.getSource()
-                .sendSuccess(
-                        () -> Component.literal("Nearest " + type.getSerializedName() + " node is at ")
-                                .append(coordinates)
-                                .append(Component.literal(" (" + distance + " blocks away)")),
-                        false);
-        return Command.SINGLE_SUCCESS;
     }
 
     private static int resetResearch(CommandContext<CommandSourceStack> ctx) {
@@ -881,19 +814,10 @@ public final class TCCommands {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             int tier = IntegerArgumentType.getInteger(ctx, "tier");
-            String[] tokens =
-                    StringArgumentType.getString(ctx, "elements").trim().split("\\s+");
             FocusPackage.Builder core = FocusPackage.builder().caster(player);
             int complexity = 0;
-            for (String token : tokens) {
-                ResourceLocation id = token.contains(":")
-                        ? ResourceLocation.parse(token)
-                        : ResourceLocation.fromNamespaceAndPath(TCIds.MODID, token);
+            for (ResourceLocation id : FocusElementArguments.parse(StringArgumentType.getString(ctx, "elements"))) {
                 FocusElement element = FocusEngine.element(id);
-                if (element == null) {
-                    ctx.getSource().sendFailure(Component.literal("Unknown focus element: " + id));
-                    return 0;
-                }
                 complexity += element.complexity(FocusSettings.defaults(element));
                 core.add(id);
             }
@@ -980,55 +904,6 @@ public final class TCCommands {
         }
     }
 
-    private static int buildInfusionAltar(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ServerPlayer player = ctx.getSource().getPlayerOrException();
-        ServerLevel level = player.serverLevel();
-        BlockPos center = player.blockPosition().relative(player.getDirection(), 4);
-
-        level.setBlockAndUpdate(center, TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
-        level.setBlockAndUpdate(center.above(2), TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
-
-        placeArcanePillar(level, center.offset(-1, 0, -1), Direction.NORTH);
-        placeArcanePillar(level, center.offset(-1, 0, 1), Direction.WEST);
-        placeArcanePillar(level, center.offset(1, 0, -1), Direction.EAST);
-        placeArcanePillar(level, center.offset(1, 0, 1), Direction.SOUTH);
-
-        for (int dx = -3; dx <= 3; dx += 3) {
-            for (int dz = -3; dz <= 3; dz += 3) {
-                if (dx != 0 || dz != 0) {
-                    level.setBlockAndUpdate(
-                            center.offset(dx, 0, dz),
-                            TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
-                }
-            }
-        }
-
-        level.removeBlock(center.offset(-1, 1, -1), false);
-        level.removeBlock(center.offset(-1, 1, 1), false);
-        level.removeBlock(center.offset(1, 1, -1), false);
-        level.removeBlock(center.offset(1, 1, 1), false);
-
-        ctx.getSource()
-                .sendSuccess(
-                        () -> Component.literal("Built infusion altar centered at "
-                                + center.getX()
-                                + " "
-                                + center.getY()
-                                + " "
-                                + center.getZ()),
-                        false);
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static void placeArcanePillar(ServerLevel level, BlockPos pos, Direction facing) {
-        level.setBlockAndUpdate(
-                pos,
-                TCBlocks.PILLAR_ARCANE
-                        .get()
-                        .defaultBlockState()
-                        .setValue(BlockStateProperties.HORIZONTAL_FACING, facing));
-    }
-
     private static int giveResearchTable(CommandContext<CommandSourceStack> ctx) {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
@@ -1059,7 +934,8 @@ public final class TCCommands {
                         false);
         ctx.getSource()
                 .sendSuccess(
-                        () -> Component.literal("Use /tc particle <name> — spawns 3 blocks in front of you")
+                        () -> Component.literal(
+                                        "Use /thaumaturge particle <name> to spawn one 3 blocks in front of you")
                                 .withStyle(ChatFormatting.GRAY),
                         false);
         for (var entry : ParticleDemos.DEMOS.entrySet()) {
@@ -1085,7 +961,8 @@ public final class TCCommands {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             String name = StringArgumentType.getString(ctx, "name");
             if (!ParticleDemos.DEMOS.containsKey(name)) {
-                ctx.getSource().sendFailure(Component.literal("Unknown demo: " + name + " — try /tc particle list"));
+                ctx.getSource()
+                        .sendFailure(Component.literal("Unknown demo: " + name + ", try /thaumaturge particle list"));
                 return 0;
             }
             ParticleDemos.run(player, name);
@@ -1106,10 +983,6 @@ public final class TCCommands {
         builder.suggest("random");
         return builder.buildFuture();
     };
-
-    private static final SuggestionProvider<CommandSourceStack> NODE_LOCATE_TYPES =
-            (ctx, builder) -> SharedSuggestionProvider.suggest(
-                    Arrays.stream(NodeType.values()).map(NodeType::getSerializedName), builder);
 
     private static final SuggestionProvider<CommandSourceStack> NODE_MODIFIERS = (ctx, builder) -> {
         for (NodeModifier modifier : NodeModifier.values()) {
