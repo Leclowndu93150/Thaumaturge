@@ -16,3 +16,4 @@
 | `JarFill` record feeding the jar item renderer | `JarItemSpecialRenderer` reads capacity off the `BlockItem`'s block -> a custom jar only needs `IEssentiaJar` |
 | item variant JSON (`assets/.../items/*.json`) | caster, focus and celestial notes variants are model overrides plus `ItemColor` handlers in `client/color` |
 | Ghast movement classes reused from vanilla | local ports at `content/entity/ai/GhastLike{Flight,LookGoal,MoveControl}`, used by Wisp and Fire Bat |
+| taint overlay: `ModelUvLayout` reads cube polygons off `Model#root()`, and `LivingEntityRendererMixin` puts the overlay flag on the render state | `ModelPart` polygons are package-private, so `ModelUvLayout` compiles each cube into `ModelPolygonCollector`. Model parts come from `ModelRootParts`, which mixins add to `HierarchicalModel`, `AgeableListModel` and `ListModel`; any other model gets a full-canvas overlay. `TaintOverlayLayer` checks the entity itself |
