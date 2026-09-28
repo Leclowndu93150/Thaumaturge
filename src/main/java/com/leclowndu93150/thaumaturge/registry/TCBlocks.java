@@ -485,7 +485,9 @@ public final class TCBlocks {
                 .mapColor(MapColor.STONE)
                 .strength(2.5F, 3600000.0F)
                 .sound(SoundType.STONE)
-                .noLootTable();
+                .noLootTable()
+                .noOcclusion()
+                .dynamicShape();
     }
 
     private static BlockBehaviour.Properties advancedFurnacePlaceholderProps() {

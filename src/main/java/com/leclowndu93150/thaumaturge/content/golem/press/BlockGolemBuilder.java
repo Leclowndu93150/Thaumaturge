@@ -30,16 +30,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockGolemBuilder extends BaseEntityBlock {
     private static final ResourceLocation MIND_CLOCKWORK_RESEARCH = TCIds.rl("mind_clockwork");
-    private static final VoxelShape NORTH_SHAPE = Shapes.box(0.0, 0.0, 0.0, 2.0, 2.0, 2.0);
-    private static final VoxelShape SOUTH_SHAPE = Shapes.box(-1.0, 0.0, -1.0, 1.0, 2.0, 1.0);
-    private static final VoxelShape WEST_SHAPE = Shapes.box(0.0, 0.0, -1.0, 2.0, 2.0, 1.0);
-    private static final VoxelShape EAST_SHAPE = Shapes.box(-1.0, 0.0, 0.0, 1.0, 2.0, 2.0);
 
     public static final MapCodec<BlockGolemBuilder> CODEC = simpleCodec(BlockGolemBuilder::new);
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -61,23 +56,7 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return shapeFor(state);
-    }
-
-    @Override
-    protected VoxelShape getCollisionShape(
-            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return shapeFor(state);
-    }
-
-    private static VoxelShape shapeFor(BlockState state) {
-        return switch (state.getValue(FACING)) {
-            case NORTH -> NORTH_SHAPE;
-            case SOUTH -> SOUTH_SHAPE;
-            case WEST -> WEST_SHAPE;
-            case EAST -> EAST_SHAPE;
-            default -> EAST_SHAPE;
-        };
+        return GolemPressShapes.at(state.getValue(FACING), BlockPos.ZERO);
     }
 
     @Override
