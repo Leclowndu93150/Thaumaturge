@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.api.infusion;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 /**
  * A block that stabilises a nearby infusion matrix. The matrix surveys a 17x17 footprint,
@@ -44,6 +45,20 @@ public interface IInfusionStabiliser {
      */
     default float getStabilizationAmount(Level level, BlockPos pos) {
         return DEFAULT_STABILIZATION;
+    }
+
+    /**
+     * The block this stabiliser counts as when the survey compares mirrored pairs and groups
+     * stabilisers for diminishing returns. Containers that hold a stabiliser, such as a candle
+     * holder, return the held block so they pair and stack exactly like it.
+     *
+     * @param level the level containing the block
+     * @param pos the position of this block
+     * @return the block used for symmetry and diminishing returns, never {@code null}
+     * @since 1.0.0
+     */
+    default Block stabiliserIdentity(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getBlock();
     }
 
     /**
