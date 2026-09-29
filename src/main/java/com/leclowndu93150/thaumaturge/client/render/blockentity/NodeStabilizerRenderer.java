@@ -29,12 +29,12 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final ResourceLocation OVERLAY_TEXTURE = TCIds.rl("textures/block/node_stabilizer_over.png");
 
     private static final RenderType BASE = RenderType.entityCutout(TEXTURE);
-    private static final RenderType OVERLAY = RenderType.entityTranslucentEmissive(OVERLAY_TEXTURE);
+    private static final RenderType OVERLAY = RenderType.entityTranslucent(OVERLAY_TEXTURE);
     private static final ResourceLocation TRANSDUCER_TEXTURE = TCIds.rl("textures/block/node_converter.png");
     private static final ResourceLocation TRANSDUCER_OVERLAY_TEXTURE =
             TCIds.rl("textures/block/node_converter_over.png");
     private static final RenderType TRANSDUCER_BASE = RenderType.entityCutout(TRANSDUCER_TEXTURE);
-    private static final RenderType TRANSDUCER_OVERLAY = RenderType.entityCutout(TRANSDUCER_OVERLAY_TEXTURE);
+    private static final RenderType TRANSDUCER_OVERLAY = RenderType.entityTranslucent(TRANSDUCER_OVERLAY_TEXTURE);
     private static final int TRANSDUCER_EXTEND_CAP = 50;
     private static final float TRANSDUCER_EXTEND_DIVISOR = 137.0F;
     private static final int TRANSDUCER_TINT_IDLE = 0xFF80FF80;
@@ -145,10 +145,8 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
                 PoseStack.Pose armPose = poseStack.last();
                 GolemMeshes.renderPart(piston, armPose, buffers.getBuffer(BASE), light, WHITE);
                 float pulse = Mth.sin((ticks + arm * 5) / 3.0F) * 0.1F + 0.9F;
-                int glow = OVERLAY_LIGHT_BASE
+                int glowLight = OVERLAY_LIGHT_BASE
                         + (int) (OVERLAY_LIGHT_RANGE * (count / (float) BlockEntityNodeStabilizer.MAX_COUNT * pulse));
-                int glowUnit = Mth.clamp(glow / 16, 0, 15);
-                int glowLight = (glowUnit << 4) | (glowUnit << 20);
                 int tint = advanced ? ADVANCED_TINT : WHITE;
                 GolemMeshes.renderPart(piston, armPose, buffers.getBuffer(OVERLAY), glowLight, tint);
                 poseStack.popPose();
@@ -190,9 +188,7 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
 
     private static int transducerGlow(float extension, float ticks, int arm) {
         float pulse = Mth.sin((ticks + arm * 5) / 3.0F) * 0.1F + 0.9F;
-        int glow = OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * extension * TRANSDUCER_GLOW_GAIN * pulse);
-        int glowUnit = Mth.clamp(glow / 16, 0, 15);
-        return (glowUnit << 4) | (glowUnit << 20);
+        return OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * extension * TRANSDUCER_GLOW_GAIN * pulse);
     }
 
     private static @Nullable TCMeshPart findPart(TCMesh mesh, String name) {
