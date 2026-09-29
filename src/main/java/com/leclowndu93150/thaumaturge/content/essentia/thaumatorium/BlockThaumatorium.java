@@ -60,7 +60,10 @@ public final class BlockThaumatorium extends BaseEntityBlock {
         Level level = context.getLevel();
         return pos.getY() < level.getMaxBuildHeight() - 1
                         && level.getBlockState(pos.above()).canBeReplaced(context)
-                ? super.getStateForPlacement(context)
+                ? defaultBlockState()
+                        .setValue(
+                                HorizontalDirectionalBlock.FACING,
+                                context.getHorizontalDirection().getOpposite())
                 : null;
     }
 
