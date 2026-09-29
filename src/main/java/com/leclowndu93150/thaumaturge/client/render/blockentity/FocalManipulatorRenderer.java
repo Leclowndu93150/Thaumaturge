@@ -35,8 +35,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float GLOW_RING_HEIGHT = 1.3F;
     private static final float GLOW_HALF = 0.175F;
     private static final float GLOW_ALPHA = 0.66F;
-    private static final int GLOW_GRID = 64;
-    private static final int GLOW_FRAME_START = 320;
     private static final int GLOW_FRAMES = 16;
     private static final int EMISSIVE_LIGHT = 0xF000F0;
     private static final float RAY_LIFT = 0.475F;

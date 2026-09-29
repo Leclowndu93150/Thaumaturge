@@ -37,6 +37,7 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     private static final int EMISSIVE_LIGHT = 0x00F000DC;
     private static final float GLOW_ALPHA = 0.21F;
     private static final float GLOW_HALF = 0.5F;
+    private static final int GLOW_FRAMES = 6;
 
     private final GrapplerModel model;
 

@@ -20,8 +20,6 @@ public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
 
     private static final int FRAME_COUNT = 16;
     private static final int FRAMES_PER_TICK = 2;
-    private static final float ROW_V0 = 0.0F;
-    private static final float ROW_V1 = 1.0F;
     private static final float BASE_SCALE = 0.1F;
     private static final float AGE_SCALE = 0.3F;
     private static final float ALPHA = 0.5F;

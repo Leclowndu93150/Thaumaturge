@@ -43,9 +43,10 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
     private static final int ICON_TEX_SIZE = 16;
     private static final int ICON_ALPHA = 200;
     private static final int THEORY_EXTRA_TICKS = 10;
-    private static final int PARTICLE_GRID = 64;
-    private static final int BURST_FRAME_START = 320;
+    private static final int GLOW_FRAME_SIZE = 16;
     private static final int BURST_FRAME_SPREAD = 16;
+    private static final int GLOW_STRIP_WIDTH = GLOW_FRAME_SIZE * BURST_FRAME_SPREAD;
+    private static final float STAR_SPARK_CHANCE = 0.2F;
     private static final int QUAD_INTRINSIC_ROTATION = 90;
     private static final int MAX_SPARKS = 200;
     private static final float SPARK_SCALE = 24.0F;
@@ -340,11 +341,11 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
         int age;
         final int maxAge;
         int delay;
-        final int startFrame;
+        final Identifier texture;
         final float g;
         final float b;
 
-        GuiSpark(float x, float y, float vx, float vy, int maxAge, int delay, int startFrame, float g, float b) {
+        GuiSpark(float x, float y, float vx, float vy, int maxAge, int delay, Identifier texture, float g, float b) {
             this.x = x;
             this.y = y;
             this.xo = x;
@@ -353,7 +354,7 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
             this.vy = vy;
             this.maxAge = maxAge;
             this.delay = delay;
-            this.startFrame = startFrame;
+            this.texture = texture;
             this.g = g;
             this.b = b;
         }
