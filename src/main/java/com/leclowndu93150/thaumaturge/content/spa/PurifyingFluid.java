@@ -28,10 +28,12 @@ public abstract class PurifyingFluid extends BaseFlowingFluid {
 
     public static void applyEntityInside(Level level, BlockPos pos, Entity entity) {
         FluidState fs = level.getFluidState(pos);
-        float quanta = fs.getAmount() / MAX_AMOUNT;
-        Vec3 motion = entity.getDeltaMovement();
-        double damp = 1.0 - quanta / 2.0;
-        entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
+        if (pos.equals(entity.blockPosition())) {
+            float quanta = fs.getAmount() / MAX_AMOUNT;
+            Vec3 motion = entity.getDeltaMovement();
+            double damp = 1.0 - quanta / 2.0;
+            entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
+        }
         if (!level.isClientSide()
                 && fs.isSource()
                 && entity instanceof ServerPlayer player
