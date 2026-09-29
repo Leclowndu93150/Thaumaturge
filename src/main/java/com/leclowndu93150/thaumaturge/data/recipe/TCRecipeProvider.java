@@ -1671,8 +1671,9 @@ public final class TCRecipeProvider extends RecipeProvider {
         clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
-        transmutationRecipe(Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
-        transmutationRecipe(Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
+        transmutationRecipe("iron_nugget", Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
+        transmutationRecipe(
+                "gold_nugget", Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
 
         new CrucibleRecipeBuilder(
                         aspects,
@@ -1697,7 +1698,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output.withConditions(new NotCondition(new TagEmptyCondition(oreTag))));
     }
 
-    private void transmutationRecipe(ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
+    private void transmutationRecipe(
+            String name, ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
         CrucibleRecipeBuilder builder = new CrucibleRecipeBuilder(
                         aspects, RecipeCategory.MISC, new ItemStack(result, 3), Ingredient.of(catalyst))
@@ -1709,7 +1711,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 builder.aspect(cost, 1);
             }
         }
-        builder.save(output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))));
+        builder.save(
+                output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))),
+                TCIds.MODID + ":crucible/" + name + "_transmutation");
     }
 
     private void buildArcaneWorkbenchRecipes() {
