@@ -16,10 +16,17 @@ public final class TCScreenTextures {
     public static final ResourceLocation RESEARCH_BACK_OVER = gui("gui_research_back_over.png");
     public static final ResourceLocation PAPER = gui("paper.png");
     public static final ResourceLocation PAPER_GILDED = gui("papergilded.png");
+    public static final ResourceLocation RESEARCH_PREREQ_MAP = research("rd_map.png");
+    public static final ResourceLocation RESEARCH_PREREQ_FLASK = research("rd_flask.png");
+    public static final ResourceLocation RESEARCH_PREREQ_CHEST = research("rd_chest.png");
 
     private TCScreenTextures() {}
 
     private static ResourceLocation gui(String name) {
         return ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/" + name);
+    }
+
+    private static ResourceLocation research(String name) {
+        return ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/research/" + name);
     }
 }

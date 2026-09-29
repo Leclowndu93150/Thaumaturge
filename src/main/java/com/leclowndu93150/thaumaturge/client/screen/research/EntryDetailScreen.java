@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
+import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget;
@@ -112,6 +113,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int CHECKMARK_V = 207;
     private static final int CHECKMARK_SIZE = 10;
     private static final int CHECKMARK_OFFSET_X = 8;
+    private static final int PREREQ_ICON_SIZE = 16;
+    private static final int PREREQ_ICON_TEX_SIZE = 32;
+    private static final int PREREQ_UNKNOWN_TINT = 0xFF80BFFF;
+    private static final String PREREQ_MAP_PREFIX = "m_";
+    private static final String PREREQ_CHEST_PREFIX = "c_";
+    private static final String PREREQ_FLASK_PREFIX = "f_";
     private static final int CHECKMARK_DEPTH = 300;
 
     private static final int REQ_TOP_Y_OFFSET = 210 - 25;
@@ -896,13 +903,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (aspect != null) {
                 AspectTagRenderer.render(graphics, slotX, y, aspect);
             } else {
-                graphics.drawString(
-                        font,
-                        Component.literal("?").withStyle(ChatFormatting.GOLD),
-                        slotX + 5,
-                        y + 4,
-                        0xFFFFFFFF,
-                        true);
+                drawPrereqIcon(graphics, slotX, y, prereq);
             }
             boolean met = completedStage || knowledge.isResearchComplete(prereq);
             satisfied[i] = met;
@@ -914,6 +915,51 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
             shift += spacing;
         }
+    }
+
+    private void drawPrereqIcon(GuiGraphics graphics, int x, int y, ResourceLocation prereq) {
+        Optional<Holder.Reference<IResearchEntry>> entry = minecraft
+                .player
+                .registryAccess()
+                .lookup(IResearchEntry.REGISTRY_KEY)
+                .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, prereq)));
+        if (entry.isPresent()) {
+            EntryIconRenderer.drawResearchIcon(
+                    graphics,
+                    x,
+                    y,
+                    EntryIconRenderer.resolveIcon(entry.get().value(), minecraft.player.tickCount),
+                    false);
+            return;
+        }
+        ResourceLocation flagIcon = prereqFlagIcon(prereq.getPath());
+        GuiBlend.blitTinted(
+                graphics,
+                flagIcon != null ? flagIcon : UNKNOWN_ASPECT_TEXTURE,
+                x,
+                y,
+                PREREQ_ICON_SIZE,
+                PREREQ_ICON_SIZE,
+                0.0F,
+                0.0F,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                flagIcon != null ? 0xFFFFFFFF : PREREQ_UNKNOWN_TINT);
+    }
+
+    private static @Nullable ResourceLocation prereqFlagIcon(String path) {
+        if (path.startsWith(PREREQ_MAP_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_MAP;
+        }
+        if (path.startsWith(PREREQ_CHEST_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_CHEST;
+        }
+        if (path.startsWith(PREREQ_FLASK_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_FLASK;
+        }
+        return null;
     }
 
     private @Nullable Holder<IAspect> aspectPrerequisite(ResourceLocation researchId) {
