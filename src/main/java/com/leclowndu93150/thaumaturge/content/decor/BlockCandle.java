@@ -18,8 +18,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class BlockCandle extends Block implements IInfusionStabiliser {
-    private static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 10.0, 11.0);
-    private static final double FLAME_Y_OFFSET = 0.7;
+    private static final VoxelShape SHAPE = Block.box(6.0, 0.0, 6.0, 10.0, 9.75, 10.5);
+    private static final double FLAME_Y_OFFSET = 0.63;
 
     private final DyeColor dye;
 

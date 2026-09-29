@@ -1,63 +1,396 @@
 {
-    "elements": [
-        {   "from": [ 6, 0, 6 ],
-            "to": [ 10, 8, 10 ],
-            "faces": {
-                "down":  { "texture": "#all", "cullface": "down", "tintindex": 0 },
-                "up":    { "texture": "#all", "tintindex": 0 },
-                "north": { "texture": "#all", "tintindex": 0 },
-                "south": { "texture": "#all", "tintindex": 0 },
-                "west":  { "texture": "#all", "tintindex": 0 },
-                "east":  { "texture": "#all", "tintindex": 0 }
-            }
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "all": "thaumaturge:block/candle",
+    "stub": "thaumaturge:block/candlestub",
+    "particle": "thaumaturge:block/candle"
+  },
+  "elements": [
+    {
+      "from": [
+        6.0,
+        0,
+        6.0
+      ],
+      "to": [
+        10.0,
+        8.0,
+        10.0
+      ],
+      "faces": {
+        "south": {
+          "texture": "#all",
+          "uv": [
+            0.0,
+            1,
+            4.0,
+            9.0
+          ],
+          "tintindex": 0
         },
-        {   "from": [ 5, 0, 7 ],
-            "to": [ 6, 1, 9 ],
-            "faces": {
-                "down":  { "texture": "#all", "cullface": "down", "tintindex": 0 },
-                "up":    { "texture": "#all", "tintindex": 0 },
-                "north": { "texture": "#all", "tintindex": 0 },
-                "south": { "texture": "#all", "tintindex": 0 },
-                "west":  { "texture": "#all", "tintindex": 0 },
-                "east":  { "texture": "#all", "tintindex": 0 }
-            }
+        "north": {
+          "texture": "#all",
+          "uv": [
+            8.0,
+            1,
+            12.0,
+            9.0
+          ],
+          "tintindex": 0
         },
-        {   "from": [ 10, 0, 7 ],
-            "to": [ 11, 2, 8 ],
-            "faces": {
-                "down":  { "texture": "#all", "cullface": "down", "tintindex": 0 },
-                "up":    { "texture": "#all", "tintindex": 0 },
-                "north": { "texture": "#all", "tintindex": 0 },
-                "south": { "texture": "#all", "tintindex": 0 },
-                "west":  { "texture": "#all", "tintindex": 0 },
-                "east":  { "texture": "#all", "tintindex": 0 }
-            }
+        "east": {
+          "texture": "#all",
+          "uv": [
+            4.0,
+            1,
+            8.0,
+            9.0
+          ],
+          "tintindex": 0
         },
-        {   "from": [ 7, 0, 10 ],
-            "to": [ 8, 1, 11 ],
-            "faces": {
-                "down":  { "texture": "#all", "cullface": "down", "tintindex": 0 },
-                "up":    { "texture": "#all", "tintindex": 0 },
-                "north": { "texture": "#all", "tintindex": 0 },
-                "south": { "texture": "#all", "tintindex": 0 },
-                "west":  { "texture": "#all", "tintindex": 0 },
-                "east":  { "texture": "#all", "tintindex": 0 }
-            }
+        "west": {
+          "texture": "#all",
+          "uv": [
+            12.0,
+            1,
+            16.0,
+            9.0
+          ],
+          "tintindex": 0
         },
-        {   "from": [ 7.5, 8, 7.5 ],
-            "to": [ 8.5, 10, 8.5 ],
-            "faces": {
-                "up":    { "texture": "#stub" },
-                "north": { "texture": "#stub" },
-                "south": { "texture": "#stub" },
-                "west":  { "texture": "#stub" },
-                "east":  { "texture": "#stub" }
-            }
+        "up": {
+          "texture": "#all",
+          "uv": [
+            0,
+            9,
+            4,
+            13
+          ],
+          "tintindex": 0
+        },
+        "down": {
+          "texture": "#all",
+          "uv": [
+            0,
+            9,
+            4,
+            13
+          ],
+          "tintindex": 0,
+          "cullface": "down"
         }
-    ],    
-    "textures": {
-        "all": "thaumaturge:block/candle",
-        "stub": "thaumaturge:block/candlestub",
-        "particle": "thaumaturge:block/candle"
+      }
+    },
+    {
+      "from": [
+        6,
+        8.0,
+        6
+      ],
+      "to": [
+        10,
+        8.75,
+        6.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#all",
+          "uv": [
+            8.0,
+            0,
+            12.0,
+            1
+          ],
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#all",
+          "uv": [
+            0,
+            14,
+            4,
+            15
+          ],
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "uv": [
+            0,
+            13,
+            4,
+            13.5
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        8.0,
+        9.5
+      ],
+      "to": [
+        10,
+        8.75,
+        10
+      ],
+      "faces": {
+        "south": {
+          "texture": "#all",
+          "uv": [
+            0.0,
+            0,
+            4.0,
+            1
+          ],
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#all",
+          "uv": [
+            0,
+            14,
+            4,
+            15
+          ],
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "uv": [
+            0,
+            13,
+            4,
+            13.5
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        8.0,
+        6.5
+      ],
+      "to": [
+        6.5,
+        8.75,
+        9.5
+      ],
+      "faces": {
+        "west": {
+          "texture": "#all",
+          "uv": [
+            12.5,
+            0,
+            15.5,
+            1
+          ],
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#all",
+          "uv": [
+            0,
+            14,
+            3.0,
+            15
+          ],
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "uv": [
+            0,
+            13,
+            3.0,
+            13.5
+          ],
+          "tintindex": 0,
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        9.5,
+        8.0,
+        6.5
+      ],
+      "to": [
+        10,
+        8.75,
+        9.5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#all",
+          "uv": [
+            4.5,
+            0,
+            7.5,
+            1
+          ],
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#all",
+          "uv": [
+            0,
+            14,
+            3.0,
+            15
+          ],
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "uv": [
+            0,
+            13,
+            3.0,
+            13.5
+          ],
+          "tintindex": 0,
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        4.5,
+        10.0
+      ],
+      "to": [
+        8.5,
+        8.75,
+        10.5
+      ],
+      "faces": {
+        "south": {
+          "texture": "#all",
+          "uv": [
+            4,
+            9,
+            5.0,
+            13.25
+          ],
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#all",
+          "uv": [
+            4,
+            9,
+            5.0,
+            9.5
+          ],
+          "tintindex": 0
+        },
+        "down": {
+          "texture": "#all",
+          "uv": [
+            4,
+            9,
+            5.0,
+            9.5
+          ],
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#all",
+          "uv": [
+            5,
+            9,
+            5.5,
+            13.25
+          ],
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#all",
+          "uv": [
+            5,
+            9,
+            5.5,
+            13.25
+          ],
+          "tintindex": 0
+        }
+      }
+    },
+    {
+      "from": [
+        8.25,
+        8.0,
+        7.75
+      ],
+      "to": [
+        8.75,
+        9.75,
+        8.25
+      ],
+      "faces": {
+        "up": {
+          "texture": "#stub",
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ]
+        },
+        "north": {
+          "texture": "#stub",
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#stub",
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ]
+        },
+        "west": {
+          "texture": "#stub",
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#stub",
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ]
+        }
+      },
+      "rotation": {
+        "origin": [
+          8.5,
+          8.0,
+          8
+        ],
+        "axis": "z",
+        "angle": 12.0
+      }
     }
+  ]
 }
