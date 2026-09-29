@@ -1016,17 +1016,15 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                     change = true;
                 }
             }
-            Vec3 delta = center.subtract(target.position());
-            double distance = delta.length();
-            if (distance < 1.0E-6) {
-                continue;
-            }
-            double pullStrength = 1.0 - distance / pullRange;
-            pullStrength = pullStrength * pullStrength * 0.15;
-            target.setDeltaMovement(target.getDeltaMovement().add(delta.scale(pullStrength / distance)));
-            target.hasImpulse = true;
-            if (target instanceof ServerPlayer player) {
-                player.connection.send(new ClientboundSetEntityMotionPacket(player));
+            Vec3 delta = center.subtract(target.position()).scale(1.0 / pullRange);
+            double power = 1.0 - delta.length();
+            if (power > 0.0) {
+                power *= power;
+                Vec3 pull = delta.normalize();
+                target.push(pull.x * power * 0.15, pull.y * power * 0.25, pull.z * power * 0.15);
+                if (target instanceof ServerPlayer player) {
+                    player.connection.send(new ClientboundSetEntityMotionPacket(player));
+                }
             }
         }
         return change;
