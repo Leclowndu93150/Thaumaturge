@@ -109,6 +109,7 @@ public final class BlockPedestal extends BaseEntityBlock {
         if (current.isEmpty() && held.isEmpty()) {
             return InteractionResult.PASS;
         }
+        boolean wasEmpty = current.isEmpty();
         if (!current.isEmpty()) {
             if (!player.getInventory().add(current)) {
                 player.drop(current, false);
@@ -120,13 +121,7 @@ public final class BlockPedestal extends BaseEntityBlock {
             held.consume(1, player);
         }
         float pitch = (level.random.nextFloat() - level.random.nextFloat()) * 0.7F + 1.0F;
-        level.playSound(
-                null,
-                pos,
-                SoundEvents.ITEM_PICKUP,
-                SoundSource.BLOCKS,
-                0.2F,
-                pitch * (current.isEmpty() ? 1.6F : 1.5F));
+        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.2F, pitch * (wasEmpty ? 1.6F : 1.5F));
         return InteractionResult.SUCCESS;
     }
 
