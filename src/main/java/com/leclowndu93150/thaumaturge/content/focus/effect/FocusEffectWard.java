@@ -8,9 +8,11 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
+import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.focus.FocusFX;
+import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumRoot;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
@@ -96,9 +98,11 @@ public final class FocusEffectWard implements FocusEffect {
     }
 
     private static boolean isStandaloneWardFocus(FocusPackage focus) {
-        return focus.units().size() == 1
-                && focus.units().getFirst().element().equals(ID)
-                && focus.units().getFirst().branches().isEmpty();
+        List<FocusUnit> units = focus.units();
+        int first = !units.isEmpty() && units.getFirst().element().equals(FocusMediumRoot.KEY) ? 1 : 0;
+        return units.size() - first == 1
+                && units.get(first).element().equals(ID)
+                && units.get(first).branches().isEmpty();
     }
 
     @Override
