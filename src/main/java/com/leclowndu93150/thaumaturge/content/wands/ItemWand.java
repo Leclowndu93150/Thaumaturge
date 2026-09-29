@@ -127,7 +127,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
                 return InteractionResultHolder.pass(player.getItemInHand(hand));
             }
             if (!FocusEffectWard.removesOwnedWard(player, core)
-                    && !consumeVis(wandStack, player, focus.getVisCost(focusStack), false, level.isClientSide())) {
+                    && !consumeFocusVis(wandStack, player, focus, focusStack, level.isClientSide())) {
                 if (player instanceof ServerPlayer serverPlayer) {
                     sendWandActionBar(serverPlayer, "tc.wand.notenoughvis");
                 }
@@ -179,6 +179,17 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
             modifier -= WandEconomy.SCEPTRE_DISCOUNT;
         }
         return Math.max(modifier, WandEconomy.MIN_CONSUMPTION_MODIFIER);
+    }
+
+    private static boolean consumeFocusVis(
+            ItemStack wandStack, Player player, ItemFocus focus, ItemStack focusStack, boolean simulate) {
+        int centivis = Math.round(focus.getVisCost(focusStack) * WandEconomy.CENTIVIS_PER_VIS);
+        if (centivis <= 0) {
+            return true;
+        }
+        Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.primalSplit(
+                centivis, focus.getVisAspects(focusStack, player.level().registryAccess()));
+        return WandVisHelper.consumeAllVis(wandStack, player, split, !simulate, false);
     }
 
     @Override

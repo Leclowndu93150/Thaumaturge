@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.mojang.math.Axis;
 import java.text.DecimalFormat;
+import java.util.Map;
 import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -129,12 +130,13 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         int max = WandVisHelper.getMaxVis(casterStack);
         ItemStack focusStack = wand.getFocusStack(casterStack);
         boolean hasFocus = focusStack.getItem() instanceof ItemFocus;
-        float perAspectCost = 0.0F;
+        Map<ResourceKey<IAspect>, Integer> costSplit = null;
         if (hasFocus && focusStack.getItem() instanceof ItemFocus focus && focus.getVisCost(focusStack) > 0.0F) {
-            perAspectCost = focus.getVisCost(focusStack)
-                    * wand.getConsumptionModifier(casterStack, player, false)
-                    / WandEconomy.PRIMAL_COUNT;
+            costSplit = WandVisHelper.primalSplit(
+                    Math.round(focus.getVisCost(focusStack) * WandEconomy.CENTIVIS_PER_VIS),
+                    focus.getVisAspects(focusStack, player.registryAccess()));
         }
+        float costModifier = wand.getConsumptionModifier(casterStack, player, false);
         boolean sneak = player.isShiftKeyDown();
         long now = Util.getMillis();
         boolean snapshot = now >= changeSyncTime;
@@ -147,6 +149,9 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         int count = 0;
         for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
             int amt = WandVisHelper.getVis(casterStack, primal);
+            float primalCost = costSplit == null
+                    ? 0.0F
+                    : costSplit.getOrDefault(primal, 0) * costModifier / WandEconomy.CENTIVIS_PER_VIS;
             graphics.pose().pushPose();
             if (!ThaumaturgeClientConfig.dialBottom()) {
                 graphics.pose().mulPose(Axis.ZP.rotationDegrees(90.0F));
@@ -181,7 +186,7 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
                     TEX_SIZE,
                     TEX_SIZE);
             int markerShift = 0;
-            if (perAspectCost > 0.0F) {
+            if (primalCost > 0.0F) {
                 graphics.blit(
                         HUD_WAND,
                         -MARKER_HALF,
@@ -231,11 +236,11 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
                         WHITE,
                         false);
                 graphics.pose().popPose();
-                if (perAspectCost > 0.0F) {
+                if (primalCost > 0.0F) {
                     graphics.pose().pushPose();
                     graphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
                     graphics.drawString(
-                            mc.font, AMOUNT_FORMAT.format(perAspectCost), COST_TEXT_X, AMOUNT_TEXT_Y, WHITE, false);
+                            mc.font, AMOUNT_FORMAT.format(primalCost), COST_TEXT_X, AMOUNT_TEXT_Y, WHITE, false);
                     graphics.pose().popPose();
                 }
             }

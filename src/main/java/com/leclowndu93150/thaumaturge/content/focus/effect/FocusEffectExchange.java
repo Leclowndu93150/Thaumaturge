@@ -97,7 +97,7 @@ public final class FocusEffectExchange implements FocusEffect, IFocusBlockPicker
                     .pickupDrops()
                     .silkTouch(silk)
                     .fortune(fortune)
-                    .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST)
+                    .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST, aspect())
                     .queue(level);
         }
         return true;

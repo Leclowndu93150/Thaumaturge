@@ -80,7 +80,8 @@ public final class BlockBreakerEngine {
             if (player == null) {
                 continue;
             }
-            if (task.visCost() > 0.0F && !WandVisHelper.consumeVisFromHotbar(player, task.visCost(), false)) {
+            if (task.visCost() > 0.0F
+                    && !WandVisHelper.consumeVisFromHotbar(player, task.visCost(), task.visAspect(), false)) {
                 continue;
             }
             if (!player.mayInteract(level, task.pos()) || current.getDestroySpeed(level, task.pos()) < 0.0F) {
@@ -97,7 +98,7 @@ public final class BlockBreakerEngine {
                     level.destroyBlockProgress(task.pos().hashCode(), task.pos(), -1);
                 }
                 if (task.visCost() > 0.0F) {
-                    WandVisHelper.consumeVisFromHotbar(player, task.visCost(), true);
+                    WandVisHelper.consumeVisFromHotbar(player, task.visCost(), task.visAspect(), true);
                 }
             } else {
                 queues.breakers().add(task.withDurability(remaining));
@@ -170,7 +171,7 @@ public final class BlockBreakerEngine {
                     collectDrops(level, task, player);
                 }
                 if (task.visCost() > 0.0F) {
-                    WandVisHelper.consumeVisFromHotbar(player, task.visCost(), true);
+                    WandVisHelper.consumeVisFromHotbar(player, task.visCost(), task.visAspect(), true);
                 }
             }
             if (task.target() != null) {
@@ -195,7 +196,8 @@ public final class BlockBreakerEngine {
         if (task.source() != null && task.source() != current) {
             return false;
         }
-        if (task.visCost() > 0.0F && !WandVisHelper.consumeVisFromHotbar(player, task.visCost(), false)) {
+        if (task.visCost() > 0.0F
+                && !WandVisHelper.consumeVisFromHotbar(player, task.visCost(), task.visAspect(), false)) {
             return false;
         }
         if (!player.mayInteract(level, task.pos())) {

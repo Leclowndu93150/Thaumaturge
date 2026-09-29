@@ -160,7 +160,7 @@ public final class FocusEffectWard implements FocusEffect {
                         ? pos.above()
                         : null;
         float visCost = otherHalf == null ? VIS_COST_PER_BLOCK : VIS_COST_PER_BLOCK * 2.0F;
-        if (!WandVisHelper.consumeVisFromHotbar(player, visCost, false)) {
+        if (!WandVisHelper.consumeVisFromHotbar(player, visCost, TCAspects.ORDO, false)) {
             return false;
         }
         if (!WardHandler.ward(level, pos, owner)) {
@@ -170,7 +170,7 @@ public final class FocusEffectWard implements FocusEffect {
             WardHandler.unward(level, pos, owner);
             return false;
         }
-        WandVisHelper.consumeVisFromHotbar(player, visCost, true);
+        WandVisHelper.consumeVisFromHotbar(player, visCost, TCAspects.ORDO, true);
         FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
         level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
         return true;
