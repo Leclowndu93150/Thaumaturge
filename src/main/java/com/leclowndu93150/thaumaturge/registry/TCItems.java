@@ -713,9 +713,9 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> TALLOW_BLOCK = ITEMS.registerSimpleBlockItem(TCBlocks.TALLOW_BLOCK);
     public static final DeferredItem<BlockItem> ITEM_GRATE = ITEMS.registerSimpleBlockItem(TCBlocks.ITEM_GRATE);
     public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_IRON =
-            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(16));
     public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_GOLD =
-            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(16));
     public static final DeferredItem<BlockItem> STONE_ARCANE_BRICK =
             ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE_BRICK);
     public static final DeferredItem<BlockItem> STONE_ANCIENT = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ANCIENT);
