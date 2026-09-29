@@ -92,7 +92,7 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
 
     @Override
     public boolean matches(IArcaneCraftingInput input, Level level) {
-        return super.matches(input, level) && this.pattern.matches(input);
+        return this.pattern.matches(input);
     }
 
     @Override

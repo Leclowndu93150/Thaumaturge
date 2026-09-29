@@ -1,23 +1,37 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
- * Host-aware source for the untyped aura-vis portion of an arcane craft.
+ * A supplier of aura vis for arcane crafts that do not run at a Thaumaturge arcane workbench.
+ * A placed arcane workbench always pays the aura part of a craft from the chunk aura around it;
+ * every other host, placed or virtual, pays it from the registered aura sources in registration
+ * order. A craft with an aura cost fails when the sources together cannot cover it.
  *
- * <p>This is deliberately separate from {@link IWorkbenchVisSource}, which substitutes typed
- * primal centivis for crystal requirements. Sources are queried in registration order. A source
- * must not mutate during simulation and must return the same clamped amount when the matching
- * commit immediately follows on the server thread.
+ * <p>Supply follows the same simulate contract as {@link IWorkbenchVisSource}: a simulated call
+ * changes nothing, and a real call supplies what the matching simulated call reported.
  *
- * @since 0.3.2
+ * <p>Register sources through {@link RegisterWorkbenchAuraSourcesEvent}.
+ *
+ * @since 1.0.0
  */
 @FunctionalInterface
 public interface IWorkbenchAuraSource {
     /**
-     * Supplies up to {@code need} untyped aura vis for the exact context host.
+     * Supplies up to {@code need} aura vis toward a craft.
      *
-     * @return the supplied amount; invalid values are clamped to {@code [0, need]}
+     * @param context   where and for whom the craft runs
+     * @param player    the crafting player
+     * @param workbench the workbench inventory
+     * @param need      the aura vis still required
+     * @param simulate  true to report what would be supplied without changing anything
+     * @return the vis supplied, never more than {@code need}; larger or negative values are
+     *         clamped by the caller
      */
-    int supply(ArcaneWorkbenchContext context, Player player, IArcaneWorkbench workbench, int need, boolean simulate);
+    int supply(
+            ArcaneWorkbenchContext context,
+            ServerPlayer player,
+            IArcaneWorkbench workbench,
+            int need,
+            boolean simulate);
 }

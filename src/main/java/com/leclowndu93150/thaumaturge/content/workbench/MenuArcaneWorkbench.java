@@ -157,7 +157,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         IArcaneRecipe arcane = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(level, input, sp);
         if (arcane != null) {
             tile.refreshAura();
-            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp);
+            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp, tile.craftingContext(sp));
             if (WorkbenchPayment.canCraft(plan, tile)) {
                 result = arcane.assemble(input, level.registryAccess());
             }
