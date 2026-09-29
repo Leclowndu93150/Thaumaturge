@@ -56,6 +56,8 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
 
     private static final int BLAZE_REGEN_TICKS = 6000;
     private static final int BLAZE_RESIST_TICKS = 12000;
+    private static final float CONTACT_DAMAGE = 3.0F;
+    private static final int CONTACT_FIRE_SECONDS = 10;
 
     public BlockInfernalFurnace(Properties properties) {
         super(properties);
@@ -172,8 +174,8 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
             }
         } else if (!level.isClientSide() && entity.tickCount % 10 == 0) {
             if (entity instanceof LivingEntity lv && !lv.fireImmune()) {
-                entity.lavaHurt();
-                lv.igniteForSeconds(10);
+                lv.hurt(level.damageSources().lava(), CONTACT_DAMAGE);
+                lv.igniteForSeconds(CONTACT_FIRE_SECONDS);
             }
         }
         super.entityInside(state, level, pos, entity);
