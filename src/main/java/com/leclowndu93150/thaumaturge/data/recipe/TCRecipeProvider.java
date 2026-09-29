@@ -1554,11 +1554,11 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output, TCIds.MODID + ":crucible/mossy_cobblestone");
 
         new CrucibleRecipeBuilder(
-                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.PACKED_ICE))
+                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.SNOW_BLOCK))
                 .aspect(TCAspects.ORDO, 1)
                 .aspect(TCAspects.GELUM, 1)
                 .gate(gate("hedge_alchemy", 2))
-                .unlockedBy("has", has(Blocks.PACKED_ICE))
+                .unlockedBy("has", has(Blocks.SNOW_BLOCK))
                 .save(output, TCIds.MODID + ":crucible/ice");
 
         new CrucibleRecipeBuilder(
