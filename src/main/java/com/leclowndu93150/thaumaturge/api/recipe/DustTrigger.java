@@ -10,6 +10,11 @@ import org.jspecify.annotations.Nullable;
 
 public interface DustTrigger extends Recipe<DustTriggerInput>, ResearchGated {
 
+    @Override
+    default boolean isSpecial() {
+        return true;
+    }
+
     default List<BlockPos> sparkle(Level level, Player player, BlockPos pos, DustTriggerPlacement placement) {
         return List.of(pos);
     }

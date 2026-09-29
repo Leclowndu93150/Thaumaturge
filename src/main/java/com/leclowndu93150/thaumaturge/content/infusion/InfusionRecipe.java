@@ -185,6 +185,11 @@ public final class InfusionRecipe implements Recipe<InfusionInput>, IInfusionRec
     }
 
     @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
+    @Override
     public boolean showNotification() {
         return false;
     }
