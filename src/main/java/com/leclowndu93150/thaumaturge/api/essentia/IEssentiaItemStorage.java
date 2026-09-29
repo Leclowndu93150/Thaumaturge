@@ -6,44 +6,81 @@ import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * Transfer-capable essentia storage bound to one item stack.
+ * Essentia storage in one item stack that automation may fill and drain, such as a warded jar.
  *
- * <p>This capability is distinct from {@link IEssentiaContainerItem}, which also covers items that
- * merely carry aspects for scanning. Presence of this capability explicitly permits automation.
+ * <p>This is separate from {@link IEssentiaContainerItem}, which also covers items that only carry
+ * aspects for scanning; having this capability is what permits transfers.
  *
- * <p>Operations never mutate the stack used to obtain this capability. Callers commit a transfer
- * by replacing their source slot with {@link ItemEssentiaTransferResult#resultingStack()}. A
- * simulated operation returns the same hypothetical replacement without changing external state.
- * Implementations must reject ambiguous stacked-container transfers unless they can return a safe,
- * complete replacement for the entire source stack.
+ * <p>No method changes the stack the capability was obtained from. A transfer returns the stack
+ * that should replace it, and the caller commits the transfer by putting that stack into the
+ * source slot, or discards the result to leave everything unchanged. Transfers only work on a
+ * stack of one item, because a stack of several containers cannot be replaced by one result.
  *
  * @since 1.0.0
  */
 public interface IEssentiaItemStorage {
-    /** Returns an immutable snapshot of all stored essentia. */
+    /**
+     * An immutable snapshot of the stored essentia.
+     *
+     * @return the contents, never {@code null}
+     */
     AspectList contents();
 
-    /** Returns the total capacity available for the given aspect. */
+    /**
+     * How much of an aspect the item holds when full.
+     *
+     * @param aspect the aspect
+     * @return the capacity, or zero when the stack cannot hold it
+     */
     int capacity(Holder<IAspect> aspect);
 
-    /** Returns whether the bound stack is compatible with the given aspect. */
+    /**
+     * Whether the item could take the aspect now, given its filter and current contents.
+     *
+     * @param aspect the aspect
+     * @return true when an insertion of this aspect can succeed
+     */
     boolean canInsert(Holder<IAspect> aspect);
 
-    /** Inserts up to {@code amount}, returning the amount moved and replacement stack. */
-    ItemEssentiaTransferResult insert(Holder<IAspect> aspect, int amount, boolean simulate);
-
-    /** Extracts up to {@code amount}, returning the amount moved and replacement stack. */
-    ItemEssentiaTransferResult extract(Holder<IAspect> aspect, int amount, boolean simulate);
+    /**
+     * Works out an insertion of up to {@code amount} of an aspect. Items that only hold full loads,
+     * such as phials, accept either a full load or nothing.
+     *
+     * @param aspect the aspect supplied
+     * @param amount the most to insert
+     * @return the amount that moves and the stack to put in the source slot
+     */
+    ItemEssentiaTransferResult insert(Holder<IAspect> aspect, int amount);
 
     /**
-     * Plays storage-specific feedback after a successful committed transfer. The default is silent;
-     * callers should use {@link EssentiaTransferFeedback}, which suppresses simulation and rejected
-     * operations.
+     * Works out an extraction of up to {@code amount} of an aspect. Items that only hold full
+     * loads give up their whole load or nothing.
+     *
+     * @param aspect the aspect requested
+     * @param amount the most to extract
+     * @return the amount that moves and the stack to put in the source slot
+     */
+    ItemEssentiaTransferResult extract(Holder<IAspect> aspect, int amount);
+
+    /**
+     * Plays this item's feedback for a committed transfer, such as a sound. The default does
+     * nothing. Call it through {@link EssentiaTransferFeedback}, which skips empty transfers and
+     * the client.
+     *
+     * @param player    the player the transfer was for
+     * @param direction whether the item was filled or drained
      */
     default void playTransferFeedback(Player player, TransferDirection direction) {}
 
+    /**
+     * Which way essentia moved.
+     *
+     * @since 1.0.0
+     */
     enum TransferDirection {
+        /** Essentia went into the item. */
         FILL,
+        /** Essentia came out of the item. */
         DRAIN
     }
 }
