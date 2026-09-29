@@ -27,6 +27,15 @@ public final class ArcaneAccess {
         return player.equals(owner) || (owner != null && locks.canAccess(pos, player));
     }
 
+    public static boolean sharesAccess(ServerLevel level, BlockPos first, BlockPos second) {
+        for (UUID player : locks(level, first).accessors(first)) {
+            if (canAccess(level, second, player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean canDelegateIron(ServerLevel level, BlockPos pos, UUID player) {
         ArcaneLockChunkData locks = locks(level, pos);
         UUID owner = locks.owner(pos);
