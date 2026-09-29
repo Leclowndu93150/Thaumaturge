@@ -16,12 +16,12 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
-    private static final RenderType ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType ORB_TYPE = TCRenderTypes.fxAlphaAdditiveBlurred(ParticleTextures.ASPECT_ORB);
 
     private static final int FRAME_COUNT = 16;
     private static final int FRAMES_PER_TICK = 2;
-    private static final float ROW_V0 = 0.5F;
-    private static final float ROW_V1 = 0.5625F;
+    private static final float ROW_V0 = 0.0F;
+    private static final float ROW_V1 = 1.0F;
     private static final float BASE_SCALE = 0.1F;
     private static final float AGE_SCALE = 0.3F;
     private static final float ALPHA = 0.5F;
@@ -78,6 +78,6 @@ public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityAspectOrb entity) {
-        return ParticleTextures.PARTICLES;
+        return ParticleTextures.ASPECT_ORB;
     }
 }
