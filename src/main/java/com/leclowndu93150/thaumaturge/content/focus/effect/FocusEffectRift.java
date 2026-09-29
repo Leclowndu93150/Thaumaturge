@@ -103,6 +103,7 @@ public final class FocusEffectRift implements FocusEffect {
                 && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
             hole.configure(bs, max, count, side);
             hole.setChanged();
+            level.sendBlockUpdated(pos, hole.getBlockState(), hole.getBlockState(), Block.UPDATE_CLIENTS);
         }
         return true;
     }
