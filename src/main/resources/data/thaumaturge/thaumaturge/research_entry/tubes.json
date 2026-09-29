@@ -17,25 +17,57 @@
           "items": [
             "thaumaturge:phial"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "thaumaturge:aspects": [
+              {
+                "aspect": "thaumaturge:vitium",
+                "amount": 10
+              }
+            ]
+          }
         },
         {
           "items": [
             "thaumaturge:phial"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "thaumaturge:aspects": [
+              {
+                "aspect": "thaumaturge:vinculum",
+                "amount": 10
+              }
+            ]
+          }
         },
         {
           "items": [
             "thaumaturge:phial"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "thaumaturge:aspects": [
+              {
+                "aspect": "thaumaturge:alienis",
+                "amount": 10
+              }
+            ]
+          }
         },
         {
           "items": [
             "thaumaturge:phial"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "thaumaturge:aspects": [
+              {
+                "aspect": "thaumaturge:alkimia",
+                "amount": 10
+              }
+            ]
+          }
         }
       ],
       "required_knowledge": [
