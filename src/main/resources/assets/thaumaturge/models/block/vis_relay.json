@@ -2,44 +2,57 @@
   "parent": "block/block",
   "textures": {
     "base": "thaumaturge:block/arcane_stone_1",
-    "crystal": "minecraft:block/amethyst_block",
-    "particle": "minecraft:block/amethyst_block"
+    "baseends": "thaumaturge:block/infuser_normal",
+    "particle": "block/amethyst_block",
+    "crystal": "block/amethyst_block"
   },
   "elements": [
     {
       "from": [5, 0, 5],
       "to": [11, 3, 11],
       "faces": {
-        "north": {"texture": "#base"},
-        "south": {"texture": "#base"},
-        "east": {"texture": "#base"},
-        "west": {"texture": "#base"},
-        "up": {"texture": "#base"},
-        "down": {"texture": "#base"}
+        "north": {"uv": [8, 6, 14, 9], "texture": "#base"},
+        "east": {"uv": [8, 6, 14, 9], "texture": "#base"},
+        "south": {"uv": [8, 6, 14, 9], "texture": "#base"},
+        "west": {"uv": [8, 6, 14, 9], "texture": "#base"},
+        "up": {"uv": [0, 0, 2, 2], "texture": "#baseends"},
+        "down": {"uv": [0, 0, 2, 2], "texture": "#baseends"}
       }
     },
     {
       "from": [6.5, 3, 6.5],
       "to": [9.5, 10, 9.5],
-      "rotation": {"origin": [8, 6, 8], "axis": "y", "angle": 45},
+      "rotation": {"angle": 45, "axis": "y", "origin": [8, 7, 8]},
       "faces": {
-        "north": {"texture": "#crystal"},
-        "south": {"texture": "#crystal"},
-        "east": {"texture": "#crystal"},
-        "west": {"texture": "#crystal"},
-        "up": {"texture": "#crystal"}
+        "north": {"uv": [3, 5, 6, 12], "texture": "#crystal"},
+        "east": {"uv": [4, 1, 7, 8], "texture": "#crystal"},
+        "south": {"uv": [10, 7, 13, 14], "texture": "#crystal"},
+        "west": {"uv": [5, 5, 8, 12], "texture": "#crystal"},
+        "up": {"uv": [8, 12, 11, 15], "texture": "#crystal"}
       }
     },
     {
-      "from": [7.25, 10, 7.25],
-      "to": [8.75, 11.5, 8.75],
-      "rotation": {"origin": [8, 10, 8], "axis": "y", "angle": 45},
+      "from": [7, 8.6, 7],
+      "to": [9, 10.6, 9],
+      "rotation": {"angle": 45, "axis": "y", "origin": [8, 9.6, 8]},
       "faces": {
-        "north": {"texture": "#crystal"},
-        "south": {"texture": "#crystal"},
-        "east": {"texture": "#crystal"},
-        "west": {"texture": "#crystal"},
-        "up": {"texture": "#crystal"}
+        "north": {"uv": [14, 9, 16, 11], "texture": "#crystal"},
+        "east": {"uv": [8, 5, 10, 7], "texture": "#crystal"},
+        "south": {"uv": [12, 10, 14, 12], "texture": "#crystal"},
+        "west": {"uv": [10, 11, 12, 13], "texture": "#crystal"},
+        "up": {"uv": [11, 10, 13, 12], "texture": "#crystal"}
+      }
+    },
+    {
+      "from": [7.5, 10.15, 7.5],
+      "to": [8.5, 11.15, 8.5],
+      "rotation": {"angle": 45, "axis": "y", "origin": [8, 10.15, 8]},
+      "faces": {
+        "north": {"uv": [7, 8, 8, 9], "texture": "#crystal"},
+        "east": {"uv": [7, 8, 8, 9], "texture": "#crystal"},
+        "south": {"uv": [6, 8, 7, 9], "texture": "#crystal"},
+        "west": {"uv": [6, 8, 7, 9], "texture": "#crystal"},
+        "up": {"uv": [6, 7, 7, 8], "texture": "#crystal"}
       }
     }
   ]
