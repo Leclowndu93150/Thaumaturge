@@ -5,7 +5,9 @@ import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryItem;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
+import com.leclowndu93150.thaumaturge.content.taint.entity.TaintConversion;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,6 +31,10 @@ public final class TCDataMaps {
             .synced(ItemWarp.CODEC, false)
             .build();
 
+    public static final DataMapType<EntityType<?>, TaintConversion> TAINT_CONVERSION = DataMapType.builder(
+                    TCIds.rl("taint_conversion"), Registries.ENTITY_TYPE, TaintConversion.CODEC)
+            .build();
+
     private TCDataMaps() {}
 
     @SubscribeEvent
@@ -37,5 +43,6 @@ public final class TCDataMaps {
         event.register(BIOME_ASPECTS);
         event.register(ITEM_WARP);
         event.register(GolemAccessoryItem.DATA_MAP);
+        event.register(TAINT_CONVERSION);
     }
 }

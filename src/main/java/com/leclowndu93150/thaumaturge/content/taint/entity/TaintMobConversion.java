@@ -6,16 +6,18 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSheep;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
 import com.leclowndu93150.thaumaturge.registry.TCEntityTags;
 import java.util.function.Supplier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.npc.Villager;
+import org.jspecify.annotations.Nullable;
 
 /** Single router for specialized replacements and the generic tainted fallback. */
 public final class TaintMobConversion {
@@ -33,28 +35,18 @@ public final class TaintMobConversion {
             return Result.IGNORED;
         }
 
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_CREEPER)) {
-            return replace(level, source, () -> TCEntities.TAINT_CREEPER.get().create(level));
-        }
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_COW)) {
-            return replace(level, source, () -> TCEntities.TAINT_COW.get().create(level));
-        }
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_PIG)) {
-            return replace(level, source, () -> TCEntities.TAINT_PIG.get().create(level));
-        }
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_CHICKEN)) {
-            return replace(level, source, () -> TCEntities.TAINT_CHICKEN.get().create(level));
-        }
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_SHEEP)) {
-            return replace(level, source, () -> TCEntities.TAINT_SHEEP.get().create(level));
-        }
-        if (source.getType().builtInRegistryHolder().is(TCEntityTags.TAINT_LEGACY_VILLAGER)) {
-            return replace(level, source, () -> TCEntities.TAINT_VILLAGER.get().create(level));
+        TaintConversion conversion = conversionFor(source.getType());
+        if (conversion != null) {
+            return replace(level, source, () -> conversion.into().create(level) instanceof Mob mob ? mob : null);
         }
 
         ChampionHelper.makeTainted(source);
         TaintEcology.addPressure(level, source.blockPosition(), GENERIC_REPLACEMENT_PRESSURE);
         return Result.CONVERTED_TO_GENERIC_TAINTED;
+    }
+
+    public static @Nullable TaintConversion conversionFor(EntityType<?> type) {
+        return type.builtInRegistryHolder().getData(TCDataMaps.TAINT_CONVERSION);
     }
 
     private static Result replace(ServerLevel level, LivingEntity source, Supplier<? extends Mob> factory) {

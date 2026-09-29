@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.data.datamap.FuelValuesProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.GolemAccessoryItemProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.InfernalBonusProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.StrippingProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.TaintConversionProvider;
 import com.leclowndu93150.thaumaturge.data.lang.TCEnglishProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCEntityLootSubProvider;
@@ -82,6 +83,7 @@ public final class TCDataGenerators {
         event.createProvider(ChampionWhitelistProvider::new);
         event.createProvider(InfernalBonusProvider::new);
         event.createProvider(GolemAccessoryItemProvider::new);
+        event.createProvider(TaintConversionProvider::new);
         event.createProvider(StrippingProvider::new);
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(EnchantingStatsProvider::new);

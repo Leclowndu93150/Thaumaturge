@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCEntityTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -60,11 +59,7 @@ public final class TaintNaturalSpawnEvents {
     }
 
     private static boolean hasLegacyPassiveVariant(EntityType<?> type) {
-        var holder = type.builtInRegistryHolder();
-        return holder.is(TCEntityTags.TAINT_LEGACY_COW)
-                || holder.is(TCEntityTags.TAINT_LEGACY_PIG)
-                || holder.is(TCEntityTags.TAINT_LEGACY_CHICKEN)
-                || holder.is(TCEntityTags.TAINT_LEGACY_SHEEP)
-                || holder.is(TCEntityTags.TAINT_LEGACY_VILLAGER);
+        TaintConversion conversion = TaintMobConversion.conversionFor(type);
+        return conversion != null && conversion.naturalSpawns();
     }
 }

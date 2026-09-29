@@ -28,12 +28,6 @@ public final class TCEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TCEntities.TAINT_CHICKEN.get()))
                 .add(key(TCEntities.TAINT_SHEEP.get()))
                 .add(key(TCEntities.TAINT_VILLAGER.get()));
-        tag(TCEntityTags.TAINT_LEGACY_CREEPER).add(key(EntityType.CREEPER));
-        tag(TCEntityTags.TAINT_LEGACY_COW).add(key(EntityType.COW));
-        tag(TCEntityTags.TAINT_LEGACY_PIG).add(key(EntityType.PIG));
-        tag(TCEntityTags.TAINT_LEGACY_CHICKEN).add(key(EntityType.CHICKEN));
-        tag(TCEntityTags.TAINT_LEGACY_SHEEP).add(key(EntityType.SHEEP));
-        tag(TCEntityTags.TAINT_LEGACY_VILLAGER).add(key(EntityType.VILLAGER));
         tag(EntityTypeTags.CAN_BREATHE_UNDER_WATER)
                 .add(key(TCEntities.CULTIST_LEADER.get()))
                 .add(key(TCEntities.CULTIST_PORTAL_GREATER.get()))
