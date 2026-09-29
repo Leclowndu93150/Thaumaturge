@@ -123,7 +123,7 @@ public final class ThaumaturgeCommonConfig {
         builder.pop(2);
 
         HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
-                        "Maximum block-eating ray length in blocks. Higher values increase reach, not entity or item pulling range.")
+                        "Maximum block-eating ray length in blocks. Dropped items are pulled from this range plus half a block; the entity pulling range is not affected.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
         SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER = builder.comment(
                         "Scales hungry node block-eating range by quality. Uses the minimum and maximum ranges below instead of the fixed range.")
