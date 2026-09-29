@@ -17,6 +17,7 @@
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
+    "client.lighting.BlockLightEngineMixin",
     "client.model.AgeableListModelMixin",
     "client.model.HierarchicalModelMixin",
     "client.model.ListModelMixin",

@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.model.HungryChestItemSpecialRendere
 import com.leclowndu93150.thaumaturge.client.model.JarBrainItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.JarItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.JarNodeItemSpecialRenderer;
+import com.leclowndu93150.thaumaturge.client.model.NitorItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.NodeStabilizerItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.client.model.WandItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
@@ -41,6 +42,7 @@ public final class TCItemRenderExtensions {
         register(event, () -> new NodeStabilizerItemSpecialRenderer(true), TCItems.NODE_STABILIZER_ADVANCED);
         register(event, () -> new NodeStabilizerItemSpecialRenderer(false, true), TCItems.NODE_TRANSDUCER);
         register(event, HungryChestItemSpecialRenderer::new, TCItems.HUNGRY_CHEST);
+        TCItems.NITORS.values().forEach(item -> register(event, NitorItemSpecialRenderer::new, item));
     }
 
     @SafeVarargs

@@ -28,9 +28,7 @@ run-gametest/config
 # Reference sources (decompiled, not part of build)
 sources/
 
-# Python files
-*.py
-!tools/*.py
+/tools/
 
 **/__pycache__/
 server-taint-test.log

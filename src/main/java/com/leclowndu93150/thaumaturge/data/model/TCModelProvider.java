@@ -842,7 +842,23 @@ public final class TCModelProvider implements DataProvider {
 
     private void registerNitor(DyeColor dye) {
         registerInvisibleBlock(TCBlocks.NITORS.get(dye).get());
-        delegateItem(TCItems.NITORS.get(dye).get(), TCIds.rl("item/nitor"));
+        modelOutput.accept(
+                ModelLocationUtils.getModelLocation(TCItems.NITORS.get(dye).get()), () -> {
+                    JsonObject model = new JsonObject();
+                    model.addProperty("loader", "neoforge:separate_transforms");
+                    JsonObject flat = new JsonObject();
+                    flat.addProperty("parent", TCIds.rl("item/nitor").toString());
+                    model.add("base", flat);
+                    JsonObject inHand = new JsonObject();
+                    inHand.addProperty("parent", BEWLR_BLOCK_PARENT.toString());
+                    JsonObject perspectives = new JsonObject();
+                    perspectives.add("firstperson_lefthand", inHand);
+                    perspectives.add("firstperson_righthand", inHand);
+                    perspectives.add("thirdperson_lefthand", inHand);
+                    perspectives.add("thirdperson_righthand", inHand);
+                    model.add("perspectives", perspectives);
+                    return model;
+                });
     }
 
     private void registerInfusionAltar() {
