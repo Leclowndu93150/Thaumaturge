@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
+import com.leclowndu93150.thaumaturge.content.aura.relay.LinkedRelaySource;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
@@ -98,7 +99,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
         if (relay == null) {
             return false;
         }
-        BlockEntityNode source = relay.resolveSource(level);
+        LinkedRelaySource source = relay.resolveSource(level);
         if (source == null) {
             return false;
         }
@@ -111,7 +112,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
             if (aspect == null) {
                 continue;
             }
-            int drained = source.drainCentivis(aspect, Math.min(RELAY_DRAW_CV, needCv));
+            int drained = VisRelayNetwork.drainNow(source, key, Math.min(RELAY_DRAW_CV, needCv));
             if (drained <= 0) {
                 continue;
             }

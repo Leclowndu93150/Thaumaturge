@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.aura.relay;
 
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
+import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
 import java.util.Objects;
@@ -131,24 +132,18 @@ public final class BlockEntityVisRelay extends BlockEntity {
             return false;
         }
         if (!level.isLoaded(parentPos)) {
-            return !AddonVisRelaySources.INSTANCE.isRegisteredAt(level, parentPos);
+            return true;
         }
-        BlockEntity parent = level.getBlockEntity(parentPos);
-        if (parent instanceof BlockEntityNode node) {
-            return depth == 1 && sourceUsable(node);
-        }
-        if (parent instanceof BlockEntityVisRelay relay) {
+        if (level.getBlockEntity(parentPos) instanceof BlockEntityVisRelay relay) {
             return relay.isLinked() && relay.depth == depth - 1 && depth <= HOP_CAP;
         }
-        return depth == 1 && AddonVisRelaySources.INSTANCE.isUsableAt(level, parentPos);
+        return depth == 1 && usableSource(level, parentPos) != null;
     }
 
     private void relink(ServerLevel level) {
-        BlockPos bestNode = null;
-        double bestNodeDistance = Double.MAX_VALUE;
+        BlockPos bestSource = null;
+        double bestSourceDistance = Double.MAX_VALUE;
         BlockPos bestRelay = null;
-        BlockPos bestAddon = null;
-        double bestAddonDistance = Double.MAX_VALUE;
         int bestRelayDepth = Integer.MAX_VALUE;
         double bestRelayDistance = Double.MAX_VALUE;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -159,36 +154,28 @@ public final class BlockEntityVisRelay extends BlockEntity {
                         continue;
                     }
                     cursor.setWithOffset(worldPosition, x, y, z);
-                    BlockEntity be = level.getBlockEntity(cursor);
-                    if (be instanceof BlockEntityNode node && sourceUsable(node)) {
+                    if (level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) {
                         double distance = cursor.distSqr(worldPosition);
-                        if (distance < bestNodeDistance) {
-                            bestNodeDistance = distance;
-                            bestNode = cursor.immutable();
-                        }
-                    } else if (AddonVisRelaySources.INSTANCE.isUsableAt(level, cursor)) {
-                        double distance = cursor.distSqr(worldPosition);
-                        if (distance < bestAddonDistance) {
-                            bestAddonDistance = distance;
-                            bestAddon = cursor.immutable();
-                        }
-                    } else if (be instanceof BlockEntityVisRelay relay && relay.isLinked() && relay.depth < HOP_CAP) {
-                        double distance = cursor.distSqr(worldPosition);
-                        if (relay.depth < bestRelayDepth
-                                || (relay.depth == bestRelayDepth && distance < bestRelayDistance)) {
+                        if (relay.isLinked()
+                                && relay.depth < HOP_CAP
+                                && (relay.depth < bestRelayDepth
+                                        || (relay.depth == bestRelayDepth && distance < bestRelayDistance))) {
                             bestRelayDepth = relay.depth;
                             bestRelayDistance = distance;
                             bestRelay = cursor.immutable();
+                        }
+                    } else if (usableSource(level, cursor) != null) {
+                        double distance = cursor.distSqr(worldPosition);
+                        if (distance < bestSourceDistance) {
+                            bestSourceDistance = distance;
+                            bestSource = cursor.immutable();
                         }
                     }
                 }
             }
         }
-        if (bestNode != null) {
-            parentPos = bestNode;
-            depth = 1;
-        } else if (bestAddon != null) {
-            parentPos = bestAddon;
+        if (bestSource != null) {
+            parentPos = bestSource;
             depth = 1;
         } else if (bestRelay != null) {
             parentPos = bestRelay;
@@ -196,41 +183,24 @@ public final class BlockEntityVisRelay extends BlockEntity {
         }
     }
 
-    private static boolean sourceUsable(BlockEntityNode node) {
-        return node.isEnergized() && !(node instanceof BlockEntityJarNode);
+    private static @Nullable IVisRelaySource usableSource(ServerLevel level, BlockPos pos) {
+        IVisRelaySource source = level.getCapability(VisRelayCapabilities.SOURCE, pos, null);
+        return source != null && source.canSupply() ? source : null;
     }
 
-    public @Nullable BlockEntityNode resolveSource(ServerLevel level) {
+    public @Nullable LinkedRelaySource resolveSource(ServerLevel level) {
         BlockEntityVisRelay current = this;
         for (int hops = 0; hops <= HOP_CAP; hops++) {
             BlockPos parent = current.parentPos;
             if (parent == null) {
                 return null;
             }
-            BlockEntity be = level.getBlockEntity(parent);
-            if (be instanceof BlockEntityNode node) {
-                return sourceUsable(node) ? node : null;
-            }
-            if (!(be instanceof BlockEntityVisRelay relay)) {
-                return null;
-            }
-            current = relay;
-        }
-        return null;
-    }
-
-    public @Nullable BlockPos resolveAddonSource(ServerLevel level) {
-        BlockEntityVisRelay current = this;
-        for (int hops = 0; hops <= HOP_CAP; hops++) {
-            BlockPos parent = current.parentPos;
-            if (parent == null) return null;
-            BlockEntity be = level.getBlockEntity(parent);
-            if (be instanceof BlockEntityNode) return null;
-            if (be instanceof BlockEntityVisRelay relay) {
+            if (level.getBlockEntity(parent) instanceof BlockEntityVisRelay relay) {
                 current = relay;
                 continue;
             }
-            return AddonVisRelaySources.INSTANCE.isUsableAt(level, parent) ? parent : null;
+            IVisRelaySource source = usableSource(level, parent);
+            return source == null ? null : new LinkedRelaySource(parent, source);
         }
         return null;
     }

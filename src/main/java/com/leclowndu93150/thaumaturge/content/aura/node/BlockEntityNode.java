@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
@@ -132,6 +133,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private int regeneration = -1;
     private int wait;
     private int starvation;
+    private final IVisRelaySource relaySource = new NodeVisRelaySource(this);
     private int lock;
     protected boolean energized;
     private @Nullable UUID drainPlayer;
@@ -365,6 +367,10 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     public int centivisRate(Holder<IAspect> aspect) {
         return energized ? aspectsBase.amountOf(aspect) : 0;
+    }
+
+    public IVisRelaySource relaySource() {
+        return relaySource;
     }
 
     public int availableCentivis(Holder<IAspect> aspect) {

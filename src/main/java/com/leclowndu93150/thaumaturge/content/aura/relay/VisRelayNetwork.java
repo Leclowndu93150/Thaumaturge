@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.content.aura.relay;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -17,16 +16,17 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
     @Override
     public int drainCentivis(
             ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount, boolean simulate) {
-        BlockEntityNode source = findSource(level, consumerPos);
-        Holder<IAspect> aspect = Aspects.resolve(level.registryAccess(), primal);
-        if (aspect == null) {
+        if (amount <= 0) {
             return 0;
         }
-        if (source != null) {
-            if (simulate) {
-                return Math.min(amount, source.availableCentivis(aspect));
-            }
-            return source.drainCentivis(aspect, amount);
+        BlockEntityVisRelay relay = findRelayNear(level, consumerPos);
+        LinkedRelaySource source = relay == null ? null : relay.resolveSource(level);
+        Holder<IAspect> aspect = Aspects.resolve(level.registryAccess(), primal);
+        if (source == null || aspect == null) {
+            return 0;
+        }
+        if (simulate) {
+            return clamp(source.source().availableCentivis(primal), amount);
         }
         int drained = drainNow(source, primal, amount);
         if (drained > 0) {
@@ -35,9 +35,15 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
         return drained;
     }
 
-    public static @Nullable BlockEntityNode findSource(ServerLevel level, BlockPos consumerPos) {
-        BlockEntityVisRelay relay = findRelayNear(level, consumerPos);
-        return relay == null ? null : relay.resolveSource(level);
+    public static int drainNow(LinkedRelaySource source, ResourceKey<IAspect> primal, int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        return clamp(source.source().drainCentivis(primal, amount, false), amount);
+    }
+
+    private static int clamp(int supplied, int amount) {
+        return Math.max(0, Math.min(amount, supplied));
     }
 
     public static @Nullable BlockEntityVisRelay findRelayNear(ServerLevel level, BlockPos consumerPos) {

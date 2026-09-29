@@ -1748,6 +1748,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.transducer.status.2", "Node energized");
         add("jade.thaumaturge.transducer.charge", "Charge: %s%%");
         add("jade.thaumaturge.relay.linked_node", "Linked to energized node");
+        add("jade.thaumaturge.relay.linked_source", "Linked to %s");
         add("jade.thaumaturge.relay.linked", "Linked");
         add("jade.thaumaturge.relay.linked_relay", "Linked through %s relays");
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
