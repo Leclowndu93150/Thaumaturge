@@ -33,3 +33,4 @@ sources/
 **/__pycache__/
 server-taint-test.log
 build-datagen
+/art/
