@@ -700,8 +700,7 @@ public final class TCBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(5.0F, 10.0F)
                     .sound(SoundType.STONE)
-                    .noOcclusion()
-                    .lightLevel(s -> 15));
+                    .noOcclusion());
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ARCANE =
             BLOCKS.registerBlock("pedestal_arcane", BlockPedestal::new, pedestalProps());
