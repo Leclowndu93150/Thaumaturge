@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
+import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -25,7 +26,7 @@ public class BlockArcaneWorkbenchCharger extends Block {
     }
 
     private boolean willSurvive(LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos.below()).getBlock() instanceof BlockArcaneWorkbench;
+        return level.getBlockState(pos.below()).is(TCBlockTags.ARCANE_WORKBENCH_CHARGER_HOSTS);
     }
 
     @Override
@@ -46,12 +47,7 @@ public class BlockArcaneWorkbenchCharger extends Block {
         if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("workbench_charger"))) {
             return InteractionResult.CONSUME;
         }
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-        if (level.getBlockEntity(pos.below()) instanceof BlockEntityArcaneWorkbench be) {
-            player.openMenu(be, buf -> buf.writeBlockPos(pos.below()));
-        }
-        return InteractionResult.CONSUME;
+        BlockPos host = pos.below();
+        return level.getBlockState(host).useWithoutItem(level, player, hit.withPosition(host));
     }
 }

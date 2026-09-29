@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block;
 
 public final class TCBlockTags {
     public static final TagKey<Block> CRUCIBLE_HEAT_SOURCES = key("crucible_heat_sources");
+    public static final TagKey<Block> ARCANE_WORKBENCH_CHARGER_HOSTS = key("arcane_workbench_charger_hosts");
     public static final TagKey<Block> PHYSICAL_FLUX = key("physical_flux");
     public static final TagKey<Block> FLUX_SCRUBBABLE = key("flux_scrubbable");
     public static final TagKey<Block> SCAN_CLAY = key("scan/f_matclay");

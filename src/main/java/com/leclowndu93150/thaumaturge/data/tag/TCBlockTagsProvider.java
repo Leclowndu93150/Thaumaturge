@@ -25,6 +25,9 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
+        tag(TCBlockTags.ARCANE_WORKBENCH_CHARGER_HOSTS)
+                .add(TCBlocks.ARCANE_WORKBENCH.get())
+                .add(TCBlocks.FOCAL_MANIPULATOR.get());
         tag(TCBlockTags.INFUSION_STABILISERS)
                 .add(Blocks.SKELETON_SKULL)
                 .add(Blocks.SKELETON_WALL_SKULL)
