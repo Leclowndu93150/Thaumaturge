@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.*;
@@ -26,6 +27,7 @@ import com.leclowndu93150.thaumaturge.registry.TCFluids;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCMenus;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.mojang.serialization.JsonOps;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -87,6 +90,10 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(
                 TCItems.CELESTIAL_NOTES.asItem(), ThaumaturgeJEIPlugin::celestialBodySubtype);
         registration.registerSubtypeInterpreter(TCItems.RESEARCH_NOTE.get(), ThaumaturgeJEIPlugin::researchNoteSubtype);
+        registration.registerSubtypeInterpreter(TCItems.WAND.get(), ThaumaturgeJEIPlugin::wandPartsSubtype);
+        registration.registerSubtypeInterpreter(TCItems.VERDANT_CHARM.get(), ThaumaturgeJEIPlugin::verdantTypeSubtype);
+        registration.registerSubtypeInterpreter(
+                TCItems.GOLEM_PLACER.get(), ThaumaturgeJEIPlugin::golemPropertiesSubtype);
     }
 
     @Override
@@ -454,5 +461,30 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     private static String researchNoteSubtype(ItemStack stack, UidContext context) {
         var note = stack.get(TCDataComponents.RESEARCH_NOTE.get());
         return note == null ? IIngredientSubtypeInterpreter.NONE : note.toString();
+    }
+
+    private static String wandPartsSubtype(ItemStack stack, UidContext context) {
+        return encodedSubtype(stack, TCDataComponents.WAND_PARTS.get());
+    }
+
+    private static String verdantTypeSubtype(ItemStack stack, UidContext context) {
+        Integer type = stack.get(TCDataComponents.VERDANT_TYPE.get());
+        return type == null ? IIngredientSubtypeInterpreter.NONE : type.toString();
+    }
+
+    private static String golemPropertiesSubtype(ItemStack stack, UidContext context) {
+        return encodedSubtype(stack, TCDataComponents.GOLEM_PROPERTIES.get());
+    }
+
+    private static <T> String encodedSubtype(ItemStack stack, DataComponentType<T> type) {
+        T value = stack.get(type);
+        if (value == null || type.codec() == null) {
+            return IIngredientSubtypeInterpreter.NONE;
+        }
+        return type.codec()
+                .encodeStart(JsonOps.INSTANCE, value)
+                .result()
+                .map(JsonElement::toString)
+                .orElse(IIngredientSubtypeInterpreter.NONE);
     }
 }
