@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -153,7 +154,7 @@ public final class BlockFluxGas extends Block {
             return 0;
         }
         BlockState aboveState = level.getBlockState(above);
-        if (!aboveState.getFluidState().isEmpty() && !PhysicalFlux.isPhysicalFlux(aboveState)) {
+        if (aboveState.getBlock() instanceof LiquidBlock && !PhysicalFlux.isPhysicalFlux(aboveState)) {
             level.setBlock(above, gasBlockState(amount), Block.UPDATE_ALL);
             level.setBlock(pos, aboveState, Block.UPDATE_ALL);
             FluidState displaced = aboveState.getFluidState();
@@ -185,7 +186,9 @@ public final class BlockFluxGas extends Block {
         if (PhysicalFlux.isPhysicalFlux(state)) {
             return -1;
         }
-        if (!state.getFluidState().isEmpty()) return 0;
+        if (!state.getFluidState().isEmpty()) {
+            return state.getBlock() instanceof LiquidBlock ? 0 : -1;
+        }
         return state.canBeReplaced() ? 0 : -1;
     }
 
