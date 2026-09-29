@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public final class TaintHelper {
+    private static final double PERCENT = 100.0;
     private static final float SEED_FLUX_THRESHOLD = 5.0F;
     private static final float SEED_FLUX_COST = 5.0F;
     private static final double SEED_SPAWN_RATE_FACTOR = 0.01;
@@ -123,6 +124,9 @@ public final class TaintHelper {
         }
 
         RandomSource random = level.getRandom();
+        if (!force && random.nextDouble() * PERCENT >= ThaumaturgeCommonConfig.TAINT_SPREAD_RATE.get()) {
+            return;
+        }
         BlockPos target = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 2, random.nextInt(3) - 1);
         if (target.equals(pos) || !level.hasChunkAt(target) || TaintBloomRegistry.isProtected(level, target)) {
             return;
@@ -254,7 +258,7 @@ public final class TaintHelper {
                 || countAdjacentTaint(level, pos) < 2) {
             return false;
         }
-        int spreadRate = ThaumaturgeCommonConfig.TAINT_SPREAD_RATE.get();
+        int spreadRate = ThaumaturgeCommonConfig.TAINT_FRONTIER_RATE.get();
         if (spreadRate <= 0) {
             return false;
         }

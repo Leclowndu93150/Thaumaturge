@@ -6,7 +6,8 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue WUSS_MODE;
-    public static final ModConfigSpec.IntValue TAINT_SPREAD_RATE;
+    public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
+    public static final ModConfigSpec.IntValue TAINT_FRONTIER_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
     public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
@@ -60,8 +61,11 @@ public final class ThaumaturgeCommonConfig {
         WUSS_MODE = builder.comment("Disables Warp, Taint spread, and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
-                        "Controls Tainted Lands spread speed. Higher values slow spreading; 0 disables biome takeover. Requires two adjacent taint blocks.")
-                .defineInRange("taintSpreadRate", 200, 0, 100000);
+                        "The % chance of taint fibres spreading on a block tick. Setting this to 0 will effectively stop taint fibre spread.")
+                .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);
+        TAINT_FRONTIER_RATE = builder.comment(
+                        "How quickly the Tainted Lands biome spreads outward, Thaumcraft 4 style. Fibrous taint tries to take over a neighbouring column with a chance of 1 in (taintFrontierRate * 5) per random tick, and only with at least two adjacent taint blocks. Higher is slower. 0 stops the biome from spreading while existing taint stays active.")
+                .defineInRange("taintFrontierRate", 200, 0, 100000);
         TAINT_SPREAD_AREA = builder.comment(
                         "Taint Seed influence radius in blocks. Seeds accelerate outbreaks but are not required for ordinary taint spread.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
