@@ -187,6 +187,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int RECIPE_BOOKMARK_TIP_W = 4;
     private static final int RECIPE_BOOKMARK_ICON_OFFSET = 7;
     private static final int RECIPE_BOOKMARK_TINT_SELECTED = 0xFFFF8080;
+    private static final int RECIPE_BOOKMARK_CYCLE_TICKS = 20;
     private static final int RECIPE_BOOKMARK_TINT_NORMAL = 0xFFFFFFFF;
 
     private static final int LABEL_TINT = 0x40FFFFFF;
@@ -1186,7 +1187,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 slotY += space;
                 continue;
             }
-            Recipe<?> recipe = displays.get(0).value();
+            Recipe<?> recipe = displays.get(minecraft.player.tickCount / RECIPE_BOOKMARK_CYCLE_TICKS % displays.size())
+                    .value();
             ItemStack result = RecipeDisplayWidget.displayResultOf(recipe, minecraft.level.registryAccess());
             int x = sw + RECIPE_BOOKMARK_OFFSET_X;
             int shJitter = rng.nextInt(3);
