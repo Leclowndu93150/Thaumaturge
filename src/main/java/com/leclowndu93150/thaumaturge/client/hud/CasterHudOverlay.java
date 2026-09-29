@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -234,15 +235,19 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
                         AMOUNT_TEXT_X,
                         AMOUNT_TEXT_Y,
                         WHITE,
-                        false);
+                        true);
                 graphics.pose().popPose();
                 if (primalCost > 0.0F) {
                     graphics.pose().pushPose();
                     graphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
                     graphics.drawString(
-                            mc.font, AMOUNT_FORMAT.format(primalCost), COST_TEXT_X, AMOUNT_TEXT_Y, WHITE, false);
+                            mc.font, AMOUNT_FORMAT.format(primalCost), COST_TEXT_X, AMOUNT_TEXT_Y, WHITE, true);
                     graphics.pose().popPose();
                 }
+                // Font render types disable blending when their batch ends. Restore it for the next glass spoke.
+                graphics.flush();
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
             }
             graphics.pose().popPose();
             count++;
