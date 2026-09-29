@@ -25,7 +25,9 @@ import org.joml.Matrix4f;
 public final class FocalManipulatorRenderer implements BlockEntityRenderer<BlockEntityFocalManipulator> {
     private static final float FOCUS_HEIGHT = 0.8F;
     private static final float FOCUS_BOB_PERIOD = 14.0F;
-    private static final float FOCUS_BOB_SCALE = 0.2F;
+    private static final float FOCUS_HOVER_PHASE = 0.2F;
+    private static final float ITEM_ENTITY_BOB_HEIGHT = 0.1F;
+    private static final float ITEM_ENTITY_GROUND_OFFSET = 0.125F;
     private static final float CRYSTAL_RING_HEIGHT = 1.05F;
     private static final float CRYSTAL_RING_RADIUS = 0.4F;
     private static final float CRYSTAL_SCALE = 0.5F;
@@ -62,11 +64,14 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
 
         ItemStack focus = table.focusStack();
         if (!focus.isEmpty()) {
-            float lift = LegacyItemLift.centerLift(focus, ItemDisplayContext.GROUND);
+            float lift = LegacyItemLift.centerLift(focus, ItemDisplayContext.GROUND)
+                    - ITEM_ENTITY_GROUND_OFFSET
+                    + Mth.sin(Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_HOVER_PHASE + FOCUS_HOVER_PHASE)
+                            * ITEM_ENTITY_BOB_HEIGHT;
             poseStack.pushPose();
             poseStack.translate(
                     0.5F,
-                    FOCUS_HEIGHT + Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_BOB_SCALE * 0.5F + FOCUS_BOB_SCALE * 0.5F,
+                    FOCUS_HEIGHT,
                     0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(ticks % 360.0F));
             poseStack.translate(0.0F, lift, 0.0F);
@@ -83,7 +88,8 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         for (int a = 0; a < q; a++) {
             AspectInstance instance = entries.get(a);
             ItemStack crystal = EssentiaCrystalFactory.of(instance.aspect());
-            float crystalLift = LegacyItemLift.centerLift(crystal, ItemDisplayContext.GROUND);
+            float crystalLift = LegacyItemLift.centerLift(crystal, ItemDisplayContext.GROUND)
+                    - ITEM_ENTITY_GROUND_OFFSET;
             float angle = ticks % 720.0F / 2.0F + ang * a;
             float bob = Mth.sin((ticks + a * 10) / 12.0F) * CRYSTAL_BOB_SCALE + CRYSTAL_BOB_SCALE;
             int color = instance.aspect().value().color();
@@ -94,6 +100,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             poseStack.translate(0.5F, GLOW_RING_HEIGHT, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
             poseStack.translate(0.0F, bob, CRYSTAL_RING_RADIUS);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
             poseStack.mulPose(camera.rotation());
             drawGlow(buffers, poseStack, ticks, r, g, b);
             poseStack.popPose();
@@ -102,8 +109,8 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
             poseStack.translate(0.0F, bob, CRYSTAL_RING_RADIUS);
             poseStack.scale(CRYSTAL_SCALE, CRYSTAL_SCALE, CRYSTAL_SCALE);
-            drawRay(poseStack, buffers, angle, a, r, g, b, ticks);
-            drawRay(poseStack, buffers, angle, (a + 1) * 5, r, g, b, ticks);
+            drawRay(poseStack, buffers, angle, a, bob, r, g, b, ticks);
+            drawRay(poseStack, buffers, angle, (a + 1) * 5, bob, r, g, b, ticks);
             poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
             poseStack.translate(0.0F, crystalLift, 0.0F);
             ItemRenderHelper.render(crystal, ItemDisplayContext.GROUND, poseStack, buffers, light, overlay, 0);
@@ -145,6 +152,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             MultiBufferSource buffers,
             float angle,
             int num,
+            float bob,
             float r,
             float g,
             float b,
@@ -153,7 +161,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         float pan = Mth.sin((ticks + num * 10) / 15.0F) * 15.0F;
         float aperture = Mth.sin((ticks + num * 10) / 14.0F) * 2.0F;
         poseStack.pushPose();
-        poseStack.translate(0.0F, RAY_LIFT, 0.0F);
+        poseStack.translate(0.0F, RAY_LIFT + bob, 0.0F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));
         poseStack.mulPose(Axis.YP.rotationDegrees(rayRandom.nextFloat() * 360.0F));
