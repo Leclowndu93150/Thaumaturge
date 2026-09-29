@@ -139,13 +139,17 @@ public final class BlockCrystal extends Block {
             LevelAccessor level,
             BlockPos pos,
             BlockPos neighbourPos) {
-        if (hasSturdyNeighbour(level, pos)) {
-            return super.updateShape(state, direction, neighbourState, level, pos, neighbourPos);
+        if (!state.canSurvive(level, pos)) {
+            level.scheduleTick(pos, this, 1);
         }
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.destroyBlock(pos, true);
+        return super.updateShape(state, direction, neighbourState, level, pos, neighbourPos);
+    }
+
+    @Override
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!state.canSurvive(level, pos)) {
+            level.destroyBlock(pos, true);
         }
-        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
