@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
+import com.leclowndu93150.thaumaturge.content.decor.HeldCandle;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
@@ -660,6 +663,17 @@ public final class TCModelProvider implements DataProvider {
             Block candle = TCBlocks.CANDLES.get(dye).get();
             simpleBlock(candle, model);
             delegateItem(candle.asItem(), model);
+        }
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            BlockCandleHolder holder = TCBlocks.CANDLE_HOLDERS.get(material).get();
+            ResourceLocation empty = TCIds.rl("block/candle_holder_" + material.getSerializedName());
+            ResourceLocation filled = TCIds.rl("block/candle_holder_" + material.getSerializedName() + "_filled");
+            PropertyDispatch.C1<HeldCandle> candles = PropertyDispatch.property(BlockCandleHolder.CANDLE);
+            for (HeldCandle held : HeldCandle.values()) {
+                candles = candles.select(held, v(held.isPresent() ? filled : empty));
+            }
+            blockStateOutput.accept(MultiVariantGenerator.multiVariant(holder).with(candles));
+            delegateItem(holder.asItem(), empty);
         }
     }
 

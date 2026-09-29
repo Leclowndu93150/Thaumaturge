@@ -959,6 +959,10 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.cloth_legs", "Apprentice's Leggings");
         add("item.thaumaturge.cloth_boots", "Apprentice's Boots");
 
+        add("block.thaumaturge.candle_holder_brass", "Brass Candle Holder");
+        add("block.thaumaturge.candle_holder_thaumium", "Thaumium Candle Holder");
+        add("block.thaumaturge.candle_holder_void", "Void Metal Candle Holder");
+
         for (DyeColor dye : DyeColor.values()) {
             add("block.thaumaturge.candle_" + dye.getName(), dyeName(dye) + " Tallow Candle");
             add("block.thaumaturge.banner_" + dye.getName(), dyeName(dye) + " Banner");

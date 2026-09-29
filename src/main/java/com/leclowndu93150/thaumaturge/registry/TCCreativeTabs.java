@@ -25,6 +25,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCCreativeTabs {
@@ -229,6 +230,9 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ITEM_GRATE.get());
                         for (DyeColor dye : DyeColor.values()) {
                             output.accept(TCItems.CANDLES.get(dye).get());
+                        }
+                        for (DeferredItem<BlockItem> holder : TCItems.CANDLE_HOLDERS.values()) {
+                            output.accept(holder.get());
                         }
 
                         output.accept(TCItems.STONE_ARCANE.get());
