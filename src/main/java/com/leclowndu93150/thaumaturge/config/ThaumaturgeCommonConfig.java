@@ -9,13 +9,10 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
     public static final ModConfigSpec.IntValue TAINT_FRONTIER_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
-    public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
     public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
-    public static final ModConfigSpec.IntValue MAGICAL_FOREST_REGION_WEIGHT;
-    public static final ModConfigSpec.IntValue TAINTED_LANDS_REGION_WEIGHT;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -51,13 +48,6 @@ public final class ThaumaturgeCommonConfig {
 
         builder.push("world");
 
-        MAGICAL_FOREST_REGION_WEIGHT = builder.comment(
-                        "Controls Magical Forest spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
-                .defineInRange("magicalForestRegionWeight", 6, 1, 100);
-        TAINTED_LANDS_REGION_WEIGHT = builder.comment(
-                        "Controls Tainted Lands spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
-                .defineInRange("taintedLandsRegionWeight", 1, 1, 100);
-
         WUSS_MODE = builder.comment("Disables Warp, Taint spread, and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
@@ -69,9 +59,6 @@ public final class ThaumaturgeCommonConfig {
         TAINT_SPREAD_AREA = builder.comment(
                         "Taint Seed influence radius in blocks. Seeds accelerate outbreaks but are not required for ordinary taint spread.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
-        GENERATE_TAINTED_LANDS = builder.comment(
-                        "Allows natural Tainted Lands generation. Does not affect Tainted Lands created through taint spread or outbreaks.")
-                .define("generateTaintedLands", true);
         TAINT_FROM_FLUX = builder.comment(
                         "Allows deep, exposed Flux Goo to develop into Fibrous Taint and Tainted Lands.")
                 .define("taintFromFlux", true);

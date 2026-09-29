@@ -1,0 +1,8 @@
+{
+  "dimension": "minecraft:overworld",
+  "biomes": [
+    "minecraft:forest",
+    "minecraft:flower_forest"
+  ],
+  "weight": 60
+}

@@ -177,7 +177,7 @@ dependencies {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation "org.mockito:mockito-core:5.15.2"
 
-    implementation "curse.maven:terrablender-neoforge-940057:6054947"
+    implementation "maven.modrinth:lithostitched:1.8.0-neoforge-21.1"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"

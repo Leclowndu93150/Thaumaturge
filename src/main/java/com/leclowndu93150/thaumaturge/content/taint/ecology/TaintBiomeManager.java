@@ -24,7 +24,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
  * column maps to one 4x4 quart column here. Infection deliberately replaces that quart column at
  * every biome Y layer. Restoration
  * asks the active chunk generator's biome source what each Y layer originally should have been,
- * which also preserves modded/TerraBlender biome choices instead of blindly restoring Plains.
+ * which also preserves modded biome choices instead of blindly restoring Plains.
  */
 public final class TaintBiomeManager {
     private TaintBiomeManager() {}
@@ -133,7 +133,7 @@ public final class TaintBiomeManager {
         // Natural Tainted Lands has no hidden pre-replacement biome to restore. Sample outward
         // along cardinal, diagonal, and half-diagonal rays; this stays bounded even when a Bloom
         // is cleansing a large natural biome while still finding a nearby climate-compatible
-        // generator column in ordinary TerraBlender region shapes.
+        // generator column in ordinary natural biome regions.
         for (int radius = 1; radius <= 256; radius++) {
             int half = Math.max(1, radius / 2);
             int[][] offsets = {

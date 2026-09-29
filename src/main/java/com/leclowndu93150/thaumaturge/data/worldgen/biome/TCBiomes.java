@@ -181,7 +181,7 @@ public final class TCBiomes {
                 .build();
     }
     /**
-     * Tainted Lands. It may occur naturally through the small TerraBlender taint region
+     * Tainted Lands. It may occur naturally through the small worldgen region
      * and can also overwrite already-generated terrain when an active infestation expands.
      */
     private static Biome taintedLands(
