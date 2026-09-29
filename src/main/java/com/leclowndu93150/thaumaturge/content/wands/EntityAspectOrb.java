@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
@@ -56,17 +57,19 @@ public class EntityAspectOrb extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        entityData.define(DATA_ASPECT, TCAspects.AER.location().getPath());
+        entityData.define(DATA_ASPECT, TCAspects.AER.location().toString());
     }
 
     public ResourceKey<IAspect> getAspect() {
-        return ResourceKey.create(
-                IAspect.REGISTRY_KEY,
-                ResourceLocation.fromNamespaceAndPath("thaumaturge", entityData.get(DATA_ASPECT)));
+        String stored = entityData.get(DATA_ASPECT);
+        ResourceLocation id = stored.indexOf(':') >= 0
+                ? ResourceLocation.tryParse(stored)
+                : ResourceLocation.tryBuild(TCIds.MODID, stored);
+        return id == null ? TCAspects.AER : ResourceKey.create(IAspect.REGISTRY_KEY, id);
     }
 
     public void setAspect(ResourceKey<IAspect> aspect) {
-        entityData.set(DATA_ASPECT, aspect.location().getPath());
+        entityData.set(DATA_ASPECT, aspect.location().toString());
     }
 
     public int getAge() {
@@ -212,7 +215,7 @@ public class EntityAspectOrb extends Entity {
                 DATA_ASPECT,
                 input.contains("Aspect")
                         ? input.getString("Aspect")
-                        : TCAspects.AER.location().getPath());
+                        : TCAspects.AER.location().toString());
     }
 
     @Override
