@@ -57,8 +57,7 @@ public final class AspectRendering {
     }
 
     /** Renders a placeholder for a syntactically valid aspect id missing from the registry. */
-    public static void renderMissingGui(GuiGraphics graphics, int x, int y, ResourceLocation missingId) {
-        java.util.Objects.requireNonNull(missingId, "missingId");
+    public static void renderMissingGui(GuiGraphics graphics, int x, int y) {
         AspectTagRenderer.renderMissingChip(graphics, x, y);
     }
 
@@ -73,12 +72,10 @@ public final class AspectRendering {
     public static void renderMissingBillboard(
             PoseStack poseStack,
             MultiBufferSource buffers,
-            ResourceLocation missingId,
             float scale,
             float alpha,
             int packedLight,
             BlendMode blendMode) {
-        java.util.Objects.requireNonNull(missingId, "missingId");
         poseStack.pushPose();
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         poseStack.scale(scale, scale, scale);
@@ -88,9 +85,7 @@ public final class AspectRendering {
     }
 
     /** Writes a holder-free missing-aspect placeholder to a caller-provided vertex consumer. */
-    public static void renderMissingQuad(
-            PoseStack poseStack, VertexConsumer buffer, ResourceLocation missingId, float alpha, int packedLight) {
-        java.util.Objects.requireNonNull(missingId, "missingId");
+    public static void renderMissingQuad(PoseStack poseStack, VertexConsumer buffer, float alpha, int packedLight) {
         AspectTagWorldRenderer.renderMissingQuad(poseStack, buffer, alpha, packedLight);
     }
 
