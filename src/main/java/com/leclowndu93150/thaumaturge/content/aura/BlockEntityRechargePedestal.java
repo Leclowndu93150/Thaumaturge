@@ -116,7 +116,8 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
                 continue;
             }
             WandVisHelper.addRealVis(wand, key, drained, true);
-            drainPos = source.getBlockPos();
+            relay.triggerConsumeEffect(level, aspect);
+            drainPos = source.position();
             drainColor = aspect.value().color();
             drainTicks = DRAIN_LINGER_TICKS;
             return true;

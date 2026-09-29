@@ -59,6 +59,15 @@ public final class TCRenderTypes {
             RenderStateShard.COLOR_WRITE,
             false,
             true));
+    private static final Function<ResourceLocation, RenderType> FX_ALPHA_ADDITIVE = Util.memoize(texture -> particle(
+            "tc_fx_alpha_additive",
+            texture,
+            PARTICLE_SHADER,
+            RenderStateShard.LIGHTNING_TRANSPARENCY,
+            RenderStateShard.LEQUAL_DEPTH_TEST,
+            RenderStateShard.COLOR_WRITE,
+            false,
+            false));
     private static final Function<ResourceLocation, RenderType> FX_ALPHA_ADDITIVE_BLURRED =
             Util.memoize(texture -> particle(
                     "tc_fx_alpha_additive_blurred",
@@ -230,6 +239,10 @@ public final class TCRenderTypes {
 
     public static RenderType fxAdditiveBlurred(ResourceLocation texture) {
         return FX_ADDITIVE_BLURRED.apply(texture);
+    }
+
+    public static RenderType fxAlphaAdditive(ResourceLocation texture) {
+        return FX_ALPHA_ADDITIVE.apply(texture);
     }
 
     public static RenderType fxAlphaAdditiveBlurred(ResourceLocation texture) {

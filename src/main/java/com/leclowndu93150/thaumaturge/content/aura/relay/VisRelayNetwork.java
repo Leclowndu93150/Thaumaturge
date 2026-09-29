@@ -28,11 +28,11 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
             }
             return source.drainCentivis(aspect, amount);
         }
-        BlockEntityVisRelay relay = findRelayNear(level, consumerPos);
-        BlockPos addonSource = relay == null ? null : relay.resolveAddonSource(level);
-        return addonSource == null
-                ? 0
-                : AddonVisRelaySources.INSTANCE.drain(level, addonSource, primal, amount, simulate);
+        int drained = drainNow(source, primal, amount);
+        if (drained > 0) {
+            relay.triggerConsumeEffect(level, aspect);
+        }
+        return drained;
     }
 
     public static @Nullable BlockEntityNode findSource(ServerLevel level, BlockPos consumerPos) {
