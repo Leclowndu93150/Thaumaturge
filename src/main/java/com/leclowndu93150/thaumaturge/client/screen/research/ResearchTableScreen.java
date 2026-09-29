@@ -894,9 +894,9 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         boolean bonus1 = table != null
                 && pool().amount(AspectPools.idOf(select1)) <= 0
                 && table.bonusAspects().amountOf(select1) > 0;
-        boolean bonus2 = table != null
-                && pool().amount(AspectPools.idOf(select2)) <= 0
-                && table.bonusAspects().amountOf(select2) > 0;
+        int secondPoolAmount = pool().amount(AspectPools.idOf(select2)) - (select1.equals(select2) && !bonus1 ? 1 : 0);
+        boolean bonus2 =
+                table != null && secondPoolAmount <= 0 && table.bonusAspects().amountOf(select2) > 0;
         PacketDistributor.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
         playSound(TCSounds.HHON.get(), 0.3F, 1.0F);
