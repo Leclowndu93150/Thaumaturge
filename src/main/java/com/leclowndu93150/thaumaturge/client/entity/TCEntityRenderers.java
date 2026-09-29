@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeSwarmerModel
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintacleModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
+import com.leclowndu93150.thaumaturge.client.model.gear.PraetorArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.RobeArmorModel;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import net.minecraft.client.model.HumanoidModel;
@@ -82,6 +83,9 @@ public final class TCEntityRenderers {
         event.registerLayerDefinition(TCModelLayers.RESEARCH_TABLE, ResearchTableModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.DECONSTRUCTION_TABLE, DeconTableModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.MANA_POD, ManaPodModel::createLayer);
+        event.registerLayerDefinition(TCModelLayers.PRAETOR_ARMOR_HEAD, PraetorArmorModel::createHead);
+        event.registerLayerDefinition(TCModelLayers.PRAETOR_ARMOR_CHEST, PraetorArmorModel::createChest);
+        event.registerLayerDefinition(TCModelLayers.PRAETOR_ARMOR_LEGS, PraetorArmorModel::createLegs);
         event.registerLayerDefinition(TCModelLayers.KNIGHT_ARMOR_HEAD, KnightArmorModel::createHead);
         event.registerLayerDefinition(TCModelLayers.KNIGHT_ARMOR_CHEST, KnightArmorModel::createChest);
         event.registerLayerDefinition(TCModelLayers.KNIGHT_ARMOR_LEGS, KnightArmorModel::createLegs);

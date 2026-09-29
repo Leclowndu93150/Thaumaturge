@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
+import com.leclowndu93150.thaumaturge.client.model.gear.PraetorArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.RobeArmorModel;
 import com.leclowndu93150.thaumaturge.content.equipment.FortressArmorItem;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
@@ -33,10 +34,10 @@ public final class CultistArmorClientExtensions {
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
         event.registerItem(
                 new CustomArmorExtension(
-                        KnightArmorModel::new,
-                        TCModelLayers.KNIGHT_ARMOR_HEAD,
-                        TCModelLayers.KNIGHT_ARMOR_CHEST,
-                        TCModelLayers.KNIGHT_ARMOR_LEGS),
+                        PraetorArmorModel::new,
+                        TCModelLayers.PRAETOR_ARMOR_HEAD,
+                        TCModelLayers.PRAETOR_ARMOR_CHEST,
+                        TCModelLayers.PRAETOR_ARMOR_LEGS),
                 TCItems.CRIMSON_PRAETOR_HELM.get(),
                 TCItems.CRIMSON_PRAETOR_CHEST.get(),
                 TCItems.CRIMSON_PRAETOR_LEGS.get());
