@@ -1,62 +1,56 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCreeper;
-import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSplosion;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TaintCreatureEvents {
-    private static final int TC4_TAINT_SPLosion_ATTEMPTS = 10;
+    private static final float BLAST_STRENGTH = 1.5F;
+    private static final double POISON_RANGE = 6.0;
+    private static final int FLUX_TAINT_TICKS = 100;
+    private static final float SPLOSION_SPREAD = 5.0F;
 
     private TaintCreatureEvents() {}
 
     @SubscribeEvent
-    public static void onDetonate(ExplosionEvent.Detonate event) {
+    public static void onExplosionStart(ExplosionEvent.Start event) {
         if (!(event.getLevel() instanceof ServerLevel level)
                 || !(event.getExplosion().getDirectSourceEntity() instanceof EntityTaintCreeper creeper)) {
             return;
         }
-        for (net.minecraft.world.entity.Entity entity : event.getAffectedEntities()) {
-            if (entity instanceof LivingEntity living) {
-                living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, 600, 0, false, true, false));
+        event.setCanceled(true);
+        level.explode(
+                null,
+                level.damageSources().explosion(creeper, creeper),
+                null,
+                creeper.getX(),
+                creeper.getY() + creeper.getBbHeight() / 2.0F,
+                creeper.getZ(),
+                BLAST_STRENGTH,
+                false,
+                Level.ExplosionInteraction.NONE);
+        AABB area = new AABB(creeper.position(), creeper.position()).inflate(POISON_RANGE);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area)) {
+            if (!(living instanceof ITaintedMob) && !living.getType().is(EntityTypeTags.UNDEAD)) {
+                living.addEffect(
+                        new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
             }
         }
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
-            return;
-        }
-
-        BlockPos center = creeper.blockPosition();
-        RandomSource random = level.getRandom();
-        for (int i = 0; i < TC4_TAINT_SPLosion_ATTEMPTS; i++) {
-            int x = center.getX() + (int) ((random.nextFloat() - random.nextFloat()) * 6.0F);
-            int z = center.getZ() + (int) ((random.nextFloat() - random.nextFloat()) * 6.0F);
-            if (!random.nextBoolean()) {
-                continue;
-            }
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos column = new BlockPos(x, y, z);
-            if (!level.hasChunkAt(column) || !TaintBiomeManager.taintColumn(level, column)) {
-                continue;
-            }
-            if (level.getBlockState(column).canBeReplaced() && BlockTaintFibre.hasSolidAttachment(level, column)) {
-                level.setBlock(column, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
-            }
-            TaintEcology.addPressure(level, column, 0.01F);
+        if (!ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+            TaintSplosion.burstAtHeight(level, creeper.blockPosition(), level.getRandom(), SPLOSION_SPREAD);
         }
     }
 }
