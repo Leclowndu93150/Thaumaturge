@@ -89,13 +89,13 @@ final class JadeConfig {
 
     enum DisplayMode {
         OFF,
-        ALWAYS,
+        ON,
         GOGGLES;
 
         boolean shouldShow(Accessor<?> accessor) {
             return switch (this) {
                 case OFF -> false;
-                case ALWAYS -> true;
+                case ON -> true;
                 case GOGGLES -> GogglesAccess.wearsGoggles(accessor.getPlayer());
             };
         }

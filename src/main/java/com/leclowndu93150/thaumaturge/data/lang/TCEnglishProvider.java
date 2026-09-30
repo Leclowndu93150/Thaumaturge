@@ -1784,7 +1784,6 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void addJadeMode(String path, String label) {
         String key = "config.jade.plugin_thaumaturge.display." + path;
         add(key, label);
-        add(key + "_always", "Always");
         add(key + "_goggles", "Goggles");
     }
 }
