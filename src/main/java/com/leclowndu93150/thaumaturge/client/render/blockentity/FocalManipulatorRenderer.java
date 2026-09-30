@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
+import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -35,7 +36,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float GLOW_RING_HEIGHT = 1.3F;
     private static final float GLOW_HALF = 0.175F;
     private static final float GLOW_ALPHA = 0.66F;
-    private static final int GLOW_FRAMES = 16;
     private static final int EMISSIVE_LIGHT = 0xF000F0;
     private static final float RAY_LIFT = 0.475F;
     private static final long RAY_SEED = 187L;
@@ -115,11 +115,11 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
 
     private static void drawGlow(
             MultiBufferSource buffers, PoseStack poseStack, float ticks, float r, float g, float b) {
-        int frame = (int) ticks % GLOW_FRAMES;
-        float u0 = frame / (float) GLOW_FRAMES;
-        float v0 = 0.0F;
-        float u1 = (frame + 1) / (float) GLOW_FRAMES;
-        float v1 = 1.0F;
+        int frame = (int) ticks % ParticleTextures.STAR_GLINT_FRAMES;
+        float u0 = StripUv.u0(frame, ParticleTextures.STAR_GLINT_FRAMES);
+        float v0 = StripUv.V0;
+        float u1 = StripUv.u1(frame, ParticleTextures.STAR_GLINT_FRAMES);
+        float v1 = StripUv.V1;
         int tint = ARGB32.colorFromFloat(GLOW_ALPHA, r, g, b);
         VertexConsumer buffer = buffers.getBuffer(GLOW_TYPE);
         Matrix4f mat = poseStack.last().pose();
