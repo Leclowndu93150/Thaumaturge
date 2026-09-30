@@ -618,7 +618,8 @@ public final class TCItems {
         }
     }
 
-    public static final Map<CandleHolderMaterial, DeferredItem<BlockItem>> CANDLE_HOLDERS = new EnumMap<>(CandleHolderMaterial.class);
+    public static final Map<CandleHolderMaterial, DeferredItem<BlockItem>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
 
     static {
         for (CandleHolderMaterial material : CandleHolderMaterial.values()) {

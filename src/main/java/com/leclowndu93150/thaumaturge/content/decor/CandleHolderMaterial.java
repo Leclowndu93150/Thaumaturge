@@ -14,7 +14,8 @@ public enum CandleHolderMaterial implements StringRepresentable {
     private final float stabilization;
     private final float researchSaveChance;
 
-    CandleHolderMaterial(String name, MapColor mapColor, float strength, float stabilization, float researchSaveChance) {
+    CandleHolderMaterial(
+            String name, MapColor mapColor, float strength, float stabilization, float researchSaveChance) {
         this.name = name;
         this.mapColor = mapColor;
         this.strength = strength;

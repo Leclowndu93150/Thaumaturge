@@ -9,9 +9,9 @@ import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
-import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
@@ -277,7 +277,11 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('T', TCItems.TALLOW.get())
                 .unlockedBy("has_tallow", has(TCItems.TALLOW.get()))
                 .save(output);
-        arcaneShaped(new ItemStack(TCItems.CANDLE_HOLDERS.get(CandleHolderMaterial.BRASS).get()), 10)
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.BRASS)
+                                .get()),
+                        10)
                 .aspect(TCAspects.IGNIS, 1)
                 .pattern(" N ")
                 .pattern("NPN")
@@ -286,7 +290,11 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("candle_holders", 1))
                 .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
                 .save(output);
-        arcaneShaped(new ItemStack(TCItems.CANDLE_HOLDERS.get(CandleHolderMaterial.THAUMIUM).get()), 25)
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.THAUMIUM)
+                                .get()),
+                        25)
                 .aspect(TCAspects.IGNIS, 1)
                 .aspect(TCAspects.ORDO, 1)
                 .pattern(" N ")
@@ -296,7 +304,11 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .gate(gate("candle_holders", 2))
                 .unlockedBy("has", has(TCItemTags.PLATES_THAUMIUM))
                 .save(output);
-        arcaneShaped(new ItemStack(TCItems.CANDLE_HOLDERS.get(CandleHolderMaterial.VOID).get()), 50)
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.VOID)
+                                .get()),
+                        50)
                 .aspect(TCAspects.IGNIS, 1)
                 .aspect(TCAspects.PERDITIO, 1)
                 .pattern(" N ")

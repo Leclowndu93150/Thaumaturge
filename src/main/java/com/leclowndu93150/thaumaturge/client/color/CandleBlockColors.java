@@ -22,8 +22,12 @@ public final class CandleBlockColors {
             BlockColor source = (state, level, pos, tintIndex) -> color;
             event.register(source, TCBlocks.CANDLES.get(dye).get());
         }
+        BlockColor holderTint = (state, level, pos, tintIndex) -> state.getValue(BlockCandleHolder.CANDLE)
+                .dye()
+                .map(dye -> 0xFF000000 | dye.getMapColor().col)
+                .orElse(0xFFFFFFFF);
         for (DeferredBlock<BlockCandleHolder> holder : TCBlocks.CANDLE_HOLDERS.values()) {
-            event.register(List.of(new CandleHolderTint()), holder.get());
+            event.register(holderTint, holder.get());
         }
     }
 }

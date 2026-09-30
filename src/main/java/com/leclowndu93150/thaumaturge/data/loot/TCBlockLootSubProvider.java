@@ -54,14 +54,25 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private LootTable.Builder candleHolderTable(Block holder) {
-        LootTable.Builder table = LootTable.lootTable().withPool(this.applyExplosionCondition(holder, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(holder))));
+        LootTable.Builder table = LootTable.lootTable()
+                .withPool(this.applyExplosionCondition(
+                        holder,
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(holder))));
         for (HeldCandle held : HeldCandle.values()) {
             if (!held.isPresent()) {
                 continue;
             }
             Item candle = TCItems.CANDLES.get(held.dye().orElseThrow()).get();
-            table.withPool(this.applyExplosionCondition(holder, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(candle))
-                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(holder).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(BlockCandleHolder.CANDLE, held)))));
+            table.withPool(this.applyExplosionCondition(
+                    holder,
+                    LootPool.lootPool()
+                            .setRolls(ConstantValue.exactly(1.0F))
+                            .add(LootItem.lootTableItem(candle))
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(holder)
+                                    .setProperties(StatePropertiesPredicate.Builder.properties()
+                                            .hasProperty(BlockCandleHolder.CANDLE, held)))));
         }
         return table;
     }

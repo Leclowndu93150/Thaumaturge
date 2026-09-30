@@ -1261,13 +1261,17 @@ public final class ResearchTextEn {
                 "The item grate allows you to toggle it open or close it with your hand, or with a redstone signal. If in the open position, any dropped items will simply fall right through it.<BR>Items can also be piped into the top of an item grate using a hopper or other means and if open, it will be ejected out the bottom.");
         add.accept("research.thaumaturge.gotcrystals.title", "Vis Crystals");
         add.accept("research.thaumaturge.candle_holders.title", "Candle Holders");
-        add.accept("research.thaumaturge.candle_holders.stage_0",
+        add.accept(
+                "research.thaumaturge.candle_holders.stage_0",
                 "Tallow candles are a staple of every thaumaturge's study, yet they tip over, drip everywhere and burn down to nothing. A proper holder solves all of that, and you suspect the metal it is made from matters more than a mundane smith would ever guess.");
-        add.accept("research.thaumaturge.candle_holders.stage_1",
+        add.accept(
+                "research.thaumaturge.candle_holders.stage_1",
                 "A simple chamberstick of alchemical brass. Right-click it with any tallow candle to seat the candle, and right-click it with an empty hand to take the candle back.<BR>A holder bearing a candle steadies an infusion exactly like the candle it holds: mirrored pairs must match in both holder metal and candle colour.<BR>Placed on top of a research table, a lit holder calms the mind: whenever you write or combine an aspect there is a 5%% chance that it is not consumed. A holder on each half of the table adds its chance to the other.");
-        add.accept("research.thaumaturge.candle_holders.stage_2",
+        add.accept(
+                "research.thaumaturge.candle_holders.stage_2",
                 "Thaumium conducts the quiet influence of a flame far better than brass. A thaumium holder steadies an infusion half again as much as a bare candle, and on a research table it spares an aspect 10%% of the time.");
-        add.accept("research.thaumaturge.candle_holders.stage_3",
+        add.accept(
+                "research.thaumaturge.candle_holders.stage_3",
                 "Void metal drinks in the restless energies around it. A void metal holder steadies an infusion twice as much as a bare candle, and on a research table it spares an aspect 15%% of the time.<BR>Two holders on the same table can never save more than half of your aspects.");
     }
 }

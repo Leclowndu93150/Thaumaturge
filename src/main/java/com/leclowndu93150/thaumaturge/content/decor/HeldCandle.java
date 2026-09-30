@@ -45,7 +45,8 @@ public enum HeldCandle implements StringRepresentable {
     }
 
     public ItemStack toStack() {
-        return dye().map(color -> new ItemStack(TCItems.CANDLES.get(color).get())).orElse(ItemStack.EMPTY);
+        return dye().map(color -> new ItemStack(TCItems.CANDLES.get(color).get()))
+                .orElse(ItemStack.EMPTY);
     }
 
     @Override

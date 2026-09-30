@@ -11,12 +11,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -68,7 +69,8 @@ public final class BlockCandleHolder extends Block implements IInfusionStabilise
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    protected VoxelShape getCollisionShape(
+            BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return EMPTY_SHAPE;
     }
 
@@ -78,31 +80,45 @@ public final class BlockCandleHolder extends Block implements IInfusionStabilise
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+    protected BlockState updateShape(
+            BlockState state,
+            Direction direction,
+            BlockState neighborState,
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighborPos) {
         if (direction == Direction.DOWN && !canSurvive(state, level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
-        return super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(
+            ItemStack stack,
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit) {
         Optional<HeldCandle> candle = HeldCandle.of(stack);
         if (state.getValue(CANDLE).isPresent() || candle.isEmpty()) {
-            return InteractionResult.TRY_WITH_EMPTY_HAND;
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
         }
         level.setBlock(pos, state.setValue(CANDLE, candle.get()), Block.UPDATE_ALL);
         stack.consume(1, player);
         level.playSound(null, pos, SoundEvents.CANDLE_PLACE, SoundSource.BLOCKS, PLACE_VOLUME, 1.0F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+    protected InteractionResult useWithoutItem(
+            BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         HeldCandle held = state.getValue(CANDLE);
         if (!held.isPresent()) {
             return InteractionResult.PASS;
@@ -149,6 +165,10 @@ public final class BlockCandleHolder extends Block implements IInfusionStabilise
 
     @Override
     public Block stabiliserIdentity(Level level, BlockPos pos) {
-        return level.getBlockState(pos).getValue(CANDLE).candle().<Block>map(candle -> candle).orElse(this);
+        return level.getBlockState(pos)
+                .getValue(CANDLE)
+                .candle()
+                .<Block>map(candle -> candle)
+                .orElse(this);
     }
 }

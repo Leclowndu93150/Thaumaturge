@@ -16,7 +16,6 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockAmber;
 import com.leclowndu93150.thaumaturge.content.decor.BlockBarrier;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandle;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
-import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.decor.BlockEffectShock;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotemCharged;
@@ -25,6 +24,7 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockStairsTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStonePorous;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStoneTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
 import com.leclowndu93150.thaumaturge.content.device.BlockArcaneEar;
@@ -597,11 +597,17 @@ public final class TCBlocks {
         }
     }
 
-    public static final Map<CandleHolderMaterial, DeferredBlock<BlockCandleHolder>> CANDLE_HOLDERS = new EnumMap<>(CandleHolderMaterial.class);
+    public static final Map<CandleHolderMaterial, DeferredBlock<BlockCandleHolder>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
 
     static {
         for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
-            CANDLE_HOLDERS.put(material, BLOCKS.registerBlock("candle_holder_" + material.getSerializedName(), props -> new BlockCandleHolder(material, props), () -> candleHolderProps(material)));
+            CANDLE_HOLDERS.put(
+                    material,
+                    BLOCKS.registerBlock(
+                            "candle_holder_" + material.getSerializedName(),
+                            props -> new BlockCandleHolder(material, props),
+                            candleHolderProps(material)));
         }
     }
 
@@ -647,7 +653,12 @@ public final class TCBlocks {
     }
 
     private static BlockBehaviour.Properties candleHolderProps(CandleHolderMaterial material) {
-        return BlockBehaviour.Properties.of().mapColor(material.mapColor()).strength(material.strength()).sound(SoundType.METAL).lightLevel(BlockCandleHolder::lightEmission).noOcclusion();
+        return BlockBehaviour.Properties.of()
+                .mapColor(material.mapColor())
+                .strength(material.strength())
+                .sound(SoundType.METAL)
+                .lightLevel(BlockCandleHolder::lightEmission)
+                .noOcclusion();
     }
 
     private static BlockBehaviour.Properties nitorProps(DyeColor dye) {
