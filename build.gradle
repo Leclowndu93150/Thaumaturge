@@ -137,14 +137,18 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // Removal note: delete this wiring, compat/dynamictrees, TCBiomeModifierSerializers and its
 // registration/data file, plus resourcepacks/dynamictrees and trees/thaumaturge. Native tree generation
 // needs no restoration: the modifier removes it only while Dynamic Trees is present and enabled.
-def copyDynamicTreesTreePack = tasks.register('copyDynamicTreesTreePack', Copy) {
-    from(sourceSets.main.resources)
-    include 'trees/**'
-    into(layout.buildDirectory.dir('classes/java/main'))
+def syncDynamicTreesTreePack = tasks.register('syncDynamicTreesTreePack', Sync) {
+    from(sourceSets.main.resources) {
+        include 'trees/**'
+        eachFile { it.relativePath = new RelativePath(true, it.relativePath.segments.drop(1) as String[]) }
+    }
+    includeEmptyDirs = false
+    into(layout.buildDirectory.dir('classes/java/main/trees'))
+    mustRunAfter tasks.named('compileJava')
 }
 
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
-    dependsOn copyDynamicTreesTreePack
+    dependsOn syncDynamicTreesTreePack
 }
 
 def removeDynamicTreesTreePackForJar = tasks.register('removeDynamicTreesTreePackForJar', Delete) {
