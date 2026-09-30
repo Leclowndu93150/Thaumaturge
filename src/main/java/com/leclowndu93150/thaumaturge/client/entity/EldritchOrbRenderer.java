@@ -19,12 +19,10 @@ import org.joml.Matrix4f;
 
 public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb> {
     private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType BILLBOARD_TYPE = TCRenderTypes.fxTranslucentBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType BILLBOARD_TYPE = TCRenderTypes.fxTranslucentBlurred(ParticleTextures.ELDRITCH_ORB);
 
     private static final long RAY_SEED = 187L;
     private static final int RAY_COUNT = 12;
-    private static final int GRID = 64;
-    private static final int BILLBOARD_ROW = 3;
     private static final int BILLBOARD_FRAMES = 13;
     private static final float BILLBOARD_SCALE = 0.75F;
     private static final float HALF = 0.5F;
@@ -65,11 +63,11 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb>
             addRay(rayBuffer, poseStack.last().pose(), fa, f4);
         }
         poseStack.popPose();
-        float texFrame = 1.0F / GRID;
-        float u0 = ((int) ticks % BILLBOARD_FRAMES) * texFrame;
-        float v0 = BILLBOARD_ROW * texFrame;
-        float u1 = u0 + texFrame;
-        float v1 = v0 + texFrame;
+        int frame = (int) ticks % BILLBOARD_FRAMES;
+        float u0 = frame / (float) BILLBOARD_FRAMES;
+        float v0 = 0.0F;
+        float u1 = (frame + 1) / (float) BILLBOARD_FRAMES;
+        float v1 = 1.0F;
         int tint = ARGB32.colorFromFloat(1.0F, 1.0F, 1.0F, 1.0F);
         Vec3 origin = entity.getPosition(partialTicks);
         LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> {
@@ -90,7 +88,7 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb>
 
     @Override
     public ResourceLocation getTextureLocation(EntityEldritchOrb entity) {
-        return ParticleTextures.PARTICLES;
+        return ParticleTextures.ELDRITCH_ORB;
     }
 
     private static void addRay(VertexConsumer buffer, Matrix4f mat, float fa, float f4) {

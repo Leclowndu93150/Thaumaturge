@@ -76,6 +76,8 @@ public final class TCModelProvider implements DataProvider {
             TextureSlot.LAYER0,
             TextureSlot.LAYER1,
             TextureSlot.LAYER2);
+    private static final ModelTemplate CONDENSER_RETEXTURED = new ModelTemplate(
+            Optional.of(TCIds.rl("block/condenser")), Optional.empty(), TextureSlot.SIDE, TextureSlot.PARTICLE);
 
     private static final ResourceLocation GENERATED_PARENT = ResourceLocation.withDefaultNamespace("item/generated");
     private static final ResourceLocation BEWLR_BLOCK_PARENT = TCIds.rl("item/bewlr_block");
@@ -475,6 +477,21 @@ public final class TCModelProvider implements DataProvider {
 
     private void simpleFromExisting(Block block, String modelName) {
         simpleBlock(block, TCIds.rl("block/" + modelName));
+    }
+
+    private void registerCondenser() {
+        Block block = TCBlocks.CONDENSER.get();
+        ResourceLocation on = TCIds.rl("block/condenser");
+        ResourceLocation offTexture = blockTexture("condenser_off");
+        ResourceLocation off = CONDENSER_RETEXTURED.create(
+                TCIds.rl("block/condenser_off"),
+                new TextureMapping().put(TextureSlot.SIDE, offTexture).put(TextureSlot.PARTICLE, offTexture),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block)
+                .with(PropertyDispatch.property(BlockStateProperties.ENABLED)
+                        .select(true, v(on))
+                        .select(false, v(off))));
+        delegateItem(block.asItem(), on);
     }
 
     private void delegateItem(Item item, ResourceLocation model) {
@@ -1089,7 +1106,7 @@ public final class TCModelProvider implements DataProvider {
         registerFacingDevice(TCBlocks.ESSENTIA_INPUT.get(), "essentia_input", false);
         registerFacingDevice(TCBlocks.ESSENTIA_OUTPUT.get(), "essentia_output", false);
 
-        simpleFromExisting(TCBlocks.CONDENSER.get(), "condenser");
+        registerCondenser();
         simpleFromExisting(TCBlocks.STABILIZER.get(), "stabilizer");
         simpleFromExisting(TCBlocks.VOID_SIPHON.get(), "void_siphon");
         registerLattice(TCBlocks.CONDENSER_LATTICE.get(), "condenser_lattice_core");

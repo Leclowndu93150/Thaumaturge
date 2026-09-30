@@ -35,8 +35,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float GLOW_RING_HEIGHT = 1.3F;
     private static final float GLOW_HALF = 0.175F;
     private static final float GLOW_ALPHA = 0.66F;
-    private static final int GLOW_GRID = 64;
-    private static final int GLOW_FRAME_START = 320;
     private static final int GLOW_FRAMES = 16;
     private static final int EMISSIVE_LIGHT = 0xF000F0;
     private static final float RAY_LIFT = 0.475F;
@@ -44,7 +42,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float RAY_ALPHA = 0.66F;
 
     private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
 
     private final RandomSource rayRandom = RandomSource.create();
 
@@ -117,12 +115,11 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
 
     private static void drawGlow(
             MultiBufferSource buffers, PoseStack poseStack, float ticks, float r, float g, float b) {
-        int frame = GLOW_FRAME_START + (int) ticks % GLOW_FRAMES;
-        float texFrame = 1.0F / GLOW_GRID;
-        float u0 = (frame % GLOW_GRID) * texFrame;
-        float v0 = (frame / GLOW_GRID) * texFrame;
-        float u1 = u0 + texFrame;
-        float v1 = v0 + texFrame;
+        int frame = (int) ticks % GLOW_FRAMES;
+        float u0 = frame / (float) GLOW_FRAMES;
+        float v0 = 0.0F;
+        float u1 = (frame + 1) / (float) GLOW_FRAMES;
+        float v1 = 1.0F;
         int tint = ARGB32.colorFromFloat(GLOW_ALPHA, r, g, b);
         VertexConsumer buffer = buffers.getBuffer(GLOW_TYPE);
         Matrix4f mat = poseStack.last().pose();

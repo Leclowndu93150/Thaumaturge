@@ -51,8 +51,9 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final ResourceLocation TEX3 = TCIds.rl("textures/gui/gui_wandtable3.png");
     private static final ResourceLocation TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
     private static final ResourceLocation TEX_COMPLEXITY = TCIds.rl("textures/gui/complex.png");
-    private static final ResourceLocation TEX_COST_XP = TCIds.rl("textures/gui/costxp.png");
-    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/gui/costvis.png");
+    private static final ResourceLocation TEX_COST_XP =
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png");
+    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/item/essentia_crystal.png");
     private static final ResourceLocation ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
     private static final ResourceLocation ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
     private static final ResourceLocation ROOT_KEY = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "root");
@@ -388,7 +389,31 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private void drawStatIcon(
             GuiGraphics graphics, ResourceLocation texture, int y, String tooltipKey, int mouseX, int mouseY) {
-        graphics.blit(texture, leftPos + INFO_X, topPos + y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+        if (texture.equals(TEX_COST_XP)) {
+            int iconX = leftPos + INFO_X + (INFO_W - 9) / 2;
+            int iconY = topPos + y + (INFO_H - 9) / 2;
+            graphics.blit(texture, iconX, iconY, 3, 3, 5, 9, 16, 16);
+            graphics.pose().pushPose();
+            graphics.pose().translate(iconX + 9, iconY, 0.0F);
+            graphics.pose().scale(-1.0F, 1.0F, 1.0F);
+            graphics.blit(texture, 0, 0, 3, 3, 4, 9, 16, 16);
+            graphics.pose().popPose();
+        } else if (texture.equals(TEX_COST_VIS)) {
+            GuiBlend.blitTinted(
+                    graphics,
+                    texture,
+                    leftPos + INFO_X,
+                    topPos + y,
+                    0.0F,
+                    0.0F,
+                    INFO_W,
+                    INFO_H,
+                    INFO_W,
+                    INFO_H,
+                    0xFF55FFFF);
+        } else {
+            graphics.blit(texture, leftPos + INFO_X, topPos + y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+        }
         if (mouseX >= leftPos + INFO_X
                 && mouseX < leftPos + INFO_X + INFO_W
                 && mouseY >= topPos + y

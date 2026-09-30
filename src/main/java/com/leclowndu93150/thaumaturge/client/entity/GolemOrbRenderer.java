@@ -17,11 +17,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
-    private static final RenderType ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType BLUE_ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
+    private static final RenderType RED_ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_RED);
 
-    private static final int GRID = 32;
-    private static final int WHITE_ROW = 7;
-    private static final int RED_ROW = 6;
     private static final int FRAME_COUNT = 6;
     private static final float ALPHA = 0.8F;
     private static final float HALF = 0.5F;
@@ -43,19 +41,18 @@ public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
         float bob = Mth.sin(entity.tickCount / 5.0F) * 0.2F + 0.2F;
         float scale = 1.0F + bob;
-        int row = entity.isRed() ? RED_ROW : WHITE_ROW;
-        int col = 1 + entity.tickCount % FRAME_COUNT;
-        float texFrame = 1.0F / GRID;
-        float u0 = col * texFrame;
-        float v0 = row * texFrame;
-        float u1 = u0 + texFrame;
-        float v1 = v0 + texFrame;
+        int frame = entity.tickCount % FRAME_COUNT;
+        float u0 = frame / (float) FRAME_COUNT;
+        float v0 = 0.0F;
+        float u1 = (frame + 1) / (float) FRAME_COUNT;
+        float v1 = 1.0F;
+        RenderType orbType = entity.isRed() ? RED_ORB_TYPE : BLUE_ORB_TYPE;
         int tint = ARGB32.colorFromFloat(ALPHA, 1.0F, 1.0F, 1.0F);
         Vec3 origin = entity.getPosition(partialTicks);
         LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> {
             latePose.mulPose(this.entityRenderDispatcher.cameraOrientation());
             latePose.scale(scale, scale, scale);
-            writeOrb(lateBuffers.getBuffer(ORB_TYPE), latePose.last().pose(), u0, v0, u1, v1, tint);
+            writeOrb(lateBuffers.getBuffer(orbType), latePose.last().pose(), u0, v0, u1, v1, tint);
         });
     }
 
@@ -69,6 +66,6 @@ public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityGolemOrb entity) {
-        return ParticleTextures.PARTICLES;
+        return entity.isRed() ? ParticleTextures.GOLEM_ORB_RED : ParticleTextures.GOLEM_ORB_BLUE;
     }
 }
