@@ -10,7 +10,7 @@ public final class VisRelayBeamRenderTypes {
     public static final ResourceLocation BEAM_TEXTURE = TCIds.rl("textures/misc/beam1.png");
 
     public static final RenderType BEAM = TCRenderTypes.fxAlphaAdditive(BEAM_TEXTURE);
-    public static final RenderType FLARE = TCRenderTypes.fxAlphaAdditive(ParticleTextures.PARTICLES);
+    public static final RenderType FLARE = TCRenderTypes.fxAlphaAdditive(ParticleTextures.STAR_GLINT);
 
     private VisRelayBeamRenderTypes() {}
 }

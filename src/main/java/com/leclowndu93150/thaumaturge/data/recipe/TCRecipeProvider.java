@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
@@ -275,6 +276,47 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('S', Tags.Items.STRINGS)
                 .define('T', TCItems.TALLOW.get())
                 .unlockedBy("has_tallow", has(TCItems.TALLOW.get()))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.BRASS)
+                                .get()),
+                        10)
+                .aspect(TCAspects.IGNIS, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_BRASS)
+                .define('P', TCItemTags.PLATES_BRASS)
+                .gate(gate("candle_holders", 1))
+                .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.THAUMIUM)
+                                .get()),
+                        25)
+                .aspect(TCAspects.IGNIS, 1)
+                .aspect(TCAspects.ORDO, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_THAUMIUM)
+                .define('P', TCItemTags.PLATES_THAUMIUM)
+                .gate(gate("candle_holders", 2))
+                .unlockedBy("has", has(TCItemTags.PLATES_THAUMIUM))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.VOID)
+                                .get()),
+                        50)
+                .aspect(TCAspects.IGNIS, 1)
+                .aspect(TCAspects.PERDITIO, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_VOID_METAL)
+                .define('P', TCItemTags.PLATES_VOID_METAL)
+                .gate(gate("candle_holders", 3))
+                .unlockedBy("has", has(TCItemTags.PLATES_VOID_METAL))
                 .save(output);
         for (DyeColor dye : DyeColor.values()) {
             ShapelessRecipeBuilder.shapeless(

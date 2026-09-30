@@ -118,7 +118,7 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
                 base,
                 1.0F);
 
-        RenderType sideType = RenderType.entityTranslucent(outerLands ? SIDE_TEXTURE_OUTER : SIDE_TEXTURE);
+        RenderType sideType = RenderType.entityCutout(outerLands ? SIDE_TEXTURE_OUTER : SIDE_TEXTURE);
         VertexConsumer sideBuffer = buffers.getBuffer(sideType);
         for (int a = 0; a < 4; a++) {
             poseStack.pushPose();
@@ -129,7 +129,7 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
             poseStack.popPose();
         }
 
-        RenderType capType = RenderType.entityTranslucent(outerLands ? CAP_TEXTURE_OUTER : CAP_TEXTURE);
+        RenderType capType = RenderType.entityCutout(outerLands ? CAP_TEXTURE_OUTER : CAP_TEXTURE);
         poseStack.pushPose();
         poseStack.translate(0.5F, base, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));

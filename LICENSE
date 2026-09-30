@@ -1,5 +1,7 @@
 Thaumaturge License
-Copyright (c) 2026 Leclowndu93150 and contributors. All rights reserved.
+Copyright (c) 2026 Leclowndu93150. All rights reserved.
+Portions copyright (c) 2026 Saereth, DeadSix, Reclipse and Iglee42, as set out
+in section 6.
 
 
 SUMMARY (not part of the license)
@@ -9,6 +11,11 @@ contribute to it. What you may not do is publish it: no uploading this mod or a
 modified version of it to CurseForge, Modrinth, or anywhere else, and no
 distributing builds of it. If the author disappears for a year, the license
 converts to MIT so the project can be continued by someone else.
+
+The project, its name, and its branding belong to the author. Contributors keep
+the copyright in the code they wrote and may reuse it in their own work, but
+contributing does not give anyone the right to publish this mod or to pull
+their code back out of it.
 
 
 1. DEFINITIONS
@@ -28,6 +35,16 @@ converts to MIT so the project can be continued by someone else.
     built from it, available to any third party, including uploading it to a mod
     distribution platform, hosting it for download, bundling it in a modpack, or
     sending it to another person.
+
+1.6 "Project" means the Thaumaturge name, logo, mod id, and branding, the
+    Software taken as a whole, including the selection and arrangement of its
+    parts, and every part of the Software that is not a Contribution.
+
+1.7 "Contribution" means code or other material written by a Contributor and
+    merged into the Canonical Repository.
+
+1.8 "Contributor" means a person, other than the Author, whose Contribution has
+    been merged into the Canonical Repository.
 
 
 2. PERMISSIONS
@@ -93,12 +110,13 @@ license automatically if the Author becomes inactive or unreachable.
 
 4.3 Effect. Once triggered and the cure period has passed without response, this
     license converts irrevocably, for everyone, to the MIT License, with the
-    copyright notice "Copyright (c) 2026 Leclowndu93150 and contributors". From
-    that moment sections 3.1 through 3.3 no longer apply.
+    copyright notice "Copyright (c) 2026 Leclowndu93150, Saereth, DeadSix,
+    Reclipse and Iglee42". From that moment sections 3.1 through 3.3 no longer
+    apply.
 
-4.4 Scope. The conversion in section 4.3 applies only to material the Author is
-    entitled to license. It does not and cannot grant rights in the material
-    described in section 5.
+4.4 Scope. The conversion in section 4.3 applies to the Project and to every
+    Contribution licensed to the Author under section 6. It does not and cannot
+    grant rights in the material described in section 5.
 
 4.5 Reset. Any commit pushed by the Author to the Canonical Repository restarts
     the period in section 4.1(a).
@@ -115,17 +133,38 @@ license automatically if the Author becomes inactive or unreachable.
     If You intend to use, reproduce, or redistribute any part of it, it is Your
     responsibility to obtain permission from the party that holds those rights.
 
-5.3 This license applies to the Author's own contributions to the Software.
+5.3 This license applies to the Project and to Contributions licensed to the
+    Author under section 6.
 
 
-6. CONTRIBUTIONS
+6. OWNERSHIP AND CONTRIBUTIONS
 
-6.1 By submitting a pull request or patch to the Canonical Repository, You grant
-    the Author a perpetual, worldwide, irrevocable, royalty-free license to use,
-    modify, sublicense, and relicense Your contribution as part of the Software,
-    including under the conversion described in section 4.
+6.1 Ownership. The Author owns the Project. Each Contributor keeps the copyright
+    in their own Contributions.
 
-6.2 You retain copyright in Your contribution.
+6.2 License to the Author. By submitting a pull request or patch to the
+    Canonical Repository, You grant the Author a perpetual, worldwide,
+    irrevocable, non-exclusive, royalty-free license to use, modify, distribute,
+    sublicense, and relicense Your Contribution as part of the Software or any
+    later version of it, including under the conversion described in section 4.
+    This license cannot be withdrawn, and it does not require the Author to
+    remove a Contribution that has already been merged.
+
+6.3 Your own code. You may use, publish, and license Your own Contributions
+    anywhere else, under any terms You choose, for example in another mod or a
+    library. This covers only the code You wrote. It does not let You Publish
+    the Software, a modified version of it, or a substantial part of the Project
+    together with Your Contribution.
+
+6.4 No extra rights. Being a Contributor gives You no rights in the Project or
+    in other people's Contributions beyond those section 2 gives everyone. In
+    particular, You may not Publish the Software, use the Thaumaturge name,
+    logo, or branding for another release, or present Yourself as an owner of
+    the Project. You may describe Yourself as a contributor to Thaumaturge.
+
+6.5 Credit. The Author will keep crediting each Contributor in the copyright
+    notice, or in a credits file in the Canonical Repository, for as long as
+    their Contributions remain in the Software.
 
 
 7. DISCLAIMER

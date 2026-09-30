@@ -47,7 +47,7 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
     public void render(
             T cap, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
         boolean outerLands = cap.getLevel() != null && cap.getLevel().dimension() == OuterLands.DIMENSION;
-        RenderType type = RenderType.entityTranslucent(outerLands ? textureOuter : texture);
+        RenderType type = RenderType.entityCutout(outerLands ? textureOuter : texture);
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));

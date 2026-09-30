@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.concurrent.CompletableFuture;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public final class TCBlockTagsProvider extends BlockTagsProvider {
@@ -167,6 +169,10 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())
                 .add(TCBlocks.METAL_BRASS_BLOCK.get())
                 .add(TCBlocks.METAL_VOID_BLOCK.get());
+
+        for (DeferredBlock<BlockCandleHolder> holder : TCBlocks.CANDLE_HOLDERS.values()) {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(holder.get());
+        }
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())

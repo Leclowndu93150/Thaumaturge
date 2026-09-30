@@ -1,0 +1,63 @@
+{
+  "category": "thaumaturge:basics",
+  "name": "research.thaumaturge.candle_holders.title",
+  "parents": [
+    "thaumaturge:research"
+  ],
+  "column": 3,
+  "row": 1,
+  "icons": [
+    "thaumaturge:candle_holder_brass"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.candle_holders.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:basics",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.candle_holders.stage_1",
+      "recipes": [
+        "thaumaturge:arcane_workbench/candle_holder_brass"
+      ],
+      "required_research": [
+        "thaumaturge:metallurgy"
+      ]
+    },
+    {
+      "text": "research.thaumaturge.candle_holders.stage_2",
+      "recipes": [
+        "thaumaturge:arcane_workbench/candle_holder_thaumium"
+      ],
+      "required_research": [
+        "thaumaturge:base_eldritch"
+      ]
+    },
+    {
+      "text": "research.thaumaturge.candle_holders.stage_3",
+      "recipes": [
+        "thaumaturge:arcane_workbench/candle_holder_void"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:ignis",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:lux",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 2
+    }
+  ],
+  "complexity": 1
+}

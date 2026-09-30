@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemHandMirror;
@@ -614,6 +615,15 @@ public final class TCItems {
     static {
         for (DyeColor dye : DyeColor.values()) {
             CANDLES.put(dye, ITEMS.registerSimpleBlockItem(TCBlocks.CANDLES.get(dye)));
+        }
+    }
+
+    public static final Map<CandleHolderMaterial, DeferredItem<BlockItem>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
+
+    static {
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            CANDLE_HOLDERS.put(material, ITEMS.registerSimpleBlockItem(TCBlocks.CANDLE_HOLDERS.get(material)));
         }
     }
 

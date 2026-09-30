@@ -51,8 +51,9 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final ResourceLocation TEX3 = TCIds.rl("textures/gui/gui_wandtable3.png");
     private static final ResourceLocation TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
     private static final ResourceLocation TEX_COMPLEXITY = TCIds.rl("textures/gui/complex.png");
-    private static final ResourceLocation TEX_COST_XP = TCIds.rl("textures/gui/costxp.png");
-    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/gui/costvis.png");
+    private static final ResourceLocation TEX_COST_XP =
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png");
+    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/item/essentia_crystal.png");
     private static final ResourceLocation ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
     private static final ResourceLocation ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
     private static final ResourceLocation ROOT_KEY = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "root");
@@ -80,6 +81,13 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final int INFO_COMPLEXITY_Y = 39;
     private static final int INFO_XP_Y = 53;
     private static final int INFO_VIS_Y = 67;
+    private static final int XP_ICON_SIZE = 9;
+    private static final int XP_ICON_U = 3;
+    private static final int XP_ICON_V = 3;
+    private static final int XP_ICON_LEFT_W = 5;
+    private static final int XP_ICON_RIGHT_W = 4;
+    private static final int XP_ICON_SHEET = 16;
+    private static final int VIS_ICON_TINT = 0xFF55FFFF;
     private static final int STAT_TEXT_X = 252;
     private static final int STAT_TEXT_Y_NUDGE = 4;
     private static final int STAT_COMPLEXITY_Y = 36;
@@ -319,9 +327,26 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private void drawStats(GuiGraphics graphics, int mouseX, int mouseY) {
         drawStatIcon(
-                graphics, TEX_COMPLEXITY, INFO_COMPLEXITY_Y, "gui.thaumaturge.wandtable.complexity", mouseX, mouseY);
-        drawStatIcon(graphics, TEX_COST_XP, INFO_XP_Y, "gui.thaumaturge.wandtable.xp_cost", mouseX, mouseY);
-        drawStatIcon(graphics, TEX_COST_VIS, INFO_VIS_Y, "gui.thaumaturge.wandtable.vis_cost", mouseX, mouseY);
+                graphics,
+                FocalManipulatorScreen::drawComplexityIcon,
+                INFO_COMPLEXITY_Y,
+                "gui.thaumaturge.wandtable.complexity",
+                mouseX,
+                mouseY);
+        drawStatIcon(
+                graphics,
+                FocalManipulatorScreen::drawXpCostIcon,
+                INFO_XP_Y,
+                "gui.thaumaturge.wandtable.xp_cost",
+                mouseX,
+                mouseY);
+        drawStatIcon(
+                graphics,
+                FocalManipulatorScreen::drawVisCostIcon,
+                INFO_VIS_Y,
+                "gui.thaumaturge.wandtable.vis_cost",
+                mouseX,
+                mouseY);
         if (maxComplexity > 0) {
             graphics.drawString(
                     font,
@@ -386,9 +411,43 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         }
     }
 
-    private void drawStatIcon(
-            GuiGraphics graphics, ResourceLocation texture, int y, String tooltipKey, int mouseX, int mouseY) {
-        graphics.blit(texture, leftPos + INFO_X, topPos + y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+    private static void drawComplexityIcon(GuiGraphics graphics, int x, int y) {
+        graphics.blit(TEX_COMPLEXITY, x, y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+    }
+
+    private static void drawXpCostIcon(GuiGraphics graphics, int x, int y) {
+        int iconX = x + (INFO_W - XP_ICON_SIZE) / 2;
+        int iconY = y + (INFO_H - XP_ICON_SIZE) / 2;
+        graphics.blit(
+                TEX_COST_XP,
+                iconX,
+                iconY,
+                XP_ICON_U,
+                XP_ICON_V,
+                XP_ICON_LEFT_W,
+                XP_ICON_SIZE,
+                XP_ICON_SHEET,
+                XP_ICON_SHEET);
+        graphics.blit(
+                TEX_COST_XP,
+                iconX + XP_ICON_LEFT_W,
+                iconY,
+                XP_ICON_RIGHT_W,
+                XP_ICON_SIZE,
+                XP_ICON_U + XP_ICON_RIGHT_W,
+                XP_ICON_V,
+                -XP_ICON_RIGHT_W,
+                XP_ICON_SIZE,
+                XP_ICON_SHEET,
+                XP_ICON_SHEET);
+    }
+
+    private static void drawVisCostIcon(GuiGraphics graphics, int x, int y) {
+        GuiBlend.blitTinted(graphics, TEX_COST_VIS, x, y, 0.0F, 0.0F, INFO_W, INFO_H, INFO_W, INFO_H, VIS_ICON_TINT);
+    }
+
+    private void drawStatIcon(GuiGraphics graphics, StatIcon icon, int y, String tooltipKey, int mouseX, int mouseY) {
+        icon.draw(graphics, leftPos + INFO_X, topPos + y);
         if (mouseX >= leftPos + INFO_X
                 && mouseX < leftPos + INFO_X + INFO_W
                 && mouseY >= topPos + y
@@ -1339,5 +1398,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             }
         }
         return false;
+    }
+
+    @FunctionalInterface
+    private interface StatIcon {
+        void draw(GuiGraphics graphics, int x, int y);
     }
 }

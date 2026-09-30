@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.crucible.BlockCrucible;
 import com.leclowndu93150.thaumaturge.content.decor.BlockAmber;
 import com.leclowndu93150.thaumaturge.content.decor.BlockBarrier;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandle;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockEffectShock;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotemCharged;
@@ -23,6 +24,7 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockStairsTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStonePorous;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStoneTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
 import com.leclowndu93150.thaumaturge.content.device.BlockArcaneEar;
@@ -595,6 +597,20 @@ public final class TCBlocks {
         }
     }
 
+    public static final Map<CandleHolderMaterial, DeferredBlock<BlockCandleHolder>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
+
+    static {
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            CANDLE_HOLDERS.put(
+                    material,
+                    BLOCKS.registerBlock(
+                            "candle_holder_" + material.getSerializedName(),
+                            props -> new BlockCandleHolder(material, props),
+                            candleHolderProps(material)));
+        }
+    }
+
     public static final Map<DyeColor, DeferredBlock<BannerStandingBlock>> BANNERS = new EnumMap<>(DyeColor.class);
     public static final Map<DyeColor, DeferredBlock<BannerWallBlock>> WALL_BANNERS = new EnumMap<>(DyeColor.class);
 
@@ -633,6 +649,15 @@ public final class TCBlocks {
                 .strength(0.1F)
                 .sound(SoundType.WOOL)
                 .lightLevel(state -> 14)
+                .noOcclusion();
+    }
+
+    private static BlockBehaviour.Properties candleHolderProps(CandleHolderMaterial material) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(material.mapColor())
+                .strength(material.strength())
+                .sound(SoundType.METAL)
+                .lightLevel(BlockCandleHolder::lightEmission)
                 .noOcclusion();
     }
 
@@ -686,8 +711,7 @@ public final class TCBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(5.0F, 10.0F)
                     .sound(SoundType.STONE)
-                    .noOcclusion()
-                    .lightLevel(s -> 15));
+                    .noOcclusion());
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ARCANE =
             BLOCKS.registerBlock("pedestal_arcane", BlockPedestal::new, pedestalProps());

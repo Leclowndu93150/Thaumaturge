@@ -4,7 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
+import com.leclowndu93150.thaumaturge.content.decor.HeldCandle;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
@@ -73,6 +76,8 @@ public final class TCModelProvider implements DataProvider {
             TextureSlot.LAYER0,
             TextureSlot.LAYER1,
             TextureSlot.LAYER2);
+    private static final ModelTemplate CONDENSER_RETEXTURED = new ModelTemplate(
+            Optional.of(TCIds.rl("block/condenser")), Optional.empty(), TextureSlot.SIDE, TextureSlot.PARTICLE);
 
     private static final ResourceLocation GENERATED_PARENT = ResourceLocation.withDefaultNamespace("item/generated");
     private static final ResourceLocation BEWLR_BLOCK_PARENT = TCIds.rl("item/bewlr_block");
@@ -474,6 +479,21 @@ public final class TCModelProvider implements DataProvider {
         simpleBlock(block, TCIds.rl("block/" + modelName));
     }
 
+    private void registerCondenser() {
+        Block block = TCBlocks.CONDENSER.get();
+        ResourceLocation on = TCIds.rl("block/condenser");
+        ResourceLocation offTexture = blockTexture("condenser_off");
+        ResourceLocation off = CONDENSER_RETEXTURED.create(
+                TCIds.rl("block/condenser_off"),
+                new TextureMapping().put(TextureSlot.SIDE, offTexture).put(TextureSlot.PARTICLE, offTexture),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block)
+                .with(PropertyDispatch.property(BlockStateProperties.ENABLED)
+                        .select(true, v(on))
+                        .select(false, v(off))));
+        delegateItem(block.asItem(), on);
+    }
+
     private void delegateItem(Item item, ResourceLocation model) {
         modelOutput.accept(ModelLocationUtils.getModelLocation(item), new DelegatedModel(model));
     }
@@ -660,6 +680,17 @@ public final class TCModelProvider implements DataProvider {
             Block candle = TCBlocks.CANDLES.get(dye).get();
             simpleBlock(candle, model);
             delegateItem(candle.asItem(), model);
+        }
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            BlockCandleHolder holder = TCBlocks.CANDLE_HOLDERS.get(material).get();
+            ResourceLocation empty = TCIds.rl("block/candle_holder_" + material.getSerializedName());
+            ResourceLocation filled = TCIds.rl("block/candle_holder_" + material.getSerializedName() + "_filled");
+            PropertyDispatch.C1<HeldCandle> candles = PropertyDispatch.property(BlockCandleHolder.CANDLE);
+            for (HeldCandle held : HeldCandle.values()) {
+                candles = candles.select(held, v(held.isPresent() ? filled : empty));
+            }
+            blockStateOutput.accept(MultiVariantGenerator.multiVariant(holder).with(candles));
+            delegateItem(holder.asItem(), empty);
         }
     }
 
@@ -1075,7 +1106,7 @@ public final class TCModelProvider implements DataProvider {
         registerFacingDevice(TCBlocks.ESSENTIA_INPUT.get(), "essentia_input", false);
         registerFacingDevice(TCBlocks.ESSENTIA_OUTPUT.get(), "essentia_output", false);
 
-        simpleFromExisting(TCBlocks.CONDENSER.get(), "condenser");
+        registerCondenser();
         simpleFromExisting(TCBlocks.STABILIZER.get(), "stabilizer");
         simpleFromExisting(TCBlocks.VOID_SIPHON.get(), "void_siphon");
         registerLattice(TCBlocks.CONDENSER_LATTICE.get(), "condenser_lattice_core");

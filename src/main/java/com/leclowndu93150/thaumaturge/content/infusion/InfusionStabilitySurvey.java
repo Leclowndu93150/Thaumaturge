@@ -48,17 +48,16 @@ public final class InfusionStabilitySurvey {
                     new BlockPos(2 * matrix.getX() - pos.getX(), pos.getY(), 2 * matrix.getZ() - pos.getZ());
             stabilisers.remove(mirrored.asLong());
 
-            Block block = level.getBlockState(pos).getBlock();
-            Block mirroredBlock = level.getBlockState(mirrored).getBlock();
+            Block block = identity(level, pos);
+            Block mirroredBlock = identity(level, mirrored);
             float amount = stabilizationAmount(level, pos);
             float mirroredAmount = stabilizationAmount(level, mirrored);
-            if (symmetryKey(block) == symmetryKey(mirroredBlock) && amount == mirroredAmount) {
-                if (block instanceof IInfusionStabiliser stabiliser
-                        && stabiliser.hasSymmetryPenalty(level, pos, mirrored)) {
-                    replenish -= stabiliser.getSymmetryPenalty(level, pos);
+            if (block == mirroredBlock && amount == mirroredAmount) {
+                if (hasSymmetryPenalty(level, pos, mirrored) || hasSymmetryPenalty(level, mirrored, pos)) {
+                    replenish -= Math.max(symmetryPenalty(level, pos), symmetryPenalty(level, mirrored));
                     problems.add(pos);
                 } else {
-                    replenish += diminishingReturns(countedByType, symmetryKey(block), amount);
+                    replenish += diminishingReturns(countedByType, block, amount);
                 }
             } else {
                 replenish -= Math.max(amount, mirroredAmount);
@@ -77,8 +76,23 @@ public final class InfusionStabilitySurvey {
                 && stabiliser.canStabiliseInfusion(level, pos);
     }
 
-    private static Block symmetryKey(Block block) {
+    private static Block identity(Level level, BlockPos pos) {
+        Block block = level.getBlockState(pos).getBlock();
+        if (block instanceof IInfusionStabiliser stabiliser) {
+            return stabiliser.stabiliserIdentity(level, pos);
+        }
         return block instanceof AbstractSkullBlock ? Blocks.SKELETON_SKULL : block;
+    }
+
+    private static boolean hasSymmetryPenalty(Level level, BlockPos pos, BlockPos mirrored) {
+        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
+                && stabiliser.hasSymmetryPenalty(level, pos, mirrored);
+    }
+
+    private static float symmetryPenalty(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
+                ? stabiliser.getSymmetryPenalty(level, pos)
+                : 0.0F;
     }
 
     private static float stabilizationAmount(Level level, BlockPos pos) {

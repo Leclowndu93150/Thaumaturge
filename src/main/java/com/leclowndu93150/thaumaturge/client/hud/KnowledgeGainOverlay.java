@@ -43,9 +43,9 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
     private static final int ICON_TEX_SIZE = 16;
     private static final int ICON_ALPHA = 200;
     private static final int THEORY_EXTRA_TICKS = 10;
-    private static final int PARTICLE_GRID = 64;
-    private static final int BURST_FRAME_START = 320;
+    private static final int GLOW_FRAME_SIZE = 16;
     private static final int BURST_FRAME_SPREAD = 16;
+    private static final int GLOW_STRIP_WIDTH = GLOW_FRAME_SIZE * BURST_FRAME_SPREAD;
     private static final int QUAD_INTRINSIC_ROTATION = 90;
     private static final int MAX_SPARKS = 200;
     private static final float SPARK_SCALE = 24.0F;
@@ -155,13 +155,12 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
                 (float) rand.nextGaussian(),
                 32 + rand.nextInt(8),
                 rand.nextInt(5),
-                rand.nextFloat() < 0.2F ? BURST_FRAME_START : 512,
+                rand.nextFloat() < 0.2F ? ParticleTextures.STAR_GLINT : ParticleTextures.ORB_GLOW,
                 Mth.nextInt(rand, 189, 255) / 255.0F,
                 Mth.nextInt(rand, 64, 255) / 255.0F));
     }
 
     private static void renderSparks(GuiGraphics graphics, float partial) {
-        float texFrame = 1024.0F / PARTICLE_GRID;
         for (GuiSpark spark : SPARKS) {
             if (spark.delay > 0) {
                 continue;
@@ -172,26 +171,24 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
                 continue;
             }
             float size = 0.2F * SPARK_SCALE * (1.0F + life);
-            int frame = spark.startFrame + spark.age % BURST_FRAME_SPREAD;
-            int frameU = frame % PARTICLE_GRID;
-            int frameV = frame / PARTICLE_GRID;
+            int frame = spark.age % BURST_FRAME_SPREAD;
             int tint = ARGB32.colorFromFloat(alpha, 1.0F, spark.g, spark.b);
             float x = spark.xo + (spark.x - spark.xo) * partial;
             float y = spark.yo + (spark.y - spark.yo) * partial;
             graphics.pose().pushPose();
             graphics.pose().translate(x - size / 2.0F, y - size / 2.0F, 0.0F);
-            graphics.pose().scale(size / texFrame, size / texFrame, 1.0F);
+            graphics.pose().scale(size / GLOW_FRAME_SIZE, size / GLOW_FRAME_SIZE, 1.0F);
             GuiBlend.blitAdditive(
                     graphics,
-                    ParticleTextures.PARTICLES,
+                    spark.texture,
                     0,
                     0,
-                    frameU * texFrame,
-                    frameV * texFrame,
-                    (int) texFrame,
-                    (int) texFrame,
-                    1024,
-                    1024,
+                    frame * GLOW_FRAME_SIZE,
+                    0.0F,
+                    GLOW_FRAME_SIZE,
+                    GLOW_FRAME_SIZE,
+                    GLOW_STRIP_WIDTH,
+                    GLOW_FRAME_SIZE,
                     tint);
             graphics.pose().popPose();
         }
@@ -211,24 +208,21 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
         float g = Mth.nextInt(mc.level.getRandom(), 189, 255) / 255.0F;
         float b = Mth.nextInt(mc.level.getRandom(), 64, 255) / 255.0F;
         int tint = ARGB32.colorFromFloat(ICON_ALPHA / 255.0F, 1.0F, g, b);
-        int frame = BURST_FRAME_START + rand.nextInt(BURST_FRAME_SPREAD);
-        int frameU = frame % PARTICLE_GRID;
-        int frameV = frame / PARTICLE_GRID;
-        float texFrame = 1024.0F / PARTICLE_GRID;
+        int frame = rand.nextInt(BURST_FRAME_SPREAD);
         graphics.pose().pushPose();
         graphics.pose().translate(-size / 2.0F, -size / 2.0F, 0.0F);
-        graphics.pose().scale(size / texFrame, size / texFrame, 1.0F);
+        graphics.pose().scale(size / GLOW_FRAME_SIZE, size / GLOW_FRAME_SIZE, 1.0F);
         GuiBlend.blitAdditive(
                 graphics,
-                ParticleTextures.PARTICLES,
+                ParticleTextures.STAR_GLINT,
                 0,
                 0,
-                frameU * texFrame,
-                frameV * texFrame,
-                (int) texFrame,
-                (int) texFrame,
-                1024,
-                1024,
+                frame * GLOW_FRAME_SIZE,
+                0.0F,
+                GLOW_FRAME_SIZE,
+                GLOW_FRAME_SIZE,
+                GLOW_STRIP_WIDTH,
+                GLOW_FRAME_SIZE,
                 tint);
         graphics.pose().popPose();
     }
@@ -340,11 +334,20 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
         int age;
         final int maxAge;
         int delay;
-        final int startFrame;
+        final ResourceLocation texture;
         final float g;
         final float b;
 
-        GuiSpark(float x, float y, float vx, float vy, int maxAge, int delay, int startFrame, float g, float b) {
+        GuiSpark(
+                float x,
+                float y,
+                float vx,
+                float vy,
+                int maxAge,
+                int delay,
+                ResourceLocation texture,
+                float g,
+                float b) {
             this.x = x;
             this.y = y;
             this.xo = x;
@@ -353,7 +356,7 @@ public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
             this.vy = vy;
             this.maxAge = maxAge;
             this.delay = delay;
-            this.startFrame = startFrame;
+            this.texture = texture;
             this.g = g;
             this.b = b;
         }
