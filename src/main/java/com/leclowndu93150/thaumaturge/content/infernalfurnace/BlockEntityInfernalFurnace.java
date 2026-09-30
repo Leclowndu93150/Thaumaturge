@@ -45,6 +45,12 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
 
     private final ItemStackHandler inventory = new ItemStackHandler(32) {
         @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            setChanged();
+        }
+
+        @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;
         }
@@ -118,6 +124,8 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
             setFacing();
         }
 
+        int previousCookTime = furnaceCookTime;
+        int previousSpeedyTime = speedyTime;
         boolean cooking = false;
         if (furnaceCookTime > 0) {
             furnaceCookTime--;
@@ -207,7 +215,9 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
                 }
             }
         }
-        setChanged();
+        if (furnaceCookTime != previousCookTime || speedyTime != previousSpeedyTime) {
+            setChanged();
+        }
     }
 
     public ItemStack addItemsToInventory(ItemStack item) {
