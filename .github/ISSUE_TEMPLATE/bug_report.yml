@@ -71,8 +71,8 @@ body:
     id: dependencies
     attributes:
       label: Relevant dependency versions
-      description: Versions of dependencies that might be involved (Curios, TerraBlender, etc.).
-      placeholder: e.g. Curios API 15.0.0-beta2, TerraBlender 26.1.2.0.3
+      description: Versions of dependencies that might be involved (Curios, Lithostitched, etc.).
+      placeholder: e.g. Curios API 15.0.0-beta2, Lithostitched 1.7.13
     validations:
       required: false
   - type: textarea
