@@ -19,6 +19,9 @@ import org.joml.Matrix4f;
 public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
     private static final RenderType ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
 
+    private static final int GRID = 32;
+    private static final int WHITE_ROW = 7;
+    private static final int RED_ROW = 6;
     private static final int FRAME_COUNT = 6;
     private static final float ALPHA = 0.8F;
     private static final float HALF = 0.5F;

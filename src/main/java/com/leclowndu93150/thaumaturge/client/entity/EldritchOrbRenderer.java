@@ -23,6 +23,8 @@ public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb>
 
     private static final long RAY_SEED = 187L;
     private static final int RAY_COUNT = 12;
+    private static final int GRID = 64;
+    private static final int BILLBOARD_ROW = 3;
     private static final int BILLBOARD_FRAMES = 13;
     private static final float BILLBOARD_SCALE = 0.75F;
     private static final float HALF = 0.5F;

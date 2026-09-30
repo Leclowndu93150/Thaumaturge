@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
-import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchPortal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -17,12 +16,10 @@ import org.joml.Matrix4f;
 
 public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEntityEldritchPortal> {
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/misc/eldritch_portal.png");
-    private static final ResourceLocation OVERWORLD_TEXTURE = TCIds.rl("textures/misc/eldritch_portal_overworld.png");
     private static final RenderType PORTAL_TYPE = TCRenderTypes.fxTranslucent(TEXTURE);
-    private static final RenderType OVERWORLD_PORTAL_TYPE = TCRenderTypes.fxTranslucent(OVERWORLD_TEXTURE);
 
-    private static final int FRAMES = 32;
-    private static final float FRAME_WIDTH = 1.0F / FRAMES;
+    private static final int FRAMES = 16;
+    private static final float FRAME_WIDTH = 0.0625F;
     private static final float GROW_TICKS_WIDTH = 5.0F;
     private static final float GROW_TICKS_HEIGHT = 30.0F;
     private static final int LIGHT = 0x00F000DC;
@@ -51,8 +48,7 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
-        VertexConsumer buffer = buffers.getBuffer(portal.getLevel() != null && portal.getLevel().dimension() == OuterLands.DIMENSION
-                ? OVERWORLD_PORTAL_TYPE : PORTAL_TYPE);
+        VertexConsumer buffer = buffers.getBuffer(PORTAL_TYPE);
         Matrix4f mat = poseStack.last().pose();
         buffer.addVertex(mat, -sx, -sy, 0.0F).setUv(u1, 0.0F).setColor(-1).setLight(LIGHT);
         buffer.addVertex(mat, -sx, sy, 0.0F).setUv(u1, 1.0F).setColor(-1).setLight(LIGHT);

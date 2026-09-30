@@ -35,6 +35,8 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     private static final float REVEALED_ALPHA = 1.0F;
     private static final float FLARE_SIZE = 0.66F;
     private static final int FLARE_FRAMES = 16;
+    private static final int PARTICLE_GRID = 64;
+    private static final int FLARE_ROW = 5;
     private static final float FLARE_TEXEL_NUDGE = 0.0001F;
 
     public VisRelayRenderer(BlockEntityRendererProvider.Context context) {}
@@ -116,10 +118,10 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
     }
 
     private static void drawFlare(PoseStack poseStack, MultiBufferSource buffers, float half, int frame, int color) {
-        float u0 = frame / (float) FLARE_FRAMES;
-        float u1 = (frame + 1) / (float) FLARE_FRAMES - FLARE_TEXEL_NUDGE;
-        float v0 = 0.0F;
-        float v1 = 1.0F - FLARE_TEXEL_NUDGE;
+        float u0 = frame / (float) PARTICLE_GRID;
+        float u1 = (frame + 1) / (float) PARTICLE_GRID - FLARE_TEXEL_NUDGE;
+        float v0 = FLARE_ROW / (float) PARTICLE_GRID;
+        float v1 = (FLARE_ROW + 1) / (float) PARTICLE_GRID - FLARE_TEXEL_NUDGE;
         poseStack.pushPose();
         poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         PoseStack.Pose pose = poseStack.last();

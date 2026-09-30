@@ -50,10 +50,10 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
     private static final float JARRED_SIZE = 0.7F;
     private static final float JARRED_HEIGHT = 0.4F;
     private static final int STRIP_ASPECT = 0;
-    private static final int STRIP_NORMAL = 7;
+    private static final int STRIP_NORMAL = 1;
     private static final int STRIP_DARK = 2;
-    private static final int STRIP_HUNGRY = 8;
-    private static final int STRIP_PURE = 9;
+    private static final int STRIP_HUNGRY = 3;
+    private static final int STRIP_PURE = 4;
     private static final int STRIP_TAINTED = 5;
     private static final int STRIP_UNSTABLE = 6;
     private static final int EMISSIVE_LIGHT = 0x00F000F0;

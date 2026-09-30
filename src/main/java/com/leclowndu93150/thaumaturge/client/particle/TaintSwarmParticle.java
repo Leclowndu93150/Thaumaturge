@@ -12,10 +12,6 @@ import net.minecraft.world.entity.Entity;
  * which steer back toward the entity.
  */
 public final class TaintSwarmParticle extends TCParticle {
-    private static final int GLOW_FRAMES = 16;
-    private static final int SWARM_FRAMES = 8;
-    private static final int SWARM_FRAME_STEP = 2;
-
     private static final float SPEED = 0.22F;
     private static final float TURN_STRENGTH = 0.08F;
 

@@ -80,16 +80,6 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final int INFO_COMPLEXITY_Y = 39;
     private static final int INFO_XP_Y = 53;
     private static final int INFO_VIS_Y = 67;
-    private static final int STAT_TEXTURE_SIZE = 16;
-    private static final int LEVEL_ORB_U = 3;
-    private static final int LEVEL_ORB_V = 3;
-    private static final int LEVEL_ORB_W = 9;
-    private static final int LEVEL_ORB_H = 9;
-    private static final int STAT_ICON_UNTINTED = 0xFFFFFFFF;
-    private static final StatIcon ICON_COMPLEXITY = StatIcon.whole(TCIds.rl("textures/gui/complex.png"), STAT_ICON_UNTINTED);
-    private static final StatIcon ICON_COST_XP = new StatIcon(Identifier.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png"),
-            LEVEL_ORB_U, LEVEL_ORB_V, LEVEL_ORB_W, LEVEL_ORB_H, true, STAT_ICON_UNTINTED);
-    private static final StatIcon ICON_COST_VIS = StatIcon.whole(TCIds.rl("textures/item/essentia_crystal.png"), ARGB.opaque(ChatFormatting.AQUA.getColor()));
     private static final int STAT_TEXT_X = 252;
     private static final int STAT_TEXT_Y_NUDGE = 4;
     private static final int STAT_COMPLEXITY_Y = 36;
@@ -1349,11 +1339,5 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             }
         }
         return false;
-    }
-
-    private record StatIcon(Identifier texture, int u, int v, int width, int height, boolean mirrored, int tint) {
-        static StatIcon whole(Identifier texture, int tint) {
-            return new StatIcon(texture, 0, 0, INFO_W, INFO_H, false, tint);
-        }
     }
 }
