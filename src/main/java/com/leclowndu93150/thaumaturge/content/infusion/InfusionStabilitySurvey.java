@@ -53,9 +53,8 @@ public final class InfusionStabilitySurvey {
             float amount = stabilizationAmount(level, pos);
             float mirroredAmount = stabilizationAmount(level, mirrored);
             if (block == mirroredBlock && amount == mirroredAmount) {
-                if (level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
-                        && stabiliser.hasSymmetryPenalty(level, pos, mirrored)) {
-                    replenish -= stabiliser.getSymmetryPenalty(level, pos);
+                if (hasSymmetryPenalty(level, pos, mirrored) || hasSymmetryPenalty(level, mirrored, pos)) {
+                    replenish -= Math.max(symmetryPenalty(level, pos), symmetryPenalty(level, mirrored));
                     problems.add(pos);
                 } else {
                     replenish += diminishingReturns(countedByType, block, amount);
@@ -83,6 +82,17 @@ public final class InfusionStabilitySurvey {
             return stabiliser.stabiliserIdentity(level, pos);
         }
         return block instanceof AbstractSkullBlock ? Blocks.SKELETON_SKULL : block;
+    }
+
+    private static boolean hasSymmetryPenalty(Level level, BlockPos pos, BlockPos mirrored) {
+        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
+                && stabiliser.hasSymmetryPenalty(level, pos, mirrored);
+    }
+
+    private static float symmetryPenalty(Level level, BlockPos pos) {
+        return level.getBlockState(pos).getBlock() instanceof IInfusionStabiliser stabiliser
+                ? stabiliser.getSymmetryPenalty(level, pos)
+                : 0.0F;
     }
 
     private static float stabilizationAmount(Level level, BlockPos pos) {
