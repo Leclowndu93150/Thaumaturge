@@ -43,6 +43,7 @@ import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
+import com.leclowndu93150.thaumaturge.registry.TCIngredientTypes;
 import com.leclowndu93150.thaumaturge.registry.TCParticles;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -90,6 +91,7 @@ public final class Thaumaturge {
         TCWandParts.register(modBus);
         TCSeals.register(modBus);
         TCEntityDataSerializers.register(modBus);
+        TCIngredientTypes.register(modBus);
         TCGolemAccessories.register();
 
         LegacyRegistryAliases.register(modBus);
