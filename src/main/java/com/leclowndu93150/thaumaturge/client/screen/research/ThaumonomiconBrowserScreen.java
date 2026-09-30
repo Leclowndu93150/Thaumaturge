@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
+import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.research.ConnectorRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
@@ -379,11 +380,16 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         return true;
     }
 
+    private boolean conditionsPass(IPlayerKnowledge knowledge, EntryNode node) {
+        if (minecraft.player == null || knowledge.isResearchKnown(node.id)) return true;
+        return ResearchUnlockConditions.passes(minecraft.player, knowledge, node.id);
+    }
+
     private boolean canUnlockResearch(IPlayerKnowledge knowledge, EntryNode node) {
         for (ResearchParent parent : node.entry.parents()) {
             if (!parent.isSatisfiedBy(knowledge)) return false;
         }
-        return true;
+        return conditionsPass(knowledge, node);
     }
 
     private void onSearchChanged(String query) {
@@ -1152,6 +1158,10 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                     s = Component.translatable(parentNode.entry.nameKey()).getString();
                 }
                 lines.add(Component.literal("@@" + ChatFormatting.YELLOW + " - " + s));
+            }
+            for (Component message : ResearchUnlockConditions.lockedMessages(minecraft.player, knowledge, node.id)) {
+                lines.add(
+                        Component.literal("@@" + ChatFormatting.YELLOW + " - ").append(message));
             }
         }
         if (knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH)) {
