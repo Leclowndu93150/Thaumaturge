@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.wands;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.wands.IWandVisStorage;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -23,8 +24,21 @@ public final class WandVisHelper {
     }
 
     public static WandVis getAllVis(ItemStack stack) {
+        IWandVisStorage storage = getParts(stack).rod().visStorage();
+        if (storage != null) {
+            return storage.getVis(stack);
+        }
         WandVis vis = stack.get(TCDataComponents.WAND_VIS.get());
         return vis != null ? vis : WandVis.EMPTY;
+    }
+
+    public static void setAllVis(ItemStack stack, WandVis vis) {
+        IWandVisStorage storage = getParts(stack).rod().visStorage();
+        if (storage != null) {
+            storage.setVis(stack, vis);
+        } else {
+            stack.set(TCDataComponents.WAND_VIS.get(), vis);
+        }
     }
 
     public static int getMaxVis(ItemStack stack) {
@@ -36,7 +50,7 @@ public final class WandVisHelper {
     }
 
     public static void storeVis(ItemStack stack, ResourceKey<IAspect> aspect, int centivis) {
-        stack.set(TCDataComponents.WAND_VIS.get(), getAllVis(stack).with(aspect, centivis));
+        setAllVis(stack, getAllVis(stack).with(aspect, centivis));
     }
 
     public static int addVis(ItemStack stack, ResourceKey<IAspect> aspect, int vis, boolean doit) {
@@ -219,6 +233,6 @@ public final class WandVisHelper {
         for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
             vis = vis.with(primal, max);
         }
-        stack.set(TCDataComponents.WAND_VIS.get(), vis);
+        setAllVis(stack, vis);
     }
 }

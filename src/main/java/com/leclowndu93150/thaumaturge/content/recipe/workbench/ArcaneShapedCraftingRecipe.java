@@ -97,7 +97,7 @@ public class ArcaneShapedCraftingRecipe extends ArcaneCraftingRecipe {
 
     @Override
     public ItemStack assemble(IArcaneCraftingInput input, HolderLookup.Provider registries) {
-        return this.result.copy();
+        return assembleResult(this.result, input);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
+import com.leclowndu93150.thaumaturge.content.wands.assembly.WandAssemblyHook;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -47,6 +48,10 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
         this.vis = vis;
         this.gate = gate;
         this.aspects = aspects;
+    }
+
+    protected static ItemStack assembleResult(ItemStack result, IArcaneCraftingInput input) {
+        return WandAssemblyHook.apply(result.copy(), input);
     }
 
     protected static NonNullList<ItemStack> defaultCraftingReminder(IArcaneCraftingInput input) {

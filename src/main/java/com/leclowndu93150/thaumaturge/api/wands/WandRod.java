@@ -25,6 +25,8 @@ public final class WandRod {
     private final boolean staff;
     private final boolean runes;
     private final @Nullable ResourceLocation assemblyResearch;
+    private final @Nullable IWandVisStorage visStorage;
+    private final @Nullable IWandRodOnAssemble onAssemble;
 
     /**
      * @param capacity  vis stored per primal pool, in whole vis
@@ -68,6 +70,62 @@ public final class WandRod {
             boolean staff,
             boolean runes,
             @Nullable ResourceLocation assemblyResearch) {
+        this(capacity, craftCost, texture, onUpdate, glow, staff, runes, assemblyResearch, null, null);
+    }
+
+    /**
+     * @param capacity         vis stored per primal pool, in whole vis
+     * @param craftCost        the crafting cost factor of this rod
+     * @param texture          the texture rendered on wand models built with this rod
+     * @param onUpdate         inventory tick callback, or null for none
+     * @param glow             whether wand models built with this rod render fullbright
+     * @param staff            whether this rod is a staff core
+     * @param runes            whether this rod bears runes
+     * @param assemblyResearch the research entry gating wand assembly recipes built around
+     *                         this rod, or null for the base auromancy gate
+     * @param visStorage       where wands built with this rod keep their vis, or null for the
+     *                         {@code thaumaturge:wand_vis} data component
+     * @since 1.0.0
+     */
+    public WandRod(
+            int capacity,
+            int craftCost,
+            ResourceLocation texture,
+            @Nullable IWandRodOnUpdate onUpdate,
+            boolean glow,
+            boolean staff,
+            boolean runes,
+            @Nullable ResourceLocation assemblyResearch,
+            @Nullable IWandVisStorage visStorage) {
+        this(capacity, craftCost, texture, onUpdate, glow, staff, runes, assemblyResearch, visStorage, null);
+    }
+
+    /**
+     * @param capacity         vis stored per primal pool, in whole vis
+     * @param craftCost        the crafting cost factor of this rod
+     * @param texture          the texture rendered on wand models built with this rod
+     * @param onUpdate         inventory tick callback, or null for none
+     * @param glow             whether wand models built with this rod render fullbright
+     * @param staff            whether this rod is a staff core
+     * @param runes            whether this rod bears runes
+     * @param assemblyResearch the research entry gating wand assembly recipes built around
+     *                         this rod, or null for the base auromancy gate
+     * @param visStorage       where wands built with this rod keep their vis, or null for the
+     *                         {@code thaumaturge:wand_vis} data component
+     * @param onAssemble       arcane workbench assembly callback, or null for none
+     * @since 1.0.0
+     */
+    public WandRod(
+            int capacity,
+            int craftCost,
+            ResourceLocation texture,
+            @Nullable IWandRodOnUpdate onUpdate,
+            boolean glow,
+            boolean staff,
+            boolean runes,
+            @Nullable ResourceLocation assemblyResearch,
+            @Nullable IWandVisStorage visStorage,
+            @Nullable IWandRodOnAssemble onAssemble) {
         this.capacity = capacity;
         this.craftCost = craftCost;
         this.texture = texture;
@@ -76,6 +134,29 @@ public final class WandRod {
         this.staff = staff;
         this.runes = runes;
         this.assemblyResearch = assemblyResearch;
+        this.visStorage = visStorage;
+        this.onAssemble = onAssemble;
+    }
+
+    /**
+     * The storage override for wands built with this rod.
+     *
+     * @return the storage, or null when vis is kept in the {@code thaumaturge:wand_vis} data
+     *         component
+     * @since 1.0.0
+     */
+    public @Nullable IWandVisStorage visStorage() {
+        return visStorage;
+    }
+
+    /**
+     * The callback run when the arcane workbench assembles a wand from this rod.
+     *
+     * @return the callback, or null when assembly copies nothing extra onto the wand
+     * @since 1.0.0
+     */
+    public @Nullable IWandRodOnAssemble onAssemble() {
+        return onAssemble;
     }
 
     /**

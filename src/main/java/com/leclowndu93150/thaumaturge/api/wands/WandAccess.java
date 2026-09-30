@@ -1,29 +1,27 @@
 package com.leclowndu93150.thaumaturge.api.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import java.util.function.Supplier;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * Static read and write access to the vis stored on a wand stack.
  *
- * <p>Wand vis lives in the {@code thaumaturge:wand_vis} data component as a {@link WandVis} record.
- * These helpers read and replace that component without exposing the component type holder, which
- * lives in the implementation. Amounts are in centivis (one hundred per vis unit).
+ * <p>Wand vis is stored in the {@code thaumaturge:wand_vis} data component as a {@link WandVis}
+ * record, unless the wand's rod declares an {@link IWandVisStorage}, in which case these helpers read
+ * and write through that storage instead. Amounts are in centivis (one hundred per vis unit).
  *
  * <p>Writes here store raw amounts; they do not apply the consumption discounts that the wand's
  * caps and the player's gear grant during casting or crafting. They are the low-level storage
  * accessor, suited to relays, chargers, and inspection tools.
  *
- * <p>The component-type supplier is bound once at mod init by Thaumaturge via {@link #bind(Supplier)};
- * addons must not call {@code bind}.
+ * <p>The implementation is bound once at mod init by Thaumaturge via {@link #bind(Bindings)}; addons
+ * must not call {@code bind}.
  *
  * @since 1.0.0
  */
 public final class WandAccess {
-    private static Supplier<DataComponentType<WandVis>> component;
+    private static Bindings impl;
 
     private WandAccess() {}
 
@@ -34,7 +32,7 @@ public final class WandAccess {
      * @return the stored vis, or {@link WandVis#EMPTY} when the stack has none
      */
     public static WandVis getAllVis(ItemStack wand) {
-        return wand.getOrDefault(componentType(), WandVis.EMPTY);
+        return bindingOrThrow().getAllVis(wand);
     }
 
     /**
@@ -55,32 +53,54 @@ public final class WandAccess {
      * @param wand     the wand stack
      * @param aspect   the aspect key
      * @param centivis the new centivis amount for the aspect
-     * @return a copied stack carrying the updated vis component
+     * @return a copied stack carrying the updated vis
      */
     public static ItemStack withVis(ItemStack wand, ResourceKey<IAspect> aspect, int centivis) {
         ItemStack copy = wand.copy();
-        copy.set(componentType(), getAllVis(wand).with(aspect, centivis));
+        bindingOrThrow().setAllVis(copy, getAllVis(wand).with(aspect, centivis));
         return copy;
     }
 
     /**
-     * Binds the wand-vis component type. Called once at mod init by Thaumaturge; addons must not
-     * call this.
+     * Binds the implementation. Called once at mod init by Thaumaturge; addons must not call this.
      *
-     * @param impl a supplier of the registered component type
+     * @param bindings the implementation
      * @throws IllegalStateException when already bound
      */
-    public static void bind(Supplier<DataComponentType<WandVis>> impl) {
-        if (component != null) {
+    public static void bind(Bindings bindings) {
+        if (impl != null) {
             throw new IllegalStateException("WandAccess already bound");
         }
-        component = impl;
+        impl = bindings;
     }
 
-    private static DataComponentType<WandVis> componentType() {
-        if (component == null) {
+    private static Bindings bindingOrThrow() {
+        if (impl == null) {
             throw new IllegalStateException("WandAccess accessed before binding");
         }
-        return component.get();
+        return impl;
+    }
+
+    /**
+     * Implementation hook bound by Thaumaturge at mod init. Addons do not implement this.
+     *
+     * @since 1.0.0
+     */
+    public interface Bindings {
+        /**
+         * Reads the wand's vis, honoring the rod's {@link IWandVisStorage}.
+         *
+         * @param wand the wand stack
+         * @return the stored vis, never null
+         */
+        WandVis getAllVis(ItemStack wand);
+
+        /**
+         * Replaces the wand's vis in place, honoring the rod's {@link IWandVisStorage}.
+         *
+         * @param wand the wand stack
+         * @param vis  the new vis storage
+         */
+        void setAllVis(ItemStack wand, WandVis vis);
     }
 }

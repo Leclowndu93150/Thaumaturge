@@ -38,6 +38,7 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolBindings;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanBindings;
 import com.leclowndu93150.thaumaturge.content.taint.TaintApiBindings;
+import com.leclowndu93150.thaumaturge.content.wands.WandAccessBindings;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
@@ -101,7 +102,7 @@ public final class Thaumaturge {
         KnowledgeAccess.bind(player -> player.getData(TCAttachments.KNOWLEDGE));
         AspectIndexAccess.bind(AspectIndexHolder::get);
         AspectIndexBuilder.fireContributorEvent(modBus);
-        WandAccess.bind(TCDataComponents.WAND_VIS);
+        WandAccess.bind(new WandAccessBindings());
         ArcaneCraftCost.bind(WorkbenchPayment::cost);
         ArcaneCraftingTransaction.bind(new ArcaneCraftingTransactions());
         InfusionCraftingTransaction.bind(new InfusionCraftingTransactions());
