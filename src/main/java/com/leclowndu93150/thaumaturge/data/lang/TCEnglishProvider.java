@@ -326,6 +326,7 @@ public final class TCEnglishProvider extends LanguageProvider {
 
         ResearchTextEn.addAll(this::add);
         CommandTextEn.addAll(this::add);
+        LoreBookTextEn.addAll(this::add);
 
         add("key.thaumaturge.thaumonomicon", "Open Thaumonomicon");
         add("gui.thaumaturge.entry.advance", "Mark As Read");

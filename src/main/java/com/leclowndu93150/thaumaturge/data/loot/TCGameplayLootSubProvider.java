@@ -1,18 +1,30 @@
 package com.leclowndu93150.thaumaturge.data.loot;
 
+import com.leclowndu93150.thaumaturge.data.lang.LoreBookTextEn;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCLootTables;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.LootTableSubProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.network.Filterable;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.EmptyLootItem;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.functions.ListOperation;
+import net.minecraft.world.level.storage.loot.functions.SetBookCoverFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SetWrittenBookPagesFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
@@ -26,6 +38,10 @@ public final class TCGameplayLootSubProvider implements LootTableSubProvider {
     private static final int LIBRARY_EMPTY_WEIGHT = 1;
     private static final int SMITH_EMPTY_WEIGHT = 1;
 
+    private static final float LORE_CHANCE = 0.0005F;
+    private static final String LORE_TITLE = "A Message to the World";
+    private static final String LORE_AUTHOR = "A Thaumaturge";
+
     private final HolderLookup.Provider registries;
 
     public TCGameplayLootSubProvider(HolderLookup.Provider registries) {
@@ -36,7 +52,7 @@ public final class TCGameplayLootSubProvider implements LootTableSubProvider {
     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
         output.accept(TCLootTables.LOOT_BAG_COMMON, bagTable(TreasureLootPools.COMMON));
         output.accept(TCLootTables.LOOT_BAG_UNCOMMON, bagTable(TreasureLootPools.UNCOMMON));
-        output.accept(TCLootTables.LOOT_BAG_RARE, bagTable(TreasureLootPools.RARE));
+        output.accept(TCLootTables.LOOT_BAG_RARE, bagTable(TreasureLootPools.RARE).withPool(lorePool()));
 
         output.accept(
                 TCLootTables.TREASURE_COMMON,

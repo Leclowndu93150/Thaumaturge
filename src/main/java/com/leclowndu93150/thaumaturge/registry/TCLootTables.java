@@ -9,6 +9,7 @@ public final class TCLootTables {
     public static final ResourceKey<LootTable> LOOT_BAG_COMMON = key("gameplay/loot_bag_common");
     public static final ResourceKey<LootTable> LOOT_BAG_UNCOMMON = key("gameplay/loot_bag_uncommon");
     public static final ResourceKey<LootTable> LOOT_BAG_RARE = key("gameplay/loot_bag_rare");
+    public static final ResourceKey<LootTable> LORE_BOOK = key("gameplay/lore_book");
 
     public static final ResourceKey<LootTable> TREASURE_COMMON = key("chests/treasure_common");
     public static final ResourceKey<LootTable> TREASURE_UNCOMMON = key("chests/treasure_uncommon");
