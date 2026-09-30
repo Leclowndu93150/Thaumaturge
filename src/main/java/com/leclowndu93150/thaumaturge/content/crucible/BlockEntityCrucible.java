@@ -39,6 +39,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectContainer {
 
@@ -197,6 +198,25 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
     @Override
     public AspectList getAspects() {
         return aspects;
+    }
+
+    public int addAspects(@Nullable Holder<IAspect> aspect, int amount) {
+        if (aspect == null
+                || amount <= 0
+                || !(level instanceof ServerLevel serverLevel)
+                || !serverLevel.getServer().isSameThread()) {
+            return 0;
+        }
+
+        int currentAmount = aspects.amountOf(aspect);
+        if (amount > Integer.MAX_VALUE - currentAmount) {
+            return 0;
+        }
+
+        aspects = aspects.add(aspect, amount);
+        setChanged();
+        syncToClient();
+        return amount;
     }
 
     @Override
