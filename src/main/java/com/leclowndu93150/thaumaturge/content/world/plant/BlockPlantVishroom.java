@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,6 +30,7 @@ public final class BlockPlantVishroom extends AbstractTCPlant {
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.GRASS_BLOCK)
+                || state.is(TCBlocks.GRASS_AMBIENT.get())
                 || state.is(Blocks.DIRT)
                 || state.is(Blocks.PODZOL)
                 || state.is(Blocks.COARSE_DIRT)

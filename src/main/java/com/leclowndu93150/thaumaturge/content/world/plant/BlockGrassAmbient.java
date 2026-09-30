@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
@@ -24,6 +25,12 @@ public final class BlockGrassAmbient extends GrassBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (level.getBiome(pos).is(TCBiomes.MAGICAL_FOREST_CAVES)) {
+            if (random.nextInt(5) == 0 && level.isEmptyBlock(pos.above())) {
+                spawnMote(level, pos.above(), random);
+            }
+            return;
+        }
         int skyLight = level.getBrightness(LightLayer.SKY, pos.above()) - level.getSkyDarken();
         float angle = level.getTimeOfDay(1.0F) * 360.0F * (float) (Math.PI / 180.0);
         float target = angle < (float) Math.PI ? 0.0F : (float) (Math.PI * 2);

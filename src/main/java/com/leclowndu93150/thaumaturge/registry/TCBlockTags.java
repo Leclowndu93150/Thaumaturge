@@ -13,6 +13,7 @@ public final class TCBlockTags {
     public static final TagKey<Block> RESEARCH_BONUS_ORDO = key("research_bonus/ordo");
     public static final TagKey<Block> PHYSICAL_FLUX = key("physical_flux");
     public static final TagKey<Block> FLUX_SCRUBBABLE = key("flux_scrubbable");
+    public static final TagKey<Block> MAGICAL_CAVE_GROUND_REPLACEABLE = key("magical_cave_ground_replaceable");
     public static final TagKey<Block> SCAN_CLAY = key("scan/f_matclay");
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");

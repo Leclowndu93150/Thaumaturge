@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public final class WispyMoteParticle extends TCParticle {
+    private static final int EMISSIVE_LIGHT = 0x00F000F0;
     private static final int FRAME_COUNT = 16;
     private static final float PEAK_ALPHA = 0.6F;
     private static final float START_SIZE = 0.1F;
@@ -60,6 +61,11 @@ public final class WispyMoteParticle extends TCParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return TCParticleLayers.additiveSoft(this.sheet);
+    }
+
+    @Override
+    protected int getLightColor(float partialTick) {
+        return EMISSIVE_LIGHT;
     }
 
     private void seekTarget() {

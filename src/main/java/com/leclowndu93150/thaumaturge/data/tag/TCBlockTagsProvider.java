@@ -26,6 +26,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(BlockTags.DIRT).add(TCBlocks.GRASS_AMBIENT.get());
+        tag(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)
+                .addTag(BlockTags.BASE_STONE_OVERWORLD)
+                .addTag(BlockTags.DIRT)
+                .addTag(BlockTags.LUSH_GROUND_REPLACEABLE);
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
         TagAppender<Block> candles = tag(TCBlockTags.CANDLES);
         TCBlocks.CANDLES.values().forEach(candle -> candles.add(candle.getKey()));

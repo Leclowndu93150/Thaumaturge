@@ -3,14 +3,17 @@ package com.leclowndu93150.thaumaturge.data.worldgen.feature;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigNodeSpawnFilter;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigRarityFilter;
+import com.leclowndu93150.thaumaturge.content.world.objects.MagicalCaveFloorPlacement;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.List;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
@@ -19,10 +22,12 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.EnvironmentScanPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.HeightmapPlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.RandomOffsetPlacement;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
@@ -38,6 +43,17 @@ public final class TCPlacedFeatures {
     public static final ResourceKey<PlacedFeature> GREATWOOD_NATURAL_RARE = key("greatwood_natural_rare");
     public static final ResourceKey<PlacedFeature> SILVERWOOD_NATURAL = key("silverwood_natural");
     public static final ResourceKey<PlacedFeature> MAGIC_FOREST_FLORA = key("magic_forest_flora");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_GRASS = key("magical_cave_grass");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_AMBIENT_GRASS = key("magical_cave_ambient_grass");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_POND = key("magical_cave_pond");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_TREES = key("magical_cave_trees");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_MUSHROOMS = key("magical_cave_mushrooms");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_FLORA = key("magical_cave_flora");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_VISHROOMS = key("magical_cave_vishrooms");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_SHIMMERLEAFS = key("magical_cave_shimmerleafs");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_MANA_PODS = key("magical_cave_mana_pods");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_CRYSTALS = key("magical_cave_crystals");
+    public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_NODES = key("magical_cave_nodes");
     public static final ResourceKey<PlacedFeature> MANA_PODS = key("mana_pods");
     public static final ResourceKey<PlacedFeature> CRYSTALS = key("crystals");
     public static final ResourceKey<PlacedFeature> NODES_WILD = key("nodes_wild");
@@ -80,6 +96,14 @@ public final class TCPlacedFeatures {
 
     private static ResourceKey<PlacedFeature> key(String path) {
         return ResourceKey.create(Registries.PLACED_FEATURE, TCIds.rl(path));
+    }
+
+    private static List<PlacementModifier> caveFloor(int attempts) {
+        return List.of(
+                CountPlacement.of(attempts),
+                InSquarePlacement.spread(),
+                MagicalCaveFloorPlacement.INSTANCE,
+                BiomeFilter.biome());
     }
 
     public static void bootstrap(BootstrapContext<PlacedFeature> context) {
@@ -171,6 +195,66 @@ public final class TCPlacedFeatures {
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.MAGIC_FOREST_FLORA),
                         List.of(PlacementUtils.HEIGHTMAP, BiomeFilter.biome())));
+
+        context.register(
+                MAGICAL_CAVE_GRASS,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_GRASS), caveFloor(4)));
+        context.register(
+                MAGICAL_CAVE_AMBIENT_GRASS,
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_AMBIENT_GRASS), caveFloor(2)));
+        context.register(
+                MAGICAL_CAVE_POND,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_POND), caveFloor(1)));
+        context.register(
+                MAGICAL_CAVE_TREES,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_TREES), caveFloor(10)));
+        context.register(
+                MAGICAL_CAVE_MUSHROOMS,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_MUSHROOMS), caveFloor(1)));
+        context.register(
+                MAGICAL_CAVE_FLORA,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_FLORA), caveFloor(12)));
+        context.register(
+                MAGICAL_CAVE_VISHROOMS,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_VISHROOM), caveFloor(12)));
+        context.register(
+                MAGICAL_CAVE_SHIMMERLEAFS,
+                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_SHIMMERLEAF), caveFloor(6)));
+        context.register(
+                MAGICAL_CAVE_MANA_PODS,
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MANA_PODS),
+                        List.of(
+                                CountPlacement.of(12),
+                                InSquarePlacement.spread(),
+                                PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT,
+                                BiomeFilter.biome())));
+        context.register(
+                MAGICAL_CAVE_CRYSTALS,
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_CRYSTALS),
+                        List.of(
+                                CountPlacement.of(128),
+                                InSquarePlacement.spread(),
+                                PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT,
+                                BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE),
+                                BiomeFilter.biome())));
+        context.register(
+                MAGICAL_CAVE_NODES,
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.NODES_WILD),
+                        List.of(
+                                ConfigNodeSpawnFilter.WILD,
+                                InSquarePlacement.spread(),
+                                PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT,
+                                EnvironmentScanPlacement.scanningFor(
+                                        Direction.DOWN,
+                                        BlockPredicate.solid(),
+                                        BlockPredicate.ONLY_IN_AIR_PREDICATE,
+                                        12),
+                                RandomOffsetPlacement.vertical(ConstantInt.of(1)),
+                                BiomeFilter.biome())));
 
         context.register(
                 TAINT_BIOME,

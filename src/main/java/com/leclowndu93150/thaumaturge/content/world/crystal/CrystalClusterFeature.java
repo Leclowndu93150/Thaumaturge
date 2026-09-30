@@ -26,6 +26,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
     private static final int MIN_SIZE = 1;
     private static final int MAX_EXTRA_SIZE = 3;
     private static final int PLACE_FLAGS = 19;
+    private static final Direction[] DIRECTIONS = Direction.values();
 
     public CrystalClusterFeature(Codec<CrystalClusterConfig> codec) {
         super(codec);
@@ -39,13 +40,18 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
         BlockPos origin = context.origin();
         int placedTotal = 0;
         boolean any = false;
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        BlockPos.MutableBlockPos neighborPos = new BlockPos.MutableBlockPos();
         for (int attempt = 0; attempt < config.attempts(); attempt++) {
-            int x = origin.getX() + 8 + Mth.nextInt(random, -6, 6);
-            int z = origin.getZ() + 8 + Mth.nextInt(random, -6, 6);
-            int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
-            int minY = level.getMinBuildHeight();
-            int y = minY + random.nextInt(Math.max(5, surface - 5 - minY));
-            BlockPos center = new BlockPos(x, y, z);
+            BlockPos center = origin;
+            if (!config.atOrigin()) {
+                int x = origin.getX() + 8 + Mth.nextInt(random, -6, 6);
+                int z = origin.getZ() + 8 + Mth.nextInt(random, -6, 6);
+                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+                int minY = level.getMinBuildHeight();
+                int y = minY + random.nextInt(Math.max(5, surface - 5 - minY));
+                center = new BlockPos(x, y, z);
+            }
 
             CrystalClusterConfig.Entry entry =
                     config.crystals().get(random.nextInt(config.crystals().size()));
@@ -60,11 +66,11 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
                 for (int dy = -1; dy <= 1; dy++) {
                     for (int dz = -1; dz <= 1; dz++) {
                         if (random.nextInt(3) != 0) {
-                            BlockPos pos = center.offset(dx, dy, dz);
+                            pos.setWithOffset(center, dx, dy, dz);
                             BlockState state = level.getBlockState(pos);
                             if (!state.liquid()
                                     && (state.isAir() || state.canBeReplaced())
-                                    && isTouchingRock(level, pos)) {
+                                    && isTouchingRock(level, pos, neighborPos)) {
                                 int size = MIN_SIZE + random.nextInt(MAX_EXTRA_SIZE);
                                 BlockState crystal = entry.block().defaultBlockState();
                                 if (crystal.hasProperty(BlockCrystal.SIZE)) {
@@ -108,9 +114,9 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
         return null;
     }
 
-    private static boolean isTouchingRock(WorldGenLevel level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            BlockState neighbor = level.getBlockState(pos.relative(direction));
+    private static boolean isTouchingRock(WorldGenLevel level, BlockPos pos, BlockPos.MutableBlockPos neighborPos) {
+        for (Direction direction : DIRECTIONS) {
+            BlockState neighbor = level.getBlockState(neighborPos.set(pos).move(direction));
             if (neighbor.is(BlockTags.BASE_STONE_OVERWORLD)
                     || neighbor.is(Tags.Blocks.STONES)
                     || neighbor.is(Tags.Blocks.ORES)

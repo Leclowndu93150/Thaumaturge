@@ -2,7 +2,8 @@
   "dimension": "minecraft:overworld",
   "biomes": [
     "minecraft:forest",
-    "minecraft:flower_forest"
+    "minecraft:flower_forest",
+    "minecraft:lush_caves"
   ],
   "weight": 60
 }

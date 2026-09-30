@@ -8,6 +8,8 @@ import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterConfig
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.CrimsonPortalFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.HilltopStonesFeature;
+import com.leclowndu93150.thaumaturge.content.world.objects.MagicalCaveBushFeature;
+import com.leclowndu93150.thaumaturge.content.world.objects.MagicalCavePondFeature;
 import com.leclowndu93150.thaumaturge.content.world.objects.ObsidianTotemFeature;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraConfig;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraFeature;
@@ -58,6 +60,12 @@ public final class TCFeatures {
 
     public static final DeferredHolder<Feature<?>, HilltopStonesFeature> HILLTOP_STONES =
             FEATURES.register("hilltop_stones", () -> new HilltopStonesFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, MagicalCavePondFeature> MAGICAL_CAVE_POND =
+            FEATURES.register("magical_cave_pond", () -> new MagicalCavePondFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, MagicalCaveBushFeature> MAGICAL_CAVE_BUSH =
+            FEATURES.register("magical_cave_bush", () -> new MagicalCaveBushFeature(NoneFeatureConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, TaintBiomeFeature> TAINT_BIOME =
             FEATURES.register("taint_biome", () -> new TaintBiomeFeature(NoneFeatureConfiguration.CODEC));
