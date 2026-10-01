@@ -5858,6 +5858,32 @@
         "amount": 10
       }
     ],
+    "thaumaturge:void_seed": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:tenebrae",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:vacuos",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
+      }
+    ],
     "thaumaturge:quicksilver": [
       {
         "aspect": "thaumaturge:metallum",
