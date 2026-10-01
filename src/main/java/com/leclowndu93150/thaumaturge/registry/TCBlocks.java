@@ -487,7 +487,6 @@ public final class TCBlocks {
                 .mapColor(MapColor.STONE)
                 .strength(2.5F, 3600000.0F)
                 .sound(SoundType.STONE)
-                .noLootTable()
                 .noOcclusion()
                 .dynamicShape();
     }
