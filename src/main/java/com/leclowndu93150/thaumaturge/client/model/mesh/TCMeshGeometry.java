@@ -37,12 +37,19 @@ public final class TCMeshGeometry implements IUnbakedGeometry<TCMeshGeometry> {
     private final boolean flipV;
     private final boolean cornerSpace;
     private final ResourceLocation renderType;
+    private final boolean declaresAmbientOcclusion;
 
-    public TCMeshGeometry(ResourceLocation model, boolean flipV, boolean cornerSpace, ResourceLocation renderType) {
+    public TCMeshGeometry(
+            ResourceLocation model,
+            boolean flipV,
+            boolean cornerSpace,
+            ResourceLocation renderType,
+            boolean declaresAmbientOcclusion) {
         this.model = model;
         this.flipV = flipV;
         this.cornerSpace = cornerSpace;
         this.renderType = renderType;
+        this.declaresAmbientOcclusion = declaresAmbientOcclusion;
     }
 
     @Override
@@ -67,7 +74,7 @@ public final class TCMeshGeometry implements IUnbakedGeometry<TCMeshGeometry> {
         RenderTypeGroup renderTypes = NamedRenderTypeManager.get(renderType);
         TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial(PARTICLE_SLOT));
         IModelBuilder<?> builder = IModelBuilder.of(
-                context.useAmbientOcclusion(),
+                declaresAmbientOcclusion && context.useAmbientOcclusion(),
                 context.useBlockLight(),
                 context.isGui3d(),
                 context.getTransforms(),
@@ -113,7 +120,8 @@ public final class TCMeshGeometry implements IUnbakedGeometry<TCMeshGeometry> {
             ResourceLocation renderType = jsonObject.has("render_type")
                     ? ResourceLocation.parse(GsonHelper.getAsString(jsonObject, "render_type"))
                     : DEFAULT_RENDER_TYPE;
-            return new TCMeshGeometry(model, flipV, cornerSpace, renderType);
+            boolean declaresAmbientOcclusion = jsonObject.has("ambientocclusion");
+            return new TCMeshGeometry(model, flipV, cornerSpace, renderType, declaresAmbientOcclusion);
         }
     }
 }
