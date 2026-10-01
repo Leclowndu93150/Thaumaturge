@@ -8,6 +8,13 @@ import net.minecraft.world.item.Item;
 
 public final class TCItemTags {
     public static final TagKey<Item> WANDS = key("wands");
+    public static final TagKey<Item> WAND_RODS = key("wand_rods");
+    public static final TagKey<Item> WAND_CAPS = key("wand_caps");
+    public static final TagKey<Item> VIS_CRYSTALS = key("vis_crystals");
+    public static final TagKey<Item> PLACEABLE_CRYSTALS = key("placeable_crystals");
+    public static final TagKey<Item> GOLEM_SEALS = key("golem_seals");
+    public static final TagKey<Item> RESEARCH_NOTES = key("research_notes");
+    public static final TagKey<Item> LOOT_CONTAINERS = key("loot_containers");
     public static final TagKey<Item> RUNIC_SHIELDABLE = key("runic_shieldable");
     public static final TagKey<Item> SCAN_IRON = key("scan/f_matiron");
     public static final TagKey<Item> NITORS = key("nitors");
