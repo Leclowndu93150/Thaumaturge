@@ -342,6 +342,10 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.MATRIX_COST.get());
         add(TCBlocks.JAR_BRAIN.get(), bannerTable(TCBlocks.JAR_BRAIN.get()));
         dropOther(TCBlocks.GOLEM_BUILDER.get(), Blocks.PISTON);
+        dropOther(TCBlocks.PLACEHOLDER_IRON_BARS.get(), Blocks.IRON_BARS);
+        dropOther(TCBlocks.PLACEHOLDER_CAULDRON.get(), Blocks.CAULDRON);
+        dropOther(TCBlocks.PLACEHOLDER_ANVIL.get(), Blocks.ANVIL);
+        dropOther(TCBlocks.PLACEHOLDER_TABLE.get(), TCBlocks.TABLE_STONE.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.ALCHEMICAL_FURNACE.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), TCBlocks.ALEMBIC.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());

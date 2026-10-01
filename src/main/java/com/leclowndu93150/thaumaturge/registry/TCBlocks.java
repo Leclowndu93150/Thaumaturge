@@ -283,7 +283,7 @@ public final class TCBlocks {
                     .lightLevel(state -> state.getValue(BlockTaintSporeStalk.MATURE) ? 10 : 0));
 
     private static BlockBehaviour.Properties pressPlaceholderProps(BlockBehaviour.Properties props) {
-        return props.mapColor(MapColor.STONE).strength(2.5F, 3600000.0F).sound(SoundType.STONE).noLootTable().noOcclusion().dynamicShape();
+                return props.mapColor(MapColor.STONE).strength(2.5F, 3600000.0F).sound(SoundType.STONE).noOcclusion().dynamicShape();
     }
 
     private static BlockBehaviour.Properties advancedFurnacePlaceholderProps(BlockBehaviour.Properties props) {

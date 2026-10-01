@@ -54,6 +54,13 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.TALLOW_BLOCK.get()).add(TCBlocks.GOLEM_FETTER.get());
         tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.CENTRIFUGE.get()).add(TCBlocks.ALEMBIC.get()).add(TCBlocks.ARCANE_WORKBENCH.get()).add(TCBlocks.RESEARCH_TABLE.get())
                 .add(TCBlocks.ARCANE_WORKBENCH_CHARGER.get()).add(TCBlocks.ARCANE_DOOR.get()).add(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.NODE_STABILIZER.get()).add(TCBlocks.NODE_STABILIZER_ADVANCED.get()).add(TCBlocks.NODE_TRANSDUCER.get()).add(TCBlocks.VIS_RELAY.get())
+                .add(TCBlocks.CRUCIBLE.get()).add(TCBlocks.THAUMATORIUM.get()).add(TCBlocks.GOLEM_BUILDER.get()).add(TCBlocks.PLACEHOLDER_IRON_BARS.get())
+                .add(TCBlocks.PLACEHOLDER_CAULDRON.get()).add(TCBlocks.PLACEHOLDER_ANVIL.get()).add(TCBlocks.PLACEHOLDER_TABLE.get()).add(TCBlocks.CONDENSER.get())
+                .add(TCBlocks.PATTERN_CRAFTER.get()).add(TCBlocks.POTION_SPRAYER.get()).add(TCBlocks.DIOPTRA.get()).add(TCBlocks.LAMP_ARCANE.get()).add(TCBlocks.LAMP_GROWTH.get())
+                .add(TCBlocks.LAMP_FERTILITY.get()).add(TCBlocks.EVERFULL_URN.get()).add(TCBlocks.VOID_SIPHON.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.DECONSTRUCTION_TABLE.get()).add(TCBlocks.LEVITATOR.get()).add(TCBlocks.BRAIN_BOX.get()).add(TCBlocks.ARCANE_EAR.get())
+                .add(TCBlocks.ARCANE_EAR_TOGGLE.get()).add(TCBlocks.HUNGRY_CHEST.get()).add(TCBlocks.VIS_GENERATOR.get());
         tag(TCBlockTags.INFUSION_STABILISERS).add(Blocks.SKELETON_SKULL).add(Blocks.SKELETON_WALL_SKULL).add(Blocks.WITHER_SKELETON_SKULL).add(Blocks.WITHER_SKELETON_WALL_SKULL)
                 .add(Blocks.ZOMBIE_HEAD).add(Blocks.ZOMBIE_WALL_HEAD).add(Blocks.PLAYER_HEAD).add(Blocks.PLAYER_WALL_HEAD).add(Blocks.CREEPER_HEAD).add(Blocks.CREEPER_WALL_HEAD)
                 .add(Blocks.DRAGON_HEAD).add(Blocks.DRAGON_WALL_HEAD).add(Blocks.PIGLIN_HEAD).add(Blocks.PIGLIN_WALL_HEAD);
