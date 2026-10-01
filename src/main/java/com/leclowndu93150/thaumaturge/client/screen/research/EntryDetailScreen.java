@@ -865,6 +865,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             ItemStack stack = pickRotatingItem(req, i);
             if (!stack.isEmpty()) {
                 graphics.renderItem(stack, slotX, y);
+                graphics.renderItemDecorations(font, stack, slotX, y);
             }
             boolean met = completedStage
                     || (obtain
