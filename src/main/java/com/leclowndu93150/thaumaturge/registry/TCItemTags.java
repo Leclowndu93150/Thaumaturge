@@ -14,7 +14,7 @@ public final class TCItemTags {
     public static final TagKey<Item> PLACEABLE_CRYSTALS = key("placeable_crystals");
     public static final TagKey<Item> GOLEM_SEALS = key("golem_seals");
     public static final TagKey<Item> RESEARCH_NOTES = key("research_notes");
-    public static final TagKey<Item> TREASURES = key("treasures");
+    public static final TagKey<Item> LOOT_CONTAINERS = key("loot_containers");
     public static final TagKey<Item> RUNIC_SHIELDABLE = key("runic_shieldable");
     public static final TagKey<Item> SCAN_IRON = key("scan/f_matiron");
     public static final TagKey<Item> NITORS = key("nitors");

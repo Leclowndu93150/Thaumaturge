@@ -111,7 +111,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
                         TCItems.SEAL_STOCK.get());
         tag(TCItemTags.RESEARCH_NOTES)
                 .add(TCItems.RESEARCH_NOTE.get(), TCItems.CELESTIAL_NOTES.get());
-        tag(TCItemTags.TREASURES)
+        tag(TCItemTags.LOOT_CONTAINERS)
                 .add(
                         TCItems.LOOT_BAG_COMMON.get(),
                         TCItems.LOOT_BAG_UNCOMMON.get(),
