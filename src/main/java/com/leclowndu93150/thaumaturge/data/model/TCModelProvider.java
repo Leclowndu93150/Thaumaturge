@@ -1714,20 +1714,73 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private void itemGrate() {
-        ResourceLocation open = ModelTemplates.CUBE_ALL.create(
-                TCBlocks.ITEM_GRATE.get(),
-                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate")),
-                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
-        ResourceLocation closed = ModelTemplates.CUBE_ALL.createWithSuffix(
-                TCBlocks.ITEM_GRATE.get(),
-                "_closed",
-                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate_closed")),
-                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
+        ResourceLocation open = TCIds.rl("block/item_grate");
+        ResourceLocation closed = TCIds.rl("block/item_grate_closed");
+        modelOutput.accept(open, () -> itemGrateModel(false));
+        modelOutput.accept(closed, () -> itemGrateModel(true));
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ITEM_GRATE.get())
                 .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.device.BlockItemGrate.OPEN)
                         .select(true, v(open))
                         .select(false, v(closed))));
         delegateItem(TCBlocks.ITEM_GRATE.get().asItem(), open);
+    }
+
+    private static JsonObject itemGrateModel(boolean closed) {
+        JsonObject root = new JsonObject();
+        root.addProperty("parent", "minecraft:block/block");
+        root.addProperty("render_type", "minecraft:cutout");
+        JsonObject textures = new JsonObject();
+        ResourceLocation grateTexture = blockTexture("item_grate");
+        textures.addProperty("particle", grateTexture.toString());
+        textures.addProperty("all", grateTexture.toString());
+        textures.addProperty("hatch", blockTexture("item_grate_closed").toString());
+        root.add("textures", textures);
+
+        JsonObject element = new JsonObject();
+        element.add("from", insetCoords(0, 14, 0));
+        element.add("to", insetCoords(16, 16, 16));
+        JsonObject faces = new JsonObject();
+        JsonObject top = new JsonObject();
+        top.addProperty("texture", "#all");
+        top.addProperty("cullface", Direction.UP.getSerializedName());
+        faces.add(Direction.UP.getSerializedName(), top);
+        JsonObject bottom = new JsonObject();
+        bottom.addProperty("texture", "#all");
+        bottom.addProperty("cullface", Direction.DOWN.getSerializedName());
+        faces.add(Direction.DOWN.getSerializedName(), bottom);
+        for (Direction direction : List.of(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", "#all");
+            face.addProperty("cullface", direction.getSerializedName());
+            JsonArray uv = new JsonArray();
+            uv.add(0);
+            uv.add(15);
+            uv.add(16);
+            uv.add(16);
+            face.add("uv", uv);
+            faces.add(direction.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        JsonArray elements = new JsonArray();
+        elements.add(element);
+        if (closed) {
+            JsonObject hatch = new JsonObject();
+            hatch.add("from", insetCoords(0, 14, 0));
+            hatch.add("to", insetCoords(16, 16, 16));
+            JsonObject hatchTop = new JsonObject();
+            hatchTop.addProperty("texture", "#hatch");
+            hatchTop.addProperty("cullface", Direction.UP.getSerializedName());
+            JsonObject hatchFaces = new JsonObject();
+            hatchFaces.add(Direction.UP.getSerializedName(), hatchTop);
+            JsonObject hatchBottom = new JsonObject();
+            hatchBottom.addProperty("texture", "#hatch");
+            hatchBottom.addProperty("cullface", Direction.DOWN.getSerializedName());
+            hatchFaces.add(Direction.DOWN.getSerializedName(), hatchBottom);
+            hatch.add("faces", hatchFaces);
+            elements.add(hatch);
+        }
+        root.add("elements", elements);
+        return root;
     }
 
     private void wardedGlass() {
