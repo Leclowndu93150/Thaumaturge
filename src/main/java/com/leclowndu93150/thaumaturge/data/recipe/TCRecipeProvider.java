@@ -1012,8 +1012,8 @@ public final class TCRecipeProvider extends RecipeProvider {
     private void buildEssentiaMachineRecipes() {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
 
-        new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(TCItems.EVERFULL_URN), Ingredient.of(Items.FLOWER_POT)).aspect(TCAspects.AQUA, 30).aspect(TCAspects.FABRICO, 10)
-                .aspect(TCAspects.TERRA, 10).gate(gate("everfull_urn")).unlockedBy("has", has(Items.FLOWER_POT)).save(output);
+        new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(TCItems.EVERFULL_URN), Ingredient.of(Items.DECORATED_POT)).aspect(TCAspects.AQUA, 30).aspect(TCAspects.FABRICO, 10)
+                .aspect(TCAspects.TERRA, 10).gate(gate("everfull_urn")).unlockedBy("has", has(Items.DECORATED_POT)).save(output);
 
         arcaneShaped(new ItemStackTemplate(TCItems.VIS_GENERATOR), 25).aspect(TCAspects.IGNIS, 1).aspect(TCAspects.ORDO, 1).pattern("WSW").pattern("EPE").pattern("WRW")
                 .define('R', TCItems.VIS_RESONATOR).define('E', TCItemTags.NUGGETS_BRASS).define('S', Tags.Items.DUSTS_REDSTONE).define('P', Items.PISTON).define('W', ItemTags.PLANKS)
