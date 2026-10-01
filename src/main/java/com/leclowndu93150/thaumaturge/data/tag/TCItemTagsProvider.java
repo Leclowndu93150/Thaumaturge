@@ -111,8 +111,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         TCItems.SEAL_USE.get(),
                         TCItems.SEAL_PROVIDER.get(),
                         TCItems.SEAL_STOCK.get());
-        tag(TCItemTags.RESEARCH_NOTES)
-                .add(TCItems.RESEARCH_NOTE.get(), TCItems.CELESTIAL_NOTES.get());
+        tag(TCItemTags.RESEARCH_NOTES).add(TCItems.RESEARCH_NOTE.get(), TCItems.CELESTIAL_NOTES.get());
         tag(TCItemTags.LOOT_CONTAINERS)
                 .add(
                         TCItems.LOOT_BAG_COMMON.get(),
