@@ -104,6 +104,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final float PURE_EROSION_CHANCE = 0.025F;
     private static final int NODE_DRAIN_INTERVAL = 5;
     private static final int ORB_BURST_MAX_PER_ASPECT = 10;
+    private static final int ORB_BURST_MAX_ORBS_PER_ASPECT = 20;
     private static final float ZAP_WIDTH = 0.3F;
     private static final int LOCK_BASIC = 1;
     private static final int LOCK_ADVANCED = 2;
@@ -1120,8 +1121,15 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         RandomSource random = serverLevel.getRandom();
         for (Map.Entry<ResourceKey<IAspect>, Integer> entry : primals.entrySet()) {
             int remaining = entry.getValue();
+            int maxPerOrb = Math.max(
+                    ORB_BURST_MAX_PER_ASPECT,
+                    (2 * remaining + ORB_BURST_MAX_ORBS_PER_ASPECT - 1) / ORB_BURST_MAX_ORBS_PER_ASPECT);
+            int orbs = 0;
             while (remaining > 0) {
-                int value = Math.min(remaining, 1 + random.nextInt(ORB_BURST_MAX_PER_ASPECT));
+                orbs++;
+                int value = orbs >= ORB_BURST_MAX_ORBS_PER_ASPECT
+                        ? remaining
+                        : Math.min(remaining, 1 + random.nextInt(maxPerOrb));
                 remaining -= value;
                 serverLevel.addFreshEntity(new EntityAspectOrb(
                         serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, entry.getKey(), value));
