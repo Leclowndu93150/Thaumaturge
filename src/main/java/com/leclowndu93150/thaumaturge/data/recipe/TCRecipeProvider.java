@@ -2560,12 +2560,12 @@ public final class TCRecipeProvider extends RecipeProvider {
                         aspects,
                         RecipeCategory.MISC,
                         new ItemStack(TCItems.EVERFULL_URN.get()),
-                        Ingredient.of(Items.FLOWER_POT))
+                        Ingredient.of(Items.DECORATED_POT))
                 .aspect(TCAspects.AQUA, 30)
                 .aspect(TCAspects.FABRICO, 10)
                 .aspect(TCAspects.TERRA, 10)
                 .gate(gate("everfull_urn"))
-                .unlockedBy("has", has(Items.FLOWER_POT))
+                .unlockedBy("has", has(Items.DECORATED_POT))
                 .save(output);
 
         arcaneShaped(new ItemStack(TCItems.VIS_GENERATOR.get()), 25)
