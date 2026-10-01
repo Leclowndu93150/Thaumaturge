@@ -85,6 +85,7 @@ public final class TCModelProvider implements DataProvider {
     private static final ResourceLocation PROPERTY_LOADED = TCIds.rl("loaded");
     private static final ResourceLocation PROPERTY_NOTE_COMPLETE = TCIds.rl("note_complete");
     private static final ResourceLocation PROPERTY_FILLED = TCIds.rl("filled");
+    private static final ResourceLocation PROPERTY_MARKED = TCIds.rl("marked");
     private static final ResourceLocation PROPERTY_VERDANT_TYPE = TCIds.rl("verdant_type");
     private static final ResourceLocation PROPERTY_CELESTIAL_BODY = TCIds.rl("celestial_body");
     private static final ResourceLocation PROPERTY_WAND_IS_STAFF = TCIds.rl("wand_is_staff");
@@ -259,7 +260,6 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.CHUNK_MUTTON.get());
         flatItem(TCItems.TRIPLE_MEAT_TREAT.get());
         flatItem(TCItems.JAR_BRACE.get());
-        flatItem(TCItems.LABEL.get());
         flatItem(TCItems.BOTTLE_TAINT.get());
         flatItem(TCItems.VIS_RESONATOR.get());
         flatItem(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());
@@ -2170,6 +2170,7 @@ public final class TCModelProvider implements DataProvider {
 
     private void containerItemModels() {
         registerPhial();
+        registerLabel();
         registerPrimordialPearl();
     }
 
@@ -2185,6 +2186,20 @@ public final class TCModelProvider implements DataProvider {
                 TCItems.PHIAL.get(),
                 Map.of("layer0", TextureMapping.getItemTexture(TCItems.PHIAL.get())),
                 List.of(new ItemOverride(PROPERTY_FILLED, 1.0F, filled)));
+    }
+
+    private void registerLabel() {
+        ResourceLocation marked = ModelLocationUtils.getModelLocation(TCItems.LABEL.get(), "_marked");
+        ModelTemplates.TWO_LAYERED_ITEM.create(
+                marked,
+                TextureMapping.layered(
+                        TextureMapping.getItemTexture(TCItems.LABEL.get()),
+                        TextureMapping.getItemTexture(TCItems.LABEL.get(), "_overlay")),
+                modelOutput);
+        generatedOverridesItem(
+                TCItems.LABEL.get(),
+                Map.of("layer0", TextureMapping.getItemTexture(TCItems.LABEL.get())),
+                List.of(new ItemOverride(PROPERTY_MARKED, 1.0F, marked)));
     }
 
     private void registerPrimordialPearl() {

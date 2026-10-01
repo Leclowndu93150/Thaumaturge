@@ -7,6 +7,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.items.ILabel;
+import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
+import com.leclowndu93150.thaumaturge.registry.TCItems;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
@@ -30,18 +33,26 @@ public final class AspectContainerTooltipHandler {
         if (stack.isEmpty()) {
             return;
         }
-        if (!(stack.getItem() instanceof IEssentiaContainerItem container)) {
-            return;
+        if (stack.getItem() instanceof IEssentiaContainerItem container) {
+            renderAspectList(container.getAspects(stack), event.getToolTip());
         }
 
+        if (stack.is(TCItems.LABEL.get())) {
+            ILabel label = (ILabel) stack.getItem();
+            if (label.getFilteredAspect(stack) == null) return;
+            Holder<IAspect> aspect =
+                    EssentiaTransportHelper.resolve(event.getContext().registries(), label.getFilteredAspect(stack));
+            renderAspectList(AspectList.of(new AspectInstance(aspect, 1)), event.getToolTip());
+        }
+    }
+
+    private static void renderAspectList(AspectList aspects, List<Component> tooltip) {
         if (!shouldShow()) {
             return;
         }
-        AspectList aspects = container.getAspects(stack);
         if (aspects.isEmpty()) {
             return;
         }
-        List<Component> tooltip = event.getToolTip();
         tooltip.add(
                 1,
                 Component.translatable("tooltip.thaumaturge.aspects.header")
