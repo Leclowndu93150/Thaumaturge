@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
@@ -95,17 +96,21 @@ public final class AspectFromStacksCategory implements IRecipeCategory<AspectFro
     @Override
     public void draw(
             Wrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        resultSlot.draw(guiGraphics);
-        guiGraphics.blit(
-                ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_inner.png"),
-                5,
-                30,
-                0,
-                0,
-                163,
-                74,
-                256,
-                256);
+        GuiBlend.withAlphaBlend(guiGraphics, () -> {
+            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+            resultSlot.draw(guiGraphics);
+            guiGraphics.setColor(1.0F, 1.0F, 1.0F, 0.5F);
+            guiGraphics.blit(
+                    ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_inner.png"),
+                    5,
+                    30,
+                    0,
+                    0,
+                    163,
+                    74,
+                    256,
+                    256);
+        });
     }
 
     public record Wrapper(Holder<IAspect> aspect, List<ItemStack> stacks) {}
