@@ -32,13 +32,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -162,6 +165,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private static @Nullable ResourceLocation persistedCategoryId = null;
     private static int persistedCatScrollPos = 0;
     private static boolean persistedSearching = false;
+    private static @Nullable ResourceLocation persistedEntryId = null;
 
     private final List<Holder.Reference<IResearchCategory>> categoriesTC = new ArrayList<>();
     private final List<Holder.Reference<IResearchCategory>> categoriesOther = new ArrayList<>();
@@ -200,6 +204,26 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         super(Component.empty());
         this.curMouseX = this.guiMapX = this.tempMapX = persistedX;
         this.curMouseY = this.guiMapY = this.tempMapY = persistedY;
+    }
+
+    public static Screen reopen() {
+        ThaumonomiconBrowserScreen browser = new ThaumonomiconBrowserScreen();
+        Minecraft minecraft = Minecraft.getInstance();
+        if (persistedEntryId == null || minecraft.player == null) {
+            return browser;
+        }
+        ResourceLocation entryId = persistedEntryId;
+        return minecraft
+                .player
+                .registryAccess()
+                .lookup(IResearchEntry.REGISTRY_KEY)
+                .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId)))
+                .<Screen>map(holder -> new EntryDetailScreen(holder, entryId, browser))
+                .orElse(browser);
+    }
+
+    public static void rememberEntry(@Nullable ResourceLocation entryId) {
+        persistedEntryId = entryId;
     }
 
     @Override

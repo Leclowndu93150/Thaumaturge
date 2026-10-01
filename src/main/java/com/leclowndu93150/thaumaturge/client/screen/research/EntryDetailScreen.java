@@ -326,6 +326,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         this.entry = entry;
         this.entryId = entryId;
         this.parent = parent;
+        ThaumonomiconBrowserScreen.rememberEntry(entryId);
     }
 
     @Override
@@ -2015,7 +2016,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 1) {
-            onClose();
+            returnToBrowser();
             return true;
         }
         if (button == 0) {
@@ -2494,16 +2495,30 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     @Override
     public void onClose() {
-        if (shownRecipe != null || showingAspects || showingKnowledge || showingConstruct) {
-            shownRecipe = null;
-            showingAspects = false;
-            showingKnowledge = false;
-            showingConstruct = false;
-            history.clear();
-            playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        if (!closeInsert()) {
+            super.onClose();
+        }
+    }
+
+    private void returnToBrowser() {
+        if (closeInsert()) {
             return;
         }
+        ThaumonomiconBrowserScreen.rememberEntry(null);
         if (minecraft != null) minecraft.setScreen(parent);
+    }
+
+    private boolean closeInsert() {
+        if (shownRecipe == null && !showingAspects && !showingKnowledge && !showingConstruct) {
+            return false;
+        }
+        shownRecipe = null;
+        showingAspects = false;
+        showingKnowledge = false;
+        showingConstruct = false;
+        history.clear();
+        playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        return true;
     }
 
     @Override
