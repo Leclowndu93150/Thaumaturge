@@ -281,10 +281,20 @@ public final class InfusionEnchantmentEvents {
         }
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.LAMPLIGHT) && !player.isShiftKeyDown()) {
-            if (level.isEmptyBlock(pos) && level.getMaxLocalRawBrightness(pos) < GLIMMER_LIGHT_THRESHOLD) {
+            if (level.isEmptyBlock(pos) && settledLight(level, pos) < GLIMMER_LIGHT_THRESHOLD) {
                 level.setBlock(pos, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
             }
         }
+    }
+
+    private static int settledLight(ServerLevel level, BlockPos pos) {
+        int light = level.getRawBrightness(pos, 0);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (Direction direction : Direction.values()) {
+            cursor.setWithOffset(pos, direction);
+            light = Math.max(light, level.getRawBrightness(cursor, 0) - 1);
+        }
+        return light;
     }
 
     @SubscribeEvent
