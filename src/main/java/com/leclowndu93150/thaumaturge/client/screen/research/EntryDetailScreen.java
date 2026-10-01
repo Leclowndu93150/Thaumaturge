@@ -74,6 +74,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int PANE_W = 256;
@@ -2527,7 +2528,40 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             onClose();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        switch (keyCode) {
+            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_PAGE_UP -> {
+                if (!insertOpen()) {
+                    prevPage();
+                }
+                return true;
+            }
+            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_DOWN, GLFW.GLFW_KEY_PAGE_DOWN -> {
+                if (!insertOpen()) {
+                    nextPage();
+                }
+                return true;
+            }
+            case GLFW.GLFW_KEY_BACKSPACE -> {
+                goBack();
+                return true;
+            }
+            default -> {
+                return super.keyPressed(keyCode, scanCode, modifiers);
+            }
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (insertOpen() || scrollY == 0.0) {
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+        if (scrollY > 0.0) {
+            prevPage();
+        } else {
+            nextPage();
+        }
+        return true;
     }
 
     @Override
