@@ -3,7 +3,7 @@
   "name": "research.thaumaturge.flux_scrubber.title",
   "parents": [
     "~thaumaturge:infusion",
-    "thaumaturge:vis_battery",
+    "thaumaturge:vis_relay",
     "thaumaturge:bellows",
     "thaumaturge:tubes"
   ],

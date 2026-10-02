@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
+import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
@@ -30,9 +30,9 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private static final int DIAMETER = RADIUS * 2 + 1;
     private static final int SCAN_VOLUME = DIAMETER * DIAMETER * DIAMETER;
     private static final int CHECKS_PER_TICK = 16;
-    // 5/10 centivis are 0.05/0.10 aura vis.
-    private static final float WORK_VIS = 0.05F;
-    private static final float VIS_REFILL_REQUEST = 0.10F;
+    public static final int WORK_POWER = 5;
+    private static final int POWER_REQUEST = 10;
+    private static final int DRAW_RETRY_TICKS = 20;
 
     private static int chargesPerRoll() {
         return ThaumaturgeCommonConfig.FLUX_SCRUBBER_CHARGES_PER_ROLL.get();
@@ -52,7 +52,8 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
 
     private int essentia;
     private int charges;
-    private float power;
+    private int power;
+    private int drawCooldown;
     private int scanIndex;
     private int scanOffset;
     private int scanStep;
@@ -71,7 +72,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
         return charges;
     }
 
-    public float power() {
+    public int power() {
         return power;
     }
 
@@ -86,15 +87,28 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
             }
         }
 
-        if (scrubber.power < WORK_VIS) {
-            float drained = AuraHelper.drainVis(level, pos, VIS_REFILL_REQUEST, false);
-            if (drained > 0.0F) {
-                scrubber.power += drained;
-                scrubber.setChanged();
-            }
+        if (scrubber.power < WORK_POWER) {
+            scrubber.drawPower((ServerLevel) level, pos);
         }
-        if (scrubber.power >= WORK_VIS) {
+        if (scrubber.power >= WORK_POWER) {
             scrubber.scanForFlux((ServerLevel) level, pos);
+        }
+    }
+
+    private void drawPower(ServerLevel level, BlockPos pos) {
+        if (drawCooldown > 0) {
+            drawCooldown--;
+            return;
+        }
+        int drained = VisRelayNetwork.drainEverySourceNear(level, pos, TCAspects.AER, POWER_REQUEST);
+        if (drained < POWER_REQUEST) {
+            drained += VisRelayNetwork.drainNodesNear(level, pos, TCAspects.AER, POWER_REQUEST - drained);
+        }
+        if (drained > 0) {
+            power += drained;
+            setChanged();
+        } else {
+            drawCooldown = DRAW_RETRY_TICKS;
         }
     }
 
@@ -119,7 +133,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
             if (dx * dx + dy * dy + dz * dz >= RADIUS * RADIUS) continue;
             BlockPos target = origin.offset(dx, dy, dz);
             if (removeOneFluxQuanta(level, target)) {
-                power -= WORK_VIS;
+                power -= WORK_POWER;
                 charges++;
                 setChanged();
                 Effects.simpleSparkle(level, Vec3.atCenterOf(target))
@@ -238,7 +252,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
         super.loadAdditional(input, registries);
         essentia = Math.max(0, Math.min(essentiaCapacity(), input.getInt("Essentia")));
         charges = Math.max(0, input.getInt("Charges"));
-        power = Math.max(0.0F, input.getFloat("Power"));
+        power = Math.max(0, input.getInt("Power"));
         scanIndex = 0;
         scanStep = 0;
     }
@@ -248,14 +262,14 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
         super.saveAdditional(output, registries);
         output.putInt("Essentia", essentia);
         output.putInt("Charges", charges);
-        output.putFloat("Power", power);
+        output.putInt("Power", power);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putInt("Essentia", essentia);
-        tag.putFloat("Power", power);
+        tag.putInt("Power", power);
         return tag;
     }
 

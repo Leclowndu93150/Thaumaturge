@@ -477,7 +477,7 @@ public final class ResearchTextEn {
         add.accept("research.thaumaturge.flux_scrubber.title", "Flux Scrubber");
         add.accept(
                 "research.thaumaturge.flux_scrubber.stage_0",
-                "Even the most skilled thaumaturge occasionally leaves a mess in the form of flux. It is a nuisance everyone has to deal with, but this machine removes the drudgery involved.<BR>The flux scrubber draws vis from the local aura and slowly removes physical Flux, whether Goo or Gas, within 16 blocks of where it is placed. What is more, it is able to reclaim a small portion of the magic that makes up the flux in the form of praecantatio essentia.<BR>Its internal buffer is very small and it will continue operating even when full, so it must be emptied if I wish to reclaim all the essentia.");
+                "Even the most skilled thaumaturge occasionally leaves a mess in the form of flux. It is a nuisance everyone has to deal with, but this machine removes the drudgery involved.<BR>The flux scrubber, when powered with aer vis from a nearby vis relay or energized node, will slowly remove any form of flux, whether Goo or Gas, within 16 blocks of where it is placed. What is more, it is able to reclaim a small portion of the magic that makes up the flux in the form of praecantatio essentia.<BR>Its internal buffer is very small and it will continue operating even when full, so it must be emptied if I wish to reclaim all the essentia.");
         add.accept("research.thaumaturge.essentia_reservoir.title", "Advanced Essentia Storage");
         add.accept(
                 "research.thaumaturge.essentia_reservoir.stage_0",

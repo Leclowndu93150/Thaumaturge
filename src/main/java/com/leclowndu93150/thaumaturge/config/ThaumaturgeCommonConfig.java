@@ -161,16 +161,16 @@ public final class ThaumaturgeCommonConfig {
 
         FLUX_SCRUBBER_CHARGES_PER_ROLL = builder.comment(
                         "Flux Goo or Gas units cleaned per Praecantatio recovery attempt. Lower values increase recovery frequency.")
-                .defineInRange("chargesPerRoll", 2, 1, 64);
+                .defineInRange("chargesPerRoll", 4, 1, 64);
         FLUX_SCRUBBER_ESSENTIA_CHANCE = builder.comment(
                         "Chance (0-1) of recovering Praecantatio per roll. 1.0 guarantees recovery.")
-                .defineInRange("essentiaChance", 0.8, 0.0, 1.0);
+                .defineInRange("essentiaChance", 0.25, 0.0, 1.0);
         FLUX_SCRUBBER_ESSENTIA_PER_ROLL = builder.comment(
                         "Praecantatio produced per successful recovery roll. Increase capacity to accommodate larger amounts.")
                 .defineInRange("essentiaPerRoll", 1, 0, 64);
         FLUX_SCRUBBER_ESSENTIA_CAPACITY = builder.comment(
                         "Maximum Praecantatio stored before the scrubber must be drained by an attached pipe or jar.")
-                .defineInRange("essentiaCapacity", 16, 1, 1024);
+                .defineInRange("essentiaCapacity", 4, 1, 1024);
 
         builder.pop();
         SPEC = builder.build();
