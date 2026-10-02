@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigNodeSpawnFilter;
 import com.leclowndu93150.thaumaturge.content.world.objects.ConfigRarityFilter;
+import com.leclowndu93150.thaumaturge.content.world.objects.MagicalCaveFloorPlacement;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.bus.api.IEventBus;
@@ -19,6 +20,9 @@ public final class TCPlacementModifiers {
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ConfigNodeSpawnFilter>>
             NODE_SPAWN_CHANCE =
                     PLACEMENT_MODIFIERS.register("node_spawn_chance", () -> () -> ConfigNodeSpawnFilter.CODEC);
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<MagicalCaveFloorPlacement>>
+            MAGICAL_CAVE_FLOOR =
+                    PLACEMENT_MODIFIERS.register("magical_cave_floor", () -> () -> MagicalCaveFloorPlacement.CODEC);
 
     private TCPlacementModifiers() {}
 

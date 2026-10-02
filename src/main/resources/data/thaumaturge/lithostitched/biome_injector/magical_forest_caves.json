@@ -1,0 +1,8 @@
+{
+  "type": "lithostitched:replace_partially",
+  "dimension": "minecraft:overworld",
+  "targets": "minecraft:lush_caves",
+  "replacement": "thaumaturge:magical_forest_caves",
+  "parameters": {},
+  "region": "thaumaturge:magical_forest"
+}

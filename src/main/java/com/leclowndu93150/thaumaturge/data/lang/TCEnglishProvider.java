@@ -572,6 +572,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.vishroom", "Vishroom");
         add("block.thaumaturge.grass_ambient", "Ambient Grass Block");
         add("biome.thaumaturge.magical_forest", "Magical Forest");
+        add("biome.thaumaturge.magical_forest_caves", "Magical Forest Caves");
         add("biome.thaumaturge.eerie", "Eerie");
         add("biome.thaumaturge.eldritch", "Eldritch");
         add("biome.thaumaturge.tainted_lands", "Tainted Lands");
