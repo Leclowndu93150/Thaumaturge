@@ -42,6 +42,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -622,12 +623,27 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         return lock;
     }
 
+    private static boolean isGenerated(ServerLevel level, BlockPos pos) {
+        return level.getChunkSource()
+                        .getChunkNow(
+                                SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()))
+                != null;
+    }
+
+    private static boolean isNeighbourhoodGenerated(ServerLevel level, BlockPos pos) {
+        return isGenerated(level, pos)
+                && isGenerated(level, pos.east())
+                && isGenerated(level, pos.west())
+                && isGenerated(level, pos.north())
+                && isGenerated(level, pos.south());
+    }
+
     private void checkLock(ServerLevel serverLevel, BlockPos pos) {
         if (count > 1 && count % BEHAVIOR_INTERVAL != 0) {
             return;
         }
         BlockPos below = pos.below();
-        if (!serverLevel.hasChunksAt(below.offset(-1, 0, -1), below.offset(1, 0, 1))) {
+        if (!isNeighbourhoodGenerated(serverLevel, below)) {
             return;
         }
         int oldLock = lock;
@@ -669,7 +685,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         BlockPos otherPos = pos.offset(x, y, z);
-        if (!serverLevel.hasChunkAt(otherPos)) {
+        if (!isGenerated(serverLevel, otherPos)) {
             return change;
         }
         if (!(serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode other)
@@ -1250,7 +1266,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                     random.nextInt(NATURAL_TAINTED_FIBRE_RANGE) - random.nextInt(NATURAL_TAINTED_FIBRE_RANGE),
                     random.nextInt(NATURAL_TAINTED_FIBRE_RANGE) - random.nextInt(NATURAL_TAINTED_FIBRE_RANGE),
                     random.nextInt(NATURAL_TAINTED_FIBRE_RANGE) - random.nextInt(NATURAL_TAINTED_FIBRE_RANGE));
-            if (!level.hasChunkAt(target)) {
+            if (!isNeighbourhoodGenerated(level, target)) {
                 continue;
             }
             BlockState targetState = level.getBlockState(target);
