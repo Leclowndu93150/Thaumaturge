@@ -51,6 +51,8 @@ public final class LabelFilterRecipe extends CustomRecipe {
                 if (!(stack.getItem() instanceof IEssentiaContainerItem it)
                         || it.getAspects(stack).isEmpty()) return null;
                 aspect = it.getAspects(stack).entries().getFirst().aspect();
+            } else if (!stack.isEmpty()) {
+                return null;
             }
         }
         if (!hasLabel) return null;
