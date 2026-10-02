@@ -1743,7 +1743,6 @@
   "tc.addendumtext": "§oAnexo %1$s§r",
   "tc.aspect.name": "Aspecto de esencia",
   "tc.aspect.composition": "%1$s + %2$s",
-  "tc.aspect.progress": "Aspectos conocidos %1$s/%2$s",
   "tc.aspect.primal": "Aspecto primordial",
   "tc.aspect.unknown": "Aspecto desconocido",
   "tc.aspect.unknown.desc": "Su naturaleza aún no se comprende.",

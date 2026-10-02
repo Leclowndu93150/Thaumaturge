@@ -1195,7 +1195,6 @@
   "tc.aspect.composition": "%1$s + %2$s",
   "tc.aspect.name": "Aspekte der Essentia",
   "tc.aspect.primal": "Primäraspekt",
-  "tc.aspect.progress": "Bekannte Aspekte %1$s/%2$s",
   "tc.aspect.unknown": "Unbekannter Aspekt",
   "tc.aspect.unknown.desc": "Sein Wesen ist noch nicht verstanden.",
   "tc.aspect.unknown.short": "???",

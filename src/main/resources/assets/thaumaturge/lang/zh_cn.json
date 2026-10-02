@@ -1794,7 +1794,6 @@
   "tc.aspect.composition": "%1$s + %2$s",
   "tc.aspect.name": "源质要素",
   "tc.aspect.primal": "元始要素",
-  "tc.aspect.progress": "要素已知 %1$s/%2$s",
   "tc.aspect.unknown": "未知要素",
   "tc.aspect.unknown.desc": "其性质尚不清楚",
   "tc.aspect.unknown.short": "？？？",

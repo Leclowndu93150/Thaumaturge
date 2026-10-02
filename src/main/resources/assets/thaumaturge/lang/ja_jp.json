@@ -1302,7 +1302,6 @@
   "tc.aspect.composition": "%1$s + %2$s",
   "tc.aspect.name": "Essentiaの属性",
   "tc.aspect.primal": "根源属性",
-  "tc.aspect.progress": "既知の属性 %1$s/%2$s",
   "tc.aspect.unknown": "未知の属性",
   "tc.aspect.unknown.desc": "その性質はまだ理解されていない。",
   "tc.aspect.unknown.short": "???",
