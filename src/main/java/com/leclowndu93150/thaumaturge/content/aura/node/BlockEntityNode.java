@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
@@ -69,11 +68,11 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 public class BlockEntityNode extends BlockEntity implements IAspectContainer {
@@ -91,7 +90,6 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final float BRIGHTEN_FLUX_LIMIT = 0.1F;
     private static final float BRIGHTEN_FILL_FRACTION = 0.9F;
     private static final int BRIGHTEN_CHANCE = 50;
-    private static final double HUNGRY_RAY_START_OFFSET = 0.25;
     private static final double HUNGRY_PULL_RANGE = 15.0;
     private static final double HUNGRY_ITEM_PULL_MARGIN = 0.5;
     private static final double HUNGRY_EAT_RANGE_SQ = 4.0;
@@ -1087,25 +1085,38 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private void eatBlock(ServerLevel serverLevel, BlockPos pos, RandomSource random) {
+        BlockPos target = hungryTarget(serverLevel, pos, random);
+        if (target != null) {
+            serverLevel.destroyBlock(target, true);
+        }
+    }
+
+    private @Nullable BlockPos hungryTarget(Level level, BlockPos pos, RandomSource random) {
         int range = hungryBlockEatRange();
         int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
         int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
         int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
+        if (!level.hasChunk(SectionPos.blockToSectionCoord(tx), SectionPos.blockToSectionCoord(tz))) {
+            return null;
+        }
+        ty = Math.min(ty, level.getHeight(Heightmap.Types.MOTION_BLOCKING, tx, tz));
+        Vec3 from = Vec3.atCenterOf(pos);
         Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = hungryNodeClip(serverLevel, pos, to);
+        BlockHitResult hit = level.clip(
+                new SourceIgnoringClipContext(pos, from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.SOURCE_ONLY));
         if (hit.getType() != HitResult.Type.BLOCK) {
-            return;
+            return null;
         }
         BlockPos target = hit.getBlockPos();
         if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
-            return;
+            return null;
         }
-        BlockState state = serverLevel.getBlockState(target);
-        float hardness = state.getDestroySpeed(serverLevel, target);
-        double maxHardness = ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get();
-        if (!state.isAir() && hardness >= 0.0F && hardness < maxHardness) {
-            serverLevel.destroyBlock(target, true);
+        BlockState state = level.getBlockState(target);
+        float hardness = state.getDestroySpeed(level, target);
+        if (state.isAir() || hardness < 0.0F || hardness >= ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get()) {
+            return null;
         }
+        return target;
     }
 
     private int hungryBlockEatRange() {
@@ -1125,17 +1136,6 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return minimum;
         }
         return minimum + Math.round(difference * 2.0F / 3.0F);
-    }
-
-    private static BlockHitResult hungryNodeClip(Level level, BlockPos pos, Vec3 to) {
-        Vec3 center = Vec3.atCenterOf(pos);
-        Vec3 direction = to.subtract(center);
-        if (direction.lengthSqr() < 1.0E-7) {
-            return BlockHitResult.miss(to, Direction.UP, pos);
-        }
-        Vec3 from = center.add(direction.normalize().scale(HUNGRY_RAY_START_OFFSET));
-        return level.clip(
-                new ClipContext(from, to, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
@@ -1220,25 +1220,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return;
         }
         RandomSource random = clientLevel.getRandom();
-        int range = hungryBlockEatRange();
-        int tx = pos.getX() + random.nextInt(range) - random.nextInt(range);
-        int ty = pos.getY() + random.nextInt(range) - random.nextInt(range);
-        int tz = pos.getZ() + random.nextInt(range) - random.nextInt(range);
-        Vec3 from = Vec3.atCenterOf(pos);
-        Vec3 to = new Vec3(tx + 0.5, ty + 0.5, tz + 0.5);
-        BlockHitResult hit = hungryNodeClip(clientLevel, pos, to);
-        if (hit.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
-        BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
+        BlockPos target = hungryTarget(clientLevel, pos, random);
+        if (target == null) {
             return;
         }
         BlockState state = clientLevel.getBlockState(target);
-        float hardness = state.getDestroySpeed(clientLevel, target);
-        if (state.isAir() || hardness < 0.0F || hardness >= ThaumaturgeCommonConfig.HUNGRY_NODE_BLOCK_HARDNESS.get()) {
-            return;
-        }
+        Vec3 from = Vec3.atCenterOf(pos);
         clientLevel.addParticle(
                 new BoreDebrisParticleOptions(state, from.x, from.y, from.z, 0.0, 0.0, 0.0),
                 target.getX() + random.nextFloat(),
