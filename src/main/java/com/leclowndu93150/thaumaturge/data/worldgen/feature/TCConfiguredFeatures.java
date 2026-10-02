@@ -195,6 +195,7 @@ public final class TCConfiguredFeatures {
                                 SILVERWOOD_NATURAL_MIN_HEIGHT,
                                 SILVERWOOD_NATURAL_EXTRA_HEIGHT,
                                 Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()),
+                                true,
                                 true)));
         context.register(
                 SILVERWOOD_TREE_GROWN,
@@ -206,6 +207,7 @@ public final class TCConfiguredFeatures {
                                 SILVERWOOD_GROWN_MIN_HEIGHT,
                                 SILVERWOOD_GROWN_EXTRA_HEIGHT,
                                 Optional.empty(),
+                                true,
                                 false)));
         context.register(
                 SILVERWOOD_TREE_CAVE,
@@ -217,6 +219,7 @@ public final class TCConfiguredFeatures {
                                 MAGICAL_CAVE_SILVERWOOD_BASE_HEIGHT,
                                 MAGICAL_CAVE_SILVERWOOD_EXTRA_HEIGHT,
                                 Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()),
+                                false,
                                 false)));
         context.register(
                 MAGICAL_CAVE_GREATWOOD_TREE,

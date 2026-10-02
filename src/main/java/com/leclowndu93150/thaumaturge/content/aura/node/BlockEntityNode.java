@@ -176,7 +176,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     public void setNodeType(NodeType type) {
         this.nodeType = type;
-        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, type);
         }
     }
@@ -190,9 +190,13 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
         }
+    }
+
+    private boolean isNodeBlock() {
+        return getBlockState().is(TCBlocks.NODE.get()) || getBlockState().is(TCBlocks.SILVERWOOD_NODE_LOG.get());
     }
 
     public @Nullable NodeModifier getNodeModifier() {

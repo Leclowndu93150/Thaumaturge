@@ -79,11 +79,17 @@ public final class BlockNode extends Block implements EntityBlock {
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
+        ItemInteractionResult pearlResult = tryPrimordialPearl(stack, level, pos, player);
+        return pearlResult != null ? pearlResult : super.useItemOn(stack, state, level, pos, player, hand, hit);
+    }
+
+    public static @Nullable ItemInteractionResult tryPrimordialPearl(
+            ItemStack stack, Level level, BlockPos pos, Player player) {
         if (!stack.is(TCItems.PRIMORDIAL_PEARL.get())
                 || stack.getDamageValue() > 2
                 || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)
                 || node.isEnergized()) {
-            return super.useItemOn(stack, state, level, pos, player, hand, hit);
+            return null;
         }
         if (!(level instanceof ServerLevel serverLevel)) {
             return ItemInteractionResult.SUCCESS;
@@ -115,6 +121,12 @@ public final class BlockNode extends Block implements EntityBlock {
             }
         }
         return ItemInteractionResult.SUCCESS;
+    }
+
+    public static void burstNode(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
+            node.burstIntoOrbs(serverLevel, pos);
+        }
     }
 
     @Override

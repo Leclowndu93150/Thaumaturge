@@ -758,6 +758,8 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> STRIPPED_WOOD_GREATWOOD =
             ITEMS.registerSimpleBlockItem(TCBlocks.STRIPPED_WOOD_GREATWOOD);
     public static final DeferredItem<BlockItem> LOG_SILVERWOOD = ITEMS.registerSimpleBlockItem(TCBlocks.LOG_SILVERWOOD);
+    public static final DeferredItem<BlockItem> SILVERWOOD_NODE_LOG =
+            ITEMS.registerSimpleBlockItem(TCBlocks.SILVERWOOD_NODE_LOG);
     public static final DeferredItem<BlockItem> WOOD_SILVERWOOD =
             ITEMS.registerSimpleBlockItem(TCBlocks.WOOD_SILVERWOOD);
     public static final DeferredItem<BlockItem> STRIPPED_LOG_SILVERWOOD =

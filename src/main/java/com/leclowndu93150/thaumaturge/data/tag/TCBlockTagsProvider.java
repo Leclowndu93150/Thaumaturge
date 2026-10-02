@@ -353,13 +353,20 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(TCBlockTags.SILVERWOOD_LOGS)
                 .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get())
                 .add(TCBlocks.WOOD_SILVERWOOD.get())
                 .add(TCBlocks.STRIPPED_LOG_SILVERWOOD.get())
                 .add(TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
 
-        tag(BlockTags.OVERWORLD_NATURAL_LOGS).add(TCBlocks.LOG_GREATWOOD.get()).add(TCBlocks.LOG_SILVERWOOD.get());
+        tag(BlockTags.OVERWORLD_NATURAL_LOGS)
+                .add(TCBlocks.LOG_GREATWOOD.get())
+                .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get());
 
-        tag(BlockTags.SNAPS_GOAT_HORN).add(TCBlocks.LOG_GREATWOOD.get()).add(TCBlocks.LOG_SILVERWOOD.get());
+        tag(BlockTags.SNAPS_GOAT_HORN)
+                .add(TCBlocks.LOG_GREATWOOD.get())
+                .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get());
 
         tag(BlockTags.FLOWERS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get());
 
