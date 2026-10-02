@@ -50,6 +50,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
@@ -207,7 +208,8 @@ public final class InfusionEnchantmentEvents {
         }
         Player player = event.getEntity();
         ItemStack held = player.getMainHandItem();
-        if (player.isShiftKeyDown()
+        if (event.getAction() == Action.ABORT
+                || player.isShiftKeyDown()
                 || !InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
                 || !held.isCorrectToolForDrops(event.getLevel().getBlockState(event.getPos()))) {
             DESTRUCTIVE_TARGETS.remove(player.getUUID());
