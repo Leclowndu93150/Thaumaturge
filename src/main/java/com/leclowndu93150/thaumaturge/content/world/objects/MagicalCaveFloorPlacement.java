@@ -24,11 +24,11 @@ public final class MagicalCaveFloorPlacement extends PlacementModifier {
 
     @Override
     public Stream<BlockPos> getPositions(PlacementContext context, RandomSource random, BlockPos origin) {
+        ChunkAccess chunk = context.getLevel().getChunk(origin);
         int top = context.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ());
-        int bottom = Math.max(-64, top - 384);
+        int bottom = Math.max(chunk.getMinBuildHeight(), top - chunk.getHeight());
         if (top <= bottom) return Stream.empty();
 
-        ChunkAccess chunk = context.getLevel().getChunk(origin);
         int minGroundY = Math.max(chunk.getMinBuildHeight(), bottom - 1);
         int localX = origin.getX() & 15;
         int localZ = origin.getZ() & 15;

@@ -10,16 +10,21 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record WispyMoteParticleOptions(int color, int age, float gravity, int targetEntityId)
+public record WispyMoteParticleOptions(int color, int age, float gravity, int targetEntityId, boolean emissive)
         implements ParticleOptions {
 
     public static final int NO_ENTITY = -1;
+
+    public WispyMoteParticleOptions(int color, int age, float gravity, int targetEntityId) {
+        this(color, age, gravity, targetEntityId, false);
+    }
 
     public static final MapCodec<WispyMoteParticleOptions> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
                     Codec.INT.fieldOf("color").forGetter(WispyMoteParticleOptions::color),
                     Codec.INT.fieldOf("age").forGetter(WispyMoteParticleOptions::age),
                     Codec.FLOAT.fieldOf("gravity").forGetter(WispyMoteParticleOptions::gravity),
-                    Codec.INT.optionalFieldOf("target", NO_ENTITY).forGetter(WispyMoteParticleOptions::targetEntityId))
+                    Codec.INT.optionalFieldOf("target", NO_ENTITY).forGetter(WispyMoteParticleOptions::targetEntityId),
+                    Codec.BOOL.optionalFieldOf("emissive", false).forGetter(WispyMoteParticleOptions::emissive))
             .apply(inst, WispyMoteParticleOptions::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WispyMoteParticleOptions> STREAM_CODEC =
@@ -32,6 +37,8 @@ public record WispyMoteParticleOptions(int color, int age, float gravity, int ta
                     WispyMoteParticleOptions::gravity,
                     ByteBufCodecs.VAR_INT,
                     WispyMoteParticleOptions::targetEntityId,
+                    ByteBufCodecs.BOOL,
+                    WispyMoteParticleOptions::emissive,
                     WispyMoteParticleOptions::new);
 
     @Override

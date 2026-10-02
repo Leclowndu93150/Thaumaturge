@@ -70,6 +70,17 @@ public final class TCPlacedFeatures {
     public static final ResourceKey<PlacedFeature> TAINT_BIOME = key("taint_biome");
 
     private static final int MAGIC_FOREST_TREE_COUNT = 2;
+    private static final int MAGICAL_CAVE_GRASS_COUNT = 4;
+    private static final int MAGICAL_CAVE_AMBIENT_GRASS_COUNT = 2;
+    private static final int MAGICAL_CAVE_POND_COUNT = 1;
+    private static final int MAGICAL_CAVE_TREE_COUNT = 10;
+    private static final int MAGICAL_CAVE_MUSHROOM_COUNT = 1;
+    private static final int MAGICAL_CAVE_FLORA_COUNT = 12;
+    private static final int MAGICAL_CAVE_VISHROOM_COUNT = 12;
+    private static final int MAGICAL_CAVE_SHIMMERLEAF_COUNT = 6;
+    private static final int MAGICAL_CAVE_MANA_POD_COUNT = 12;
+    private static final int MAGICAL_CAVE_CRYSTAL_COUNT = 128;
+    private static final int MAGICAL_CAVE_NODE_FLOOR_SCAN = 12;
     private static final int TAINTED_LANDS_TREE_COUNT = 2;
     private static final int TAINTED_LANDS_GRASS_COUNT = 2;
     private static final float MAGIC_FOREST_EXTRA_TREE_CHANCE = 0.1F;
@@ -198,35 +209,50 @@ public final class TCPlacedFeatures {
 
         context.register(
                 MAGICAL_CAVE_GRASS,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_GRASS), caveFloor(4)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_GRASS),
+                        caveFloor(MAGICAL_CAVE_GRASS_COUNT)));
         context.register(
                 MAGICAL_CAVE_AMBIENT_GRASS,
                 new PlacedFeature(
-                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_AMBIENT_GRASS), caveFloor(2)));
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_AMBIENT_GRASS),
+                        caveFloor(MAGICAL_CAVE_AMBIENT_GRASS_COUNT)));
         context.register(
                 MAGICAL_CAVE_POND,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_POND), caveFloor(1)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_POND),
+                        caveFloor(MAGICAL_CAVE_POND_COUNT)));
         context.register(
                 MAGICAL_CAVE_TREES,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_TREES), caveFloor(10)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_TREES),
+                        caveFloor(MAGICAL_CAVE_TREE_COUNT)));
         context.register(
                 MAGICAL_CAVE_MUSHROOMS,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_MUSHROOMS), caveFloor(1)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_MUSHROOMS),
+                        caveFloor(MAGICAL_CAVE_MUSHROOM_COUNT)));
         context.register(
                 MAGICAL_CAVE_FLORA,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_FLORA), caveFloor(12)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_FLORA),
+                        caveFloor(MAGICAL_CAVE_FLORA_COUNT)));
         context.register(
                 MAGICAL_CAVE_VISHROOMS,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_VISHROOM), caveFloor(12)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_VISHROOM),
+                        caveFloor(MAGICAL_CAVE_VISHROOM_COUNT)));
         context.register(
                 MAGICAL_CAVE_SHIMMERLEAFS,
-                new PlacedFeature(configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_SHIMMERLEAF), caveFloor(6)));
+                new PlacedFeature(
+                        configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_SHIMMERLEAF),
+                        caveFloor(MAGICAL_CAVE_SHIMMERLEAF_COUNT)));
         context.register(
                 MAGICAL_CAVE_MANA_PODS,
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.MANA_PODS),
                         List.of(
-                                CountPlacement.of(12),
+                                CountPlacement.of(MAGICAL_CAVE_MANA_POD_COUNT),
                                 InSquarePlacement.spread(),
                                 PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT,
                                 BiomeFilter.biome())));
@@ -235,7 +261,7 @@ public final class TCPlacedFeatures {
                 new PlacedFeature(
                         configured.getOrThrow(TCConfiguredFeatures.MAGICAL_CAVE_CRYSTALS),
                         List.of(
-                                CountPlacement.of(128),
+                                CountPlacement.of(MAGICAL_CAVE_CRYSTAL_COUNT),
                                 InSquarePlacement.spread(),
                                 PlacementUtils.RANGE_BOTTOM_TO_MAX_TERRAIN_HEIGHT,
                                 BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE),
@@ -252,7 +278,7 @@ public final class TCPlacedFeatures {
                                         Direction.DOWN,
                                         BlockPredicate.solid(),
                                         BlockPredicate.ONLY_IN_AIR_PREDICATE,
-                                        12),
+                                        MAGICAL_CAVE_NODE_FLOOR_SCAN),
                                 RandomOffsetPlacement.vertical(ConstantInt.of(1)),
                                 BiomeFilter.biome())));
 

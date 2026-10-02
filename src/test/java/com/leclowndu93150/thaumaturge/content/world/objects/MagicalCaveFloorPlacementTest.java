@@ -99,6 +99,7 @@ class MagicalCaveFloorPlacementTest {
             });
         }
         when(chunk.getMinBuildHeight()).thenReturn(-64);
+        when(chunk.getHeight()).thenReturn(384);
         when(chunk.getSectionIndex(anyInt())).thenAnswer(call -> ((int) call.getArgument(0) + 64) >> 4);
         when(chunk.getSection(anyInt())).thenAnswer(call -> sections[(int) call.getArgument(0)]);
         when(context.getLevel()).thenReturn(level);

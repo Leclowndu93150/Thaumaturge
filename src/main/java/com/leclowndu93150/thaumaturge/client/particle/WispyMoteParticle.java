@@ -25,6 +25,7 @@ public final class WispyMoteParticle extends TCParticle {
     private static final double SPEED_LIMIT = 0.35;
 
     private final int targetEntityId;
+    private final boolean emissive;
     private Entity target;
 
     private WispyMoteParticle(
@@ -42,6 +43,7 @@ public final class WispyMoteParticle extends TCParticle {
         this.lifetime = (int) (options.age() + options.age() / 2.0F * this.random.nextFloat());
         this.gravity = options.gravity();
         this.targetEntityId = options.targetEntityId();
+        this.emissive = options.emissive();
         this.alpha = 0.0F;
         setMoonWind(WIND_SCALE);
     }
@@ -65,7 +67,7 @@ public final class WispyMoteParticle extends TCParticle {
 
     @Override
     protected int getLightColor(float partialTick) {
-        return EMISSIVE_LIGHT;
+        return this.emissive ? EMISSIVE_LIGHT : super.getLightColor(partialTick);
     }
 
     private void seekTarget() {

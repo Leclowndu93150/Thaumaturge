@@ -14,6 +14,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 public final class ManaPodFeature extends Feature<NoneFeatureConfiguration> {
     private static final int TREE_SCAN_BELOW_SURFACE = 32;
     private static final int TREE_SCAN_ABOVE_SURFACE = 16;
+    private static final int CAVE_SCAN_RANGE = 8;
     private static final int DRIFT = 4;
     private static final int MIN_START_AGE = 2;
     private static final int START_AGE_SPREAD = 5;
@@ -31,8 +32,9 @@ public final class ManaPodFeature extends Feature<NoneFeatureConfiguration> {
         boolean cave = level.getBiome(context.origin()).is(TCBiomes.MAGICAL_FOREST_CAVES);
         int centerY =
                 cave ? context.origin().getY() : level.getHeight(Heightmap.Types.MOTION_BLOCKING, baseX, baseZ) - 1;
-        int y = Math.max(level.getMinBuildHeight() + 1, centerY - (cave ? 8 : TREE_SCAN_BELOW_SURFACE));
-        int maxY = Math.min(level.getMaxBuildHeight() - 1, centerY + (cave ? 8 : TREE_SCAN_ABOVE_SURFACE));
+        int y = Math.max(level.getMinBuildHeight() + 1, centerY - (cave ? CAVE_SCAN_RANGE : TREE_SCAN_BELOW_SURFACE));
+        int maxY =
+                Math.min(level.getMaxBuildHeight() - 1, centerY + (cave ? CAVE_SCAN_RANGE : TREE_SCAN_ABOVE_SURFACE));
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(baseX, y, baseZ);
         while (cursor.getY() <= maxY) {
             if (level.isEmptyBlock(cursor) && level.isEmptyBlock(cursor.below())) {

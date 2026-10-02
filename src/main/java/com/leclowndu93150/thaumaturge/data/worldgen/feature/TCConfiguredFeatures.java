@@ -105,6 +105,23 @@ public final class TCConfiguredFeatures {
     private static final float MAGICAL_CAVE_OAK_TREE_CHANCE = 0.70F;
     private static final float MAGICAL_CAVE_SILVERWOOD_CHANCE = 1.3F / 12.0F;
     private static final float MAGICAL_CAVE_GREATWOOD_CHANCE = MAGICAL_CAVE_SILVERWOOD_CHANCE;
+    private static final float MAGICAL_CAVE_BROWN_MUSHROOM_CHANCE = 0.03F;
+    private static final float MAGICAL_CAVE_RED_MUSHROOM_CHANCE = 0.025F;
+    private static final float MAGICAL_CAVE_FLOWER_CHANCE = 0.12F;
+    private static final int MAGICAL_CAVE_SILVERWOOD_BASE_HEIGHT = 6;
+    private static final int MAGICAL_CAVE_SILVERWOOD_EXTRA_HEIGHT = 3;
+    private static final int MAGICAL_CAVE_GREATWOOD_BASE_HEIGHT = 4;
+    private static final int MAGICAL_CAVE_GREATWOOD_EXTRA_HEIGHT = 2;
+    private static final int MAGICAL_CAVE_GREATWOOD_FOLIAGE_RADIUS = 2;
+    private static final int MAGICAL_CAVE_GREATWOOD_FOLIAGE_HEIGHT = 3;
+    private static final int MAGICAL_CAVE_CRYSTAL_ATTEMPTS = 1;
+    private static final int MAGICAL_CAVE_CRYSTAL_MAX_TOTAL = 8;
+    private static final int CAVE_GROUND_MIN_DEPTH = 1;
+    private static final int CAVE_GROUND_MAX_DEPTH = 2;
+    private static final int CAVE_GROUND_VERTICAL_RANGE = 5;
+    private static final int CAVE_GROUND_MIN_RADIUS = 3;
+    private static final int CAVE_GROUND_MAX_RADIUS = 6;
+    private static final float CAVE_GROUND_EXTRA_EDGE_CHANCE = 0.3F;
     private static final int CRYSTAL_ATTEMPTS = 8;
     private static final int CRYSTAL_MAX_TOTAL = 64;
     private static final int CRYSTAL_BIOME_ASPECT_CHANCE = 3;
@@ -132,12 +149,12 @@ public final class TCConfiguredFeatures {
                 BlockStateProvider.simple(ground),
                 PlacementUtils.inlinePlaced(Feature.NO_OP, NoneFeatureConfiguration.INSTANCE),
                 CaveSurface.FLOOR,
-                UniformInt.of(1, 2),
+                UniformInt.of(CAVE_GROUND_MIN_DEPTH, CAVE_GROUND_MAX_DEPTH),
                 0.0F,
-                5,
+                CAVE_GROUND_VERTICAL_RANGE,
                 0.0F,
-                UniformInt.of(3, 6),
-                0.3F);
+                UniformInt.of(CAVE_GROUND_MIN_RADIUS, CAVE_GROUND_MAX_RADIUS),
+                CAVE_GROUND_EXTRA_EDGE_CHANCE);
     }
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
@@ -197,8 +214,8 @@ public final class TCConfiguredFeatures {
                         new SilverwoodTreeConfig(
                                 TCBlocks.LOG_SILVERWOOD.get(),
                                 TCBlocks.LEAVES_SILVERWOOD.get(),
-                                6,
-                                3,
+                                MAGICAL_CAVE_SILVERWOOD_BASE_HEIGHT,
+                                MAGICAL_CAVE_SILVERWOOD_EXTRA_HEIGHT,
                                 Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()),
                                 false)));
         context.register(
@@ -207,9 +224,15 @@ public final class TCConfiguredFeatures {
                         Feature.TREE,
                         new TreeConfiguration.TreeConfigurationBuilder(
                                         BlockStateProvider.simple(TCBlocks.LOG_GREATWOOD.get()),
-                                        new StraightTrunkPlacer(4, 2, 0),
+                                        new StraightTrunkPlacer(
+                                                MAGICAL_CAVE_GREATWOOD_BASE_HEIGHT,
+                                                MAGICAL_CAVE_GREATWOOD_EXTRA_HEIGHT,
+                                                0),
                                         BlockStateProvider.simple(TCBlocks.LEAVES_GREATWOOD.get()),
-                                        new BlobFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 3),
+                                        new BlobFoliagePlacer(
+                                                ConstantInt.of(MAGICAL_CAVE_GREATWOOD_FOLIAGE_RADIUS),
+                                                ConstantInt.of(0),
+                                                MAGICAL_CAVE_GREATWOOD_FOLIAGE_HEIGHT),
                                         new TwoLayersFeatureSize(1, 0, 1))
                                 .build()));
 
@@ -343,15 +366,15 @@ public final class TCConfiguredFeatures {
                                         new WeightedPlacedFeature(
                                                 PlacementUtils.inlinePlaced(
                                                         configured.getOrThrow(VegetationFeatures.PATCH_BROWN_MUSHROOM)),
-                                                0.03F),
+                                                MAGICAL_CAVE_BROWN_MUSHROOM_CHANCE),
                                         new WeightedPlacedFeature(
                                                 PlacementUtils.inlinePlaced(
                                                         configured.getOrThrow(VegetationFeatures.PATCH_RED_MUSHROOM)),
-                                                0.025F),
+                                                MAGICAL_CAVE_RED_MUSHROOM_CHANCE),
                                         new WeightedPlacedFeature(
                                                 PlacementUtils.inlinePlaced(
                                                         configured.getOrThrow(VegetationFeatures.FLOWER_DEFAULT)),
-                                                0.12F)),
+                                                MAGICAL_CAVE_FLOWER_CHANCE)),
                                 PlacementUtils.inlinePlaced(configured.getOrThrow(VegetationFeatures.PATCH_GRASS)))));
         context.register(
                 MAGICAL_CAVE_VISHROOM,
@@ -417,7 +440,12 @@ public final class TCConfiguredFeatures {
                 MAGICAL_CAVE_CRYSTALS,
                 new ConfiguredFeature<>(
                         TCFeatures.CRYSTAL_CLUSTER.get(),
-                        new CrystalClusterConfig(crystals, 1, 8, CRYSTAL_BIOME_ASPECT_CHANCE, true)));
+                        new CrystalClusterConfig(
+                                crystals,
+                                MAGICAL_CAVE_CRYSTAL_ATTEMPTS,
+                                MAGICAL_CAVE_CRYSTAL_MAX_TOTAL,
+                                CRYSTAL_BIOME_ASPECT_CHANCE,
+                                true)));
 
         TagMatchTest stone = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
         TagMatchTest deepslate = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
