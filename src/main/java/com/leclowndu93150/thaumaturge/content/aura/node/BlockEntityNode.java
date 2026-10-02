@@ -626,9 +626,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (count > 1 && count % BEHAVIOR_INTERVAL != 0) {
             return;
         }
+        BlockPos below = pos.below();
+        if (!serverLevel.hasChunksAt(below.offset(-1, 0, -1), below.offset(1, 0, 1))) {
+            return;
+        }
         int oldLock = lock;
         lock = 0;
-        BlockPos below = pos.below();
         if (!serverLevel.hasNeighborSignal(below)
                 && serverLevel.getBlockState(below).getBlock() instanceof BlockNodeStabilizer stabilizer) {
             lock = stabilizer.isAdvanced() ? LOCK_ADVANCED : LOCK_BASIC;
@@ -666,6 +669,9 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return change;
         }
         BlockPos otherPos = pos.offset(x, y, z);
+        if (!serverLevel.hasChunkAt(otherPos)) {
+            return change;
+        }
         if (!(serverLevel.getBlockEntity(otherPos) instanceof BlockEntityNode other)
                 || !other.allowDischarge()
                 || other.lock > 0) {

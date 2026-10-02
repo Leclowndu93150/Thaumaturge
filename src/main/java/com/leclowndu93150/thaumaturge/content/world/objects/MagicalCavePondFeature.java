@@ -50,7 +50,6 @@ public final class MagicalCavePondFeature extends Feature<NoneFeatureConfigurati
 
         BlockPos.MutableBlockPos cellSurface = new BlockPos.MutableBlockPos();
         BlockPos.MutableBlockPos waterPos = new BlockPos.MutableBlockPos();
-        BlockPos.MutableBlockPos support = new BlockPos.MutableBlockPos();
         for (int dx = -LARGE_RADIUS; dx <= LARGE_RADIUS; dx++) {
             for (int dz = -LARGE_RADIUS; dz <= LARGE_RADIUS; dz++) {
                 if (!cells[index(dx, dz)]) {
@@ -58,14 +57,10 @@ public final class MagicalCavePondFeature extends Feature<NoneFeatureConfigurati
                 }
                 cellSurface.setWithOffset(surface, dx, 0, dz);
                 waterPos.set(cellSurface).move(Direction.DOWN);
-                support.set(waterPos).move(Direction.DOWN);
                 level.setBlock(cellSurface, Blocks.AIR.defaultBlockState(), PLACE_FLAGS);
                 level.scheduleTick(cellSurface, Blocks.AIR, 0);
                 markAboveForPostProcessing(level, cellSurface);
                 level.setBlock(waterPos, Blocks.WATER.defaultBlockState(), PLACE_FLAGS);
-                if (level.getBlockState(support).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
-                    level.setBlock(support, Blocks.CLAY.defaultBlockState(), PLACE_FLAGS);
-                }
             }
         }
         return true;

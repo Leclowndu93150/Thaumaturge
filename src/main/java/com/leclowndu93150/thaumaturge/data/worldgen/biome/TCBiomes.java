@@ -124,7 +124,6 @@ public final class TCBiomes {
             HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers) {
         MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
         BiomeDefaultFeatures.commonSpawns(mobs);
-        mobs.addSpawn(MobCategory.AXOLOTLS, new MobSpawnSettings.SpawnerData(EntityType.AXOLOTL, 10, 4, 6));
         mobs.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(TCEntities.WISP.get(), 20, 1, 2));
 
         BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placed, carvers);
