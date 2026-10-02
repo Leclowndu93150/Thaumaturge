@@ -47,7 +47,6 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.THAUMOMETER.get());
                         output.accept(TCItems.SCRIBING_TOOLS.get());
                         output.accept(TCItems.RESEARCH_NOTE.get());
-                        output.accept(TCItems.CELESTIAL_NOTES.get());
                         output.accept(TCItems.MANA_BEAN.get());
                         output.accept(TCItems.VIS_RESONATOR.get());
                         for (CelestialBody body : CelestialBody.values()) {
