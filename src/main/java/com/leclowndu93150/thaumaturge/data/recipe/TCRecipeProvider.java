@@ -19,6 +19,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.CrucibleRecipeBuilder;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.InfusionEnchantmentRecipeBuilder;
@@ -162,6 +163,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .requires(TCItems.LABEL)
                 .unlockedBy("has", has(TCItems.LABEL))
                 .save(output, TCIds.MODID + ":label_clear");
+
+        SpecialRecipeBuilder.special(category -> LabelFilterRecipe.INSTANCE)
+                .save(output, TCIds.rl("label_filter").toString());
 
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TCItems.JAR_BRACE, 2)
                 .pattern("SBS")

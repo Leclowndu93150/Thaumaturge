@@ -262,6 +262,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.elemental_sword.toggle", "Sneak + right-click to toggle the whirlwind");
         add("item.thaumaturge.jar_brace", "Brass Lid Brace");
         add("item.thaumaturge.label", "Label");
+        add("item.thaumaturge.marked_label", "Marked Label");
         add("item.thaumaturge.salis_mundus", "Salis Mundus");
         add(
                 "tooltip.thaumaturge.salis_mundus.desc",

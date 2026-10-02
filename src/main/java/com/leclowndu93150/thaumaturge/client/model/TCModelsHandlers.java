@@ -25,6 +25,7 @@ public final class TCModelsHandlers {
     public static final ResourceLocation LOADED_PROPERTY_ID = TCIds.rl("loaded");
     public static final ResourceLocation NOTE_COMPLETE_PROPERTY_ID = TCIds.rl("note_complete");
     public static final ResourceLocation FILLED_PROPERTY_ID = TCIds.rl("filled");
+    public static final ResourceLocation MARKED_PROPERTY_ID = TCIds.rl("marked");
     public static final ResourceLocation VERDANT_TYPE_PROPERTY_ID = TCIds.rl("verdant_type");
     public static final ResourceLocation CELESTIAL_BODY_PROPERTY_ID = TCIds.rl("celestial_body");
     public static final ResourceLocation MESH_LOADER_ID = TCIds.rl("mesh");
@@ -55,6 +56,7 @@ public final class TCModelsHandlers {
             registerComponentFlag(
                     TCItems.RESEARCH_NOTE.get(), NOTE_COMPLETE_PROPERTY_ID, TCDataComponents.NOTE_COMPLETE.get());
             registerComponentFlag(TCItems.PHIAL.get(), FILLED_PROPERTY_ID, TCDataComponents.ASPECTS.get());
+            registerComponentFlag(TCItems.LABEL.get(), MARKED_PROPERTY_ID, TCDataComponents.ASPECT_FILTER.get());
             ItemProperties.register(
                     TCItems.VERDANT_CHARM.get(),
                     VERDANT_TYPE_PROPERTY_ID,

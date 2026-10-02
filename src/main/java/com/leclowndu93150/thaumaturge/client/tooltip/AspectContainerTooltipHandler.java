@@ -7,13 +7,17 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.items.ILabel;
+import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -30,18 +34,27 @@ public final class AspectContainerTooltipHandler {
         if (stack.isEmpty()) {
             return;
         }
-        if (!(stack.getItem() instanceof IEssentiaContainerItem container)) {
-            return;
+        if (stack.getItem() instanceof IEssentiaContainerItem container) {
+            renderAspectList(container.getAspects(stack), event.getToolTip());
         }
 
+        if (stack.getItem() instanceof ILabel label) {
+            ResourceKey<IAspect> filter = label.getFilteredAspect(stack);
+            HolderLookup.Provider registries = event.getContext().registries();
+            if (filter == null || registries == null) return;
+            Holder<IAspect> aspect = EssentiaTransportHelper.resolve(registries, filter);
+            if (aspect == null) return;
+            renderAspectList(AspectList.of(new AspectInstance(aspect, 1)), event.getToolTip());
+        }
+    }
+
+    private static void renderAspectList(AspectList aspects, List<Component> tooltip) {
         if (!shouldShow()) {
             return;
         }
-        AspectList aspects = container.getAspects(stack);
         if (aspects.isEmpty()) {
             return;
         }
-        List<Component> tooltip = event.getToolTip();
         tooltip.add(
                 1,
                 Component.translatable("tooltip.thaumaturge.aspects.header")
