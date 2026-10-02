@@ -124,6 +124,7 @@ public final class TCDebugCommand {
     private static int toggleRaycast(CommandContext<CommandSourceStack> ctx) {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
+            TCDebugEvents.toggleRaycastDebug(player);
             PacketDistributor.sendToPlayer(player, ClientboundToggleRaycastDebugPayload.INSTANCE);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
