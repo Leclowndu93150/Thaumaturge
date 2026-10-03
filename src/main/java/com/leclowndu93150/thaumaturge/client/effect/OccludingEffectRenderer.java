@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ public final class OccludingEffectRenderer {
 
     private static final RenderType WISPY = TCRenderTypes.occludingEffect(WISPY_TEXTURE);
     private static final RenderType PORTAL = TCRenderTypes.occludingEffect(PORTAL_TEXTURE);
+    private static final float PORTAL_YAW_OFFSET = 180.0F;
 
     private static final List<Beam> BEAMS = new ArrayList<>();
     private static final List<Portal> PORTALS = new ArrayList<>();
@@ -112,8 +114,8 @@ public final class OccludingEffectRenderer {
         for (Portal portal : PORTALS) {
             poseStack.pushPose();
             poseStack.translate(portal.origin.x - camera.x, portal.origin.y - camera.y, portal.origin.z - camera.z);
-            poseStack.mulPose(
-                    Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+            poseStack.mulPose(Axis.YP.rotationDegrees(PORTAL_YAW_OFFSET
+                    - Minecraft.getInstance().gameRenderer.getMainCamera().getYRot()));
             writePortal(poseStack.last(), buffer, portal);
             poseStack.popPose();
         }
