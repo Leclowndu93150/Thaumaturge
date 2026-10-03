@@ -314,15 +314,26 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(TCBlockTags.SCAN_CLAY).add(Blocks.CLAY).addTag(BlockTags.TERRACOTTA);
 
-        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get());
-        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get());
-        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get());
+        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
+        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
+        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get()).add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_STONE)
+                .add(TCBlocks.ORE_AMBER.get())
+                .add(TCBlocks.ORE_CINNABAR.get())
+                .add(TCBlocks.ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE)
+                .add(TCBlocks.DEEPSLATE_ORE_AMBER.get())
+                .add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get())
+                .add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
         tag(Tags.Blocks.ORES).addTags(TCBlockTags.ORES_AMBER, TCBlockTags.ORES_CINNABAR, TCBlockTags.ORES_QUARTZ);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TCBlocks.ORE_AMBER.get())
                 .add(TCBlocks.ORE_CINNABAR.get())
                 .add(TCBlocks.ORE_QUARTZ.get())
+                .add(TCBlocks.DEEPSLATE_ORE_AMBER.get())
+                .add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get())
+                .add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get())
                 .add(TCBlocks.SMELTER_BASIC.get())
                 .add(TCBlocks.SMELTER_THAUMIUM.get())
                 .add(TCBlocks.SMELTER_VOID.get())
@@ -354,9 +365,9 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.PILLAR_ELDRITCH.get())
                 .add(TCBlocks.RECHARGE_PEDESTAL.get());
 
-        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get());
+        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
 
-        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
 
         tag(TCBlockTags.PORTABLE_HOLE_BLACKLIST);
 

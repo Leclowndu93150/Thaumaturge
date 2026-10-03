@@ -70,6 +70,9 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
 public final class TCModelProvider implements DataProvider {
+    private static final ResourceLocation DEEPSLATE_TEXTURE = ResourceLocation.withDefaultNamespace("block/deepslate");
+    private static final ResourceLocation BLOCK_PARENT = ResourceLocation.withDefaultNamespace("block/block");
+    private static final int FULL_CUBE = 16;
     private static final ResourceLocation VANILLA_GRINDSTONE =
             ResourceLocation.withDefaultNamespace("block/grindstone");
     private static final int QUARTER_TURNS = 4;
@@ -333,6 +336,9 @@ public final class TCModelProvider implements DataProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_AMBER.get());
         blockModels.createTrivialCube(TCBlocks.ORE_CINNABAR.get());
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_AMBER.get(), "ore_amber_overlay");
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), "ore_cinnabar_overlay");
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), "ore_quartz_overlay");
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
@@ -465,6 +471,51 @@ public final class TCModelProvider implements DataProvider {
 
     private static Variant vName(String blockModelName) {
         return v(TCIds.rl("block/" + blockModelName));
+    }
+
+    private void deepslateOre(Block block, String overlay) {
+        ResourceLocation model = ModelLocationUtils.getModelLocation(block);
+        ResourceLocation overlayTexture = blockTexture(overlay);
+        modelOutput.accept(model, () -> {
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", BLOCK_PARENT.toString());
+            root.addProperty("render_type", "minecraft:cutout");
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", DEEPSLATE_TEXTURE.toString());
+            textures.addProperty("base", DEEPSLATE_TEXTURE.toString());
+            textures.addProperty("overlay", overlayTexture.toString());
+            root.add("textures", textures);
+            JsonArray elements = new JsonArray();
+            elements.add(fullCube("#base"));
+            elements.add(fullCube("#overlay"));
+            root.add("elements", elements);
+            return root;
+        });
+        simpleBlock(block, model);
+        delegateItem(block.asItem(), model);
+    }
+
+    private static JsonObject fullCube(String texture) {
+        JsonObject element = new JsonObject();
+        element.add("from", coords(0, 0, 0));
+        element.add("to", coords(FULL_CUBE, FULL_CUBE, FULL_CUBE));
+        JsonObject faces = new JsonObject();
+        for (Direction dir : Direction.values()) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", texture);
+            face.addProperty("cullface", dir.getSerializedName());
+            faces.add(dir.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        return element;
+    }
+
+    private static JsonArray coords(int x, int y, int z) {
+        JsonArray array = new JsonArray();
+        array.add(x);
+        array.add(y);
+        array.add(z);
+        return array;
     }
 
     private void simpleBlock(Block block, ResourceLocation model) {

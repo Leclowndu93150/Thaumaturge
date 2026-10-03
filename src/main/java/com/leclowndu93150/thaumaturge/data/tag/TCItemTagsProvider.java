@@ -147,7 +147,9 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
 
         copy(TCBlockTags.ORES_AMBER, TCItemTags.ORES_AMBER);
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
-        tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
+        tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get()).add(TCItems.DEEPSLATE_ORE_QUARTZ.get());
+        copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
+        copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
         tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR, TCItemTags.ORES_QUARTZ);
         tag(TCItemTags.RAW_MATERIALS_CINNABAR).add(TCItems.RAW_CINNABAR.get());
         tag(Tags.Items.RAW_MATERIALS).addTag(TCItemTags.RAW_MATERIALS_CINNABAR);

@@ -460,7 +460,8 @@ public final class TCConfiguredFeatures {
                                 OreConfiguration.target(
                                         stone, TCBlocks.ORE_CINNABAR.get().defaultBlockState()),
                                 OreConfiguration.target(
-                                        deepslate, TCBlocks.ORE_CINNABAR.get().defaultBlockState())))));
+                                        deepslate,
+                                        TCBlocks.DEEPSLATE_ORE_CINNABAR.get().defaultBlockState())))));
         context.register(
                 ORE_QUARTZ,
                 new ConfiguredFeature<>(
@@ -469,7 +470,8 @@ public final class TCConfiguredFeatures {
                                 OreConfiguration.target(
                                         stone, TCBlocks.ORE_QUARTZ.get().defaultBlockState()),
                                 OreConfiguration.target(
-                                        deepslate, TCBlocks.ORE_QUARTZ.get().defaultBlockState())))));
+                                        deepslate,
+                                        TCBlocks.DEEPSLATE_ORE_QUARTZ.get().defaultBlockState())))));
         context.register(
                 ORE_AMBER,
                 new ConfiguredFeature<>(
@@ -478,7 +480,8 @@ public final class TCConfiguredFeatures {
                                 OreConfiguration.target(
                                         stone, TCBlocks.ORE_AMBER.get().defaultBlockState()),
                                 OreConfiguration.target(
-                                        deepslate, TCBlocks.ORE_AMBER.get().defaultBlockState())))));
+                                        deepslate,
+                                        TCBlocks.DEEPSLATE_ORE_AMBER.get().defaultBlockState())))));
 
         context.register(
                 CINDERPEARL_PATCH,

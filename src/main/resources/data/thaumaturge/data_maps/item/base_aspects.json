@@ -5816,7 +5816,39 @@
         "amount": 10
       }
     ],
+    "thaumaturge:deepslate_ore_amber": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:vinculum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 10
+      }
+    ],
     "thaumaturge:ore_cinnabar": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:alkimia",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:deepslate_ore_cinnabar": [
       {
         "aspect": "thaumaturge:terra",
         "amount": 5
