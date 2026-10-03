@@ -197,6 +197,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.INFERNAL_FURNACE.get());
                         output.accept(TCItems.THAUMATORIUM.get());
                         output.accept(TCItems.INFUSION_MATRIX.get());
+                        output.accept(TCItems.ARCANE_GRINDSTONE.get());
                         output.accept(TCItems.PEDESTAL_ARCANE.get());
                         output.accept(TCItems.PEDESTAL_ANCIENT.get());
                         output.accept(TCItems.PEDESTAL_ELDRITCH.get());

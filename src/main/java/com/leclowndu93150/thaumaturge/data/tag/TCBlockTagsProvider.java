@@ -153,6 +153,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.HUNGRY_CHEST.get())
                 .add(TCBlocks.VIS_GENERATOR.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(TCBlocks.ARCANE_GRINDSTONE.get())
                 .add(TCBlocks.ESSENTIA_CRYSTALIZER.get())
                 .add(TCBlocks.ESSENTIA_RESERVOIR.get())
                 .add(TCBlocks.GOLEM_FETTER.get())

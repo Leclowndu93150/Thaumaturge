@@ -20,6 +20,11 @@ public final class TCScreenTextures {
     public static final ResourceLocation RESEARCH_PREREQ_FLASK = research("rd_flask.png");
     public static final ResourceLocation RESEARCH_PREREQ_CHEST = research("rd_chest.png");
 
+    public static final ResourceLocation GRINDSTONE =
+            ResourceLocation.withDefaultNamespace("textures/gui/container/grindstone.png");
+    public static final ResourceLocation GRINDSTONE_ERROR =
+            ResourceLocation.withDefaultNamespace("container/grindstone/error");
+
     private TCScreenTextures() {}
 
     private static ResourceLocation gui(String name) {

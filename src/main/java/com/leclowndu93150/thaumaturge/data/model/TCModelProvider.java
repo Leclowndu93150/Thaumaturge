@@ -70,6 +70,8 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
 public final class TCModelProvider implements DataProvider {
+    private static final ResourceLocation VANILLA_GRINDSTONE =
+            ResourceLocation.withDefaultNamespace("block/grindstone");
     private static final int QUARTER_TURNS = 4;
     private static final int HALF_TURN = 2;
     private static final int NORTH_TO_SOUTH_TURNS = 2;
@@ -1626,6 +1628,7 @@ public final class TCModelProvider implements DataProvider {
                 blockTexture("eldritch_stone_3"));
         stairsFromTexture(TCBlocks.STAIRS_GREATWOOD.get(), blockTexture("plank_greatwood"));
         stairsFromTexture(TCBlocks.STAIRS_SILVERWOOD.get(), blockTexture("plank_silverwood"));
+        arcaneGrindstone();
         woodFamily(
                 blockTexture("plank_greatwood"),
                 TCBlocks.DOOR_GREATWOOD.get(),
@@ -2093,6 +2096,43 @@ public final class TCModelProvider implements DataProvider {
     private static VariantProperties.Rotation turnsFromNorth(Direction facing, int extraTurns) {
         return VariantProperties.Rotation.values()[
                 Math.floorMod(facing.get2DDataValue() + NORTH_TO_SOUTH_TURNS + extraTurns, QUARTER_TURNS)];
+    }
+
+    private void arcaneGrindstone() {
+        Block block = TCBlocks.ARCANE_GRINDSTONE.get();
+        ResourceLocation wheel = blockTexture("arcane_stone_1");
+        ResourceLocation frame = blockTexture("metal_thaumium");
+        ResourceLocation model = ModelLocationUtils.getModelLocation(block);
+        modelOutput.accept(model, () -> {
+            JsonObject textures = new JsonObject();
+            textures.addProperty("pivot", frame.toString());
+            textures.addProperty("round", wheel.toString());
+            textures.addProperty("side", wheel.toString());
+            textures.addProperty("particle", wheel.toString());
+            textures.addProperty("leg", frame.toString());
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", VANILLA_GRINDSTONE.toString());
+            root.add("textures", textures);
+            return root;
+        });
+        PropertyDispatch.C2<AttachFace, Direction> placement =
+                PropertyDispatch.properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            placement.select(
+                    AttachFace.FLOOR, facing, v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            placement.select(
+                    AttachFace.WALL,
+                    facing,
+                    v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90));
+            placement.select(
+                    AttachFace.CEILING,
+                    facing,
+                    v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block).with(placement));
+        delegateItem(block.asItem(), model);
     }
 
     private void stairsFromTexture(Block block, ResourceLocation all) {
