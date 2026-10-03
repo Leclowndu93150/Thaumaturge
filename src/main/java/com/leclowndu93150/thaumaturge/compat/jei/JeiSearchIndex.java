@@ -14,6 +14,8 @@ import mezz.jei.api.runtime.IIngredientFilter;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.gui.ingredients.IListElement;
+import mezz.jei.gui.ingredients.IListElementInfo;
+import mezz.jei.gui.ingredients.ListElementInfo;
 import mezz.jei.gui.ingredients.IngredientFilter;
 import mezz.jei.gui.search.IElementSearch;
 import org.jspecify.annotations.Nullable;
@@ -41,20 +43,22 @@ public final class JeiSearchIndex {
     }
 
     private static <V> void refresh(IngredientFilter filter, IElementSearch search, IIngredientManager ingredients, IListElement<V> element) {
+        if (!(search instanceof ElementSearchAccessor accessor)) {
+            return;
+        }
         ITypedIngredient<V> typed = element.getTypedIngredient();
         IIngredientHelper<V> helper = ingredients.getIngredientHelper(typed.getType());
         Object uid = helper.getUid(typed.getIngredient(), UidContext.Ingredient);
-        element.setVisible(false);
-        if (search instanceof ElementSearchAccessor accessor) {
-            accessor.thaumaturge$allElements().remove(uid);
+        IListElementInfo<V> info = ListElementInfo.createFromElement(element, ingredients, ((IngredientFilterAccessor) filter).thaumaturge$modIdHelper());
+        if (info == null) {
+            Thaumaturge.LOGGER.error("Could not refresh the JEI search entry for {}; it keeps its old search name", helper.getErrorInfo(typed.getIngredient()));
+            return;
         }
+        accessor.thaumaturge$allElements().remove(uid);
         try {
-            filter.onIngredientsAdded(helper, List.of(typed));
+            filter.addIngredient(info);
         } catch (RuntimeException | LinkageError e) {
-            if (search instanceof ElementSearchAccessor accessor) {
-                accessor.thaumaturge$allElements().putIfAbsent(uid, element);
-            }
-            element.setVisible(true);
+            accessor.thaumaturge$allElements().putIfAbsent(uid, element);
             Thaumaturge.LOGGER.error("Could not refresh the JEI search entry for {}; it keeps its old search name", helper.getErrorInfo(typed.getIngredient()), e);
         }
     }
