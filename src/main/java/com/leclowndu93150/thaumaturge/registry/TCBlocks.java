@@ -331,6 +331,15 @@ public final class TCBlocks {
     public static final DeferredBlock<Block> ORE_QUARTZ = BLOCKS.registerBlock("ore_quartz", Block::new,
             props -> props.mapColor(MapColor.STONE).strength(3.0F, 5.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
 
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_AMBER = BLOCKS.registerBlock("deepslate_ore_amber", Block::new,
+            props -> props.mapColor(MapColor.DEEPSLATE).strength(3.0F, 5.0F).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_CINNABAR = BLOCKS.registerBlock("deepslate_ore_cinnabar", Block::new,
+            props -> props.mapColor(MapColor.DEEPSLATE).strength(3.5F, 5.0F).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_QUARTZ = BLOCKS.registerBlock("deepslate_ore_quartz", Block::new,
+            props -> props.mapColor(MapColor.DEEPSLATE).strength(4.5F, 5.0F).sound(SoundType.DEEPSLATE).requiresCorrectToolForDrops());
+
     public static final Map<DyeColor, DeferredBlock<BlockNitor>> NITORS = new EnumMap<>(DyeColor.class);
 
     static {

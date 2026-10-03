@@ -82,6 +82,8 @@ public final class TCModelProvider extends ModelProvider {
     private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
 
     private static final TextureSlot LEGACY_MESH_SLOT = TextureSlot.create("legacy");
+    private static final Identifier DEEPSLATE_TEXTURE = Identifier.withDefaultNamespace("block/deepslate");
+    private static final Identifier BLOCK_PARENT = Identifier.withDefaultNamespace("block/block");
     private static final TextureSlot GRINDSTONE_PIVOT_SLOT = TextureSlot.create("pivot");
     private static final TextureSlot GRINDSTONE_ROUND_SLOT = TextureSlot.create("round");
     private static final TextureSlot GRINDSTONE_LEG_SLOT = TextureSlot.create("leg");
@@ -456,6 +458,44 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
     }
 
+    private static void deepslateOre(BlockModelGenerators blockModels, Block block, String overlay) {
+        Identifier model = ModelLocationUtils.getModelLocation(block);
+        blockModels.modelOutput.accept(model, overlaidCubeModel(DEEPSLATE_TEXTURE, TCIds.rl("block/" + overlay)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
+    }
+
+    private static ModelInstance overlaidCubeModel(Identifier base, Identifier overlay) {
+        return () -> {
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", BLOCK_PARENT.toString());
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", base.toString());
+            textures.addProperty("base", base.toString());
+            textures.addProperty("overlay", overlay.toString());
+            root.add("textures", textures);
+            JsonArray elements = new JsonArray();
+            elements.add(fullCube("#base"));
+            elements.add(fullCube("#overlay"));
+            root.add("elements", elements);
+            return root;
+        };
+    }
+
+    private static JsonObject fullCube(String texture) {
+        JsonObject element = new JsonObject();
+        element.add("from", insetCoords(0, 0, 0));
+        element.add("to", insetCoords(16, 16, 16));
+        JsonObject faces = new JsonObject();
+        for (Direction dir : Direction.values()) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", texture);
+            face.addProperty("cullface", dir.getSerializedName());
+            faces.add(dir.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        return element;
+    }
+
     private static boolean insetExposed(int mask, Direction dir) {
         return (mask & (1 << dir.get3DDataValue())) != 0;
     }
@@ -736,6 +776,9 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_AMBER.get());
         blockModels.createTrivialCube(TCBlocks.ORE_CINNABAR.get());
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_AMBER.get(), "ore_amber_overlay");
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), "ore_cinnabar_overlay");
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), "ore_quartz_overlay");
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());

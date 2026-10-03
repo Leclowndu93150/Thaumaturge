@@ -342,6 +342,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.ore_amber", "Amber Bearing Stone");
         add("block.thaumaturge.ore_cinnabar", "Cinnabar Ore");
         add("block.thaumaturge.ore_quartz", "Quartz Ore");
+        add("block.thaumaturge.deepslate_ore_amber", "Amber Bearing Deepslate");
+        add("block.thaumaturge.deepslate_ore_cinnabar", "Deepslate Cinnabar Ore");
+        add("block.thaumaturge.deepslate_ore_quartz", "Deepslate Quartz Ore");
 
         add("block.thaumaturge.alchemical_construct", "Alchemical Construct");
         add("block.thaumaturge.advanced_alchemical_construct", "Advanced Alchemical Construct");

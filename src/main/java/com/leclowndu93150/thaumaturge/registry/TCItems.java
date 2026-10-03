@@ -525,6 +525,9 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> ORE_AMBER = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_AMBER);
     public static final DeferredItem<BlockItem> ORE_CINNABAR = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_CINNABAR);
     public static final DeferredItem<BlockItem> ORE_QUARTZ = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_QUARTZ);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_AMBER = ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_AMBER);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_CINNABAR = ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_CINNABAR);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_QUARTZ = ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_QUARTZ);
 
     public static final DeferredItem<BlockItem> ALCHEMICAL_CONSTRUCT = ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_CONSTRUCT);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_CONSTRUCT = ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT);

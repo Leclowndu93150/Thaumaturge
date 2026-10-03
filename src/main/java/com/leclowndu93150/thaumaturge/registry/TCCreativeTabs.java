@@ -135,9 +135,12 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.CRYSTAL_VITIUM.get());
 
                 output.accept(TCItems.ORE_AMBER.get());
+                output.accept(TCItems.DEEPSLATE_ORE_AMBER.get());
                 output.accept(TCItems.ORE_CINNABAR.get());
+                output.accept(TCItems.DEEPSLATE_ORE_CINNABAR.get());
                 output.accept(TCItems.RAW_CINNABAR.get());
                 output.accept(TCItems.ORE_QUARTZ.get());
+                output.accept(TCItems.DEEPSLATE_ORE_QUARTZ.get());
                 output.accept(TCItems.AMBER_BLOCK);
                 output.accept(TCItems.METAL_BRASS_BLOCK);
                 output.accept(TCItems.METAL_THAUMIUM_BLOCK);

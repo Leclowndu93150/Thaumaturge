@@ -262,12 +262,12 @@ public final class TCConfiguredFeatures {
 
         TagMatchTest stone = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
         TagMatchTest deepslate = new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES);
-        context.register(ORE_CINNABAR, new ConfiguredFeature<>(Feature.REPLACE_SINGLE_BLOCK, new ReplaceBlockConfiguration(
-                List.of(OreConfiguration.target(stone, TCBlocks.ORE_CINNABAR.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.ORE_CINNABAR.get().defaultBlockState())))));
+        context.register(ORE_CINNABAR, new ConfiguredFeature<>(Feature.REPLACE_SINGLE_BLOCK, new ReplaceBlockConfiguration(List
+                .of(OreConfiguration.target(stone, TCBlocks.ORE_CINNABAR.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.DEEPSLATE_ORE_CINNABAR.get().defaultBlockState())))));
         context.register(ORE_QUARTZ, new ConfiguredFeature<>(Feature.REPLACE_SINGLE_BLOCK, new ReplaceBlockConfiguration(
-                List.of(OreConfiguration.target(stone, TCBlocks.ORE_QUARTZ.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.ORE_QUARTZ.get().defaultBlockState())))));
+                List.of(OreConfiguration.target(stone, TCBlocks.ORE_QUARTZ.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.DEEPSLATE_ORE_QUARTZ.get().defaultBlockState())))));
         context.register(ORE_AMBER, new ConfiguredFeature<>(Feature.REPLACE_SINGLE_BLOCK, new ReplaceBlockConfiguration(
-                List.of(OreConfiguration.target(stone, TCBlocks.ORE_AMBER.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.ORE_AMBER.get().defaultBlockState())))));
+                List.of(OreConfiguration.target(stone, TCBlocks.ORE_AMBER.get().defaultBlockState()), OreConfiguration.target(deepslate, TCBlocks.DEEPSLATE_ORE_AMBER.get().defaultBlockState())))));
 
         context.register(CINDERPEARL_PATCH, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK, new SimpleBlockConfiguration(BlockStateProvider.simple(TCBlocks.PLANT_CINDERPEARL.get()))));
     }

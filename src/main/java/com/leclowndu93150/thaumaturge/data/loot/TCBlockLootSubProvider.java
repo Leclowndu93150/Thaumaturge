@@ -255,8 +255,8 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private void generateResources() {
-        add(TCBlocks.ORE_AMBER.get(), b -> createOreDrop(b, TCItems.AMBER.get()).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(this.doesNotHaveSilkTouch())
-                .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE)).add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
+        add(TCBlocks.ORE_AMBER.get(), this::amberOreTable);
+        add(TCBlocks.DEEPSLATE_ORE_AMBER.get(), this::amberOreTable);
         add(TCBlocks.MIRROR.get(), this::mirrorTable);
         add(TCBlocks.MIRROR_ESSENTIA.get(), this::mirrorTable);
         add(TCBlocks.MANA_POD.get(), this::manaPodTable);
@@ -266,7 +266,9 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                                 .when(BonusLevelTableCondition.bonusLevelFlatChance(lookupProvider.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), VENT_CURIO_CHANCES))
                                 .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
         add(TCBlocks.ORE_CINNABAR.get(), b -> createOreDrop(b, TCItems.RAW_CINNABAR.get()));
+        add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), b -> createOreDrop(b, TCItems.RAW_CINNABAR.get()));
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
+        add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
@@ -371,5 +373,10 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.PILLAR_ARCANE.get());
         dropSelf(TCBlocks.PILLAR_ANCIENT.get());
         dropSelf(TCBlocks.PILLAR_ELDRITCH.get());
+    }
+
+    private LootTable.Builder amberOreTable(Block block) {
+        return createOreDrop(block, TCItems.AMBER.get()).withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(this.doesNotHaveSilkTouch())
+                .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE)).add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get())));
     }
 }
