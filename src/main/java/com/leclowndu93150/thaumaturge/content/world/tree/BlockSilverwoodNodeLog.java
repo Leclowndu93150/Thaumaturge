@@ -2,12 +2,12 @@ package com.leclowndu93150.thaumaturge.content.world.tree;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockNode;
-import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
+import com.leclowndu93150.thaumaturge.content.aura.node.NodeHostBlock;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements EntityBlock {
+public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements EntityBlock, NodeHostBlock {
     public static final MapCodec<BlockSilverwoodNodeLog> CODEC = simpleCodec(BlockSilverwoodNodeLog::new);
 
     public BlockSilverwoodNodeLog(Properties properties) {
@@ -53,6 +53,11 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
     }
 
     @Override
+    public BlockState depletedState(BlockState state) {
+        return TCBlocks.LOG_SILVERWOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
+    }
+
+    @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(TCItems.LOG_SILVERWOOD.get());
     }
@@ -78,9 +83,7 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (level instanceof ServerLevel serverLevel && !state.is(newState.getBlock())) {
-            NodeLocationIndex.get(serverLevel).remove(pos);
-        }
+        BlockNode.unindexNode(state, level, pos, newState);
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

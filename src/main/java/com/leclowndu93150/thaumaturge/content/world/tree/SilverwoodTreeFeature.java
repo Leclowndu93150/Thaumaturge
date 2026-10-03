@@ -117,12 +117,12 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
 
         int trunkY;
         int nodeChance = Math.max(1, (int) (height * 1.5F));
-        boolean nodePlaced = false;
+        boolean lastNode = false;
         for (trunkY = 0; trunkY < height; trunkY++) {
             BlockPos trunkPos = new BlockPos(x, y + trunkY, z);
             BlockState state = level.getBlockState(trunkPos);
             if (state.isAir() || state.is(BlockTags.LEAVES) || state.canBeReplaced()) {
-                boolean placeNode = config.node() && !nodePlaced && trunkY > 0 && random.nextInt(nodeChance) == 0;
+                boolean placeNode = config.node() && trunkY > 0 && !lastNode && random.nextInt(nodeChance) == 0;
                 Block trunkLog = placeNode ? TCBlocks.SILVERWOOD_NODE_LOG.get() : config.log();
                 BlockState trunkState = trunkLog.defaultBlockState();
                 if (trunkState.hasProperty(RotatedPillarBlock.AXIS)) {
@@ -140,8 +140,9 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
                             false,
                             NodeGenerator.DEFAULT_SPECIAL_RARITY,
                             NodeGenerator.DEFAULT_BASE_AURA);
-                    nodePlaced = true;
+                    nodeChance += height;
                 }
+                lastNode = placeNode;
                 placeLog(level, x - 1, y + trunkY, z, config, placedLogs, Direction.Axis.Y);
                 placeLog(level, x + 1, y + trunkY, z, config, placedLogs, Direction.Axis.Y);
                 placeLog(level, x, y + trunkY, z - 1, config, placedLogs, Direction.Axis.Y);

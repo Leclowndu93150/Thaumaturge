@@ -156,9 +156,13 @@ public final class BlockNode extends Block implements EntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        unindexNode(state, level, pos, newState);
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    public static void unindexNode(BlockState state, Level level, BlockPos pos, BlockState newState) {
         if (level instanceof ServerLevel serverLevel && !state.is(newState.getBlock())) {
             NodeLocationIndex.get(serverLevel).remove(pos);
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 }

@@ -65,6 +65,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -192,6 +193,15 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         super.onLoad();
         if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        }
+    }
+
+    private static void removeDepletedNode(ServerLevel serverLevel, BlockPos pos) {
+        BlockState state = serverLevel.getBlockState(pos);
+        if (state.getBlock() instanceof NodeHostBlock host) {
+            serverLevel.setBlock(pos, host.depletedState(state), Block.UPDATE_ALL);
+        } else {
+            serverLevel.removeBlock(pos, false);
         }
     }
 
@@ -606,7 +616,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             }
         }
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
         return change;
     }
@@ -977,7 +987,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         nodeChange();
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
     }
 
