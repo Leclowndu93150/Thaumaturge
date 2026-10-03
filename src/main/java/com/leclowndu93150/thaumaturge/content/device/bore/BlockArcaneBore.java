@@ -1,9 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -81,6 +83,13 @@ public final class BlockArcaneBore extends BaseEntityBlock {
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityArcaneBore bore)) {
             return InteractionResult.PASS;
+        }
+        if (player.isSecondaryUseActive()) {
+            if (!level.isClientSide()) {
+                level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.destroyBlock(pos, true, player);
+            }
+            return InteractionResult.SUCCESS;
         }
         MenuArcaneBore.open(player, bore);
         return InteractionResult.SUCCESS;
