@@ -551,6 +551,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.sapling_silverwood", "Silverwood Sapling");
         add("block.thaumaturge.log_greatwood", "Greatwood Log");
         add("block.thaumaturge.log_silverwood", "Silverwood Log");
+        add("block.thaumaturge.silverwood_node_log", "Silverwood Log");
         add("block.thaumaturge.greatwood", "Greatwood");
         add("block.thaumaturge.silverwood", "Silverwood");
         add("block.thaumaturge.stripped_log_greatwood", "Stripped Greatwood Log");

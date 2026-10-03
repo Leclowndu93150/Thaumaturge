@@ -40,7 +40,11 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
         copy(BlockTags.FLOWERS, ItemTags.FLOWERS);
         copy(TCBlockTags.MAGICAL_PLANTS, TCItemTags.MAGICAL_PLANTS);
         copy(TCBlockTags.GREATWOOD_LOGS, TCItemTags.GREATWOOD_LOGS);
-        copy(TCBlockTags.SILVERWOOD_LOGS, TCItemTags.SILVERWOOD_LOGS);
+        tag(TCItemTags.SILVERWOOD_LOGS)
+                .add(TCItems.LOG_SILVERWOOD.get())
+                .add(TCItems.WOOD_SILVERWOOD.get())
+                .add(TCItems.STRIPPED_LOG_SILVERWOOD.get())
+                .add(TCItems.STRIPPED_WOOD_SILVERWOOD.get());
         copy(TCBlockTags.PLANKS_GREATWOOD, TCItemTags.PLANKS_GREATWOOD);
         copy(TCBlockTags.PLANKS_SILVERWOOD, TCItemTags.PLANKS_SILVERWOOD);
         copy(TCBlockTags.PLANKS, TCItemTags.PLANKS);

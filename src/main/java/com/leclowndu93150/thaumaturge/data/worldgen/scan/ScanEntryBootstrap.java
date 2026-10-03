@@ -45,6 +45,7 @@ public final class ScanEntryBootstrap {
                 blockReg,
                 TCBlocks.LOG_GREATWOOD.get(),
                 TCBlocks.LOG_SILVERWOOD.get(),
+                TCBlocks.SILVERWOOD_NODE_LOG.get(),
                 TCBlocks.WOOD_GREATWOOD.get(),
                 TCBlocks.WOOD_SILVERWOOD.get(),
                 TCBlocks.STRIPPED_LOG_GREATWOOD.get(),

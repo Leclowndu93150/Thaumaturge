@@ -1375,6 +1375,10 @@ public final class TCModelProvider implements DataProvider {
         simpleFromExisting(TCBlocks.LEAVES_SILVERWOOD.get(), "leaves_silverwood");
         log(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.WOOD_GREATWOOD.get());
         log(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get());
+        axisPillar(
+                TCBlocks.SILVERWOOD_NODE_LOG.get(),
+                TCIds.rl("block/log_silverwood"),
+                TCIds.rl("block/log_silverwood_horizontal"));
         log(TCBlocks.STRIPPED_LOG_GREATWOOD.get(), TCBlocks.STRIPPED_WOOD_GREATWOOD.get());
         log(TCBlocks.STRIPPED_LOG_SILVERWOOD.get(), TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
     }

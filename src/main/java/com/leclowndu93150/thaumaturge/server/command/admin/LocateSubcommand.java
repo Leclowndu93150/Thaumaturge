@@ -53,7 +53,8 @@ final class LocateSubcommand implements AdminSubcommand {
             if (!level.hasChunkAt(candidate)) {
                 break;
             }
-            if (level.getBlockState(candidate).is(TCBlocks.NODE.get())
+            if ((level.getBlockState(candidate).is(TCBlocks.NODE.get())
+                            || level.getBlockState(candidate).is(TCBlocks.SILVERWOOD_NODE_LOG.get()))
                     && level.getBlockEntity(candidate) instanceof BlockEntityNode node) {
                 if (node.getNodeType() == type) {
                     break;

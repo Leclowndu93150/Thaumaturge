@@ -65,6 +65,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -176,7 +177,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
 
     public void setNodeType(NodeType type) {
         this.nodeType = type;
-        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, type);
         }
     }
@@ -190,9 +191,22 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
         }
+    }
+
+    private static void removeDepletedNode(ServerLevel serverLevel, BlockPos pos) {
+        BlockState state = serverLevel.getBlockState(pos);
+        if (state.getBlock() instanceof NodeHostBlock host) {
+            serverLevel.setBlock(pos, host.depletedState(state), Block.UPDATE_ALL);
+        } else {
+            serverLevel.removeBlock(pos, false);
+        }
+    }
+
+    private boolean isNodeBlock() {
+        return getBlockState().is(TCBlocks.NODE.get()) || getBlockState().is(TCBlocks.SILVERWOOD_NODE_LOG.get());
     }
 
     public @Nullable NodeModifier getNodeModifier() {
@@ -602,7 +616,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             }
         }
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
         return change;
     }
@@ -973,7 +987,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         nodeChange();
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
     }
 

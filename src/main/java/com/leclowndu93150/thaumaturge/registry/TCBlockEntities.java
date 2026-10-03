@@ -108,7 +108,10 @@ public final class TCBlockEntities {
                     "node",
                     () -> new BlockEntityType<>(
                             BlockEntityNode::new,
-                            Set.of(TCBlocks.NODE.get(), TCBlocks.OBSIDIAN_TOTEM_CHARGED.get()),
+                            Set.of(
+                                    TCBlocks.NODE.get(),
+                                    TCBlocks.OBSIDIAN_TOTEM_CHARGED.get(),
+                                    TCBlocks.SILVERWOOD_NODE_LOG.get()),
                             null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNodeStabilizer>> NODE_STABILIZER =
