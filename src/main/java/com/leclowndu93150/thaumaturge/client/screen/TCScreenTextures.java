@@ -23,6 +23,9 @@ public final class TCScreenTextures {
     public static final Identifier RESEARCH_PREREQ_FLASK = research("rd_flask.png");
     public static final Identifier RESEARCH_PREREQ_CHEST = research("rd_chest.png");
 
+    public static final Identifier GRINDSTONE = Identifier.withDefaultNamespace("textures/gui/container/grindstone.png");
+    public static final Identifier GRINDSTONE_ERROR = Identifier.withDefaultNamespace("container/grindstone/error");
+
     private TCScreenTextures() {}
 
     private static Identifier gui(String name) {

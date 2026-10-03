@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.BlockArcaneGrindstone;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.PressurePlateBlock;
@@ -401,6 +402,9 @@ public final class TCBlocks {
     }
 
     //
+
+    public static final DeferredBlock<BlockArcaneGrindstone> ARCANE_GRINDSTONE = BLOCKS.registerBlock("arcane_grindstone", BlockArcaneGrindstone::new,
+            props -> props.mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(2.0F, 6.0F).sound(SoundType.STONE).pushReaction(PushReaction.BLOCK));
 
     public static final DeferredBlock<BlockInfusionMatrix> INFUSION_MATRIX = BLOCKS.registerBlock("infusion_matrix", BlockInfusionMatrix::new,
             props -> props.mapColor(MapColor.STONE).strength(1.5F, 1.2F).sound(SoundType.STONE).noOcclusion());

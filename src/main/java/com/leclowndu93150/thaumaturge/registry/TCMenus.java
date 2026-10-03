@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.MenuArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
@@ -29,6 +30,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, TCIds.MODID);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneGrindstone>> ARCANE_GRINDSTONE = MENUS.register("arcane_grindstone", () -> IMenuTypeExtension.create(MenuArcaneGrindstone::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuFocalManipulator>> FOCAL_MANIPULATOR = MENUS.register("focal_manipulator", () -> IMenuTypeExtension.create(MenuFocalManipulator::new));
 

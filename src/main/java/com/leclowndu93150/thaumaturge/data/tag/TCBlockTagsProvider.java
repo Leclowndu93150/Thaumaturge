@@ -90,6 +90,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.ARCANE_GRINDSTONE.get());
 
         tag(BlockTags.WOODEN_DOORS).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get());
         tag(BlockTags.WOODEN_TRAPDOORS).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get());

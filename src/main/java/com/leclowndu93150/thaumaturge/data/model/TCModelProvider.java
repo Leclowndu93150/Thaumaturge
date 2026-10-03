@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.client.data.models.model.TextureMapping;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -80,6 +82,11 @@ public final class TCModelProvider extends ModelProvider {
     private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
 
     private static final TextureSlot LEGACY_MESH_SLOT = TextureSlot.create("legacy");
+    private static final TextureSlot GRINDSTONE_PIVOT_SLOT = TextureSlot.create("pivot");
+    private static final TextureSlot GRINDSTONE_ROUND_SLOT = TextureSlot.create("round");
+    private static final TextureSlot GRINDSTONE_LEG_SLOT = TextureSlot.create("leg");
+    private static final ModelTemplate ARCANE_GRINDSTONE = new ModelTemplate(Optional.of(Identifier.withDefaultNamespace("block/grindstone")), Optional.empty(), GRINDSTONE_PIVOT_SLOT,
+            GRINDSTONE_ROUND_SLOT, TextureSlot.SIDE, TextureSlot.PARTICLE, GRINDSTONE_LEG_SLOT);
     private static final TextureSlot RESERVOIR_TANK_SLOT = TextureSlot.create("tank");
     private static final float RESERVOIR_TANK_MIN = 2.0F;
     private static final float RESERVOIR_TANK_MAX = 14.0F;
@@ -1539,6 +1546,24 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.new BlockFamilyProvider(TextureMapping.cube(planks)).fence(fence).fenceGate(fenceGate).button(button).pressurePlate(pressurePlate);
     }
 
+    private void arcaneGrindstone(BlockModelGenerators blockModels) {
+        Block block = TCBlocks.ARCANE_GRINDSTONE.get();
+        Material wheel = texture("arcane_stone_1");
+        Material frame = texture("metal_thaumium");
+        TextureMapping textures = new TextureMapping().put(GRINDSTONE_PIVOT_SLOT, frame).put(GRINDSTONE_ROUND_SLOT, wheel).put(TextureSlot.SIDE, wheel).put(TextureSlot.PARTICLE, wheel)
+                .put(GRINDSTONE_LEG_SLOT, frame);
+        MultiVariant model = BlockModelGenerators.plainVariant(ARCANE_GRINDSTONE.create(block, textures, blockModels.modelOutput));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, model).with(PropertyDispatch.modify(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING)
+                .select(AttachFace.FLOOR, Direction.NORTH, BlockModelGenerators.NOP).select(AttachFace.FLOOR, Direction.EAST, BlockModelGenerators.Y_ROT_90)
+                .select(AttachFace.FLOOR, Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(AttachFace.FLOOR, Direction.WEST, BlockModelGenerators.Y_ROT_270)
+                .select(AttachFace.WALL, Direction.NORTH, BlockModelGenerators.X_ROT_90).select(AttachFace.WALL, Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90))
+                .select(AttachFace.WALL, Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
+                .select(AttachFace.WALL, Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270)).select(AttachFace.CEILING, Direction.SOUTH, BlockModelGenerators.X_ROT_180)
+                .select(AttachFace.CEILING, Direction.WEST, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_90))
+                .select(AttachFace.CEILING, Direction.NORTH, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_180))
+                .select(AttachFace.CEILING, Direction.EAST, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_270))));
+    }
+
     private void decorModels(BlockModelGenerators blockModels) {
         slab(blockModels, TCBlocks.SLAB_GREATWOOD.get(), TCBlocks.PLANK_GREATWOOD.get(), texture("plank_greatwood"), texture("plank_greatwood"), texture("plank_greatwood"));
         slab(blockModels, TCBlocks.SLAB_SILVERWOOD.get(), TCBlocks.PLANK_SILVERWOOD.get(), texture("plank_silverwood"), texture("plank_silverwood"), texture("plank_silverwood"));
@@ -1548,6 +1573,7 @@ public final class TCModelProvider extends ModelProvider {
         slab(blockModels, TCBlocks.SLAB_ELDRITCH.get(), TCBlocks.STONE_ELDRITCH_TILE.get(), texture("eldritch_stone_1"), texture("eldritch_stone_2"), texture("eldritch_stone_3"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_GREATWOOD.get(), texture("plank_greatwood"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_SILVERWOOD.get(), texture("plank_silverwood"));
+        arcaneGrindstone(blockModels);
         woodFamily(blockModels, TCBlocks.PLANK_GREATWOOD.get(), TCBlocks.DOOR_GREATWOOD.get(), TCBlocks.TRAPDOOR_GREATWOOD.get(), TCBlocks.FENCE_GREATWOOD.get(), TCBlocks.FENCE_GATE_GREATWOOD.get(),
                 TCBlocks.BUTTON_GREATWOOD.get(), TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
         woodFamily(blockModels, TCBlocks.PLANK_SILVERWOOD.get(), TCBlocks.DOOR_SILVERWOOD.get(), TCBlocks.TRAPDOOR_SILVERWOOD.get(), TCBlocks.FENCE_SILVERWOOD.get(),

@@ -1406,6 +1406,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.slab_eldritch", "Eldritch Stone Slab");
         add("block.thaumaturge.stairs_greatwood", "Greatwood Stairs");
         add("block.thaumaturge.stairs_silverwood", "Silverwood Stairs");
+        add("block.thaumaturge.arcane_grindstone", "Arcane Grindstone");
+        add("gui.thaumaturge.arcane_grindstone.title", "Strip Infusions");
         add("block.thaumaturge.door_greatwood", "Greatwood Door");
         add("block.thaumaturge.trapdoor_greatwood", "Greatwood Trapdoor");
         add("block.thaumaturge.fence_greatwood", "Greatwood Fence");

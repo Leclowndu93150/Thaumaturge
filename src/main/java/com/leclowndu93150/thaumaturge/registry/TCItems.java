@@ -580,6 +580,7 @@ public final class TCItems {
 
     public static final DeferredItem<ItemResearchNote> RESEARCH_NOTE = ITEMS.registerItem("research_note", ItemResearchNote::new, props -> props.stacksTo(1));
 
+    public static final DeferredItem<BlockItem> ARCANE_GRINDSTONE = ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_GRINDSTONE);
     public static final DeferredItem<BlockItem> INFUSION_MATRIX = ITEMS.registerSimpleBlockItem(TCBlocks.INFUSION_MATRIX);
     public static final DeferredItem<BlockItem> PEDESTAL_ARCANE = ITEMS.registerSimpleBlockItem(TCBlocks.PEDESTAL_ARCANE);
     public static final DeferredItem<BlockItem> PEDESTAL_ANCIENT = ITEMS.registerSimpleBlockItem(TCBlocks.PEDESTAL_ANCIENT);
