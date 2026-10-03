@@ -335,9 +335,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tc.stage.completed", "Completed");
         add("tc.stage.hold", "Completing...");
         add("tc.research.complete", "Research Complete!");
-        add("tc.research.stage.history", "Stage %1$d / %2$d");
-        add("tc.research.previous_stage", "Previous stage");
-        add("tc.research.next_stage", "Next stage");
+        add("tc.research.stage.bookmark", "Stage %s");
         add("tc.aspect.name", "Aspects of Essentia");
         add("tc.knowledge.name", "Knowledge Totals");
         add("tc.aspect.primal", "Primal Aspect");

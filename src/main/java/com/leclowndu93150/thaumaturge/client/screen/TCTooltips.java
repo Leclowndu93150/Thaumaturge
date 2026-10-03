@@ -71,6 +71,10 @@ public final class TCTooltips {
                 .withStyle(ChatFormatting.AQUA);
     }
 
+    public static Component stageBookmark(int stage) {
+        return Component.translatable("tc.research.stage.bookmark", stage);
+    }
+
     public static Component researchMissing() {
         return Component.translatable("tc.researchmissing").withStyle(ChatFormatting.RED);
     }
