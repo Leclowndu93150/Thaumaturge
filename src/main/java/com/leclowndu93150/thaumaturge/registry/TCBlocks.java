@@ -133,15 +133,23 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.PoweredRailBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -149,6 +157,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCBlocks {
+    private static final int WOODEN_BUTTON_PRESS_TICKS = 30;
+
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TCIds.MODID);
 
     public static final DeferredBlock<BlockWardedGlass> WARDED_GLASS = BLOCKS.registerBlock(
@@ -1453,6 +1463,126 @@ public final class TCBlocks {
                     .strength(2.0F, 3.0F)
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
+
+    public static final DeferredBlock<DoorBlock> DOOR_GREATWOOD = BLOCKS.registerBlock(
+            "door_greatwood",
+            props -> new DoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_GREATWOOD = BLOCKS.registerBlock(
+            "trapdoor_greatwood",
+            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .isValidSpawn((state, level, pos, type) -> false)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceBlock> FENCE_GREATWOOD = BLOCKS.registerBlock(
+            "fence_greatwood",
+            FenceBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_GREATWOOD = BLOCKS.registerBlock(
+            "fence_gate_greatwood",
+            props -> new FenceGateBlock(WoodType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<ButtonBlock> BUTTON_GREATWOOD = BLOCKS.registerBlock(
+            "button_greatwood",
+            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_GREATWOOD = BLOCKS.registerBlock(
+            "pressure_plate_greatwood",
+            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .noCollission()
+                    .strength(0.5F)
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<DoorBlock> DOOR_SILVERWOOD = BLOCKS.registerBlock(
+            "door_silverwood",
+            props -> new DoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_SILVERWOOD = BLOCKS.registerBlock(
+            "trapdoor_silverwood",
+            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .isValidSpawn((state, level, pos, type) -> false)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceBlock> FENCE_SILVERWOOD = BLOCKS.registerBlock(
+            "fence_silverwood",
+            FenceBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_SILVERWOOD = BLOCKS.registerBlock(
+            "fence_gate_silverwood",
+            props -> new FenceGateBlock(WoodType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<ButtonBlock> BUTTON_SILVERWOOD = BLOCKS.registerBlock(
+            "button_silverwood",
+            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_SILVERWOOD = BLOCKS.registerBlock(
+            "pressure_plate_silverwood",
+            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .noCollission()
+                    .strength(0.5F)
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
 
     public static final DeferredBlock<BlockTable> TABLE_WOOD = BLOCKS.registerBlock(
             "table_wood",
