@@ -69,7 +69,7 @@ public final class TCMeshGeometry implements ExtendedUnbakedGeometry {
             } else {
                 sheet = translucent ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockItemSheet();
             }
-            BakedQuad.MaterialInfo info = new BakedQuad.MaterialInfo(baked.sprite(), translucent ? ChunkSectionLayer.TRANSLUCENT : ChunkSectionLayer.CUTOUT, sheet, NO_TINT, false, 0);
+            BakedQuad.MaterialInfo info = new BakedQuad.MaterialInfo(baked.sprite(), translucent ? ChunkSectionLayer.TRANSLUCENT : ChunkSectionLayer.CUTOUT, sheet, NO_TINT, true, 0);
             List<BakedQuad> quads = new ArrayList<>();
             TCMeshQuadBaker.bakePart(part, baked, NO_TINT, transform, info, flipV, quads);
             for (BakedQuad quad : quads) {

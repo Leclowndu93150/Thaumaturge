@@ -23,12 +23,6 @@ public final class TCMeshUnbakedModel extends AbstractUnbakedModel {
         return geometry;
     }
 
-    @Override
-    public Boolean ambientOcclusion() {
-        Boolean declared = super.ambientOcclusion();
-        return declared != null ? declared : Boolean.FALSE;
-    }
-
     public static final class Loader implements UnbakedModelLoader<TCMeshUnbakedModel> {
         public static final Loader INSTANCE = new Loader();
 

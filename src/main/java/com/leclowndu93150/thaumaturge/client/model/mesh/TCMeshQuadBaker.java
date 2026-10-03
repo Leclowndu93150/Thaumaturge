@@ -6,6 +6,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
+import net.neoforged.neoforge.client.model.quad.BakedColors;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -21,18 +24,22 @@ public final class TCMeshQuadBaker {
     }
 
     public static void bakePart(TCMeshPart part, Material.Baked baked, int tintIndex, Matrix4f transform, BakedQuad.MaterialInfo info, boolean flipV, List<BakedQuad> output) {
+        Matrix3f normalTransform = transform.normal(new Matrix3f());
         for (int quad = 0; quad < part.quadCount(); quad++) {
-            output.add(bakeQuad(part, quad, baked, transform, info, flipV));
+            output.add(bakeQuad(part, quad, baked, transform, normalTransform, info, flipV));
         }
     }
 
-    private static BakedQuad bakeQuad(TCMeshPart part, int quad, Material.Baked baked, Matrix4f transform, BakedQuad.MaterialInfo info, boolean flipV) {
+    private static BakedQuad bakeQuad(TCMeshPart part, int quad, Material.Baked baked, Matrix4f transform, Matrix3f normalTransform, BakedQuad.MaterialInfo info, boolean flipV) {
         Vector3fc[] positions = new Vector3fc[4];
         float[] us = new float[4];
         float[] vs = new float[4];
+        int[] normals = new int[4];
         for (int i = 0; i < 4; i++) {
             int vertex = quad * 4 + i;
             Vector3f pos = new Vector3f(part.positions()[vertex * 3], part.positions()[vertex * 3 + 1], part.positions()[vertex * 3 + 2]);
+            Vector3f normal = new Vector3f(part.normals()[vertex * 3], part.normals()[vertex * 3 + 1], part.normals()[vertex * 3 + 2]);
+            normals[i] = BakedNormals.pack(normal.mul(normalTransform).normalize());
             float u = 0.0F;
             float v = 0.0F;
             if (part.uvs() != null) {
@@ -50,7 +57,8 @@ public final class TCMeshQuadBaker {
             packedUvs[i] = UVPair.pack(us[i], vs[i]);
         }
         Direction facing = computeFaceDirection(positions);
-        return new BakedQuad(positions[0], positions[1], positions[2], positions[3], packedUvs[0], packedUvs[1], packedUvs[2], packedUvs[3], facing, info);
+        BakedNormals bakedNormals = BakedNormals.of(normals[0], normals[1], normals[2], normals[3]);
+        return new BakedQuad(positions[0], positions[1], positions[2], positions[3], packedUvs[0], packedUvs[1], packedUvs[2], packedUvs[3], facing, info, bakedNormals, BakedColors.DEFAULT);
     }
 
     private static void contractUvs(float[] us, float[] vs, TextureAtlasSprite sprite) {
