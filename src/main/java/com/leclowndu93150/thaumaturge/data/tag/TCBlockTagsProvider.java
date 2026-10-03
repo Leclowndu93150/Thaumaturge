@@ -156,8 +156,7 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.ESSENTIA_CRYSTALIZER.get())
                 .add(TCBlocks.ESSENTIA_RESERVOIR.get())
                 .add(TCBlocks.GOLEM_FETTER.get())
-                .add(TCBlocks.ITEM_GRATE.get())
-                .add(TCBlocks.ALCHEMICAL_FURNACE.get());
+                .add(TCBlocks.ITEM_GRATE.get());
         tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.ARCANE_DOOR.get()).add(TCBlocks.ARCANE_PRESSURE_PLATE.get());
 
         tag(BlockTags.SLABS)

@@ -132,9 +132,7 @@ public class BlockPlaceholder extends Block {
                         if (level.getBlockState(controllerPos).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
                             BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, controllerPos, pos);
                             level.setBlock(
-                                    controllerPos,
-                                    TCBlocks.ALCHEMICAL_FURNACE.get().defaultBlockState(),
-                                    Block.UPDATE_ALL);
+                                    controllerPos, TCBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
                             break restoreAdvancedFurnace;
                         }
                     }

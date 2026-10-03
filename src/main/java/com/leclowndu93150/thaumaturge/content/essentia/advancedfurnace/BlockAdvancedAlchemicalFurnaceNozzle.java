@@ -52,7 +52,7 @@ public final class BlockAdvancedAlchemicalFurnaceNozzle extends BaseEntityBlock 
             BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, furnace.getBlockPos(), pos);
             level.setBlock(
                     furnace.getBlockPos(),
-                    com.leclowndu93150.thaumaturge.registry.TCBlocks.ALCHEMICAL_FURNACE
+                    com.leclowndu93150.thaumaturge.registry.TCBlocks.SMELTER_BASIC
                             .get()
                             .defaultBlockState(),
                     Block.UPDATE_ALL);

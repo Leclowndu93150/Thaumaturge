@@ -99,7 +99,7 @@ public final class BlueprintBootstrap {
                                                 toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())),
                                 'F',
                                         part(
-                                                block(TCBlocks.ALCHEMICAL_FURNACE.get()),
+                                                block(TCBlocks.SMELTER_BASIC.get()),
                                                 toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()))),
                         List.of(List.of("ACA", "C C", "ACA"), List.of("VNV", "NFN", "VNV"))));
 

@@ -102,7 +102,6 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ARCANE_WORKBENCH.get());
                         output.accept(TCItems.CRUCIBLE.get());
                         output.accept(TCItems.ALCHEMICAL_CONSTRUCT.get());
-                        output.accept(TCItems.ALCHEMICAL_FURNACE.get());
                         output.accept(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
                         output.accept(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
                         output.accept(TCItems.CENTRIFUGE.get());

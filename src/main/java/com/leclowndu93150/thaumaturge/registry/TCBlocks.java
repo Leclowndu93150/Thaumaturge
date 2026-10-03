@@ -64,7 +64,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnaceNozzle;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
@@ -1334,15 +1333,6 @@ public final class TCBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(4.0F, 10.0F)
                     .sound(SoundType.METAL)
-                    .requiresCorrectToolForDrops());
-
-    public static final DeferredBlock<BlockAlchemicalFurnace> ALCHEMICAL_FURNACE = BLOCKS.registerBlock(
-            "alchemical_furnace",
-            BlockAlchemicalFurnace::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
-                    .strength(3.0F, 17.0F)
-                    .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
     public static final DeferredBlock<BlockMetalTC> ADVANCED_ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(

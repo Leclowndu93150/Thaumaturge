@@ -1988,19 +1988,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
                 .save(output);
 
-        arcaneShaped(new ItemStack(TCItems.ALCHEMICAL_FURNACE.get()), 10)
-                .aspect(TCAspects.IGNIS, 5)
-                .aspect(TCAspects.AQUA, 5)
-                .pattern("SCS")
-                .pattern("SFS")
-                .pattern("SSS")
-                .define('S', TCItems.STONE_ARCANE)
-                .define('C', TCItems.CRUCIBLE)
-                .define('F', Items.FURNACE)
-                .gate(gate("essentia_smelter"))
-                .unlockedBy("has", has(TCItems.CRUCIBLE))
-                .save(output);
-
         // Retain both the total cost and each primal requirement
         // through the modern generic-vis and crystal payment model.
         arcaneShaped(new ItemStack(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get(), 4), 50)
