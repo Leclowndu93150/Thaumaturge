@@ -59,6 +59,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
@@ -68,6 +70,9 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
 public final class TCModelProvider implements DataProvider {
+    private static final int QUARTER_TURNS = 4;
+    private static final int HALF_TURN = 2;
+    private static final int NORTH_TO_SOUTH_TURNS = 2;
 
     private static final ModelTemplate THREE_LAYERED_ITEM = new ModelTemplate(
             Optional.of(ResourceLocation.withDefaultNamespace("item/generated")),
@@ -1621,6 +1626,22 @@ public final class TCModelProvider implements DataProvider {
                 blockTexture("eldritch_stone_3"));
         stairsFromTexture(TCBlocks.STAIRS_GREATWOOD.get(), blockTexture("plank_greatwood"));
         stairsFromTexture(TCBlocks.STAIRS_SILVERWOOD.get(), blockTexture("plank_silverwood"));
+        woodFamily(
+                blockTexture("plank_greatwood"),
+                TCBlocks.DOOR_GREATWOOD.get(),
+                TCBlocks.TRAPDOOR_GREATWOOD.get(),
+                TCBlocks.FENCE_GREATWOOD.get(),
+                TCBlocks.FENCE_GATE_GREATWOOD.get(),
+                TCBlocks.BUTTON_GREATWOOD.get(),
+                TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        woodFamily(
+                blockTexture("plank_silverwood"),
+                TCBlocks.DOOR_SILVERWOOD.get(),
+                TCBlocks.TRAPDOOR_SILVERWOOD.get(),
+                TCBlocks.FENCE_SILVERWOOD.get(),
+                TCBlocks.FENCE_GATE_SILVERWOOD.get(),
+                TCBlocks.BUTTON_SILVERWOOD.get(),
+                TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         existingModelWithItem(TCBlocks.TABLE_WOOD.get(), "table_wood");
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
@@ -1938,6 +1959,140 @@ public final class TCModelProvider implements DataProvider {
                         .select(SlabType.TOP, v(topModel))
                         .select(SlabType.DOUBLE, v(doubleModel))));
         delegateItem(slab.asItem(), bottomModel);
+    }
+
+    private void woodFamily(
+            ResourceLocation plankTexture,
+            Block door,
+            Block trapdoor,
+            Block fence,
+            Block fenceGate,
+            Block button,
+            Block pressurePlate) {
+        BiConsumer<ResourceLocation, Supplier<JsonElement>> cutoutOutput =
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get()));
+        TextureMapping doorTextures = TextureMapping.door(door);
+        ResourceLocation bottomLeft = ModelTemplates.DOOR_BOTTOM_LEFT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomLeftOpen = ModelTemplates.DOOR_BOTTOM_LEFT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomRight = ModelTemplates.DOOR_BOTTOM_RIGHT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomRightOpen =
+                ModelTemplates.DOOR_BOTTOM_RIGHT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topLeft = ModelTemplates.DOOR_TOP_LEFT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topLeftOpen = ModelTemplates.DOOR_TOP_LEFT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topRight = ModelTemplates.DOOR_TOP_RIGHT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topRightOpen = ModelTemplates.DOOR_TOP_RIGHT_OPEN.create(door, doorTextures, cutoutOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(door)
+                .with(doorHalf(
+                        doorHalf(
+                                PropertyDispatch.properties(
+                                        BlockStateProperties.HORIZONTAL_FACING,
+                                        BlockStateProperties.DOUBLE_BLOCK_HALF,
+                                        BlockStateProperties.DOOR_HINGE,
+                                        BlockStateProperties.OPEN),
+                                DoubleBlockHalf.LOWER,
+                                bottomLeft,
+                                bottomLeftOpen,
+                                bottomRight,
+                                bottomRightOpen),
+                        DoubleBlockHalf.UPPER,
+                        topLeft,
+                        topLeftOpen,
+                        topRight,
+                        topRightOpen)));
+        flatItem(door.asItem());
+
+        TextureMapping trapdoorTextures = TextureMapping.defaultTexture(trapdoor);
+        ResourceLocation trapdoorTop = ModelTemplates.TRAPDOOR_TOP.create(trapdoor, trapdoorTextures, cutoutOutput);
+        ResourceLocation trapdoorBottom =
+                ModelTemplates.TRAPDOOR_BOTTOM.create(trapdoor, trapdoorTextures, cutoutOutput);
+        ResourceLocation trapdoorOpen = ModelTemplates.TRAPDOOR_OPEN.create(trapdoor, trapdoorTextures, cutoutOutput);
+        PropertyDispatch.C3<Direction, Half, Boolean> trapdoorStates = PropertyDispatch.properties(
+                BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.HALF, BlockStateProperties.OPEN);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            for (Half half : Half.values()) {
+                trapdoorStates.select(facing, half, false, v(half == Half.TOP ? trapdoorTop : trapdoorBottom));
+                trapdoorStates.select(
+                        facing, half, true, v(trapdoorOpen).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            }
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(trapdoor).with(trapdoorStates));
+        delegateItem(trapdoor.asItem(), trapdoorBottom);
+
+        TextureMapping plank = new TextureMapping().put(TextureSlot.TEXTURE, plankTexture);
+        ResourceLocation fencePost = ModelTemplates.FENCE_POST.create(fence, plank, modelOutput);
+        ResourceLocation fenceSide = ModelTemplates.FENCE_SIDE.create(fence, plank, modelOutput);
+        MultiPartGenerator fenceParts = MultiPartGenerator.multiPart(fence).with(v(fencePost));
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            fenceParts.with(
+                    Condition.condition().term(PipeBlock.PROPERTY_BY_DIRECTION.get(facing), true),
+                    v(fenceSide)
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.UV_LOCK, true));
+        }
+        blockStateOutput.accept(fenceParts);
+        delegateItem(fence.asItem(), ModelTemplates.FENCE_INVENTORY.create(fence, plank, modelOutput));
+
+        ResourceLocation gateOpen = ModelTemplates.FENCE_GATE_OPEN.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateClosed = ModelTemplates.FENCE_GATE_CLOSED.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateWallOpen = ModelTemplates.FENCE_GATE_WALL_OPEN.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateWallClosed = ModelTemplates.FENCE_GATE_WALL_CLOSED.create(fenceGate, plank, modelOutput);
+        PropertyDispatch.C1<Direction> gateFacing = PropertyDispatch.property(BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            gateFacing.select(
+                    facing, Variant.variant().with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN)));
+        }
+        blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(fenceGate, Variant.variant().with(VariantProperties.UV_LOCK, true))
+                        .with(gateFacing)
+                        .with(PropertyDispatch.properties(BlockStateProperties.IN_WALL, BlockStateProperties.OPEN)
+                                .select(false, false, v(gateClosed))
+                                .select(true, false, v(gateWallClosed))
+                                .select(false, true, v(gateOpen))
+                                .select(true, true, v(gateWallOpen))));
+        delegateItem(fenceGate.asItem(), gateClosed);
+
+        ResourceLocation buttonUp = ModelTemplates.BUTTON.create(button, plank, modelOutput);
+        ResourceLocation buttonDown = ModelTemplates.BUTTON_PRESSED.create(button, plank, modelOutput);
+        PropertyDispatch.C2<AttachFace, Direction> buttonFacing =
+                PropertyDispatch.properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            buttonFacing.select(
+                    AttachFace.FLOOR,
+                    facing,
+                    Variant.variant().with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            buttonFacing.select(
+                    AttachFace.WALL,
+                    facing,
+                    Variant.variant()
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                            .with(VariantProperties.UV_LOCK, true));
+            buttonFacing.select(
+                    AttachFace.CEILING,
+                    facing,
+                    Variant.variant()
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(button)
+                .with(PropertyDispatch.property(BlockStateProperties.POWERED)
+                        .select(false, v(buttonUp))
+                        .select(true, v(buttonDown)))
+                .with(buttonFacing));
+        delegateItem(button.asItem(), ModelTemplates.BUTTON_INVENTORY.create(button, plank, modelOutput));
+
+        ResourceLocation plateUp = ModelTemplates.PRESSURE_PLATE_UP.create(pressurePlate, plank, modelOutput);
+        ResourceLocation plateDown = ModelTemplates.PRESSURE_PLATE_DOWN.create(pressurePlate, plank, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(pressurePlate)
+                .with(PropertyDispatch.property(BlockStateProperties.POWERED)
+                        .select(false, v(plateUp))
+                        .select(true, v(plateDown))));
+        delegateItem(pressurePlate.asItem(), plateUp);
+    }
+
+    private static VariantProperties.Rotation turnsFromNorth(Direction facing, int extraTurns) {
+        return VariantProperties.Rotation.values()[
+                Math.floorMod(facing.get2DDataValue() + NORTH_TO_SOUTH_TURNS + extraTurns, QUARTER_TURNS)];
     }
 
     private void stairsFromTexture(Block block, ResourceLocation all) {

@@ -94,6 +94,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
@@ -1165,6 +1166,30 @@ public final class TCItems {
             ITEMS.registerSimpleBlockItem(TCBlocks.STAIRS_GREATWOOD);
     public static final DeferredItem<BlockItem> STAIRS_SILVERWOOD =
             ITEMS.registerSimpleBlockItem(TCBlocks.STAIRS_SILVERWOOD);
+    public static final DeferredItem<DoubleHighBlockItem> DOOR_GREATWOOD = ITEMS.registerItem(
+            "door_greatwood", props -> new DoubleHighBlockItem(TCBlocks.DOOR_GREATWOOD.get(), props));
+    public static final DeferredItem<BlockItem> TRAPDOOR_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TRAPDOOR_GREATWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GREATWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GATE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GATE_GREATWOOD);
+    public static final DeferredItem<BlockItem> BUTTON_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.BUTTON_GREATWOOD);
+    public static final DeferredItem<BlockItem> PRESSURE_PLATE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.PRESSURE_PLATE_GREATWOOD);
+    public static final DeferredItem<DoubleHighBlockItem> DOOR_SILVERWOOD = ITEMS.registerItem(
+            "door_silverwood", props -> new DoubleHighBlockItem(TCBlocks.DOOR_SILVERWOOD.get(), props));
+    public static final DeferredItem<BlockItem> TRAPDOOR_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TRAPDOOR_SILVERWOOD);
+    public static final DeferredItem<BlockItem> FENCE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_SILVERWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GATE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GATE_SILVERWOOD);
+    public static final DeferredItem<BlockItem> BUTTON_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.BUTTON_SILVERWOOD);
+    public static final DeferredItem<BlockItem> PRESSURE_PLATE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.PRESSURE_PLATE_SILVERWOOD);
     public static final DeferredItem<BlockItem> TABLE_WOOD = ITEMS.registerSimpleBlockItem(TCBlocks.TABLE_WOOD);
     public static final DeferredItem<BlockItem> TABLE_STONE = ITEMS.registerSimpleBlockItem(TCBlocks.TABLE_STONE);
     public static final DeferredItem<BlockItem> PAVING_STONE_TRAVEL =

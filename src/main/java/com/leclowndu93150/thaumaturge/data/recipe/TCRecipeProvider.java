@@ -555,6 +555,60 @@ public final class TCRecipeProvider extends RecipeProvider {
         stairsRecipe(TCBlocks.STAIRS_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
         slabRecipe(TCBlocks.SLAB_GREATWOOD.get(), TCItemTags.PLANKS_GREATWOOD);
         slabRecipe(TCBlocks.SLAB_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
+        doorBuilder(TCBlocks.DOOR_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_door")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_trapdoor")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_fence")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        buttonBuilder(TCBlocks.BUTTON_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_button")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        pressurePlateBuilder(
+                        RecipeCategory.REDSTONE,
+                        TCBlocks.PRESSURE_PLATE_GREATWOOD.get(),
+                        Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        doorBuilder(TCBlocks.DOOR_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_door")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_trapdoor")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_fence")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        buttonBuilder(TCBlocks.BUTTON_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_button")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        pressurePlateBuilder(
+                        RecipeCategory.REDSTONE,
+                        TCBlocks.PRESSURE_PLATE_SILVERWOOD.get(),
+                        Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
         slabRecipe(TCBlocks.SLAB_ARCANE_STONE.get(), TCBlocks.STONE_ARCANE.get());
         slabRecipe(TCBlocks.SLAB_ARCANE_BRICK.get(), TCBlocks.STONE_ARCANE_BRICK.get());
         slabRecipe(TCBlocks.SLAB_ANCIENT.get(), TCBlocks.STONE_ANCIENT.get());

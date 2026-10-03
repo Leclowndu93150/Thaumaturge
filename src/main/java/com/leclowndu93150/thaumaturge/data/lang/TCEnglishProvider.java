@@ -1480,6 +1480,18 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.slab_eldritch", "Eldritch Stone Slab");
         add("block.thaumaturge.stairs_greatwood", "Greatwood Stairs");
         add("block.thaumaturge.stairs_silverwood", "Silverwood Stairs");
+        add("block.thaumaturge.door_greatwood", "Greatwood Door");
+        add("block.thaumaturge.trapdoor_greatwood", "Greatwood Trapdoor");
+        add("block.thaumaturge.fence_greatwood", "Greatwood Fence");
+        add("block.thaumaturge.fence_gate_greatwood", "Greatwood Fence Gate");
+        add("block.thaumaturge.button_greatwood", "Greatwood Button");
+        add("block.thaumaturge.pressure_plate_greatwood", "Greatwood Pressure Plate");
+        add("block.thaumaturge.door_silverwood", "Silverwood Door");
+        add("block.thaumaturge.trapdoor_silverwood", "Silverwood Trapdoor");
+        add("block.thaumaturge.fence_silverwood", "Silverwood Fence");
+        add("block.thaumaturge.fence_gate_silverwood", "Silverwood Fence Gate");
+        add("block.thaumaturge.button_silverwood", "Silverwood Button");
+        add("block.thaumaturge.pressure_plate_silverwood", "Silverwood Pressure Plate");
         add("block.thaumaturge.table_wood", "Wood Table");
         add("block.thaumaturge.table_stone", "Stone Table");
         add("block.thaumaturge.paving_stone_travel", "Paving Stone of Travel");
