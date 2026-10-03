@@ -2,25 +2,19 @@ package com.leclowndu93150.thaumaturge.content.entity.champion;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
-import com.leclowndu93150.thaumaturge.content.entity.construct.EntityOwnedConstruct;
-import com.leclowndu93150.thaumaturge.content.taint.entity.TaintMobConversion;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
@@ -36,13 +30,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class ChampionEvents {
     private static final int ROLL_BOUND = 100;
     private static final double MIN_CHAMPION_HEALTH = 10.0;
-    private static final float TAINT_CONVERT_HEALTH = 2.0F;
     private static final int XP_BASE = 5;
     private static final int XP_SPREAD = 3;
     private static final int BAG_ROLL_BOUND = 9;
@@ -53,18 +45,10 @@ public final class ChampionEvents {
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getLevel().isClientSide()) {
-            return;
-        }
-        if (event.getEntity() instanceof PathfinderMob creature
-                && !(creature instanceof EntityOwnedConstruct)
-                && ChampionHelper.championType(creature) == ChampionModifier.TAINTED) {
-            ChampionHelper.resetTaintedAIMarker(creature);
-        }
-        if (!(event.getEntity() instanceof Monster mob) || mob instanceof EntityCultistPortalLesser) {
-            return;
-        }
-        if (ChampionHelper.championType(mob) >= ChampionHelper.NOT_CHAMPION) {
+        if (event.getLevel().isClientSide()
+                || !(event.getEntity() instanceof Monster mob)
+                || mob instanceof EntityCultistPortalLesser
+                || ChampionHelper.rolled(mob)) {
             return;
         }
         boolean allowed = ThaumaturgeCommonConfig.ALLOW_CHAMPION_MOBS.get();
@@ -93,82 +77,14 @@ public final class ChampionEvents {
         if (whitelisted && roll <= 0 && mob.getAttributeBaseValue(Attributes.MAX_HEALTH) >= MIN_CHAMPION_HEALTH) {
             ChampionHelper.makeChampion(mob, false);
         } else {
-            ChampionHelper.markNotChampion(mob);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onEntityTick(EntityTickEvent.Post event) {
-        if (event.getEntity().level().isClientSide()
-                || !(event.getEntity() instanceof PathfinderMob mob)
-                || !mob.isAlive()) {
-            return;
-        }
-        int type = ChampionHelper.championType(mob);
-        if (type >= 0
-                && type < ChampionModifier.MODS.size()
-                && ChampionModifier.MODS.get(type).trigger() == ChampionModifier.Trigger.TICK) {
-            ChampionModifier.MODS.get(type).effect().perform(mob, null, null, 0.0F);
+            ChampionHelper.markRolled(mob);
         }
     }
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        LivingEntity victim = event.getEntity();
-        if (victim.level().isClientSide()) {
-            return;
-        }
-        if (victim.getHealth() < TAINT_CONVERT_HEALTH
-                && !victim.isInvertedHealAndHarm()
-                && victim.isAlive()
-                && !(victim instanceof EntityOwnedConstruct)
-                && !(victim instanceof ITaintedMob)
-                && victim.hasEffect(TCMobEffects.FLUX_TAINT)
-                && victim.getRandom().nextBoolean()) {
-            TaintMobConversion.tryConvert((ServerLevel) victim.level(), victim);
-            return;
-        }
-        int victimType = ChampionHelper.championType(victim);
-        if (victim instanceof Monster && (victimType >= 0 || victim instanceof IEldritchMob)) {
-            if ((victimType == ChampionModifier.WARDED || victim instanceof IEldritchMob)
-                    && victim.getAbsorptionAmount() > 0.0F) {
-                victim.level()
-                        .playSound(
-                                null,
-                                victim.getX(),
-                                victim.getY(),
-                                victim.getZ(),
-                                TCSounds.RUNICSHIELDCHARGE.get(),
-                                SoundSource.HOSTILE,
-                                0.66F,
-                                1.1F + victim.getRandom().nextFloat() * 0.1F);
-            }
-            if (victimType >= 0
-                    && ChampionModifier.MODS.get(victimType).trigger() == ChampionModifier.Trigger.WHEN_HURT
-                    && event.getSource().getEntity() instanceof LivingEntity attacker) {
-                event.setAmount(ChampionModifier.MODS
-                        .get(victimType)
-                        .effect()
-                        .perform(victim, attacker, event.getSource(), event.getAmount()));
-            }
-        }
-        if (event.getAmount() > 0.0F
-                && event.getSource().getEntity() instanceof Monster attacker
-                && ChampionHelper.isChampion(attacker)) {
-            int attackerType = ChampionHelper.championType(attacker);
-            if (ChampionModifier.MODS.get(attackerType).trigger() == ChampionModifier.Trigger.ON_ATTACK) {
-                event.setAmount(ChampionModifier.MODS
-                        .get(attackerType)
-                        .effect()
-                        .perform(attacker, victim, event.getSource(), event.getAmount()));
-            }
-        }
-        if (event.getAmount() > 0.0F && event.getSource().getEntity() instanceof LivingEntity attacker) {
-            int attackerType = ChampionHelper.championType(attacker);
-            if (attacker instanceof ITaintedMob || attackerType == ChampionModifier.TAINTED) {
-                victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(
-                        TCMobEffects.FLUX_TAINT, 200, 0, true, false, false));
-            }
+        if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof IEldritchMob) {
+            ShieldChargeSound.playIfShielded(event.getEntity());
         }
     }
 
@@ -176,10 +92,8 @@ public final class ChampionEvents {
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
         if (!(entity.level() instanceof ServerLevel server)
-                || !(entity instanceof Monster)
                 || !event.isRecentlyHit()
-                || !ChampionHelper.isChampion(entity)
-                || ChampionHelper.championType(entity) == ChampionModifier.TAINTED) {
+                || !MobTraits.isChampion(entity)) {
             return;
         }
         Entity killer = event.getSource().getEntity();

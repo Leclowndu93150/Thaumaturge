@@ -214,6 +214,10 @@ public final class TCItems {
     public static final DeferredItem<ItemEssentiaCrystal> ESSENTIA_CRYSTAL =
             ITEMS.registerItem("essentia_crystal", ItemEssentiaCrystal::new);
 
+    public static final DeferredItem<Item> TAINTED_GOO = ITEMS.registerSimpleItem("tainted_goo");
+
+    public static final DeferredItem<Item> TAINT_TENDRIL = ITEMS.registerSimpleItem("taint_tendril");
+
     public static final DeferredItem<ItemBottleTaint> BOTTLE_TAINT = ITEMS.registerItem(
             "bottle_taint",
             ItemBottleTaint::new,

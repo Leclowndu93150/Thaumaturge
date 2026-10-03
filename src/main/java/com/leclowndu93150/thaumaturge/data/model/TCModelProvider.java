@@ -260,6 +260,8 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.CHUNK_MUTTON.get());
         flatItem(TCItems.TRIPLE_MEAT_TREAT.get());
         flatItem(TCItems.JAR_BRACE.get());
+        flatItem(TCItems.TAINTED_GOO.get());
+        flatItem(TCItems.TAINT_TENDRIL.get());
         flatItem(TCItems.BOTTLE_TAINT.get());
         flatItem(TCItems.VIS_RESONATOR.get());
         flatItem(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());

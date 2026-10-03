@@ -1,12 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionModifier;
+import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
@@ -111,13 +112,9 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
 
     @Override
     public void generateName() {
-        int mod = ChampionHelper.championType(this);
-        if (mod >= 0) {
-            this.setCustomName(Component.translatable(
-                    "entity.thaumaturge.eldritch_golem.name.custom",
-                    Component.translatable(
-                            "champion.mod." + ChampionModifier.MODS.get(mod).name())));
-        }
+        MobTraits.champion(this)
+                .ifPresent(trait -> this.setCustomName(Component.translatable(
+                        "entity.thaumaturge.eldritch_golem.name.custom", MobTraitNames.of(trait))));
     }
 
     @Override

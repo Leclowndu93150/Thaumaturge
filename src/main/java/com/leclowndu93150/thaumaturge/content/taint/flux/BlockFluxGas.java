@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
@@ -234,7 +234,7 @@ public final class BlockFluxGas extends Block implements LiquidBlockContainer {
         if (!(level instanceof ServerLevel serverLevel) || !(entity instanceof LivingEntity living)) {
             return;
         }
-        if (living instanceof ITaintedMob
+        if (MobTraits.isTainted(living)
                 || living.getType().is(EntityTypeTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
                 || living.hasEffect(TCMobEffects.VIS_EXHAUST)

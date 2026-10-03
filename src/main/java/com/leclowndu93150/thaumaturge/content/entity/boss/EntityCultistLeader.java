@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionModifier;
+import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.nbt.CompoundTag;
@@ -105,14 +106,9 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     public void generateName() {
-        int mod = ChampionHelper.championType(this);
-        if (mod >= 0) {
-            this.setCustomName(Component.translatable(
-                    "entity.thaumaturge.cultist_leader.name.custom",
-                    getTitle(),
-                    Component.translatable(
-                            "champion.mod." + ChampionModifier.MODS.get(mod).name())));
-        }
+        MobTraits.champion(this)
+                .ifPresent(trait -> this.setCustomName(Component.translatable(
+                        "entity.thaumaturge.cultist_leader.name.custom", getTitle(), MobTraitNames.of(trait))));
     }
 
     private String getTitle() {

@@ -147,23 +147,6 @@ public final class TCEntityEvents {
                 TCEntities.TAINT_CRAWLER.get(),
                 EntityTaintCrawler.createAttributes().build());
         event.put(
-                TCEntities.TAINT_SPIDER.get(),
-                EntityTaintSpider.createAttributes().build());
-        event.put(
-                TCEntities.TAINT_CREEPER.get(),
-                EntityTaintCreeper.createAttributes().build());
-        event.put(TCEntities.TAINT_COW.get(), EntityTaintCow.createAttributes().build());
-        event.put(TCEntities.TAINT_PIG.get(), EntityTaintPig.createAttributes().build());
-        event.put(
-                TCEntities.TAINT_CHICKEN.get(),
-                EntityTaintChicken.createAttributes().build());
-        event.put(
-                TCEntities.TAINT_SHEEP.get(),
-                EntityTaintSheep.createAttributes().build());
-        event.put(
-                TCEntities.TAINT_VILLAGER.get(),
-                EntityTaintVillager.createAttributes().build());
-        event.put(
                 TCEntities.TAINT_SPORE.get(),
                 EntityTaintSpore.createAttributes().build());
         event.put(

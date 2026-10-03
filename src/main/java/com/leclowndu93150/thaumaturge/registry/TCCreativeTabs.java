@@ -413,6 +413,8 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.FIREBAT_SPAWN_EGG.get());
                         output.accept(TCItems.MIND_SPIDER_SPAWN_EGG.get());
                         output.accept(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());
+                        output.accept(TCItems.TAINTED_GOO.get());
+                        output.accept(TCItems.TAINT_TENDRIL.get());
                         output.accept(TCItems.BOTTLE_TAINT.get());
                         output.accept(TCItems.TAINT_ROCK.get());
                         output.accept(TCItems.TAINT_SOIL.get());
