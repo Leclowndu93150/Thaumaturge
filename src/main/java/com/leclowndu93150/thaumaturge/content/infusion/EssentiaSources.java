@@ -4,8 +4,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -17,6 +20,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class EssentiaSources {
+    private static final Comparator<InsertTarget> INSERT_ORDER =
+            Comparator.comparingInt(InsertTarget::suction).reversed().thenComparing(InsertTarget::empty);
     private static final int DEFAULT_RANGE = 12;
     private static final int RETRY_DELAY_TICKS = 200;
 
@@ -105,7 +110,7 @@ public final class EssentiaSources {
         if (sources == null) {
             sources = scan(level);
         }
-        List<BlockPos> emptySources = new ArrayList<>();
+        List<InsertTarget> targets = new ArrayList<>();
         for (BlockPos sourcePos : sources) {
             IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
             if (!(container instanceof IAspectSource source)
@@ -113,18 +118,16 @@ public final class EssentiaSources {
                     || !source.doesContainerAccept(aspect)) {
                 continue;
             }
-            if (source.getAspects().isEmpty()) {
-                emptySources.add(sourcePos);
-            } else if (insertInto(level, aspect, fxExtendTicks, sourcePos, source)) {
-                return true;
-            }
+            targets.add(new InsertTarget(
+                    sourcePos,
+                    suctionFor(level, sourcePos, aspect),
+                    source.getAspects().isEmpty()));
         }
-        for (BlockPos sourcePos : emptySources) {
-            IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
+        targets.sort(INSERT_ORDER);
+        for (InsertTarget target : targets) {
+            IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, target.pos(), null);
             if (container instanceof IAspectSource source
-                    && !source.isBlocked()
-                    && source.doesContainerAccept(aspect)
-                    && insertInto(level, aspect, fxExtendTicks, sourcePos, source)) {
+                    && insertInto(level, aspect, fxExtendTicks, target.pos(), source)) {
                 return true;
             }
         }
@@ -132,6 +135,17 @@ public final class EssentiaSources {
         retryAt = level.getGameTime() + RETRY_DELAY_TICKS;
         return false;
     }
+
+    private static int suctionFor(ServerLevel level, BlockPos pos, Holder<IAspect> aspect) {
+        IEssentiaTransport transport = level.getCapability(EssentiaCapabilities.TRANSPORT, pos, null);
+        if (transport == null) {
+            return 0;
+        }
+        Holder<IAspect> wanted = transport.getSuctionType(null);
+        return wanted != null && wanted.is(aspect) ? transport.getSuctionAmount(null) : 0;
+    }
+
+    private record InsertTarget(BlockPos pos, int suction, boolean empty) {}
 
     private boolean insertInto(
             ServerLevel level, Holder<IAspect> aspect, int fxExtendTicks, BlockPos sourcePos, IAspectSource source) {
