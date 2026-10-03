@@ -158,6 +158,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int BACK_W = 20;
     private static final int BACK_H = 12;
     private static final int BACK_OFFSET_X = 118;
+    private static final int STAGE_HISTORY_LEFT_X = 6;
+    private static final int STAGE_HISTORY_RIGHT_X = 86;
+    private static final int STAGE_HISTORY_CENTER_X = 52;
+    private static final int STAGE_HISTORY_DRAW_Y_OFFSET = 185;
+    private static final int STAGE_HISTORY_HIT_Y = 184;
+    private static final int STAGE_HISTORY_HIT_SIZE = 12;
 
     private static final int RECIPE_NAV_LEFT_OFFSET_X = 40;
     private static final int RECIPE_NAV_RIGHT_OFFSET_X = 204;
@@ -175,15 +181,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int BOOKMARK_ASPECT_CLICK_Y = 8;
     private static final int BOOKMARK_KNOWLEDGE_RENDER_Y = 32;
     private static final int BOOKMARK_KNOWLEDGE_CLICK_Y = 31;
-    private static final int STAGE_BOOKMARK_FIRST_Y = 55;
-    private static final int STAGE_BOOKMARK_MAX_STEP = 23;
-    private static final int STAGE_BOOKMARK_TOTAL_BUDGET = 140;
-    private static final int STAGE_BOOKMARK_BOOK_EDGE_X = 24;
-    private static final int STAGE_BOOKMARK_TUCK = 3;
-    private static final int STAGE_BOOKMARK_ICON_OFFSET = 23;
-    private static final int STAGE_BOOKMARK_LABEL_X = 17;
-    private static final int STAGE_BOOKMARK_LABEL_Y = 9;
-    private static final int STAGE_BOOKMARK_LABEL_COLOR = 0xFFFFFFFF;
 
     private static final int RECIPE_BOOKMARK_OFFSET_X = 280;
     private static final int RECIPE_BOOKMARK_BASE_Y_OFFSET = -8;
@@ -523,6 +520,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         return isComplete || displayedStageIndex() < progressStage;
     }
 
+    private boolean canNavigateStageHistory() {
+        return currentPage == 0 && hasStageHistory();
+    }
+
     private boolean hasStageHistory() {
         return entry.value().stages().size() > 1
                 && currentStageIndex() > 0
@@ -582,7 +583,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
         graphics.pose().popPose();
         renderBookmarks(graphics, mouseX, mouseY);
-        renderStageBookmarks(graphics, mouseX, mouseY);
         renderRecipeBookmarks(graphics, stage, mouseX, mouseY);
         drawNavigation(graphics, mouseX, mouseY);
     }
@@ -1269,87 +1269,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
     }
 
-    private int stageBookmarkTop() {
-        boolean knowledgeShown = knowsResearch(KNOWLEDGETYPES_RESEARCH) && !entryId.equals(KNOWLEDGETYPES_RESEARCH);
-        return sh + (knowledgeShown ? STAGE_BOOKMARK_FIRST_Y : BOOKMARK_KNOWLEDGE_RENDER_Y);
-    }
-
-    private int stageBookmarkStep(int count) {
-        return Math.min(STAGE_BOOKMARK_MAX_STEP, STAGE_BOOKMARK_TOTAL_BUDGET / count);
-    }
-
-    private int stageBookmarkAt(int mouseX, int mouseY) {
-        int count = currentStageIndex() + 1;
-        int step = stageBookmarkStep(count);
-        int top = stageBookmarkTop();
-        int x = sw + BOOKMARK_OFFSET_X;
-        for (int stageIndex = count - 1; stageIndex >= 0; stageIndex--) {
-            if (mouseInside(x, top + stageIndex * step, BOOKMARK_W, BOOKMARK_H, mouseX, mouseY)) {
-                return stageIndex;
-            }
-        }
-        return -1;
-    }
-
-    private void renderStageBookmarks(GuiGraphics graphics, int mouseX, int mouseY) {
-        if (!hasStageHistory()) {
-            return;
-        }
-        int count = currentStageIndex() + 1;
-        int step = stageBookmarkStep(count);
-        int top = stageBookmarkTop();
-        int displayed = displayedStageIndex();
-        int hovered = stageBookmarkAt(mouseX, mouseY);
-        int bookEdge = sw + BOOKMARK_OFFSET_X + STAGE_BOOKMARK_BOOK_EDGE_X;
-        ItemStack note = new ItemStack(TCItems.RESEARCH_NOTE.get());
-        for (int stageIndex = 0; stageIndex < count; stageIndex++) {
-            int y = top + stageIndex * step;
-            int tuck = stageIndex == hovered ? 0 : STAGE_BOOKMARK_TUCK;
-            int tint = stageIndex == displayed ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
-            GuiBlend.blitTinted(
-                    graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
-                    bookEdge - RECIPE_BOOKMARK_W,
-                    y,
-                    RECIPE_BOOKMARK_W,
-                    RECIPE_BOOKMARK_H,
-                    (float) (RECIPE_BOOKMARK_U_BASE + tuck + RECIPE_BOOKMARK_W),
-                    (float) RECIPE_BOOKMARK_V,
-                    -RECIPE_BOOKMARK_W,
-                    RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    tint);
-            GuiBlend.blitTinted(
-                    graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
-                    bookEdge - RECIPE_BOOKMARK_TIP_W,
-                    y,
-                    RECIPE_BOOKMARK_TIP_W,
-                    RECIPE_BOOKMARK_H,
-                    (float) (RECIPE_BOOKMARK_TIP_U + RECIPE_BOOKMARK_TIP_W),
-                    (float) RECIPE_BOOKMARK_V,
-                    -RECIPE_BOOKMARK_TIP_W,
-                    RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    RECIPE_BOOKMARK_TINT_NORMAL);
-            int iconX = bookEdge - STAGE_BOOKMARK_ICON_OFFSET + tuck;
-            graphics.renderItem(note, iconX, y);
-            String label = Integer.toString(stageIndex + 1);
-            graphics.drawString(
-                    font,
-                    label,
-                    iconX + STAGE_BOOKMARK_LABEL_X - font.width(label),
-                    y + STAGE_BOOKMARK_LABEL_Y,
-                    STAGE_BOOKMARK_LABEL_COLOR,
-                    true);
-            if (stageIndex == hovered) {
-                DeferredTooltip.set(TCTooltips.stageBookmark(stageIndex + 1), mouseX, mouseY);
-            }
-        }
-    }
-
     private void renderRecipeBookmarks(GuiGraphics graphics, IResearchStage stage, int mouseX, int mouseY) {
         List<ResourceLocation> recipes = displayRecipes(stage);
         boolean hasConstruct = stage.construct().isPresent();
@@ -2027,6 +1946,64 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 graphics.drawString(font, Component.translatable("recipe.return"), mouseX, mouseY, textColor, true);
             }
         }
+        if (canNavigateStageHistory()) {
+            int displayedStage = displayedStageIndex();
+            int progressStage = currentStageIndex();
+            if (displayedStage > 0) {
+                int leftX = sw + STAGE_HISTORY_LEFT_X;
+                drawTexturedRectScaled(
+                        graphics,
+                        leftX,
+                        sh + STAGE_HISTORY_DRAW_Y_OFFSET,
+                        ARROW_LEFT_U,
+                        ARROW_V,
+                        ARROW_W,
+                        ARROW_H,
+                        bob);
+                if (mouseInside(
+                        leftX - 1,
+                        sh + STAGE_HISTORY_HIT_Y,
+                        STAGE_HISTORY_HIT_SIZE,
+                        STAGE_HISTORY_HIT_SIZE,
+                        mouseX,
+                        mouseY)) {
+                    DeferredTooltip.set(Component.translatable("tc.research.previous_stage"), mouseX, mouseY);
+                }
+            }
+            if (displayedStage < progressStage) {
+                int rightX = sw + STAGE_HISTORY_RIGHT_X;
+                drawTexturedRectScaled(
+                        graphics,
+                        rightX,
+                        sh + STAGE_HISTORY_DRAW_Y_OFFSET,
+                        ARROW_RIGHT_U,
+                        ARROW_V,
+                        ARROW_W,
+                        ARROW_H,
+                        bob);
+                if (mouseInside(
+                        rightX - 1,
+                        sh + STAGE_HISTORY_HIT_Y,
+                        STAGE_HISTORY_HIT_SIZE,
+                        STAGE_HISTORY_HIT_SIZE,
+                        mouseX,
+                        mouseY)) {
+                    DeferredTooltip.set(Component.translatable("tc.research.next_stage"), mouseX, mouseY);
+                }
+            }
+            Component label = Component.translatable(
+                    "tc.research.stage.history",
+                    displayedStage + 1,
+                    entry.value().stages().size());
+            int labelWidth = font.width(label);
+            graphics.drawString(
+                    font,
+                    label,
+                    sw + STAGE_HISTORY_CENTER_X - labelWidth / 2,
+                    sh + STAGE_HISTORY_DRAW_Y_OFFSET + 2,
+                    TEXT_LINE_COLOR,
+                    false);
+        }
     }
 
     private boolean insertOpen() {
@@ -2122,12 +2099,23 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 goBack();
                 return true;
             }
-            if (hasStageHistory()) {
-                int stageHit = stageBookmarkAt((int) mx, (int) my);
-                if (stageHit >= 0) {
-                    if (stageHit != displayedStageIndex()) {
-                        selectHistoryStage(stageHit);
-                    }
+            if (canNavigateStageHistory()) {
+                int displayedStage = displayedStageIndex();
+                int progressStage = currentStageIndex();
+                int stageNavY = sh + STAGE_HISTORY_HIT_Y;
+                int leftX = sw + STAGE_HISTORY_LEFT_X - 1;
+                int rightX = sw + STAGE_HISTORY_RIGHT_X - 1;
+                if (displayedStage > 0
+                        && mouseInside(
+                                leftX, stageNavY, STAGE_HISTORY_HIT_SIZE, STAGE_HISTORY_HIT_SIZE, (int) mx, (int) my)) {
+                    selectHistoryStage(displayedStage - 1);
+                    return true;
+                }
+                if (displayedStage < progressStage
+                        && mouseInside(
+                                rightX, stageNavY, STAGE_HISTORY_HIT_SIZE, STAGE_HISTORY_HIT_SIZE, (int) mx, (int)
+                                        my)) {
+                    selectHistoryStage(displayedStage + 1);
                     return true;
                 }
             }
