@@ -1039,17 +1039,19 @@ public final class TCModelProvider implements DataProvider {
 
     private void registerActivatorRail() {
         Block block = TCBlocks.ACTIVATOR_RAIL.get();
-        ResourceLocation flat = ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), modelOutput);
+        BiConsumer<ResourceLocation, Supplier<JsonElement>> cutoutOutput =
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get()));
+        ResourceLocation flat = ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation risingNE =
-                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), modelOutput);
+                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation risingSW =
-                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), modelOutput);
+                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation flatOn = ModelTemplates.RAIL_FLAT.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ResourceLocation risingNEOn = ModelTemplates.RAIL_RAISED_NE.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ResourceLocation risingSWOn = ModelTemplates.RAIL_RAISED_SW.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ModelTemplates.FLAT_ITEM.create(
                 ModelLocationUtils.getModelLocation(block.asItem()),
                 TextureMapping.layer0(TextureMapping.getBlockTexture(block)),

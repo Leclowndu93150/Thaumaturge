@@ -1219,7 +1219,7 @@ public final class TCBlocks {
 
     public static final DeferredBlock<PoweredRailBlock> ACTIVATOR_RAIL = BLOCKS.registerBlock(
             "activator_rail",
-            PoweredRailBlock::new,
+            properties -> new PoweredRailBlock(properties, true),
             BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL));
 
     public static final DeferredBlock<Block> PLANK_GREATWOOD = BLOCKS.registerBlock(
