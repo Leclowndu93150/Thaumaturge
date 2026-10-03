@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import mezz.jei.api.constants.VanillaTypes;
+import com.leclowndu93150.thaumaturge.compat.jei.category.AspectFromStacksCategory;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -31,6 +33,7 @@ public final class AspectJeiSync {
 
     static void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
+        rebuildAspectStackPages();
         discoveredAspects.clear();
         Player player = Minecraft.getInstance().player;
         if (player != null) {
@@ -86,6 +89,22 @@ public final class AspectJeiSync {
             return AspectPools.idOf(aspects.entries().get(0).aspect());
         }
         return null;
+    }
+
+    public static void rebuildAspectStackPages() {
+        IJeiRuntime current = runtime;
+        if (current == null) {
+            return;
+        }
+        IRecipeManager recipes = current.getRecipeManager();
+        List<AspectFromStacksCategory.Wrapper> stale = recipes.createRecipeLookup(AspectFromStacksCategory.RECIPE_TYPE).includeHidden().get().toList();
+        if (!stale.isEmpty()) {
+            recipes.hideRecipes(AspectFromStacksCategory.RECIPE_TYPE, stale);
+        }
+        List<AspectFromStacksCategory.Wrapper> pages = ThaumaturgeJEIPlugin.aspectFromStacksPages(current.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK));
+        if (!pages.isEmpty()) {
+            recipes.addRecipes(AspectFromStacksCategory.RECIPE_TYPE, pages);
+        }
     }
 
     public static void syncDiscovered() {

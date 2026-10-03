@@ -290,11 +290,15 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     }
 
     private static void registerAspectFromStacksPages(IRecipeRegistration registration) {
+        registration.addRecipes(AspectFromStacksCategory.RECIPE_TYPE, aspectFromStacksPages(registration.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK)));
+    }
+
+    static List<AspectFromStacksCategory.Wrapper> aspectFromStacksPages(Collection<ItemStack> allStacks) {
         List<AspectFromStacksCategory.Wrapper> wrappers = new ArrayList<>();
         Map<ItemStack, AspectList> index = new HashMap<>();
         Map<Holder<IAspect>, List<ItemStack>> invertedIndex = new HashMap<>();
 
-        registration.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK).forEach(stack -> {
+        allStacks.forEach(stack -> {
             AspectList aspectList = AspectIndexAccess.index().of(stack);
             index.put(stack, aspectList);
             aspectList.entries().forEach(instance -> {
@@ -315,7 +319,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                     }
                 });
 
-        registration.addRecipes(AspectFromStacksCategory.RECIPE_TYPE, wrappers);
+        return wrappers;
     }
 
     private static Holder<IAspect> pickIconAspect() {
