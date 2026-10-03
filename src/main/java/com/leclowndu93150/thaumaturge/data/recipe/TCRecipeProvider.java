@@ -765,9 +765,6 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.ICE), Ingredient.of(Items.SNOW_BLOCK)).aspect(TCAspects.ORDO, 1).aspect(TCAspects.GELUM, 1)
                 .gate(gate("hedge_alchemy", 2)).unlockedBy("has", has(Items.SNOW_BLOCK)).save(output, TCIds.MODID + ":crucible/ice");
 
-        new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.CRACKED_STONE_BRICKS), Ingredient.of(Items.STONE_BRICKS)).aspect(TCAspects.PERDITIO, 2)
-                .gate(gate("hedge_alchemy", 2)).unlockedBy("has", has(Items.STONE_BRICKS)).save(output, TCIds.MODID + ":crucible/cracked_stone_bricks");
-
         new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.BONE_MEAL, 4), Ingredient.of(Items.BONE)).aspect(TCAspects.PERDITIO, 1).gate(gate("hedge_alchemy", 2))
                 .unlockedBy("has", has(Items.BONE)).save(output, TCIds.MODID + ":crucible/bone_meal");
 
