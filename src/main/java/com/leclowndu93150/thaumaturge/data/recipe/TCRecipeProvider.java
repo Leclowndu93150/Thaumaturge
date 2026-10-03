@@ -82,6 +82,7 @@ import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 public final class TCRecipeProvider extends RecipeProvider {
+    private static final int ARCANE_GRINDSTONE_VIS = 50;
 
     private RecipeOutput output;
     private HolderLookup.Provider registries;
@@ -555,6 +556,17 @@ public final class TCRecipeProvider extends RecipeProvider {
         stairsRecipe(TCBlocks.STAIRS_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
         slabRecipe(TCBlocks.SLAB_GREATWOOD.get(), TCItemTags.PLANKS_GREATWOOD);
         slabRecipe(TCBlocks.SLAB_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_GRINDSTONE.get()), ARCANE_GRINDSTONE_VIS)
+                .aspect(TCAspects.ORDO, 2)
+                .aspect(TCAspects.PERDITIO, 2)
+                .pattern(" T ")
+                .pattern("TGT")
+                .pattern(" T ")
+                .define('T', TCItemTags.INGOTS_THAUMIUM)
+                .define('G', Items.GRINDSTONE)
+                .gate(gate("infusion_enchantment"))
+                .unlockedBy("has", has(TCItemTags.INGOTS_THAUMIUM))
+                .save(output);
         doorBuilder(TCBlocks.DOOR_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .group("wooden_door")
                 .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))

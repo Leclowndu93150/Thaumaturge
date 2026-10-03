@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumato
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import com.leclowndu93150.thaumaturge.content.golem.press.MenuGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.MenuArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
 import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
@@ -28,6 +29,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, TCIds.MODID);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneGrindstone>> ARCANE_GRINDSTONE =
+            MENUS.register("arcane_grindstone", () -> IMenuTypeExtension.create(MenuArcaneGrindstone::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuFocalManipulator>> FOCAL_MANIPULATOR =
             MENUS.register("focal_manipulator", () -> IMenuTypeExtension.create(MenuFocalManipulator::new));

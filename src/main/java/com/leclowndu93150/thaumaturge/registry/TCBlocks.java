@@ -92,6 +92,7 @@ import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockPlaceholder;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPedestal;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPillar;
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.BlockArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.metal.BlockMetalTC;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
@@ -712,6 +713,16 @@ public final class TCBlocks {
     }
 
     //
+
+    public static final DeferredBlock<BlockArcaneGrindstone> ARCANE_GRINDSTONE = BLOCKS.registerBlock(
+            "arcane_grindstone",
+            BlockArcaneGrindstone::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .requiresCorrectToolForDrops()
+                    .strength(2.0F, 6.0F)
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.BLOCK));
 
     public static final DeferredBlock<BlockInfusionMatrix> INFUSION_MATRIX = BLOCKS.registerBlock(
             "infusion_matrix",

@@ -864,6 +864,8 @@ public final class TCItems {
     public static final DeferredItem<ItemResearchNote> RESEARCH_NOTE =
             ITEMS.registerItem("research_note", ItemResearchNote::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<BlockItem> ARCANE_GRINDSTONE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_GRINDSTONE);
     public static final DeferredItem<BlockItem> INFUSION_MATRIX =
             ITEMS.registerSimpleBlockItem(TCBlocks.INFUSION_MATRIX);
     public static final DeferredItem<BlockItem> PEDESTAL_ARCANE =
