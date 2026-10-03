@@ -594,6 +594,24 @@
         "amount": 2
       }
     ],
+    "#c:raw_materials/cinnabar": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:alkimia",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 2
+      }
+    ],
     "#c:raw_materials/gold": [
       {
         "aspect": "thaumaturge:metallum",

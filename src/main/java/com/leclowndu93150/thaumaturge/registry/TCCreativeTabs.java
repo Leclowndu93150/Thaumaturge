@@ -142,6 +142,7 @@ public final class TCCreativeTabs {
 
                         output.accept(TCItems.ORE_AMBER.get());
                         output.accept(TCItems.ORE_CINNABAR.get());
+                        output.accept(TCItems.RAW_CINNABAR.get());
                         output.accept(TCItems.ORE_QUARTZ.get());
                         output.accept(TCItems.AMBER_BLOCK);
                         output.accept(TCItems.METAL_BRASS_BLOCK);

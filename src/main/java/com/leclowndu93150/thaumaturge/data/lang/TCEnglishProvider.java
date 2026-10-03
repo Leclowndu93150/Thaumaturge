@@ -414,6 +414,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.cluster_silver", "Native Silver Cluster");
         add("item.thaumaturge.cluster_lead", "Native Lead Cluster");
         add("item.thaumaturge.cluster_tin", "Native Tin Cluster");
+        add("item.thaumaturge.raw_cinnabar", "Raw Cinnabar");
         add("item.thaumaturge.cluster_cinnabar", "Native Cinnabar Cluster");
         add("item.thaumaturge.cluster_quartz", "Native Quartz Cluster");
 

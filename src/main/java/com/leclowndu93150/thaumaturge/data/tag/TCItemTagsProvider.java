@@ -141,6 +141,8 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
         tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
         tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR, TCItemTags.ORES_QUARTZ);
+        tag(TCItemTags.RAW_MATERIALS_CINNABAR).add(TCItems.RAW_CINNABAR.get());
+        tag(Tags.Items.RAW_MATERIALS).addTag(TCItemTags.RAW_MATERIALS_CINNABAR);
         tag(TCItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TCBlockTags.STORAGE_BLOCKS_AMBER, TCItemTags.STORAGE_BLOCKS_AMBER);
@@ -204,6 +206,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         Tags.Items.ORES_DIAMOND,
                         Tags.Items.ORES_EMERALD,
                         TCItemTags.ORES_CINNABAR,
+                        TCItemTags.RAW_MATERIALS_CINNABAR,
                         TCItemTags.ORES_AMBER);
         tag(TCItemTags.RARE_EARTH_CHANCE_NORMAL)
                 .addOptionalTag(TCItemTags.ORES_SILVER)

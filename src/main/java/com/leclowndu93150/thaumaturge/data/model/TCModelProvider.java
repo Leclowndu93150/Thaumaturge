@@ -401,6 +401,7 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.CLUSTER_SILVER.get());
         flatItem(TCItems.CLUSTER_LEAD.get());
         flatItem(TCItems.CLUSTER_TIN.get());
+        flatItem(TCItems.RAW_CINNABAR.get());
         flatItem(TCItems.CLUSTER_CINNABAR.get());
         flatItem(TCItems.CLUSTER_QUARTZ.get());
 

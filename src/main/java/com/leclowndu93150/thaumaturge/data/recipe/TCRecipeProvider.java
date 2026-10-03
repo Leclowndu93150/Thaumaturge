@@ -214,6 +214,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output);
 
         oreSmelting(TCItems.QUICKSILVER, TCItemTags.ORES_CINNABAR, 1F, "quicksilver");
+        rawSmelting(TCItems.QUICKSILVER, TCItemTags.RAW_MATERIALS_CINNABAR, 0.7F, "quicksilver", "raw_cinnabar");
         oreSmelting(TCItems.AMBER, TCItemTags.ORES_AMBER, 1F, "amber");
         oreSmelting(Items.QUARTZ, Tags.Items.ORES_QUARTZ, 0.2F, "quartz");
 
@@ -419,6 +420,18 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .group(group)
                 .unlockedBy("has", this.has(oreTag))
                 .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_ore");
+    }
+
+    private void rawSmelting(ItemLike item, TagKey<Item> rawTag, float xp, String group, String rawName) {
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(rawTag), RecipeCategory.MISC, item, xp, 200)
+                .group(group)
+                .unlockedBy("has", this.has(rawTag))
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_from_" + rawName);
+
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(rawTag), RecipeCategory.MISC, item, xp, 100)
+                .group(group)
+                .unlockedBy("has", this.has(rawTag))
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_" + rawName);
     }
 
     private void clusterSmelting(ItemLike item, ItemLike cluster, String group) {
@@ -1727,7 +1740,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         clusterRecipe(TCItems.CLUSTER_TIN, TCItemTags.ORES_TIN);
         clusterRecipe(TCItems.CLUSTER_SILVER, TCItemTags.ORES_SILVER);
         clusterRecipe(TCItems.CLUSTER_LEAD, TCItemTags.ORES_LEAD);
-        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
+        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.RAW_MATERIALS_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
         transmutationRecipe("iron_nugget", Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);

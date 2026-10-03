@@ -367,7 +367,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                                                 .getOrThrow(Enchantments.FORTUNE),
                                         VENT_CURIO_CHANCES))
                                 .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
-        dropSelf(TCBlocks.ORE_CINNABAR.get());
+        add(TCBlocks.ORE_CINNABAR.get(), b -> createOreDrop(b, TCItems.RAW_CINNABAR.get()));
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
