@@ -32,7 +32,8 @@ import org.jspecify.annotations.Nullable;
 public final class FocalManipulatorRenderer implements BlockEntityRenderer<BlockEntityFocalManipulator, FocalManipulatorRenderState> {
     private static final float FOCUS_HEIGHT = 0.8F;
     private static final float FOCUS_BOB_PERIOD = 14.0F;
-    private static final float FOCUS_BOB_SCALE = 0.2F;
+    private static final float FOCUS_HOVER_PHASE = 0.2F;
+    private static final float ITEM_ENTITY_BOB_HEIGHT = 0.1F;
     private static final float CRYSTAL_RING_HEIGHT = 1.05F;
     private static final float CRYSTAL_RING_RADIUS = 0.4F;
     private static final float CRYSTAL_SCALE = 0.5F;
@@ -92,9 +93,9 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         float ticks = state.ticks;
         if (state.focus != null) {
             poseStack.pushPose();
-            poseStack.translate(0.5F, FOCUS_HEIGHT + Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_BOB_SCALE * 0.5F + FOCUS_BOB_SCALE * 0.5F, 0.5F);
+            poseStack.translate(0.5F, FOCUS_HEIGHT, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(ticks % 360.0F));
-            poseStack.translate(0.0F, state.focusLift, 0.0F);
+            poseStack.translate(0.0F, state.focusLift + Mth.sin(Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_HOVER_PHASE + FOCUS_HOVER_PHASE) * ITEM_ENTITY_BOB_HEIGHT, 0.0F);
             state.focus.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
         }
