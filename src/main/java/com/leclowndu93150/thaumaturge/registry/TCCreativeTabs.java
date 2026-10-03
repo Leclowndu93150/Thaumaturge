@@ -337,6 +337,18 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.SLAB_ELDRITCH.get());
                 output.accept(TCItems.STAIRS_GREATWOOD.get());
                 output.accept(TCItems.STAIRS_SILVERWOOD.get());
+                output.accept(TCItems.DOOR_GREATWOOD.get());
+                output.accept(TCItems.TRAPDOOR_GREATWOOD.get());
+                output.accept(TCItems.FENCE_GREATWOOD.get());
+                output.accept(TCItems.FENCE_GATE_GREATWOOD.get());
+                output.accept(TCItems.BUTTON_GREATWOOD.get());
+                output.accept(TCItems.PRESSURE_PLATE_GREATWOOD.get());
+                output.accept(TCItems.DOOR_SILVERWOOD.get());
+                output.accept(TCItems.TRAPDOOR_SILVERWOOD.get());
+                output.accept(TCItems.FENCE_SILVERWOOD.get());
+                output.accept(TCItems.FENCE_GATE_SILVERWOOD.get());
+                output.accept(TCItems.BUTTON_SILVERWOOD.get());
+                output.accept(TCItems.PRESSURE_PLATE_SILVERWOOD.get());
                 output.accept(TCItems.TABLE_WOOD.get());
                 output.accept(TCItems.TABLE_STONE.get());
                 output.accept(TCItems.PAVING_STONE_TRAVEL.get());

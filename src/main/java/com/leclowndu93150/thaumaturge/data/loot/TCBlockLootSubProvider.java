@@ -315,6 +315,18 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.SLAB_ELDRITCH.get(), this::createSlabItemTable);
         dropSelf(TCBlocks.STAIRS_GREATWOOD.get());
         dropSelf(TCBlocks.STAIRS_SILVERWOOD.get());
+        add(TCBlocks.DOOR_GREATWOOD.get(), this::createDoorTable);
+        dropSelf(TCBlocks.TRAPDOOR_GREATWOOD.get());
+        dropSelf(TCBlocks.FENCE_GREATWOOD.get());
+        dropSelf(TCBlocks.FENCE_GATE_GREATWOOD.get());
+        dropSelf(TCBlocks.BUTTON_GREATWOOD.get());
+        dropSelf(TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        add(TCBlocks.DOOR_SILVERWOOD.get(), this::createDoorTable);
+        dropSelf(TCBlocks.TRAPDOOR_SILVERWOOD.get());
+        dropSelf(TCBlocks.FENCE_SILVERWOOD.get());
+        dropSelf(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        dropSelf(TCBlocks.BUTTON_SILVERWOOD.get());
+        dropSelf(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         dropSelf(TCBlocks.TABLE_WOOD.get());
         dropSelf(TCBlocks.TABLE_STONE.get());
         dropSelf(TCBlocks.PAVING_STONE_TRAVEL.get());

@@ -91,6 +91,18 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
 
+        tag(BlockTags.WOODEN_DOORS).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_TRAPDOORS).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_FENCES).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(BlockTags.FENCE_GATES).add(TCBlocks.FENCE_GATE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_BUTTONS).add(TCBlocks.BUTTON_GREATWOOD.get()).add(TCBlocks.BUTTON_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_PRESSURE_PLATES).add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get()).add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCES_WOODEN).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCE_GATES_WOODEN).add(TCBlocks.FENCE_GATE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_GREATWOOD.get())
+                .add(TCBlocks.BUTTON_GREATWOOD.get()).add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get())
+                .add(TCBlocks.FENCE_SILVERWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get()).add(TCBlocks.BUTTON_SILVERWOOD.get()).add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
+
         tag(TCBlockTags.ELDRITCH_OBELISK_PARTS).add(TCBlocks.ELDRITCH_ALTAR.get()).add(TCBlocks.ELDRITCH_OBELISK.get()).add(TCBlocks.ELDRITCH_PILLAR.get()).add(TCBlocks.ELDRITCH_CAPSTONE.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.OBSIDIAN_TILE.get()).add(TCBlocks.OBSIDIAN_TOTEM.get()).add(TCBlocks.OBSIDIAN_TOTEM_CHARGED.get()).add(TCBlocks.ELDRITCH_STONE.get())

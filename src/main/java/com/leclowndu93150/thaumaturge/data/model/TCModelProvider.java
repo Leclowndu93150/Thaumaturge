@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
+import net.minecraft.client.data.models.model.TextureMapping;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
@@ -1532,6 +1533,12 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName)));
     }
 
+    private void woodFamily(BlockModelGenerators blockModels, Block planks, Block door, Block trapdoor, Block fence, Block fenceGate, Block button, Block pressurePlate) {
+        blockModels.createDoor(door);
+        blockModels.createTrapdoor(trapdoor);
+        blockModels.new BlockFamilyProvider(TextureMapping.cube(planks)).fence(fence).fenceGate(fenceGate).button(button).pressurePlate(pressurePlate);
+    }
+
     private void decorModels(BlockModelGenerators blockModels) {
         slab(blockModels, TCBlocks.SLAB_GREATWOOD.get(), TCBlocks.PLANK_GREATWOOD.get(), texture("plank_greatwood"), texture("plank_greatwood"), texture("plank_greatwood"));
         slab(blockModels, TCBlocks.SLAB_SILVERWOOD.get(), TCBlocks.PLANK_SILVERWOOD.get(), texture("plank_silverwood"), texture("plank_silverwood"), texture("plank_silverwood"));
@@ -1541,6 +1548,10 @@ public final class TCModelProvider extends ModelProvider {
         slab(blockModels, TCBlocks.SLAB_ELDRITCH.get(), TCBlocks.STONE_ELDRITCH_TILE.get(), texture("eldritch_stone_1"), texture("eldritch_stone_2"), texture("eldritch_stone_3"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_GREATWOOD.get(), texture("plank_greatwood"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_SILVERWOOD.get(), texture("plank_silverwood"));
+        woodFamily(blockModels, TCBlocks.PLANK_GREATWOOD.get(), TCBlocks.DOOR_GREATWOOD.get(), TCBlocks.TRAPDOOR_GREATWOOD.get(), TCBlocks.FENCE_GREATWOOD.get(), TCBlocks.FENCE_GATE_GREATWOOD.get(),
+                TCBlocks.BUTTON_GREATWOOD.get(), TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        woodFamily(blockModels, TCBlocks.PLANK_SILVERWOOD.get(), TCBlocks.DOOR_SILVERWOOD.get(), TCBlocks.TRAPDOOR_SILVERWOOD.get(), TCBlocks.FENCE_SILVERWOOD.get(),
+                TCBlocks.FENCE_GATE_SILVERWOOD.get(), TCBlocks.BUTTON_SILVERWOOD.get(), TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         existingModelWithItem(blockModels, TCBlocks.TABLE_WOOD.get(), "table_wood");
         existingModelWithItem(blockModels, TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(blockModels, TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
