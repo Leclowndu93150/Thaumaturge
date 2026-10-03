@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
@@ -29,9 +30,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar, JarRenderState> {
-    private static final Identifier BRINE_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "textures/entity/jarbrine.png");
-    private static final Identifier LABEL_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "textures/entity/label.png");
-    public static final Identifier ANIMATED_GLOW_LOCATION = Identifier.fromNamespaceAndPath("thaumaturge", "block/animatedglow");
+    private static final Identifier BRINE_TEXTURE = TCIds.rl("textures/entity/jarbrine.png");
+    private static final Identifier LABEL_TEXTURE = TCIds.rl("textures/entity/label.png");
+    public static final Identifier ANIMATED_GLOW_LOCATION = TCIds.rl("block/animatedglow");
     public static final SpriteId ANIMATED_GLOW_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, ANIMATED_GLOW_LOCATION);
 
     public static final float FLUID_MIN = 4.0F / 16.0F;

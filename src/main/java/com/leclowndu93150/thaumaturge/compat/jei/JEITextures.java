@@ -16,6 +16,6 @@ public final class JEITextures {
     private JEITextures() {}
 
     private static Identifier jei(String name) {
-        return Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/jei/" + name);
+        return TCIds.rl("textures/gui/jei/" + name);
     }
 }

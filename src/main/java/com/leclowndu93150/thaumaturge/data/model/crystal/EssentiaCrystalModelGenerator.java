@@ -12,7 +12,7 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
 
 public final class EssentiaCrystalModelGenerator {
-    private static final Identifier CRYSTAL_TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/essentia_crystal");
+    private static final Identifier CRYSTAL_TEXTURE = TCIds.rl("item/essentia_crystal");
 
     private EssentiaCrystalModelGenerator() {}
 

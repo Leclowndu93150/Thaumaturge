@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
 import java.util.List;
-import net.minecraft.resources.Identifier;
+
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.resources.ResourceKey;
 
 /**
@@ -67,6 +68,6 @@ public final class TCAspects {
     private TCAspects() {}
 
     private static ResourceKey<IAspect> key(String tag) {
-        return ResourceKey.create(IAspect.REGISTRY_KEY, Identifier.fromNamespaceAndPath("thaumaturge", tag));
+        return ResourceKey.create(IAspect.REGISTRY_KEY, TCIds.rl(tag));
     }
 }

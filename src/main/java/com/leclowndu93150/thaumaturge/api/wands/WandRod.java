@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.wands;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -14,7 +15,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class WandRod {
     /** The registry key for wand rods. */
-    public static final ResourceKey<Registry<WandRod>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "wand_rod"));
+    public static final ResourceKey<Registry<WandRod>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("wand_rod"));
 
     private final int capacity;
     private final int craftCost;

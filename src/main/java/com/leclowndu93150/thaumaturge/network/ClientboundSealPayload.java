@@ -8,10 +8,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 
 public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) implements CustomPacketPayload {
-    public static final Type<ClientboundSealPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "seal"));
+    public static final Type<ClientboundSealPayload> TYPE = new Type<>(TCIds.rl("seal"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSealPayload> STREAM_CODEC = StreamCodec.composite(SealPos.STREAM_CODEC, ClientboundSealPayload::pos,
             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(SealEntity.CODEC)), ClientboundSealPayload::seal, ClientboundSealPayload::new);

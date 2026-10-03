@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.resources.Identifier;
 
 /**
@@ -9,14 +10,10 @@ import net.minecraft.resources.Identifier;
  */
 public final class TCResearchEntries {
     /** Unlocks celestial observation through the thaumometer. */
-    public static final Identifier CELESTIAL_SCANNING = id("celestial_scanning");
+    public static final Identifier CELESTIAL_SCANNING = TCIds.rl("celestial_scanning");
 
     /** Granted when the thaumometer detects dangerous flux levels in the local aura. */
-    public static final Identifier FLUX = id("flux");
+    public static final Identifier FLUX = TCIds.rl("flux");
 
     private TCResearchEntries() {}
-
-    private static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath("thaumaturge", path);
-    }
 }

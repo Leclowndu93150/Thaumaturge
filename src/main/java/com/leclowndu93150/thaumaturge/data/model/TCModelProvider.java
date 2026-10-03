@@ -120,9 +120,9 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private static void registerVoidRobePiece(ItemModelGenerators itemModels, Item item, String name) {
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
-        Material clothTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
-        Material metalTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
+        Identifier itemModelId = TCIds.rl("item/" + name);
+        Material clothTex = new Material(TCIds.rl("item/" + name + "_over"));
+        Material metalTex = new Material(TCIds.rl("item/" + name));
         ModelTemplates.TWO_LAYERED_ITEM.create(itemModelId, TextureMapping.layered(clothTex, metalTex), itemModels.modelOutput);
         itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
     }
@@ -140,19 +140,19 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private static void registerInvisibleBlock(BlockModelGenerators blockModels, Block block) {
-        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
+        Identifier empty = TCIds.rl("block/empty");
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
     }
 
     private static void registerNitor(BlockModelGenerators blockModels, ItemModelGenerators itemModels, DyeColor dye) {
         var block = TCBlocks.NITORS.get(dye).get();
-        Identifier empty = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/empty");
+        Identifier empty = TCIds.rl("block/empty");
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(empty)));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
 
         var item = TCItems.NITORS.get(dye).get();
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/nitor");
+        Identifier itemModelId = TCIds.rl("item/nitor");
         int rgb = dye.getTextureDiffuseColor() & 0xFFFFFF;
         ItemModel.Unbaked flat = ItemModelUtils.tintedModel(itemModelId, new Constant(rgb));
         ItemModel.Unbaked inHand = new SpecialModelWrapper.Unbaked(Identifier.withDefaultNamespace("block/block"), Optional.empty(), new NitorItemSpecialRenderer.Unbaked(block.dyeColor()));
@@ -172,18 +172,18 @@ public final class TCModelProvider extends ModelProvider {
         registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ANCIENT.get(), "pedestal_ancient");
         registerSimpleWithItem(blockModels, itemModels, TCBlocks.PEDESTAL_ELDRITCH.get(), "pedestal_eldritch");
         registerSimpleWithItem(blockModels, itemModels, TCBlocks.INFUSION_MATRIX.get(), "infusion_matrix");
-        itemModels.itemModelOutput.accept(TCBlocks.INFUSION_MATRIX.asItem(), ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/infusion_matrix")));
+        itemModels.itemModelOutput.accept(TCBlocks.INFUSION_MATRIX.asItem(), ItemModelUtils.plainModel(TCIds.rl("block/infusion_matrix")));
     }
 
     private static void registerPillar(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName, PropertyDispatch<VariantMutator> facing) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        Identifier model = TCIds.rl("block/" + modelName);
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant).with(facing));
         itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(model), new ClientItem.Properties(true, true, 1));
     }
 
     private static void registerSimpleWithItem(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        Identifier model = TCIds.rl("block/" + modelName);
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
         if (block != TCBlocks.INFUSION_MATRIX.get()) {
@@ -193,18 +193,18 @@ public final class TCModelProvider extends ModelProvider {
 
     private static void registerSpa(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Identifier spaModel = ModelTemplates.CUBE_BOTTOM_TOP.create(ModelLocationUtils.getModelLocation(TCBlocks.SPA.get()),
-                new TextureMapping().put(TextureSlot.SIDE, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_side")))
-                        .put(TextureSlot.TOP, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/spa_top")))
+                new TextureMapping().put(TextureSlot.SIDE, new Material(TCIds.rl("block/spa_side")))
+                        .put(TextureSlot.TOP, new Material(TCIds.rl("block/spa_top")))
                         .put(TextureSlot.BOTTOM, new Material(Identifier.withDefaultNamespace("block/furnace_top"))),
                 blockModels.modelOutput);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.SPA.get(), new MultiVariant(WeightedList.of(new Variant(spaModel)))));
         itemModels.itemModelOutput.accept(TCItems.SPA.get(), ItemModelUtils.plainModel(spaModel));
         blockModels.blockStateOutput.accept(
-                MultiVariantGenerator.dispatch(TCBlocks.PURIFYING_FLUID.get(), new MultiVariant(WeightedList.of(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/purifying_fluid"))))));
+                MultiVariantGenerator.dispatch(TCBlocks.PURIFYING_FLUID.get(), new MultiVariant(WeightedList.of(new Variant(TCIds.rl("block/purifying_fluid"))))));
         itemModels.generateFlatItem(TCItems.BUCKET_LIQUID_DEATH.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.BUCKET_PURIFYING.get(), ModelTemplates.FLAT_ITEM);
         blockModels.blockStateOutput.accept(
-                MultiVariantGenerator.dispatch(TCBlocks.LIQUID_DEATH.get(), new MultiVariant(WeightedList.of(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/liquid_death"))))));
+                MultiVariantGenerator.dispatch(TCBlocks.LIQUID_DEATH.get(), new MultiVariant(WeightedList.of(new Variant(TCIds.rl("block/liquid_death"))))));
     }
 
     private static void registerGolemancy(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
@@ -240,8 +240,8 @@ public final class TCModelProvider extends ModelProvider {
                 itemModels.modelOutput);
         itemModels.itemModelOutput.accept(TCItems.GOLEM_PLACER.get(), ItemModelUtils.tintedModel(golemModel, new GolemMaterialTint()));
 
-        Identifier inlayDot = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_dot");
-        Identifier inlaySide = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_side");
+        Identifier inlayDot = TCIds.rl("block/inlay_dot");
+        Identifier inlaySide = TCIds.rl("block/inlay_side");
         MultiPartGenerator inlayGenerator = MultiPartGenerator.multiPart(TCBlocks.INLAY.get()).with(new MultiVariant(WeightedList.of(new Variant(inlayDot))));
         inlayGenerator = inlayGenerator.with(new ConditionBuilder().term(BlockInlay.NORTH, true), new MultiVariant(WeightedList.of(new Variant(inlaySide))));
         inlayGenerator = inlayGenerator.with(new ConditionBuilder().term(BlockInlay.EAST, true), new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_90.apply(new Variant(inlaySide)))));
@@ -249,11 +249,11 @@ public final class TCModelProvider extends ModelProvider {
         inlayGenerator = inlayGenerator.with(new ConditionBuilder().term(BlockInlay.WEST, true), new MultiVariant(WeightedList.of(BlockModelGenerators.Y_ROT_270.apply(new Variant(inlaySide)))));
         blockModels.blockStateOutput.accept(inlayGenerator);
         Identifier inlayItemModel = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(TCItems.INLAY.get()), TextureMapping
-                .layered(new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect_under")), new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_connect1"))),
+                .layered(new Material(TCIds.rl("block/inlay_connect_under")), new Material(TCIds.rl("block/inlay_connect1"))),
                 itemModels.modelOutput);
         itemModels.itemModelOutput.accept(TCItems.INLAY.get(), ItemModelUtils.plainModel(inlayItemModel));
 
-        Identifier patternCrafterModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/pattern_crafter");
+        Identifier patternCrafterModel = TCIds.rl("block/pattern_crafter");
         PropertyDispatch<VariantMutator> patternCrafterFacing = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.NORTH, BlockModelGenerators.NOP)
                 .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270).select(Direction.EAST, BlockModelGenerators.Y_ROT_90);
         blockModels.blockStateOutput
@@ -261,9 +261,9 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(TCItems.PATTERN_CRAFTER.get(), ItemModelUtils.plainModel(patternCrafterModel));
 
         Identifier sprayerModel = ModelTemplates.CUBE_BOTTOM_TOP.create(TCBlocks.POTION_SPRAYER.get(),
-                new TextureMapping().put(TextureSlot.TOP, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_top")))
-                        .put(TextureSlot.BOTTOM, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_bottom")))
-                        .put(TextureSlot.SIDE, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/potion_sprayer_side"))),
+                new TextureMapping().put(TextureSlot.TOP, new Material(TCIds.rl("block/potion_sprayer_top")))
+                        .put(TextureSlot.BOTTOM, new Material(TCIds.rl("block/potion_sprayer_bottom")))
+                        .put(TextureSlot.SIDE, new Material(TCIds.rl("block/potion_sprayer_side"))),
                 blockModels.modelOutput);
         PropertyDispatch<VariantMutator> sprayerFacing = PropertyDispatch.modify(BlockStateProperties.FACING).select(Direction.UP, BlockModelGenerators.NOP)
                 .select(Direction.DOWN, BlockModelGenerators.X_ROT_180).select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
@@ -276,8 +276,8 @@ public final class TCModelProvider extends ModelProvider {
                 .select(Direction.DOWN, BlockModelGenerators.X_ROT_180).select(Direction.NORTH, BlockModelGenerators.X_ROT_90)
                 .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180)).select(Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270))
                 .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
-        Identifier levitatorOn = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_on");
-        Identifier levitatorOff = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/levitator_off");
+        Identifier levitatorOn = TCIds.rl("block/levitator_on");
+        Identifier levitatorOff = TCIds.rl("block/levitator_off");
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.LEVITATOR.get()).with(PropertyDispatch.initial(BlockStateProperties.ENABLED)
                 .select(true, new MultiVariant(WeightedList.of(new Variant(levitatorOn)))).select(false, new MultiVariant(WeightedList.of(new Variant(levitatorOff))))).with(levitatorFacing));
         itemModels.itemModelOutput.accept(TCItems.LEVITATOR.get(), ItemModelUtils.plainModel(levitatorOff));
@@ -288,7 +288,7 @@ public final class TCModelProvider extends ModelProvider {
 
         registerInvisibleBlock(blockModels, TCBlocks.GOLEM_BUILDER.get());
         itemModels.itemModelOutput.accept(TCItems.GOLEM_BUILDER.get(),
-                new SpecialModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/golem_builder_base"), Optional.empty(), new GolemBuilderItemSpecialRenderer.Unbaked()));
+                new SpecialModelWrapper.Unbaked(TCIds.rl("item/golem_builder_base"), Optional.empty(), new GolemBuilderItemSpecialRenderer.Unbaked()));
         registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_IRON_BARS.get());
         registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_CAULDRON.get());
         registerInvisibleBlock(blockModels, TCBlocks.PLACEHOLDER_ANVIL.get());
@@ -304,8 +304,8 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TCItems.GRAPPLE_GUN_SPOOL.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.ELDRITCH_EYE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.RUNED_TABLET.get(), ModelTemplates.FLAT_ITEM);
-        ItemModel.Unbaked unloaded = ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_1"));
-        ItemModel.Unbaked loaded = ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/grapple_gun_2"));
+        ItemModel.Unbaked unloaded = ItemModelUtils.plainModel(TCIds.rl("item/grapple_gun_1"));
+        ItemModel.Unbaked loaded = ItemModelUtils.plainModel(TCIds.rl("item/grapple_gun_2"));
         itemModels.itemModelOutput.accept(TCItems.GRAPPLE_GUN.get(), ItemModelUtils.conditional(ItemModelUtils.hasComponent(TCDataComponents.GRAPPLE_LOADED.get()), loaded, unloaded));
         registerActivatorRail(blockModels);
     }
@@ -347,25 +347,25 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private static void registerRobeItem(ItemModelGenerators itemModels, Item item, String name) {
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name);
-        Material baseTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name));
-        Material overTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/" + name + "_over"));
+        Identifier itemModelId = TCIds.rl("item/" + name);
+        Material baseTex = new Material(TCIds.rl("item/" + name));
+        Material overTex = new Material(TCIds.rl("item/" + name + "_over"));
         ModelTemplates.TWO_LAYERED_ITEM.create(itemModelId, TextureMapping.layered(baseTex, overTex), itemModels.modelOutput);
         itemModels.itemModelOutput.accept(item, ItemModelUtils.tintedModel(itemModelId, new Dye(ROBES_UNDYED_ARGB)));
     }
 
     private static void registerMirrorItem(ItemModelGenerators itemModels, Item item, String frameTexture) {
-        Material frame = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + frameTexture));
+        Material frame = new Material(TCIds.rl("block/" + frameTexture));
         Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(item),
-                TextureMapping.layered(frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpane"))), itemModels.modelOutput);
+                TextureMapping.layered(frame, new Material(TCIds.rl("block/mirrorpane"))), itemModels.modelOutput);
         Identifier linkedModel = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(item, "_on"),
-                TextureMapping.layered(frame, new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorpaneopen"))), itemModels.modelOutput);
+                TextureMapping.layered(frame, new Material(TCIds.rl("block/mirrorpaneopen"))), itemModels.modelOutput);
         itemModels.itemModelOutput.accept(item,
                 ItemModelUtils.conditional(new HasComponent(TCDataComponents.MIRROR_LINK.get(), false), ItemModelUtils.plainModel(linkedModel), ItemModelUtils.plainModel(model)));
     }
 
     private static void mirrorBlockState(BlockModelGenerators blockModels, Block block) {
-        Identifier model = ModelTemplates.PARTICLE_ONLY.createWithSuffix(block, "_state", TextureMapping.particle(new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/mirrorframe"))),
+        Identifier model = ModelTemplates.PARTICLE_ONLY.createWithSuffix(block, "_state", TextureMapping.particle(new Material(TCIds.rl("block/mirrorframe"))),
                 blockModels.modelOutput);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
     }
@@ -441,7 +441,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private static void cubeAllTexture(BlockModelGenerators blockModels, Block block, String textureName) {
-        Identifier textureId = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + textureName);
+        Identifier textureId = TCIds.rl("block/" + textureName);
         Material texture = new Material(textureId);
         Identifier modelId = ModelTemplates.CUBE_ALL.create(block, TextureMapping.cube(texture), blockModels.modelOutput);
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(modelId)));
@@ -654,7 +654,7 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TCItems.CHUNK_RABBIT.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.CHUNK_MUTTON.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.TRIPLE_MEAT_TREAT.get(), ModelTemplates.FLAT_ITEM);
-        itemModels.itemModelOutput.accept(TCItems.THAUMOMETER.get(), ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/thaumometer")));
+        itemModels.itemModelOutput.accept(TCItems.THAUMOMETER.get(), ItemModelUtils.plainModel(TCIds.rl("item/thaumometer")));
         itemModels.generateFlatItem(TCItems.JAR_BRACE.get(), ModelTemplates.FLAT_ITEM);
         Identifier labelModelId = itemModels.createFlatItemModel(TCItems.LABEL.get(), ModelTemplates.FLAT_ITEM);
         Identifier labelOverlayModelId = itemModels.createFlatItemModel(TCItems.LABEL.get(), "_overlay", ModelTemplates.FLAT_ITEM);
@@ -716,9 +716,9 @@ public final class TCModelProvider extends ModelProvider {
         registerBaubleItems(itemModels);
 
         // Nitor Models
-        Identifier itemModelId = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/nitor");
-        Material baseTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/nitor"));
-        Material coreTex = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/nitor_core"));
+        Identifier itemModelId = TCIds.rl("item/nitor");
+        Material baseTex = new Material(TCIds.rl("block/nitor"));
+        Material coreTex = new Material(TCIds.rl("block/nitor_core"));
         TextureMapping textures = TextureMapping.layered(baseTex, coreTex);
         ModelTemplates.TWO_LAYERED_ITEM.create(itemModelId, textures, itemModels.modelOutput);
         for (DyeColor dye : DyeColor.values()) {
@@ -843,7 +843,7 @@ public final class TCModelProvider extends ModelProvider {
         PropertyDispatch<VariantMutator> rotations = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.NORTH, BlockModelGenerators.NOP)
                 .select(Direction.EAST, BlockModelGenerators.Y_ROT_90).select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variantOf(modelName)).with(rotations));
-        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName), Optional.empty(), List.of()),
+        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(TCIds.rl("block/" + modelName), Optional.empty(), List.of()),
                 new ClientItem.Properties(true, oversizedInGui, 1));
     }
 
@@ -858,17 +858,17 @@ public final class TCModelProvider extends ModelProvider {
                 .select(Direction.UP, BlockModelGenerators.X_ROT_270).select(Direction.NORTH, BlockModelGenerators.NOP).select(Direction.EAST, BlockModelGenerators.Y_ROT_90)
                 .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.BELLOWS.get(), variantOf("bellows")).with(rotations));
-        itemModels.itemModelOutput.accept(TCBlocks.BELLOWS.asItem(), new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/bellows"), Optional.empty(), List.of()));
+        itemModels.itemModelOutput.accept(TCBlocks.BELLOWS.asItem(), new CuboidItemModelWrapper.Unbaked(TCIds.rl("item/bellows"), Optional.empty(), List.of()));
     }
 
     private void registerBanners(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/tc_banner");
+        Identifier model = TCIds.rl("block/tc_banner");
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
-        Material stand = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/banner_stand"));
-        Material cloth = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/banner_cloth"));
-        Material symbol = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/banner_symbol"));
-        Identifier dyedItemModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/banner_dyed");
-        Identifier cultistItemModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/banner_cultist");
+        Material stand = new Material(TCIds.rl("item/banner_stand"));
+        Material cloth = new Material(TCIds.rl("item/banner_cloth"));
+        Material symbol = new Material(TCIds.rl("item/banner_symbol"));
+        Identifier dyedItemModel = TCIds.rl("item/banner_dyed");
+        Identifier cultistItemModel = TCIds.rl("item/banner_cultist");
         THREE_LAYERED_ITEM.create(dyedItemModel, TextureMapping.layered(stand, cloth, symbol), itemModels.modelOutput);
         ModelTemplates.TWO_LAYERED_ITEM.create(cultistItemModel, TextureMapping.layered(stand, new Material(cultistItemModel)), itemModels.modelOutput);
         for (DyeColor dye : DyeColor.values()) {
@@ -884,7 +884,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerCandles(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/candle");
+        Identifier model = TCIds.rl("block/candle");
         MultiVariant variant = new MultiVariant(WeightedList.of(new Variant(model)));
         for (DyeColor dye : DyeColor.values()) {
             Block candle = TCBlocks.CANDLES.get(dye).get();
@@ -894,9 +894,9 @@ public final class TCModelProvider extends ModelProvider {
         }
         for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
             String name = "block/candle_holder_" + material.getSerializedName();
-            Identifier emptyHolder = Identifier.fromNamespaceAndPath(TCIds.MODID, name);
+            Identifier emptyHolder = TCIds.rl(name);
             MultiVariant empty = new MultiVariant(WeightedList.of(new Variant(emptyHolder)));
-            MultiVariant filled = new MultiVariant(WeightedList.of(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, name + "_filled"))));
+            MultiVariant filled = new MultiVariant(WeightedList.of(new Variant(TCIds.rl(name + "_filled"))));
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.CANDLE_HOLDERS.get(material).get())
                     .with(PropertyDispatch.initial(BlockCandleHolder.CANDLE).generate(held -> held.isPresent() ? filled : empty)));
             itemModels.itemModelOutput.accept(TCItems.CANDLE_HOLDERS.get(material).get(), ItemModelUtils.plainModel(emptyHolder));
@@ -942,12 +942,12 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerVerdantCharm(ItemModelGenerators itemModels) {
-        Material base = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/verdant_charm"));
+        Material base = new Material(TCIds.rl("item/verdant_charm"));
         List<SelectItemModel.SwitchCase<Integer>> cases = new ArrayList<>();
         Identifier fallback = null;
         for (int type = 0; type <= 2; type++) {
-            Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/verdant_charm_" + type);
-            Material overlay = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/verdant_charm_over_" + type));
+            Identifier model = TCIds.rl("item/verdant_charm_" + type);
+            Material overlay = new Material(TCIds.rl("item/verdant_charm_over_" + type));
             ModelTemplates.TWO_LAYERED_ITEM.create(model, TextureMapping.layered(base, overlay), itemModels.modelOutput);
             cases.add(ItemModelUtils.when(type, ItemModelUtils.plainModel(model)));
             if (type == 0) {
@@ -966,14 +966,14 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerCelestialNotes(ItemModelGenerators itemModels) {
-        Material sheet = new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/celestial_notes_sheet"));
+        Material sheet = new Material(TCIds.rl("item/celestial_notes_sheet"));
         List<SelectItemModel.SwitchCase<CelestialBody>> cases = new ArrayList<>();
         for (CelestialBody body : CelestialBody.values()) {
-            Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/celestial_notes_" + body.getSerializedName());
+            Identifier model = TCIds.rl("item/celestial_notes_" + body.getSerializedName());
             ModelTemplates.TWO_LAYERED_ITEM.create(model, TextureMapping.layered(sheet, new Material(model)), itemModels.modelOutput);
             cases.add(ItemModelUtils.when(body, ItemModelUtils.plainModel(model)));
         }
-        Identifier fallback = Identifier.fromNamespaceAndPath(TCIds.MODID, "item/celestial_notes_sun");
+        Identifier fallback = TCIds.rl("item/celestial_notes_sun");
         itemModels.itemModelOutput.accept(TCItems.CELESTIAL_NOTES.get(),
                 ItemModelUtils.select(new ComponentContents<>(TCDataComponents.CELESTIAL_BODY.get()), ItemModelUtils.plainModel(fallback), cases));
     }
@@ -982,8 +982,8 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(block, BlockModelGenerators.plainVariant(TCIds.rl("block/" + modelName))));
         itemModels.itemModelOutput.accept(block.asItem(),
                 new CompositeModel.Unbaked(
-                        List.of(new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName), Optional.empty(), List.of()),
-                                new SpecialModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName), Optional.empty(), new JarItemSpecialRenderer.Unbaked())),
+                        List.of(new CuboidItemModelWrapper.Unbaked(TCIds.rl("block/" + modelName), Optional.empty(), List.of()),
+                                new SpecialModelWrapper.Unbaked(TCIds.rl("block/" + modelName), Optional.empty(), new JarItemSpecialRenderer.Unbaked())),
                         Optional.empty()));
     }
 
@@ -993,13 +993,13 @@ public final class TCModelProvider extends ModelProvider {
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block).with(coreVariant);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BooleanProperty property = BlockEssentiaTransport.propertyFor(direction);
-            Variant rotated = applyRotation(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/alembic_bore")), direction);
+            Variant rotated = applyRotation(new Variant(TCIds.rl("block/alembic_bore")), direction);
             MultiVariant variant = new MultiVariant(WeightedList.of(rotated));
             generator = generator.with(new ConditionBuilder().term(property, true), variant);
         }
         blockModels.blockStateOutput.accept(generator);
 
-        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/alembic"), Optional.empty(), List.of()));
+        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(TCIds.rl("block/alembic"), Optional.empty(), List.of()));
     }
 
     private void registerSmelter(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName) {
@@ -1010,7 +1010,7 @@ public final class TCModelProvider extends ModelProvider {
                 .select(Direction.EAST, BlockModelGenerators.Y_ROT_90).select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(lit).with(rotations));
 
-        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName + "_off"), Optional.empty(), List.of()));
+        itemModels.itemModelOutput.accept(block.asItem(), new CuboidItemModelWrapper.Unbaked(TCIds.rl("block/" + modelName + "_off"), Optional.empty(), List.of()));
     }
 
     private static void registerFluxGas(BlockModelGenerators blockModels) {
@@ -1111,27 +1111,27 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private static Material blockTexture(String name) {
-        return new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + name));
+        return new Material(TCIds.rl("block/" + name));
     }
 
     private MultiVariant variantOf(String modelName) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        Identifier model = TCIds.rl("block/" + modelName);
         return new MultiVariant(WeightedList.of(new Variant(model)));
     }
 
     private void registerDeconstructionTable(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         registerInvisibleBlock(blockModels, TCBlocks.DECONSTRUCTION_TABLE.get());
         itemModels.itemModelOutput.accept(TCBlocks.DECONSTRUCTION_TABLE.get().asItem(),
-                new SpecialModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/deconstruction_table_base"), Optional.empty(), new DeconTableItemSpecialRenderer.Unbaked()));
+                new SpecialModelWrapper.Unbaked(TCIds.rl("item/deconstruction_table_base"), Optional.empty(), new DeconTableItemSpecialRenderer.Unbaked()));
     }
 
     private void registerResearchNote(ItemModelGenerators itemModels) {
         Identifier base = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(TCItems.RESEARCH_NOTE.get()), TextureMapping
-                .layered(new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/research_note")), new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/research_note_overlay"))),
+                .layered(new Material(TCIds.rl("item/research_note")), new Material(TCIds.rl("item/research_note_overlay"))),
                 itemModels.modelOutput);
         Identifier complete = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(TCItems.RESEARCH_NOTE.get(), "_complete"),
-                TextureMapping.layered(new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/research_note_complete")),
-                        new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/research_note_complete_overlay"))),
+                TextureMapping.layered(new Material(TCIds.rl("item/research_note_complete")),
+                        new Material(TCIds.rl("item/research_note_complete_overlay"))),
                 itemModels.modelOutput);
         ItemModel.Unbaked baseModel = ItemModelUtils.tintedModel(base, new Constant(0xFFFFFF), new NoteColorTint(0x999999));
         ItemModel.Unbaked completeModel = ItemModelUtils.tintedModel(complete, new Constant(0xFFFFFF), new NoteColorTint(0x999999));
@@ -1139,7 +1139,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerResearchTable(BlockModelGenerators blockModels) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/table_wood");
+        Identifier model = TCIds.rl("block/table_wood");
         registerInvisibleBlock(blockModels, TCBlocks.RESEARCH_TABLE.get());
         blockModels.registerSimpleItemModel(TCBlocks.RESEARCH_TABLE.get().asItem(), model);
     }
@@ -1148,8 +1148,8 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(TCBlocks.JAR_BRAIN.get(), BlockModelGenerators.plainVariant(TCIds.rl("block/jar_normal"))));
         itemModels.itemModelOutput.accept(TCBlocks.JAR_BRAIN.get().asItem(),
                 new CompositeModel.Unbaked(
-                        List.of(new CuboidItemModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/jar_normal"), Optional.empty(), List.of()),
-                                new SpecialModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/jar_normal"), Optional.empty(), new JarBrainItemSpecialRenderer.Unbaked())),
+                        List.of(new CuboidItemModelWrapper.Unbaked(TCIds.rl("block/jar_normal"), Optional.empty(), List.of()),
+                                new SpecialModelWrapper.Unbaked(TCIds.rl("block/jar_normal"), Optional.empty(), new JarBrainItemSpecialRenderer.Unbaked())),
                         Optional.empty()));
     }
 
@@ -1189,7 +1189,7 @@ public final class TCModelProvider extends ModelProvider {
         registerLattice(blockModels, itemModels, TCBlocks.CONDENSER_LATTICE_DIRTY.get(), "condenser_lattice_core_dirty");
         registerRelay(blockModels, itemModels);
 
-        Identifier thaumatoriumModel = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/thaumatorium");
+        Identifier thaumatoriumModel = TCIds.rl("block/thaumatorium");
         PropertyDispatch<VariantMutator> thaumatoriumFacing = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.WEST, BlockModelGenerators.X_ROT_90)
                 .select(Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270)).select(Direction.NORTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90))
                 .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180));
@@ -1206,7 +1206,7 @@ public final class TCModelProvider extends ModelProvider {
 
         registerInvisibleBlock(blockModels, TCBlocks.CENTRIFUGE.get());
         itemModels.itemModelOutput.accept(TCItems.CENTRIFUGE.get(),
-                new SpecialModelWrapper.Unbaked(Identifier.fromNamespaceAndPath(TCIds.MODID, "item/centrifuge_base"), Optional.empty(), new CentrifugeItemSpecialRenderer.Unbaked()));
+                new SpecialModelWrapper.Unbaked(TCIds.rl("item/centrifuge_base"), Optional.empty(), new CentrifugeItemSpecialRenderer.Unbaked()));
 
         registerInvisibleBlock(blockModels, TCBlocks.HUNGRY_CHEST.get());
         itemModels.itemModelOutput.accept(TCItems.HUNGRY_CHEST.get(),
@@ -1224,8 +1224,8 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerLattice(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String coreModel) {
-        Identifier side = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/condenser_lattice_side");
-        Identifier core = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + coreModel);
+        Identifier side = TCIds.rl("block/condenser_lattice_side");
+        Identifier core = TCIds.rl("block/" + coreModel);
         MultiPartGenerator generator = MultiPartGenerator.multiPart(block).with(new MultiVariant(WeightedList.of(new Variant(core))));
         record LatticeFace(BooleanProperty property, VariantMutator mutator) {
         }
@@ -1242,8 +1242,8 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerRelay(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Identifier on = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/redstone_relay_on");
-        Identifier off = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/redstone_relay_off");
+        Identifier on = TCIds.rl("block/redstone_relay_on");
+        Identifier off = TCIds.rl("block/redstone_relay_off");
         PropertyDispatch<VariantMutator> facing = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.SOUTH, BlockModelGenerators.NOP)
                 .select(Direction.NORTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_90).select(Direction.EAST, BlockModelGenerators.Y_ROT_270);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.REDSTONE_RELAY.get()).with(PropertyDispatch.initial(BlockStateProperties.POWERED)
@@ -1252,14 +1252,14 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void registerFacingDevice(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String modelName, PropertyDispatch<VariantMutator> facing) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        Identifier model = TCIds.rl("block/" + modelName);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, new MultiVariant(WeightedList.of(new Variant(model)))).with(facing));
         itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(model));
     }
 
     private void registerEnabledFacingDevice(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String onModel, String offModel, PropertyDispatch<VariantMutator> facing) {
-        Identifier on = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + onModel);
-        Identifier off = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + offModel);
+        Identifier on = TCIds.rl("block/" + onModel);
+        Identifier off = TCIds.rl("block/" + offModel);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(PropertyDispatch.initial(BlockStateProperties.ENABLED)
                 .select(true, new MultiVariant(WeightedList.of(new Variant(on)))).select(false, new MultiVariant(WeightedList.of(new Variant(off))))).with(facing));
         itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(off));
@@ -1271,8 +1271,8 @@ public final class TCModelProvider extends ModelProvider {
 
         Identifier[] batteryModels = new Identifier[5];
         for (int i = 0; i < 5; i++) {
-            Identifier textureId = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/vis_battery_" + i);
-            batteryModels[i] = ModelTemplates.CUBE_ALL.create(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/vis_battery_" + i), TextureMapping.cube(new Material(textureId)),
+            Identifier textureId = TCIds.rl("block/vis_battery_" + i);
+            batteryModels[i] = ModelTemplates.CUBE_ALL.create(TCIds.rl("block/vis_battery_" + i), TextureMapping.cube(new Material(textureId)),
                     blockModels.modelOutput);
         }
         PropertyDispatch<MultiVariant> chargeDispatch = PropertyDispatch.initial(BlockVisBattery.CHARGE).generate(charge -> {
@@ -1282,8 +1282,8 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.VIS_BATTERY.get()).with(chargeDispatch));
         itemModels.itemModelOutput.accept(TCItems.VIS_BATTERY.get(), ItemModelUtils.plainModel(batteryModels[0]));
 
-        Identifier dioptraOn = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/dioptra_on");
-        Identifier dioptraOff = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/dioptra_off");
+        Identifier dioptraOn = TCIds.rl("block/dioptra_on");
+        Identifier dioptraOff = TCIds.rl("block/dioptra_off");
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(TCBlocks.DIOPTRA.get()).with(PropertyDispatch.initial(BlockStateProperties.ENABLED)
                 .select(true, new MultiVariant(WeightedList.of(new Variant(dioptraOn)))).select(false, new MultiVariant(WeightedList.of(new Variant(dioptraOff))))));
         itemModels.itemModelOutput.accept(TCItems.DIOPTRA.get(), ItemModelUtils.plainModel(dioptraOn));
@@ -1368,7 +1368,7 @@ public final class TCModelProvider extends ModelProvider {
         simpleCube(blockModels, TCBlocks.LEAVES_GREATWOOD.get(), "leaves_greatwood");
         simpleCube(blockModels, TCBlocks.LEAVES_SILVERWOOD.get(), "leaves_silverwood");
         itemModels.itemModelOutput.accept(TCBlocks.LEAVES_GREATWOOD.get().asItem(),
-                ItemModelUtils.tintedModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/leaves_greatwood"), new Constant(FOLIAGE_DEFAULT_COLOR)));
+                ItemModelUtils.tintedModel(TCIds.rl("block/leaves_greatwood"), new Constant(FOLIAGE_DEFAULT_COLOR)));
         log(blockModels, TCBlocks.LOG_GREATWOOD.get(), TCBlocks.WOOD_GREATWOOD.get());
         log(blockModels, TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get());
         blockModels.blockStateOutput.accept(BlockModelGenerators.createRotatedPillarWithHorizontalVariant(TCBlocks.SILVERWOOD_NODE_LOG.get(),
@@ -1483,7 +1483,7 @@ public final class TCModelProvider extends ModelProvider {
         WeightedList.Builder<Variant> entries = WeightedList.builder();
         for (int tex = 1; tex <= 2; tex++) {
             for (String face : new String[]{"north", "south", "east", "west"}) {
-                entries.add(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/taint_log_" + face + tex)), 1);
+                entries.add(new Variant(TCIds.rl("block/taint_log_" + face + tex)), 1);
             }
         }
         MultiVariant barks = new MultiVariant(entries.build());
@@ -1495,7 +1495,7 @@ public final class TCModelProvider extends ModelProvider {
     private MultiVariant rotatedWeighted(String[] models, int[] weights) {
         WeightedList.Builder<Variant> entries = WeightedList.builder();
         for (int i = 0; i < models.length; i++) {
-            Variant base = new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + models[i]));
+            Variant base = new Variant(TCIds.rl("block/" + models[i]));
             entries.add(base, weights[i]);
             entries.add(BlockModelGenerators.X_ROT_90.apply(base), weights[i]);
             entries.add(BlockModelGenerators.Y_ROT_90.apply(base), weights[i]);
@@ -1514,8 +1514,8 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private MultiVariant orbVariants() {
-        return new MultiVariant(WeightedList.<Variant>builder().add(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/taint_orb_0")))
-                .add(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/taint_orb_1"))).add(new Variant(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/taint_orb_2"))).build());
+        return new MultiVariant(WeightedList.<Variant>builder().add(new Variant(TCIds.rl("block/taint_orb_0")))
+                .add(new Variant(TCIds.rl("block/taint_orb_1"))).add(new Variant(TCIds.rl("block/taint_orb_2"))).build());
     }
 
     private void registerTaintFibre(BlockModelGenerators blockModels) {
@@ -1539,7 +1539,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void blockItemModel(ItemModelGenerators itemModels, Item item, String modelName) {
-        itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName)));
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(TCIds.rl("block/" + modelName)));
     }
 
     private void decorModels(BlockModelGenerators blockModels) {
@@ -1558,7 +1558,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private Material texture(String name) {
-        return new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + name));
+        return new Material(TCIds.rl("block/" + name));
     }
 
     private void slab(BlockModelGenerators blockModels, Block slab, Block fullBlock, Material bottom, Material top, Material side) {
@@ -1626,7 +1626,7 @@ public final class TCModelProvider extends ModelProvider {
     }
 
     private void existingModelWithItem(BlockModelGenerators blockModels, Block block, String modelName) {
-        Identifier model = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName);
+        Identifier model = TCIds.rl("block/" + modelName);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
         blockModels.registerSimpleItemModel(block.asItem(), model);
     }

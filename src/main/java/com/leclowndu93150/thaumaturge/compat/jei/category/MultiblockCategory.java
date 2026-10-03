@@ -39,13 +39,13 @@ import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
 public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
-    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(Identifier.fromNamespaceAndPath(TCIds.MODID, "multiblock_dust_trigger"));
+    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(TCIds.rl("multiblock_dust_trigger"));
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 108;
 
-    private static final IDrawable resultIcon = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
-    private static final IDrawable arrow = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
+    private static final IDrawable resultIcon = new AlphaDrawable(TCIds.rl("textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
+    private static final IDrawable arrow = new AlphaDrawable(TCIds.rl("textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
     private final IDrawable icon;
 
     private static final int DUST_SLOT_X = WIDTH / 2 - arrow.getWidth() / 2 - 20 - 18;

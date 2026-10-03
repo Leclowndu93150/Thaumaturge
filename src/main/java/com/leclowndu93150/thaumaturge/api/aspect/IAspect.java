@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.api.aspect;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -28,7 +30,7 @@ import net.minecraft.resources.ResourceKey;
  */
 public interface IAspect {
     /** The datapack registry key for aspects. */
-    ResourceKey<Registry<IAspect>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "aspect"));
+    ResourceKey<Registry<IAspect>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("aspect"));
 
     /**
      * The unique tag of this aspect. Stable identifier and the registry path of the aspect.

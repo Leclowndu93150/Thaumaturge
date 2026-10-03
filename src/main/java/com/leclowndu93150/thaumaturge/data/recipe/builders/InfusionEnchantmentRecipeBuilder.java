@@ -16,7 +16,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeUnlockAdvancementBuilder;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -60,7 +59,7 @@ public final class InfusionEnchantmentRecipeBuilder {
 
     public void save(RecipeOutput output) {
         Preconditions.checkState(!components.isEmpty(), "Infusion enchantment recipe has no components");
-        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(TCIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName()));
+        ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, TCIds.rl("infusion_enchantment/" + enchantment.getSerializedName()));
         InfusionEnchantmentRecipe recipe = new InfusionEnchantmentRecipe(enchantment, components, aspects, displayCatalyst, Optional.ofNullable(gate));
         output.accept(key, recipe, null);
     }

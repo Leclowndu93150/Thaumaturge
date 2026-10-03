@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.resources.Identifier;
 
 /**
@@ -20,13 +21,13 @@ public interface IEssentiaJar {
     int DEFAULT_CAPACITY = 250;
 
     /** The side texture of a standard jar. */
-    Identifier DEFAULT_SIDE_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_side");
+    Identifier DEFAULT_SIDE_TEXTURE = TCIds.rl("block/jar_side");
 
     /** The top texture of a standard jar. */
-    Identifier DEFAULT_TOP_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_top");
+    Identifier DEFAULT_TOP_TEXTURE = TCIds.rl("block/jar_top");
 
     /** The bottom texture of a standard jar. */
-    Identifier DEFAULT_BOTTOM_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "block/jar_bottom");
+    Identifier DEFAULT_BOTTOM_TEXTURE = TCIds.rl("block/jar_bottom");
 
     /**
      * The amount of a single aspect this jar kind can hold.

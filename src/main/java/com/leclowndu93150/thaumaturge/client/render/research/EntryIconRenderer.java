@@ -28,7 +28,7 @@ public final class EntryIconRenderer {
     public static final int ICON_REFERENCE_SIZE = 16;
     public static final int HIT_PADDING = 2;
 
-    public static final Identifier NODE_TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+    public static final Identifier NODE_TEXTURE = TCIds.rl("textures/misc/auranodes.png");
     private static final int NODE_TEXTURE_SIZE = 2048;
     private static final int NODE_GRID = 32;
     private static final int NODE_FRAME_SIZE = NODE_TEXTURE_SIZE / NODE_GRID;
@@ -63,8 +63,8 @@ public final class EntryIconRenderer {
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
-    private static final Identifier FOCUS_EFFECT_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_effect.png");
-    private static final Identifier FOCUS_MEDIUM_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_medium.png");
+    private static final Identifier FOCUS_EFFECT_BACK = TCIds.rl("textures/foci/_effect.png");
+    private static final Identifier FOCUS_MEDIUM_BACK = TCIds.rl("textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
     private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;

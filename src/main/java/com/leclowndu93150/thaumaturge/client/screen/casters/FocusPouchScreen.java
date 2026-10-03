@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class FocusPouchScreen extends AbstractTCContainerScreen<MenuFocusPouch> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_focuspouch.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_focuspouch.png");
     private static final int WIDTH = 175;
     private static final int HEIGHT = 232;
     private static final int BLOCKED_X = 8;

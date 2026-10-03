@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundClearResearchFlagsPayload(Identifier research, List<ResearchFlag> flags) implements CustomPacketPayload {
-    public static final Type<ServerboundClearResearchFlagsPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "clear_research_flags"));
+    public static final Type<ServerboundClearResearchFlagsPayload> TYPE = new Type<>(TCIds.rl("clear_research_flags"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundClearResearchFlagsPayload> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC,
             ServerboundClearResearchFlagsPayload::research, ResearchFlag.STREAM_CODEC.apply(ByteBufCodecs.list()), ServerboundClearResearchFlagsPayload::flags,

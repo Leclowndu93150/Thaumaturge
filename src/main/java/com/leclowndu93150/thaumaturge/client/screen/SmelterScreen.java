@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 public class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
 
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_smelter.png");
 
     protected SmelterScreen(MenuSmelter menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE, 176, 166);

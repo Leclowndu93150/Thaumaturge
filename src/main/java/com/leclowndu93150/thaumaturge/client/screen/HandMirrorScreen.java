@@ -9,7 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class HandMirrorScreen extends AbstractTCContainerScreen<MenuHandMirror> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_handmirror.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_handmirror.png");
     private static final int WIDTH = 176;
     private static final int HEIGHT = 166;
     private static final int BLOCKED_X = 8;

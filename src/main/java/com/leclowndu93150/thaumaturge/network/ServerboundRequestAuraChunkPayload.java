@@ -7,7 +7,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -15,7 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundRequestAuraChunkPayload(int chunkX, int chunkZ) implements CustomPacketPayload {
-    public static final Type<ServerboundRequestAuraChunkPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "request_aura_chunk"));
+    public static final Type<ServerboundRequestAuraChunkPayload> TYPE = new Type<>(TCIds.rl("request_aura_chunk"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundRequestAuraChunkPayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ServerboundRequestAuraChunkPayload::chunkX,
             ByteBufCodecs.VAR_INT, ServerboundRequestAuraChunkPayload::chunkZ, ServerboundRequestAuraChunkPayload::new);

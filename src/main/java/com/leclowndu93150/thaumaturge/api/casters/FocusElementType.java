@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.casters;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -15,5 +16,5 @@ import net.minecraft.resources.ResourceKey;
  */
 public record FocusElementType(FocusElement element, Identifier icon, int color) {
     /** The registry key for focus element types. */
-    public static final ResourceKey<Registry<FocusElementType>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "focus_element"));
+    public static final ResourceKey<Registry<FocusElementType>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("focus_element"));
 }

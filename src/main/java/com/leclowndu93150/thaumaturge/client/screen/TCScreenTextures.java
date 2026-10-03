@@ -23,10 +23,10 @@ public final class TCScreenTextures {
     private TCScreenTextures() {}
 
     private static Identifier gui(String name) {
-        return Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/" + name);
+        return TCIds.rl("textures/gui/" + name);
     }
 
     private static Identifier research(String name) {
-        return Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/research/" + name);
+        return TCIds.rl("textures/research/" + name);
     }
 }

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.Optional;
@@ -20,7 +21,7 @@ import net.minecraft.util.Mth;
  */
 public interface IResearchCategory {
     /** Datapack registry key for research categories. */
-    ResourceKey<Registry<IResearchCategory>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "research_category"));
+    ResourceKey<Registry<IResearchCategory>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("research_category"));
 
     /**
      * Identifier of the research entry that gates access to this category in the Thaumonomicon.

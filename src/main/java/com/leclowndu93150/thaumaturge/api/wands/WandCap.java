@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.wands;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import java.util.List;
 import net.minecraft.core.Registry;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceKey;
  */
 public final class WandCap {
     /** The registry key for wand caps. */
-    public static final ResourceKey<Registry<WandCap>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "wand_cap"));
+    public static final ResourceKey<Registry<WandCap>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("wand_cap"));
 
     private final float baseCostModifier;
     private final List<ResourceKey<IAspect>> specialCostAspects;

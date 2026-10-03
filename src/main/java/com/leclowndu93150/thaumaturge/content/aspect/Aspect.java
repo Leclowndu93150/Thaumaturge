@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -45,6 +46,6 @@ public record Aspect(String tag, int color, List<Holder<IAspect>> components, Op
     }
 
     private static Identifier defaultTexture(String tag) {
-        return Identifier.fromNamespaceAndPath("thaumaturge", "textures/aspects/" + tag + ".png");
+        return TCIds.rl("textures/aspects/" + tag + ".png");
     }
 }

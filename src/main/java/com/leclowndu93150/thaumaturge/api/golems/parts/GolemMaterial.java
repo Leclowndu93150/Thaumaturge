@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.golems.parts;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import java.util.List;
 import java.util.function.Supplier;
@@ -18,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class GolemMaterial {
     /** The registry key for golem materials. */
-    public static final ResourceKey<Registry<GolemMaterial>> REGISTRY_KEY = ResourceKey.createRegistryKey(Identifier.fromNamespaceAndPath("thaumaturge", "golem_material"));
+    public static final ResourceKey<Registry<GolemMaterial>> REGISTRY_KEY = ResourceKey.createRegistryKey(TCIds.rl("golem_material"));
 
     private final List<Identifier> research;
     private final Identifier texture;

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
@@ -24,12 +24,12 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  */
 public final class AspectDataMaps {
     /** Item-to-aspect base assignments, keyed {@code thaumaturge:base_aspects}. */
-    public static final DataMapType<Item, AspectList> BASE_ASPECTS = DataMapType.builder(Identifier.fromNamespaceAndPath("thaumaturge", "base_aspects"), Registries.ITEM, AspectList.CODEC)
+    public static final DataMapType<Item, AspectList> BASE_ASPECTS = DataMapType.builder(TCIds.rl("base_aspects"), Registries.ITEM, AspectList.CODEC)
             .synced(AspectList.CODEC, false).build();
 
     /** Entity-to-aspect assignments, keyed {@code thaumaturge:entity_aspects}. */
     public static final DataMapType<EntityType<?>, AspectList> ENTITY_ASPECTS = DataMapType
-            .builder(Identifier.fromNamespaceAndPath("thaumaturge", "entity_aspects"), Registries.ENTITY_TYPE, AspectList.CODEC).synced(AspectList.CODEC, false).build();
+            .builder(TCIds.rl("entity_aspects"), Registries.ENTITY_TYPE, AspectList.CODEC).synced(AspectList.CODEC, false).build();
 
     private AspectDataMaps() {}
 }

@@ -65,7 +65,7 @@ public final class ResearchLinkData extends SavedData {
     public static final Codec<ResearchLinkData> CODEC = RecordCodecBuilder
             .create(builder -> builder.group(Link.CODEC.listOf().fieldOf("links").forGetter(data -> data.links)).apply(builder, ResearchLinkData::new));
 
-    public static final SavedDataType<ResearchLinkData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "research_share"), ResearchLinkData::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<ResearchLinkData> TYPE = new SavedDataType<>(TCIds.rl("research_share"), ResearchLinkData::new, CODEC, DataFixTypes.LEVEL);
 
     private final List<Link> links;
     private final Set<UUID> pendingPlayers = new HashSet<>();

@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.event.RegisterBlockStateModels;
 
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public final class CrystalModelRegistration {
-    public static final Identifier CRYSTAL_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "crystal");
+    public static final Identifier CRYSTAL_MODEL_ID = TCIds.rl("crystal");
 
     private CrystalModelRegistration() {}
 

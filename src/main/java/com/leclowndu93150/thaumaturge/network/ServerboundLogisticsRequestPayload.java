@@ -6,13 +6,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) implements CustomPacketPayload {
-    public static final Type<ServerboundLogisticsRequestPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "logistics_request"));
+    public static final Type<ServerboundLogisticsRequestPayload> TYPE = new Type<>(TCIds.rl("logistics_request"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsRequestPayload> STREAM_CODEC = StreamCodec.composite(ItemStack.STREAM_CODEC, ServerboundLogisticsRequestPayload::stack,
             ByteBufCodecs.VAR_INT, ServerboundLogisticsRequestPayload::amount, ServerboundLogisticsRequestPayload::new);

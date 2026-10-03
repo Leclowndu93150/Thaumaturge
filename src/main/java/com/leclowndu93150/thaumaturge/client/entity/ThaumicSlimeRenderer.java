@@ -18,7 +18,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public final class ThaumicSlimeRenderer extends MobRenderer<ThaumicSlime, SlimeRenderState, SlimeModel> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/entity/thaumic_slime.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/entity/thaumic_slime.png");
 
     public ThaumicSlimeRenderer(EntityRendererProvider.Context context) {
         super(context, new SlimeModel(context.bakeLayer(ModelLayers.SLIME)), 0.25F);

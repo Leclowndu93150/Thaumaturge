@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.api.damagesource;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageType;
 
@@ -29,6 +28,6 @@ public final class TCDamageTypes {
     private TCDamageTypes() {}
 
     private static ResourceKey<DamageType> key(String path) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.fromNamespaceAndPath(TCIds.MODID, path));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, TCIds.rl(path));
     }
 }

@@ -58,7 +58,7 @@ import org.jspecify.annotations.Nullable;
 
 @JeiPlugin
 public final class ThaumaturgeJEIPlugin implements IModPlugin {
-    private static final Identifier PLUGIN_UID = Identifier.fromNamespaceAndPath(TCIds.MODID, "jei_plugin");
+    private static final Identifier PLUGIN_UID = TCIds.rl("jei_plugin");
 
     /*public static Map<IRecipeType<?>,List<RecipeHolder<?>>> searchAffectedRecipes;
     public static IJeiRuntime runtime;*/

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
@@ -27,7 +28,7 @@ import org.jspecify.annotations.Nullable;
 
 public class AlembicRenderer implements BlockEntityRenderer<BlockEntityAlembic, AlembicRenderState> {
 
-    private static final Identifier LABEL_TEXTURE = Identifier.fromNamespaceAndPath("thaumaturge", "textures/entity/label.png");
+    private static final Identifier LABEL_TEXTURE = TCIds.rl("textures/entity/label.png");
 
     public AlembicRenderer(BlockEntityRendererProvider.Context context) {}
 

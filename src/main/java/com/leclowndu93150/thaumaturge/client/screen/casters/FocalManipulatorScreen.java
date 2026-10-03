@@ -55,7 +55,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final Identifier TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
     private static final Identifier ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
     private static final Identifier ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
-    private static final Identifier ROOT_KEY = Identifier.fromNamespaceAndPath(TCIds.MODID, "root");
+    private static final Identifier ROOT_KEY = TCIds.rl("root");
 
     private static final int GUI_SIZE = 231;
     private static final int ATLAS = 256;

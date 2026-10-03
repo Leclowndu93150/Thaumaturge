@@ -44,7 +44,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHolder<ArcaneCraftingRecipe>> {
     public static final IRecipeHolderType<ArcaneCraftingRecipe> RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.ARCANE.get());
 
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_researchbook_overlay.png");
 
     private static final int WIDTH = 162;
     private static final int HEIGHT = 138;

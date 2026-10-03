@@ -47,7 +47,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     public static final IRecipeHolderType<InfusionEnchantmentRecipe> ENCHANTMENT_RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.INFUSION_ENCHANTMENT.get());
     public static final IRecipeHolderType<InfusionRunicAugmentRecipe> RUNIC_RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.RUNIC_AUGMENT.get());
 
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_researchbook_overlay.png");
     private static final int TEXTURE_SIZE = 512;
 
     private static final int WIDTH = 146;

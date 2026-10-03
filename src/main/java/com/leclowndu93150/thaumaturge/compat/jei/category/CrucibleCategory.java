@@ -26,7 +26,6 @@ import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -37,8 +36,8 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     public static final int ASPECT_Y = 66;
     public static final int ASPECT_X = 66;
     public static final int SPACE = 22;
-    private static final IDrawable background = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 2, 5, 109, 129, 0, 0, 9, 10);;
-    private static final IDrawable arrow = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
+    private static final IDrawable background = new AlphaDrawable(TCIds.rl("textures/gui/gui_researchbook_overlay.png"), 2, 5, 109, 129, 0, 0, 9, 10);;
+    private static final IDrawable arrow = new AlphaDrawable(TCIds.rl("textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
 
     private final IDrawable icon;
 

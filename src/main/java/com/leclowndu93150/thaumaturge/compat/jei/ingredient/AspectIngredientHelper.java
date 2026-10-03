@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.ingredient;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 public final class AspectIngredientHelper implements IIngredientHelper<AspectInstance> {
     public static final AspectIngredientHelper INSTANCE = new AspectIngredientHelper();
 
-    private static final Identifier UNKNOWN = Identifier.fromNamespaceAndPath("thaumaturge", "unknown");
+    private static final Identifier UNKNOWN = TCIds.rl("unknown");
 
     private AspectIngredientHelper() {}
 

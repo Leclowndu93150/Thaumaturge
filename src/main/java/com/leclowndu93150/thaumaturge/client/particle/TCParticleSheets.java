@@ -19,7 +19,7 @@ public final class TCParticleSheets {
     private TCParticleSheets() {}
 
     public static ParticleSheet sheet(String name) {
-        return SHEETS.computeIfAbsent(name, key -> new ParticleSheet(key, Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/particle/" + key + ".png")));
+        return SHEETS.computeIfAbsent(name, key -> new ParticleSheet(key, TCIds.rl("textures/particle/" + key + ".png")));
     }
 
     @SubscribeEvent

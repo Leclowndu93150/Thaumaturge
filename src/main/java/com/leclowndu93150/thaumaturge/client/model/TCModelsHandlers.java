@@ -13,29 +13,29 @@ import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent;
 @EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
 public class TCModelsHandlers {
 
-    public static final Identifier JAR_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "jar");
+    public static final Identifier JAR_MODEL_ID = TCIds.rl("jar");
 
-    public static final Identifier JAR_BRAIN_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "jar_brain");
+    public static final Identifier JAR_BRAIN_MODEL_ID = TCIds.rl("jar_brain");
 
-    public static final Identifier JAR_NODE_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "jar_node");
+    public static final Identifier JAR_NODE_MODEL_ID = TCIds.rl("jar_node");
 
-    public static final Identifier CENTRIFUGE_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "centrifuge");
+    public static final Identifier CENTRIFUGE_MODEL_ID = TCIds.rl("centrifuge");
 
-    public static final Identifier GOLEM_BUILDER_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "golem_builder");
+    public static final Identifier GOLEM_BUILDER_MODEL_ID = TCIds.rl("golem_builder");
 
-    public static final Identifier ADVANCED_ALCHEMICAL_FURNACE_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "advanced_alchemical_furnace");
+    public static final Identifier ADVANCED_ALCHEMICAL_FURNACE_MODEL_ID = TCIds.rl("advanced_alchemical_furnace");
 
-    public static final Identifier DECON_TABLE_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "deconstruction_table");
+    public static final Identifier DECON_TABLE_MODEL_ID = TCIds.rl("deconstruction_table");
 
-    public static final Identifier WAND_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "wand");
+    public static final Identifier WAND_MODEL_ID = TCIds.rl("wand");
 
-    public static final Identifier NODE_STABILIZER_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "node_stabilizer");
+    public static final Identifier NODE_STABILIZER_MODEL_ID = TCIds.rl("node_stabilizer");
 
-    public static final Identifier NITOR_MODEL_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "nitor");
+    public static final Identifier NITOR_MODEL_ID = TCIds.rl("nitor");
 
-    public static final Identifier WAND_IS_STAFF_PROPERTY_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "wand_is_staff");
+    public static final Identifier WAND_IS_STAFF_PROPERTY_ID = TCIds.rl("wand_is_staff");
 
-    public static final Identifier MESH_LOADER_ID = Identifier.fromNamespaceAndPath(TCIds.MODID, "mesh");
+    public static final Identifier MESH_LOADER_ID = TCIds.rl("mesh");
 
     @SubscribeEvent
     public static void onRegisterItemModels(RegisterSpecialModelRendererEvent event) {

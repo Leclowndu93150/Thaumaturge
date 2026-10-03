@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 
 public record ClientboundStreamEffectPayload(StreamEffectKind kind, double sx, double sy, double sz, double tx, double ty, double tz, int color, int extraInt, int extraInt2, float extraFloat,
         float extraFloat2, int entityId, byte flags) implements CustomPacketPayload {
@@ -12,7 +11,7 @@ public record ClientboundStreamEffectPayload(StreamEffectKind kind, double sx, d
     public static final byte FLAG_REVERSE = 1;
     public static final byte FLAG_WITH_SOURCE = 2;
 
-    public static final Type<ClientboundStreamEffectPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "fx_stream"));
+    public static final Type<ClientboundStreamEffectPayload> TYPE = new Type<>(TCIds.rl("fx_stream"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundStreamEffectPayload> STREAM_CODEC = StreamCodec.of((buf, data) -> {
         buf.writeByte(data.kind.ordinal());

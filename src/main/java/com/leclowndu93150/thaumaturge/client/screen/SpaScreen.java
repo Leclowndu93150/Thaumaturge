@@ -21,7 +21,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_spa.png");
+    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_spa.png");
 
     private static final int MIX_X = 89;
     private static final int MIX_Y = 35;

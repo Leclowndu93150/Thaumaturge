@@ -7,13 +7,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundFocusChangePayload(String focusKey) implements CustomPacketPayload {
-    public static final Type<ServerboundFocusChangePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "focus_change"));
+    public static final Type<ServerboundFocusChangePayload> TYPE = new Type<>(TCIds.rl("focus_change"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusChangePayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, ServerboundFocusChangePayload::focusKey,
             ServerboundFocusChangePayload::new);

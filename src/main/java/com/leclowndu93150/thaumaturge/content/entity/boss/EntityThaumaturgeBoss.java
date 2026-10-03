@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
@@ -190,11 +191,11 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     private static Identifier hpBuffId(int slot) {
-        return Identifier.fromNamespaceAndPath("thaumaturge", "boss_hp_buff_" + slot);
+        return TCIds.rl("boss_hp_buff_" + slot);
     }
 
     private static Identifier dmgBuffId(int slot) {
-        return Identifier.fromNamespaceAndPath("thaumaturge", "boss_dmg_buff_" + slot);
+        return TCIds.rl("boss_dmg_buff_" + slot);
     }
 
     @Override

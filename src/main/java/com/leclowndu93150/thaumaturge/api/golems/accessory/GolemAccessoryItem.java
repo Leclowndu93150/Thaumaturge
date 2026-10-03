@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.golems.accessory;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public record GolemAccessoryItem(Identifier accessory) {
             .create(instance -> instance.group(Identifier.CODEC.fieldOf("accessory").forGetter(GolemAccessoryItem::accessory)).apply(instance, GolemAccessoryItem::new));
 
     /** The item data map binding items to accessories, keyed {@code thaumaturge:golem_accessory}. */
-    public static final DataMapType<Item, GolemAccessoryItem> DATA_MAP = DataMapType.builder(Identifier.fromNamespaceAndPath("thaumaturge", "golem_accessory"), Registries.ITEM, CODEC)
+    public static final DataMapType<Item, GolemAccessoryItem> DATA_MAP = DataMapType.builder(TCIds.rl("golem_accessory"), Registries.ITEM, CODEC)
             .synced(CODEC, false).build();
 
     /**
