@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
@@ -82,11 +83,8 @@ public final class ArchitectOverlayRenderer {
         if (mc.level == null || player == null || mc.options.hideGui) {
             return;
         }
-        ItemStack stack = player.getMainHandItem();
-        if (!(stack.getItem() instanceof IArchitect)) {
-            stack = player.getOffhandItem();
-        }
-        if (!(stack.getItem() instanceof IArchitect architect) || architect.useBlockHighlight(stack)) {
+        ItemStack stack = heldArchitect(player);
+        if (!(stack.getItem() instanceof IArchitect architect)) {
             return;
         }
         HitResult target = architect.getArchitectMOP(stack, mc.level, player);
@@ -114,6 +112,27 @@ public final class ArchitectOverlayRenderer {
             drawOverlayBlock(poseStack, buffers, pos, cam);
         }
         buffers.endBatch();
+    }
+
+    @SubscribeEvent
+    public static void onBlockOutline(ExtractBlockOutlineRenderStateEvent event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        ItemStack stack = heldArchitect(player);
+        if (!(stack.getItem() instanceof IArchitect architect) || !architect.useBlockHighlight(stack)) {
+            return;
+        }
+        BlockHitResult hit = event.getHitResult();
+        if (!architect.getArchitectBlocks(stack, event.getLevel(), hit.getBlockPos(), hit.getDirection(), player).isEmpty()) {
+            event.setCanceled(true);
+        }
+    }
+
+    private static ItemStack heldArchitect(LocalPlayer player) {
+        ItemStack stack = player.getMainHandItem();
+        return stack.getItem() instanceof IArchitect ? stack : player.getOffhandItem();
     }
 
     private static boolean isConnected(BlockPos pos) {
