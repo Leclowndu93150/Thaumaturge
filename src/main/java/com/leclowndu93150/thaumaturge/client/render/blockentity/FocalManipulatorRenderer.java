@@ -28,7 +28,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float FOCUS_BOB_PERIOD = 14.0F;
     private static final float FOCUS_HOVER_PHASE = 0.2F;
     private static final float ITEM_ENTITY_BOB_HEIGHT = 0.1F;
-    private static final float ITEM_ENTITY_GROUND_OFFSET = 0.125F;
     private static final float CRYSTAL_RING_HEIGHT = 1.05F;
     private static final float CRYSTAL_RING_RADIUS = 0.4F;
     private static final float CRYSTAL_SCALE = 0.5F;
@@ -63,7 +62,6 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         ItemStack focus = table.focusStack();
         if (!focus.isEmpty()) {
             float lift = LegacyItemLift.centerLift(focus, ItemDisplayContext.GROUND)
-                    - ITEM_ENTITY_GROUND_OFFSET
                     + Mth.sin(Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_HOVER_PHASE + FOCUS_HOVER_PHASE)
                             * ITEM_ENTITY_BOB_HEIGHT;
             poseStack.pushPose();
@@ -83,8 +81,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         for (int a = 0; a < q; a++) {
             AspectInstance instance = entries.get(a);
             ItemStack crystal = EssentiaCrystalFactory.of(instance.aspect());
-            float crystalLift =
-                    LegacyItemLift.centerLift(crystal, ItemDisplayContext.GROUND) - ITEM_ENTITY_GROUND_OFFSET;
+            float crystalLift = LegacyItemLift.centerLift(crystal, ItemDisplayContext.GROUND);
             float angle = ticks % 720.0F / 2.0F + ang * a;
             float bob = Mth.sin((ticks + a * 10) / 12.0F) * CRYSTAL_BOB_SCALE + CRYSTAL_BOB_SCALE;
             int color = instance.aspect().value().color();
