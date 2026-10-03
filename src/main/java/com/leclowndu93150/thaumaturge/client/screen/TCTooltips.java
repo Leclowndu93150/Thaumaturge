@@ -76,10 +76,6 @@ public final class TCTooltips {
         return Component.translatable("tc.research.stage").append(Component.literal(" ")).append(Component.translatable("tc.research.stage.short", stage, total)).withStyle(ChatFormatting.AQUA);
     }
 
-    public static Component stageBookmark(int stage) {
-        return Component.translatable("tc.research.stage.bookmark", stage);
-    }
-
     public static Component researchMissing() {
         return Component.translatable("tc.researchmissing").withStyle(ChatFormatting.RED);
     }
