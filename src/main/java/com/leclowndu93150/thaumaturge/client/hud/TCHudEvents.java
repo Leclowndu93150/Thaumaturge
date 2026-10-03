@@ -19,6 +19,7 @@ public final class TCHudEvents {
         event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("knowledge_gain"), new KnowledgeGainOverlay());
         event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("caster_hud"), new CasterHudOverlay());
         event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("recharge_hud"), new RechargeHudOverlay());
+        event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("hover_hud"), new HoverHudOverlay());
         event.registerAbove(VanillaGuiLayers.EXPERIENCE_LEVEL, TCIds.rl("radial_focus"), new RadialFocusOverlay());
     }
 }

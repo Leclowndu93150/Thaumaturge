@@ -106,6 +106,9 @@ public final class TCDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> POUCH_CONTENTS = DATA_COMPONENTS.registerComponentType("pouch_contents",
             builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackTemplate>> HARNESS_JAR = DATA_COMPONENTS.registerComponentType("harness_jar",
+            builder -> builder.persistent(ItemStackTemplate.CODEC).networkSynchronized(ItemStackTemplate.STREAM_CODEC));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> MIRROR_LINK = DATA_COMPONENTS.registerComponentType("mirror_link",
             builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));
 

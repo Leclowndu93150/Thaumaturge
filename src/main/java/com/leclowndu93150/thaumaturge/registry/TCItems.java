@@ -36,6 +36,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.TrinketItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
+import com.leclowndu93150.thaumaturge.content.equipment.hover.ThaumostaticHarnessItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
@@ -338,6 +339,9 @@ public final class TCItems {
 
     public static final DeferredItem<TravellerBootsItem> TRAVELLER_BOOTS = ITEMS.registerItem("traveller_boots", TravellerBootsItem::new,
             props -> props.humanoidArmor(TCMaterials.ARMOR_TRAVELLER, ArmorType.BOOTS).durability(350).rarity(Rarity.RARE));
+
+    public static final DeferredItem<ThaumostaticHarnessItem> THAUMOSTATIC_HARNESS = ITEMS.registerItem("thaumostatic_harness", ThaumostaticHarnessItem::new,
+            props -> props.humanoidArmor(TCMaterials.ARMOR_THAUMOSTATIC_HARNESS, ArmorType.CHESTPLATE).rarity(Rarity.EPIC));
 
     public static final DeferredItem<RobeArmorItem> CLOTH_CHEST = ITEMS.registerItem("cloth_chest", props -> new RobeArmorItem(3, props),
             props -> props.humanoidArmor(TCMaterials.ARMOR_ROBES, ArmorType.CHESTPLATE));

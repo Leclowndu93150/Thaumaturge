@@ -36,6 +36,7 @@ public final class TCModelLayers {
     public static final ModelLayerLocation ROBE_ARMOR_HEAD = new ModelLayerLocation(TCIds.rl("robe_armor"), "head");
     public static final ModelLayerLocation ROBE_ARMOR_CHEST = new ModelLayerLocation(TCIds.rl("robe_armor"), "chest");
     public static final ModelLayerLocation ROBE_ARMOR_LEGS = new ModelLayerLocation(TCIds.rl("robe_armor"), "legs");
+    public static final ModelLayerLocation THAUMOSTATIC_HARNESS = new ModelLayerLocation(TCIds.rl("thaumostatic_harness"), "chest");
     public static final ModelLayerLocation PECH = new ModelLayerLocation(TCIds.rl("pech"), "main");
     public static final ModelLayerLocation ELDRITCH_CRAB = new ModelLayerLocation(TCIds.rl("eldritch_crab"), "main");
     public static final ModelLayerLocation ELDRITCH_GUARDIAN = new ModelLayerLocation(TCIds.rl("eldritch_guardian"), "main");

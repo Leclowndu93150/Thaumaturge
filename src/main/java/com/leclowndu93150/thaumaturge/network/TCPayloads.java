@@ -50,6 +50,7 @@ public final class TCPayloads {
         registrar.playToServer(ServerboundLogisticsRequestPayload.TYPE, ServerboundLogisticsRequestPayload.STREAM_CODEC, ServerboundLogisticsRequestPayload::handle);
         registrar.playToServer(ServerboundLogisticsSearchPayload.TYPE, ServerboundLogisticsSearchPayload.STREAM_CODEC, ServerboundLogisticsSearchPayload::handle);
         registrar.playToServer(ServerboundCloudJumpPayload.TYPE, ServerboundCloudJumpPayload.STREAM_CODEC, ServerboundCloudJumpPayload::handle);
+        registrar.playToServer(ServerboundToggleHoverPayload.TYPE, ServerboundToggleHoverPayload.STREAM_CODEC, ServerboundToggleHoverPayload::handle);
         registrar.playToServer(ServerboundAdvanceStagePayload.TYPE, ServerboundAdvanceStagePayload.STREAM_CODEC, ServerboundAdvanceStagePayload::handle);
         registrar.playToServer(ServerboundScanSlotPayload.TYPE, ServerboundScanSlotPayload.STREAM_CODEC, ServerboundScanSlotPayload::handle);
         registrar.playToClient(ClientboundAspectGainPayload.TYPE, ClientboundAspectGainPayload.STREAM_CODEC, (payload, context) -> AspectGainClientHandler.handle(payload, context));

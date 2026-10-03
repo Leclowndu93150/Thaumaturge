@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -100,6 +101,12 @@ public final class TCAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CHAMPION_ROLLED = register("champion_rolled",
             () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL.fieldOf("rolled")).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> HOVERING = register("hovering",
+            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL.fieldOf("hovering"), hovering -> hovering).sync(ByteBufCodecs.BOOL).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> HOVER_CHARGE = register("hover_charge",
+            () -> AttachmentType.builder(() -> 0).serialize(Codec.INT.fieldOf("charge"), charge -> charge > 0).build());
 
     private TCAttachments() {}
 

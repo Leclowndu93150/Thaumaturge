@@ -533,6 +533,11 @@ public final class ResearchTextEn {
                 "I need to create something that will ease my travels. I should examine the mechanics of movement and how one can go about improving it.");
         add.accept("research.thaumaturge.boots_traveller.stage_1",
                 "I have designed a pair of enchanted boots that will ease the journey of any traveler.<BR>They will allow one to move faster, jump higher and fall further.<BR>Lastly they allow you to cut through water like a fish. A slow and clumsy fish, but a fish nonetheless.<BR>This power does have a cost however - the boots need to be charged with vis for their abilities to function.");
+        add.accept("research.thaumaturge.thaumostatic_harness.title", "Thaumostatic Harness");
+        add.accept("research.thaumaturge.thaumostatic_harness.stage_0",
+                "You have finally managed to unlock the secret of flight. You have created a harness that anchors itself to the Thaumic Field using thaumostatic energy allowing you to defy gravity. You think quantums and quarks might also be involved somehow.<BR>Unusually the only vis required to power this harness is added during its creation process. Instead the fuel it requires for flight is raw Potentia. Simply right click while holding the harness to insert filled jars.<BR>Pressing 'H' while wearing the harness activates or deactivates it.");
+        add.accept("research.thaumaturge.thaumostatic_harness.stage_1",
+                "While active the harness will constantly use Potentia.<BR>The harness will not reduce your block breaking speed while you are flying with it.");
         add.accept("research.thaumaturge.elemental_tools.title", "Elemental Tools");
         add.accept("research.thaumaturge.elemental_tools.stage_0",
                 "With the discovery of infusion, I should experiment with binding primal elements into tools and weapons. If I am correct this will grant them unique and powerful properties.<BR>For my initial experiments I should stick to working with thaumium tools - they will be easy to infuse and will be a good base for future experiments.");
