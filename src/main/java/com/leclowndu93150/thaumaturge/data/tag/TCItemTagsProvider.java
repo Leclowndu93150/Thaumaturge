@@ -73,6 +73,8 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
         tag(Tags.Items.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
         tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR);
+        tag(TCItemTags.RAW_MATERIALS_CINNABAR).add(TCItems.RAW_CINNABAR.get());
+        tag(Tags.Items.RAW_MATERIALS).addTag(TCItemTags.RAW_MATERIALS_CINNABAR);
         tag(TCItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TCBlockTags.STORAGE_BLOCKS_AMBER, TCItemTags.STORAGE_BLOCKS_AMBER);
@@ -104,7 +106,8 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
 
         tag(TCItemTags.CLUSTERS).add(TCItems.CLUSTER_IRON.get(), TCItems.CLUSTER_COPPER.get(), TCItems.CLUSTER_GOLD.get(), TCItems.CLUSTER_QUARTZ.get(), TCItems.CLUSTER_CINNABAR.get(),
                 TCItems.CLUSTER_QUARTZ.get(), TCItems.CLUSTER_LEAD.get(), TCItems.CLUSTER_SILVER.get(), TCItems.CLUSTER_TIN.get());
-        tag(TCItemTags.RARE_EARTH_CHANCE_HIGH).addTags(Tags.Items.ORES_NETHERITE_SCRAP, Tags.Items.ORES_DIAMOND, Tags.Items.ORES_EMERALD, TCItemTags.ORES_CINNABAR, TCItemTags.ORES_AMBER);
+        tag(TCItemTags.RARE_EARTH_CHANCE_HIGH).addTags(Tags.Items.ORES_NETHERITE_SCRAP, Tags.Items.ORES_DIAMOND, Tags.Items.ORES_EMERALD, TCItemTags.ORES_CINNABAR, TCItemTags.RAW_MATERIALS_CINNABAR,
+                TCItemTags.ORES_AMBER);
         tag(TCItemTags.RARE_EARTH_CHANCE_NORMAL).addOptionalTag(TCItemTags.ORES_SILVER).addTags(Tags.Items.ORES_GOLD, Tags.Items.RAW_MATERIALS_GOLD, TCItemTags.CLUSTERS);
         tag(TCItemTags.RARE_EARTH_CHANCE_LOW).addOptionalTags(TCItemTags.ORES_TIN, TCItemTags.ORES_LEAD).addTags(Tags.Items.ORES_IRON, Tags.Items.ORES_COAL, Tags.Items.ORES_COPPER,
                 Tags.Items.ORES_LAPIS, Tags.Items.ORES_REDSTONE, Tags.Items.ORES_QUARTZ, Tags.Items.RAW_MATERIALS_IRON, Tags.Items.RAW_MATERIALS_COPPER);
