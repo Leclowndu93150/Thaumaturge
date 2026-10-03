@@ -192,6 +192,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private int sMaxX;
     private int sMaxY;
     private boolean valid;
+    private boolean emptyNodes;
+    private boolean validCrystals;
+    private boolean creativeBuild;
+    private int playerLevel;
     private boolean draggingCanvas;
     private double lastDragX;
     private double lastDragY;
@@ -290,6 +294,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             lastDataStamp = table.clientDataStamp;
             gatherInfo(false);
         }
+        refreshValidity(false);
     }
 
     @Override
@@ -1211,7 +1216,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         if (focus.getItem() instanceof ItemFocus focusItem) {
             maxComplexity = focusItem.getMaxComplexity();
         }
-        boolean emptyNodes = false;
+        emptyNodes = false;
         Map<String, Integer> compCount = new HashMap<>();
         Map<ResourceKey<IAspect>, Integer> crystalAspects = new LinkedHashMap<>();
         for (FocusElementNode fn : table.data.values()) {
@@ -1232,25 +1237,16 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         costCast = totalComplexity / 5.0F;
         costVis = totalComplexity * 10 + maxComplexity / 5;
         costXp = (int) Math.max(1L, Math.round(Math.sqrt(totalComplexity)));
-        boolean validCrystals = false;
         if (!crystalAspects.isEmpty() && minecraft != null && minecraft.player != null && minecraft.level != null) {
-            validCrystals = true;
             List<ItemStack> stacks = new ArrayList<>();
             var registry = minecraft.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
             for (var entry : crystalAspects.entrySet()) {
-                ItemStack crystal = EssentiaCrystalFactory.of(registry.getOrThrow(entry.getKey()), entry.getValue());
-                stacks.add(crystal);
-                if (!carrying(crystal)) {
-                    validCrystals = false;
-                }
+                stacks.add(EssentiaCrystalFactory.of(registry.getOrThrow(entry.getKey()), entry.getValue()));
             }
             components = stacks;
         }
         gatherPartsList();
-        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
-        int playerLevel = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
-        valid = totalComplexity <= maxComplexity && !emptyNodes && validCrystals && (creative || costXp <= playerLevel);
-        updateConfirmTooltip(emptyNodes, validCrystals, playerLevel);
+        refreshValidity(true);
         calcScrollBounds();
         clampScroll();
         rebuildSliders();
@@ -1263,6 +1259,31 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         if (sync) {
             sendData();
         }
+    }
+
+    private void refreshValidity(boolean force) {
+        boolean crystals = components != null && !components.isEmpty();
+        if (crystals) {
+            for (ItemStack stack : components) {
+                if (!carrying(stack)) {
+                    crystals = false;
+                    break;
+                }
+            }
+        }
+        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
+        int level = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
+        if (!force && crystals == validCrystals && creative == creativeBuild && level == playerLevel) {
+            return;
+        }
+        validCrystals = crystals;
+        creativeBuild = creative;
+        playerLevel = level;
+        valid = totalComplexity <= maxComplexity
+                && !emptyNodes
+                && validCrystals
+                && (creativeBuild || costXp <= playerLevel);
+        updateConfirmTooltip();
     }
 
     private void rebuildSliders() {
@@ -1335,7 +1356,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         }
     }
 
-    private void updateConfirmTooltip(boolean emptyNodes, boolean validCrystals, int playerLevel) {
+    private void updateConfirmTooltip() {
         if (buttonConfirm == null) {
             return;
         }
@@ -1365,8 +1386,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             if (components == null || components.isEmpty()) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.no_effects"));
             }
-            if (costXp > playerLevel
-                    && !(minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild)) {
+            if (costXp > playerLevel && !creativeBuild) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.xp", costXp));
             }
             if (valid) {
