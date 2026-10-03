@@ -610,9 +610,11 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_BARRIER.get(), 4), 50)
                 .aspect(TCAspects.IGNIS, 1)
                 .aspect(TCAspects.ORDO, 1)
-                .pattern("SS")
-                .pattern("SS")
+                .pattern("SAS")
+                .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('A', TCItems.CRYSTAL_IGNIS)
+                .define('B', TCItems.CRYSTAL_ORDO)
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -620,9 +622,11 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_TRAVEL.get(), 4), 50)
                 .aspect(TCAspects.AER, 1)
                 .aspect(TCAspects.TERRA, 1)
-                .pattern("SS")
-                .pattern("SS")
+                .pattern("SAS")
+                .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('A', TCItems.CRYSTAL_AER)
+                .define('B', TCItems.CRYSTAL_TERRA)
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -1900,6 +1904,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShapeless(new ItemStack(TCItems.TUBE_RESTRICT.get()), 10)
                 .aspect(TCAspects.TERRA)
                 .requires(TCItems.TUBE)
+                .requires(Tags.Items.STONES)
                 .gate(gate("tubes"))
                 .unlockedBy("has", has(TCItems.TUBE))
                 .save(output);
@@ -1907,6 +1912,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShapeless(new ItemStack(TCItems.TUBE_ONEWAY.get()), 10)
                 .aspect(TCAspects.AQUA)
                 .requires(TCItems.TUBE)
+                .requires(Tags.Items.DYES_BLUE)
                 .gate(gate("tubes"))
                 .unlockedBy("has", has(TCItems.TUBE))
                 .save(output);
