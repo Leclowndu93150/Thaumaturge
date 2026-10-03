@@ -11,6 +11,7 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
 public final class TaintSplosionParticle extends SingleQuadParticle {
@@ -118,7 +119,7 @@ public final class TaintSplosionParticle extends SingleQuadParticle {
             TextureAtlasSprite sprite = Minecraft.getInstance()
                     .getItemRenderer()
                     .getModel(new ItemStack(Items.SLIME_BALL), level, null, 0)
-                    .getParticleIcon();
+                    .getParticleIcon(ModelData.EMPTY);
             return new TaintSplosionParticle(level, x, y, z, xd, yd, zd, sprite);
         }
     }

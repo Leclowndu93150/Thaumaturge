@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -58,7 +59,7 @@ public final class NodeGenerator {
         boolean placed = createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
         if (placed
                 && data.type() == NodeType.TAINTED
-                && !(level instanceof net.minecraft.server.level.ServerLevel)
+                && !(level instanceof ServerLevel)
                 && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             node.markNaturalTaintBootstrap();
         }

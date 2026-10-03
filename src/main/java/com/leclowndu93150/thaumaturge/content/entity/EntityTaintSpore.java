@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Spider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -33,8 +34,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  * value. Keep that split here so the renderer keeps the slow swelling instead of snapping whenever the
  * 1200-tick growth step fires.</p>
  */
-public class EntityTaintSpore extends Monster
-        implements ITaintedMob, net.minecraft.world.entity.projectile.ItemSupplier {
+public class EntityTaintSpore extends Monster implements ITaintedMob, ItemSupplier {
     private static final EntityDataAccessor<Integer> DATA_SPORE_SIZE =
             SynchedEntityData.defineId(EntityTaintSpore.class, EntityDataSerializers.INT);
     private static final int GROWTH_INTERVAL = 1200;

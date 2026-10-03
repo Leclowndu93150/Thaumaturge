@@ -88,6 +88,11 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
     }
 
     @Override
+    public boolean isIncomplete() {
+        return true;
+    }
+
+    @Override
     public int getBaseVis() {
         return vis;
     }

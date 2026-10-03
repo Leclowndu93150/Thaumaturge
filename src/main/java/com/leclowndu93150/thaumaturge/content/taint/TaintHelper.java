@@ -119,7 +119,7 @@ public final class TaintHelper {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
             return;
         }
-        if (!level.hasChunkAt(pos) || TaintBloomRegistry.isProtected(level, pos)) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) || TaintBloomRegistry.isProtected(level, pos)) {
             return;
         }
 
@@ -128,7 +128,9 @@ public final class TaintHelper {
             return;
         }
         BlockPos target = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 2, random.nextInt(3) - 1);
-        if (target.equals(pos) || !level.hasChunkAt(target) || TaintBloomRegistry.isProtected(level, target)) {
+        if (target.equals(pos)
+                || !level.hasChunk(target.getX() >> 4, target.getZ() >> 4)
+                || TaintBloomRegistry.isProtected(level, target)) {
             return;
         }
 
@@ -149,7 +151,7 @@ public final class TaintHelper {
         boolean isLeaves = targetState.is(BlockTags.LEAVES);
         boolean isReplaceable = targetState.isAir() || targetState.canBeReplaced();
 
-        if (!isLeaves && !targetState.liquid() && isReplaceable) {
+        if (!isLeaves && targetState.getFluidState().isEmpty() && isReplaceable) {
             if (isAdjacentToSolidBlock(level, target) && !BlockTaintFibre.isOnlyAdjacentToTaint(level, target)) {
                 if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
                     return;
@@ -252,7 +254,7 @@ public final class TaintHelper {
      */
     public static boolean trySpreadTaintedBiome(ServerLevel level, BlockPos pos, RandomSource random) {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()
-                || !level.hasChunkAt(pos)
+                || !level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)
                 || !TaintBiomeManager.isTainted(level, pos)
                 || TaintBloomRegistry.isProtected(level, pos)
                 || countAdjacentTaint(level, pos) < 2) {
@@ -272,7 +274,7 @@ public final class TaintHelper {
         }
 
         BlockPos target = pos.offset(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
-        if (!level.hasChunkAt(target)
+        if (!level.hasChunk(target.getX() >> 4, target.getZ() >> 4)
                 || TaintBiomeManager.isTainted(level, target)
                 || TaintBloomRegistry.isProtected(level, target)) {
             return false;
@@ -308,7 +310,7 @@ public final class TaintHelper {
         }
         for (int i = 0; i < 8; i++) {
             BlockPos target = origin.offset(random.nextInt(9) - 4, random.nextInt(3) - 1, random.nextInt(9) - 4);
-            if (!level.hasChunkAt(target)) {
+            if (!level.hasChunk(target.getX() >> 4, target.getZ() >> 4)) {
                 continue;
             }
             if (tryCreateTaintSeed(level, target, level.getBlockState(target), random, false)) {

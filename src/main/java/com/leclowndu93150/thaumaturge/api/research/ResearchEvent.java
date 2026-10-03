@@ -6,9 +6,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.neoforge.common.NeoForge;
 
 /**
- * Base class for research-related events fired on the {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS NeoForge event bus}.
+ * Base class for research-related events fired on the {@link NeoForge#EVENT_BUS NeoForge event bus}.
  *
  * <p>Concrete events are cancellable. Cancelling a research event prevents the corresponding
  * mutation from being applied to the player's {@link com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge knowledge record}.

@@ -31,7 +31,7 @@ public final class PrimalCrusherItem extends Item implements IWarpingGear {
     }
 
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return TCMaterials.TOOL_PRIMAL_VOID.getEnchantmentValue();
     }
 

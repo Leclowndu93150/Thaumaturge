@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -7,15 +8,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public abstract class EntityCultist extends Monster {
     public static final byte ARRIVAL_EVENT = 20;
     private static final float GEAR_DROP_CHANCE = 0.05F;
@@ -48,14 +51,11 @@ public abstract class EntityCultist extends Monster {
     protected void populateDefaultEquipmentEnchantments(
             ServerLevelAccessor level, RandomSource random, DifficultyInstance difficulty) {}
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
-        this.setLoot(difficulty);
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (event.getEntity() instanceof EntityCultist cultist) {
+            cultist.setLoot(event.getDifficulty());
+        }
     }
 
     @Override

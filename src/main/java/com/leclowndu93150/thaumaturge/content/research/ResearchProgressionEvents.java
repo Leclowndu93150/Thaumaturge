@@ -10,6 +10,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceKey;
@@ -75,9 +76,8 @@ public final class ResearchProgressionEvents {
 
     public static void recordCrafted(ServerPlayer player, ItemStack crafted) {
         if (crafted.isEmpty()) return;
-        ResourceLocation itemId = crafted.getItem()
-                .builtInRegistryHolder()
-                .unwrapKey()
+        ResourceLocation itemId = BuiltInRegistries.ITEM
+                .getResourceKey(crafted.getItem())
                 .map(ResourceKey::location)
                 .orElse(null);
         if (itemId == null) return;
@@ -206,7 +206,10 @@ public final class ResearchProgressionEvents {
                     player.getY() > player.level().getMaxBuildHeight() * UP_HIGH_FRACTION);
         }
         if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0) return;
-        if (player.level().hasChunkAt(player.blockPosition())) {
+        if (player.level()
+                .hasChunk(
+                        player.blockPosition().getX() >> 4,
+                        player.blockPosition().getZ() >> 4)) {
             Holder<Biome> biome = player.level().getBiome(player.blockPosition());
             milestone(player, knowledge, TCIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
             milestone(player, knowledge, TCIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));

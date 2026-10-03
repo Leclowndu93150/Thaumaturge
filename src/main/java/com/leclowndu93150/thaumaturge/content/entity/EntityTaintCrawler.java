@@ -76,7 +76,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
         if (!here.isAir() && !here.canBeReplaced()) {
             return;
         }
-        if (here.liquid()) {
+        if (!here.getFluidState().isEmpty()) {
             return;
         }
         if (here.is(TCBlocks.TAINT_FIBRE.get())) {

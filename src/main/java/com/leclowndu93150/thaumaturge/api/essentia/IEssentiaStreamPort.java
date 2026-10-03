@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.api.essentia;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -9,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
  * Visual routing contract for blocks that emit or receive essentia stream effects.
  *
  * <p>By default a stream travels directly between its two endpoints and may clip through
- * the block models at either end. A {@link net.minecraft.world.level.block.Block} implementing
+ * the block models at either end. A {@link Block} implementing
  * this interface declares a port instead: the stream attaches at {@link StreamPort#anchor()}
  * and travels straight through {@link StreamPort#clearance()} before it is allowed to curve
  * toward the far endpoint. Arriving streams pass the same two points in reverse order.

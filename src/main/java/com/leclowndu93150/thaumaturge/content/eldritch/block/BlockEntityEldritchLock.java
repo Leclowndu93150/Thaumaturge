@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 
 public final class BlockEntityEldritchLock extends BlockEntity {
     private static final int OPEN_TICKS = 100;
@@ -241,7 +242,8 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         placePedestal(level, x2, y + 2, z2);
         EntityEldritchWarden boss = new EntityEldritchWarden(TCEntities.ELDRITCH_WARDEN.get(), level);
         faceBoss(boss, lockPos, x2 + 0.5, y + 3, z2 + 0.5);
-        boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x2, y + 3, z2)), MobSpawnType.EVENT, null);
+        EventHooks.finalizeMobSpawn(
+                boss, level, level.getCurrentDifficultyAt(new BlockPos(x2, y + 3, z2)), MobSpawnType.EVENT, null);
         boss.restrictTo(new BlockPos(x, y + 2, z), 32);
         level.addFreshEntity(boss);
     }
@@ -301,7 +303,8 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         }
         EntityEldritchGolem boss = new EntityEldritchGolem(TCEntities.ELDRITCH_GOLEM.get(), level);
         faceBoss(boss, lockPos, x + 0.5, y + 3, z + 0.5);
-        boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x, y + 3, z)), MobSpawnType.EVENT, null);
+        EventHooks.finalizeMobSpawn(
+                boss, level, level.getCurrentDifficultyAt(new BlockPos(x, y + 3, z)), MobSpawnType.EVENT, null);
         level.addFreshEntity(boss);
     }
 
@@ -352,7 +355,8 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         EntityCultistPortalGreater boss =
                 new EntityCultistPortalGreater(TCEntities.CULTIST_PORTAL_GREATER.get(), level);
         boss.moveTo(x + 0.5, y + 2, z + 0.5, 0.0F, 0.0F);
-        boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x, y + 2, z)), MobSpawnType.EVENT, null);
+        EventHooks.finalizeMobSpawn(
+                boss, level, level.getCurrentDifficultyAt(new BlockPos(x, y + 2, z)), MobSpawnType.EVENT, null);
         level.addFreshEntity(boss);
     }
 
@@ -412,7 +416,8 @@ public final class BlockEntityEldritchLock extends BlockEntity {
                 : new EntityTaintacle(TCEntities.TAINTACLE.get(), level);
         boss.moveTo(x, y, z, 0.0F, 0.0F);
         ChampionHelper.makeChampion(boss, true);
-        boss.finalizeSpawn(level, level.getCurrentDifficultyAt(boss.blockPosition()), MobSpawnType.EVENT, null);
+        EventHooks.finalizeMobSpawn(
+                boss, level, level.getCurrentDifficultyAt(boss.blockPosition()), MobSpawnType.EVENT, null);
         level.addFreshEntity(boss);
     }
 

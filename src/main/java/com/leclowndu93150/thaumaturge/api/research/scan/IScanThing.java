@@ -1,8 +1,11 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -10,9 +13,8 @@ import org.jspecify.annotations.Nullable;
  * arbitrary scan target matches and which research key a successful scan grants.
  *
  * <p>The scan target passed to {@link #checkThing checkThing} is one of: an
- * {@link net.minecraft.world.entity.Entity}, an {@link net.minecraft.world.item.ItemStack},
- * a {@link net.minecraft.core.BlockPos} in the scanning player's level, or {@code null} when the
- * player scanned empty air (used by sky scans).
+ * {@link Entity}, an {@link ItemStack}, a {@link BlockPos} in the scanning player's level, or
+ * {@code null} when the player scanned empty air (used by sky scans).
  *
  * <p>Register implementations through {@link ScanningManager#addScannableThing}.
  *

@@ -13,13 +13,13 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 
 public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
@@ -30,7 +30,7 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
     public static final ResourceLocation ANIMATED_GLOW_LOCATION =
             ResourceLocation.fromNamespaceAndPath("thaumaturge", "block/animatedglow");
     public static final Material ANIMATED_GLOW_MATERIAL =
-            new Material(TextureAtlas.LOCATION_BLOCKS, ANIMATED_GLOW_LOCATION);
+            new Material(InventoryMenu.BLOCK_ATLAS, ANIMATED_GLOW_LOCATION);
 
     public static final float FLUID_MIN = 4.0F / 16.0F;
     public static final float FLUID_MAX = 12.0F / 16.0F;

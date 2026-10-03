@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.registry.TCPlacementModifiers;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -50,7 +51,7 @@ public final class ConfigNodeSpawnFilter extends PlacementFilter {
         EERIE("eerie"),
         NETHER("nether");
 
-        private static final com.mojang.serialization.Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
+        private static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
         private final String name;
 
         Kind(String name) {

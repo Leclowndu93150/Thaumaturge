@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
@@ -26,8 +27,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -40,8 +39,12 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public class EntityThaumaturgeBoss extends Monster implements ISidedHurt {
     private static final EntityDataAccessor<Integer> DATA_AGGRO =
             SynchedEntityData.defineId(EntityThaumaturgeBoss.class, EntityDataSerializers.INT);
@@ -123,16 +126,24 @@ public class EntityThaumaturgeBoss extends Monster implements ISidedHurt {
         this.bossEvent.removePlayer(player);
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
-        this.restrictTo(this.blockPosition(), HOME_RADIUS);
-        this.generateName();
-        this.bossEvent.setName(this.getDisplayName());
-        return data;
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (!(event.getEntity() instanceof EntityThaumaturgeBoss boss)) {
+            return;
+        }
+        ServerLevelAccessor level = event.getLevel();
+        DifficultyInstance difficulty = event.getDifficulty();
+        if (boss instanceof EntityCultistLeader leader) {
+            leader.prepareSpawn(level, difficulty);
+        } else if (boss instanceof EntityEldritchGolem golem) {
+            golem.prepareSpawn();
+        } else if (boss instanceof EntityEldritchWarden warden) {
+            warden.prepareSpawn();
+        }
+        boss.restrictTo(boss.blockPosition(), HOME_RADIUS);
+        boss.generateName();
+        boss.bossEvent.setName(boss.getDisplayName());
+        event.setCanceled(true);
     }
 
     @Override

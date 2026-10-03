@@ -33,7 +33,8 @@ public final class TaintSplosion {
             }
             int y = onSurface ? level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) : center.getY();
             BlockPos column = new BlockPos(x, y, z);
-            if (!level.hasChunkAt(column) || !TaintBiomeManager.taintColumn(level, column)) {
+            if (!level.hasChunk(column.getX() >> 4, column.getZ() >> 4)
+                    || !TaintBiomeManager.taintColumn(level, column)) {
                 continue;
             }
             if (level.getBlockState(column).canBeReplaced()

@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
 public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
@@ -221,8 +222,12 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
                 this.getX() + this.random.nextFloat() - this.random.nextFloat(),
                 this.getY() + 0.25,
                 this.getZ() + this.random.nextFloat() - this.random.nextFloat());
-        cultist.finalizeSpawn(
-                server, server.getCurrentDifficultyAt(cultist.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+        EventHooks.finalizeMobSpawn(
+                cultist,
+                server,
+                server.getCurrentDifficultyAt(cultist.blockPosition()),
+                MobSpawnType.MOB_SUMMONED,
+                null);
         cultist.restrictTo(this.blockPosition(), 32);
         server.addFreshEntity(cultist);
         if (cultist instanceof EntityCultist minion) {

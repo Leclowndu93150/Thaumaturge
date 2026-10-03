@@ -13,6 +13,7 @@ import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -299,7 +300,8 @@ public final class ScanEntryBootstrap {
     private static HolderSet<Block> blocks(HolderGetter<Block> reg, Block... values) {
         List<Holder<Block>> holders = new ArrayList<>(values.length);
         for (Block value : values) {
-            holders.add(reg.getOrThrow(value.builtInRegistryHolder().key()));
+            holders.add(
+                    reg.getOrThrow(BuiltInRegistries.BLOCK.getResourceKey(value).orElseThrow()));
         }
         return HolderSet.direct(holders);
     }
@@ -307,7 +309,8 @@ public final class ScanEntryBootstrap {
     private static HolderSet<Item> items(HolderGetter<Item> reg, ItemLike... values) {
         List<Holder<Item>> holders = new ArrayList<>(values.length);
         for (ItemLike value : values) {
-            holders.add(reg.getOrThrow(value.asItem().builtInRegistryHolder().key()));
+            holders.add(reg.getOrThrow(
+                    BuiltInRegistries.ITEM.getResourceKey(value.asItem()).orElseThrow()));
         }
         return HolderSet.direct(holders);
     }
@@ -315,7 +318,8 @@ public final class ScanEntryBootstrap {
     private static HolderSet<EntityType<?>> entities(HolderGetter<EntityType<?>> reg, EntityType<?>... values) {
         List<Holder<EntityType<?>>> holders = new ArrayList<>(values.length);
         for (EntityType<?> value : values) {
-            holders.add(reg.getOrThrow(value.builtInRegistryHolder().key()));
+            holders.add(reg.getOrThrow(
+                    BuiltInRegistries.ENTITY_TYPE.getResourceKey(value).orElseThrow()));
         }
         return HolderSet.direct(holders);
     }

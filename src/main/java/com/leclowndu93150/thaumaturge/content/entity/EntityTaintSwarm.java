@@ -170,7 +170,9 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
     }
 
     private static boolean isValidFlightTarget(ServerLevel level, BlockPos pos) {
-        if (pos == null || !level.hasChunkAt(pos) || !level.getBlockState(pos).isAir()) {
+        if (pos == null
+                || !level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)
+                || !level.getBlockState(pos).isAir()) {
             return false;
         }
         if (pos.getY() < level.getMinBuildHeight() + 1

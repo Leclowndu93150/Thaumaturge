@@ -2,10 +2,11 @@ package com.leclowndu93150.thaumaturge.api.aura;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
 
 /**
  * Per-biome aura generation modifier. Data-map value attached to entries of
- * {@link net.minecraft.core.registries.Registries#BIOME}.
+ * {@link Registries#BIOME}.
  *
  * <p>The {@link #value()} is multiplied into the base aura sample at chunk generation time. The
  * default value when a biome has no entry is {@code 0.5}.

@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.event.EventHooks;
 
 public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     private static final int VENT_EVENT = 1;
@@ -143,7 +144,8 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
         double offsetZ = dir.getAxis() == Direction.Axis.Z ? crab.getBbWidth() / 2.0 : 0.5;
         crab.moveTo(pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ, dir.toYRot(), 0.0F);
         crab.setDeltaMovement(dir.getStepX() * 0.2F, dir.getStepY() * 0.2F, dir.getStepZ() * 0.2F);
-        crab.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWNER, null);
+        EventHooks.finalizeMobSpawn(
+                crab, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.SPAWNER, null);
         int difficulty = Math.max(
                 (int) (level.getDifficulty().getId()
                         + serverLevel.getCurrentDifficultyAt(pos).getEffectiveDifficulty()),

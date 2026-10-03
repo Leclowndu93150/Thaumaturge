@@ -54,7 +54,7 @@ public final class ElementalHoeItem extends HoeItem {
                 }
             }
         }
-        if (!did && BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), level, pos)) {
+        if (!did && BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), level, pos, player)) {
             context.getItemInHand()
                     .hurtAndBreak(BONEMEAL_DAMAGE, player, LivingEntity.getSlotForHand(context.getHand()));
             if (!level.isClientSide()) {

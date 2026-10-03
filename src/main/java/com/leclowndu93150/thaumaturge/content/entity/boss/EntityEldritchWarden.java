@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,15 +30,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -51,9 +49,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob, IEldritchMob, ISidedHurt {
     private static final EntityDataAccessor<Byte> DATA_TITLE =
@@ -293,8 +289,9 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         boolean placed = false;
         for (int attempt = 0; attempt < TELEPORT_TRIES; attempt++) {
             BlockPos pos = new BlockPos(x, y, z);
-            if (server.getBlockState(pos.below()).blocksMotion()
-                    && !server.getBlockState(pos).blocksMotion()) {
+            BlockPos below = pos.below();
+            if (server.getBlockState(below).isFaceSturdy(server, below, Direction.UP)
+                    && server.getBlockState(pos).getCollisionShape(server, pos).isEmpty()) {
                 placed = true;
                 break;
             }
@@ -355,17 +352,11 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         return super.hurtClient(source, damage);
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+    void prepareSpawn() {
         this.spawnTimer = SPAWN_TICKS;
         this.setTitle(this.random.nextInt(TITLES.length));
         this.setAbsorptionAmount(this.getAbsorptionAmount() + shieldCap());
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
     @Override

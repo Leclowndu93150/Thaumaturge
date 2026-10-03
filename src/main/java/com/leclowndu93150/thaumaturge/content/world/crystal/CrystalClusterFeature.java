@@ -68,7 +68,7 @@ public final class CrystalClusterFeature extends Feature<CrystalClusterConfig> {
                         if (random.nextInt(3) != 0) {
                             pos.setWithOffset(center, dx, dy, dz);
                             BlockState state = level.getBlockState(pos);
-                            if (!state.liquid()
+                            if (state.getFluidState().isEmpty()
                                     && (state.isAir() || state.canBeReplaced())
                                     && isTouchingRock(level, pos, neighborPos)) {
                                 int size = MIN_SIZE + random.nextInt(MAX_EXTRA_SIZE);

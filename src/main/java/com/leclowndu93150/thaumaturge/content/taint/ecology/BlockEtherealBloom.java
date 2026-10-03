@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.content.world.plant.AbstractTCPlant;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -30,7 +31,7 @@ public final class BlockEtherealBloom extends AbstractTCPlant implements EntityB
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.isFaceSturdy(level, pos, net.minecraft.core.Direction.UP);
+        return state.isFaceSturdy(level, pos, Direction.UP);
     }
 
     @Override

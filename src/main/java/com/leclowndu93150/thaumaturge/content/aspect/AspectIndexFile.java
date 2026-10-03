@@ -50,7 +50,7 @@ public final class AspectIndexFile {
             lines.add("item:" + id);
         }
         for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = item.builtInRegistryHolder().getData(AspectDataMaps.BASE_ASPECTS);
+            AspectList declared = BuiltInRegistries.ITEM.wrapAsHolder(item).getData(AspectDataMaps.BASE_ASPECTS);
             if (declared == null || declared.isEmpty()) {
                 continue;
             }

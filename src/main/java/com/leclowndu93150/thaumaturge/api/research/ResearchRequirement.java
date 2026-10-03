@@ -9,6 +9,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +53,7 @@ public record ResearchRequirement(HolderSet<Item> items, DataComponentPatch comp
      * @return {@code true} when the stack's item and components both satisfy the requirement
      */
     public boolean matches(ItemStack stack) {
-        return items.contains(stack.getItem().builtInRegistryHolder()) && matchesComponents(stack);
+        return items.contains(BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem())) && matchesComponents(stack);
     }
 
     private boolean matchesComponents(ItemStack stack) {

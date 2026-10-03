@@ -46,7 +46,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -56,8 +55,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -78,7 +75,6 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
@@ -103,7 +99,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     private static final int FLAG_FOLLOWING = 1 << 1;
     private static final int FLAG_COMBAT = 1 << 3;
-    private static final int HOME_RANGE = 32;
+    static final int HOME_RANGE = 32;
     private static final int HOME_RANGE_SCOUT = 48;
     private static final double BASE_MOVEMENT_SPEED = 0.3;
     private static final int RANGED_TARGET_FORGET_DIST_SQR = 1024;
@@ -447,17 +443,6 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     public void setBesideClimbableBlock(boolean climbing) {
         byte flags = entityData.get(CLIMBING);
         entityData.set(CLIMBING, (byte) (climbing ? flags | 1 : flags & ~1));
-    }
-
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType spawnReason,
-            @Nullable SpawnGroupData spawnGroupData) {
-        restrictTo(blockPosition(), HOME_RANGE);
-        updateEntityAttributes();
-        return spawnGroupData;
     }
 
     @Override

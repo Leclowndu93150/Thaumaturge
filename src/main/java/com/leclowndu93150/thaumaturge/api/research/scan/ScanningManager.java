@@ -236,7 +236,7 @@ public final class ScanningManager {
             if (state.is(TCBlocks.NODE.get()) || state.is(TCBlocks.SILVERWOOD_NODE_LOG.get())) {
                 return ItemStack.EMPTY;
             }
-            ItemStack stack = state.getBlock().getCloneItemStack(player.level(), pos, state);
+            ItemStack stack = state.getCloneItemStack(null, player.level(), pos, player);
             if (stack.isEmpty()) {
                 FluidState fluid = state.getFluidState();
                 if (!fluid.isEmpty()) {

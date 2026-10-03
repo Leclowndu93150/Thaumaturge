@@ -66,7 +66,7 @@ public final class AspectIndexBuilder {
     private static Map<Item, AspectList> collectBase(HolderLookup.Provider registries) {
         Map<Item, AspectList> map = new HashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = item.builtInRegistryHolder().getData(AspectDataMaps.BASE_ASPECTS);
+            AspectList declared = BuiltInRegistries.ITEM.wrapAsHolder(item).getData(AspectDataMaps.BASE_ASPECTS);
             if (declared != null && !declared.isEmpty()) {
                 AspectList capped = cap(declared.merge(EquipmentAspects.bonusFor(item, registries)), registries);
                 if (!capped.isEmpty()) {

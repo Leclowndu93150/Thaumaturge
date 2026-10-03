@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -80,7 +81,7 @@ public final class WandChargingEvents {
     }
 
     private static ResourceKey<IAspect> plantAspect(Block block) {
-        ResourceLocation id = block.builtInRegistryHolder().key().location();
+        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
         if (id.equals(TCBlocks.PLANT_CINDERPEARL.getId())) {
             return TCAspects.IGNIS;
         }

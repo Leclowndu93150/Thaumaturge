@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -111,14 +112,14 @@ public final class LegacyItemLift {
     private static float[] bakedYBounds(BakedModel model, ItemDisplayContext context) {
         RandomSource random = RandomSource.create(QUAD_SEED);
         PoseStack poseStack = new PoseStack();
-        model.getTransforms().getTransform(context).apply(false, poseStack);
+        model.applyTransform(context, poseStack, false);
         poseStack.translate(-0.5F, -0.5F, -0.5F);
         Matrix4f matrix = poseStack.last().pose();
 
         float[] bounds = {Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY};
-        accumulateY(model.getQuads(null, null, random), matrix, bounds);
+        accumulateY(model.getQuads(null, null, random, ModelData.EMPTY, null), matrix, bounds);
         for (Direction direction : Direction.values()) {
-            accumulateY(model.getQuads(null, direction, random), matrix, bounds);
+            accumulateY(model.getQuads(null, direction, random, ModelData.EMPTY, null), matrix, bounds);
         }
         return bounds;
     }

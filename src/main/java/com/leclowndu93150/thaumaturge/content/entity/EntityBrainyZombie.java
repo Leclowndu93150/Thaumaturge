@@ -6,6 +6,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class EntityBrainyZombie extends Zombie {
     public EntityBrainyZombie(EntityType<? extends EntityBrainyZombie> type, Level level) {
@@ -27,8 +28,7 @@ public class EntityBrainyZombie extends Zombie {
 
     @Override
     protected void doUnderWaterConversion() {
-        if (!net.neoforged.neoforge.event.EventHooks.canLivingConvert(
-                this, TCEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
+        if (!EventHooks.canLivingConvert(this, TCEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
             return;
         }
         this.convertToZombieType(TCEntities.BRAINY_DROWNED.get());

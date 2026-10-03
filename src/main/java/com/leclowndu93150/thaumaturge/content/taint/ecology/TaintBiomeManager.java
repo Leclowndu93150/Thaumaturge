@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.ChunkPos;
@@ -30,7 +31,8 @@ public final class TaintBiomeManager {
     private TaintBiomeManager() {}
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos) && level.getBiome(pos).is(TCBiomes.TAINTED_LANDS);
+        return level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)
+                && level.getBiome(pos).is(TCBiomes.TAINTED_LANDS);
     }
 
     public static boolean isDynamicallyTainted(ServerLevel level, BlockPos pos) {
@@ -65,8 +67,7 @@ public final class TaintBiomeManager {
         return true;
     }
 
-    public static boolean replaceColumn(
-            ServerLevel level, BlockPos pos, net.minecraft.resources.ResourceKey<Biome> biomeKey) {
+    public static boolean replaceColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> biomeKey) {
         LevelChunk chunk = loadedChunk(level, pos);
         if (chunk == null) {
             return false;
@@ -180,7 +181,7 @@ public final class TaintBiomeManager {
     }
 
     private static LevelChunk loadedChunk(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             return null;
         }
         return level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4);

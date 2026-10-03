@@ -33,7 +33,18 @@ public final class AspectIngredientHelper implements IIngredientHelper<AspectIns
     }
 
     @Override
+    public Object getUid(AspectInstance ingredient, UidContext context) {
+        return aspectUid(ingredient);
+    }
+
+    // JEI still asks for the old method in latest version...
+    @SuppressWarnings("removal")
+    @Override
     public String getUniqueId(AspectInstance ingredient, UidContext context) {
+        return aspectUid(ingredient);
+    }
+
+    private static String aspectUid(AspectInstance ingredient) {
         return ingredient
                 .aspect()
                 .unwrapKey()

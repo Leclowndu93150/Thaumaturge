@@ -54,7 +54,7 @@ public final class GogglesItem extends ArmorItem implements IGoggles, IRevealer,
 
     // Not a TieredItem/ArmorItem, so the enchantment value has to come from here or the table offers nothing.
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return TCItems.GOGGLES_ENCHANTMENT_VALUE;
     }
 }

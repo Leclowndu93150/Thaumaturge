@@ -76,7 +76,10 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
         level.playSound(
                 null,
                 corePos,
-                getBlock().defaultBlockState().getSoundType().getPlaceSound(),
+                getBlock()
+                        .defaultBlockState()
+                        .getSoundType(level, corePos, player)
+                        .getPlaceSound(),
                 SoundSource.BLOCKS,
                 1.0F,
                 1.0F);

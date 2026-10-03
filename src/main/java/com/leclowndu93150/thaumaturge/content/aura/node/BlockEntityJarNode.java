@@ -4,8 +4,11 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockEntityJarNode extends BlockEntityNode {
@@ -48,10 +51,13 @@ public class BlockEntityJarNode extends BlockEntityNode {
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag output) {
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        CompoundTag output = saveCustomOnly(registries);
         output.remove("Type");
         output.remove("Modifier");
         output.remove("Aspects");
         output.remove("AspectsBase");
+        BlockItem.setBlockEntityData(stack, getType(), output);
+        stack.applyComponents(collectComponents());
     }
 }

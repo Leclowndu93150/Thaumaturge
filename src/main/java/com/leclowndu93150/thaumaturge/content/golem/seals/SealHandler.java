@@ -100,7 +100,7 @@ public final class SealHandler {
             return;
         }
         seal.getSeal().onRemoval(level, pos.pos(), pos.face());
-        if (level.hasChunkAt(pos.pos())) {
+        if (level.hasChunk(pos.pos().getX() >> 4, pos.pos().getZ() >> 4)) {
             LevelChunk chunk = level.getChunkAt(pos.pos());
             chunk.getData(TCAttachments.SEALS).seals().remove(seal);
             chunk.setUnsaved(true);
@@ -148,7 +148,8 @@ public final class SealHandler {
     public static void tickSealEntities(ServerLevel level) {
         boolean validate = level.getGameTime() % 20 == 0;
         for (SealEntity seal : index(level).seals().values()) {
-            if (!level.hasChunkAt(seal.getSealPos().pos())) {
+            if (!level.hasChunk(
+                    seal.getSealPos().pos().getX() >> 4, seal.getSealPos().pos().getZ() >> 4)) {
                 continue;
             }
             try {
@@ -173,7 +174,7 @@ public final class SealHandler {
     }
 
     public static void markDirty(ServerLevel level, BlockPos pos) {
-        if (level.hasChunkAt(pos)) {
+        if (level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             level.getChunkAt(pos).setUnsaved(true);
         }
     }

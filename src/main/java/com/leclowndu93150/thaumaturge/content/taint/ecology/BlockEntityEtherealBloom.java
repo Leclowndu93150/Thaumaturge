@@ -63,7 +63,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 BlockPos sample = new BlockPos((chunkX << 4) + 8, origin.getY(), (chunkZ << 4) + 8);
-                if (!level.hasChunkAt(sample)) {
+                if (!level.hasChunk(sample.getX() >> 4, sample.getZ() >> 4)) {
                     continue;
                 }
                 float before = TaintEcology.getSaturation(level, sample);
@@ -85,7 +85,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
         for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
                 BlockPos sample = new BlockPos((chunkX << 4) + 8, origin.getY(), (chunkZ << 4) + 8);
-                if (level.hasChunkAt(sample)
+                if (level.hasChunk(sample.getX() >> 4, sample.getZ() >> 4)
                         && (TaintEcology.getSaturation(level, sample) > 0.0F
                                 || TaintBiomeManager.isTainted(level, sample))) {
                     return true;
@@ -106,7 +106,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
             }
 
             BlockPos column = origin.offset(x, 0, z);
-            if (!level.hasChunkAt(column)) {
+            if (!level.hasChunk(column.getX() >> 4, column.getZ() >> 4)) {
                 continue;
             }
             // The Ethereal Bloom resets the biome as part of the same cleansing operation. The

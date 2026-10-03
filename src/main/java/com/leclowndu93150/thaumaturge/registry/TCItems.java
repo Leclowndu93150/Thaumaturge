@@ -527,7 +527,7 @@ public final class TCItems {
                             .nutrition(4)
                             .saturationModifier(0.2F)
                             .alwaysEdible()
-                            .effect(new MobEffectInstance(MobEffects.HUNGER, 30, 0), 0.8F)
+                            .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 30, 0), 0.8F)
                             .build()));
 
     public static final DeferredItem<SpawnEggItem> BRAINY_ZOMBIE_SPAWN_EGG =
@@ -694,7 +694,7 @@ public final class TCItems {
                     .nutrition(6)
                     .saturationModifier(0.8F)
                     .alwaysEdible()
-                    .effect(new MobEffectInstance(MobEffects.REGENERATION, 100, 0), 0.66F)
+                    .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 100, 0), 0.66F)
                     .build())));
 
     private static DeferredItem<Item> registerChunk(String id) {

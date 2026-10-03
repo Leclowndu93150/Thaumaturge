@@ -39,7 +39,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
@@ -54,6 +53,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -62,6 +62,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
 public final class RecipeDisplayWidget {
@@ -912,7 +913,14 @@ public final class RecipeDisplayWidget {
             } else if (!state.getFluidState().isEmpty() && Minecraft.getInstance().level != null) {
                 renderFluidPreview(buffers, pose, state);
             } else {
-                dispatcher.renderSingleBlock(state, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                dispatcher.renderSingleBlock(
+                        state,
+                        pose,
+                        buffers,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        ModelData.EMPTY,
+                        null);
             }
             pose.popPose();
         }
@@ -925,7 +933,7 @@ public final class RecipeDisplayWidget {
         TextureAtlasSprite sprite = state.getFluidState().is(FluidTags.LAVA)
                 ? ModelBakery.LAVA_FLOW.sprite()
                 : ModelBakery.WATER_FLOW.sprite();
-        VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(TextureAtlas.LOCATION_BLOCKS));
+        VertexConsumer consumer = buffers.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
         float minU = sprite.getU0();
         float maxU = sprite.getU1();
         float minV = sprite.getV0();

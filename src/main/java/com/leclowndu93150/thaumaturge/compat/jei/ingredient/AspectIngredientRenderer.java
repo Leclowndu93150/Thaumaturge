@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import java.util.ArrayList;
 import java.util.List;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -34,8 +35,7 @@ public final class AspectIngredientRenderer implements IIngredientRenderer<Aspec
         }
     }
 
-    @Override
-    public List<Component> getTooltip(AspectInstance instance, TooltipFlag tooltipFlag) {
+    private List<Component> tooltipLines(AspectInstance instance) {
         Holder<IAspect> ingredient = instance.aspect();
         IAspect value = ingredient.value();
         int color = value.color() | 0xFF000000;
@@ -48,6 +48,16 @@ public final class AspectIngredientRenderer implements IIngredientRenderer<Aspec
         lines.add(AspectComponents.name(ingredient).withStyle(style -> style.withColor(color)));
         lines.add(AspectComponents.description(ingredient).withStyle(ChatFormatting.GRAY));
         return lines;
+    }
+
+    @Override
+    public List<Component> getTooltip(AspectInstance instance, TooltipFlag tooltipFlag) {
+        return tooltipLines(instance);
+    }
+
+    @Override
+    public void getTooltip(ITooltipBuilder tooltip, AspectInstance instance, TooltipFlag tooltipFlag) {
+        tooltip.addAll(tooltipLines(instance));
     }
 
     @Override

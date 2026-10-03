@@ -126,7 +126,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
             int xx = (int) ((this.random.nextFloat() - this.random.nextFloat()) * TAINT_SPREAD_RADIUS);
             int zz = (int) ((this.random.nextFloat() - this.random.nextFloat()) * TAINT_SPREAD_RADIUS);
             BlockPos column = center.offset(xx, 0, zz);
-            if (!server.hasChunkAt(column)) {
+            if (!server.hasChunk(column.getX() >> 4, column.getZ() >> 4)) {
                 continue;
             }
             TaintBiomeManager.taintColumn(server, column);

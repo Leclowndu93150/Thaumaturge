@@ -60,7 +60,7 @@ public final class BannerWallBlock extends AbstractBannerBlock {
 
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        return rotate(state, mirror.getRotation(state.getValue(FACING)));
     }
 
     @Override
@@ -78,7 +78,7 @@ public final class BannerWallBlock extends AbstractBannerBlock {
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction facing = state.getValue(FACING);
         BlockPos wallPos = pos.relative(facing.getOpposite());
-        return level.getBlockState(wallPos).isSolid();
+        return level.getBlockState(wallPos).isFaceSturdy(level, wallPos, facing);
     }
 
     @Override

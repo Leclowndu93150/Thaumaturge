@@ -20,6 +20,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -151,7 +152,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
             ItemEntity entity = new ItemEntity(level, x, y, z, remainder);
             entity.setDeltaMovement(
                     outputFace.getStepX() * 0.04D, outputFace.getStepY() * 0.04D, outputFace.getStepZ() * 0.04D);
-            if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            if (level instanceof ServerLevel server) {
                 // Fire the vent event as part of the ejection attempt, before spawning the item.
                 server.blockEvent(pos, getBlockState().getBlock(), VENT_EVENT, 0);
             }

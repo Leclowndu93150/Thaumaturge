@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -79,7 +80,7 @@ public final class WarpManager {
         if (stack.getItem() instanceof IWarpingGear gear) {
             warp += gear.getWarp(stack, wearer);
         }
-        ItemWarp mapped = stack.getItem().builtInRegistryHolder().getData(TCDataMaps.ITEM_WARP);
+        ItemWarp mapped = BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem()).getData(TCDataMaps.ITEM_WARP);
         if (mapped != null) {
             warp += mapped.amount();
         }

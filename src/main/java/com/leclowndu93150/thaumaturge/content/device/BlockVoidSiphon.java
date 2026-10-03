@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -99,8 +100,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
                         }
 
                         @Override
-                        public AbstractContainerMenu createMenu(
-                                int containerId, net.minecraft.world.entity.player.Inventory inventory, Player p) {
+                        public AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player p) {
                             return new MenuVoidSiphon(containerId, inventory, siphon);
                         }
                     },

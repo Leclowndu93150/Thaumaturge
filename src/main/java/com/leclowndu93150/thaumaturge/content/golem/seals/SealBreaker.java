@@ -99,7 +99,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
                 task.setLifespan((short) Math.max(task.getLifespan(), 10L));
                 task.setData(task.getData() - breakSpeed);
                 int progress = (int) (9.0F * (1.0F - task.getData() / hardness));
-                SoundType sound = state.getSoundType();
+                SoundType sound = state.getSoundType(level, task.getPos(), golem.getGolemEntity());
                 level.playSound(
                         null,
                         task.getPos(),

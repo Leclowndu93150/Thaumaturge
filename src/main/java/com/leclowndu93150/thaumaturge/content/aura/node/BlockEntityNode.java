@@ -861,7 +861,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         int x = origin.getX() + random.nextInt(range) - random.nextInt(range);
         int z = origin.getZ() + random.nextInt(range) - random.nextInt(range);
         BlockPos sample = new BlockPos(x, origin.getY(), z);
-        return serverLevel.hasChunkAt(sample) ? sample : null;
+        return serverLevel.hasChunk(sample.getX() >> 4, sample.getZ() >> 4) ? sample : null;
     }
 
     private boolean handleTypeBehavior(ServerLevel serverLevel, BlockPos pos, boolean change) {

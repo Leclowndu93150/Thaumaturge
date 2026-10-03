@@ -12,6 +12,7 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCross
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -19,6 +20,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TCEntityEvents {
@@ -196,5 +198,13 @@ public final class TCEntityEvents {
         event.put(
                 TCEntities.ARCANE_BORE.get(),
                 EntityArcaneBore.createAttributes().build());
+    }
+
+    @SubscribeEvent
+    public static void onMobEffectApplicable(MobEffectEvent.Applicable event) {
+        if (event.getEntity() instanceof EntityEldritchCrab
+                && event.getEffectInstance().is(MobEffects.POISON)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+        }
     }
 }

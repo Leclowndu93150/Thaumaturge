@@ -143,7 +143,7 @@ public final class PhysicalFlux {
         }
         for (int attempt = 0; attempt < SPILL_ATTEMPTS; attempt++) {
             BlockPos target = origin.offset(random.nextInt(3) - 1, random.nextInt(3) - 1, random.nextInt(3) - 1);
-            if (!level.hasChunkAt(target)) {
+            if (!level.hasChunk(target.getX() >> 4, target.getZ() >> 4)) {
                 continue;
             }
             if (trySpillAt(level, target, random)) {

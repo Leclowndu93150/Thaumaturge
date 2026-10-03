@@ -306,7 +306,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         if (state.is(TCBlocks.TAINT_FIBRE.get())) {
             return true;
         }
-        if (state.blocksMotion()) {
+        if (!state.getCollisionShape(level, pos).isEmpty()) {
             return false;
         }
         return state.canBeReplaced();

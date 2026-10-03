@@ -151,7 +151,7 @@ public final class FluxPressureEvents {
     private static boolean spawnWisp(ServerLevel level, BlockPos origin) {
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, origin);
         BlockPos spawn = surface.above(5);
-        if (spawn.getY() >= level.getMaxBuildHeight() - 1 || !level.hasChunkAt(spawn)) {
+        if (spawn.getY() >= level.getMaxBuildHeight() - 1 || !level.hasChunk(spawn.getX() >> 4, spawn.getZ() >> 4)) {
             return false;
         }
         WispEntity wisp = TCEntities.WISP.get().create(level);
@@ -255,7 +255,7 @@ public final class FluxPressureEvents {
 
     private static boolean startLightning(ServerLevel level, BlockPos origin) {
         BlockPos strike = findLightningTarget(level, origin);
-        if (!level.hasChunkAt(strike) || !level.canSeeSky(strike)) {
+        if (!level.hasChunk(strike.getX() >> 4, strike.getZ() >> 4) || !level.canSeeSky(strike)) {
             return false;
         }
         flashLightning(level, strike, true);
@@ -317,7 +317,7 @@ public final class FluxPressureEvents {
     }
 
     private static void placeLightningGoo(ServerLevel level, BlockPos target) {
-        if (!level.hasChunkAt(target)) {
+        if (!level.hasChunk(target.getX() >> 4, target.getZ() >> 4)) {
             return;
         }
         BlockPos placedAt = target;
@@ -384,7 +384,7 @@ public final class FluxPressureEvents {
             int x = rain.center.getX() + random.nextInt(RAIN_RADIUS * 2 + 1) - RAIN_RADIUS;
             int z = rain.center.getZ() + random.nextInt(RAIN_RADIUS * 2 + 1) - RAIN_RADIUS;
             BlockPos sample = new BlockPos(x, rain.center.getY(), z);
-            if (!level.hasChunkAt(sample)) {
+            if (!level.hasChunk(sample.getX() >> 4, sample.getZ() >> 4)) {
                 continue;
             }
             BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, sample);

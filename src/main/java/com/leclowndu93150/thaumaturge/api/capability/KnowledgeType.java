@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 
 /**
@@ -11,7 +12,7 @@ import net.minecraft.util.StringRepresentable;
  *
  * <p>Each entry advances a player's raw counter for a {@link com.leclowndu93150.thaumaturge.api.research.IResearchCategory category}.
  * The raw counter is divided by {@link #progression()} to yield the visible level reported by
- * {@link IPlayerKnowledge#knowledge(KnowledgeType, net.minecraft.resources.ResourceKey)}. For
+ * {@link IPlayerKnowledge#knowledge(KnowledgeType, ResourceKey)}. For
  * example, every thirty-second theory yields
  * one level.
  *

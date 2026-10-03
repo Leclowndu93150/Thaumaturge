@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -66,7 +66,8 @@ public final class ChampionEvents {
         }
         int whitelistBonus = 0;
         boolean whitelisted = false;
-        Integer weight = mob.getType().builtInRegistryHolder().getData(ChampionDataMaps.CHAMPION_WHITELIST);
+        Integer weight =
+                BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(mob.getType()).getData(ChampionDataMaps.CHAMPION_WHITELIST);
         if (weight != null) {
             whitelisted = true;
             if (allowed) {
@@ -122,6 +123,6 @@ public final class ChampionEvents {
         }
         Holder<Enchantment> looting =
                 level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING);
-        return EnchantmentHelper.getItemEnchantmentLevel(looting, living.getMainHandItem());
+        return living.getMainHandItem().getEnchantmentLevel(looting);
     }
 }

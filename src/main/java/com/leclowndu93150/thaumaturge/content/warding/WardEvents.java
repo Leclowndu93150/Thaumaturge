@@ -98,7 +98,7 @@ public final class WardEvents {
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
         BlockPos origin = event.getPos().getWorldPosition();
-        if (event.getLevel().hasChunkAt(origin)) {
+        if (event.getLevel().hasChunk(origin.getX() >> 4, origin.getZ() >> 4)) {
             WardHandler.syncChunk(event.getPlayer(), event.getLevel().getChunkAt(origin));
         }
     }

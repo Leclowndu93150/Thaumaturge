@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -81,7 +82,7 @@ public record ScanEntry(
         }
         if (target instanceof Entity entity && !(entity instanceof ItemEntity)) {
             return entities.isPresent()
-                    && entities.get().contains(entity.getType().builtInRegistryHolder());
+                    && entities.get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entity.getType()));
         }
         ItemStack stack = ItemStack.EMPTY;
         if (target instanceof ItemStack targetStack) {
@@ -97,6 +98,6 @@ public record ScanEntry(
         }
         return blocks.isPresent()
                 && stack.getItem() instanceof BlockItem blockItem
-                && blocks.get().contains(blockItem.getBlock().builtInRegistryHolder());
+                && blocks.get().contains(BuiltInRegistries.BLOCK.wrapAsHolder(blockItem.getBlock()));
     }
 }

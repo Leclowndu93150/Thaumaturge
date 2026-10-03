@@ -178,7 +178,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
                     random.nextInt(8) - random.nextInt(8),
                     random.nextInt(8) - random.nextInt(8),
                     random.nextInt(8) - random.nextInt(8));
-            if (!level.hasChunkAt(target)) {
+            if (!level.hasChunk(target.getX() >> 4, target.getZ() >> 4)) {
                 continue;
             }
             if (target.getY() < nodePos.getY()) {

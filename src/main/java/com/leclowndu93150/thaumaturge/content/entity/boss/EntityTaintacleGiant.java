@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
@@ -16,19 +17,19 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritchMob, ISidedHurt {
     private static final EntityDataAccessor<Integer> DATA_AGGRO =
             SynchedEntityData.defineId(EntityTaintacleGiant.class, EntityDataSerializers.INT);
@@ -67,14 +68,12 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
         this.entityData.set(DATA_AGGRO, anger);
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
-        ChampionHelper.makeChampion(this, true);
-        return data;
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (event.getEntity() instanceof EntityTaintacleGiant giant) {
+            ChampionHelper.makeChampion(giant, true);
+            event.setCanceled(true);
+        }
     }
 
     @Override

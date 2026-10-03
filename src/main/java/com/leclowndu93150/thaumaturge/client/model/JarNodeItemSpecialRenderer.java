@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class JarNodeItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
     private static final float NODE_HEIGHT = 0.4F;
@@ -38,7 +39,14 @@ public final class JarNodeItemSpecialRenderer extends BlockEntityWithoutLevelRen
             int overlay) {
         Minecraft.getInstance()
                 .getBlockRenderer()
-                .renderSingleBlock(TCBlocks.JAR_NODE.get().defaultBlockState(), poseStack, buffers, light, overlay);
+                .renderSingleBlock(
+                        TCBlocks.JAR_NODE.get().defaultBlockState(),
+                        poseStack,
+                        buffers,
+                        light,
+                        overlay,
+                        ModelData.EMPTY,
+                        null);
 
         NodeData data = stack.get(TCDataComponents.NODE_DATA.get());
         if (data == null || data.aspects().isEmpty()) {

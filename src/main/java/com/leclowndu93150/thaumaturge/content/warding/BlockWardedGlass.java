@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 /** A warded transparent block. TransparentBlock supplies seam-free same-block face culling. */
 public final class BlockWardedGlass extends TransparentBlock {
@@ -24,12 +25,7 @@ public final class BlockWardedGlass extends TransparentBlock {
     }
 
     @Override
-    public void setPlacedBy(
-            Level level,
-            BlockPos pos,
-            net.minecraft.world.level.block.state.BlockState state,
-            LivingEntity placer,
-            ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level instanceof ServerLevel server && placer instanceof Player player) {
             WardHandler.ward(server, pos, player.getUUID());

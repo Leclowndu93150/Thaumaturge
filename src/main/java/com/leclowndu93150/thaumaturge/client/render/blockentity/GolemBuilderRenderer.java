@@ -15,18 +15,18 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.AABB;
 
 public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEntityGolemBuilder> {
     public static final ResourceLocation MODEL = TCIds.rl("models/mesh/golembuilder.tcmesh");
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/golembuilder.png");
     private static final Material LAVA_MATERIAL =
-            new Material(TextureAtlas.LOCATION_BLOCKS, ResourceLocation.withDefaultNamespace("block/lava_still"));
+            new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.withDefaultNamespace("block/lava_still"));
     private static final String PRESS_PART = "press";
     private static final float PRESS_DROP = 0.625F;
     private static final float LAVA_OFFSET_X = -0.3125F;

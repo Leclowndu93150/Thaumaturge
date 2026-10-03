@@ -8,11 +8,13 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,7 +52,7 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), net.minecraft.core.Direction.UP);
+        return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
     }
 
     @Override
@@ -104,7 +106,7 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
     }
 
     @Override
-    public void die(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
+    public void die(Level level, BlockPos pos, BlockState state) {
         level.removeBlock(pos, false);
     }
 }

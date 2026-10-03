@@ -25,6 +25,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -170,8 +172,11 @@ public final class BlockEntityManaPod extends BlockEntity {
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag output) {
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        CompoundTag output = saveCustomOnly(registries);
         output.remove("Aspect");
+        BlockItem.setBlockEntityData(stack, getType(), output);
+        stack.applyComponents(collectComponents());
     }
 
     @Override

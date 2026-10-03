@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.api.aspect;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -13,8 +14,7 @@ import net.minecraft.resources.ResourceLocation;
  * <p>Aspects are loaded from datapack JSON under {@code data/<namespace>/thaumaturge/aspect/}
  * and exposed through the {@link #REGISTRY_KEY} datapack registry. Code typically references
  * aspects by {@link ResourceKey} (see the constants in {@code TCAspects}) and resolves them
- * through a {@link net.minecraft.core.HolderLookup.Provider HolderLookup.Provider} or a
- * {@link Holder}.
+ * through a {@link HolderLookup.Provider} or a {@link Holder}.
  *
  * <p>Aspects come in two kinds. A primal aspect has no components and represents one of the
  * six base essences. A compound aspect declares exactly two component aspects whose

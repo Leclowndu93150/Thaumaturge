@@ -13,6 +13,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.connection.ConnectionType;
 
 public record GolemAccessoryStates(List<AccessoryStateSlot<?>> slots) implements GolemAccessoryStateView {
     public static final GolemAccessoryStates EMPTY = new GolemAccessoryStates(List.of());
@@ -35,7 +36,8 @@ public record GolemAccessoryStates(List<AccessoryStateSlot<?>> slots) implements
     }
 
     public int encodedSize(RegistryAccess registries) {
-        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registries);
+        RegistryFriendlyByteBuf buf =
+                new RegistryFriendlyByteBuf(Unpooled.buffer(), registries, ConnectionType.NEOFORGE);
         try {
             encode(buf, this);
             return buf.readableBytes();

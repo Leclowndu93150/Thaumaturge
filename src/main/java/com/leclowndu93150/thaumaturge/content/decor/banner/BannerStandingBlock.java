@@ -65,7 +65,8 @@ public final class BannerStandingBlock extends AbstractBannerBlock {
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos.below()).isSolid();
+        BlockPos supportPos = pos.below();
+        return level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.UP);
     }
 
     @Override

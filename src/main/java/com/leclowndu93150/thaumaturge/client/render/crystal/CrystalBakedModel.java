@@ -10,7 +10,6 @@ import java.util.Random;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,13 +117,14 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
     }
 
     @Override
+    @Deprecated
     public TextureAtlasSprite getParticleIcon() {
         return particle;
     }
 
     @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
+    public TextureAtlasSprite getParticleIcon(ModelData modelData) {
+        return particle;
     }
 
     @Override

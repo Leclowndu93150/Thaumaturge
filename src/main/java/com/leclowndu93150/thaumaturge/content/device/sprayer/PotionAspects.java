@@ -39,7 +39,7 @@ final class PotionAspects {
                 .potion();
         AspectList result = AspectList.EMPTY;
         boolean anyReagent = false;
-        if (potion.isPresent() && !potion.get().is(Potions.WATER)) {
+        if (potion.isPresent() && !potion.get().is(Potions.WATER.unwrapKey().orElseThrow())) {
             for (ItemStack reagent : reagentsOf(level, potion.get())) {
                 AspectList reagentAspects = AspectIndexAccess.index().of(reagent);
                 for (AspectInstance entry : reagentAspects.entries()) {

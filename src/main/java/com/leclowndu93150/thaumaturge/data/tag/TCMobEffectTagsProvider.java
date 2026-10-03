@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.registry.TCEffectTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.Holder;
@@ -10,10 +11,14 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public final class TCMobEffectTagsProvider extends TagsProvider<MobEffect> {
-    public TCMobEffectTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, Registries.MOB_EFFECT, lookupProvider);
+    public TCMobEffectTagsProvider(
+            PackOutput output,
+            CompletableFuture<HolderLookup.Provider> lookupProvider,
+            ExistingFileHelper existingFileHelper) {
+        super(output, Registries.MOB_EFFECT, lookupProvider, TCIds.MODID, existingFileHelper);
     }
 
     @Override

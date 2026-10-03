@@ -79,7 +79,8 @@ public final class InfusionEnchantmentHelper {
         ItemAttributeModifiers modifiers =
                 stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
-            if (entry.attribute().is(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND)) {
+            if (entry.attribute().is(Attributes.ATTACK_DAMAGE.unwrapKey().orElseThrow())
+                    && entry.slot().test(EquipmentSlot.MAINHAND)) {
                 return true;
             }
         }

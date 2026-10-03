@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -23,8 +24,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
@@ -38,10 +37,13 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedHurt {
     private static final EntityDataAccessor<Boolean> DATA_HELM =
             SynchedEntityData.defineId(EntityEldritchCrab.class, EntityDataSerializers.BOOLEAN);
@@ -104,24 +106,24 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
         return false;
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (!(event.getEntity() instanceof EntityEldritchCrab crab)) {
+            return;
+        }
+        var level = event.getLevel();
+        DifficultyInstance difficulty = event.getDifficulty();
         if (level.getDifficulty() == Difficulty.HARD) {
-            this.setHelm(true);
+            crab.setHelm(true);
         } else {
-            this.setHelm(this.random.nextFloat() < HELM_CHANCE);
+            crab.setHelm(crab.random.nextFloat() < HELM_CHANCE);
         }
         RandomSource rand = level.getRandom();
         if (level.getDifficulty() == Difficulty.HARD
                 && rand.nextFloat() < HARD_GROUP_EFFECT_CHANCE * difficulty.getSpecialMultiplier()) {
             var effect = randomGroupEffect(rand);
-            this.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION));
+            crab.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION));
         }
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
 
     private static Holder<MobEffect> randomGroupEffect(RandomSource rand) {
@@ -236,11 +238,6 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
         this.playSound(SoundEvents.SPIDER_STEP, 0.15F, 1.0F);
-    }
-
-    @Override
-    public boolean canBeAffected(MobEffectInstance effect) {
-        return !effect.is(MobEffects.POISON) && super.canBeAffected(effect);
     }
 
     @Override

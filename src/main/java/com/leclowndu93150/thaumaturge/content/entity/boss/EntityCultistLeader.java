@@ -24,8 +24,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -42,7 +40,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.providers.VanillaEnchantmentProviders;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import org.jspecify.annotations.Nullable;
 
 public class EntityCultistLeader extends EntityThaumaturgeBoss implements RangedAttackMob {
     private static final EntityDataAccessor<Byte> DATA_TITLE =
@@ -143,12 +140,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
         }
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData data) {
+    void prepareSpawn(ServerLevelAccessor level, DifficultyInstance difficulty) {
         this.equipPraetorGear();
         float clamped = difficulty.getSpecialMultiplier();
         ItemStack weapon = this.getMainHandItem();
@@ -162,7 +154,6 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
         }
         this.setTitle(this.random.nextInt(TITLES.length));
         ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
     @Override

@@ -64,7 +64,7 @@ public final class WardHandler {
     }
 
     public static boolean ward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!level.hasChunkAt(pos) || !canWard(level, pos) || isWarded(level, pos)) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4) || !canWard(level, pos) || isWarded(level, pos)) {
             return false;
         }
         LevelChunk chunk = level.getChunkAt(pos);
@@ -76,7 +76,7 @@ public final class WardHandler {
     }
 
     public static boolean unward(ServerLevel level, BlockPos pos, UUID owner) {
-        if (!level.hasChunkAt(pos)) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             return false;
         }
         WardChunkData data = existing(level, pos);
@@ -113,7 +113,7 @@ public final class WardHandler {
     }
 
     private static @Nullable WardChunkData existing(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
+        if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
             return null;
         }
         LevelChunk chunk = level.getChunkAt(pos);

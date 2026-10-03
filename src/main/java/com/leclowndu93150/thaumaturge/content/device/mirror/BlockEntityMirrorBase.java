@@ -78,7 +78,9 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
 
     public void invalidateLink() {
         ServerLevel targetLevel = targetLevel();
-        if (targetLevel == null || link == null || !targetLevel.hasChunkAt(link.pos())) {
+        if (targetLevel == null
+                || link == null
+                || !targetLevel.hasChunk(link.pos().getX() >> 4, link.pos().getZ() >> 4)) {
             return;
         }
         BlockEntityMirrorBase target = target();

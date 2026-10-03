@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -33,20 +34,13 @@ public final class RaycastDebugOverlay implements LayeredDraw.Layer {
         return switch (result) {
             case BlockHitResult block ->
                 "Block : " + block.getBlockPos().toShortString() + " | "
-                        + mc.level
-                                .getBlockState(block.getBlockPos())
-                                .getBlock()
-                                .builtInRegistryHolder()
-                                .key()
-                                .location()
+                        + BuiltInRegistries.BLOCK.getKey(
+                                mc.level.getBlockState(block.getBlockPos()).getBlock())
                         + " | " + block.getDirection();
             case EntityHitResult entity ->
                 "Entity : " + entity.getEntity().getName().getString() + " | "
-                        + entity.getEntity()
-                                .getType()
-                                .builtInRegistryHolder()
-                                .key()
-                                .location() + " | " + entity.getLocation();
+                        + BuiltInRegistries.ENTITY_TYPE.getKey(
+                                entity.getEntity().getType()) + " | " + entity.getLocation();
             default -> "Invalid : " + result.getType() + " | " + result.getLocation();
         };
     }

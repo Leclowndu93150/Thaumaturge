@@ -71,7 +71,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
 
     @Override
     protected BlockState mirror(BlockState state, Mirror mirror) {
-        return state.rotate(mirror.getRotation(state.getValue(BlockStateProperties.FACING)));
+        return rotate(state, mirror.getRotation(state.getValue(BlockStateProperties.FACING)));
     }
 
     @Override

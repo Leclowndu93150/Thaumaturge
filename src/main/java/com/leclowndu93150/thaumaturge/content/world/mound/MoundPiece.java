@@ -31,6 +31,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.ScatteredFeaturePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.neoforged.neoforge.event.EventHooks;
 
 public class MoundPiece extends ScatteredFeaturePiece {
     private static final int SURFACE_OFFSET = -10;
@@ -124,7 +125,8 @@ public class MoundPiece extends ScatteredFeaturePiece {
             int y = data.charAt(i + 1) - 'A';
             int z = data.charAt(i + 2) - 'A';
             int id = data.charAt(i + 3) - 'A';
-            if (!stateFor(id).blocksMotion()) {
+            BlockPos pos = this.getWorldPos(x, y, z);
+            if (stateFor(id).getCollisionShape(level, pos).isEmpty()) {
                 continue;
             }
             columnMinY.merge(x << 8 | z, y, Math::min);
@@ -186,7 +188,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
         if (portal != null) {
             portal.setPersistenceRequired();
             portal.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
-            portal.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
+            EventHooks.finalizeMobSpawn(portal, level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null);
             level.addFreshEntityWithPassengers(portal);
         }
     }

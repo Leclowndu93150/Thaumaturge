@@ -188,7 +188,7 @@ public final class InvHelper {
     }
 
     private static boolean shareTag(ItemStack first, ItemStack second) {
-        return first.getItem().builtInRegistryHolder().tags().anyMatch(second::is);
+        return BuiltInRegistries.ITEM.wrapAsHolder(first.getItem()).tags().anyMatch(second::is);
     }
 
     private static boolean componentsContainedIn(ItemStack first, ItemStack second) {

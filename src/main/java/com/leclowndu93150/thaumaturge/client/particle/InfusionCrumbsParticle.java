@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
 public final class InfusionCrumbsParticle extends SeekerParticle {
@@ -98,13 +99,14 @@ public final class InfusionCrumbsParticle extends SeekerParticle {
                     return Minecraft.getInstance()
                             .getBlockRenderer()
                             .getBlockModelShaper()
-                            .getParticleIcon(state);
+                            .getBlockModel(state)
+                            .getParticleIcon(ModelData.EMPTY);
                 }
             }
             return Minecraft.getInstance()
                     .getItemRenderer()
                     .getModel(options.stack(), level, null, 0)
-                    .getParticleIcon();
+                    .getParticleIcon(ModelData.EMPTY);
         }
     }
 }

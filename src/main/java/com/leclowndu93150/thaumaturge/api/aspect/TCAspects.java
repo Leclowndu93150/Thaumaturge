@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.api.aspect;
 
 import java.util.List;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 /**
  * Typed handles to the built-in Thaumaturge aspects. Each constant is a {@link ResourceKey}
- * that can be resolved against a {@link net.minecraft.core.HolderLookup.Provider} to obtain
- * the {@link net.minecraft.core.Holder Holder} or value at runtime.
+ * that can be resolved against a {@link HolderLookup.Provider} to obtain the {@link Holder}
+ * or value at runtime.
  *
  * <p>Holding a {@code ResourceKey} rather than the value itself means code is safe to
  * reference these constants in {@code <clinit>} and is unaffected by datapack reloads or

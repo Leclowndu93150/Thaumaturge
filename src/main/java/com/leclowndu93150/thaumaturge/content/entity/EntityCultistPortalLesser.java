@@ -20,6 +20,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
 public class EntityCultistPortalLesser extends Monster {
@@ -137,8 +138,12 @@ public class EntityCultistPortalLesser extends Monster {
                 this.getX() + this.random.nextFloat() - this.random.nextFloat(),
                 this.getY() + 0.25,
                 this.getZ() + this.random.nextFloat() - this.random.nextFloat());
-        cultist.finalizeSpawn(
-                server, server.getCurrentDifficultyAt(cultist.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+        EventHooks.finalizeMobSpawn(
+                cultist,
+                server,
+                server.getCurrentDifficultyAt(cultist.blockPosition()),
+                MobSpawnType.MOB_SUMMONED,
+                null);
         server.addFreshEntity(cultist);
         cultist.spawnCultistArrivalParticles();
         cultist.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);

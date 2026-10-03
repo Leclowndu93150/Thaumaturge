@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -56,7 +57,8 @@ public final class GolemAccessories {
      *         that is not registered
      */
     public static Optional<GolemAccessory> forItem(ItemStack stack) {
-        GolemAccessoryItem entry = stack.getItem().builtInRegistryHolder().getData(GolemAccessoryItem.DATA_MAP);
+        GolemAccessoryItem entry =
+                BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem()).getData(GolemAccessoryItem.DATA_MAP);
         return entry == null ? Optional.empty() : Optional.ofNullable(REGISTRY.get(entry.accessory()));
     }
 

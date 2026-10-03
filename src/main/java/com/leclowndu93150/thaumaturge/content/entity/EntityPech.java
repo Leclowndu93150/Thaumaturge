@@ -46,7 +46,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -70,8 +69,13 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import org.jspecify.annotations.Nullable;
 
+@EventBusSubscriber(modid = TCIds.MODID)
 public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
     public static final int TYPE_FORAGER = 0;
     public static final int TYPE_MAGE = 1;
@@ -293,29 +297,29 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
         }
     }
 
-    @Override
-    public @Nullable SpawnGroupData finalizeSpawn(
-            ServerLevelAccessor level,
-            DifficultyInstance difficulty,
-            MobSpawnType reason,
-            @Nullable SpawnGroupData groupData) {
-        this.setDropChance(EquipmentSlot.MAINHAND, 0.2F);
-        this.setDropChance(EquipmentSlot.OFFHAND, 0.2F);
-        this.rollHeldItem();
-        ItemStack held = this.getMainHandItem();
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (!(event.getEntity() instanceof EntityPech pech)) {
+            return;
+        }
+        ServerLevelAccessor level = event.getLevel();
+        DifficultyInstance difficulty = event.getDifficulty();
+        pech.setDropChance(EquipmentSlot.MAINHAND, 0.2F);
+        pech.setDropChance(EquipmentSlot.OFFHAND, 0.2F);
+        pech.rollHeldItem();
+        ItemStack held = pech.getMainHandItem();
         if (held.is(TCItems.PECH_WAND.get())) {
-            this.setPechType(TYPE_MAGE);
-            this.setDropChance(EquipmentSlot.MAINHAND, 0.1F);
+            pech.setPechType(TYPE_MAGE);
+            pech.setDropChance(EquipmentSlot.MAINHAND, 0.1F);
         } else if (!held.isEmpty()) {
             if (held.is(Items.BOW)) {
-                this.setPechType(TYPE_STALKER);
+                pech.setPechType(TYPE_STALKER);
             }
-            this.populateDefaultEquipmentEnchantments(level, this.random, difficulty);
+            pech.populateDefaultEquipmentEnchantments(level, pech.random, difficulty);
         }
         float f = difficulty.getSpecialMultiplier();
-        this.setCanPickUpLoot(this.random.nextFloat() < 0.75F * f);
-        this.setCombatTask();
-        return super.finalizeSpawn(level, difficulty, reason, groupData);
+        pech.setCanPickUpLoot(pech.random.nextFloat() < 0.75F * f);
+        pech.setCombatTask();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.casters;
 
 import java.util.Set;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -10,7 +11,7 @@ import org.jspecify.annotations.Nullable;
  * intermediary such as a projectile entity: it spawns the carrier with
  * {@link CastContext#continuation()} and returns null, which halts the current branch. The
  * intermediary later resumes the spell through
- * {@link FocusEngine#run(net.minecraft.world.level.Level, FocusPackage, CastStreams)}.
+ * {@link FocusEngine#run(Level, FocusPackage, CastStreams)}.
  *
  * @since 1.0.0
  */

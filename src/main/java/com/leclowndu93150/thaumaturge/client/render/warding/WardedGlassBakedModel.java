@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
@@ -111,13 +110,14 @@ public final class WardedGlassBakedModel implements IDynamicBakedModel {
     }
 
     @Override
+    @Deprecated
     public TextureAtlasSprite getParticleIcon() {
         return particle;
     }
 
     @Override
-    public ItemTransforms getTransforms() {
-        return ItemTransforms.NO_TRANSFORMS;
+    public TextureAtlasSprite getParticleIcon(ModelData modelData) {
+        return particle;
     }
 
     @Override

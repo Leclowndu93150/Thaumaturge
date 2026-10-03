@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
+import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCEntityTags;
 import java.util.concurrent.CompletableFuture;
@@ -11,10 +12,14 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public final class TCEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
-    public TCEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(output, Registries.ENTITY_TYPE, lookupProvider);
+    public TCEntityTypeTagsProvider(
+            PackOutput output,
+            CompletableFuture<HolderLookup.Provider> lookupProvider,
+            ExistingFileHelper existingFileHelper) {
+        super(output, Registries.ENTITY_TYPE, lookupProvider, TCIds.MODID, existingFileHelper);
     }
 
     @Override

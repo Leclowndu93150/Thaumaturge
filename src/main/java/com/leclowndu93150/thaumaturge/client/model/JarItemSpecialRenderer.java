@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
 
@@ -33,7 +34,14 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
         }
         Minecraft.getInstance()
                 .getBlockRenderer()
-                .renderSingleBlock(blockItem.getBlock().defaultBlockState(), poseStack, buffers, light, overlay);
+                .renderSingleBlock(
+                        blockItem.getBlock().defaultBlockState(),
+                        poseStack,
+                        buffers,
+                        light,
+                        overlay,
+                        ModelData.EMPTY,
+                        null);
         AspectInstance contents = extractContents(stack);
         if (contents != null) {
             int capacity = blockItem.getBlock() instanceof IEssentiaJar jar

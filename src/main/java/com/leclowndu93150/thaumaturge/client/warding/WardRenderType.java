@@ -5,14 +5,14 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.world.inventory.InventoryMenu;
 
 public final class WardRenderType {
     private static final int BUFFER_SIZE = 1536;
     private static final RenderStateShard.ShaderStateShard SHADER =
             new RenderStateShard.ShaderStateShard(TCShaders::wardAdd);
     private static final RenderStateShard.TextureStateShard BLOCK_ATLAS =
-            new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false);
+            new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false);
 
     public static final RenderType ADDITIVE = RenderType.create(
             "thaumaturge_ward_runes",

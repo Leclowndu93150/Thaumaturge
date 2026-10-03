@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.MobSpawnType;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.neoforged.neoforge.event.EventHooks;
 
 /** Initial infection placed inside naturally generated Tainted Lands. */
 public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
@@ -67,7 +69,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             }
             BlockState below = level.getBlockState(target.below());
             BlockState here = level.getBlockState(target);
-            if (!below.is(net.minecraft.tags.BlockTags.DIRT)
+            if (!below.is(BlockTags.DIRT)
                     || (!here.isAir() && !here.canBeReplaced())
                     || !BlockTaintFibre.hasSolidAttachment(level, target)) {
                 continue;
@@ -105,7 +107,8 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
         BiomeSource source = level.getLevel().getChunkSource().getGenerator().getBiomeSource();
         Climate.Sampler sampler =
                 level.getLevel().getChunkSource().randomState().sampler();
-        int quartY = QuartPos.fromBlock(level.getSeaLevel());
+        int seaLevel = level.getLevel().getChunkSource().getGenerator().getSeaLevel();
+        int quartY = QuartPos.fromBlock(seaLevel);
         if (!chunkContainsNaturalTaint(source, sampler, chunk.x, chunk.z, quartY)) {
             return false;
         }
@@ -187,7 +190,8 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             return false;
         }
         taintacle.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
-        taintacle.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
+        EventHooks.finalizeMobSpawn(
+                taintacle, level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
         // This is the single biome landmark spawn, not a regular mob-cap spawn. Persistence keeps
         // it from despawning before the player reaches the newly generated patch.
         taintacle.setPersistenceRequired();

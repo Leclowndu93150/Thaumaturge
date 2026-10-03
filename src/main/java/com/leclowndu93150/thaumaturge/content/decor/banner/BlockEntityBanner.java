@@ -12,6 +12,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
@@ -80,7 +82,10 @@ public final class BlockEntityBanner extends BlockEntity {
     }
 
     @Override
-    public void removeComponentsFromTag(CompoundTag output) {
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        CompoundTag output = saveCustomOnly(registries);
         output.remove("aspect");
+        BlockItem.setBlockEntityData(stack, getType(), output);
+        stack.applyComponents(collectComponents());
     }
 }

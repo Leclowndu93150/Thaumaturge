@@ -23,6 +23,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeOnewa
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeRestrict;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeValve;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceKey;
@@ -217,7 +218,7 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
         tag.put(CONTENTS, contents);
     }
 
-    private static void writeSingleAspect(CompoundTag tag, net.minecraft.core.Holder<IAspect> aspect, int amount) {
+    private static void writeSingleAspect(CompoundTag tag, Holder<IAspect> aspect, int amount) {
         if (aspect == null) return;
         writeSingleAspect(tag, aspect.unwrapKey().orElse(null), amount);
     }

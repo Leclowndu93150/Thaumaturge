@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.golems;
 
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
+import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -78,7 +79,7 @@ public interface IGolemAPI {
     List<ItemStack> getCarrying();
 
     /**
-     * Awards rank experience. Only golems with the {@link GolemTrait#SMART} trait accumulate it.
+     * Awards rank experience. Only golems with the {@link TCGolemTraits#SMART} trait accumulate it.
      *
      * @param xp the experience amount
      */

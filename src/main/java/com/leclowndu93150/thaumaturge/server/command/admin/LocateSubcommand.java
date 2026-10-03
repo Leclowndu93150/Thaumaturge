@@ -50,7 +50,7 @@ final class LocateSubcommand implements AdminSubcommand {
         Optional<BlockPos> result;
         while ((result = index.findNearest(origin, type)).isPresent()) {
             BlockPos candidate = result.get();
-            if (!level.hasChunkAt(candidate)) {
+            if (!level.hasChunk(candidate.getX() >> 4, candidate.getZ() >> 4)) {
                 break;
             }
             if ((level.getBlockState(candidate).is(TCBlocks.NODE.get())

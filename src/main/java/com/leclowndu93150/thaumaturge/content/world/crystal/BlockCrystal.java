@@ -261,7 +261,7 @@ public final class BlockCrystal extends Block {
             return null;
         }
         BlockState targetState = level.getBlockState(target);
-        if (targetState.liquid()) {
+        if (!targetState.getFluidState().isEmpty()) {
             return null;
         }
         if (!targetState.isAir() && !targetState.canBeReplaced()) {

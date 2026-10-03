@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
 import java.util.Set;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,7 +75,9 @@ public final class WarpEventHandler {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        ItemWarp warp = event.getCrafting().getItem().builtInRegistryHolder().getData(TCDataMaps.ITEM_WARP);
+        ItemWarp warp = BuiltInRegistries.ITEM
+                .wrapAsHolder(event.getCrafting().getItem())
+                .getData(TCDataMaps.ITEM_WARP);
         if (warp != null) {
             WarpManager.addWarp(player, warp.amount(), WarpType.NORMAL);
         }

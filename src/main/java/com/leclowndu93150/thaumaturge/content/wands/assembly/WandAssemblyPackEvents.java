@@ -35,7 +35,8 @@ public final class WandAssemblyPackEvents {
                     Component.literal("Wand assembly recipes derived from the cap and rod registries"),
                     PackCompatibility.COMPATIBLE,
                     FeatureFlagSet.of(),
-                    List.of());
+                    List.of(),
+                    false);
             PackSelectionConfig config = new PackSelectionConfig(true, Pack.Position.BOTTOM, false);
             consumer.accept(new Pack(location, new AssemblySupplier(), metadata, config));
         });

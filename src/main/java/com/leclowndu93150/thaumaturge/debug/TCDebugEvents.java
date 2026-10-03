@@ -34,8 +34,11 @@ public class TCDebugEvents {
     public static void playerTick(PlayerTickEvent.Post event) {
         if (event.getEntity().level().isClientSide()) return;
         Player player = event.getEntity();
-        if (!RAYCAST_DEBUG_PLAYERS.contains(player.getUUID()) || !player.level().hasChunkAt(player.blockPosition()))
-            return;
+        if (!RAYCAST_DEBUG_PLAYERS.contains(player.getUUID())
+                || !player.level()
+                        .hasChunk(
+                                player.blockPosition().getX() >> 4,
+                                player.blockPosition().getZ() >> 4)) return;
         HitResult hitResult = ScanRaycastHelper.performRaycast(player);
         PacketDistributor.sendToPlayer((ServerPlayer) player, new ClientboundRaycastDebugPayload(hitResult));
     }

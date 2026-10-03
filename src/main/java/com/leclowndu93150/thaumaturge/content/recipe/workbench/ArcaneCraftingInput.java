@@ -164,7 +164,7 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
                 var10000 = this.width == input.width
                         && this.height == input.height
                         && this.ingredientCount == input.ingredientCount
-                        && ItemStack.listMatches(this.items, input.items);
+                        && itemListsMatch(this.items, input.items);
             } else {
                 var10000 = false;
             }
@@ -174,9 +174,24 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
     }
 
     public int hashCode() {
-        int result = ItemStack.hashStackList(this.items);
+        int result = 0;
+        for (ItemStack item : this.items) {
+            result = 31 * result + ItemStack.hashItemAndComponents(item);
+        }
         result = 31 * result + this.width;
         return 31 * result + this.height;
+    }
+
+    private static boolean itemListsMatch(List<ItemStack> first, List<ItemStack> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+        for (int i = 0; i < first.size(); i++) {
+            if (!ItemStack.matches(first.get(i), second.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

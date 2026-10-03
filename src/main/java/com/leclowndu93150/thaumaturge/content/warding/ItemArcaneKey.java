@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public final class ItemArcaneKey extends Item {
@@ -25,8 +26,7 @@ public final class ItemArcaneKey extends Item {
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         if (level.getBlockState(pos).is(TCBlocks.ARCANE_DOOR.get())
-                && level.getBlockState(pos).getValue(net.minecraft.world.level.block.DoorBlock.HALF)
-                        == DoubleBlockHalf.UPPER) pos = pos.below();
+                && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) pos = pos.below();
         if (player == null || !isLock(level, pos)) {
             return InteractionResult.PASS;
         }

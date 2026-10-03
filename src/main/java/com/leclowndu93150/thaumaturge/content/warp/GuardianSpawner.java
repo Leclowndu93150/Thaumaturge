@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.neoforged.neoforge.event.EventHooks;
 
 public final class GuardianSpawner {
     private static final int SPAWN_ATTEMPTS = 50;
@@ -65,7 +66,8 @@ public final class GuardianSpawner {
                 portal.discard();
                 continue;
             }
-            portal.finalizeSpawn(level, level.getCurrentDifficultyAt(portal.blockPosition()), MobSpawnType.EVENT, null);
+            EventHooks.finalizeMobSpawn(
+                    portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), MobSpawnType.EVENT, null);
             level.addFreshEntity(portal);
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.16");
             return;

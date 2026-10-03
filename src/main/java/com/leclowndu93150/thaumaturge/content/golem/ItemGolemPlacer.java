@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 
 public final class ItemGolemPlacer extends Item implements ISealDisplayer {
     public ItemGolemPlacer(Properties properties) {
@@ -94,7 +95,8 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
             golem.setProperties(props.copy());
         }
         golem.setRankXp(held.getOrDefault(TCDataComponents.GOLEM_XP.get(), 0));
-        golem.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
+        EventHooks.finalizeMobSpawn(
+                golem, serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);
         if (!player.hasInfiniteMaterials()) {
             held.shrink(1);
         }

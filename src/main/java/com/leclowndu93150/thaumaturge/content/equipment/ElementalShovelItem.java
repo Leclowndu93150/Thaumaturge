@@ -82,7 +82,7 @@ public final class ElementalShovelItem extends ShovelItem implements IArchitect 
         level.playSound(
                 null,
                 p2,
-                state.getSoundType().getBreakSound(),
+                state.getSoundType(level, p2, player).getBreakSound(),
                 SoundSource.BLOCKS,
                 0.6F,
                 0.9F + level.getRandom().nextFloat() * 0.2F);

@@ -54,7 +54,7 @@ public final class TaintEnvironmentEvents {
                     center.getX() + offset[0] * BIOME_BLEND_RADIUS,
                     center.getY(),
                     center.getZ() + offset[1] * BIOME_BLEND_RADIUS);
-            if (!level.hasChunkAt(sample)) {
+            if (!level.hasChunk(sample.getX() >> 4, sample.getZ() >> 4)) {
                 continue;
             }
             int weight = offset[0] == 0 && offset[1] == 0 ? 4 : 1;
@@ -81,7 +81,7 @@ public final class TaintEnvironmentEvents {
                         player.getRandom().nextInt(25) - 12,
                         0,
                         player.getRandom().nextInt(25) - 12);
-        if (!level.hasChunkAt(sample)) {
+        if (!level.hasChunk(sample.getX() >> 4, sample.getZ() >> 4)) {
             return;
         }
         BlockPos spawn = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sample)

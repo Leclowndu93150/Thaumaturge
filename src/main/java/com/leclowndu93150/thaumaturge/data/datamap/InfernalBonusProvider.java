@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.TagKey;
@@ -164,7 +165,10 @@ public final class InfernalBonusProvider extends DataMapProvider {
     }
 
     private static void add(Builder<List<InfernalBonus>, Item> b, ItemLike key, InfernalBonus... values) {
-        b.add(key.asItem().builtInRegistryHolder(), Arrays.stream(values).toList(), false);
+        b.add(
+                BuiltInRegistries.ITEM.wrapAsHolder(key.asItem()),
+                Arrays.stream(values).toList(),
+                false);
     }
 
     private static void add(Builder<List<InfernalBonus>, Item> b, TagKey<Item> key, InfernalBonus... values) {

@@ -40,6 +40,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jspecify.annotations.Nullable;
 
 public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
@@ -228,7 +229,14 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
                         .getBlockEntityRenderDispatcher()
                         .renderItem(matrixPreview, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
             } else {
-                dispatcher.renderSingleBlock(state, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                dispatcher.renderSingleBlock(
+                        state,
+                        pose,
+                        buffers,
+                        LightTexture.FULL_BRIGHT,
+                        OverlayTexture.NO_OVERLAY,
+                        ModelData.EMPTY,
+                        null);
             }
             pose.popPose();
         }

@@ -96,10 +96,14 @@ public final class TCDataGenerators {
                         new TCBlockTagsProvider(output, lookupProvider, event.getExistingFileHelper()),
                 (output, lookupProvider, blockTags) ->
                         new TCItemTagsProvider(output, lookupProvider, blockTags, event.getExistingFileHelper()));
-        event.createProvider(TCDamageTypeTagsProvider::new);
-        event.createProvider(TCBiomeTagsProvider::new);
-        event.createProvider(TCEntityTypeTagsProvider::new);
-        event.createProvider(TCMobEffectTagsProvider::new);
+        event.createProvider((output, lookupProvider) ->
+                new TCDamageTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TCBiomeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TCEntityTypeTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
+        event.createProvider((output, lookupProvider) ->
+                new TCMobEffectTagsProvider(output, lookupProvider, event.getExistingFileHelper()));
 
         event.createProvider((output, lookupProvider) -> new LootTableProvider(
                 output,

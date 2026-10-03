@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityEldritchAltar extends BlockEntity {
@@ -106,7 +107,8 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         }
         knight.moveTo(x + 0.5, y, z + 0.5, 0.0F, 0.0F);
         if (level.noCollision(knight) && !level.containsAnyLiquid(knight.getBoundingBox())) {
-            knight.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
+            EventHooks.finalizeMobSpawn(
+                    knight, level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
             knight.restrictTo(pos, 16);
             level.addFreshEntity(knight);
         }
@@ -133,7 +135,8 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         }
         guardian.moveTo(x + 0.5, y, z + 0.5, 0.0F, 0.0F);
         if (level.noCollision(guardian) && !level.containsAnyLiquid(guardian.getBoundingBox())) {
-            guardian.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
+            EventHooks.finalizeMobSpawn(
+                    guardian, level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
             guardian.restrictTo(pos, 16);
             level.addFreshEntity(guardian);
         }
@@ -151,7 +154,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
             cleric.moveTo(pos.getX() + 0.5 + xx, pos.getY(), pos.getZ() + 0.5 + zz, 0.0F, 0.0F);
             if (level.noCollision(cleric) && !level.containsAnyLiquid(cleric.getBoundingBox())) {
                 cleric.restrictTo(pos, 8);
-                cleric.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
+                EventHooks.finalizeMobSpawn(cleric, level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
                 if (level.addFreshEntity(cleric)) {
                     success++;
                     cleric.setRitualist(true);

@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.client.entity;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSwarm;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 
 public final class TaintSwarmRenderer extends EntityRenderer<EntityTaintSwarm> {
 
@@ -14,6 +14,6 @@ public final class TaintSwarmRenderer extends EntityRenderer<EntityTaintSwarm> {
 
     @Override
     public ResourceLocation getTextureLocation(EntityTaintSwarm entity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+        return InventoryMenu.BLOCK_ATLAS;
     }
 }

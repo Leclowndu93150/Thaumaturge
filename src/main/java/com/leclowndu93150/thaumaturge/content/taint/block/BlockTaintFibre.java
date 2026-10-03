@@ -291,7 +291,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 c++;
             } else if (neighbor.isAir()) {
                 c--;
-            } else if (!neighbor.liquid()
+            } else if (neighbor.getFluidState().isEmpty()
                     && !neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite())) {
                 c--;
             }

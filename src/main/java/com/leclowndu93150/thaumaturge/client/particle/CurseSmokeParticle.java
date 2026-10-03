@@ -4,6 +4,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 public final class CurseSmokeParticle extends TCParticle {
@@ -44,7 +45,7 @@ public final class CurseSmokeParticle extends TCParticle {
             this.flickerFrom = this.flickerTo;
             this.flickerTo = this.age >= this.lifetime - 2 ? 0.0F : this.random.nextFloat();
         }
-        this.alpha = net.minecraft.util.Mth.lerp((this.age % 2) / 2.0F, this.flickerFrom, this.flickerTo);
+        this.alpha = Mth.lerp((this.age % 2) / 2.0F, this.flickerFrom, this.flickerTo);
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {

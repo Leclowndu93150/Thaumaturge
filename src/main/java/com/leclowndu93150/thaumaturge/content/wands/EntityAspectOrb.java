@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 public class EntityAspectOrb extends Entity {
     private static final EntityDataAccessor<String> DATA_ASPECT =
@@ -97,7 +98,7 @@ public class EntityAspectOrb extends Entity {
     @Override
     public void tick() {
         super.tick();
-        if (isEyeInFluid(FluidTags.WATER)) {
+        if (isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
             Vec3 movement = getDeltaMovement();
             setDeltaMovement(movement.x * 0.99, Math.min(movement.y + 5.0E-4, 0.06), movement.z * 0.99);
         } else {

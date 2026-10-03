@@ -31,7 +31,7 @@ final class BuildSubcommand implements AdminSubcommand {
             return 0;
         }
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-3, 0, -3), center.offset(3, 2, 3))) {
-            if (!level.hasChunkAt(pos)) {
+            if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
                 source.sendFailure(Component.translatable("commands.thaumaturge.build.infusion_altar.unloaded"));
                 return 0;
             }

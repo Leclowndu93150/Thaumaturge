@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
+import static net.minecraft.world.item.crafting.RecipeType.SMELTING;
+
 import com.google.gson.JsonElement;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
@@ -31,13 +33,14 @@ import com.mojang.serialization.JsonOps;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.RecipeType;
@@ -76,10 +79,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
-        IIngredientSubtypeInterpreter<ItemStack> aspectsInterpreter = ThaumaturgeJEIPlugin::aspectsSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> essentiaInterpreter = ThaumaturgeJEIPlugin::essentiaSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> filterInterpreter = ThaumaturgeJEIPlugin::aspectFilterSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> crystalAspectInterpreter = ThaumaturgeJEIPlugin::crystalAspectSubtype;
+        ISubtypeInterpreter<ItemStack> aspectsInterpreter = subtypeInterpreter(ThaumaturgeJEIPlugin::aspectsSubtype);
+        ISubtypeInterpreter<ItemStack> essentiaInterpreter = subtypeInterpreter(ThaumaturgeJEIPlugin::essentiaSubtype);
+        ISubtypeInterpreter<ItemStack> filterInterpreter =
+                subtypeInterpreter(ThaumaturgeJEIPlugin::aspectFilterSubtype);
+        ISubtypeInterpreter<ItemStack> crystalAspectInterpreter =
+                subtypeInterpreter(ThaumaturgeJEIPlugin::crystalAspectSubtype);
         registration.registerSubtypeInterpreter(TCItems.JAR_NORMAL.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TCItems.JAR_VOID.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TCItems.LABEL.get(), filterInterpreter);
@@ -88,12 +93,15 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(TCItems.ESSENTIA_CRYSTAL.get(), crystalAspectInterpreter);
         registration.registerSubtypeInterpreter(TCItems.PHIAL.get(), aspectsInterpreter);
         registration.registerSubtypeInterpreter(
-                TCItems.CELESTIAL_NOTES.asItem(), ThaumaturgeJEIPlugin::celestialBodySubtype);
-        registration.registerSubtypeInterpreter(TCItems.RESEARCH_NOTE.get(), ThaumaturgeJEIPlugin::researchNoteSubtype);
-        registration.registerSubtypeInterpreter(TCItems.WAND.get(), ThaumaturgeJEIPlugin::wandPartsSubtype);
-        registration.registerSubtypeInterpreter(TCItems.VERDANT_CHARM.get(), ThaumaturgeJEIPlugin::verdantTypeSubtype);
+                TCItems.CELESTIAL_NOTES.asItem(), subtypeInterpreter(ThaumaturgeJEIPlugin::celestialBodySubtype));
         registration.registerSubtypeInterpreter(
-                TCItems.GOLEM_PLACER.get(), ThaumaturgeJEIPlugin::golemPropertiesSubtype);
+                TCItems.RESEARCH_NOTE.get(), subtypeInterpreter(ThaumaturgeJEIPlugin::researchNoteSubtype));
+        registration.registerSubtypeInterpreter(
+                TCItems.WAND.get(), subtypeInterpreter(ThaumaturgeJEIPlugin::wandPartsSubtype));
+        registration.registerSubtypeInterpreter(
+                TCItems.VERDANT_CHARM.get(), subtypeInterpreter(ThaumaturgeJEIPlugin::verdantTypeSubtype));
+        registration.registerSubtypeInterpreter(
+                TCItems.GOLEM_PLACER.get(), subtypeInterpreter(ThaumaturgeJEIPlugin::golemPropertiesSubtype));
     }
 
     @Override
@@ -394,7 +402,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         }
 
         List<RecipeHolder<SmeltingRecipe>> smeltingRecipes =
-                level.getRecipeManager().getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
+                level.getRecipeManager().getAllRecipesFor(SMELTING);
         List<InfernalBonusWrapper> bonuses = registration.getIngredientManager().getAllItemStacks().stream()
                 .map(stack -> infernalFurnaceBonus(level, smeltingRecipes, stack))
                 .filter(Objects::nonNull)
@@ -430,37 +438,54 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         return null;
     }
 
+    private static ISubtypeInterpreter<ItemStack> subtypeInterpreter(
+            BiFunction<ItemStack, UidContext, String> legacySubtype) {
+        return new ISubtypeInterpreter<>() {
+            @Override
+            public @Nullable Object getSubtypeData(ItemStack stack, UidContext context) {
+                String subtype = legacySubtype.apply(stack, context);
+                return subtype.isEmpty() ? null : subtype;
+            }
+
+            @Override
+            @Deprecated
+            public String getLegacyStringSubtypeInfo(ItemStack stack, UidContext context) {
+                return legacySubtype.apply(stack, context);
+            }
+        };
+    }
+
     private static String aspectsSubtype(ItemStack stack, UidContext context) {
         AspectList list = stack.get(TCDataComponents.ASPECTS.get());
         if (list == null || list.isEmpty()) {
-            return IIngredientSubtypeInterpreter.NONE;
+            return "";
         }
         return list.toString();
     }
 
     private static String essentiaSubtype(ItemStack stack, UidContext context) {
         var contents = stack.get(TCDataComponents.ESSENTIA_CONTENTS.get());
-        return contents == null ? IIngredientSubtypeInterpreter.NONE : contents.toString();
+        return contents == null ? "" : contents.toString();
     }
 
     private static String aspectFilterSubtype(ItemStack stack, UidContext context) {
         var filter = stack.get(TCDataComponents.ASPECT_FILTER.get());
-        return filter == null ? IIngredientSubtypeInterpreter.NONE : filter.toString();
+        return filter == null ? "" : filter.toString();
     }
 
     private static String crystalAspectSubtype(ItemStack stack, UidContext context) {
         var crystal = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
-        return crystal == null ? IIngredientSubtypeInterpreter.NONE : crystal.toString();
+        return crystal == null ? "" : crystal.toString();
     }
 
     private static String celestialBodySubtype(ItemStack stack, UidContext context) {
         var body = stack.get(TCDataComponents.CELESTIAL_BODY.get());
-        return body == null ? IIngredientSubtypeInterpreter.NONE : body.toString();
+        return body == null ? "" : body.toString();
     }
 
     private static String researchNoteSubtype(ItemStack stack, UidContext context) {
         var note = stack.get(TCDataComponents.RESEARCH_NOTE.get());
-        return note == null ? IIngredientSubtypeInterpreter.NONE : note.toString();
+        return note == null ? "" : note.toString();
     }
 
     private static String wandPartsSubtype(ItemStack stack, UidContext context) {
@@ -469,7 +494,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     private static String verdantTypeSubtype(ItemStack stack, UidContext context) {
         Integer type = stack.get(TCDataComponents.VERDANT_TYPE.get());
-        return type == null ? IIngredientSubtypeInterpreter.NONE : type.toString();
+        return type == null ? "" : type.toString();
     }
 
     private static String golemPropertiesSubtype(ItemStack stack, UidContext context) {
@@ -479,12 +504,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     private static <T> String encodedSubtype(ItemStack stack, DataComponentType<T> type) {
         T value = stack.get(type);
         if (value == null || type.codec() == null) {
-            return IIngredientSubtypeInterpreter.NONE;
+            return "";
         }
         return type.codec()
                 .encodeStart(JsonOps.INSTANCE, value)
                 .result()
                 .map(JsonElement::toString)
-                .orElse(IIngredientSubtypeInterpreter.NONE);
+                .orElse("");
     }
 }

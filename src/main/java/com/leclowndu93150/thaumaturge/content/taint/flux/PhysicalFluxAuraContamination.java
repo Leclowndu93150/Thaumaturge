@@ -160,7 +160,7 @@ public final class PhysicalFluxAuraContamination {
             }
 
             BlockPos pos = BlockPos.of(entry.getKey());
-            if (!level.hasChunkAt(pos)) {
+            if (!level.hasChunk(pos.getX() >> 4, pos.getZ() >> 4)) {
                 continue;
             }
             BlockState state = level.getBlockState(pos);

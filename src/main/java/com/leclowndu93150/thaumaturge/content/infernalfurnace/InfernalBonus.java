@@ -69,7 +69,7 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
     }
 
     public static Builder builder(ItemLike item) {
-        return new Builder(HolderSet.direct(item.asItem().builtInRegistryHolder()));
+        return new Builder(HolderSet.direct(BuiltInRegistries.ITEM.wrapAsHolder(item.asItem())));
     }
 
     public static Builder builder(HolderLookup<Item> getter, TagKey<Item> tag) {
@@ -117,7 +117,7 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
                 Either<TagKey<Item>, ResourceKey<Item>> source,
                 Item object) {
             List<InfernalBonus> result = new ArrayList<>(value);
-            result.removeIf(bonus -> bonus.items().contains(key.builtInRegistryHolder()));
+            result.removeIf(bonus -> bonus.items().contains(BuiltInRegistries.ITEM.wrapAsHolder(key)));
             return result.isEmpty() ? Optional.empty() : Optional.of(result);
         }
     }
