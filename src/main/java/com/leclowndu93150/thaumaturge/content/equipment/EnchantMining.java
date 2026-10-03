@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import java.util.ArrayDeque;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +25,7 @@ public final class EnchantMining {
     private static final int LOG_UPDATE_DELAY_RANGE = 75;
     private static final int SEARCH_LIMIT_HORIZONTAL = 24;
     private static final int SEARCH_LIMIT_VERTICAL = 48;
+    private static final int SEARCH_NODE_LIMIT = 1024;
 
     private EnchantMining() {}
 
@@ -47,8 +50,7 @@ public final class EnchantMining {
     }
 
     public static boolean breakFurthest(ServerLevel level, BlockPos origin, BlockState block, Player player) {
-        int reach = isLog(level, origin) ? 2 : 1;
-        BlockPos furthest = findFurthest(level, origin, block, reach);
+        BlockPos furthest = findFurthest(level, origin, block);
         boolean worked = harvestBlock(level, player, furthest, true);
         if (worked && isLog(level, origin)) {
             for (int xx = -LOG_UPDATE_RADIUS; xx <= LOG_UPDATE_RADIUS; xx++) {
@@ -63,37 +65,47 @@ public final class EnchantMining {
         return worked;
     }
 
-    private static BlockPos findFurthest(ServerLevel level, BlockPos origin, BlockState block, int reach) {
+    private static BlockPos findFurthest(ServerLevel level, BlockPos origin, BlockState block) {
+        LongOpenHashSet visited = new LongOpenHashSet();
+        ArrayDeque<BlockPos> frontier = new ArrayDeque<>();
+        ArrayDeque<BlockPos> next = new ArrayDeque<>();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        visited.add(origin.asLong());
+        frontier.add(origin);
         BlockPos best = origin;
-        double bestDistance = 0.0;
-        boolean advanced;
-        do {
-            advanced = false;
-            for (int xx = -reach; xx <= reach && !advanced; xx++) {
-                for (int yy = reach; yy >= -reach && !advanced; yy--) {
-                    for (int zz = -reach; zz <= reach && !advanced; zz++) {
-                        BlockPos candidate = best.offset(xx, yy, zz);
-                        if (Math.abs(candidate.getX() - origin.getX()) > SEARCH_LIMIT_HORIZONTAL || Math.abs(candidate.getY() - origin.getY()) > SEARCH_LIMIT_VERTICAL
-                                || Math.abs(candidate.getZ() - origin.getZ()) > SEARCH_LIMIT_HORIZONTAL) {
-                            return best;
-                        }
-                        BlockState state = level.getBlockState(candidate);
-                        boolean same = state.is(block.getBlock());
-                        if (same && state.getDestroySpeed(level, candidate) >= 0.0F) {
-                            double dx = candidate.getX() - origin.getX();
-                            double dy = candidate.getY() - origin.getY();
-                            double dz = candidate.getZ() - origin.getZ();
-                            double distance = dx * dx + dy * dy + dz * dz;
-                            if (distance > bestDistance) {
-                                bestDistance = distance;
-                                best = candidate;
-                                advanced = true;
+        while (!frontier.isEmpty()) {
+            double bestDistance = -1.0;
+            for (BlockPos pos : frontier) {
+                double distance = pos.distSqr(origin);
+                if (distance > bestDistance) {
+                    bestDistance = distance;
+                    best = pos;
+                }
+                if (visited.size() >= SEARCH_NODE_LIMIT) {
+                    continue;
+                }
+                for (int xx = -1; xx <= 1; xx++) {
+                    for (int yy = -1; yy <= 1; yy++) {
+                        for (int zz = -1; zz <= 1; zz++) {
+                            cursor.setWithOffset(pos, xx, yy, zz);
+                            if (Math.abs(cursor.getX() - origin.getX()) > SEARCH_LIMIT_HORIZONTAL || Math.abs(cursor.getY() - origin.getY()) > SEARCH_LIMIT_VERTICAL
+                                    || Math.abs(cursor.getZ() - origin.getZ()) > SEARCH_LIMIT_HORIZONTAL || visited.contains(cursor.asLong()) || !level.isLoaded(cursor)) {
+                                continue;
+                            }
+                            BlockState state = level.getBlockState(cursor);
+                            if (state.is(block.getBlock()) && state.getDestroySpeed(level, cursor) >= 0.0F) {
+                                visited.add(cursor.asLong());
+                                next.add(cursor.immutable());
                             }
                         }
                     }
                 }
             }
-        } while (advanced);
+            ArrayDeque<BlockPos> done = frontier;
+            frontier = next;
+            next = done;
+            next.clear();
+        }
         return best;
     }
 
