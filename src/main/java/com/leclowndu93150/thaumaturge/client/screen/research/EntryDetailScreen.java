@@ -521,12 +521,22 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private boolean canNavigateStageHistory() {
+        return currentPage == 0 && hasStageHistory();
+    }
+
+    private boolean hasStageHistory() {
         return entry.value().stages().size() > 1
                 && currentStageIndex() > 0
                 && !hasRedundantFinalStage(entry.value().stages())
-                && currentPage == 0
                 && !insertOpen()
                 && history.isEmpty();
+    }
+
+    private void stepHistoryStage(int delta) {
+        int target = displayedStageIndex() + delta;
+        if (target >= 0 && target <= currentStageIndex()) {
+            selectHistoryStage(target);
+        }
     }
 
     private void selectHistoryStage(int stageIndex) {
@@ -2593,6 +2603,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (insertOpen() || scrollY == 0.0) {
             return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+        if (hasShiftDown()) {
+            if (hasStageHistory()) {
+                stepHistoryStage(scrollY > 0.0 ? -1 : 1);
+            }
+            return true;
         }
         if (scrollY > 0.0) {
             prevPage();
