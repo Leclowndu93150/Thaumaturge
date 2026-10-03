@@ -393,6 +393,7 @@ public final class TCCreativeTabs {
                     output.accept(golemPlacer(properties));
                 });
                 output.accept(TCItems.TRAVELLER_BOOTS.get());
+                output.accept(TCItems.THAUMOSTATIC_HARNESS.get());
                 output.accept(TCItems.CLOTH_CHEST.get());
                 output.accept(TCItems.CLOTH_LEGS.get());
                 output.accept(TCItems.CLOTH_BOOTS.get());

@@ -869,6 +869,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.elemental_spear", "Spear of the Firmament");
         add("item.thaumaturge.primal_crusher", "Primal Crusher");
         add("item.thaumaturge.traveller_boots", "Boots of the Traveller");
+        add("item.thaumaturge.thaumostatic_harness", "Thaumostatic Harness");
+        add("tooltip.thaumaturge.thaumostatic_harness.fuel", "%1$s x %2$s");
         add("item.thaumaturge.cloth_chest", "Apprentice's Robes");
         add("item.thaumaturge.cloth_legs", "Apprentice's Leggings");
         add("item.thaumaturge.cloth_boots", "Apprentice's Boots");
@@ -933,6 +935,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("key.category.thaumaturge.main", "Thaumaturge");
         add("key.thaumaturge.change_focus", "Change Wand Focus");
         add("key.thaumaturge.misc_toggle", "Misc Wand Toggle");
+        add("key.thaumaturge.toggle_hover", "Activate Hover Harness");
         add("item.thaumaturge.wand", "Wand");
         add("item.thaumaturge.wand.named", "%1$s %2$s Wand");
         add("item.thaumaturge.wand.sceptre", "%1$s %2$s Scepter");
@@ -1198,6 +1201,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.arcane_key_iron", "Iron Key");
         add("item.thaumaturge.arcane_key_gold", "Gold Key");
         add("message.thaumaturge.arcane_key_bound", "Key bound");
+        add("message.thaumaturge.hover_disrupted", "Something disrupts your ability to fly.");
         add("message.thaumaturge.arcane_key_no_access", "You cannot bind a key to this lock");
         add("message.thaumaturge.arcane_key_wrong_lock", "This key is bound to another lock");
         add("message.thaumaturge.arcane_key_already_bound", "This key is already bound to this lock");

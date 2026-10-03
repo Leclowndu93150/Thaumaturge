@@ -114,6 +114,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(CuriosTags.RING).add(TCItems.RING_MUNDANE.get(), TCItems.RING_APPRENTICE.get(), TCItems.RING_FANCY.get(), TCItems.CLOUD_RING.get());
         tag(CuriosTags.BELT).add(TCItems.GIRDLE_MUNDANE.get(), TCItems.GIRDLE_FANCY.get(), TCItems.FOCUS_POUCH.get());
         tag(CuriosTags.CHARM).add(TCItems.CHARM_UNDYING.get(), TCItems.VERDANT_CHARM.get(), TCItems.VOIDSEER_CHARM.get());
+        tag(CuriosTags.BACK).add(TCItems.THAUMOSTATIC_HARNESS.get());
 
         tag(TCItemTags.RUNIC_SHIELDABLE).addOptionalTags(CuriosTags.HEAD, CuriosTags.NECKLACE, CuriosTags.RING, CuriosTags.BELT, CuriosTags.CHARM);
 
@@ -127,7 +128,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         Item[] helmets = {TCItems.THAUMIUM_HELM.get(), TCItems.VOID_HELM.get(), TCItems.VOID_ROBE_HELM.get(), TCItems.FORTRESS_HELM.get(), TCItems.CRIMSON_PLATE_HELM.get(),
                 TCItems.CRIMSON_ROBE_HELM.get(), TCItems.CRIMSON_PRAETOR_HELM.get(), TCItems.GOGGLES_REVEALING.get()};
         Item[] chestplates = {TCItems.THAUMIUM_CHEST.get(), TCItems.VOID_CHEST.get(), TCItems.VOID_ROBE_CHEST.get(), TCItems.FORTRESS_CHEST.get(), TCItems.CLOTH_CHEST.get(),
-                TCItems.CRIMSON_PLATE_CHEST.get(), TCItems.CRIMSON_ROBE_CHEST.get(), TCItems.CRIMSON_PRAETOR_CHEST.get()};
+                TCItems.CRIMSON_PLATE_CHEST.get(), TCItems.CRIMSON_ROBE_CHEST.get(), TCItems.CRIMSON_PRAETOR_CHEST.get(), TCItems.THAUMOSTATIC_HARNESS.get()};
         Item[] leggings = {TCItems.THAUMIUM_LEGS.get(), TCItems.VOID_LEGS.get(), TCItems.VOID_ROBE_LEGS.get(), TCItems.FORTRESS_LEGS.get(), TCItems.CLOTH_LEGS.get(), TCItems.CRIMSON_PLATE_LEGS.get(),
                 TCItems.CRIMSON_ROBE_LEGS.get(), TCItems.CRIMSON_PRAETOR_LEGS.get()};
         Item[] boots = {TCItems.THAUMIUM_BOOTS.get(), TCItems.VOID_BOOTS.get(), TCItems.TRAVELLER_BOOTS.get(), TCItems.CLOTH_BOOTS.get(), TCItems.CRIMSON_BOOTS.get()};

@@ -1,0 +1,58 @@
+{
+  "category": "thaumaturge:infusion",
+  "name": "research.thaumaturge.thaumostatic_harness.title",
+  "parents": [
+    "thaumaturge:boots_traveller"
+  ],
+  "column": -2,
+  "row": 0,
+  "icons": [
+    "thaumaturge:thaumostatic_harness"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.thaumostatic_harness.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:infusion",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
+      ],
+      "required_research": [
+        "thaumaturge:scanned/aspect/thaumaturge/volatus",
+        "thaumaturge:scanned/aspect/thaumaturge/machina"
+      ]
+    },
+    {
+      "text": "research.thaumaturge.thaumostatic_harness.stage_1",
+      "recipes": [
+        "thaumaturge:infusion/thaumostatic_harness"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:volatus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:machina",
+      "amount": 2
+    }
+  ],
+  "complexity": 3
+}

@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.PraetorArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.RobeArmorModel;
+import com.leclowndu93150.thaumaturge.client.model.gear.ThaumostaticHarnessModel;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.ambient.BatModel;
@@ -90,6 +91,7 @@ public final class TCEntityRenderers {
         event.registerLayerDefinition(TCModelLayers.ROBE_ARMOR_HEAD, RobeArmorModel::createHead);
         event.registerLayerDefinition(TCModelLayers.ROBE_ARMOR_CHEST, RobeArmorModel::createChest);
         event.registerLayerDefinition(TCModelLayers.ROBE_ARMOR_LEGS, RobeArmorModel::createLegs);
+        event.registerLayerDefinition(TCModelLayers.THAUMOSTATIC_HARNESS, ThaumostaticHarnessModel::createChest);
         event.registerLayerDefinition(TCModelLayers.TURRET_CROSSBOW, CrossbowModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.ARCANE_BORE, ArcaneBoreModel::createLayer);
         event.registerLayerDefinition(TCModelLayers.GRAPPLER, GrapplerModel::createLayer);

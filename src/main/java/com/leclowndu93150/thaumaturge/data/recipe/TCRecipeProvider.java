@@ -113,6 +113,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         buildElementalToolRecipes();
         buildEssentiaReservoirRecipe();
         buildTravellerBootsRecipe();
+        buildThaumostaticHarnessRecipe();
         buildRechargePedestalRecipe();
         buildFocalManipulatorRecipe();
         buildCrucibleRecipes();
@@ -464,6 +465,17 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.FABRIC.get()))
                 .component(Ingredient.of(TCItems.FABRIC.get())).component(Ingredient.of(items.getOrThrow(Tags.Items.FEATHERS))).component(Ingredient.of(items.getOrThrow(ItemTags.FISHES)))
                 .aspect(TCAspects.VOLATUS, 100).aspect(TCAspects.MOTUS, 100).instability(1).gate(gate("boots_traveller")).unlockedBy("has", has(Items.LEATHER_BOOTS)).save(output);
+    }
+
+    private void buildThaumostaticHarnessRecipe() {
+        Ingredient airCrystal = Ingredient.of(TCItems.CRYSTAL_AER.get());
+        Ingredient greatwoodPlanks = Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD));
+        Ingredient gold = Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_GOLD));
+        Ingredient iron = Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_IRON));
+        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.COMBAT, new ItemStackTemplate(TCItems.THAUMOSTATIC_HARNESS.get()),
+                Ingredient.of(Items.LEATHER_CHESTPLATE)).component(airCrystal).component(airCrystal).component(greatwoodPlanks).component(greatwoodPlanks).component(Ingredient.of(Items.COMPARATOR))
+                .component(gold).component(gold).component(iron).component(iron).aspect(TCAspects.VOLATUS, 32).aspect(TCAspects.POTENTIA, 32).aspect(TCAspects.MACHINA, 32).aspect(TCAspects.MOTUS, 16)
+                .instability(6).gate(gate("thaumostatic_harness")).unlockedBy("has", has(TCItems.TRAVELLER_BOOTS)).save(output);
     }
 
     private static ItemStackTemplate enchantedTool(Item item, Map<InfusionEnchantment, Integer> enchantments) {
