@@ -233,8 +233,7 @@
       "text": "research.thaumaturge.essentia_smelter.stage_3",
       "recipes": [
         "thaumaturge:arcane_workbench/smelter_basic",
-        "thaumaturge:arcane_workbench/alembic",
-        "thaumaturge:arcane_workbench/alchemical_furnace"
+        "thaumaturge:arcane_workbench/alembic"
       ]
     }
   ],

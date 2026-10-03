@@ -136,8 +136,8 @@ public final class TCBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySpa>> SPA = BLOCK_ENTITIES.register("spa",
             () -> new BlockEntityType<>(BlockEntitySpa::new, Set.of(TCBlocks.SPA.get())));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySmelter>> SMELTER = BLOCK_ENTITIES.register("smelter", () -> new BlockEntityType<>(BlockEntitySmelter::new,
-            Set.of(TCBlocks.SMELTER_BASIC.get(), TCBlocks.SMELTER_THAUMIUM.get(), TCBlocks.SMELTER_VOID.get(), TCBlocks.ALCHEMICAL_FURNACE.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySmelter>> SMELTER = BLOCK_ENTITIES.register("smelter",
+            () -> new BlockEntityType<>(BlockEntitySmelter::new, Set.of(TCBlocks.SMELTER_BASIC.get(), TCBlocks.SMELTER_THAUMIUM.get(), TCBlocks.SMELTER_VOID.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>> ADVANCED_ALCHEMICAL_FURNACE = BLOCK_ENTITIES.register("advanced_alchemical_furnace",
             () -> new BlockEntityType<>(BlockEntityAdvancedAlchemicalFurnace::new, Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())));

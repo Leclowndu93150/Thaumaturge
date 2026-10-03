@@ -177,7 +177,6 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.ALEMBIC.get());
         dropSelf(TCBlocks.BELLOWS.get());
         dropSelf(TCBlocks.SMELTER_BASIC.get());
-        dropSelf(TCBlocks.ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.ESSENTIA_CRYSTALIZER.get());
         dropSelf(TCBlocks.ESSENTIA_RESERVOIR.get());
         dropSelf(TCBlocks.FLUX_SCRUBBER.get());
@@ -347,7 +346,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropOther(TCBlocks.PLACEHOLDER_CAULDRON.get(), Blocks.CAULDRON);
         dropOther(TCBlocks.PLACEHOLDER_ANVIL.get(), Blocks.ANVIL);
         dropOther(TCBlocks.PLACEHOLDER_TABLE.get(), TCBlocks.TABLE_STONE.get());
-        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.ALCHEMICAL_FURNACE.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.SMELTER_BASIC.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), TCBlocks.ALEMBIC.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());

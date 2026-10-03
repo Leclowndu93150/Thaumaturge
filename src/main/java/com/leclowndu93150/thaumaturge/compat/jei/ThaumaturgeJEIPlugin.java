@@ -250,7 +250,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addCraftingStation(AspectFromStacksCategory.RECIPE_TYPE, TCItems.THAUMONOMICON.get());
         registration.addCraftingStation(InfernalFurnaceCategory.RECIPE_TYPE, TCItems.INFERNAL_FURNACE.get());
         registration.addCraftingStation(MultiblockCategory.RECIPE_TYPE, TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
-        registration.addCraftingStation(AspectFromStacksCategory.RECIPE_TYPE, TCItems.ALCHEMICAL_FURNACE.get(), TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
+        registration.addCraftingStation(AspectFromStacksCategory.RECIPE_TYPE, TCItems.SMELTER_BASIC.get(), TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
     }
 
     @Override

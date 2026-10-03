@@ -595,7 +595,6 @@ public final class TCModelProvider extends ModelProvider {
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_BASIC.get(), "smelter_basic");
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_THAUMIUM.get(), "smelter_thaumium");
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_VOID.get(), "smelter_void");
-        registerAlchemicalFurnace(blockModels, itemModels);
         registerAdvancedAlchemicalFurnace(blockModels, itemModels);
         registerEssentiaCrystalizer(blockModels, itemModels);
         registerEssentiaReservoir(blockModels, itemModels);
@@ -1097,17 +1096,6 @@ public final class TCModelProvider extends ModelProvider {
         Identifier base = BLOCK_PARTICLE.create(TCIds.rl("item/advanced_alchemical_furnace_base"), TextureMapping.particle(blockTexture("advanced_alchemical_furnace")), blockModels.modelOutput);
         itemModels.itemModelOutput.accept(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get(),
                 new SpecialModelWrapper.Unbaked(base, Optional.empty(), new AdvancedAlchemicalFurnaceItemSpecialRenderer.Unbaked()));
-    }
-
-    private static void registerAlchemicalFurnace(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Block furnace = TCBlocks.ALCHEMICAL_FURNACE.get();
-        TextureMapping textures = new TextureMapping().put(TextureSlot.TOP, blockTexture("al_furnace_top")).put(TextureSlot.BOTTOM, blockTexture("base_metal"))
-                .put(TextureSlot.SIDE, blockTexture("al_furnace_side")).put(TextureSlot.FRONT, blockTexture("al_furnace_front_off"));
-        Identifier model = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(furnace, textures, blockModels.modelOutput);
-        PropertyDispatch<VariantMutator> rotations = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.NORTH, BlockModelGenerators.NOP)
-                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90).select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(furnace, BlockModelGenerators.plainVariant(model)).with(rotations));
-        itemModels.itemModelOutput.accept(TCItems.ALCHEMICAL_FURNACE.get(), ItemModelUtils.plainModel(model));
     }
 
     private static Material blockTexture(String name) {

@@ -137,8 +137,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(Tags.Blocks.ORES).addTags(TCBlockTags.ORES_AMBER, TCBlockTags.ORES_CINNABAR);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.ORE_QUARTZ.get()).add(TCBlocks.SMELTER_BASIC.get())
-                .add(TCBlocks.ALCHEMICAL_FURNACE.get()).add(TCBlocks.SMELTER_THAUMIUM.get()).add(TCBlocks.SMELTER_VOID.get()).add(TCBlocks.SMELTER_AUX.get()).add(TCBlocks.SMELTER_VENT.get())
-                .add(TCBlocks.SPA.get()).add(TCBlocks.ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
+                .add(TCBlocks.SMELTER_THAUMIUM.get()).add(TCBlocks.SMELTER_VOID.get()).add(TCBlocks.SMELTER_AUX.get()).add(TCBlocks.SMELTER_VENT.get()).add(TCBlocks.SPA.get())
+                .add(TCBlocks.ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get()).add(TCBlocks.ESSENTIA_CRYSTALIZER.get())
                 .add(TCBlocks.ESSENTIA_RESERVOIR.get()).add(TCBlocks.FLUX_SCRUBBER.get());

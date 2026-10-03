@@ -105,7 +105,6 @@ public final class TCCreativeTabs {
                 output.accept(TCItems.SMELTER_BASIC.get());
                 output.accept(TCItems.SMELTER_THAUMIUM.get());
                 output.accept(TCItems.SMELTER_VOID.get());
-                output.accept(TCItems.ALCHEMICAL_FURNACE.get());
                 output.accept(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
                 output.accept(TCItems.SMELTER_AUX.get());
                 output.accept(TCItems.SMELTER_VENT.get());
