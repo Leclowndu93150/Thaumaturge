@@ -298,7 +298,7 @@ public final class TCConfiguredFeatures {
                                 TCBlocks.PLANT_VISHROOM.get(),
                                 FLORA_GRASS_ATTEMPTS,
                                 FLORA_VISHROOM_ATTEMPTS,
-                                context.lookup(Registries.BLOCK).getOrThrow(BlockTags.SMALL_FLOWERS),
+                                context.lookup(Registries.BLOCK).getOrThrow(TCBlockTags.MAGICAL_FOREST_FLOWERS),
                                 FLORA_FLOWER_ATTEMPTS,
                                 List.of(
                                         new MagicForestFloraConfig.PlantPatch(

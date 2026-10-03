@@ -40,6 +40,7 @@ public final class TCBlockTags {
     public static final TagKey<Block> LAMP_GROWTH_BLACKLIST = key("lamp_growth_blacklist");
 
     public static final TagKey<Block> MAGICAL_PLANTS = key("magical_plants");
+    public static final TagKey<Block> MAGICAL_FOREST_FLOWERS = key("magical_forest_flowers");
     public static final TagKey<Block> TAINT_CONVERTIBLE_LOG = key("taint_convertible/log");
     public static final TagKey<Block> TAINT_CONVERTIBLE_SOIL = key("taint_convertible/soil");
     public static final TagKey<Block> TAINT_CONVERTIBLE_ROCK = key("taint_convertible/rock");

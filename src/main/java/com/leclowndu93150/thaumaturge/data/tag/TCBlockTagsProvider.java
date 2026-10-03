@@ -375,6 +375,20 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.PLANT_CINDERPEARL.get())
                 .add(TCBlocks.PLANT_VISHROOM.get());
 
+        tag(TCBlockTags.MAGICAL_FOREST_FLOWERS)
+                .add(Blocks.DANDELION)
+                .add(Blocks.POPPY)
+                .add(Blocks.BLUE_ORCHID)
+                .add(Blocks.ALLIUM)
+                .add(Blocks.AZURE_BLUET)
+                .add(Blocks.RED_TULIP)
+                .add(Blocks.ORANGE_TULIP)
+                .add(Blocks.WHITE_TULIP)
+                .add(Blocks.PINK_TULIP)
+                .add(Blocks.OXEYE_DAISY)
+                .add(Blocks.CORNFLOWER)
+                .add(Blocks.LILY_OF_THE_VALLEY);
+
         tag(Tags.Blocks.STRIPPED_LOGS)
                 .add(TCBlocks.STRIPPED_LOG_GREATWOOD.get())
                 .add(TCBlocks.STRIPPED_LOG_SILVERWOOD.get());
