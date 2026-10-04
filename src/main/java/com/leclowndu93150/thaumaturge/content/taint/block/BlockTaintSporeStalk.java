@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
@@ -106,7 +107,7 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
     }
 
     @Override
-    public void die(Level level, BlockPos pos, BlockState state) {
+    public void decay(Level level, BlockPos pos, BlockState state) {
         level.removeBlock(pos, false);
     }
 }

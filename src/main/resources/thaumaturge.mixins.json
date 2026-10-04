@@ -28,7 +28,8 @@
     "client.renderer.entity.layers.HumanoidArmorLayerAccessor",
     "iris.pathways.HandRendererMixin",
     "jei.gui.ingredients.IngredientFilterAccessor",
-    "jei.gui.ingredients.IngredientFilterApiAccessor"
+    "jei.gui.ingredients.IngredientFilterApiAccessor",
+    "jei.gui.search.ElementSearchAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

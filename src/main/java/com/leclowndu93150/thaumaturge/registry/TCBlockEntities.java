@@ -19,7 +19,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampGrowth;
-import com.leclowndu93150.thaumaturge.content.device.BlockEntityLevitator;
+import com.leclowndu93150.thaumaturge.content.device.levitator.BlockEntityLevitator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityRedstoneRelay;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVisGenerator;
@@ -101,7 +101,7 @@ public final class TCBlockEntities {
     }
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityNode>> NODE = BLOCK_ENTITIES.register("node",
-            () -> new BlockEntityType<>(BlockEntityNode::new, Set.of(TCBlocks.NODE.get(), TCBlocks.OBSIDIAN_TOTEM_CHARGED.get())));
+            () -> new BlockEntityType<>(BlockEntityNode::new, Set.of(TCBlocks.NODE.get(), TCBlocks.OBSIDIAN_TOTEM_CHARGED.get(), TCBlocks.SILVERWOOD_NODE_LOG.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityVisRelay>> VIS_RELAY = BLOCK_ENTITIES.register("vis_relay",
             () -> new BlockEntityType<>(BlockEntityVisRelay::new, Set.of(TCBlocks.VIS_RELAY.get())));
@@ -136,8 +136,8 @@ public final class TCBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySpa>> SPA = BLOCK_ENTITIES.register("spa",
             () -> new BlockEntityType<>(BlockEntitySpa::new, Set.of(TCBlocks.SPA.get())));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySmelter>> SMELTER = BLOCK_ENTITIES.register("smelter", () -> new BlockEntityType<>(BlockEntitySmelter::new,
-            Set.of(TCBlocks.SMELTER_BASIC.get(), TCBlocks.SMELTER_THAUMIUM.get(), TCBlocks.SMELTER_VOID.get(), TCBlocks.ALCHEMICAL_FURNACE.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntitySmelter>> SMELTER = BLOCK_ENTITIES.register("smelter",
+            () -> new BlockEntityType<>(BlockEntitySmelter::new, Set.of(TCBlocks.SMELTER_BASIC.get(), TCBlocks.SMELTER_THAUMIUM.get(), TCBlocks.SMELTER_VOID.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityAdvancedAlchemicalFurnace>> ADVANCED_ALCHEMICAL_FURNACE = BLOCK_ENTITIES.register("advanced_alchemical_furnace",
             () -> new BlockEntityType<>(BlockEntityAdvancedAlchemicalFurnace::new, Set.of(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())));

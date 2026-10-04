@@ -17,7 +17,7 @@ public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) imp
             ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(SealEntity.CODEC)), ClientboundSealPayload::seal, ClientboundSealPayload::new);
 
     public static ClientboundSealPayload update(SealEntity seal) {
-        return new ClientboundSealPayload(seal.getSealPos(), Optional.of(seal));
+        return new ClientboundSealPayload(seal.pos(), Optional.of(seal));
     }
 
     public static ClientboundSealPayload remove(SealPos pos) {

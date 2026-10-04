@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
 import com.leclowndu93150.thaumaturge.client.render.ModelPartGeometry;
@@ -9,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
+import com.leclowndu93150.thaumaturge.registry.TCItemTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -71,7 +71,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
         BlockEntityRenderer.super.extractRenderState(table, state, partialTicks, cameraPosition, breakProgress);
         state.facing = table.getBlockState().hasProperty(BlockResearchTable.FACING) ? table.getBlockState().getValue(BlockResearchTable.FACING) : Direction.NORTH;
         ItemStack tools = table.items().getResource(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS).toStack(1);
-        state.hasTools = tools.getItem() instanceof IScribeTools;
+        state.hasTools = tools.is(TCItemTags.SCRIBING_TOOLS);
         ItemStack note = table.items().getResource(BlockEntityResearchTable.SLOT_NOTE).toStack(1);
         ResearchNoteData data = ResearchNotes.dataOf(note);
         state.hasNote = !note.isEmpty() && data != null;

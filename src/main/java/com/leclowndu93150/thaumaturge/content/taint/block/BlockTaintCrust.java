@@ -40,7 +40,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
     }
 
     @Override
-    public void die(Level level, BlockPos pos, BlockState state) {
+    public void decay(Level level, BlockPos pos, BlockState state) {
         level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
@@ -48,7 +48,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         TaintHelper.trySpreadTaintedBiome(level, pos, random);
         if (!TaintBiomeManager.isTainted(level, pos) && random.nextInt(OUTSIDE_BIOME_DECAY_CHANCE) == 0) {
-            die(level, pos, state);
+            decay(level, pos, state);
             return;
         }
         subRandomTick(state, level, pos, random);

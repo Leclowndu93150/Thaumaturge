@@ -21,7 +21,7 @@ public enum GolemDataProvider implements IServerDataProvider<EntityAccessor> {
     public void appendServerData(CompoundTag tag, EntityAccessor accessor) {
         if (accessor.getEntity() instanceof EntityThaumaturgeGolem golem) {
             tag.putInt("RankXp", golem.getRankXp());
-            int rank = golem.getProperties().getRank();
+            int rank = golem.properties().rank();
             tag.putInt("RankXpRequired", (rank + 1) * (rank + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT);
         }
     }

@@ -1,5 +1,8 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.client.data.models.model.TextureMapping;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
@@ -79,6 +82,13 @@ public final class TCModelProvider extends ModelProvider {
     private static final int ROBES_UNDYED_ARGB = 0xFF6A3880;
 
     private static final TextureSlot LEGACY_MESH_SLOT = TextureSlot.create("legacy");
+    private static final Identifier DEEPSLATE_TEXTURE = Identifier.withDefaultNamespace("block/deepslate");
+    private static final Identifier BLOCK_PARENT = Identifier.withDefaultNamespace("block/block");
+    private static final TextureSlot GRINDSTONE_PIVOT_SLOT = TextureSlot.create("pivot");
+    private static final TextureSlot GRINDSTONE_ROUND_SLOT = TextureSlot.create("round");
+    private static final TextureSlot GRINDSTONE_LEG_SLOT = TextureSlot.create("leg");
+    private static final ModelTemplate ARCANE_GRINDSTONE = new ModelTemplate(Optional.of(Identifier.withDefaultNamespace("block/grindstone")), Optional.empty(), GRINDSTONE_PIVOT_SLOT,
+            GRINDSTONE_ROUND_SLOT, TextureSlot.SIDE, TextureSlot.PARTICLE, GRINDSTONE_LEG_SLOT);
     private static final TextureSlot RESERVOIR_TANK_SLOT = TextureSlot.create("tank");
     private static final float RESERVOIR_TANK_MIN = 2.0F;
     private static final float RESERVOIR_TANK_MAX = 14.0F;
@@ -448,6 +458,44 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, variant));
     }
 
+    private static void deepslateOre(BlockModelGenerators blockModels, Block block, String overlay) {
+        Identifier model = ModelLocationUtils.getModelLocation(block);
+        blockModels.modelOutput.accept(model, overlaidCubeModel(DEEPSLATE_TEXTURE, TCIds.rl("block/" + overlay)));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
+    }
+
+    private static ModelInstance overlaidCubeModel(Identifier base, Identifier overlay) {
+        return () -> {
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", BLOCK_PARENT.toString());
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", base.toString());
+            textures.addProperty("base", base.toString());
+            textures.addProperty("overlay", overlay.toString());
+            root.add("textures", textures);
+            JsonArray elements = new JsonArray();
+            elements.add(fullCube("#base"));
+            elements.add(fullCube("#overlay"));
+            root.add("elements", elements);
+            return root;
+        };
+    }
+
+    private static JsonObject fullCube(String texture) {
+        JsonObject element = new JsonObject();
+        element.add("from", insetCoords(0, 0, 0));
+        element.add("to", insetCoords(16, 16, 16));
+        JsonObject faces = new JsonObject();
+        for (Direction dir : Direction.values()) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", texture);
+            face.addProperty("cullface", dir.getSerializedName());
+            faces.add(dir.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        return element;
+    }
+
     private static boolean insetExposed(int mask, Direction dir) {
         return (mask & (1 << dir.get3DDataValue())) != 0;
     }
@@ -595,7 +643,6 @@ public final class TCModelProvider extends ModelProvider {
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_BASIC.get(), "smelter_basic");
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_THAUMIUM.get(), "smelter_thaumium");
         registerSmelter(blockModels, itemModels, TCBlocks.SMELTER_VOID.get(), "smelter_void");
-        registerAlchemicalFurnace(blockModels, itemModels);
         registerAdvancedAlchemicalFurnace(blockModels, itemModels);
         registerEssentiaCrystalizer(blockModels, itemModels);
         registerEssentiaReservoir(blockModels, itemModels);
@@ -661,6 +708,8 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(TCItems.LABEL.get(),
                 new CompositeModel.Unbaked(List.of(ItemModelUtils.plainModel(labelModelId), ItemModelUtils.conditional(ItemModelUtils.hasComponent(TCDataComponents.ASPECT_FILTER.get()),
                         ItemModelUtils.tintedModel(labelOverlayModelId, new AspectFilterTint(0xffffff)), ItemModelUtils.plainModel(labelModelId))), Optional.empty()));
+        itemModels.generateFlatItem(TCItems.TAINTED_GOO.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.TAINT_TENDRIL.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.BOTTLE_TAINT.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.VIS_RESONATOR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.THAUMIC_SLIME_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
@@ -727,6 +776,9 @@ public final class TCModelProvider extends ModelProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_AMBER.get());
         blockModels.createTrivialCube(TCBlocks.ORE_CINNABAR.get());
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_AMBER.get(), "ore_amber_overlay");
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), "ore_cinnabar_overlay");
+        deepslateOre(blockModels, TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), "ore_quartz_overlay");
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
@@ -777,6 +829,7 @@ public final class TCModelProvider extends ModelProvider {
         registerSpear(itemModels, TCItems.ELEMENTAL_SPEAR.get());
         itemModels.generateFlatItem(TCItems.PRIMAL_CRUSHER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         itemModels.generateFlatItem(TCItems.TRAVELLER_BOOTS.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.THAUMOSTATIC_HARNESS.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.THAUMIUM_HELM.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.THAUMIUM_CHEST.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.THAUMIUM_LEGS.get(), ModelTemplates.FLAT_ITEM);
@@ -802,6 +855,7 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TCItems.CLUSTER_SILVER.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.CLUSTER_LEAD.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.CLUSTER_TIN.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(TCItems.RAW_CINNABAR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.CLUSTER_CINNABAR.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.CLUSTER_QUARTZ.get(), ModelTemplates.FLAT_ITEM);
 
@@ -1097,17 +1151,6 @@ public final class TCModelProvider extends ModelProvider {
                 new SpecialModelWrapper.Unbaked(base, Optional.empty(), new AdvancedAlchemicalFurnaceItemSpecialRenderer.Unbaked()));
     }
 
-    private static void registerAlchemicalFurnace(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Block furnace = TCBlocks.ALCHEMICAL_FURNACE.get();
-        TextureMapping textures = new TextureMapping().put(TextureSlot.TOP, blockTexture("al_furnace_top")).put(TextureSlot.BOTTOM, blockTexture("base_metal"))
-                .put(TextureSlot.SIDE, blockTexture("al_furnace_side")).put(TextureSlot.FRONT, blockTexture("al_furnace_front_off"));
-        Identifier model = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(furnace, textures, blockModels.modelOutput);
-        PropertyDispatch<VariantMutator> rotations = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING).select(Direction.NORTH, BlockModelGenerators.NOP)
-                .select(Direction.EAST, BlockModelGenerators.Y_ROT_90).select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(Direction.WEST, BlockModelGenerators.Y_ROT_270);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(furnace, BlockModelGenerators.plainVariant(model)).with(rotations));
-        itemModels.itemModelOutput.accept(TCItems.ALCHEMICAL_FURNACE.get(), ItemModelUtils.plainModel(model));
-    }
-
     private static Material blockTexture(String name) {
         return new Material(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + name));
     }
@@ -1369,6 +1412,9 @@ public final class TCModelProvider extends ModelProvider {
                 ItemModelUtils.tintedModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/leaves_greatwood"), new Constant(FOLIAGE_DEFAULT_COLOR)));
         log(blockModels, TCBlocks.LOG_GREATWOOD.get(), TCBlocks.WOOD_GREATWOOD.get());
         log(blockModels, TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get());
+        blockModels.blockStateOutput.accept(BlockModelGenerators.createRotatedPillarWithHorizontalVariant(TCBlocks.SILVERWOOD_NODE_LOG.get(),
+                BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(TCBlocks.LOG_SILVERWOOD.get())),
+                BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(TCBlocks.LOG_SILVERWOOD.get(), "_horizontal"))));
         log(blockModels, TCBlocks.STRIPPED_LOG_GREATWOOD.get(), TCBlocks.STRIPPED_WOOD_GREATWOOD.get());
         log(blockModels, TCBlocks.STRIPPED_LOG_SILVERWOOD.get(), TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
     }
@@ -1537,6 +1583,30 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(TCIds.MODID, "block/" + modelName)));
     }
 
+    private void woodFamily(BlockModelGenerators blockModels, Block planks, Block door, Block trapdoor, Block fence, Block fenceGate, Block button, Block pressurePlate) {
+        blockModels.createDoor(door);
+        blockModels.createTrapdoor(trapdoor);
+        blockModels.new BlockFamilyProvider(TextureMapping.cube(planks)).fence(fence).fenceGate(fenceGate).button(button).pressurePlate(pressurePlate);
+    }
+
+    private void arcaneGrindstone(BlockModelGenerators blockModels) {
+        Block block = TCBlocks.ARCANE_GRINDSTONE.get();
+        Material wheel = texture("arcane_stone_1");
+        Material frame = texture("metal_thaumium");
+        TextureMapping textures = new TextureMapping().put(GRINDSTONE_PIVOT_SLOT, frame).put(GRINDSTONE_ROUND_SLOT, wheel).put(TextureSlot.SIDE, wheel).put(TextureSlot.PARTICLE, wheel)
+                .put(GRINDSTONE_LEG_SLOT, frame);
+        MultiVariant model = BlockModelGenerators.plainVariant(ARCANE_GRINDSTONE.create(block, textures, blockModels.modelOutput));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, model).with(PropertyDispatch.modify(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING)
+                .select(AttachFace.FLOOR, Direction.NORTH, BlockModelGenerators.NOP).select(AttachFace.FLOOR, Direction.EAST, BlockModelGenerators.Y_ROT_90)
+                .select(AttachFace.FLOOR, Direction.SOUTH, BlockModelGenerators.Y_ROT_180).select(AttachFace.FLOOR, Direction.WEST, BlockModelGenerators.Y_ROT_270)
+                .select(AttachFace.WALL, Direction.NORTH, BlockModelGenerators.X_ROT_90).select(AttachFace.WALL, Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90))
+                .select(AttachFace.WALL, Direction.SOUTH, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_180))
+                .select(AttachFace.WALL, Direction.WEST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_270)).select(AttachFace.CEILING, Direction.SOUTH, BlockModelGenerators.X_ROT_180)
+                .select(AttachFace.CEILING, Direction.WEST, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_90))
+                .select(AttachFace.CEILING, Direction.NORTH, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_180))
+                .select(AttachFace.CEILING, Direction.EAST, BlockModelGenerators.X_ROT_180.then(BlockModelGenerators.Y_ROT_270))));
+    }
+
     private void decorModels(BlockModelGenerators blockModels) {
         slab(blockModels, TCBlocks.SLAB_GREATWOOD.get(), TCBlocks.PLANK_GREATWOOD.get(), texture("plank_greatwood"), texture("plank_greatwood"), texture("plank_greatwood"));
         slab(blockModels, TCBlocks.SLAB_SILVERWOOD.get(), TCBlocks.PLANK_SILVERWOOD.get(), texture("plank_silverwood"), texture("plank_silverwood"), texture("plank_silverwood"));
@@ -1546,6 +1616,11 @@ public final class TCModelProvider extends ModelProvider {
         slab(blockModels, TCBlocks.SLAB_ELDRITCH.get(), TCBlocks.STONE_ELDRITCH_TILE.get(), texture("eldritch_stone_1"), texture("eldritch_stone_2"), texture("eldritch_stone_3"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_GREATWOOD.get(), texture("plank_greatwood"));
         stairsFromTexture(blockModels, TCBlocks.STAIRS_SILVERWOOD.get(), texture("plank_silverwood"));
+        arcaneGrindstone(blockModels);
+        woodFamily(blockModels, TCBlocks.PLANK_GREATWOOD.get(), TCBlocks.DOOR_GREATWOOD.get(), TCBlocks.TRAPDOOR_GREATWOOD.get(), TCBlocks.FENCE_GREATWOOD.get(), TCBlocks.FENCE_GATE_GREATWOOD.get(),
+                TCBlocks.BUTTON_GREATWOOD.get(), TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        woodFamily(blockModels, TCBlocks.PLANK_SILVERWOOD.get(), TCBlocks.DOOR_SILVERWOOD.get(), TCBlocks.TRAPDOOR_SILVERWOOD.get(), TCBlocks.FENCE_SILVERWOOD.get(),
+                TCBlocks.FENCE_GATE_SILVERWOOD.get(), TCBlocks.BUTTON_SILVERWOOD.get(), TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         existingModelWithItem(blockModels, TCBlocks.TABLE_WOOD.get(), "table_wood");
         existingModelWithItem(blockModels, TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(blockModels, TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");

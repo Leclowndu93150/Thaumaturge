@@ -13,6 +13,6 @@ public class TCCurioProvider extends CuriosDataProvider {
 
     @Override
     public void generate(HolderLookup.Provider registries) {
-        createEntities("players").addPlayer().addSlots("head", "necklace", "ring", "belt", "charm");
+        createEntities("players").addPlayer().addSlots("head", "necklace", "ring", "belt", "charm", "back");
     }
 }

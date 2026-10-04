@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
+import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
@@ -33,6 +34,8 @@ import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 
 public final class EntityBottleTaint extends ThrowableItemProjectile implements ItemSupplier {
+    public static final ThrowProfile THROW = new ThrowProfile(0.66F, 1.0F, -5.0F, 0.5F);
+
     private static final double SPLASH_RADIUS = 5.0;
     private static final int FLUX_TAINT_TICKS = 100;
     private static final int TAINT_ATTEMPTS = 10;

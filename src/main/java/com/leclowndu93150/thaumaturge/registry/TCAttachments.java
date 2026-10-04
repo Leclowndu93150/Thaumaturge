@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealWorldIndex;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealsChunkData;
-import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemTasks;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -87,7 +88,7 @@ public final class TCAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<ArcaneLockChunkData>> ARCANE_LOCKS = register("arcane_locks",
             () -> AttachmentType.builder(ArcaneLockChunkData::new).serialize(ArcaneLockChunkData.CODEC).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<GolemTasks>> GOLEM_TASKS = register("golem_tasks", () -> AttachmentType.builder(GolemTasks::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaskBoard>> GOLEM_TASKS = register("golem_tasks", () -> AttachmentType.builder(TaskBoard::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Set<BlockPos>>> EAR_INDEX = register("ear_index",
             () -> AttachmentType.<Set<BlockPos>>builder(() -> ConcurrentHashMap.newKeySet()).build());
@@ -100,6 +101,12 @@ public final class TCAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CHAMPION_ROLLED = register("champion_rolled",
             () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL.fieldOf("rolled")).copyOnDeath().build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> HOVERING = register("hovering",
+            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL.fieldOf("hovering"), hovering -> hovering).sync(ByteBufCodecs.BOOL).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> HOVER_CHARGE = register("hover_charge",
+            () -> AttachmentType.builder(() -> 0).serialize(Codec.INT.fieldOf("charge"), charge -> charge > 0).build());
 
     private TCAttachments() {}
 

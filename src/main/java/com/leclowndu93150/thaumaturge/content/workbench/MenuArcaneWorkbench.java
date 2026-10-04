@@ -52,6 +52,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     private static final int CRAFT_ORIGIN_X = 41;
     private static final int CRAFT_ORIGIN_Y = 41;
     private static final int CRAFT_SPACING = 23;
+    public static final int CRYSTAL_SLOT_START = 9;
     public static final int[] CRYSTAL_X = {64, 16, 112, 16, 112, 64};
     public static final int[] CRYSTAL_Y = {13, 35, 35, 94, 94, 116};
     public static final int WAND_X = 160;
@@ -111,7 +112,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         }
 
         for (int i = 0; i < PRIMAL_ORDER.size(); i++) {
-            addSlot(new SlotCrystalEssentia(craftingInventory, 9 + i, CRYSTAL_X[i], CRYSTAL_Y[i], PRIMAL_ORDER.get(i)));
+            addSlot(new SlotCrystalEssentia(craftingInventory, CRYSTAL_SLOT_START + i, CRYSTAL_X[i], CRYSTAL_Y[i], PRIMAL_ORDER.get(i)));
         }
 
         addSlot(new SlotWorkbenchWand(craftingInventory, InventoryArcaneWorkbench.WAND_SLOT, WAND_X, WAND_Y));

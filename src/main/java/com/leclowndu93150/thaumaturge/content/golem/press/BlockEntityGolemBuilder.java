@@ -110,7 +110,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     private void finishCraft(Level level, BlockPos pos) {
         ItemStack placer = new ItemStack(TCItems.GOLEM_PLACER.get());
-        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), pendingGolem.copy());
+        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), pendingGolem);
         ItemStack current = output.getResource(SLOT_OUTPUT).toStack(output.getAmountAsInt(SLOT_OUTPUT));
         if (current.isEmpty()) {
             output.set(SLOT_OUTPUT, ItemResource.of(placer), 1);
@@ -180,7 +180,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     }
 
     public boolean[] checkCraft(GolemProperties props) {
-        List<ItemStack> components = props.generateComponents();
+        List<ItemStack> components = props.components();
         boolean[] result = new boolean[components.size()];
         for (int i = 0; i < components.size(); i++) {
             result[i] = InvHelper.checkAdjacentChests(level, worldPosition, components.get(i));
@@ -190,21 +190,21 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     public boolean startCraft(GolemProperties props, Player player) {
         ItemStack placer = new ItemStack(TCItems.GOLEM_PLACER.get());
-        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), props.copy());
+        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), props);
         ItemStack current = output.getResource(SLOT_OUTPUT).toStack(output.getAmountAsInt(SLOT_OUTPUT));
         boolean slotFree = current.isEmpty() || current.getCount() < current.getMaxStackSize() && ItemStack.isSameItemSameComponents(current, placer);
         if (!slotFree) {
             reset();
             return false;
         }
-        pendingGolem = props.copy();
-        List<ItemStack> componentList = props.generateComponents();
+        pendingGolem = props;
+        List<ItemStack> componentList = props.components();
         ItemStack[] components = componentList.toArray(new ItemStack[0]);
         if (!InvHelper.consumeItemsFromAdjacentInventoryOrPlayer(level, worldPosition, player, true, components)) {
             reset();
             return false;
         }
-        cost = pendingGolem.getTraits().size() * 2;
+        cost = pendingGolem.traits().size() * 2;
         for (ItemStack stack : components) {
             cost += stack.getCount();
         }

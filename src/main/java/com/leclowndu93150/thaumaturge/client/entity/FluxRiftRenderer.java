@@ -60,7 +60,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxR
         state.widths.addAll(entity.pointsWidth);
         state.stability = entity.getRiftStability();
         state.animationTime = entity.tickCount + partialTicks;
-        state.goggles = Minecraft.getInstance().player != null && GogglesAccess.wearsGoggles(Minecraft.getInstance().player);
+        state.goggles = Minecraft.getInstance().player != null && GogglesAccess.wearsRevealingGear(Minecraft.getInstance().player);
     }
 
     @Override

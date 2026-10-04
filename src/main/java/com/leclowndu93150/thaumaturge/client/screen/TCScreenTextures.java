@@ -16,9 +16,15 @@ public final class TCScreenTextures {
     public static final Identifier RESEARCH_BACK_OVER = gui("gui_research_back_over.png");
     public static final Identifier PAPER = gui("paper.png");
     public static final Identifier PAPER_GILDED = gui("papergilded.png");
+    public static final Identifier HUD = gui("hud.png");
+    public static final Identifier HUD_HOVER_SPARK = gui("hud_hover_spark.png");
+    public static final Identifier THAUMOSTATIC_HARNESS = gui("gui_thaumostatic_harness.png");
     public static final Identifier RESEARCH_PREREQ_MAP = research("rd_map.png");
     public static final Identifier RESEARCH_PREREQ_FLASK = research("rd_flask.png");
     public static final Identifier RESEARCH_PREREQ_CHEST = research("rd_chest.png");
+
+    public static final Identifier GRINDSTONE = Identifier.withDefaultNamespace("textures/gui/container/grindstone.png");
+    public static final Identifier GRINDSTONE_ERROR = Identifier.withDefaultNamespace("container/grindstone/error");
 
     private TCScreenTextures() {}
 

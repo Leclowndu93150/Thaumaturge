@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.entity.ai.ThaumicSlimeSpitGoal;
 import com.leclowndu93150.thaumaturge.content.particle.FluxGooDropletParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
@@ -35,7 +34,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public final class ThaumicSlime extends Slime implements ITaintedMob {
+public final class ThaumicSlime extends Slime {
     public static final int PARTICLE_COLOR = 0xB200FF;
     public static final float PARTICLE_ALPHA = 0.4F;
 

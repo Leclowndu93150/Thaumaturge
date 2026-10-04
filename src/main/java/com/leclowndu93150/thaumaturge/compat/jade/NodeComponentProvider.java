@@ -40,7 +40,7 @@ public enum NodeComponentProvider implements IBlockComponentProvider {
             return;
         }
         Player player = accessor.getPlayer();
-        if (!GogglesAccess.revealsNodes(player) && !(player.getMainHandItem().getItem() instanceof ThaumometerItem) && !(player.getOffhandItem().getItem() instanceof ThaumometerItem)) {
+        if (!GogglesAccess.wearsRevealingGear(player) && !(player.getMainHandItem().getItem() instanceof ThaumometerItem) && !(player.getOffhandItem().getItem() instanceof ThaumometerItem)) {
             return;
         }
         if (node instanceof BlockEntityJarNode || node.getNodeType() != NodeType.NORMAL || node.getNodeModifier() != null) {

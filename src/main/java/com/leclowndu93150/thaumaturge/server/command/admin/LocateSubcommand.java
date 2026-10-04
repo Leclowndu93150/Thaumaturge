@@ -22,6 +22,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 
 final class LocateSubcommand implements AdminSubcommand {
     private static final DynamicCommandExceptionType INVALID_TYPE = new DynamicCommandExceptionType(type -> Component.translatable("commands.thaumaturge.locate.node.invalid_type", type));
@@ -45,7 +46,8 @@ final class LocateSubcommand implements AdminSubcommand {
             if (!level.hasChunkAt(candidate)) {
                 break;
             }
-            if (level.getBlockState(candidate).is(TCBlocks.NODE.get()) && level.getBlockEntity(candidate) instanceof BlockEntityNode node) {
+            BlockState candidateState = level.getBlockState(candidate);
+            if ((candidateState.is(TCBlocks.NODE.get()) || candidateState.is(TCBlocks.SILVERWOOD_NODE_LOG.get())) && level.getBlockEntity(candidate) instanceof BlockEntityNode node) {
                 if (node.getNodeType() == type) {
                     break;
                 }

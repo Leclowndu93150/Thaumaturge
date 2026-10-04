@@ -12,7 +12,9 @@ import com.leclowndu93150.thaumaturge.content.wands.WandTooltips;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -22,6 +24,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneWorkbench> {
     private static final Identifier WAND_SLOT_TEXTURE = TCIds.rl("textures/gui/workbench_wand_slot.png");
@@ -70,7 +73,13 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
                 graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.ARCANE_WORKBENCH, -32, -32, 192, 0, 64, 64, 256, 256, ARGB.color(128, color));
                 graphics.pose().popMatrix();
                 if (mouseX >= slotX && mouseX < slotX + SLOT_SIZE && mouseY >= slotY && mouseY < slotY + SLOT_SIZE) {
-                    graphics.setTooltipForNextFrame(font, Component.translatable("gui.thaumaturge.arcane_workbench.crystal_needed.tooltip", WandEconomy.CRYSTAL_SUBSTITUTE_VIS), mouseX, mouseY);
+                    Component hint = Component.translatable("gui.thaumaturge.arcane_workbench.crystal_needed.tooltip", WandEconomy.CRYSTAL_SUBSTITUTE_VIS);
+                    ItemStack crystal = menu.getCraftingInventory().getItem(MenuArcaneWorkbench.CRYSTAL_SLOT_START + index);
+                    if (crystal.isEmpty()) {
+                        graphics.setTooltipForNextFrame(font, hint, mouseX, mouseY);
+                    } else {
+                        graphics.setTooltipForNextFrame(font, List.of(crystal.getHoverName(), hint), Optional.empty(), mouseX, mouseY);
+                    }
                 }
             }
         }
@@ -84,7 +93,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
         graphics.pose().popMatrix();
 
         if (plan != null && requiredVis > 0) {
-            int baseVis = recipe.getBaseVis();
+            int baseVis = recipe.visCost();
             Component required;
             if (requiredVis < baseVis) {
                 int discountPercentage = Math.round(100.0F - requiredVis * 100.0F / baseVis);

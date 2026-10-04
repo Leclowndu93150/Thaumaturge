@@ -20,7 +20,7 @@ public record GolemMaterialTint() implements ItemTintSource {
         if (props == null) {
             return DEFAULT;
         }
-        return OPAQUE | props.getMaterial().itemColor();
+        return OPAQUE | props.material().itemColor();
     }
 
     @Override

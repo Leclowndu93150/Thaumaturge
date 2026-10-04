@@ -23,7 +23,7 @@ public final class BlockTaintRock extends AbstractTaintBlock {
     }
 
     @Override
-    public void die(Level level, BlockPos pos, BlockState state) {
+    public void decay(Level level, BlockPos pos, BlockState state) {
         level.setBlock(pos, TCBlocks.STONE_POROUS.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 

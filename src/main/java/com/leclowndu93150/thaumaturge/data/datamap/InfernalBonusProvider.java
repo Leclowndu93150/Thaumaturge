@@ -34,6 +34,7 @@ public final class InfernalBonusProvider extends DataMapProvider {
         add(b, Tags.Items.ORES_GOLD, InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD).count(2).chance(0.33F).build());
         add(b, Tags.Items.ORES_QUARTZ, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUARTZ).count(2).chance(0.33F).build());
         add(b, TCItemTags.ORES_CINNABAR, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER).count(2).chance(0.33F).build());
+        add(b, TCItemTags.RAW_MATERIALS_CINNABAR, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER).chance(0.33F).build());
         addConditional(b, TCItemTags.ORES_LEAD, new NotCondition(new TagEmptyCondition<>(TCItemTags.NUGGETS_LEAD)),
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_LEAD).count(2).chance(0.33F).build());
         addConditional(b, TCItemTags.ORES_SILVER, new NotCondition(new TagEmptyCondition<>(TCItemTags.NUGGETS_SILVER)),

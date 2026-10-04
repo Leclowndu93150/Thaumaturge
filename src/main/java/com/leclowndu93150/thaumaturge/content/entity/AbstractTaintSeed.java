@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
@@ -28,7 +27,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
+public abstract class AbstractTaintSeed extends Monster {
     private static final int SPREAD_INTERVAL = 20;
     private static final int AMBIENT_FUMES = 3;
     private static final double AMBIENT_FUME_RISE = 0.015;

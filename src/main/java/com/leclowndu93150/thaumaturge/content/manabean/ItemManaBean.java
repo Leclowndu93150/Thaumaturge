@@ -1,9 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -30,7 +28,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public final class ItemManaBean extends Item implements IEssentiaContainerItem {
+public final class ItemManaBean extends Item {
     private static final int EFFECT_AMPLIFIER = 2;
     private static final double INSTANT_HEALTH_FACTOR = 3.0;
     private static final int EFFECT_BASE_DURATION = 160;
@@ -110,23 +108,4 @@ public final class ItemManaBean extends Item implements IEssentiaContainerItem {
         return InteractionResult.SUCCESS_SERVER;
     }
 
-    @Override
-    public AspectList getAspects(ItemStack stack) {
-        AspectInstance stored = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
-        return stored == null ? AspectList.EMPTY : AspectList.of(stored);
-    }
-
-    @Override
-    public void setAspects(ItemStack stack, AspectList aspects) {
-        if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TCDataComponents.CRYSTAL_ASPECT.get());
-            return;
-        }
-        stack.set(TCDataComponents.CRYSTAL_ASPECT.get(), aspects.entries().getFirst().withAmount(1));
-    }
-
-    @Override
-    public boolean ignoreContainedAspects() {
-        return false;
-    }
 }

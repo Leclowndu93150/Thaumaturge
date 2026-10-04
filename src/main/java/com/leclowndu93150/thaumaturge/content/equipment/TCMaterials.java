@@ -32,6 +32,7 @@ public final class TCMaterials {
     public static final ResourceKey<EquipmentAsset> ASSET_CULTIST_ROBE = asset("cultist_robe");
     public static final ResourceKey<EquipmentAsset> ASSET_CULTIST_BOOTS = asset("cultist_boots");
     public static final ResourceKey<EquipmentAsset> ASSET_CULTIST_LEADER = asset("cultist_leader");
+    public static final ResourceKey<EquipmentAsset> ASSET_THAUMOSTATIC_HARNESS = asset("thaumostatic_harness");
 
     public static final ArmorMaterial ARMOR_THAUMIUM = new ArmorMaterial(25, defense(2, 5, 6, 2), 25, SoundEvents.ARMOR_EQUIP_IRON, 1.0F, 0.0F, TCItemTags.INGOTS_THAUMIUM, ASSET_THAUMIUM);
     public static final ArmorMaterial ARMOR_ROBES = new ArmorMaterial(25, defense(1, 2, 3, 1), 25, SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 0.0F, ItemTags.WOOL, ASSET_ROBES);
@@ -43,6 +44,8 @@ public final class TCMaterials {
     public static final ArmorMaterial ARMOR_CULTIST_ROBE = new ArmorMaterial(17, defense(2, 4, 5, 2), 13, SoundEvents.ARMOR_EQUIP_CHAIN, 0.0F, 0.0F, ItemTags.WOOL, ASSET_CULTIST_ROBE);
     public static final ArmorMaterial ARMOR_CULTIST_BOOTS = new ArmorMaterial(15, defense(2, 5, 6, 2), 9, SoundEvents.ARMOR_EQUIP_IRON, 0.0F, 0.0F, Tags.Items.INGOTS_IRON, ASSET_CULTIST_BOOTS);
     public static final ArmorMaterial ARMOR_CULTIST_LEADER = new ArmorMaterial(30, defense(3, 6, 7, 3), 20, SoundEvents.ARMOR_EQUIP_IRON, 1.0F, 0.0F, Tags.Items.INGOTS_IRON, ASSET_CULTIST_LEADER);
+    public static final ArmorMaterial ARMOR_THAUMOSTATIC_HARNESS = new ArmorMaterial(25, defense(1, 2, 3, 1), 25, SoundEvents.ARMOR_EQUIP_LEATHER, 0.0F, 0.0F, Tags.Items.INGOTS_GOLD,
+            ASSET_THAUMOSTATIC_HARNESS);
 
     private static Map<ArmorType, Integer> defense(int boots, int leggings, int chestplate, int helmet) {
         return Map.of(ArmorType.BOOTS, boots, ArmorType.LEGGINGS, leggings, ArmorType.CHESTPLATE, chestplate, ArmorType.HELMET, helmet);

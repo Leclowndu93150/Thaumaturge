@@ -32,8 +32,8 @@ public final class EldritchWardenRenderer extends MobRenderer<EntityEldritchWard
     @Override
     public void extractRenderState(EntityEldritchWarden entity, State state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        state.armLiftL = entity.armLiftL;
-        state.armLiftR = entity.armLiftR;
+        state.armLiftL = entity.arms().leftLift();
+        state.armLiftR = entity.arms().rightLift();
         state.alpha = 1.0F;
         state.spawnFraction = entity.getSpawnTimer() / SPAWN_TICKS;
         state.height = entity.getBbHeight();

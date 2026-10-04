@@ -202,14 +202,27 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
-        if (level instanceof ServerLevel serverLevel && state.is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isIndexedNodeBlock(state)) {
             NodeLocationIndex.get(serverLevel).remove(pos);
         }
     }
 
     private void updateLocationIndex() {
-        if (level instanceof ServerLevel serverLevel && getBlockState().is(TCBlocks.NODE.get())) {
+        if (level instanceof ServerLevel serverLevel && isIndexedNodeBlock(getBlockState())) {
             NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        }
+    }
+
+    private static boolean isIndexedNodeBlock(BlockState state) {
+        return state.is(TCBlocks.NODE.get()) || state.is(TCBlocks.SILVERWOOD_NODE_LOG.get());
+    }
+
+    private static void removeDepletedNode(ServerLevel serverLevel, BlockPos pos) {
+        BlockState state = serverLevel.getBlockState(pos);
+        if (state.getBlock() instanceof NodeHostBlock host) {
+            serverLevel.setBlock(pos, host.depletedState(state), Block.UPDATE_ALL);
+        } else {
+            serverLevel.removeBlock(pos, false);
         }
     }
 
@@ -233,7 +246,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     @Override
-    public boolean doesContainerAccept(Holder<IAspect> aspect) {
+    public boolean accepts(Holder<IAspect> aspect) {
         return true;
     }
 
@@ -246,7 +259,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
+    public int fill(Holder<IAspect> aspect, int amount) {
         int capped = Math.min(amount, Math.max(0, aspectsBase.amountOf(aspect) - aspects.amountOf(aspect)));
         if (capped > 0) {
             aspects = aspects.add(aspect, capped);
@@ -256,7 +269,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     @Override
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    public boolean drain(Holder<IAspect> aspect, int amount) {
         if (aspects.amountOf(aspect) < amount) {
             return false;
         }
@@ -273,12 +286,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     @Override
-    public boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
+    public boolean holds(Holder<IAspect> aspect, int amount) {
         return aspects.amountOf(aspect) >= amount;
     }
 
     @Override
-    public int containerContains(Holder<IAspect> aspect) {
+    public int amountOf(Holder<IAspect> aspect) {
         return aspects.amountOf(aspect);
     }
 
@@ -597,7 +610,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         Holder<IAspect> target = depleted.get(random.nextInt(depleted.size()));
         float drained = nodeType == NodeType.TAINTED ? AuraHelper.drainFlux(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false) : AuraHelper.drainVis(serverLevel, pos, FEED_RAW_VIS_PER_POINT, false);
         if (drained >= FEED_RAW_VIS_PER_POINT - 0.01F) {
-            addToContainer(target, 1);
+            fill(target, 1);
             starvation = 0;
             return true;
         }
@@ -682,7 +695,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             }
         }
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
         return change;
     }
@@ -769,10 +782,10 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         List<AspectInstance> otherEntries = other.aspects.entries();
         Holder<IAspect> stolen = otherEntries.get(random.nextInt(otherEntries.size())).aspect();
         boolean moved = false;
-        if (aspects.amountOf(stolen) < aspectsBase.amountOf(stolen) && other.takeFromContainer(stolen, 1)) {
-            addToContainer(stolen, 1);
+        if (aspects.amountOf(stolen) < aspectsBase.amountOf(stolen) && other.drain(stolen, 1)) {
+            fill(stolen, 1);
             moved = true;
-        } else if (other.takeFromContainer(stolen, 1)) {
+        } else if (other.drain(stolen, 1)) {
             if (random.nextInt(1 + (int) (aspectsBase.amountOf(stolen) / (shiny ? 1.5 : 1.0))) == 0) {
                 aspectsBase = raiseBase(aspectsBase, stolen, 1);
                 if (nodeModifier == NodeModifier.PALE && random.nextInt(100) == 0) {
@@ -804,7 +817,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (nodeType == NodeType.UNSTABLE && random.nextBoolean()) {
             if (lock == 0) {
                 Holder<IAspect> primal = randomStoredPrimal(random);
-                if (primal != null && takeFromContainer(primal, 1)) {
+                if (primal != null && drain(primal, 1)) {
                     ResourceKey<IAspect> key = primal.unwrapKey().orElseThrow();
                     serverLevel.addFreshEntity(new EntityAspectOrb(serverLevel, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, key, 1));
                     return true;
@@ -952,7 +965,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         nodeChange();
         if (aspectsBase.isEmpty()) {
-            serverLevel.removeBlock(pos, false);
+            removeDepletedNode(serverLevel, pos);
         }
     }
 
@@ -1067,7 +1080,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         ResourceKey<IAspect> chosen = keys.get(random.nextInt(keys.size()));
         Holder<IAspect> holder = serverLevel.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(chosen);
         if (aspects.amountOf(holder) < aspectsBase.amountOf(holder)) {
-            addToContainer(holder, 1);
+            fill(holder, 1);
         } else if (random.nextInt(1 + aspectsBase.amountOf(holder) * 2) < primals.get(chosen)) {
             aspectsBase = raiseBase(aspectsBase, holder, 1);
         }
@@ -1199,7 +1212,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (moved <= 0) {
             return false;
         }
-        takeFromContainer(chosen, moved);
+        drain(chosen, moved);
         drainPlayer = player.getUUID();
         drainColor = chosen.value().color();
         drainTicks = DRAIN_LINGER_TICKS;

@@ -13,7 +13,7 @@ import net.minecraft.util.StringRepresentable;
  * <p>Each value declares the tool classes it may be applied to and the maximum level it may
  * reach. Levels are stored per stack in the {@code thaumaturge:infusion_enchantments} data
  * component. Applicability is tested against an item's tool classes, weapon status, armor slot,
- * or {@link IRechargable} nature.
+ * or {@link ChargeProfile rechargeable} nature.
  *
  * @since 1.0.0
  */

@@ -7,8 +7,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.content.entity.ai.PechItemGoal;
-import com.leclowndu93150.thaumaturge.content.entity.ai.PechTradeGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.FetchItemGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.HoldStillGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
+import com.leclowndu93150.thaumaturge.content.entity.ai.ItemCollector;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
@@ -63,6 +65,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -73,7 +76,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public class EntityPech extends Monster implements RangedAttackMob {
+public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, ItemCollector {
+    public static final String DROPPED_BY_PECH_TAG = "PechDrop";
+
     public static final int TYPE_FORAGER = 0;
     public static final int TYPE_MAGE = 1;
     public static final int TYPE_STALKER = 2;
@@ -125,8 +130,8 @@ public class EntityPech extends Monster implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PechTradeGoal(this));
-        this.goalSelector.addGoal(3, new PechItemGoal(this));
+        this.goalSelector.addGoal(1, new HoldStillGoal<>(this));
+        this.goalSelector.addGoal(3, new FetchItemGoal<>(this));
         this.goalSelector.addGoal(5, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 0.5));
         this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.6));
@@ -446,6 +451,21 @@ public class EntityPech extends Monster implements RangedAttackMob {
         }
     }
 
+    @Override
+    public boolean holdingStill() {
+        return this.isTamed() && this.trading;
+    }
+
+    @Override
+    public void releaseHold() {
+        this.trading = false;
+    }
+
+    @Override
+    public boolean wantsToCollect(ItemEntity item) {
+        return !item.entityTags().contains(DROPPED_BY_PECH_TAG) && this.canPickup(item.getItem());
+    }
+
     public boolean canPickup(ItemStack stack) {
         if (stack.isEmpty()) {
             return false;
@@ -464,7 +484,8 @@ public class EntityPech extends Monster implements RangedAttackMob {
         return false;
     }
 
-    public ItemStack pickupItem(ItemStack stack) {
+    @Override
+    public ItemStack collect(ItemStack stack) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }

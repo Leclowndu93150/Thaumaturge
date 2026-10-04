@@ -7,37 +7,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 
-public class EntitySpecialItem extends ItemEntity {
+public final class EntitySpecialItem extends ItemEntity {
+    private static final double TOSS_SPREAD = 0.1;
+    private static final double TOSS_LIFT = 0.2;
+    private static final double CLIMB_BRAKE = 0.1;
 
-    public EntitySpecialItem(EntityType<? extends ItemEntity> type, Level level) {
+    public EntitySpecialItem(EntityType<? extends EntitySpecialItem> type, Level level) {
         super(type, level);
     }
 
-    public EntitySpecialItem(Level level, double x, double y, double z, ItemStack itemStack) {
-        super(TCEntities.SPECIAL_ITEM.get(), level);
-        this.setPos(x, y, z);
-        this.setItem(itemStack);
-        this.setDeltaMovement(this.random.nextDouble() * 0.2 - 0.1, 0.2, this.random.nextDouble() * 0.2 - 0.1);
-        this.lifespan = itemStack.getItem() == null ? 6000 : itemStack.getEntityLifespan(level);
-    }
-
-    public EntitySpecialItem(Level level, double x, double y, double z, ItemStack itemStack, double deltaX, double deltaY, double deltaZ) {
+    public EntitySpecialItem(Level level, double x, double y, double z, ItemStack stack) {
         this(TCEntities.SPECIAL_ITEM.get(), level);
-        this.setPos(x, y, z);
-        this.setItem(itemStack);
-        this.setDeltaMovement(deltaX, deltaY, deltaZ);
-        this.lifespan = itemStack.getItem() == null ? 6000 : itemStack.getEntityLifespan(level);
+        setPos(x, y, z);
+        setItem(stack);
+        lifespan = stack.getEntityLifespan(level);
+        setDeltaMovement(random.triangle(0.0, TOSS_SPREAD), TOSS_LIFT, random.triangle(0.0, TOSS_SPREAD));
     }
 
     @Override
-    public void tick() {
-        if (tickCount > 1) {
-            if (this.getDeltaMovement().y > 0.0)
-                setDeltaMovement(getDeltaMovement().multiply(1, 0.9, 1));
-
-            setDeltaMovement(getDeltaMovement().add(0, 0.04, 0));
-            super.tick();
-        }
+    protected double getDefaultGravity() {
+        return Math.max(0.0, getDeltaMovement().y) * CLIMB_BRAKE;
     }
 
     @Override

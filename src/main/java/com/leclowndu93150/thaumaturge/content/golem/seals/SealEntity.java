@@ -1,23 +1,24 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISeal;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigArea;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
+import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
+import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
-import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
-import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import com.leclowndu93150.thaumaturge.registry.TCSeals;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -25,114 +26,113 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class SealEntity implements ISealEntity {
-    public static final Codec<SealEntity> CODEC = RecordCodecBuilder.create(instance -> instance.group(SealPos.CODEC.fieldOf("pos").forGetter(SealEntity::sealPos),
-            LegacyIds.IDENTIFIER_CODEC.fieldOf("type").forGetter(seal -> seal.typeId), Codec.BYTE.optionalFieldOf("priority", (byte) 0).forGetter(SealEntity::getPriority),
-            Codec.BYTE.optionalFieldOf("color", (byte) 0).forGetter(SealEntity::getColor), Codec.BOOL.optionalFieldOf("locked", false).forGetter(SealEntity::isLocked),
-            Codec.BOOL.optionalFieldOf("redstone", false).forGetter(SealEntity::isRedstoneSensitive), UUIDUtil.CODEC.optionalFieldOf("owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
-            BlockPos.CODEC.optionalFieldOf("area", new BlockPos(1, 1, 1)).forGetter(SealEntity::getArea),
-            CompoundTag.CODEC.optionalFieldOf("data", new CompoundTag()).forGetter(SealEntity::writeSealData)).apply(instance, SealEntity::fromCodec));
+    public static final Codec<SealEntity> CODEC = LegacyIds.IDENTIFIER_CODEC.partialDispatch("type", seal -> DataResult.success(seal.typeId), SealEntity::formatFor);
 
-    private final SealPos sealPos;
+    private static final BlockPos UNIT_AREA = new BlockPos(1, 1, 1);
+    private static final int OPENING_WIDTH = 3;
+
+    private final SealPos pos;
     private final Identifier typeId;
-    private final ISeal seal;
+    private final SealType type;
+    private final Contents contents;
     private byte priority;
     private byte color;
     private boolean locked;
-    private boolean redstone;
-    private UUID owner;
-    private BlockPos area = new BlockPos(1, 1, 1);
-    private boolean stopped;
+    private boolean redstoneControlled;
+    private @Nullable UUID owner;
+    private BlockPos area;
+    private boolean halted;
 
-    public SealEntity(SealPos sealPos, Identifier typeId, ISeal seal) {
-        this.sealPos = sealPos;
+    private SealEntity(SealPos pos, Identifier typeId, SealType type, Contents contents, BlockPos area) {
+        this.pos = pos;
         this.typeId = typeId;
-        this.seal = seal;
-        if (seal instanceof ISealConfigArea) {
-            int x = sealPos.face().getStepX() == 0 ? 3 : 1;
-            int y = sealPos.face().getStepY() == 0 ? 3 : 1;
-            int z = sealPos.face().getStepZ() == 0 ? 3 : 1;
-            this.area = new BlockPos(x, y, z);
-        }
+        this.type = type;
+        this.contents = contents;
+        this.area = area;
     }
 
-    private static SealEntity fromCodec(SealPos pos, Identifier typeId, byte priority, byte color, boolean locked, boolean redstone, Optional<UUID> owner, BlockPos area, CompoundTag data) {
-        SealType type = TCSeals.registry().getValue(typeId);
-        if (type == null) {
-            throw new IllegalStateException("Unknown seal type " + typeId);
-        }
-        SealEntity entity = new SealEntity(pos, typeId, type.factory().get());
-        entity.priority = priority;
-        entity.color = color;
-        entity.locked = locked;
-        entity.redstone = redstone;
-        entity.owner = owner.orElse(null);
-        entity.area = area;
-        entity.readSealData(data);
-        return entity;
-    }
-
-    private CompoundTag writeSealData() {
-        CompoundTag data = new CompoundTag();
-        seal.writeCustomNBT(data);
-        if (seal instanceof ISealConfigToggles toggles) {
-            for (ISealConfigToggles.SealToggle toggle : toggles.getToggles()) {
-                data.putBoolean(toggle.getKey(), toggle.getValue());
-            }
-        }
-        return data;
-    }
-
-    private void readSealData(CompoundTag data) {
-        seal.readCustomNBT(data);
-        if (seal instanceof ISealConfigToggles toggles) {
-            for (ISealConfigToggles.SealToggle toggle : toggles.getToggles()) {
-                data.getBoolean(toggle.getKey()).ifPresent(toggle::setValue);
-            }
-        }
-    }
-
-    public Identifier getTypeId() {
-        return typeId;
-    }
-
-    private SealPos sealPos() {
-        return sealPos;
-    }
-
-    @Override
-    public void tickSealEntity(Level level) {
-        if (isStoppedByRedstone(level)) {
-            if (!stopped) {
-                for (Task task : TaskHandler.getTasks(level).values()) {
-                    if (sealPos.equals(task.getSealPos())) {
-                        task.setSuspended(true);
-                    }
-                }
-            }
-            stopped = true;
-            return;
-        }
-        stopped = false;
-        seal.tickSeal(level, this);
-    }
-
-    @Override
-    public boolean isStoppedByRedstone(Level level) {
-        return isRedstoneSensitive() && (level.hasNeighborSignal(sealPos.pos()) || level.hasNeighborSignal(sealPos.pos().relative(sealPos.face())));
-    }
-
-    @Override
-    public ISeal getSeal() {
+    public static SealEntity place(SealPos pos, Identifier typeId, SealType type, UUID owner) {
+        SealEntity seal = new SealEntity(pos, typeId, type, Contents.fresh(type), type.hasArea() ? openingArea(pos.face()) : UNIT_AREA);
+        seal.owner = owner;
         return seal;
     }
 
-    @Override
-    public SealPos getSealPos() {
-        return sealPos;
+    private static BlockPos openingArea(Direction face) {
+        return new BlockPos(face.getStepX() == 0 ? OPENING_WIDTH : 1, face.getStepY() == 0 ? OPENING_WIDTH : 1, face.getStepZ() == 0 ? OPENING_WIDTH : 1);
+    }
+
+    private static DataResult<MapCodec<SealEntity>> formatFor(Identifier typeId) {
+        return TCSeals.registry().getOptional(typeId).map(type -> DataResult.success(format(typeId, type))).orElseGet(() -> DataResult.error(() -> "Unknown seal type " + typeId));
+    }
+
+    private static MapCodec<SealEntity> format(Identifier typeId, SealType type) {
+        Codec<Contents> contents = Contents.codec(type).codec();
+        return RecordCodecBuilder
+                .mapCodec(instance -> instance
+                        .group(SealPos.CODEC.fieldOf("pos").forGetter(SealEntity::pos), Codec.BYTE.optionalFieldOf("priority", (byte) 0).forGetter(SealEntity::priority),
+                                Codec.BYTE.optionalFieldOf("color", (byte) 0).forGetter(SealEntity::color), Codec.BOOL.optionalFieldOf("locked", false).forGetter(SealEntity::isLocked),
+                                Codec.BOOL.optionalFieldOf("redstone", false).forGetter(SealEntity::isRedstoneControlled),
+                                UUIDUtil.CODEC.optionalFieldOf("owner").forGetter(seal -> Optional.ofNullable(seal.owner)),
+                                BlockPos.CODEC.optionalFieldOf("area", UNIT_AREA).forGetter(SealEntity::area), contents.lenientOptionalFieldOf("data").forGetter(seal -> Optional.of(seal.contents)))
+                        .apply(instance, (pos, priority, color, locked, redstone, owner, area, data) -> {
+                            SealEntity seal = new SealEntity(pos, typeId, type, data.orElseGet(() -> Contents.fresh(type)), area);
+                            seal.priority = priority;
+                            seal.color = color;
+                            seal.locked = locked;
+                            seal.redstoneControlled = redstone;
+                            seal.owner = owner.orElse(null);
+                            return seal;
+                        }));
+    }
+
+    public void tick(ServerLevel level) {
+        if (isStoppedByRedstone(level)) {
+            if (!halted) {
+                TaskBoard.of(level).suspendAllFrom(pos);
+            }
+            halted = true;
+            return;
+        }
+        halted = false;
+        contents.behavior().tick(level, this);
     }
 
     @Override
-    public byte getPriority() {
+    public SealPos pos() {
+        return pos;
+    }
+
+    public Identifier typeId() {
+        return typeId;
+    }
+
+    @Override
+    public SealType type() {
+        return type;
+    }
+
+    @Override
+    public ISealBehavior behavior() {
+        return contents.behavior();
+    }
+
+    @Override
+    public Optional<ISealFilter> filter() {
+        return contents.filter().map(ISealFilter.class::cast);
+    }
+
+    @Override
+    public boolean setting(SealSetting setting) {
+        return contents.settings().get(setting);
+    }
+
+    @Override
+    public void setSetting(SealSetting setting, boolean value) {
+        contents.settings().set(setting, value);
+    }
+
+    @Override
+    public byte priority() {
         return priority;
     }
 
@@ -142,7 +142,7 @@ public final class SealEntity implements ISealEntity {
     }
 
     @Override
-    public byte getColor() {
+    public byte color() {
         return color;
     }
 
@@ -152,13 +152,13 @@ public final class SealEntity implements ISealEntity {
     }
 
     @Override
-    public @Nullable UUID getOwner() {
-        return owner;
+    public BlockPos area() {
+        return area;
     }
 
     @Override
-    public void setOwner(@Nullable UUID owner) {
-        this.owner = owner;
+    public void setArea(BlockPos area) {
+        this.area = area;
     }
 
     @Override
@@ -172,29 +172,49 @@ public final class SealEntity implements ISealEntity {
     }
 
     @Override
-    public boolean isRedstoneSensitive() {
-        return redstone;
+    public boolean isRedstoneControlled() {
+        return redstoneControlled;
     }
 
     @Override
-    public void setRedstoneSensitive(boolean redstoneSensitive) {
-        this.redstone = redstoneSensitive;
+    public void setRedstoneControlled(boolean controlled) {
+        this.redstoneControlled = controlled;
     }
 
     @Override
-    public void syncToClient(Level level) {
-        if (level instanceof ServerLevel serverLevel) {
-            PacketDistributor.sendToPlayersInDimension(serverLevel, ClientboundSealPayload.update(this));
+    public @Nullable UUID owner() {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(@Nullable UUID owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public boolean isStoppedByRedstone(Level level) {
+        return redstoneControlled && (level.hasNeighborSignal(pos.pos()) || level.hasNeighborSignal(pos.pos().relative(pos.face())));
+    }
+
+    @Override
+    public void markChanged(Level level) {
+        if (level instanceof ServerLevel server) {
+            SealHandler.markDirty(server, pos.pos());
+            PacketDistributor.sendToPlayersInDimension(server, ClientboundSealPayload.update(this));
         }
     }
 
-    @Override
-    public BlockPos getArea() {
-        return area;
-    }
+    private record Contents(Optional<SealFilterState> filter, SealSettingValues settings, ISealBehavior behavior) {
+        static Contents fresh(SealType type) {
+            return new Contents(type.filter().map(SealFilterState::new), new SealSettingValues(type), type.newBehavior());
+        }
 
-    @Override
-    public void setArea(BlockPos area) {
-        this.area = area;
+        static MapCodec<Contents> codec(SealType type) {
+            MapCodec<Optional<SealFilterState>> filter = type.filter().map(spec -> SealFilterState.codec(spec).xmap(Optional::of, Optional::orElseThrow))
+                    .orElseGet(() -> MapCodec.unit(Optional::empty));
+            return RecordCodecBuilder.mapCodec(
+                    instance -> instance.group(filter.forGetter(Contents::filter), SealSettingValues.codec(type).forGetter(Contents::settings), type.behaviorCodec().forGetter(Contents::behavior))
+                            .apply(instance, Contents::new));
+        }
     }
 }

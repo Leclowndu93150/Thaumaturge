@@ -148,7 +148,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
     }
 
     private static boolean shouldShow(Player player) {
-        if (GogglesAccess.wearsGoggles(player)) {
+        if (GogglesAccess.wearsRevealingGear(player)) {
             return true;
         }
         ItemStack main = player.getMainHandItem();

@@ -21,9 +21,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 
 final class CommandSupport {
-    static final DynamicCommandExceptionType UNKNOWN_ENTRY = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.research.unknown_entry", id));
-    static final DynamicCommandExceptionType UNKNOWN_CATEGORY = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.research.unknown_category", id));
-    static final DynamicCommandExceptionType UNKNOWN_ASPECT = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.aspects.unknown", id));
+    static final DynamicCommandExceptionType UNKNOWN_ENTRY = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.research.unknown_entry", String.valueOf(id)));
+    static final DynamicCommandExceptionType UNKNOWN_CATEGORY = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.research.unknown_category", String.valueOf(id)));
+    static final DynamicCommandExceptionType UNKNOWN_ASPECT = new DynamicCommandExceptionType(id -> Component.translatable("commands.thaumaturge.aspects.unknown", String.valueOf(id)));
 
     private CommandSupport() {}
 

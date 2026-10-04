@@ -10,49 +10,95 @@ import java.util.Set;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The composition of a golem: its material, four parts and experience rank. Trait queries
- * resolve the union of all part traits with opposing pairs cancelling each other.
+ * The build of a golem: its material, four parts and experience rank.
+ *
+ * <p>Builds are immutable values. The {@code with} methods return a new build and leave this one untouched, so a build can be
+ * shared between an entity and an item data component. Apply a changed build with {@link IGolemAPI#setProperties}.
  *
  * @since 1.0.0
  */
 public interface IGolemProperties {
     /**
-     * @return the effective trait set after opposite cancellation
+     * @return the effective traits: the union of every part's traits, where a trait and its opposite cancel each other out
      */
-    Set<GolemTrait> getTraits();
+    Set<GolemTrait> traits();
 
     /**
      * @param trait the trait to test
-     * @return whether the effective trait set contains it
+     * @return whether the effective traits contain it
      */
-    boolean hasTrait(GolemTrait trait);
+    default boolean hasTrait(GolemTrait trait) {
+        return traits().contains(trait);
+    }
 
     /**
-     * @return the crafting components consumed to assemble this golem, with equal stacks merged
+     * @return the crafting components consumed to assemble this build, with equal stacks merged; a fresh list each call
      */
-    List<ItemStack> generateComponents();
+    List<ItemStack> components();
 
-    void setMaterial(GolemMaterial material);
+    /**
+     * @return the material
+     */
+    GolemMaterial material();
 
-    GolemMaterial getMaterial();
+    /**
+     * @return the head
+     */
+    GolemHead head();
 
-    void setHead(GolemHead head);
+    /**
+     * @return the arms
+     */
+    GolemArm arms();
 
-    GolemHead getHead();
+    /**
+     * @return the legs
+     */
+    GolemLeg legs();
 
-    void setArms(GolemArm arms);
+    /**
+     * @return the addon
+     */
+    GolemAddon addon();
 
-    GolemArm getArms();
+    /**
+     * @return the experience rank, from 0 to 10
+     */
+    int rank();
 
-    void setLegs(GolemLeg legs);
+    /**
+     * @param material the new material
+     * @return a copy of this build with the material replaced
+     */
+    IGolemProperties withMaterial(GolemMaterial material);
 
-    GolemLeg getLegs();
+    /**
+     * @param head the new head
+     * @return a copy of this build with the head replaced
+     */
+    IGolemProperties withHead(GolemHead head);
 
-    void setAddon(GolemAddon addon);
+    /**
+     * @param arms the new arms
+     * @return a copy of this build with the arms replaced
+     */
+    IGolemProperties withArms(GolemArm arms);
 
-    GolemAddon getAddon();
+    /**
+     * @param legs the new legs
+     * @return a copy of this build with the legs replaced
+     */
+    IGolemProperties withLegs(GolemLeg legs);
 
-    void setRank(int rank);
+    /**
+     * @param addon the new addon
+     * @return a copy of this build with the addon replaced
+     */
+    IGolemProperties withAddon(GolemAddon addon);
 
-    int getRank();
+    /**
+     * @param rank the new rank, from 0 to 10
+     * @return a copy of this build with the rank replaced
+     */
+    IGolemProperties withRank(int rank);
 }

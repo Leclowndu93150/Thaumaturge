@@ -83,6 +83,7 @@ import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 public final class TCRecipeProvider extends RecipeProvider {
+    private static final int ARCANE_GRINDSTONE_VIS = 50;
 
     private TCRecipeProvider(HolderLookup.Provider provider, RecipeOutput output) {
         super(provider, output);
@@ -113,6 +114,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         buildElementalToolRecipes();
         buildEssentiaReservoirRecipe();
         buildTravellerBootsRecipe();
+        buildThaumostaticHarnessRecipe();
         buildRechargePedestalRecipe();
         buildFocalManipulatorRecipe();
         buildCrucibleRecipes();
@@ -180,6 +182,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(Tags.Items.GLASS_BLOCKS)).save(output);
 
         oreSmelting(TCItems.QUICKSILVER, TCItemTags.ORES_CINNABAR, 1F, "quicksilver");
+        rawSmelting(TCItems.QUICKSILVER, TCItemTags.RAW_MATERIALS_CINNABAR, 0.7F, "quicksilver", "raw_cinnabar");
         oreSmelting(TCItems.AMBER, TCItemTags.ORES_AMBER, 1F, "amber");
         oreSmelting(Items.QUARTZ, Tags.Items.ORES_QUARTZ, 0.2F, "quartz");
 
@@ -267,6 +270,14 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(this.output, recipeId(getItemName(item) + "_blasting_from_ore"));
     }
 
+    private void rawSmelting(ItemLike item, TagKey<Item> rawTag, float xp, String group, String rawName) {
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(items.getOrThrow(rawTag)), RecipeCategory.MISC, CookingBookCategory.MISC, item, xp, 200).group(group).unlockedBy("has", this.has(rawTag))
+                .save(this.output, recipeId(getItemName(item) + "_from_" + rawName));
+
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(items.getOrThrow(rawTag)), RecipeCategory.MISC, CookingBookCategory.MISC, item, xp, 100).group(group).unlockedBy("has", this.has(rawTag))
+                .save(this.output, recipeId(getItemName(item) + "_blasting_from_" + rawName));
+    }
+
     private void clusterSmelting(ItemLike item, ItemLike cluster, String group) {
 
         SimpleCookingRecipeBuilder.smelting(Ingredient.of(cluster), RecipeCategory.MISC, CookingBookCategory.MISC, new ItemStackTemplate(item.asItem(), 2), 1F, 200).group(group)
@@ -310,6 +321,31 @@ public final class TCRecipeProvider extends RecipeProvider {
         stairsRecipe(TCBlocks.STAIRS_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
         slabRecipe(TCBlocks.SLAB_GREATWOOD.get(), TCItemTags.PLANKS_GREATWOOD);
         slabRecipe(TCBlocks.SLAB_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
+        arcaneShaped(new ItemStackTemplate(TCItems.ARCANE_GRINDSTONE), ARCANE_GRINDSTONE_VIS).aspect(TCAspects.ORDO, 2).aspect(TCAspects.PERDITIO, 2).pattern(" T ").pattern("TGT").pattern(" T ")
+                .define('T', TCItemTags.INGOTS_THAUMIUM).define('G', Items.GRINDSTONE).gate(gate("infusion_enchantment")).unlockedBy("has", has(TCItemTags.INGOTS_THAUMIUM)).save(output);
+        doorBuilder(TCBlocks.DOOR_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_door").unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD)).save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_trapdoor").unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_fence").unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD)).save(output);
+        buttonBuilder(TCBlocks.BUTTON_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_button").unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        pressurePlateBuilder(RecipeCategory.REDSTONE, TCBlocks.PRESSURE_PLATE_GREATWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD))).group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD)).save(output);
+        doorBuilder(TCBlocks.DOOR_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_door").unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_trapdoor").unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_fence").unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD)).save(output);
+        buttonBuilder(TCBlocks.BUTTON_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_button").unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        pressurePlateBuilder(RecipeCategory.REDSTONE, TCBlocks.PRESSURE_PLATE_SILVERWOOD.get(), Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_SILVERWOOD))).group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD)).save(output);
         slabRecipe(TCBlocks.SLAB_ARCANE_STONE.get(), TCBlocks.STONE_ARCANE.get());
         slabRecipe(TCBlocks.SLAB_ARCANE_BRICK.get(), TCBlocks.STONE_ARCANE_BRICK.get());
         slabRecipe(TCBlocks.SLAB_ANCIENT.get(), TCBlocks.STONE_ANCIENT.get());
@@ -336,11 +372,13 @@ public final class TCRecipeProvider extends RecipeProvider {
         shaped(RecipeCategory.BUILDING_BLOCKS, TCItems.AMBER_BLOCK, 4).pattern("##").pattern("##").define('#', TCItems.AMBER_BRICK).unlockedBy("has", has(TCItems.AMBER_BRICK)).save(output,
                 TCIds.MODID + ":amber_block_from_brick");
 
-        arcaneShaped(new ItemStackTemplate(TCItems.PAVING_STONE_BARRIER.get(), 4), 50).aspect(TCAspects.IGNIS, 1).aspect(TCAspects.ORDO, 1).pattern("SS").pattern("SS")
-                .define('S', TCItems.STONE_ARCANE_BRICK).gate(artificeGate).unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK)).save(output);
+        arcaneShaped(new ItemStackTemplate(TCItems.PAVING_STONE_BARRIER.get(), 4), 50).aspect(TCAspects.IGNIS, 1).aspect(TCAspects.ORDO, 1).pattern("SAS").pattern("SBS")
+                .define('S', TCItems.STONE_ARCANE_BRICK).define('A', TCItems.CRYSTAL_IGNIS).define('B', TCItems.CRYSTAL_ORDO).gate(artificeGate).unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
+                .save(output);
 
-        arcaneShaped(new ItemStackTemplate(TCItems.PAVING_STONE_TRAVEL.get(), 4), 50).aspect(TCAspects.AER, 1).aspect(TCAspects.TERRA, 1).pattern("SS").pattern("SS")
-                .define('S', TCItems.STONE_ARCANE_BRICK).gate(artificeGate).unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK)).save(output);
+        arcaneShaped(new ItemStackTemplate(TCItems.PAVING_STONE_TRAVEL.get(), 4), 50).aspect(TCAspects.AER, 1).aspect(TCAspects.TERRA, 1).pattern("SAS").pattern("SBS")
+                .define('S', TCItems.STONE_ARCANE_BRICK).define('A', TCItems.CRYSTAL_AER).define('B', TCItems.CRYSTAL_TERRA).gate(artificeGate).unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
+                .save(output);
     }
 
     private void stairsRecipe(Block result, Block base) {
@@ -462,6 +500,17 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.CRYSTAL_AER.get())).component(Ingredient.of(TCItems.FABRIC.get()))
                 .component(Ingredient.of(TCItems.FABRIC.get())).component(Ingredient.of(items.getOrThrow(Tags.Items.FEATHERS))).component(Ingredient.of(items.getOrThrow(ItemTags.FISHES)))
                 .aspect(TCAspects.VOLATUS, 100).aspect(TCAspects.MOTUS, 100).instability(1).gate(gate("boots_traveller")).unlockedBy("has", has(Items.LEATHER_BOOTS)).save(output);
+    }
+
+    private void buildThaumostaticHarnessRecipe() {
+        Ingredient airCrystal = Ingredient.of(TCItems.CRYSTAL_AER.get());
+        Ingredient greatwoodPlanks = Ingredient.of(items.getOrThrow(TCItemTags.PLANKS_GREATWOOD));
+        Ingredient gold = Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_GOLD));
+        Ingredient iron = Ingredient.of(items.getOrThrow(Tags.Items.INGOTS_IRON));
+        new InfusionRecipeBuilder(registries.lookupOrThrow(IAspect.REGISTRY_KEY), RecipeCategory.COMBAT, new ItemStackTemplate(TCItems.THAUMOSTATIC_HARNESS.get()),
+                Ingredient.of(Items.LEATHER_CHESTPLATE)).component(airCrystal).component(airCrystal).component(greatwoodPlanks).component(greatwoodPlanks).component(Ingredient.of(Items.COMPARATOR))
+                .component(gold).component(gold).component(iron).component(iron).aspect(TCAspects.VOLATUS, 32).aspect(TCAspects.POTENTIA, 32).aspect(TCAspects.MACHINA, 32).aspect(TCAspects.MOTUS, 16)
+                .instability(6).gate(gate("thaumostatic_harness")).unlockedBy("has", has(TCItems.TRAVELLER_BOOTS)).save(output);
     }
 
     private static ItemStackTemplate enchantedTool(Item item, Map<InfusionEnchantment, Integer> enchantments) {
@@ -716,9 +765,6 @@ public final class TCRecipeProvider extends RecipeProvider {
         new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.ICE), Ingredient.of(Items.SNOW_BLOCK)).aspect(TCAspects.ORDO, 1).aspect(TCAspects.GELUM, 1)
                 .gate(gate("hedge_alchemy", 2)).unlockedBy("has", has(Items.SNOW_BLOCK)).save(output, TCIds.MODID + ":crucible/ice");
 
-        new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.CRACKED_STONE_BRICKS), Ingredient.of(Items.STONE_BRICKS)).aspect(TCAspects.PERDITIO, 2)
-                .gate(gate("hedge_alchemy", 2)).unlockedBy("has", has(Items.STONE_BRICKS)).save(output, TCIds.MODID + ":crucible/cracked_stone_bricks");
-
         new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.BONE_MEAL, 4), Ingredient.of(Items.BONE)).aspect(TCAspects.PERDITIO, 1).gate(gate("hedge_alchemy", 2))
                 .unlockedBy("has", has(Items.BONE)).save(output, TCIds.MODID + ":crucible/bone_meal");
 
@@ -751,7 +797,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         clusterRecipe(TCItems.CLUSTER_TIN, TCItemTags.ORES_TIN);
         clusterRecipe(TCItems.CLUSTER_SILVER, TCItemTags.ORES_SILVER);
         clusterRecipe(TCItems.CLUSTER_LEAD, TCItemTags.ORES_LEAD);
-        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
+        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.RAW_MATERIALS_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
         new CrucibleRecipeBuilder(aspects, RecipeCategory.MISC, new ItemStackTemplate(Items.IRON_NUGGET, 3), Ingredient.of(items.getOrThrow(Tags.Items.NUGGETS_IRON))).aspect(TCAspects.METALLUM, 2)
@@ -792,9 +838,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('F', Tags.Items.PLAYER_WORKSTATIONS_FURNACES).define('P', TCItemTags.PLATES_BRASS).define('R', TCItems.CRUCIBLE).gate(gate("essentia_smelter", 1))
                 .unlockedBy("has", has(TCItems.CRUCIBLE)).save(output);
 
-        arcaneShaped(new ItemStackTemplate(TCItems.ALCHEMICAL_FURNACE), 10).aspect(TCAspects.IGNIS, 5).aspect(TCAspects.AQUA, 5).pattern("SCS").pattern("SFS").pattern("SSS")
-                .define('S', TCItems.STONE_ARCANE).define('C', TCItems.CRUCIBLE).define('F', Items.FURNACE).gate(gate("essentia_smelter")).unlockedBy("has", has(TCItems.CRUCIBLE)).save(output);
-
         arcaneShaped(new ItemStackTemplate(TCItems.ESSENTIA_CRYSTALIZER), 125).aspect(TCAspects.AQUA, 1).aspect(TCAspects.TERRA, 3).aspect(TCAspects.ORDO, 1).pattern("IDI").pattern("QCQ")
                 .pattern("WTW").define('I', Tags.Items.INGOTS_IRON).define('D', Items.DIAMOND_BLOCK).define('Q', TCItems.SALIS_MUNDUS).define('C', TCItems.ALCHEMICAL_CONSTRUCT)
                 .define('W', ItemTags.PLANKS).define('T', TCItems.TUBE).gate(gate("essentia_crystalizer")).unlockedBy("has", has(TCItems.SALIS_MUNDUS)).save(output);
@@ -816,9 +859,11 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStackTemplate(TCItems.TUBE, 8), 10).pattern(" Q ").pattern("PGP").pattern(" B ").define('Q', TCItemTags.NUGGETS_QUICKSILVER).define('P', TCItemTags.PLATES_IRON)
                 .define('G', Tags.Items.GLASS_BLOCKS).define('B', TCItemTags.NUGGETS_BRASS).gate(gate("tubes")).unlockedBy("has", has(Tags.Items.GEMS_QUARTZ)).save(output);
 
-        arcaneShapeless(new ItemStackTemplate(TCItems.TUBE_RESTRICT), 10).aspect(TCAspects.TERRA).requires(TCItems.TUBE).gate(gate("tubes")).unlockedBy("has", has(TCItems.TUBE)).save(output);
+        arcaneShapeless(new ItemStackTemplate(TCItems.TUBE_RESTRICT), 10).aspect(TCAspects.TERRA).requires(TCItems.TUBE).requires(Tags.Items.STONES).gate(gate("tubes"))
+                .unlockedBy("has", has(TCItems.TUBE)).save(output);
 
-        arcaneShapeless(new ItemStackTemplate(TCItems.TUBE_ONEWAY), 10).aspect(TCAspects.AQUA).requires(TCItems.TUBE).gate(gate("tubes")).unlockedBy("has", has(TCItems.TUBE)).save(output);
+        arcaneShapeless(new ItemStackTemplate(TCItems.TUBE_ONEWAY), 10).aspect(TCAspects.AQUA).requires(TCItems.TUBE).requires(Tags.Items.DYES_BLUE).gate(gate("tubes"))
+                .unlockedBy("has", has(TCItems.TUBE)).save(output);
 
         arcaneShapeless(new ItemStackTemplate(TCItems.TUBE_FILTER), 10).requires(TCItems.TUBE).requires(TCItems.FILTER).gate(gate("tubes")).unlockedBy("has", has(TCItems.TUBE)).save(output);
 

@@ -265,26 +265,26 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
     }
 
     @Override
-    public @Nullable HitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity caster) {
+    public @Nullable HitResult aim(ItemStack stack, Level level, LivingEntity caster) {
         IArchitect architect = architectElement(stack);
-        return architect == null ? null : architect.getArchitectMOP(stack, level, caster);
+        return architect == null ? null : architect.aim(stack, level, caster);
     }
 
     @Override
-    public boolean useBlockHighlight(ItemStack stack) {
+    public boolean replacesBlockHighlight(ItemStack stack) {
         return false;
     }
 
     @Override
-    public List<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
+    public List<BlockPos> previewBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
         IArchitect architect = architectElement(stack);
-        return architect == null ? List.of() : architect.getArchitectBlocks(stack, level, pos, side, player);
+        return architect == null ? List.of() : architect.previewBlocks(stack, level, pos, side, player);
     }
 
     @Override
-    public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, EnumAxis axis) {
+    public boolean showsAxis(ItemStack stack, Level level, Player player, Direction side, Direction.Axis axis) {
         IArchitect architect = architectElement(stack);
-        return architect != null && architect.showAxis(stack, level, player, side, axis);
+        return architect != null && architect.showsAxis(stack, level, player, side, axis);
     }
 
     @Override

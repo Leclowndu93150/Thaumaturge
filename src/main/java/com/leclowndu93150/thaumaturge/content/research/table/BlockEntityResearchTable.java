@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchTableAid;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectCombinations;
@@ -21,6 +20,7 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TCItemTags;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -485,7 +485,7 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         @Override
         public boolean isValid(int index, ItemResource resource) {
             return switch (index) {
-                case SLOT_SCRIBE_TOOLS -> resource.toStack(1).getItem() instanceof IScribeTools;
+                case SLOT_SCRIBE_TOOLS -> resource.is(TCItemTags.SCRIBING_TOOLS);
                 case SLOT_NOTE -> resource.toStack(1).has(TCDataComponents.RESEARCH_NOTE.get());
                 default -> false;
             };

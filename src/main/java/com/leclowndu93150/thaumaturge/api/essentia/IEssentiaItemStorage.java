@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
  * Essentia storage in one item stack that automation may fill and drain, such as a warded jar or a
  * phial.
  *
- * <p>This is separate from {@link IEssentiaContainerItem}, which also covers items that only carry
+ * <p>This is separate from {@link IItemEssentia}, which also covers items that only carry
  * aspects for scanning; having this capability is what permits transfers.
  *
  * <p>No method changes the stack the capability was obtained from. A transfer returns the stack

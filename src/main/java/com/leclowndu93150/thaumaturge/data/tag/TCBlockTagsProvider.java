@@ -27,6 +27,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.POTTED_CINDERPEARL.get()).add(TCBlocks.POTTED_VISHROOM.get());
 
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
+        tag(BlockTags.WITHER_IMMUNE).add(TCBlocks.STONE_ANCIENT_ROCK.get()).add(TCBlocks.STONE_ANCIENT_DOORWAY.get());
+        tag(BlockTags.DRAGON_IMMUNE).add(TCBlocks.STONE_ANCIENT_ROCK.get()).add(TCBlocks.STONE_ANCIENT_DOORWAY.get());
         tag(TCBlockTags.ARCANE_WORKBENCH_CHARGER_HOSTS).add(TCBlocks.ARCANE_WORKBENCH.get()).add(TCBlocks.FOCAL_MANIPULATOR.get());
         tag(TCBlockTags.PHYSICAL_FLUX).add(TCBlocks.FLUX_GOO.get()).add(TCBlocks.FLUX_GAS.get());
         tag(TCBlockTags.FLUX_SCRUBBABLE).addTag(TCBlockTags.PHYSICAL_FLUX);
@@ -51,6 +53,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.PRESSURE_PLATES).add(TCBlocks.ARCANE_PRESSURE_PLATE.get());
         tag(TCBlockTags.MAGICAL_PLANTS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get()).add(TCBlocks.PLANT_VISHROOM.get());
         tag(BlockTags.FLOWERS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get());
+        tag(TCBlockTags.CINDERPEARL_SOIL).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(BlockTags.TERRACOTTA);
+        tag(TCBlockTags.SHIMMERLEAF_SOIL).addTag(BlockTags.SUBSTRATE_OVERWORLD);
+        tag(TCBlockTags.VISHROOM_SOIL).add(Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.PODZOL, Blocks.COARSE_DIRT, Blocks.MYCELIUM, Blocks.MOSS_BLOCK, Blocks.STONE).add(TCBlocks.GRASS_AMBIENT.get());
+        tag(TCBlockTags.MAGICAL_FOREST_FLOWERS).add(Blocks.DANDELION, Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.AZURE_BLUET, Blocks.RED_TULIP, Blocks.ORANGE_TULIP, Blocks.WHITE_TULIP,
+                Blocks.PINK_TULIP, Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.LILY_OF_THE_VALLEY);
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.TUBE.get()).add(TCBlocks.TUBE_VALVE.get()).add(TCBlocks.TUBE_RESTRICT.get()).add(TCBlocks.TUBE_FILTER.get()).add(TCBlocks.TUBE_ONEWAY.get())
                 .add(TCBlocks.TUBE_BUFFER.get()).add(TCBlocks.ESSENTIA_INPUT.get()).add(TCBlocks.ESSENTIA_OUTPUT.get()).add(TCBlocks.FOCAL_MANIPULATOR.get()).add(TCBlocks.ITEM_GRATE.get())
                 .add(TCBlocks.TALLOW_BLOCK.get()).add(TCBlocks.GOLEM_FETTER.get());
@@ -88,6 +95,19 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.STAIRS_ANCIENT.get()).add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.ARCANE_GRINDSTONE.get());
+
+        tag(BlockTags.WOODEN_DOORS).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_TRAPDOORS).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_FENCES).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(BlockTags.FENCE_GATES).add(TCBlocks.FENCE_GATE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_BUTTONS).add(TCBlocks.BUTTON_GREATWOOD.get()).add(TCBlocks.BUTTON_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_PRESSURE_PLATES).add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get()).add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCES_WOODEN).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCE_GATES_WOODEN).add(TCBlocks.FENCE_GATE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_GREATWOOD.get())
+                .add(TCBlocks.BUTTON_GREATWOOD.get()).add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get())
+                .add(TCBlocks.FENCE_SILVERWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get()).add(TCBlocks.BUTTON_SILVERWOOD.get()).add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
 
         tag(TCBlockTags.ELDRITCH_OBELISK_PARTS).add(TCBlocks.ELDRITCH_ALTAR.get()).add(TCBlocks.ELDRITCH_OBELISK.get()).add(TCBlocks.ELDRITCH_PILLAR.get()).add(TCBlocks.ELDRITCH_CAPSTONE.get());
 
@@ -129,21 +149,24 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(TCBlockTags.SCAN_CLAY).add(Blocks.CLAY).addTag(BlockTags.TERRACOTTA);
 
-        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get());
-        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get());
-        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get());
+        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
+        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
+        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get()).add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE).add(TCBlocks.DEEPSLATE_ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.DEEPSLATE_ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
         tag(Tags.Blocks.ORES).addTags(TCBlockTags.ORES_AMBER, TCBlockTags.ORES_CINNABAR);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.ORE_QUARTZ.get()).add(TCBlocks.SMELTER_BASIC.get())
-                .add(TCBlocks.ALCHEMICAL_FURNACE.get()).add(TCBlocks.SMELTER_THAUMIUM.get()).add(TCBlocks.SMELTER_VOID.get()).add(TCBlocks.SMELTER_AUX.get()).add(TCBlocks.SMELTER_VENT.get())
-                .add(TCBlocks.SPA.get()).add(TCBlocks.ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
+                .add(TCBlocks.SMELTER_THAUMIUM.get()).add(TCBlocks.SMELTER_VOID.get()).add(TCBlocks.SMELTER_AUX.get()).add(TCBlocks.SMELTER_VENT.get()).add(TCBlocks.SPA.get())
+                .add(TCBlocks.ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
                 .add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get()).add(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get()).add(TCBlocks.ESSENTIA_CRYSTALIZER.get())
                 .add(TCBlocks.ESSENTIA_RESERVOIR.get()).add(TCBlocks.FLUX_SCRUBBER.get());
 
-        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get());
+        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
 
-        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
 
         tag(TCBlockTags.PORTABLE_HOLE_BLACKLIST);
 
@@ -154,10 +177,11 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(Tags.Blocks.STORAGE_BLOCKS).addTags(TCBlockTags.STORAGE_BLOCKS_AMBER, TCBlockTags.STORAGE_BLOCKS_BRASS, TCBlockTags.STORAGE_BLOCKS_THAUMIUM, TCBlockTags.STORAGE_BLOCKS_VOID_METAL);
 
         tag(TCBlockTags.GREATWOOD_LOGS).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.WOOD_GREATWOOD.get(), TCBlocks.STRIPPED_LOG_GREATWOOD.get(), TCBlocks.STRIPPED_WOOD_GREATWOOD.get());
-        tag(TCBlockTags.SILVERWOOD_LOGS).add(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get(), TCBlocks.STRIPPED_LOG_SILVERWOOD.get(), TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
+        tag(TCBlockTags.SILVERWOOD_LOGS).add(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.SILVERWOOD_NODE_LOG.get(), TCBlocks.WOOD_SILVERWOOD.get(), TCBlocks.STRIPPED_LOG_SILVERWOOD.get(),
+                TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
         tag(Tags.Blocks.OVERWORLD_NATURAL_LOGS).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get());
-        tag(BlockTags.OVERWORLD_NATURAL_LOGS).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get());
-        tag(BlockTags.SNAPS_GOAT_HORN).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get());
+        tag(BlockTags.OVERWORLD_NATURAL_LOGS).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.SILVERWOOD_NODE_LOG.get());
+        tag(BlockTags.SNAPS_GOAT_HORN).add(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.SILVERWOOD_NODE_LOG.get());
         tag(Tags.Blocks.NATURAL_WOODS).add(TCBlocks.WOOD_GREATWOOD.get()).add(TCBlocks.WOOD_SILVERWOOD.get());
 
         tag(Tags.Blocks.STRIPPED_LOGS).add(TCBlocks.STRIPPED_LOG_GREATWOOD.get()).add(TCBlocks.STRIPPED_LOG_SILVERWOOD.get());

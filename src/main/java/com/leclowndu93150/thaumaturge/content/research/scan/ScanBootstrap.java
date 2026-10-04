@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.Scans;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
@@ -25,11 +27,11 @@ public final class ScanBootstrap {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            ScanningManager.addScannableThing(new ScanGeneric());
-            ScanningManager.addScannableThing(new ScanNode());
-            ScanningManager.addScannableThing(new ScanSky());
+            ScanningManager.register(new ScanGeneric());
+            ScanningManager.register(new ScanNode());
+            ScanningManager.register(new ScanSky());
             for (Holder.Reference<MobEffect> effect : BuiltInRegistries.MOB_EFFECT.listElements().toList()) {
-                ScanningManager.addScannableThing(new ScanPotion(effect));
+                ScanningManager.register(Scans.matching(ScanKeys.effect(effect.key().identifier()), CarriedTraits.effect(effect)));
             }
         });
     }
@@ -38,12 +40,12 @@ public final class ScanBootstrap {
     public static void onTagsUpdated(TagsUpdatedEvent event) {
         event.getLookupProvider().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().forEach(aspect -> {
             if (DYNAMIC_ASPECTS.add(aspect.key().identifier())) {
-                ScanningManager.addScannableThing(new ScanAspectDiscovery(aspect.key()));
+                ScanningManager.register(new ScanAspectDiscovery(aspect.key()));
             }
         });
         event.getLookupProvider().lookupOrThrow(Registries.ENCHANTMENT).listElements().forEach(enchantment -> {
             if (DYNAMIC_ENCHANTMENTS.add(enchantment.key().identifier())) {
-                ScanningManager.addScannableThing(new ScanEnchantment(enchantment.key().identifier()));
+                ScanningManager.register(Scans.matching(ScanKeys.enchantment(enchantment.key().identifier()), CarriedTraits.enchantment(enchantment.key())));
             }
         });
     }

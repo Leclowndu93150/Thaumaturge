@@ -342,6 +342,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.ore_amber", "Amber Bearing Stone");
         add("block.thaumaturge.ore_cinnabar", "Cinnabar Ore");
         add("block.thaumaturge.ore_quartz", "Quartz Ore");
+        add("block.thaumaturge.deepslate_ore_amber", "Amber Bearing Deepslate");
+        add("block.thaumaturge.deepslate_ore_cinnabar", "Deepslate Cinnabar Ore");
+        add("block.thaumaturge.deepslate_ore_quartz", "Deepslate Quartz Ore");
 
         add("block.thaumaturge.alchemical_construct", "Alchemical Construct");
         add("block.thaumaturge.advanced_alchemical_construct", "Advanced Alchemical Construct");
@@ -376,6 +379,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.cluster_silver", "Native Silver Cluster");
         add("item.thaumaturge.cluster_lead", "Native Lead Cluster");
         add("item.thaumaturge.cluster_tin", "Native Tin Cluster");
+        add("item.thaumaturge.raw_cinnabar", "Raw Cinnabar");
         add("item.thaumaturge.cluster_cinnabar", "Native Cinnabar Cluster");
         add("item.thaumaturge.cluster_quartz", "Native Quartz Cluster");
 
@@ -510,6 +514,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.sapling_silverwood", "Silverwood Sapling");
         add("block.thaumaturge.log_greatwood", "Greatwood Log");
         add("block.thaumaturge.log_silverwood", "Silverwood Log");
+        add("block.thaumaturge.silverwood_node_log", "Silverwood Log");
         add("block.thaumaturge.greatwood", "Greatwood");
         add("block.thaumaturge.silverwood", "Silverwood");
         add("block.thaumaturge.stripped_log_greatwood", "Stripped Greatwood Log");
@@ -605,6 +610,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("entity.thaumaturge.falling_taint", "Falling Taint");
         add("entity.thaumaturge.bottle_taint", "Bottle of Tainted Goo");
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
+        add("item.thaumaturge.tainted_goo", "Tainted Goo");
+        add("item.thaumaturge.taint_tendril", "Taint Tendril");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
         add("entity.thaumaturge.brainy_drowned", "Angry Drowned");
@@ -866,6 +873,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.elemental_spear", "Spear of the Firmament");
         add("item.thaumaturge.primal_crusher", "Primal Crusher");
         add("item.thaumaturge.traveller_boots", "Boots of the Traveller");
+        add("item.thaumaturge.thaumostatic_harness", "Thaumostatic Harness");
+        add("tooltip.thaumaturge.thaumostatic_harness.fuel", "%1$s x %2$s");
         add("item.thaumaturge.cloth_chest", "Apprentice's Robes");
         add("item.thaumaturge.cloth_legs", "Apprentice's Leggings");
         add("item.thaumaturge.cloth_boots", "Apprentice's Boots");
@@ -930,6 +939,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("key.category.thaumaturge.main", "Thaumaturge");
         add("key.thaumaturge.change_focus", "Change Wand Focus");
         add("key.thaumaturge.misc_toggle", "Misc Wand Toggle");
+        add("key.thaumaturge.toggle_hover", "Activate Hover Harness");
         add("item.thaumaturge.wand", "Wand");
         add("item.thaumaturge.wand.named", "%1$s %2$s Wand");
         add("item.thaumaturge.wand.sceptre", "%1$s %2$s Scepter");
@@ -1183,7 +1193,6 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.golem_fetter", "Golem Fetter");
         add("block.thaumaturge.warded_glass", "Warded Glass");
         add("block.thaumaturge.arcane_door", "Arcane Door");
-        add("block.thaumaturge.alchemical_furnace", "Alchemical Furnace");
         add("block.thaumaturge.advanced_alchemical_furnace", "Advanced Alchemical Furnace");
         add("block.thaumaturge.advanced_alchemical_furnace_alembic_placeholder", "Alembic");
         add("block.thaumaturge.advanced_alchemical_furnace_construct_placeholder", "Alchemical Construct");
@@ -1196,6 +1205,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.arcane_key_iron", "Iron Key");
         add("item.thaumaturge.arcane_key_gold", "Gold Key");
         add("message.thaumaturge.arcane_key_bound", "Key bound");
+        add("message.thaumaturge.hover_disrupted", "Something disrupts your ability to fly.");
         add("message.thaumaturge.arcane_key_no_access", "You cannot bind a key to this lock");
         add("message.thaumaturge.arcane_key_wrong_lock", "This key is bound to another lock");
         add("message.thaumaturge.arcane_key_already_bound", "This key is already bound to this lock");
@@ -1399,6 +1409,20 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.slab_eldritch", "Eldritch Stone Slab");
         add("block.thaumaturge.stairs_greatwood", "Greatwood Stairs");
         add("block.thaumaturge.stairs_silverwood", "Silverwood Stairs");
+        add("block.thaumaturge.arcane_grindstone", "Arcane Grindstone");
+        add("gui.thaumaturge.arcane_grindstone.title", "Strip Infusions");
+        add("block.thaumaturge.door_greatwood", "Greatwood Door");
+        add("block.thaumaturge.trapdoor_greatwood", "Greatwood Trapdoor");
+        add("block.thaumaturge.fence_greatwood", "Greatwood Fence");
+        add("block.thaumaturge.fence_gate_greatwood", "Greatwood Fence Gate");
+        add("block.thaumaturge.button_greatwood", "Greatwood Button");
+        add("block.thaumaturge.pressure_plate_greatwood", "Greatwood Pressure Plate");
+        add("block.thaumaturge.door_silverwood", "Silverwood Door");
+        add("block.thaumaturge.trapdoor_silverwood", "Silverwood Trapdoor");
+        add("block.thaumaturge.fence_silverwood", "Silverwood Fence");
+        add("block.thaumaturge.fence_gate_silverwood", "Silverwood Fence Gate");
+        add("block.thaumaturge.button_silverwood", "Silverwood Button");
+        add("block.thaumaturge.pressure_plate_silverwood", "Silverwood Pressure Plate");
         add("block.thaumaturge.table_wood", "Wood Table");
         add("block.thaumaturge.table_stone", "Stone Table");
         add("block.thaumaturge.paving_stone_travel", "Paving Stone of Travel");

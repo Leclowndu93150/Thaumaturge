@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
@@ -125,8 +126,8 @@ public final class InventoryScanHandler {
             ticks = 0;
             return;
         }
-        Object scanned = resolveTarget(player);
-        if (scanned == null || !ScanningManager.isThingStillScannable(player, scanned) || studyHint(player, targetAspects(player)) != null) {
+        ScanTarget scanned = resolveTarget(player);
+        if (scanned == null || !ScanningManager.isStillScannable(player, scanned) || studyHint(player, targetAspects(player)) != null) {
             ticks = 0;
             return;
         }
@@ -180,11 +181,11 @@ public final class InventoryScanHandler {
         return slot == null ? AspectList.EMPTY : AspectIndexAccess.index().of(slot.getItem());
     }
 
-    private static @Nullable Object resolveTarget(LocalPlayer player) {
+    private static @Nullable ScanTarget resolveTarget(LocalPlayer player) {
         if (target == ServerboundScanSlotPayload.SELF) {
-            return player;
+            return ScanTarget.entity(player);
         }
         Slot slot = hoveredSlot(player);
-        return slot == null ? null : slot.getItem();
+        return slot == null ? null : ScanTarget.stack(slot.getItem());
     }
 }

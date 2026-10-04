@@ -3,18 +3,14 @@ package com.leclowndu93150.thaumaturge.client.entity;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.EldritchCrabModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchCrab;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.resources.Identifier;
 
-public final class EldritchCrabRenderer extends MobRenderer<EntityEldritchCrab, EldritchCrabRenderState, EldritchCrabModel> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/crab.png");
-    private static final float SHADOW = 0.5F;
-    private static final float SCALE = 0.8F;
+public final class EldritchCrabRenderer extends ScaledMobRenderer<EntityEldritchCrab, EldritchCrabRenderState, EldritchCrabModel> {
+    private static final float CRAB_SIZE = 0.8F;
+    private static final float CRAB_SHADOW = 0.5F;
 
     public EldritchCrabRenderer(EntityRendererProvider.Context context) {
-        super(context, new EldritchCrabModel(context.bakeLayer(TCModelLayers.ELDRITCH_CRAB)), SHADOW);
+        super(context, new EldritchCrabModel(context.bakeLayer(TCModelLayers.ELDRITCH_CRAB)), TCIds.rl("textures/entity/crab.png"), CRAB_SIZE, CRAB_SHADOW);
     }
 
     @Override
@@ -23,18 +19,8 @@ public final class EldritchCrabRenderer extends MobRenderer<EntityEldritchCrab, 
     }
 
     @Override
-    public void extractRenderState(EntityEldritchCrab entity, EldritchCrabRenderState state, float partialTicks) {
-        super.extractRenderState(entity, state, partialTicks);
-        state.helm = entity.hasHelm();
-    }
-
-    @Override
-    protected void scale(EldritchCrabRenderState state, PoseStack poseStack) {
-        poseStack.scale(SCALE, SCALE, SCALE);
-    }
-
-    @Override
-    public Identifier getTextureLocation(EldritchCrabRenderState state) {
-        return TEXTURE;
+    public void extractRenderState(EntityEldritchCrab crab, EldritchCrabRenderState state, float partialTicks) {
+        super.extractRenderState(crab, state, partialTicks);
+        state.helm = crab.hasHelm();
     }
 }

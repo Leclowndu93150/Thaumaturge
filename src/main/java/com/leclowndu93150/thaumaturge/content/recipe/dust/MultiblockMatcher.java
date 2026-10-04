@@ -1,12 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
-import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 public final class MultiblockMatcher {
@@ -17,12 +18,16 @@ public final class MultiblockMatcher {
     public static @Nullable DustTriggerPlacement find(Level level, BlockPos clicked, Blueprint blueprint) {
         int ys = blueprint.ySize();
         int horizontal = Math.max(blueprint.xSize(), blueprint.zSize());
+        Map<Direction, List<BlueprintCell>> orientations = new EnumMap<>(Direction.class);
+        for (Direction face : HORIZONTALS) {
+            orientations.put(face, new RotatedBlueprint(blueprint, rotationsFor(face)).cells());
+        }
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int yy = -ys; yy <= 0; yy++) {
             for (int xx = -horizontal; xx <= 0; xx++) {
                 for (int zz = -horizontal; zz <= 0; zz++) {
                     cursor.set(clicked.getX() + xx, clicked.getY() + yy, clicked.getZ() + zz);
-                    Direction facing = fitMultiblock(level, cursor, blueprint);
+                    Direction facing = fitMultiblock(level, cursor, orientations);
                     if (facing != null) {
                         return new DustTriggerPlacement(xx, yy, zz, facing);
                     }
@@ -32,29 +37,12 @@ public final class MultiblockMatcher {
         return null;
     }
 
-    private static @Nullable Direction fitMultiblock(Level level, BlockPos origin, Blueprint blueprint) {
-        int ys = blueprint.ySize();
+    private static @Nullable Direction fitMultiblock(Level level, BlockPos origin, Map<Direction, List<BlueprintCell>> orientations) {
         BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
-        outer : for (Direction face : HORIZONTALS) {
-            int rotations = 3 - horizontalIndex(face);
-            for (int y = 0; y < ys; y++) {
-                BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-                matrix.rotate90DegRight(rotations);
-                for (int x = 0; x < matrix.rows(); x++) {
-                    for (int z = 0; z < matrix.cols(); z++) {
-                        BlueprintPart part = matrix.get(x, z);
-                        if (part == null) {
-                            continue;
-                        }
-                        probe.set(origin.getX() + x, origin.getY() + (-y + (ys - 1)), origin.getZ() + z);
-                        BlockState state = level.getBlockState(probe);
-                        if (!part.source().matches(state)) {
-                            continue outer;
-                        }
-                    }
-                }
+        for (Direction face : HORIZONTALS) {
+            if (orientations.get(face).stream().allMatch(cell -> cell.part().source().matches(level.getBlockState(probe.setWithOffset(origin, cell.offset()))))) {
+                return face;
             }
-            return face;
         }
         return null;
     }

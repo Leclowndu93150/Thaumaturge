@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
-import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
+import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
 import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
@@ -51,7 +51,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityInfusionMatrix extends BlockEntity implements IGogglesDisplayExtended, IInteractWithCaster, ReadOnlyAspectContainer {
+public final class BlockEntityInfusionMatrix extends BlockEntity implements IGogglesReadout, IInteractWithCaster, ReadOnlyAspectContainer {
     public static final float STABILITY_CAP = 25.0F;
     private static final float STABILITY_FLOOR = -100.0F;
     private static final int IDLE_VALIDATE_INTERVAL = 100;
@@ -316,23 +316,23 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     }
 
     @Override
-    public Vec3 getIGogglesTextOffset() {
+    public Vec3 readoutAnchor() {
         return new Vec3(0.0, GOGGLES_TEXT_Y_OFFSET, 0.0);
     }
 
     @Override
-    public Component[] getIGogglesText() {
+    public List<Component> readout() {
         Component tier = Component.translatable(STABILITY_LANG_PREFIX + stabilityTierKey()).withStyle(ChatFormatting.BOLD);
         Component gain = Component.literal(STABILITY_FORMAT.format(stabilityReplenish) + " ").append(Component.translatable(STABILITY_LANG_PREFIX + "gain")).withStyle(ChatFormatting.GOLD,
                 ChatFormatting.ITALIC);
         float lpc = lossPerCycle();
         if (lpc == 0.0F) {
-            return new Component[]{tier, gain};
+            return List.of(tier, gain);
         }
         Component loss = Component.translatable(STABILITY_LANG_PREFIX + "range")
                 .append(Component.literal(STABILITY_FORMAT.format(lpc) + " ").append(Component.translatable(STABILITY_LANG_PREFIX + "loss")).withStyle(ChatFormatting.ITALIC))
                 .withStyle(ChatFormatting.RED);
-        return new Component[]{tier, gain, loss};
+        return List.of(tier, gain, loss);
     }
 
     private boolean catalystStillPresent(ServerLevel level) {

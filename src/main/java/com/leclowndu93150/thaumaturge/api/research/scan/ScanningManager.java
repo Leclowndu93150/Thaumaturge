@@ -1,19 +1,17 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,272 +22,263 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Registry and dispatcher for everything the thaumometer can scan. Addons register
- * {@link IScanThing} subjects at mod init; the thaumometer routes every scan attempt through
- * {@link #scanTheThing scanTheThing}.
+ * Registry and dispatcher for everything the thaumometer can scan.
  *
- * <p>Knowledge and aspect lookups go through a binding installed by the implementation at mod
- * init; addons must not call {@link #bind bind}.
+ * <p>A scan asks every registered {@link IScannable} and every {@link ScanEntry} whether it matches the target, advances the research
+ * of each match, then tells the player what happened. Scanning a block that holds items also scans up to 100 of the stacks inside.
+ *
+ * <p>Registration is not thread-safe; register during mod construction only. Knowledge and aspect lookups go through a binding the mod
+ * installs at construction; addons must not call {@link #bind}.
  *
  * @since 1.0.0
  */
 public final class ScanningManager {
-    private static final List<IScanThing> THINGS = new ArrayList<>();
-    private static final int MAX_CONTAINER_SCANS = 100;
-    private static Bindings impl;
+    private static final List<IScannable> SUBJECTS = new ArrayList<>();
+    private static final int CONTAINER_SCAN_LIMIT = 100;
+    private static @Nullable Bindings bindings;
 
     private ScanningManager() {}
 
     /**
-     * Internal operations the manager delegates to the implementation.
+     * Adds a code-driven scan subject.
      *
-     * @since 1.0.0
+     * @param subject the subject
      */
-    public interface Bindings {
-        /**
-         * Grants the given research key, advancing the entry when one exists for the key or
-         * recording the bare key otherwise.
-         *
-         * @param player the player; must be a server player to take effect
-         * @param research the research key
-         * @return {@code true} when the player's record changed
-         */
-        boolean progressResearch(Player player, Identifier research);
-
-        /**
-         * Awards raw knowledge of the given type toward a category.
-         *
-         * @param player the player; must be a server player to take effect
-         * @param type the knowledge type
-         * @param category the research category identifier
-         * @param amount the amount of raw knowledge to add
-         * @return {@code true} when knowledge was added
-         */
-        boolean addKnowledge(Player player, KnowledgeType type, Identifier category, int amount);
-
-        /**
-         * The effective aspect composition of an item stack.
-         *
-         * @param stack the stack
-         * @return the aspects, or {@link AspectList#EMPTY} when none
-         */
-        AspectList itemAspects(ItemStack stack);
-
-        /**
-         * The registered aspect composition of an entity.
-         *
-         * @param entity the entity
-         * @return the aspects, or {@link AspectList#EMPTY} when none
-         */
-        AspectList entityAspects(Entity entity);
+    public static void register(IScannable subject) {
+        SUBJECTS.add(subject);
     }
 
     /**
-     * Registers a scannable subject. Call during mod init or later; registration is not
-     * thread-safe and must happen on the main thread.
-     *
-     * @param thing the subject to add
-     */
-    public static void addScannableThing(IScanThing thing) {
-        THINGS.add(thing);
-    }
-
-    /**
-     * Scans the given target for the player, granting every matching subject's research key and
-     * running its success hook. Sends the player an action-bar result message. When the target is
-     * a block position exposing an item handler, every contained stack is scanned as well, up to
-     * an internal limit.
-     *
-     * <p>Server-side only; calling on the client does nothing useful because research grants
-     * require a server player.
+     * Scans a target for a player: advances research, runs side effects and shows the result in the action bar. Server side only.
      *
      * @param player the scanning player
-     * @param target the scan target; entity, stack, position, or {@code null}
+     * @param target what the thaumometer points at
      */
-    public static void scanTheThing(Player player, @Nullable Object target) {
+    public static void scan(Player player, ScanTarget target) {
         boolean found = false;
-        boolean suppress = false;
-        Component failure = null;
-        for (IScanThing thing : THINGS) {
-            if (!thing.checkThing(player, target)) {
+        boolean silent = false;
+        Component refusal = null;
+        for (IScannable subject : SUBJECTS) {
+            if (!subject.matches(player, target)) {
                 continue;
             }
-            Component fail = thing.scanFailure(player, target);
-            if (fail != null) {
-                if (failure == null) {
-                    failure = fail;
-                }
+            Component refused = subject.refusal(player, target);
+            if (refused != null) {
+                refusal = refusal == null ? refused : refusal;
                 continue;
             }
-            Identifier key = thing.getResearchKey(player, target);
-            if (key != null) {
-                boolean alreadyKnown = KnowledgeAccess.of(player).isResearchKnown(key);
-                if (!bindingOrThrow().progressResearch(player, key) && !(alreadyKnown && thing.canScanAfterResearchKnown(player, target))) {
-                    continue;
-                }
+            Identifier research = subject.research(player, target);
+            if (research != null && !advance(player, research) && !(KnowledgeAccess.of(player).isResearchKnown(research) && subject.rescannable(player, target))) {
+                continue;
             }
-            if (key == null) {
-                suppress = true;
-            }
+            silent |= research == null;
             found = true;
-            thing.onSuccess(player, target);
+            subject.onScanned(player, target);
         }
-        for (ScanEntry entry : scanEntries(player)) {
-            if (entry.matches(player, target) && bindingOrThrow().progressResearch(player, entry.key())) {
+        for (ScanEntry entry : entries(player)) {
+            if (entry.matches(player, target) && advance(player, entry.key())) {
                 found = true;
             }
         }
-        if (failure != null) {
-            player.sendOverlayMessage(failure.copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-        } else if (!suppress) {
-            if (found) {
-                player.sendOverlayMessage(Component.translatable("tc.knownobject").withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC));
-            } else {
-                player.sendOverlayMessage(Component.translatable("tc.unknownobject").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-            }
+        report(player, refusal, found, silent);
+        if (target instanceof ScannedBlock(var pos)) {
+            scanContents(player, player.level().getCapability(Capabilities.Item.BLOCK, pos, Direction.UP));
         }
-        if (target instanceof BlockPos pos) {
-            ResourceHandler<ItemResource> handler = player.level().getCapability(Capabilities.Item.BLOCK, pos, Direction.UP);
-            if (handler != null) {
-                int scanned = 0;
-                for (int index = 0; index < handler.size(); index++) {
-                    ItemResource resource = handler.getResource(index);
-                    if (!resource.isEmpty()) {
-                        scanTheThing(player, resource.toStack(handler.getAmountAsInt(index)));
-                        scanned++;
-                    }
-                    if (scanned >= MAX_CONTAINER_SCANS) {
-                        player.sendOverlayMessage(Component.translatable("tc.invtoolarge").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-                        break;
-                    }
-                }
+    }
+
+    private static boolean advance(Player player, Identifier research) {
+        return impl().progressResearch(player, research);
+    }
+
+    private static void report(Player player, @Nullable Component refusal, boolean found, boolean silent) {
+        if (refusal != null) {
+            player.sendOverlayMessage(refusal.copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        } else if (!silent) {
+            player.sendOverlayMessage(found
+                    ? Component.translatable("tc.knownobject").withStyle(ChatFormatting.GREEN, ChatFormatting.ITALIC)
+                    : Component.translatable("tc.unknownobject").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        }
+    }
+
+    private static void scanContents(Player player, @Nullable ResourceHandler<ItemResource> contents) {
+        if (contents == null) {
+            return;
+        }
+        int scanned = 0;
+        for (int index = 0; index < contents.size(); index++) {
+            ItemResource resource = contents.getResource(index);
+            if (!resource.isEmpty()) {
+                scan(player, ScanTarget.stack(resource.toStack(contents.getAmountAsInt(index))));
+                scanned++;
+            }
+            if (scanned >= CONTAINER_SCAN_LIMIT) {
+                player.sendOverlayMessage(Component.translatable("tc.invtoolarge").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+                return;
             }
         }
     }
 
     /**
-     * Returns whether any subject still has something to teach the player about the target.
-     * Safe to call on the client; reads the synced knowledge copy.
-     *
-     * @param player the player
-     * @param target the scan target
-     * @return {@code true} when scanning the target would grant something new
+     * @param player the scanning player
+     * @param target the candidate target
+     * @return whether scanning the target could still advance research the player lacks, or would trigger a keyless subject
      */
-    public static boolean isThingStillScannable(Player player, @Nullable Object target) {
-        for (IScanThing thing : THINGS) {
-            if (!thing.checkThing(player, target)) {
+    public static boolean isStillScannable(Player player, ScanTarget target) {
+        IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
+        for (IScannable subject : SUBJECTS) {
+            if (!subject.matches(player, target)) {
                 continue;
             }
-            Identifier key = thing.getResearchKey(player, target);
-            if (key != null && (!KnowledgeAccess.of(player).isResearchKnown(key) || thing.canScanAfterResearchKnown(player, target))) {
+            Identifier research = subject.research(player, target);
+            if (research == null || !knowledge.isResearchKnown(research) || subject.rescannable(player, target)) {
                 return true;
             }
         }
-        for (ScanEntry entry : scanEntries(player)) {
-            if (entry.matches(player, target) && !KnowledgeAccess.of(player).isResearchKnown(entry.key())) {
+        for (ScanEntry entry : entries(player)) {
+            if (entry.matches(player, target) && !knowledge.isResearchKnown(entry.key())) {
                 return true;
             }
         }
         return false;
     }
 
-    private static Iterable<ScanEntry> scanEntries(Player player) {
-        return player.level().registryAccess().lookup(ScanEntry.REGISTRY_KEY).<Iterable<ScanEntry>>map(registry -> registry.listElements().map(Holder.Reference::value).toList()).orElse(List.of());
+    private static List<ScanEntry> entries(Player player) {
+        return player.level().registryAccess().lookup(ScanEntry.REGISTRY_KEY).map(registry -> registry.listElements().map(Holder.Reference::value).toList()).orElse(List.of());
     }
 
     /**
-     * Normalizes a scan target into an item stack when possible. Item entities yield their stack,
-     * positions yield the block's clone item, and fluid blocks yield the fluid's bucket.
+     * Turns a target into the item stack item-based scans look at: the stack itself, a dropped item's stack, or the item form of a
+     * block (its pick-block stack, or a bucket for a fluid). Blocks with no meaningful item form, such as aura nodes, give nothing.
      *
-     * @param player the scanning player, used for level access
-     * @param target the scan target
-     * @return the stack, or {@link ItemStack#EMPTY} when the target has no item form
+     * @param player the scanning player
+     * @param target the target
+     * @return the item form, or an empty stack
      */
-    public static ItemStack getItemFromParms(Player player, @Nullable Object target) {
-        if (target instanceof ItemStack stack) {
-            return stack;
+    public static ItemStack stackOf(Player player, ScanTarget target) {
+        if (!(target instanceof ScannedBlock(var pos))) {
+            return target.carriedStack();
         }
-        if (target instanceof ItemEntity itemEntity) {
-            return itemEntity.getItem();
+        BlockState state = player.level().getBlockState(pos);
+        if (impl().hidesItemForm(state)) {
+            return ItemStack.EMPTY;
         }
-        if (target instanceof BlockPos pos) {
-            BlockState state = player.level().getBlockState(pos);
-            if (state.is(TCBlocks.NODE.get())) {
-                return ItemStack.EMPTY;
-            }
-            ItemStack stack = state.getCloneItemStack(player.level(), pos, false);
-            if (stack.isEmpty()) {
-                FluidState fluid = state.getFluidState();
-                if (!fluid.isEmpty()) {
-                    stack = new ItemStack(fluid.getType().getBucket());
-                }
-            }
-            return stack;
-        }
-        return ItemStack.EMPTY;
+        ItemStack stack = state.getCloneItemStack(player.level(), pos, false);
+        FluidState fluid = state.getFluidState();
+        return stack.isEmpty() && !fluid.isEmpty() ? new ItemStack(fluid.getType().getBucket()) : stack;
     }
 
     /**
-     * The effective aspects of an item stack, resolved through the bound implementation.
-     *
-     * @param stack the stack
-     * @return the aspects, or {@link AspectList#EMPTY} when none
+     * @param player the scanning player
+     * @param target the target
+     * @return the aspects of the scanned creature, or of the target's item form; empty when it has neither
+     */
+    public static AspectList aspectsOf(Player player, ScanTarget target) {
+        Entity creature = target.creature();
+        if (creature != null) {
+            return entityAspects(creature);
+        }
+        ItemStack stack = stackOf(player, target);
+        return stack.isEmpty() ? AspectList.EMPTY : itemAspects(stack);
+    }
+
+    /**
+     * @param stack a stack
+     * @return the stack's aspects as the aspect index sees them
      */
     public static AspectList itemAspects(ItemStack stack) {
-        return bindingOrThrow().itemAspects(stack);
+        return impl().itemAspects(stack);
     }
 
     /**
-     * The registered aspects of an entity, resolved through the bound implementation.
-     *
-     * @param entity the entity
-     * @return the aspects, or {@link AspectList#EMPTY} when none
+     * @param entity an entity
+     * @return the entity's aspects as the aspect index sees them
      */
     public static AspectList entityAspects(Entity entity) {
-        return bindingOrThrow().entityAspects(entity);
+        return impl().entityAspects(entity);
     }
 
     /**
-     * Grants a research key through the bound implementation.
+     * Advances a research by one scan step for a player. Server side only.
      *
-     * @param player the player; must be a server player to take effect
+     * @param player   the player
      * @param research the research key
-     * @return {@code true} when the player's record changed
+     * @return whether the research advanced
      */
     public static boolean progressResearch(Player player, Identifier research) {
-        return bindingOrThrow().progressResearch(player, research);
+        return impl().progressResearch(player, research);
     }
 
     /**
-     * Awards raw knowledge through the bound implementation.
+     * Grants knowledge points to a player. Server side only.
      *
-     * @param player the player; must be a server player to take effect
-     * @param type the knowledge type
-     * @param category the research category identifier
-     * @param amount the amount to add
-     * @return {@code true} when knowledge was added
+     * @param player   the player
+     * @param type     the knowledge type
+     * @param category the research category
+     * @param amount   the points
+     * @return whether any knowledge was granted
      */
     public static boolean addKnowledge(Player player, KnowledgeType type, Identifier category, int amount) {
-        return bindingOrThrow().addKnowledge(player, type, category, amount);
+        return impl().addKnowledge(player, type, category, amount);
     }
 
     /**
-     * Binds the implementation. Called once at mod init; addons must not call this.
+     * Installs the implementation. Called once by Thaumaturge during mod construction; addons must not call it.
      *
-     * @param bindings the implementation
+     * @param impl the implementation
      * @throws IllegalStateException when already bound
      */
-    public static void bind(Bindings bindings) {
-        if (impl != null) {
+    public static void bind(Bindings impl) {
+        if (bindings != null) {
             throw new IllegalStateException("ScanningManager already bound");
         }
-        impl = bindings;
+        bindings = impl;
     }
 
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
+    private static Bindings impl() {
+        if (bindings == null) {
             throw new IllegalStateException("ScanningManager accessed before binding");
         }
-        return impl;
+        return bindings;
+    }
+
+    /**
+     * The hooks Thaumaturge implements behind this facade.
+     *
+     * @since 1.0.0
+     */
+    public interface Bindings {
+        /**
+         * @param player   the player
+         * @param research the research key
+         * @return whether the research advanced
+         */
+        boolean progressResearch(Player player, Identifier research);
+
+        /**
+         * @param player   the player
+         * @param type     the knowledge type
+         * @param category the category
+         * @param amount   the points
+         * @return whether knowledge was granted
+         */
+        boolean addKnowledge(Player player, KnowledgeType type, Identifier category, int amount);
+
+        /**
+         * @param stack a stack
+         * @return the stack's aspects
+         */
+        AspectList itemAspects(ItemStack stack);
+
+        /**
+         * @param entity an entity
+         * @return the entity's aspects
+         */
+        AspectList entityAspects(Entity entity);
+
+        /**
+         * @param state a block state
+         * @return whether the block should not be scanned through its item form
+         */
+        boolean hidesItemForm(BlockState state);
     }
 }

@@ -31,6 +31,14 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         copy(BlockTags.FLOWERS, ItemTags.FLOWERS);
         copy(TCBlockTags.MAGICAL_PLANTS, TCItemTags.MAGICAL_PLANTS);
         copy(BlockTags.WOODEN_SLABS, ItemTags.WOODEN_SLABS);
+        copy(BlockTags.WOODEN_DOORS, ItemTags.WOODEN_DOORS);
+        copy(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS);
+        copy(BlockTags.WOODEN_FENCES, ItemTags.WOODEN_FENCES);
+        copy(BlockTags.FENCE_GATES, ItemTags.FENCE_GATES);
+        copy(BlockTags.WOODEN_BUTTONS, ItemTags.WOODEN_BUTTONS);
+        copy(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES);
+        copy(Tags.Blocks.FENCES_WOODEN, Tags.Items.FENCES_WOODEN);
+        copy(Tags.Blocks.FENCE_GATES_WOODEN, Tags.Items.FENCE_GATES_WOODEN);
         copy(BlockTags.SLABS, ItemTags.SLABS);
         copy(BlockTags.STAIRS, ItemTags.STAIRS);
         copy(BlockTags.WOODEN_STAIRS, ItemTags.WOODEN_STAIRS);
@@ -38,7 +46,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         copy(TCBlockTags.PLANKS_GREATWOOD, TCItemTags.PLANKS_GREATWOOD);
         copy(TCBlockTags.PLANKS_SILVERWOOD, TCItemTags.PLANKS_SILVERWOOD);
         copy(TCBlockTags.GREATWOOD_LOGS, TCItemTags.GREATWOOD_LOGS);
-        copy(TCBlockTags.SILVERWOOD_LOGS, TCItemTags.SILVERWOOD_LOGS);
+        tag(TCItemTags.SILVERWOOD_LOGS).add(TCItems.LOG_SILVERWOOD.get(), TCItems.WOOD_SILVERWOOD.get(), TCItems.STRIPPED_LOG_SILVERWOOD.get(), TCItems.STRIPPED_WOOD_SILVERWOOD.get());
         copy(Tags.Blocks.OVERWORLD_NATURAL_LOGS, Tags.Items.OVERWORLD_NATURAL_LOGS);
         copy(Tags.Blocks.NATURAL_WOODS, Tags.Items.NATURAL_WOODS);
         copy(Tags.Blocks.STRIPPED_LOGS, Tags.Items.STRIPPED_LOGS);
@@ -49,6 +57,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
             tag(TCItemTags.NITORS).add(TCItems.NITORS.get(dye).get());
         }
 
+        tag(TCItemTags.SCRIBING_TOOLS).add(TCItems.SCRIBING_TOOLS.get());
         tag(TCItemTags.WANDS).add(TCItems.WAND.get(), TCItems.PECH_WAND.get());
         tag(TCItemTags.WAND_RODS).add(TCItems.WAND_ROD_GREATWOOD.get(), TCItems.WAND_ROD_OBSIDIAN.get(), TCItems.WAND_ROD_BLAZE.get(), TCItems.WAND_ROD_ICE.get(), TCItems.WAND_ROD_QUARTZ.get(),
                 TCItems.WAND_ROD_BONE.get(), TCItems.WAND_ROD_REED.get(), TCItems.WAND_ROD_SILVERWOOD.get(), TCItems.STAFF_ROD_GREATWOOD.get(), TCItems.STAFF_ROD_OBSIDIAN.get(),
@@ -71,8 +80,12 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
 
         copy(TCBlockTags.ORES_AMBER, TCItemTags.ORES_AMBER);
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
-        tag(Tags.Items.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
+        tag(Tags.Items.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get()).add(TCItems.DEEPSLATE_ORE_QUARTZ.get());
+        copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
+        copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
         tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR);
+        tag(TCItemTags.RAW_MATERIALS_CINNABAR).add(TCItems.RAW_CINNABAR.get());
+        tag(Tags.Items.RAW_MATERIALS).addTag(TCItemTags.RAW_MATERIALS_CINNABAR);
         tag(TCItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TCBlockTags.STORAGE_BLOCKS_AMBER, TCItemTags.STORAGE_BLOCKS_AMBER);
@@ -104,7 +117,8 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
 
         tag(TCItemTags.CLUSTERS).add(TCItems.CLUSTER_IRON.get(), TCItems.CLUSTER_COPPER.get(), TCItems.CLUSTER_GOLD.get(), TCItems.CLUSTER_QUARTZ.get(), TCItems.CLUSTER_CINNABAR.get(),
                 TCItems.CLUSTER_QUARTZ.get(), TCItems.CLUSTER_LEAD.get(), TCItems.CLUSTER_SILVER.get(), TCItems.CLUSTER_TIN.get());
-        tag(TCItemTags.RARE_EARTH_CHANCE_HIGH).addTags(Tags.Items.ORES_NETHERITE_SCRAP, Tags.Items.ORES_DIAMOND, Tags.Items.ORES_EMERALD, TCItemTags.ORES_CINNABAR, TCItemTags.ORES_AMBER);
+        tag(TCItemTags.RARE_EARTH_CHANCE_HIGH).addTags(Tags.Items.ORES_NETHERITE_SCRAP, Tags.Items.ORES_DIAMOND, Tags.Items.ORES_EMERALD, TCItemTags.ORES_CINNABAR, TCItemTags.RAW_MATERIALS_CINNABAR,
+                TCItemTags.ORES_AMBER);
         tag(TCItemTags.RARE_EARTH_CHANCE_NORMAL).addOptionalTag(TCItemTags.ORES_SILVER).addTags(Tags.Items.ORES_GOLD, Tags.Items.RAW_MATERIALS_GOLD, TCItemTags.CLUSTERS);
         tag(TCItemTags.RARE_EARTH_CHANCE_LOW).addOptionalTags(TCItemTags.ORES_TIN, TCItemTags.ORES_LEAD).addTags(Tags.Items.ORES_IRON, Tags.Items.ORES_COAL, Tags.Items.ORES_COPPER,
                 Tags.Items.ORES_LAPIS, Tags.Items.ORES_REDSTONE, Tags.Items.ORES_QUARTZ, Tags.Items.RAW_MATERIALS_IRON, Tags.Items.RAW_MATERIALS_COPPER);
@@ -114,6 +128,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(CuriosTags.RING).add(TCItems.RING_MUNDANE.get(), TCItems.RING_APPRENTICE.get(), TCItems.RING_FANCY.get(), TCItems.CLOUD_RING.get());
         tag(CuriosTags.BELT).add(TCItems.GIRDLE_MUNDANE.get(), TCItems.GIRDLE_FANCY.get(), TCItems.FOCUS_POUCH.get());
         tag(CuriosTags.CHARM).add(TCItems.CHARM_UNDYING.get(), TCItems.VERDANT_CHARM.get(), TCItems.VOIDSEER_CHARM.get());
+        tag(CuriosTags.BACK).add(TCItems.THAUMOSTATIC_HARNESS.get());
 
         tag(TCItemTags.RUNIC_SHIELDABLE).addOptionalTags(CuriosTags.HEAD, CuriosTags.NECKLACE, CuriosTags.RING, CuriosTags.BELT, CuriosTags.CHARM);
 
@@ -127,7 +142,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
         Item[] helmets = {TCItems.THAUMIUM_HELM.get(), TCItems.VOID_HELM.get(), TCItems.VOID_ROBE_HELM.get(), TCItems.FORTRESS_HELM.get(), TCItems.CRIMSON_PLATE_HELM.get(),
                 TCItems.CRIMSON_ROBE_HELM.get(), TCItems.CRIMSON_PRAETOR_HELM.get(), TCItems.GOGGLES_REVEALING.get()};
         Item[] chestplates = {TCItems.THAUMIUM_CHEST.get(), TCItems.VOID_CHEST.get(), TCItems.VOID_ROBE_CHEST.get(), TCItems.FORTRESS_CHEST.get(), TCItems.CLOTH_CHEST.get(),
-                TCItems.CRIMSON_PLATE_CHEST.get(), TCItems.CRIMSON_ROBE_CHEST.get(), TCItems.CRIMSON_PRAETOR_CHEST.get()};
+                TCItems.CRIMSON_PLATE_CHEST.get(), TCItems.CRIMSON_ROBE_CHEST.get(), TCItems.CRIMSON_PRAETOR_CHEST.get(), TCItems.THAUMOSTATIC_HARNESS.get()};
         Item[] leggings = {TCItems.THAUMIUM_LEGS.get(), TCItems.VOID_LEGS.get(), TCItems.VOID_ROBE_LEGS.get(), TCItems.FORTRESS_LEGS.get(), TCItems.CLOTH_LEGS.get(), TCItems.CRIMSON_PLATE_LEGS.get(),
                 TCItems.CRIMSON_ROBE_LEGS.get(), TCItems.CRIMSON_PRAETOR_LEGS.get()};
         Item[] boots = {TCItems.THAUMIUM_BOOTS.get(), TCItems.VOID_BOOTS.get(), TCItems.TRAVELLER_BOOTS.get(), TCItems.CLOTH_BOOTS.get(), TCItems.CRIMSON_BOOTS.get()};

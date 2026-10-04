@@ -10,6 +10,8 @@ import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,5 +63,10 @@ public final class ScanBindings implements ScanningManager.Bindings {
     @Override
     public AspectList entityAspects(Entity entity) {
         return EntityAspects.of(entity);
+    }
+
+    @Override
+    public boolean hidesItemForm(BlockState state) {
+        return state.is(TCBlocks.NODE.get()) || state.is(TCBlocks.SILVERWOOD_NODE_LOG.get());
     }
 }

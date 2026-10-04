@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.data.datamap.TaintedProfileProvider;
 import com.leclowndu93150.thaumaturge.data.lang.TCEnglishProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCEntityLootSubProvider;
+import com.leclowndu93150.thaumaturge.data.loot.TCTaintedLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGameplayLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGlobalLootModifierProvider;
 import com.leclowndu93150.thaumaturge.data.model.TCModelProvider;
@@ -84,6 +85,7 @@ public final class TCDataGenerators {
         event.createProvider((output, lookupProvider) -> new LootTableProvider(output, Set.of(),
                 List.of(new LootTableProvider.SubProviderEntry(TCBlockLootSubProvider::new, LootContextParamSets.BLOCK),
                         new LootTableProvider.SubProviderEntry(TCEntityLootSubProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(TCTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                         new LootTableProvider.SubProviderEntry(TCGameplayLootSubProvider::new, LootContextParamSets.CHEST)),
                 lookupProvider));
 

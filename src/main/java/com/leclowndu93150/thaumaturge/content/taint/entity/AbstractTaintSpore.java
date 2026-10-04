@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
@@ -22,7 +21,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AbstractTaintSpore extends Monster implements ITaintedMob {
+public abstract class AbstractTaintSpore extends Monster {
     public static final int MIN_SIZE = 2;
     public static final int MAX_SIZE = 10;
 

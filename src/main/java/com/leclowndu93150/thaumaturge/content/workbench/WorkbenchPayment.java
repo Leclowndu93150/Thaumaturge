@@ -50,7 +50,7 @@ public final class WorkbenchPayment {
             // Source-paid (no wand, no crystals): only gear discounts apply.
             modifier = gearModifier(player);
         }
-        int auraVis = recipe.getBaseVis() <= 0 ? 0 : Math.max(1, Mth.ceil(recipe.getBaseVis() * modifier));
+        int auraVis = recipe.visCost() <= 0 ? 0 : Math.max(1, Mth.ceil(recipe.visCost() * modifier));
 
         // Plan making
         Plan plan = new Plan(fullWand, wandCentivis, sourceCentivis, crystalNeeds, auraVis, hasCrystals(inventory, crystalNeeds));
@@ -59,7 +59,7 @@ public final class WorkbenchPayment {
 
     private static AspectList calculateCrystalNeeds(IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, @Nullable ArcaneWorkbenchContext context, @Nullable TransactionContext outer, boolean hasWand, ItemStack wand, Map<ResourceKey<IAspect>, Integer> wandCentivis, Map<ResourceKey<IAspect>, Integer> sourceCentivis) {
         AspectList crystalNeeds = AspectList.EMPTY;
-        for (AspectInstance entry : recipe.getCrystals().entries()) {
+        for (AspectInstance entry : recipe.crystalCost().entries()) {
             ResourceKey<IAspect> primal = entry.aspect().getKey();
             int centivis = entry.amount() * WandEconomy.CRYSTAL_SUBSTITUTE_VIS * WandEconomy.CENTIVIS_PER_VIS;
             Map<ResourceKey<IAspect>, Integer> single = new LinkedHashMap<>();
@@ -156,7 +156,7 @@ public final class WorkbenchPayment {
     }
 
     public static int crudeCost(IArcaneRecipe recipe) {
-        return Mth.ceil(recipe.getBaseVis() * WandEconomy.CRAFT_AURA_SURCHARGE);
+        return Mth.ceil(recipe.visCost() * WandEconomy.CRAFT_AURA_SURCHARGE);
     }
 
     private static float averageCraftModifier(ItemStack wand, Player player) {

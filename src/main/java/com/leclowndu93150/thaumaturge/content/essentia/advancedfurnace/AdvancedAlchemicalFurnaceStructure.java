@@ -68,7 +68,7 @@ public final class AdvancedAlchemicalFurnaceStructure {
                 for (int z = -RADIUS; z <= RADIUS; z++) {
                     cursor.setWithOffset(part, x, y, z);
                     if (level.getBlockState(cursor).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE)) {
-                        level.setBlock(cursor.immutable(), TCBlocks.ALCHEMICAL_FURNACE.get().defaultBlockState(), Block.UPDATE_ALL);
+                        level.setBlock(cursor.immutable(), TCBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
                         return;
                     }
                 }

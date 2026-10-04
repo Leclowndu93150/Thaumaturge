@@ -13,6 +13,7 @@ import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -84,9 +85,21 @@ public final class TaintCreatureEvents {
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        if (MobTraits.has(event.getEntity(), TCMobTraits.TAINT_BROOD.getKey())) {
+        LivingEntity entity = event.getEntity();
+        if (MobTraits.has(entity, TCMobTraits.TAINT_BROOD.getKey())) {
             event.setCanceled(true);
+            return;
         }
+        if (!(entity.level() instanceof ServerLevel level) || !MobTraits.has(entity, MobTraits.TAINTED)) {
+            return;
+        }
+        TaintedProfile profile = TaintedProfile.of(entity.getType());
+        if (profile == null || profile.lootTable().isEmpty()) {
+            return;
+        }
+        event.getDrops().clear();
+        entity.dropFromLootTable(level, event.getSource(), event.isRecentlyHit(), profile.lootTable().get(),
+                stack -> event.getDrops().add(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), stack)));
     }
 
     @SubscribeEvent

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
@@ -80,7 +80,7 @@ public final class ChampionEvents {
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        if (!event.getEntity().level().isClientSide() && event.getEntity() instanceof IEldritchMob) {
+        if (!event.getEntity().level().isClientSide() && event.getEntity().is(ThaumaturgeEntityTypeTags.ELDRITCH)) {
             ShieldChargeSound.playIfShielded(event.getEntity());
         }
     }

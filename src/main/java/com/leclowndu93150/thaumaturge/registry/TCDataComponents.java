@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -70,6 +71,9 @@ public final class TCDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> CHARGE = DATA_COMPONENTS.registerComponentType("charge",
             builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ChargeProfile>> RECHARGEABLE = DATA_COMPONENTS.registerComponentType("rechargeable",
+            builder -> builder.persistent(ChargeProfile.CODEC).networkSynchronized(ChargeProfile.STREAM_CODEC));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<InfusionEnchantments>> INFUSION_ENCHANTMENTS = DATA_COMPONENTS.registerComponentType("infusion_enchantments",
             builder -> builder.persistent(InfusionEnchantments.CODEC).networkSynchronized(InfusionEnchantments.STREAM_CODEC));
 
@@ -105,6 +109,9 @@ public final class TCDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> POUCH_CONTENTS = DATA_COMPONENTS.registerComponentType("pouch_contents",
             builder -> builder.persistent(ItemContainerContents.CODEC).networkSynchronized(ItemContainerContents.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackTemplate>> HARNESS_JAR = DATA_COMPONENTS.registerComponentType("harness_jar",
+            builder -> builder.persistent(ItemStackTemplate.CODEC).networkSynchronized(ItemStackTemplate.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> MIRROR_LINK = DATA_COMPONENTS.registerComponentType("mirror_link",
             builder -> builder.persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC));

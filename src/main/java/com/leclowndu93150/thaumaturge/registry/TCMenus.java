@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.MenuArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
@@ -9,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.device.sprayer.MenuPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
+import com.leclowndu93150.thaumaturge.content.equipment.hover.MenuThaumostaticHarness;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumatorium;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
@@ -28,6 +30,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, TCIds.MODID);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuArcaneGrindstone>> ARCANE_GRINDSTONE = MENUS.register("arcane_grindstone", () -> IMenuTypeExtension.create(MenuArcaneGrindstone::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuFocalManipulator>> FOCAL_MANIPULATOR = MENUS.register("focal_manipulator", () -> IMenuTypeExtension.create(MenuFocalManipulator::new));
 
@@ -55,6 +59,9 @@ public final class TCMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<MenuGolemLogistics>> GOLEM_LOGISTICS = MENUS.register("golem_logistics", () -> IMenuTypeExtension.create(MenuGolemLogistics::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuFocusPouch>> FOCUS_POUCH = MENUS.register("focus_pouch", () -> IMenuTypeExtension.create(MenuFocusPouch::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuThaumostaticHarness>> THAUMOSTATIC_HARNESS = MENUS.register("thaumostatic_harness",
+            () -> IMenuTypeExtension.create(MenuThaumostaticHarness::new));
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuPech>> PECH = MENUS.register("pech", () -> IMenuTypeExtension.create(MenuPech::new));
 

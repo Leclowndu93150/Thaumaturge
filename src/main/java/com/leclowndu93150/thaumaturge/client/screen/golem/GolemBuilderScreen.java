@@ -202,18 +202,13 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             }
             return;
         }
-        props = GolemProperties.createDefault();
-        props.setHead(valHeads.get(headIndex));
-        props.setMaterial(valMats.get(matIndex));
-        props.setArms(valArms.get(armIndex));
-        props.setLegs(valLegs.get(legIndex));
-        props.setAddon(valAddons.get(addonIndex));
+        props = new GolemProperties(valMats.get(matIndex), valHeads.get(headIndex), valArms.get(armIndex), valLegs.get(legIndex), valAddons.get(addonIndex), 0);
         BlockEntityGolemBuilder builder = menu.blockEntity();
         if (builder != null) {
-            ClientPacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props.copy(), false));
+            ClientPacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, false));
         }
         redoComps();
-        GolemTrait[] tags = props.getTraits().toArray(new GolemTrait[0]);
+        GolemTrait[] tags = props.traits().toArray(new GolemTrait[0]);
         if (tags.length > 0) {
             int yy = tags.length <= 4 ? (tags.length - 1) % 4 * 8 : 24;
             int xx = (tags.length - 1) / 4 % 4 * 8;
@@ -231,12 +226,12 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                 }
             }
         }
-        int health = 10 + props.getMaterial().healthMod();
+        int health = 10 + props.material().healthMod();
         if (props.hasTrait(TCGolemTraits.FRAGILE.get())) {
             health = (int) (health * 0.75);
         }
         hearts = health / 2.0F;
-        int armorValue = props.getMaterial().armor();
+        int armorValue = props.material().armor();
         if (props.hasTrait(TCGolemTraits.ARMORED.get())) {
             armorValue = (int) Math.max(armorValue * 1.5, armorValue + 1);
         }
@@ -244,7 +239,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             armorValue = (int) (armorValue * 0.75);
         }
         armor = armorValue / 2.0F;
-        double damageValue = props.hasTrait(TCGolemTraits.FIGHTER.get()) ? props.getMaterial().damage() : 0.0;
+        double damageValue = props.hasTrait(TCGolemTraits.FIGHTER.get()) ? props.material().damage() : 0.0;
         if (props.hasTrait(TCGolemTraits.BRUTAL.get())) {
             damageValue = Math.max(damageValue * 1.5, damageValue + 1.0);
         }
@@ -326,8 +321,8 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             return;
         }
         allFound = true;
-        cost = props.getTraits().size() * 2;
-        components = props.generateComponents();
+        cost = props.traits().size() * 2;
+        components = props.components();
         BlockEntityGolemBuilder builder = menu.blockEntity();
         Player player = minecraft.player;
         owns = new boolean[components.size()];
@@ -432,7 +427,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         }
         BlockEntityGolemBuilder builder = menu.blockEntity();
         if (builder != null) {
-            ClientPacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props.copy(), true));
+            ClientPacketDistributor.sendToServer(new ServerboundGolemPressPayload(builder.getBlockPos(), props, true));
             disableAll = true;
         }
     }

@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -36,6 +37,7 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
     private static final float SCALE_FACTOR = 1.25F;
     private static final float GROW_TICKS = 50.0F;
     private static final int LIGHT = 0x00F000DC;
+    private static final float BILLBOARD_YAW_OFFSET = 180.0F;
 
     public CultistPortalRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -95,7 +97,7 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
         float sy = scaleY;
         poseStack.pushPose();
         poseStack.translate(0.0F, state.halfHeight, 0.0F);
-        poseStack.mulPose(camera.orientation);
+        poseStack.mulPose(Axis.YP.rotationDegrees(BILLBOARD_YAW_OFFSET - camera.yRot));
         collector.submitCustomGeometry(poseStack, PORTAL_TYPE, (pose, buffer) -> {
             Matrix4fc mat = pose.pose();
             buffer.addVertex(mat, -sx, -sy, 0.0F).setUv(u1, 0.0F).setColor(tint).setLight(LIGHT);

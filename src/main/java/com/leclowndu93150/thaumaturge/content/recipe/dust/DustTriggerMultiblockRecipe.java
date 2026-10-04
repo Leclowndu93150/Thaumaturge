@@ -105,24 +105,8 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         if (blueprint == null || placement == null || placement.facing() == null) {
             return List.of(pos);
         }
-        int ys = blueprint.ySize();
-        int rotations = MultiblockMatcher.rotationsFor(placement.facing());
         BlockPos origin = pos.offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
-        List<BlockPos> out = new java.util.ArrayList<>();
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-            matrix.rotate90DegRight(rotations);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part == null) {
-                        continue;
-                    }
-                    out.add(origin.offset(x, -y + (ys - 1), z));
-                }
-            }
-        }
-        return out;
+        return new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells().stream().map(cell -> origin.offset(cell.offset())).toList();
     }
 
     @Override
@@ -138,24 +122,10 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         if (blueprint == null) {
             return;
         }
-        int ys = blueprint.ySize();
-        int rotations = MultiblockMatcher.rotationsFor(placement.facing());
         BlockPos origin = input.pos().offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-            matrix.rotate90DegRight(rotations);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part == null) {
-                        continue;
-                    }
-                    BlockPos cellPos = origin.offset(x, -y + (ys - 1), z);
-                    int delay = part.priority();
-                    BlockState original = level.getBlockState(cellPos);
-                    enqueueForPart(serverLevel, cellPos, original, part, placement.facing(), useFace, player, delay);
-                }
-            }
+        for (BlueprintCell cell : new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells()) {
+            BlockPos cellPos = origin.offset(cell.offset());
+            enqueueForPart(serverLevel, cellPos, level.getBlockState(cellPos), cell.part(), placement.facing(), useFace, player, cell.part().priority());
         }
     }
 

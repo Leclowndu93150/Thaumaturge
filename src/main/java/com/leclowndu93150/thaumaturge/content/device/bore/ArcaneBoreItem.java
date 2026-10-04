@@ -1,25 +1,31 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
-import com.leclowndu93150.thaumaturge.content.entity.construct.TurretPlacerItem;
+import com.leclowndu93150.thaumaturge.content.entity.construct.ConstructDeployment;
+import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
+import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 
 public final class ArcaneBoreItem extends BlockItem {
-    private final TurretPlacerItem.ConstructFactory factory;
+    private static final ConstructDeployment<EntityArcaneBore> ON_RAILS = new ConstructDeployment<>(TCEntities.ARCANE_BORE, ArcaneBoreItem::faceAwayFromPlacer);
 
-    public ArcaneBoreItem(Block block, Properties properties, TurretPlacerItem.ConstructFactory factory) {
+    public ArcaneBoreItem(Block block, Properties properties) {
         super(block, properties);
-        this.factory = factory;
     }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
         if (context.getLevel().getBlockState(context.getClickedPos()).is(BlockTags.RAILS)) {
-            return TurretPlacerItem.placeConstruct(context, factory);
+            return ON_RAILS.deploy(context);
         }
         return super.useOn(context);
+    }
+
+    private static void faceAwayFromPlacer(EntityArcaneBore bore, Player placer) {
+        bore.setFacing(placer.getDirection());
     }
 }

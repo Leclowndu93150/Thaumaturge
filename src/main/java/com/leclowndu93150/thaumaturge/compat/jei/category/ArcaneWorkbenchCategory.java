@@ -126,7 +126,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
             layoutShapeless(builder, shapeless);
         }
 
-        layoutCrystals(builder, recipe.getCrystals());
+        layoutCrystals(builder, recipe.crystalCost());
         builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).add(output);
     }
 
@@ -179,7 +179,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         arrow.draw(guiGraphics, ARROW_X, ARROW_Y);
 
         Font font = Minecraft.getInstance().font;
-        String vis = Integer.toString(recipe.value().getBaseVis());
+        String vis = Integer.toString(recipe.value().visCost());
         guiGraphics.text(font, vis, VIS_CENTER_X - font.width(vis) / 2, VIS_Y, 0xFF000000 | ChatFormatting.DARK_GRAY.getColor(), false);
 
         if (!recipe.value().doesPassGate(Minecraft.getInstance().player)) {

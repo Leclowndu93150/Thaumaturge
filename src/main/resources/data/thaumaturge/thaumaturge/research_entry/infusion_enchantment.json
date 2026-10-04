@@ -43,7 +43,8 @@
         "thaumaturge:infusion_enchantment/sounding",
         "thaumaturge:infusion_enchantment/arcing",
         "thaumaturge:infusion_enchantment/essence",
-        "thaumaturge:infusion_enchantment/lamplight"
+        "thaumaturge:infusion_enchantment/lamplight",
+        "thaumaturge:arcane_workbench/arcane_grindstone"
       ]
     }
   ],

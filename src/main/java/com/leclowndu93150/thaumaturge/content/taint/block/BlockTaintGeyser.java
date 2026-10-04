@@ -33,7 +33,7 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
     }
 
     @Override
-    public void die(Level level, BlockPos pos, BlockState state) {
+    public void decay(Level level, BlockPos pos, BlockState state) {
         level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
