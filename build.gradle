@@ -17,6 +17,7 @@ spotless {
         palantirJavaFormat('2.96.0')
         trimTrailingWhitespace()
         endWithNewline()
+        toggleOffOn()
     }
 }
 

@@ -33,10 +33,12 @@ public final class WandRendererRegistry implements WandRenderers.Bindings {
         context.renderDefault();
     }
 
+    // spotless:off
     private record Registration(
             int priority,
             long order,
             Predicate<WandRenderContext> predicate,
             IWandRenderer renderer
     ) {}
+    // spotless:on
 }
