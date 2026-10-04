@@ -2,7 +2,8 @@ package com.leclowndu93150.thaumaturge.content.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISeal;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -43,14 +44,14 @@ public final class ItemSealPlacer extends Item implements ISealDisplayer {
         if (!player.mayUseItemAt(pos, context.getClickedFace(), stack)) {
             return InteractionResult.FAIL;
         }
-        ISeal seal = GolemHelper.createSeal(sealKey);
-        if (seal == null || !seal.canPlaceAt(level, pos, context.getClickedFace())) {
+        SealType type = GolemHelper.sealType(sealKey).orElse(null);
+        if (type == null || !type.placement().allows(level, pos, context.getClickedFace())) {
             return InteractionResult.FAIL;
         }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (SealHandler.addSealEntity((ServerLevel) level, pos, context.getClickedFace(), seal, player) && !player.hasInfiniteMaterials()) {
+        if (SealHandler.place((ServerLevel) level, new SealPos(pos, context.getClickedFace()), sealKey, type, player) && !player.hasInfiniteMaterials()) {
             stack.shrink(1);
         }
         return InteractionResult.SUCCESS_SERVER;

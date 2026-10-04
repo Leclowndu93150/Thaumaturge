@@ -40,8 +40,8 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         ISealEntity seal = getAimedSeal(player);
         if (seal != null) {
             if (player.isShiftKeyDown()) {
-                SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-                level.playSound(null, seal.getSealPos().pos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+                SealHandler.removeSealEntity((ServerLevel) level, seal.pos(), false);
+                level.playSound(null, seal.pos().pos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             } else {
                 SealGuiOpener.open(player, seal);
             }
@@ -78,7 +78,7 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
             return InteractionResult.SUCCESS;
         }
         if (player.isShiftKeyDown()) {
-            SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
+            SealHandler.removeSealEntity((ServerLevel) level, seal.pos(), false);
             level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         } else {
             SealGuiOpener.open(player, seal);

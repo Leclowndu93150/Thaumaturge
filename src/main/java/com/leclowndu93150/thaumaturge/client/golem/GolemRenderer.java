@@ -64,8 +64,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
     @Override
     public void extractRenderState(EntityThaumaturgeGolem entity, GolemRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        state.props = (GolemProperties) entity.getProperties();
-        state.color = entity.getGolemColor();
+        state.props = (GolemProperties) entity.properties();
+        state.color = entity.color();
         state.bodyRot = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
         state.headYawDelta = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot) - state.bodyRot;
         state.pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
@@ -91,7 +91,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
         state.holdingItem = !held.isEmpty();
         state.heldItemIsBlock = held.getItem() instanceof BlockItem;
         itemModelResolver.updateForTopItem(state.heldItem, held, ItemDisplayContext.HEAD, entity.level(), entity, 0);
-        List<ItemStack> carrying = entity.getCarrying();
+        List<ItemStack> carrying = entity.hands().contents();
         ItemStack hauled = carrying.size() > 1 ? carrying.get(1) : ItemStack.EMPTY;
         state.haulingItem = !hauled.isEmpty();
         state.haulerItemIsBlock = hauled.getItem() instanceof BlockItem;
@@ -121,7 +121,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
 
     private void renderParts(GolemRenderState state, PoseStack poseStack, SubmitNodeCollector collector, boolean xray, int color) {
         GolemProperties props = state.props;
-        Identifier matTexture = props.getMaterial().texture();
+        Identifier matTexture = props.material().texture();
         boolean holding = state.holdingItem;
         boolean rolling = props.hasTrait(TCGolemTraits.WHEELED.get()) || props.hasTrait(TCGolemTraits.FLYER.get());
         float bry = 0.0F;
@@ -265,10 +265,10 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
 
     private static List<GolemPartModel> attachedParts(GolemProperties props, GolemPartModel.AttachPoint point) {
         List<GolemPartModel> out = new ArrayList<>();
-        addPart(out, props.getHead().model(), point);
-        addPart(out, props.getArms().model(), point);
-        addPart(out, props.getLegs().model(), point);
-        addPart(out, props.getAddon().model(), point);
+        addPart(out, props.head().model(), point);
+        addPart(out, props.arms().model(), point);
+        addPart(out, props.legs().model(), point);
+        addPart(out, props.addon().model(), point);
         return out;
     }
 
@@ -300,7 +300,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
     }
 
     private static void submitMeshPart(TCMeshPart part, PoseStack poseStack, SubmitNodeCollector collector, Identifier texture, boolean xray, int color, GolemRenderState state) {
-        boolean translucent = ARGB.alpha(color) < 255 || !texture.equals(state.props.getMaterial().texture());
+        boolean translucent = ARGB.alpha(color) < 255 || !texture.equals(state.props.material().texture());
         RenderType type = xray ? xrayType(texture) : translucent ? RenderTypes.entityTranslucent(texture) : RenderTypes.entityCutout(texture);
         int light = state.lightCoords;
         collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, color));

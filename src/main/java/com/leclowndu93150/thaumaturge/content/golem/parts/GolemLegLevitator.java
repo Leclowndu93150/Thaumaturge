@@ -1,25 +1,28 @@
 package com.leclowndu93150.thaumaturge.content.golem.parts;
 
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
-import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
+import com.leclowndu93150.thaumaturge.api.golems.parts.IGolemPartAbility;
 import com.leclowndu93150.thaumaturge.registry.TCParticles;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-public final class GolemLegLevitator implements GolemLeg.ILegFunction {
-    private static final int PARTICLE_GRID = 16;
-    private static final int PARTICLE_START = 56;
-    private static final int GROUND_INTERVAL = 5;
+public final class GolemLegLevitator implements IGolemPartAbility {
+    private static final int GROUNDED_PULSE = 5;
+    private static final double EXHAUST_HEIGHT = 0.1;
+    private static final double EXHAUST_FALL = -0.1;
+    private static final double EXHAUST_SPREAD = 100.0;
 
     @Override
-    public void onUpdateTick(IGolemAPI golem) {
-        Level level = golem.getGolemWorld();
-        LivingEntity entity = golem.getGolemEntity();
-        if (!level.isClientSide() || (entity.onGround() && entity.tickCount % GROUND_INTERVAL != 0)) {
+    public void tick(IGolemAPI golem) {
+        Level level = golem.level();
+        LivingEntity body = golem.asEntity();
+        boolean idle = body.onGround() && body.tickCount % GROUNDED_PULSE != 0;
+        if (!level.isClientSide() || idle) {
             return;
         }
-        RandomSource rand = level.getRandom();
-        level.addParticle(TCParticles.GOLEM_TRAIL.get(), entity.getX(), entity.getY() + 0.1, entity.getZ(), rand.nextGaussian() / 100.0, -0.1, rand.nextGaussian() / 100.0);
+        RandomSource random = level.getRandom();
+        level.addParticle(TCParticles.GOLEM_TRAIL.get(), body.getX(), body.getY() + EXHAUST_HEIGHT, body.getZ(), random.nextGaussian() / EXHAUST_SPREAD, EXHAUST_FALL,
+                random.nextGaussian() / EXHAUST_SPREAD);
     }
 }

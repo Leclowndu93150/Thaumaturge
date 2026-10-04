@@ -19,13 +19,15 @@ public abstract class GolemPart {
     private final List<GolemComponent> components;
     private final List<Holder<GolemTrait>> traits;
     private final GolemPartModel model;
+    private final IGolemPartAbility ability;
 
-    protected GolemPart(List<Identifier> research, Identifier icon, List<GolemComponent> components, List<Holder<GolemTrait>> traits, @Nullable GolemPartModel model) {
+    protected GolemPart(List<Identifier> research, Identifier icon, List<GolemComponent> components, List<Holder<GolemTrait>> traits, @Nullable GolemPartModel model, @Nullable IGolemPartAbility ability) {
         this.research = List.copyOf(research);
         this.icon = icon;
         this.components = List.copyOf(components);
         this.traits = List.copyOf(traits);
         this.model = model;
+        this.ability = ability;
     }
 
     /**
@@ -64,9 +66,11 @@ public abstract class GolemPart {
     }
 
     /**
-     * @return the behavior ticked for this part, or null when it has none
+     * @return the ability this part adds to its golem, or null when it adds none
      */
-    public abstract @Nullable IGolemFunction function();
+    public @Nullable IGolemPartAbility ability() {
+        return ability;
+    }
 
     /**
      * The translation key for a part's display name in golem UIs.

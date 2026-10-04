@@ -8,41 +8,48 @@ import com.leclowndu93150.thaumaturge.api.golems.parts.GolemComponent;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemHead;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
+import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
 import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public final class GolemProperties implements IGolemProperties {
-    public static final Codec<GolemProperties> CODEC = RecordCodecBuilder
-            .create(instance -> instance.group(TCGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::getMaterial),
-                    TCGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::getHead), TCGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::getArms),
-                    TCGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::getLegs), TCGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::getAddon),
-                    Codec.intRange(0, 10).optionalFieldOf("rank", 0).forGetter(GolemProperties::getRank)).apply(instance, GolemProperties::new));
+    private static final int MAX_RANK = 10;
+    private static final int BASE_SHARE = 2;
 
-    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(registryStream(TCGolemParts::materials), GolemProperties::getMaterial,
-            registryStream(TCGolemParts::heads), GolemProperties::getHead, registryStream(TCGolemParts::arms), GolemProperties::getArms, registryStream(TCGolemParts::legs), GolemProperties::getLegs,
-            registryStream(TCGolemParts::addons), GolemProperties::getAddon, ByteBufCodecs.VAR_INT, GolemProperties::getRank, GolemProperties::new);
+    public static final Codec<GolemProperties> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(TCGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::material), TCGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::head),
+                    TCGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::arms), TCGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::legs),
+                    TCGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::addon), Codec.intRange(0, MAX_RANK).optionalFieldOf("rank", 0).forGetter(GolemProperties::rank))
+            .apply(instance, GolemProperties::new));
+    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(byId(TCGolemParts::materials), GolemProperties::material, byId(TCGolemParts::heads),
+            GolemProperties::head, byId(TCGolemParts::arms), GolemProperties::arms, byId(TCGolemParts::legs), GolemProperties::legs, byId(TCGolemParts::addons), GolemProperties::addon,
+            ByteBufCodecs.VAR_INT, GolemProperties::rank, GolemProperties::new);
 
-    private GolemMaterial material;
-    private GolemHead head;
-    private GolemArm arms;
-    private GolemLeg legs;
-    private GolemAddon addon;
-    private int rank;
-    private Set<GolemTrait> traitCache;
+    private final GolemMaterial material;
+    private final GolemHead head;
+    private final GolemArm arms;
+    private final GolemLeg legs;
+    private final GolemAddon addon;
+    private final int rank;
+    private @Nullable Set<GolemTrait> traits;
 
     public GolemProperties(GolemMaterial material, GolemHead head, GolemArm arms, GolemLeg legs, GolemAddon addon, int rank) {
         this.material = material;
@@ -57,149 +64,124 @@ public final class GolemProperties implements IGolemProperties {
         return new GolemProperties(TCGolemParts.WOOD.get(), TCGolemParts.HEAD_BASIC.get(), TCGolemParts.ARMS_BASIC.get(), TCGolemParts.LEGS_WALKER.get(), TCGolemParts.ADDON_NONE.get(), 0);
     }
 
-    public GolemProperties copy() {
-        return new GolemProperties(material, head, arms, legs, addon, rank);
+    public static GolemProperties of(IGolemProperties build) {
+        return build instanceof GolemProperties own ? own : new GolemProperties(build.material(), build.head(), build.arms(), build.legs(), build.addon(), build.rank());
     }
 
-    private static <T> StreamCodec<ByteBuf, T> registryStream(Supplier<Registry<T>> registry) {
+    private static <T> StreamCodec<ByteBuf, T> byId(Supplier<Registry<T>> registry) {
         return Identifier.STREAM_CODEC.map(id -> registry.get().getValue(id), value -> registry.get().getKey(value));
     }
 
     @Override
-    public Set<GolemTrait> getTraits() {
-        if (traitCache == null) {
-            traitCache = new LinkedHashSet<>();
-            material.traits().forEach(this::addTraitSmart);
-            head.traits().forEach(this::addTraitSmart);
-            arms.traits().forEach(this::addTraitSmart);
-            legs.traits().forEach(this::addTraitSmart);
-            addon.traits().forEach(this::addTraitSmart);
+    public Set<GolemTrait> traits() {
+        if (traits == null) {
+            traits = Collections.unmodifiableSet(resolveTraits());
         }
-        return traitCache;
+        return traits;
     }
 
-    private void addTraitSmart(Holder<GolemTrait> trait) {
-        GolemTrait value = trait.value();
-        GolemTrait opposite = value.opposite() == null ? null : TCGolemTraits.registry().getValue(value.opposite());
-        if (opposite != null && traitCache.contains(opposite)) {
-            traitCache.remove(opposite);
-        } else {
-            traitCache.add(value);
-        }
+    private Set<GolemTrait> resolveTraits() {
+        Set<GolemTrait> resolved = new LinkedHashSet<>();
+        Stream.of(material.traits(), head.traits(), arms.traits(), legs.traits(), addon.traits()).flatMap(List::stream).map(Holder::value).forEach(trait -> {
+            GolemTrait opposite = trait.opposite() == null ? null : TCGolemTraits.registry().getValue(trait.opposite());
+            if (opposite != null && resolved.remove(opposite)) {
+                return;
+            }
+            resolved.add(trait);
+        });
+        return resolved;
     }
 
     @Override
-    public boolean hasTrait(GolemTrait trait) {
-        return getTraits().contains(trait);
-    }
-
-    @Override
-    public List<ItemStack> generateComponents() {
-        List<ItemStack> components = new ArrayList<>();
-        addToList(components, material.base(), 2);
-        addToList(components, material.mechanism(), 1);
-        addPartComponents(components, arms.components());
-        addPartComponents(components, legs.components());
-        addPartComponents(components, head.components());
-        addPartComponents(components, addon.components());
-        return components;
-    }
-
-    private void addPartComponents(List<ItemStack> components, List<GolemComponent> parts) {
-        for (GolemComponent component : parts) {
-            addToList(components, component.resolve(material), 1);
+    public List<ItemStack> components() {
+        List<ItemStack> bill = new ArrayList<>();
+        merge(bill, material.base(), BASE_SHARE);
+        merge(bill, material.mechanism(), 1);
+        for (GolemPart part : List.of(arms, legs, head, addon)) {
+            for (GolemComponent component : part.components()) {
+                merge(bill, component.resolve(material), 1);
+            }
         }
+        return bill;
     }
 
-    private static void addToList(List<ItemStack> components, ItemStack newItem, int multiplier) {
-        for (ItemStack stack : components) {
-            if (ItemStack.isSameItemSameComponents(stack, newItem)) {
-                stack.grow(newItem.getCount() * multiplier);
+    private static void merge(List<ItemStack> bill, ItemStack item, int times) {
+        for (ItemStack line : bill) {
+            if (ItemStack.isSameItemSameComponents(line, item)) {
+                line.grow(item.getCount() * times);
                 return;
             }
         }
-        ItemStack copy = newItem.copy();
-        copy.setCount(copy.getCount() * multiplier);
-        components.add(copy);
+        bill.add(item.copyWithCount(item.getCount() * times));
     }
 
     @Override
-    public void setMaterial(GolemMaterial material) {
-        this.material = material;
-        traitCache = null;
-    }
-
-    @Override
-    public GolemMaterial getMaterial() {
+    public GolemMaterial material() {
         return material;
     }
 
     @Override
-    public void setHead(GolemHead head) {
-        this.head = head;
-        traitCache = null;
-    }
-
-    @Override
-    public GolemHead getHead() {
+    public GolemHead head() {
         return head;
     }
 
     @Override
-    public void setArms(GolemArm arms) {
-        this.arms = arms;
-        traitCache = null;
-    }
-
-    @Override
-    public GolemArm getArms() {
+    public GolemArm arms() {
         return arms;
     }
 
     @Override
-    public void setLegs(GolemLeg legs) {
-        this.legs = legs;
-        traitCache = null;
-    }
-
-    @Override
-    public GolemLeg getLegs() {
+    public GolemLeg legs() {
         return legs;
     }
 
     @Override
-    public void setAddon(GolemAddon addon) {
-        this.addon = addon;
-        traitCache = null;
-    }
-
-    @Override
-    public GolemAddon getAddon() {
+    public GolemAddon addon() {
         return addon;
     }
 
     @Override
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    @Override
-    public int getRank() {
+    public int rank() {
         return rank;
     }
 
     @Override
+    public GolemProperties withMaterial(GolemMaterial material) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
+    public GolemProperties withHead(GolemHead head) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
+    public GolemProperties withArms(GolemArm arms) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
+    public GolemProperties withLegs(GolemLeg legs) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
+    public GolemProperties withAddon(GolemAddon addon) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
+    public GolemProperties withRank(int rank) {
+        return new GolemProperties(material, head, arms, legs, addon, rank);
+    }
+
+    @Override
     public boolean equals(Object other) {
-        return other instanceof GolemProperties props && props.material == material && props.head == head && props.arms == arms && props.legs == legs && props.addon == addon && props.rank == rank;
+        return other instanceof GolemProperties build && build.material == material && build.head == head && build.arms == arms && build.legs == legs && build.addon == addon && build.rank == rank;
     }
 
     @Override
     public int hashCode() {
-        int hash = material.hashCode();
-        hash = 31 * hash + head.hashCode();
-        hash = 31 * hash + arms.hashCode();
-        hash = 31 * hash + legs.hashCode();
-        hash = 31 * hash + addon.hashCode();
-        return 31 * hash + rank;
+        return Objects.hash(material, head, arms, legs, addon, rank);
     }
 }

@@ -35,20 +35,20 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
             return;
         }
         if (props.hasTrait(TCGolemTraits.SMART.get())) {
-            if (props.getRank() >= EntityThaumaturgeGolem.MAX_RANK) {
-                tooltip.accept(Component.translatable("golem.rank").append(" " + props.getRank()).withStyle(ChatFormatting.GOLD));
+            if (props.rank() >= EntityThaumaturgeGolem.MAX_RANK) {
+                tooltip.accept(Component.translatable("golem.rank").append(" " + props.rank()).withStyle(ChatFormatting.GOLD));
             } else {
                 int xp = stack.getOrDefault(TCDataComponents.GOLEM_XP.get(), 0);
-                int needed = (props.getRank() + 1) * (props.getRank() + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT;
-                tooltip.accept(Component.translatable("golem.rank").append(" " + props.getRank()).withStyle(ChatFormatting.GOLD)
+                int needed = (props.rank() + 1) * (props.rank() + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT;
+                tooltip.accept(Component.translatable("golem.rank").append(" " + props.rank()).withStyle(ChatFormatting.GOLD)
                         .append(Component.literal(" (" + xp + "/" + needed + ")").withStyle(ChatFormatting.DARK_GREEN)));
             }
         }
-        Identifier materialKey = TCGolemParts.materials().getKey(props.getMaterial());
+        Identifier materialKey = TCGolemParts.materials().getKey(props.material());
         if (materialKey != null) {
             tooltip.accept(Component.translatable(GolemMaterial.nameKey(materialKey)).withStyle(ChatFormatting.GREEN));
         }
-        for (GolemTrait trait : props.getTraits()) {
+        for (GolemTrait trait : props.traits()) {
             tooltip.accept(Component.literal("-").append(Component.translatable(GolemTrait.nameKey(TCGolemTraits.registry().getKey(trait)))).withStyle(ChatFormatting.BLUE));
         }
     }
@@ -82,7 +82,7 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         ItemStack held = context.getItemInHand();
         GolemProperties props = held.get(TCDataComponents.GOLEM_PROPERTIES.get());
         if (props != null) {
-            golem.setProperties(props.copy());
+            golem.setProperties(props);
         }
         golem.setRankXp(held.getOrDefault(TCDataComponents.GOLEM_XP.get(), 0));
         golem.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);

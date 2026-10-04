@@ -15,6 +15,17 @@ Changes
 - greatwoods and magical forest big oaks generate through the vanilla tree feature with the new thaumaturge:crown_trunk_placer, thaumaturge:crown_foliage_placer and thaumaturge:spider_nest types; the thaumaturge:big_tree and thaumaturge:big_magic_tree feature types are gone
 - silverwoods generate through the vanilla tree feature with thaumaturge:silverwood_trunk_placer, thaumaturge:leaf_cell_foliage_placer, thaumaturge:detached_leaf_pruner and thaumaturge:scattered_flowers; the thaumaturge:silverwood_tree feature type is gone
 - api: remove IScribeTools, tag items with thaumaturge:scribing_tools instead
+- golem seals are assembled from parts; advanced seals are the basic seal with a bigger filter, visible options and the smart trait, and every seal keeps its old behaviour, options and save data
+- seal filter items keep their components when saved and synced
+- the harvest seal remembers its replant spots even while replanting is switched off
+- golem builds stored on golem items are immutable values
+- api: seals are ISealBehavior jobs registered as SealType entries built from parts (filter, area, settings, trait gates, placement, placer); ISeal, ISealConfigArea, ISealConfigFilter, ISealConfigToggles and ISealGui are gone, use SealType.builder, SealSetting, SealPanel, SealFilterSpec and ISealFilter
+- api: ISealEntity exposes type(), behavior(), filter(), setting()/setSetting(), markChanged() and plain accessor names (pos, priority, color, area, isLocked, isRedstoneControlled, owner); getSeal, syncToClient and tickSealEntity are gone
+- api: Task targets a TaskTarget (BlockTarget or EntityTarget) created with Task.atBlock/Task.onEntity; TYPE_BLOCK/TYPE_ENTITY, getType and the get-prefixed accessors are gone, setSuspended is suspend(), setCompletion is recordAttempt(), canGolemPerformTask is canBePerformedBy()
+- api: IGolemAPI carries items through hands() (IGolemHands); holdItem, dropItem, canCarry, canCarryAmount, isCarrying and getCarrying moved there, getGolemEntity/getGolemWorld/getProperties/getGolemColor are asEntity/level/properties/color
+- api: IGolemProperties is immutable; setters are replaced by withMaterial/withHead/withArms/withLegs/withAddon/withRank and getters lost their get prefix, generateComponents is components()
+- api: IGolemFunction and the IHeadFunction/ILegFunction/IAddonFunction/IArmFunction sub-interfaces are replaced by IGolemPartAbility and IGolemArmAbility; GolemPart.function() is ability()
+- api: GolemHelper.createSeal is sealType(), getPosInArea and getBoundsForArea moved to SealArea.cell and SealArea.bounds
 
 ------------------------------------------------------
 Version 0.2.0
