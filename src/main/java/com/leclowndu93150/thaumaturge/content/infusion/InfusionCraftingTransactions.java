@@ -1,43 +1,41 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
-import com.leclowndu93150.thaumaturge.api.recipe.ResearchStatus;
+import com.leclowndu93150.thaumaturge.api.recipe.ResearchGateStatus;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
-/** Internal implementation behind the supported infusion facade. */
-public final class InfusionCraftingTransactions {
-    private InfusionCraftingTransactions() {}
+public final class InfusionCraftingTransactions implements InfusionCraftingTransaction.Bindings {
 
-    public static InfusionCraftingTransaction.Inspection inspect(
+    @Override
+    public InfusionCraftingTransaction.Inspection inspect(
             InfusionMatrixContext context, ServerPlayer player, ItemStack catalyst, List<ItemStack> components) {
         InfusionCraftingTransaction.Failure invalid = validate(context, player);
-        if (invalid == InfusionCraftingTransaction.Failure.NONE
-                && (catalyst == null
-                        || components == null
-                        || components.stream().anyMatch(java.util.Objects::isNull))) {
-            invalid = InfusionCraftingTransaction.Failure.INVALID_INPUT;
-        }
         if (invalid != InfusionCraftingTransaction.Failure.NONE) {
             return InfusionCraftingTransaction.Inspection.failure(invalid);
         }
         return inspectValid(context, player, catalyst.copyWithCount(1), copyComponents(components));
     }
 
-    public static InfusionCraftingTransaction.Failure start(
-            InfusionMatrixContext context, ServerPlayer player, ResourceLocation expectedRecipeId) {
+    @Override
+    public InfusionCraftingTransaction.Failure start(
+            InfusionMatrixContext context, ServerPlayer player, ResourceKey<Recipe<?>> expectedRecipeId) {
         InfusionCraftingTransaction.Failure invalid = validate(context, player);
         if (invalid != InfusionCraftingTransaction.Failure.NONE) return invalid;
-        if (expectedRecipeId == null) return InfusionCraftingTransaction.Failure.INVALID_INPUT;
         BlockEntityInfusionMatrix matrix = matrix(context);
         if (matrix == null) return InfusionCraftingTransaction.Failure.MATRIX_UNAVAILABLE;
         if (!matrix.isActive()) return InfusionCraftingTransaction.Failure.MATRIX_INACTIVE;
@@ -53,13 +51,13 @@ public final class InfusionCraftingTransactions {
         InfusionCraftingTransaction.Inspection inspection = inspectValid(context, player, catalyst, components);
         if (!inspection.successful()) return inspection.failure();
         if (!expectedRecipeId.equals(inspection.recipeId())) {
-            return InfusionCraftingTransaction.Failure.COMPONENTS_CHANGED;
+            return InfusionCraftingTransaction.Failure.INGREDIENTS_CHANGED;
         }
         matrix.refreshSurroundings();
         matrix.onRightClick(context.level(), player);
         return matrix.isCrafting()
                 ? InfusionCraftingTransaction.Failure.NONE
-                : InfusionCraftingTransaction.Failure.NATIVE_INFUSION_FAILED;
+                : InfusionCraftingTransaction.Failure.NOT_STARTED;
     }
 
     private static InfusionCraftingTransaction.Inspection inspectValid(
@@ -139,7 +137,7 @@ public final class InfusionCraftingTransactions {
             MatrixEnvironment environment,
             ServerPlayer player,
             ResourceLocation recipeId,
-            com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe recipe,
+            IInfusionRecipe recipe,
             @Nullable List<ItemStack> matched,
             AspectList aspects,
             int instability,
@@ -148,26 +146,23 @@ public final class InfusionCraftingTransactions {
         if (matched == null) {
             return InfusionCraftingTransaction.Inspection.failure(InfusionCraftingTransaction.Failure.NO_RECIPE);
         }
-        ResearchStatus research = recipe.researchStatus(player);
+        ResearchGateStatus research = recipe.gateStatus(player);
         float multiplier = BlockEntityInfusionMatrix.effectiveCostMultiplier(environment);
         AspectList required = BlockEntityInfusionMatrix.scaleByEnvironment(aspects, multiplier);
         return new InfusionCraftingTransaction.Inspection(
-                research.permitsCrafting(),
                 research.permitsCrafting()
                         ? InfusionCraftingTransaction.Failure.NONE
                         : InfusionCraftingTransaction.Failure.RESEARCH_LOCKED,
-                recipeId,
+                ResourceKey.create(Registries.RECIPE, recipeId),
                 required,
                 instability,
                 research,
-                output,
                 output,
                 remainders(matched),
                 exactOutput);
     }
 
     private static InfusionCraftingTransaction.Failure validate(InfusionMatrixContext context, ServerPlayer player) {
-        if (context == null || player == null) return InfusionCraftingTransaction.Failure.INVALID_CONTEXT;
         if (!context.level().getServer().isSameThread()) {
             return InfusionCraftingTransaction.Failure.NOT_SERVER_THREAD;
         }
@@ -190,7 +185,10 @@ public final class InfusionCraftingTransactions {
     }
 
     private static List<ItemStack> copyComponents(List<ItemStack> components) {
-        return components.stream().map(stack -> stack.copyWithCount(1)).toList();
+        return components.stream()
+                .filter(Objects::nonNull)
+                .map(stack -> stack.copyWithCount(1))
+                .toList();
     }
 
     private static ItemStack projectedResult(ItemStack result, ItemStack catalyst) {

@@ -5,17 +5,19 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import java.util.Map;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The computed cost of crafting an {@link IArcaneRecipe} at a workbench for a given player, and
  * where that cost is paid from.
  *
- * <p>An arcane craft is paid in three ways, resolved in order: primal vis drawn from a wand in the
- * workbench's wand slot, essentia crystals consumed from the crystal slots, and aura vis drained
- * from the block entity. This record reports the outcome of that resolution so addons can display
+ * <p>An arcane craft is paid in three ways: each primal's share is drawn from a wand in the
+ * workbench's wand slot, else from registered {@link IWorkbenchVisSource}s, else from essentia
+ * crystals in the crystal slots; the aura part is drained from the chunk aura around the workbench
+ * or from registered {@link IWorkbenchAuraSource}s. This record reports the outcome of that resolution so addons can display
  * the cost, decide affordability, or drive automation without recomputing the rules.
  *
- * <p>Instances are produced by {@link #of(IArcaneRecipe, IArcaneWorkbench, Player)} and are
+ * <p>Instances are produced by {@link #of(IArcaneRecipe, IArcaneWorkbench, Player, ArcaneWorkbenchContext)} and are
  * delivered mutably-replaceable through {@link ArcaneCraftCostEvent}. All fields are immutable
  * views.
  *
@@ -41,6 +43,29 @@ public record ArcaneCraftCost(
     /**
      * Computes the cost of crafting {@code recipe} at {@code workbench} for {@code player}.
      *
+     * <p>{@link IWorkbenchVisSource}s are consulted only when a context is given and the player is
+     * a server player, and only with simulated calls. Affordability here covers the wand, sources
+     * and crystals; {@link ArcaneCraftingTransaction#preview} also checks the aura.
+     *
+     * @param recipe    the arcane recipe
+     * @param workbench the workbench inventory holding crystals and the wand
+     * @param player    the crafting player, whose wand and gear affect the cost
+     * @param context   where the craft runs, or null to leave external vis sources out
+     * @return the resolved cost
+     * @throws IllegalStateException when accessed before the implementation has bound the factory
+     */
+    public static ArcaneCraftCost of(
+            IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player, @Nullable ArcaneWorkbenchContext context) {
+        if (factory == null) {
+            throw new IllegalStateException("ArcaneCraftCost accessed before binding");
+        }
+        return factory.compute(recipe, workbench, player, context);
+    }
+
+    /**
+     * Computes the cost of crafting {@code recipe} at {@code workbench} for {@code player} without
+     * consulting external vis sources. Safe on the client.
+     *
      * @param recipe    the arcane recipe
      * @param workbench the workbench inventory holding crystals and the wand
      * @param player    the crafting player, whose wand and gear affect the cost
@@ -48,10 +73,7 @@ public record ArcaneCraftCost(
      * @throws IllegalStateException when accessed before the implementation has bound the factory
      */
     public static ArcaneCraftCost of(IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player) {
-        if (factory == null) {
-            throw new IllegalStateException("ArcaneCraftCost accessed before binding");
-        }
-        return factory.compute(recipe, workbench, player);
+        return of(recipe, workbench, player, null);
     }
 
     /**
@@ -80,8 +102,13 @@ public record ArcaneCraftCost(
          * @param recipe    the arcane recipe
          * @param workbench the workbench inventory
          * @param player    the crafting player
+         * @param context   where the craft runs, or null to leave external vis sources out
          * @return the resolved cost
          */
-        ArcaneCraftCost compute(IArcaneRecipe recipe, IArcaneWorkbench workbench, Player player);
+        ArcaneCraftCost compute(
+                IArcaneRecipe recipe,
+                IArcaneWorkbench workbench,
+                Player player,
+                @Nullable ArcaneWorkbenchContext context);
     }
 }

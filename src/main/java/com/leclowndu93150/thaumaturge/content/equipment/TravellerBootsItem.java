@@ -43,6 +43,11 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
         super(TCMaterials.ARMOR_TRAVELLER, ArmorItem.Type.BOOTS, properties);
     }
 
+    @Override
+    public boolean canWalkOnPowderedSnow(ItemStack stack, LivingEntity wearer) {
+        return true;
+    }
+
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         if (event.getSlot() != EquipmentSlot.FEET

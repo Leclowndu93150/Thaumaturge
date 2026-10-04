@@ -8,8 +8,12 @@ import net.minecraft.world.level.block.Block;
 
 public final class TCBlockTags {
     public static final TagKey<Block> CRUCIBLE_HEAT_SOURCES = key("crucible_heat_sources");
+    public static final TagKey<Block> ARCANE_WORKBENCH_CHARGER_HOSTS = key("arcane_workbench_charger_hosts");
+    public static final TagKey<Block> CANDLES = key("candles");
+    public static final TagKey<Block> RESEARCH_BONUS_ORDO = key("research_bonus/ordo");
     public static final TagKey<Block> PHYSICAL_FLUX = key("physical_flux");
     public static final TagKey<Block> FLUX_SCRUBBABLE = key("flux_scrubbable");
+    public static final TagKey<Block> MAGICAL_CAVE_GROUND_REPLACEABLE = key("magical_cave_ground_replaceable");
     public static final TagKey<Block> SCAN_CLAY = key("scan/f_matclay");
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");
@@ -36,6 +40,7 @@ public final class TCBlockTags {
     public static final TagKey<Block> LAMP_GROWTH_BLACKLIST = key("lamp_growth_blacklist");
 
     public static final TagKey<Block> MAGICAL_PLANTS = key("magical_plants");
+    public static final TagKey<Block> MAGICAL_FOREST_FLOWERS = key("magical_forest_flowers");
     public static final TagKey<Block> TAINT_CONVERTIBLE_LOG = key("taint_convertible/log");
     public static final TagKey<Block> TAINT_CONVERTIBLE_SOIL = key("taint_convertible/soil");
     public static final TagKey<Block> TAINT_CONVERTIBLE_ROCK = key("taint_convertible/rock");

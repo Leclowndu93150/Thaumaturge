@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
-import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
+import com.leclowndu93150.thaumaturge.content.wands.assembly.WandAssemblyHook;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -14,7 +14,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
 
 public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
 
@@ -49,6 +48,10 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
         this.vis = vis;
         this.gate = gate;
         this.aspects = aspects;
+    }
+
+    protected static ItemStack assembleResult(ItemStack result, IArcaneCraftingInput input) {
+        return WandAssemblyHook.apply(result.copy(), input);
     }
 
     protected static NonNullList<ItemStack> defaultCraftingReminder(IArcaneCraftingInput input) {
@@ -97,11 +100,5 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
     @Override
     public AspectList getCrystals() {
         return aspects;
-    }
-
-    @Override
-    public boolean matches(IArcaneCraftingInput input, Level level) {
-        WorkbenchPayment.Plan plan = WorkbenchPayment.plan(this, input, input.player());
-        return plan.crystalsSatisfied();
     }
 }

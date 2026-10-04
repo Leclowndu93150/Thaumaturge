@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
@@ -16,23 +16,28 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 /** Finite Flux Gas implemented as an upward-moving modern block. */
-public final class BlockFluxGas extends Block {
+public final class BlockFluxGas extends Block implements LiquidBlockContainer {
     public static final MapCodec<BlockFluxGas> CODEC = simpleCodec(BlockFluxGas::new);
     public static final IntegerProperty AMOUNT = IntegerProperty.create("amount", 1, PhysicalFlux.MAX_QUANTA);
 
@@ -70,6 +75,17 @@ public final class BlockFluxGas extends Block {
     @Override
     protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         return state.getValue(AMOUNT) <= REPLACEABLE_AMOUNT;
+    }
+
+    @Override
+    public boolean canPlaceLiquid(
+            @Nullable Player player, BlockGetter level, BlockPos pos, BlockState state, Fluid fluid) {
+        return false;
+    }
+
+    @Override
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        return false;
     }
 
     @Override
@@ -153,7 +169,7 @@ public final class BlockFluxGas extends Block {
             return 0;
         }
         BlockState aboveState = level.getBlockState(above);
-        if (!aboveState.getFluidState().isEmpty() && !PhysicalFlux.isPhysicalFlux(aboveState)) {
+        if (aboveState.getBlock() instanceof LiquidBlock && !PhysicalFlux.isPhysicalFlux(aboveState)) {
             level.setBlock(above, gasBlockState(amount), Block.UPDATE_ALL);
             level.setBlock(pos, aboveState, Block.UPDATE_ALL);
             FluidState displaced = aboveState.getFluidState();
@@ -185,7 +201,9 @@ public final class BlockFluxGas extends Block {
         if (PhysicalFlux.isPhysicalFlux(state)) {
             return -1;
         }
-        if (!state.getFluidState().isEmpty()) return 0;
+        if (!state.getFluidState().isEmpty()) {
+            return state.getBlock() instanceof LiquidBlock ? 0 : -1;
+        }
         return state.canBeReplaced() ? 0 : -1;
     }
 
@@ -216,7 +234,7 @@ public final class BlockFluxGas extends Block {
         if (!(level instanceof ServerLevel serverLevel) || !(entity instanceof LivingEntity living)) {
             return;
         }
-        if (living instanceof ITaintedMob
+        if (MobTraits.isTainted(living)
                 || living.getType().is(EntityTypeTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
                 || living.hasEffect(TCMobEffects.VIS_EXHAUST)

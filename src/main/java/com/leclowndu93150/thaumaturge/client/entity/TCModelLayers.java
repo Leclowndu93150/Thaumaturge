@@ -20,6 +20,12 @@ public final class TCModelLayers {
     public static final ModelLayerLocation BRAIN = new ModelLayerLocation(TCIds.rl("brain"), "main");
     public static final ModelLayerLocation JAR_BRINE = new ModelLayerLocation(TCIds.rl("jar_brine"), "main");
     public static final ModelLayerLocation CENTRIFUGE = new ModelLayerLocation(TCIds.rl("centrifuge"), "main");
+    public static final ModelLayerLocation PRAETOR_ARMOR_HEAD =
+            new ModelLayerLocation(TCIds.rl("praetor_armor"), "head");
+    public static final ModelLayerLocation PRAETOR_ARMOR_CHEST =
+            new ModelLayerLocation(TCIds.rl("praetor_armor"), "chest");
+    public static final ModelLayerLocation PRAETOR_ARMOR_LEGS =
+            new ModelLayerLocation(TCIds.rl("praetor_armor"), "legs");
     public static final ModelLayerLocation KNIGHT_ARMOR_HEAD = new ModelLayerLocation(TCIds.rl("knight_armor"), "head");
     public static final ModelLayerLocation KNIGHT_ARMOR_CHEST =
             new ModelLayerLocation(TCIds.rl("knight_armor"), "chest");

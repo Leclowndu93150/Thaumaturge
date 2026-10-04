@@ -1,62 +1,153 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCreeper;
-import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.entity.construct.EntityOwnedConstruct;
+import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitEngine;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSplosion;
 import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import net.minecraft.core.BlockPos;
+import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TaintCreatureEvents {
-    private static final int TC4_TAINT_SPLosion_ATTEMPTS = 10;
+    private static final float BLAST_STRENGTH = 1.5F;
+    private static final double POISON_RANGE = 6.0;
+    private static final int FLUX_TAINT_TICKS = 100;
+    private static final float SPLOSION_SPREAD = 5.0F;
+    private static final float INFECTION_HEALTH = 2.0F;
+    private static final int TAINTED_ATTACK_FLUX_TAINT_TICKS = 200;
+    private static final int BROOD_EXPERIENCE = 2;
 
     private TaintCreatureEvents() {}
 
     @SubscribeEvent
-    public static void onDetonate(ExplosionEvent.Detonate event) {
+    public static void onExplosionStart(ExplosionEvent.Start event) {
         if (!(event.getLevel() instanceof ServerLevel level)
-                || !(event.getExplosion().getDirectSourceEntity() instanceof EntityTaintCreeper creeper)) {
+                || !(event.getExplosion().getDirectSourceEntity() instanceof Creeper creeper)
+                || !MobTraits.has(creeper, TCMobTraits.TAINT_BLAST.getKey())) {
             return;
         }
-        for (net.minecraft.world.entity.Entity entity : event.getAffectedEntities()) {
-            if (entity instanceof LivingEntity living) {
-                living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, 600, 0, false, true, false));
+        event.setCanceled(true);
+        level.explode(
+                null,
+                level.damageSources().explosion(creeper, creeper),
+                null,
+                creeper.getX(),
+                creeper.getY() + creeper.getBbHeight() / 2.0F,
+                creeper.getZ(),
+                BLAST_STRENGTH,
+                false,
+                Level.ExplosionInteraction.NONE);
+        AABB area = new AABB(creeper.position(), creeper.position()).inflate(POISON_RANGE);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area)) {
+            if (!MobTraits.isTainted(living) && !living.getType().is(EntityTypeTags.UNDEAD)) {
+                living.addEffect(
+                        new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
             }
         }
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
-            return;
+        if (!ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+            TaintSplosion.burstAtHeight(level, creeper.blockPosition(), level.getRandom(), SPLOSION_SPREAD);
         }
+    }
 
-        BlockPos center = creeper.blockPosition();
-        RandomSource random = level.getRandom();
-        for (int i = 0; i < TC4_TAINT_SPLosion_ATTEMPTS; i++) {
-            int x = center.getX() + (int) ((random.nextFloat() - random.nextFloat()) * 6.0F);
-            int z = center.getZ() + (int) ((random.nextFloat() - random.nextFloat()) * 6.0F);
-            if (!random.nextBoolean()) {
-                continue;
-            }
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos column = new BlockPos(x, y, z);
-            if (!level.hasChunkAt(column) || !TaintBiomeManager.taintColumn(level, column)) {
-                continue;
-            }
-            if (level.getBlockState(column).canBeReplaced() && BlockTaintFibre.hasSolidAttachment(level, column)) {
-                level.setBlock(column, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
-            }
-            TaintEcology.addPressure(level, column, 0.01F);
+    @SubscribeEvent
+    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        LivingEntity victim = event.getEntity();
+        if (!(victim.level() instanceof ServerLevel level)) {
+            return;
+        }
+        if (victim.getHealth() < INFECTION_HEALTH
+                && !victim.isInvertedHealAndHarm()
+                && victim.isAlive()
+                && !(victim instanceof EntityOwnedConstruct)
+                && victim.hasEffect(TCMobEffects.FLUX_TAINT)
+                && victim.getRandom().nextBoolean()) {
+            TaintInfection.tryInfect(level, victim);
+            return;
+        }
+        if (event.getAmount() > 0.0F
+                && event.getSource().getEntity() instanceof LivingEntity attacker
+                && MobTraits.isTainted(attacker)) {
+            victim.addEffect(new MobEffectInstance(
+                    TCMobEffects.FLUX_TAINT, TAINTED_ATTACK_FLUX_TAINT_TICKS, 0, true, false, false));
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        if (event.getTarget() instanceof LivingEntity target
+                && MobTraitEngine.suppressesNativeAi(target)
+                && MobTraits.has(target, MobTraits.TAINTED)
+                && !event.getItemStack().is(Tags.Items.TOOLS_SHEAR)) {
+            event.setCancellationResult(InteractionResult.PASS);
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLivingDrops(LivingDropsEvent event) {
+        LivingEntity entity = event.getEntity();
+        if (MobTraits.has(entity, TCMobTraits.TAINT_BROOD.getKey())) {
+            event.setCanceled(true);
+            return;
+        }
+        if (!(entity.level() instanceof ServerLevel level) || !MobTraits.has(entity, MobTraits.TAINTED)) {
+            return;
+        }
+        TaintedProfile profile = TaintedProfile.of(entity.getType());
+        if (profile == null || profile.lootTable().isEmpty()) {
+            return;
+        }
+        event.getDrops().clear();
+        LootTable table = level.getServer()
+                .reloadableRegistries()
+                .getLootTable(profile.lootTable().get());
+        DamageSource source = event.getSource();
+        LootParams.Builder params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.THIS_ENTITY, entity)
+                .withParameter(LootContextParams.ORIGIN, entity.position())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, source)
+                .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, source.getEntity())
+                .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, source.getDirectEntity());
+        if (event.isRecentlyHit() && source.getEntity() instanceof Player player) {
+            params = params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
+                    .withLuck(player.getLuck());
+        }
+        table.getRandomItems(
+                params.create(LootContextParamSets.ENTITY),
+                entity.getLootTableSeed(),
+                stack -> event.getDrops()
+                        .add(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), stack)));
+    }
+
+    @SubscribeEvent
+    public static void onExperienceDrop(LivingExperienceDropEvent event) {
+        if (MobTraits.has(event.getEntity(), TCMobTraits.TAINT_BROOD.getKey())) {
+            event.setDroppedExperience(BROOD_EXPERIENCE);
         }
     }
 }

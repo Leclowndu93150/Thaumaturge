@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.compat.jei;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.compat.jei.category.AspectFromStacksCategory;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestSyncAspectPoolPayload;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.recipe.IRecipeManager;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
@@ -33,6 +35,7 @@ public final class AspectJeiSync {
 
     static void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
+        rebuildAspectStackPages();
         discoveredAspects.clear();
         gatedStacks.clear();
         IIngredientManager ingredients = jeiRuntime.getIngredientManager();
@@ -69,6 +72,26 @@ public final class AspectJeiSync {
             return AspectPools.idOf(aspects.entries().get(0).aspect());
         }
         return null;
+    }
+
+    public static void rebuildAspectStackPages() {
+        IJeiRuntime current = runtime;
+        if (current == null) {
+            return;
+        }
+        IRecipeManager recipes = current.getRecipeManager();
+        List<AspectFromStacksCategory.Wrapper> stale = recipes.createRecipeLookup(AspectFromStacksCategory.RECIPE_TYPE)
+                .includeHidden()
+                .get()
+                .toList();
+        if (!stale.isEmpty()) {
+            recipes.hideRecipes(AspectFromStacksCategory.RECIPE_TYPE, stale);
+        }
+        List<AspectFromStacksCategory.Wrapper> pages = ThaumaturgeJEIPlugin.aspectFromStacksPages(
+                current.getIngredientManager().getAllIngredients(VanillaTypes.ITEM_STACK));
+        if (!pages.isEmpty()) {
+            recipes.addRecipes(AspectFromStacksCategory.RECIPE_TYPE, pages);
+        }
     }
 
     public static void syncDiscovered() {

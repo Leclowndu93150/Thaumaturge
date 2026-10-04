@@ -5,8 +5,9 @@ package com.leclowndu93150.thaumaturge.api.aspect;
  *
  * <p>Expose this interface through {@link AspectCapabilities#CONTAINER}. Native source discovery
  * queries that capability with a {@code null} side, so providers intended for infusion must return
- * a view for null context. Discovery considers only already-loaded positions, orders candidates by
- * distance, and never force-loads chunks.
+ * a view for null context. Native selection considers only already-loaded positions and prefers
+ * higher-priority sources before applying its proximity and transport rules. It never force-loads
+ * chunks.
  *
  * <p>The default native search covers a cube extending 12 blocks from its center. Directional
  * searches cover the same 25-by-25 cross-section and extend 12 blocks forward. A failed search is
@@ -20,6 +21,18 @@ package com.leclowndu93150.thaumaturge.api.aspect;
  * @since 1.0.0
  */
 public interface IAspectSource extends IAspectContainer {
+
+    /**
+     * Returns this source's preference in native automated essentia-source selection. Higher
+     * values are tried first; sources with equal priority retain the native selection order.
+     *
+     * <p>The default keeps existing third-party aspect sources at neutral priority.
+     *
+     * @return source selection priority, defaulting to {@code 0}
+     */
+    default int getSourcePriority() {
+        return 0;
+    }
 
     /**
      * Returns whether automated source discovery should temporarily skip this container.

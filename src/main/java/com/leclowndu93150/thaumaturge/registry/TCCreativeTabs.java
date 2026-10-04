@@ -25,6 +25,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCCreativeTabs {
@@ -46,7 +47,6 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.THAUMOMETER.get());
                         output.accept(TCItems.SCRIBING_TOOLS.get());
                         output.accept(TCItems.RESEARCH_NOTE.get());
-                        output.accept(TCItems.CELESTIAL_NOTES.get());
                         output.accept(TCItems.MANA_BEAN.get());
                         output.accept(TCItems.VIS_RESONATOR.get());
                         for (CelestialBody body : CelestialBody.values()) {
@@ -102,7 +102,6 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ARCANE_WORKBENCH.get());
                         output.accept(TCItems.CRUCIBLE.get());
                         output.accept(TCItems.ALCHEMICAL_CONSTRUCT.get());
-                        output.accept(TCItems.ALCHEMICAL_FURNACE.get());
                         output.accept(TCItems.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
                         output.accept(TCItems.ADVANCED_ALCHEMICAL_FURNACE.get());
                         output.accept(TCItems.CENTRIFUGE.get());
@@ -142,8 +141,12 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.CRYSTAL_VITIUM.get());
 
                         output.accept(TCItems.ORE_AMBER.get());
+                        output.accept(TCItems.DEEPSLATE_ORE_AMBER.get());
                         output.accept(TCItems.ORE_CINNABAR.get());
+                        output.accept(TCItems.DEEPSLATE_ORE_CINNABAR.get());
+                        output.accept(TCItems.RAW_CINNABAR.get());
                         output.accept(TCItems.ORE_QUARTZ.get());
+                        output.accept(TCItems.DEEPSLATE_ORE_QUARTZ.get());
                         output.accept(TCItems.AMBER_BLOCK);
                         output.accept(TCItems.METAL_BRASS_BLOCK);
                         output.accept(TCItems.METAL_THAUMIUM_BLOCK);
@@ -197,6 +200,7 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.INFERNAL_FURNACE.get());
                         output.accept(TCItems.THAUMATORIUM.get());
                         output.accept(TCItems.INFUSION_MATRIX.get());
+                        output.accept(TCItems.ARCANE_GRINDSTONE.get());
                         output.accept(TCItems.PEDESTAL_ARCANE.get());
                         output.accept(TCItems.PEDESTAL_ANCIENT.get());
                         output.accept(TCItems.PEDESTAL_ELDRITCH.get());
@@ -229,6 +233,9 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.ITEM_GRATE.get());
                         for (DyeColor dye : DyeColor.values()) {
                             output.accept(TCItems.CANDLES.get(dye).get());
+                        }
+                        for (DeferredItem<BlockItem> holder : TCItems.CANDLE_HOLDERS.values()) {
+                            output.accept(holder.get());
                         }
 
                         output.accept(TCItems.STONE_ARCANE.get());
@@ -343,6 +350,18 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.SLAB_ELDRITCH.get());
                         output.accept(TCItems.STAIRS_GREATWOOD.get());
                         output.accept(TCItems.STAIRS_SILVERWOOD.get());
+                        output.accept(TCItems.DOOR_GREATWOOD.get());
+                        output.accept(TCItems.TRAPDOOR_GREATWOOD.get());
+                        output.accept(TCItems.FENCE_GREATWOOD.get());
+                        output.accept(TCItems.FENCE_GATE_GREATWOOD.get());
+                        output.accept(TCItems.BUTTON_GREATWOOD.get());
+                        output.accept(TCItems.PRESSURE_PLATE_GREATWOOD.get());
+                        output.accept(TCItems.DOOR_SILVERWOOD.get());
+                        output.accept(TCItems.TRAPDOOR_SILVERWOOD.get());
+                        output.accept(TCItems.FENCE_SILVERWOOD.get());
+                        output.accept(TCItems.FENCE_GATE_SILVERWOOD.get());
+                        output.accept(TCItems.BUTTON_SILVERWOOD.get());
+                        output.accept(TCItems.PRESSURE_PLATE_SILVERWOOD.get());
                         output.accept(TCItems.TABLE_WOOD.get());
                         output.accept(TCItems.TABLE_STONE.get());
                         output.accept(TCItems.PAVING_STONE_TRAVEL.get());
@@ -410,6 +429,8 @@ public final class TCCreativeTabs {
                         output.accept(TCItems.FIREBAT_SPAWN_EGG.get());
                         output.accept(TCItems.MIND_SPIDER_SPAWN_EGG.get());
                         output.accept(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());
+                        output.accept(TCItems.TAINTED_GOO.get());
+                        output.accept(TCItems.TAINT_TENDRIL.get());
                         output.accept(TCItems.BOTTLE_TAINT.get());
                         output.accept(TCItems.TAINT_ROCK.get());
                         output.accept(TCItems.TAINT_SOIL.get());

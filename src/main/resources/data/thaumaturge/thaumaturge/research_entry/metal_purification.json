@@ -19,7 +19,9 @@
         "thaumaturge:crucible/cluster_copper",
         "thaumaturge:crucible/cluster_tin",
         "thaumaturge:crucible/cluster_silver",
-        "thaumaturge:crucible/cluster_lead"
+        "thaumaturge:crucible/cluster_lead",
+        "thaumaturge:crucible/iron_nugget_transmutation",
+        "thaumaturge:crucible/gold_nugget_transmutation"
       ],
       "required_knowledge": [
         {

@@ -35,7 +35,7 @@ public final class TCKeybinds {
     public static void onClientTick(ClientTickEvent.Post event) {
         if (Minecraft.getInstance().screen != null) return;
         while (OPEN_THAUMONOMICON.consumeClick()) {
-            Minecraft.getInstance().setScreen(new ThaumonomiconBrowserScreen());
+            Minecraft.getInstance().setScreen(ThaumonomiconBrowserScreen.reopen());
         }
     }
 }

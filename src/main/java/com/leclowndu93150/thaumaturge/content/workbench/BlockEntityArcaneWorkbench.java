@@ -2,11 +2,15 @@ package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -60,6 +64,12 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
 
     public InventoryArcaneWorkbench getInventory() {
         return inventory;
+    }
+
+    public ArcaneWorkbenchContext craftingContext(ServerPlayer player) {
+        String hostKey = player.serverLevel().dimension().location() + ":" + worldPosition.asLong();
+        return ArcaneWorkbenchContext.placed(
+                player, worldPosition, UUID.nameUUIDFromBytes(hostKey.getBytes(StandardCharsets.UTF_8)), null);
     }
 
     public void refreshAura() {

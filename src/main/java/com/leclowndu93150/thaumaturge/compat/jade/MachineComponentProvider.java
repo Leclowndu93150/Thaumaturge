@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +45,7 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
             } else if (!accessor.showDetails()) {
                 tooltip.add(Component.translatable("jade.thaumaturge.relay.linked"));
             } else if (relay.depth() == 1) {
-                tooltip.add(Component.translatable("jade.thaumaturge.relay.linked_node"));
+                tooltip.add(linkedSource(relay));
             } else {
                 tooltip.add(Component.translatable("jade.thaumaturge.relay.linked_relay", relay.depth() - 1));
             }
@@ -213,5 +214,16 @@ public enum MachineComponentProvider implements IBlockComponentProvider {
             case "focal_manipulator" -> JadeConfig.FOCAL_MANIPULATORS;
             default -> null;
         };
+    }
+
+    private static Component linkedSource(BlockEntityVisRelay relay) {
+        if (relay.getLevel() == null
+                || relay.parentPos() == null
+                || relay.getLevel().getBlockEntity(relay.parentPos()) instanceof BlockEntityNode) {
+            return Component.translatable("jade.thaumaturge.relay.linked_node");
+        }
+        return Component.translatable(
+                "jade.thaumaturge.relay.linked_source",
+                relay.getLevel().getBlockState(relay.parentPos()).getBlock().getName());
     }
 }

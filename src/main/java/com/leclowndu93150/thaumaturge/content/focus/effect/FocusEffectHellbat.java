@@ -108,6 +108,9 @@ public final class FocusEffectHellbat implements FocusEffect {
                             + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * SPAWN_SPREAD,
                     level.getRandom().nextFloat() * 360.0F,
                     0.0F);
+            if (!level.noCollision(bat)) {
+                continue;
+            }
             bat.summon(caster, struck, bonus);
             if (level.addFreshEntity(bat)) {
                 spawned = true;

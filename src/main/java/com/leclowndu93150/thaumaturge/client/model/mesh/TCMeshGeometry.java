@@ -83,7 +83,7 @@ public final class TCMeshGeometry implements IUnbakedGeometry<TCMeshGeometry> {
             }
             TextureAtlasSprite sprite = spriteGetter.apply(context.getMaterial(slot));
             quads.clear();
-            TCMeshQuadBaker.bakePart(part, sprite, NO_TINT, transform, flipV, quads);
+            TCMeshQuadBaker.bakePart(part, sprite, NO_TINT, transform, flipV, true, 0, 0, quads);
             for (BakedQuad quad : quads) {
                 builder.addUnculledFace(quad);
             }

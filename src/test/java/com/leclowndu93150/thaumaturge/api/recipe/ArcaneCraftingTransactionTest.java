@@ -21,15 +21,20 @@ class ArcaneCraftingTransactionTest {
         ItemStack output = new ItemStack(Items.STONE, 2);
         ItemStack remainder = new ItemStack(Items.DIRT, 3);
         ArcaneCraftingTransaction.Result result = new ArcaneCraftingTransaction.Result(
-                true, false, ArcaneCraftingTransaction.Failure.NONE, output, List.of(remainder), null);
+                ArcaneCraftingTransaction.Failure.NONE, output, List.of(remainder), null);
         ArcaneCraftingTransaction.Inspection inspection = new ArcaneCraftingTransaction.Inspection(
-                true, ArcaneCraftingTransaction.Failure.NONE, null, output, List.of(remainder), null);
+                ArcaneCraftingTransaction.Failure.NONE,
+                null,
+                output,
+                List.of(remainder),
+                null,
+                ResearchGateStatus.UNLOCKED);
 
         output.setCount(64);
         remainder.setCount(64);
         assertDefensive(result::output, result::remainders);
         assertDefensive(inspection::output, inspection::remainders);
-        assertEquals(ResearchStatus.UNLOCKED, inspection.researchStatus());
+        assertEquals(ResearchGateStatus.UNLOCKED, inspection.researchStatus());
     }
 
     @Test
@@ -57,14 +62,14 @@ class ArcaneCraftingTransactionTest {
     }
 
     @Test
-    void paymentSummaryUsesEvaluatedCost() {
+    void failedResultKeepsEvaluatedCost() {
         ArcaneCraftCost cost = new ArcaneCraftCost(false, Map.of(), AspectList.EMPTY, 23, false);
         ArcaneCraftingTransaction.Result result = new ArcaneCraftingTransaction.Result(
-                false, false, ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE, ItemStack.EMPTY, List.of(), cost);
+                ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE, ItemStack.EMPTY, List.of(), cost);
 
-        ArcanePaymentSummary summary = result.paymentSummary();
-        assertEquals(23, summary.auraVisRequired());
-        assertEquals(false, summary.affordable());
+        assertEquals(false, result.successful());
+        assertEquals(23, result.cost().auraVis());
+        assertEquals(false, result.cost().affordable());
     }
 
     private static void assertDefensive(

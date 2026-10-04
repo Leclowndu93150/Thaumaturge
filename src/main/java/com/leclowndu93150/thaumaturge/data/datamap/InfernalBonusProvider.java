@@ -81,6 +81,12 @@ public final class InfernalBonusProvider extends DataMapProvider {
                         .build());
         add(
                 b,
+                TCItemTags.RAW_MATERIALS_CINNABAR,
+                InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER)
+                        .chance(0.33F)
+                        .build());
+        add(
+                b,
                 TCItemTags.ORES_LEAD,
                 InfernalBonus.builder(items, TCItemTags.NUGGETS_LEAD)
                         .count(2)

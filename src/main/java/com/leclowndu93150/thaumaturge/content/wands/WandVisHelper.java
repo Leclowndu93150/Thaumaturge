@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.wands.IWandVisStorage;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -22,8 +24,21 @@ public final class WandVisHelper {
     }
 
     public static WandVis getAllVis(ItemStack stack) {
+        IWandVisStorage storage = getParts(stack).rod().visStorage();
+        if (storage != null) {
+            return storage.getVis(stack);
+        }
         WandVis vis = stack.get(TCDataComponents.WAND_VIS.get());
         return vis != null ? vis : WandVis.EMPTY;
+    }
+
+    public static void setAllVis(ItemStack stack, WandVis vis) {
+        IWandVisStorage storage = getParts(stack).rod().visStorage();
+        if (storage != null) {
+            storage.setVis(stack, vis);
+        } else {
+            stack.set(TCDataComponents.WAND_VIS.get(), vis);
+        }
     }
 
     public static int getMaxVis(ItemStack stack) {
@@ -35,7 +50,7 @@ public final class WandVisHelper {
     }
 
     public static void storeVis(ItemStack stack, ResourceKey<IAspect> aspect, int centivis) {
-        stack.set(TCDataComponents.WAND_VIS.get(), getAllVis(stack).with(aspect, centivis));
+        setAllVis(stack, getAllVis(stack).with(aspect, centivis));
     }
 
     public static int addVis(ItemStack stack, ResourceKey<IAspect> aspect, int vis, boolean doit) {
@@ -149,11 +164,50 @@ public final class WandVisHelper {
         return false;
     }
 
-    public static boolean consumeVisFromHotbar(Player player, float vis, boolean doit) {
+    public static Map<ResourceKey<IAspect>, Integer> primalSplit(int centivis, AspectList aspects) {
+        Map<ResourceKey<IAspect>, Integer> weights = WandChargingEvents.reduceToPrimals(aspects);
+        int totalWeight = 0;
+        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+            totalWeight += weights.getOrDefault(primal, 0);
+        }
+        if (totalWeight <= 0) {
+            return evenSplit(centivis);
+        }
+        Map<ResourceKey<IAspect>, Integer> split = new LinkedHashMap<>();
+        int remainder = centivis;
+        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+            int weight = weights.getOrDefault(primal, 0);
+            if (weight > 0) {
+                int share = centivis * weight / totalWeight;
+                split.put(primal, share);
+                remainder -= share;
+            }
+        }
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : split.entrySet()) {
+            if (remainder <= 0) {
+                break;
+            }
+            entry.setValue(entry.getValue() + 1);
+            remainder--;
+        }
+        split.values().removeIf(share -> share <= 0);
+        return split;
+    }
+
+    public static boolean consumeVisFromHotbar(
+            Player player, float vis, @Nullable ResourceKey<IAspect> aspect, boolean doit) {
         if (vis <= 0.0F) {
             return true;
         }
-        Map<ResourceKey<IAspect>, Integer> split = evenSplit(Math.round(vis * WandEconomy.CENTIVIS_PER_VIS));
+        AspectList aspects = aspect == null
+                ? AspectList.EMPTY
+                : player.level()
+                        .registryAccess()
+                        .lookupOrThrow(IAspect.REGISTRY_KEY)
+                        .get(aspect)
+                        .map(holder -> AspectList.EMPTY.add(holder, 1))
+                        .orElse(AspectList.EMPTY);
+        Map<ResourceKey<IAspect>, Integer> split = primalSplit(Math.round(vis * WandEconomy.CENTIVIS_PER_VIS), aspects);
         for (int slot = 0; slot < HOTBAR_SIZE; slot++) {
             ItemStack stack = player.getInventory().getItem(slot);
             if (stack.getItem() instanceof ItemWand && consumeAllVis(stack, player, split, doit, false)) {
@@ -179,6 +233,6 @@ public final class WandVisHelper {
         for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
             vis = vis.with(primal, max);
         }
-        stack.set(TCDataComponents.WAND_VIS.get(), vis);
+        setAllVis(stack, vis);
     }
 }

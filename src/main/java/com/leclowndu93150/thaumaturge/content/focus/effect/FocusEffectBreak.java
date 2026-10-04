@@ -83,7 +83,7 @@ public final class FocusEffectBreak implements FocusEffect {
                         .strength(strength)
                         .durability(dur)
                         .delay((int) (dur / strength / DELAY_DIVISOR * index))
-                        .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST)
+                        .visCost(BASE_VIS_COST + (silk ? SILK_VIS_COST : 0.0F) + fortune * FORTUNE_VIS_COST, aspect())
                         .queue(level);
             }
         }

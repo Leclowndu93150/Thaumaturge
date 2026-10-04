@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
 import com.leclowndu93150.thaumaturge.content.entity.FocusCloudCooldowns;
+import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitRuntime;
+import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealWorldIndex;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealsChunkData;
@@ -14,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
 import com.leclowndu93150.thaumaturge.content.warding.ArcaneLockChunkData;
 import com.leclowndu93150.thaumaturge.content.warding.WardChunkData;
 import com.leclowndu93150.thaumaturge.content.warp.WarpData;
+import com.mojang.serialization.Codec;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -113,6 +116,25 @@ public final class TCAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Set<BlockPos>>> EAR_INDEX = register(
             "ear_index",
             () -> AttachmentType.<Set<BlockPos>>builder(() -> ConcurrentHashMap.newKeySet())
+                    .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MobTraitState>> MOB_TRAITS = register(
+            "mob_traits",
+            () -> AttachmentType.builder(() -> MobTraitState.EMPTY)
+                    .serialize(MobTraitState.CODEC.codec(), state -> !state.isEmpty())
+                    .sync(MobTraitState.STREAM_CODEC)
+                    .copyOnDeath()
+                    .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MobTraitRuntime>> MOB_TRAIT_RUNTIME = register(
+            "mob_trait_runtime",
+            () -> AttachmentType.builder(MobTraitRuntime::new).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> CHAMPION_ROLLED = register(
+            "champion_rolled",
+            () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL)
+                    .copyOnDeath()
                     .build());
 
     private TCAttachments() {}

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
@@ -260,7 +260,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         if (!(entity instanceof LivingEntity living)) {
             return;
         }
-        if (living instanceof ITaintedMob) {
+        if (MobTraits.isTainted(living)) {
             return;
         }
         if (living.getType().is(EntityTypeTags.UNDEAD)) {

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemHandMirror;
@@ -42,7 +43,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvan
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
-import com.leclowndu93150.thaumaturge.content.golem.ItemGolemAccessory;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemBell;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
@@ -94,6 +94,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
@@ -213,6 +214,10 @@ public final class TCItems {
 
     public static final DeferredItem<ItemEssentiaCrystal> ESSENTIA_CRYSTAL =
             ITEMS.registerItem("essentia_crystal", ItemEssentiaCrystal::new);
+
+    public static final DeferredItem<Item> TAINTED_GOO = ITEMS.registerSimpleItem("tainted_goo");
+
+    public static final DeferredItem<Item> TAINT_TENDRIL = ITEMS.registerSimpleItem("taint_tendril");
 
     public static final DeferredItem<ItemBottleTaint> BOTTLE_TAINT = ITEMS.registerItem(
             "bottle_taint",
@@ -448,16 +453,11 @@ public final class TCItems {
     public static final DeferredItem<ItemGolemBell> GOLEM_BELL =
             ITEMS.registerItem("golem_bell", ItemGolemBell::new, new Item.Properties().stacksTo(1));
 
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_TOP_HAT =
-            ITEMS.registerItem("golem_top_hat", props -> new ItemGolemAccessory(TCGolemAccessories.TOP_HAT, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_FEZ =
-            ITEMS.registerItem("golem_fez", props -> new ItemGolemAccessory(TCGolemAccessories.FEZ, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_GLASSES =
-            ITEMS.registerItem("golem_glasses", props -> new ItemGolemAccessory(TCGolemAccessories.GLASSES, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_BOWTIE =
-            ITEMS.registerItem("golem_bowtie", props -> new ItemGolemAccessory(TCGolemAccessories.BOWTIE, props));
-    public static final DeferredItem<ItemGolemAccessory> GOLEM_VISOR =
-            ITEMS.registerItem("golem_visor", props -> new ItemGolemAccessory(TCGolemAccessories.VISOR, props));
+    public static final DeferredItem<Item> GOLEM_TOP_HAT = ITEMS.registerSimpleItem("golem_top_hat");
+    public static final DeferredItem<Item> GOLEM_FEZ = ITEMS.registerSimpleItem("golem_fez");
+    public static final DeferredItem<Item> GOLEM_GLASSES = ITEMS.registerSimpleItem("golem_glasses");
+    public static final DeferredItem<Item> GOLEM_BOWTIE = ITEMS.registerSimpleItem("golem_bowtie");
+    public static final DeferredItem<Item> GOLEM_VISOR = ITEMS.registerSimpleItem("golem_visor");
 
     public static final DeferredItem<ItemSealPlacer> SEAL_BLANK = sealItem("seal_blank", null);
     public static final DeferredItem<ItemSealPlacer> SEAL_PICKUP = sealItem("seal_pickup", "pickup");
@@ -623,6 +623,15 @@ public final class TCItems {
         }
     }
 
+    public static final Map<CandleHolderMaterial, DeferredItem<BlockItem>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
+
+    static {
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            CANDLE_HOLDERS.put(material, ITEMS.registerSimpleBlockItem(TCBlocks.CANDLE_HOLDERS.get(material)));
+        }
+    }
+
     public static final Map<DyeColor, DeferredItem<StandingAndWallBlockItem>> BANNERS = new EnumMap<>(DyeColor.class);
 
     static {
@@ -719,9 +728,9 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> TALLOW_BLOCK = ITEMS.registerSimpleBlockItem(TCBlocks.TALLOW_BLOCK);
     public static final DeferredItem<BlockItem> ITEM_GRATE = ITEMS.registerSimpleBlockItem(TCBlocks.ITEM_GRATE);
     public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_IRON =
-            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("arcane_key_iron", ItemArcaneKey::new, new Item.Properties().stacksTo(16));
     public static final DeferredItem<ItemArcaneKey> ARCANE_KEY_GOLD =
-            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(1));
+            ITEMS.registerItem("arcane_key_gold", ItemArcaneKey::new, new Item.Properties().stacksTo(16));
     public static final DeferredItem<BlockItem> STONE_ARCANE_BRICK =
             ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ARCANE_BRICK);
     public static final DeferredItem<BlockItem> STONE_ANCIENT = ITEMS.registerSimpleBlockItem(TCBlocks.STONE_ANCIENT);
@@ -783,11 +792,15 @@ public final class TCItems {
     public static final DeferredItem<BlockItem> ORE_AMBER = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_AMBER);
     public static final DeferredItem<BlockItem> ORE_CINNABAR = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_CINNABAR);
     public static final DeferredItem<BlockItem> ORE_QUARTZ = ITEMS.registerSimpleBlockItem(TCBlocks.ORE_QUARTZ);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_AMBER =
+            ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_AMBER);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_CINNABAR =
+            ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_CINNABAR);
+    public static final DeferredItem<BlockItem> DEEPSLATE_ORE_QUARTZ =
+            ITEMS.registerSimpleBlockItem(TCBlocks.DEEPSLATE_ORE_QUARTZ);
 
     public static final DeferredItem<BlockItem> ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_CONSTRUCT);
-    public static final DeferredItem<BlockItem> ALCHEMICAL_FURNACE =
-            ITEMS.registerSimpleBlockItem(TCBlocks.ALCHEMICAL_FURNACE);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_CONSTRUCT =
             ITEMS.registerSimpleBlockItem(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT);
     public static final DeferredItem<BlockItem> ADVANCED_ALCHEMICAL_FURNACE =
@@ -826,6 +839,7 @@ public final class TCItems {
     public static final DeferredItem<Item> CLUSTER_TIN = ITEMS.registerSimpleItem("cluster_tin");
     public static final DeferredItem<Item> CLUSTER_SILVER = ITEMS.registerSimpleItem("cluster_silver");
     public static final DeferredItem<Item> CLUSTER_LEAD = ITEMS.registerSimpleItem("cluster_lead");
+    public static final DeferredItem<Item> RAW_CINNABAR = ITEMS.registerSimpleItem("raw_cinnabar");
     public static final DeferredItem<Item> CLUSTER_CINNABAR = ITEMS.registerSimpleItem("cluster_cinnabar");
     public static final DeferredItem<Item> CLUSTER_QUARTZ = ITEMS.registerSimpleItem("cluster_quartz");
 
@@ -856,6 +870,8 @@ public final class TCItems {
     public static final DeferredItem<ItemResearchNote> RESEARCH_NOTE =
             ITEMS.registerItem("research_note", ItemResearchNote::new, new Item.Properties().stacksTo(1));
 
+    public static final DeferredItem<BlockItem> ARCANE_GRINDSTONE =
+            ITEMS.registerSimpleBlockItem(TCBlocks.ARCANE_GRINDSTONE);
     public static final DeferredItem<BlockItem> INFUSION_MATRIX =
             ITEMS.registerSimpleBlockItem(TCBlocks.INFUSION_MATRIX);
     public static final DeferredItem<BlockItem> PEDESTAL_ARCANE =
@@ -1158,6 +1174,30 @@ public final class TCItems {
             ITEMS.registerSimpleBlockItem(TCBlocks.STAIRS_GREATWOOD);
     public static final DeferredItem<BlockItem> STAIRS_SILVERWOOD =
             ITEMS.registerSimpleBlockItem(TCBlocks.STAIRS_SILVERWOOD);
+    public static final DeferredItem<DoubleHighBlockItem> DOOR_GREATWOOD = ITEMS.registerItem(
+            "door_greatwood", props -> new DoubleHighBlockItem(TCBlocks.DOOR_GREATWOOD.get(), props));
+    public static final DeferredItem<BlockItem> TRAPDOOR_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TRAPDOOR_GREATWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GREATWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GATE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GATE_GREATWOOD);
+    public static final DeferredItem<BlockItem> BUTTON_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.BUTTON_GREATWOOD);
+    public static final DeferredItem<BlockItem> PRESSURE_PLATE_GREATWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.PRESSURE_PLATE_GREATWOOD);
+    public static final DeferredItem<DoubleHighBlockItem> DOOR_SILVERWOOD = ITEMS.registerItem(
+            "door_silverwood", props -> new DoubleHighBlockItem(TCBlocks.DOOR_SILVERWOOD.get(), props));
+    public static final DeferredItem<BlockItem> TRAPDOOR_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.TRAPDOOR_SILVERWOOD);
+    public static final DeferredItem<BlockItem> FENCE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_SILVERWOOD);
+    public static final DeferredItem<BlockItem> FENCE_GATE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.FENCE_GATE_SILVERWOOD);
+    public static final DeferredItem<BlockItem> BUTTON_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.BUTTON_SILVERWOOD);
+    public static final DeferredItem<BlockItem> PRESSURE_PLATE_SILVERWOOD =
+            ITEMS.registerSimpleBlockItem(TCBlocks.PRESSURE_PLATE_SILVERWOOD);
     public static final DeferredItem<BlockItem> TABLE_WOOD = ITEMS.registerSimpleBlockItem(TCBlocks.TABLE_WOOD);
     public static final DeferredItem<BlockItem> TABLE_STONE = ITEMS.registerSimpleBlockItem(TCBlocks.TABLE_STONE);
     public static final DeferredItem<BlockItem> PAVING_STONE_TRAVEL =

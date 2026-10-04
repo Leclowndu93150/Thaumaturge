@@ -139,9 +139,13 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // registration/data file, plus resourcepacks/dynamictrees and trees/thaumaturge. Native tree generation
 // needs no restoration: the modifier removes it only while Dynamic Trees is present and enabled.
 def syncDynamicTreesTreePack = tasks.register('syncDynamicTreesTreePack', Sync) {
-    from(sourceSets.main.resources)
-    include 'trees/**'
-    into(layout.buildDirectory.dir('classes/java/main'))
+    from(sourceSets.main.resources) {
+        include 'trees/**'
+        eachFile { it.relativePath = new RelativePath(true, it.relativePath.segments.drop(1) as String[]) }
+    }
+    includeEmptyDirs = false
+    into(layout.buildDirectory.dir('classes/java/main/trees'))
+    mustRunAfter tasks.named('compileJava')
 }
 
 tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
@@ -178,7 +182,7 @@ dependencies {
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation "org.mockito:mockito-core:5.15.2"
 
-    implementation "curse.maven:terrablender-neoforge-940057:6054947"
+    implementation "maven.modrinth:lithostitched:1.8.0-neoforge-21.1"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"

@@ -4,13 +4,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
-import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingStore;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -53,8 +50,8 @@ public final class SlotArcaneResult extends Slot {
 
         ArcaneCraftingInput.Positioned positioned = craftMatrix.asPositionedArcaneCraftInput();
         ArcaneCraftingInput input = positioned.input().withPlayer(player);
-        ArcaneCraftingTransaction.Result result = ArcaneCraftingTransaction.commit(
-                context(serverPlayer), serverPlayer, input, new NativeStore(player, positioned));
+        ArcaneCraftingTransaction.Result result = ArcaneCraftingTransaction.craft(
+                tile.craftingContext(serverPlayer), serverPlayer, input, new NativeStore(player, positioned), false);
         if (!result.successful()) return false;
         committedArcaneCraft = true;
         resultContainer.setItem(0, result.output());
@@ -112,13 +109,6 @@ public final class SlotArcaneResult extends Slot {
         }
     }
 
-    private ArcaneWorkbenchContext context(ServerPlayer player) {
-        String hostKey = player.serverLevel().dimension().location() + ":"
-                + tile.getBlockPos().asLong();
-        return ArcaneWorkbenchContext.placed(
-                player, tile.getBlockPos(), UUID.nameUUIDFromBytes(hostKey.getBytes(StandardCharsets.UTF_8)), null);
-    }
-
     void returnCommittedOutput(Player player) {
         if (!committedArcaneCraft) return;
         ItemStack output = getItem().copy();
@@ -137,82 +127,80 @@ public final class SlotArcaneResult extends Slot {
         }
 
         @Override
-        public Reservation reserve(List<ItemStack> snapshot) {
-            return matches(snapshot) ? new NativeReservation(snapshot) : null;
+        public boolean consume(Consumption consumption, boolean simulate) {
+            if (!matches(consumption.grid()) || !hasCrystals(consumption.crystals())) {
+                return false;
+            }
+            if (simulate) {
+                return true;
+            }
+            ArcaneCraftingInput input = positioned.input();
+            List<ItemStack> remainders = consumption.remainders();
+            for (int y = 0; y < input.height(); y++) {
+                for (int x = 0; x < input.width(); x++) {
+                    int compact = x + y * input.width();
+                    int slot = x + positioned.left() + (y + positioned.top()) * 3;
+                    craftMatrix.removeItem(slot, 1);
+                    placeRemainder(slot, compact < remainders.size() ? remainders.get(compact) : ItemStack.EMPTY);
+                }
+            }
+            consumeCrystals(consumption.crystals());
+            if (!consumption.wand().isEmpty()) {
+                craftMatrix.setItem(InventoryArcaneWorkbench.WAND_SLOT, consumption.wand());
+            }
+            return true;
         }
 
-        private boolean matches(List<ItemStack> snapshot) {
+        private boolean matches(List<ItemStack> grid) {
             ArcaneCraftingInput input = positioned.input();
-            if (snapshot.size() != input.width() * input.height()) return false;
+            if (grid.size() != input.width() * input.height()) return false;
             for (int y = 0; y < input.height(); y++) {
                 for (int x = 0; x < input.width(); x++) {
                     ItemStack actual = craftMatrix.getItem(x + positioned.left() + (y + positioned.top()) * 3);
-                    if (!ItemStack.matches(actual, snapshot.get(x + y * input.width()))) return false;
+                    if (!ItemStack.matches(actual, grid.get(x + y * input.width()))) return false;
                 }
             }
             return true;
         }
 
-        private final class NativeReservation implements Reservation {
-            private final List<ItemStack> snapshot;
-            private boolean finished;
-
-            private NativeReservation(List<ItemStack> snapshot) {
-                this.snapshot = snapshot;
-            }
-
-            @Override
-            public boolean isValid() {
-                return !finished && matches(snapshot);
-            }
-
-            @Override
-            public void commit(ItemStack output, List<ItemStack> remainders, AspectList crystals) {
-                if (!isValid()) throw new IllegalStateException("Arcane workbench reservation changed");
-                ArcaneCraftingInput input = positioned.input();
-                for (int y = 0; y < input.height(); y++) {
-                    for (int x = 0; x < input.width(); x++) {
-                        int compact = x + y * input.width();
-                        int slot = x + positioned.left() + (y + positioned.top()) * 3;
-                        craftMatrix.removeItem(slot, 1);
-                        ItemStack remainder = compact < remainders.size()
-                                ? remainders.get(compact).copy()
-                                : ItemStack.EMPTY;
-                        placeRemainder(slot, remainder);
+        private boolean hasCrystals(AspectList crystals) {
+            for (AspectInstance entry : crystals.entries()) {
+                int found = 0;
+                for (int slot = InventoryArcaneWorkbench.CRAFTING_SLOTS;
+                        slot < InventoryArcaneWorkbench.WAND_SLOT;
+                        slot++) {
+                    ItemStack crystal = craftMatrix.getItem(slot);
+                    Holder<IAspect> aspect = ItemEssentiaCrystal.aspectOf(crystal);
+                    if (aspect != null && aspect.is(entry.aspect().unwrapKey().orElseThrow())) {
+                        found += crystal.getCount();
                     }
                 }
-                consumeCrystals(crystals);
-                finished = true;
+                if (found < entry.amount()) return false;
             }
+            return true;
+        }
 
-            private void placeRemainder(int slot, ItemStack remainder) {
-                if (remainder.isEmpty()) return;
-                ItemStack existing = craftMatrix.getItem(slot);
-                if (existing.isEmpty()) craftMatrix.setItem(slot, remainder);
-                else if (!player.getInventory().add(remainder)) player.drop(remainder, false);
-            }
+        private void placeRemainder(int slot, ItemStack remainder) {
+            if (remainder.isEmpty()) return;
+            ItemStack existing = craftMatrix.getItem(slot);
+            if (existing.isEmpty()) craftMatrix.setItem(slot, remainder);
+            else if (!player.getInventory().add(remainder)) player.drop(remainder, false);
+        }
 
-            private void consumeCrystals(AspectList crystals) {
-                for (AspectInstance entry : crystals.entries()) {
-                    int needed = entry.amount();
-                    for (int slot = InventoryArcaneWorkbench.CRAFTING_SLOTS;
-                            slot < InventoryArcaneWorkbench.WAND_SLOT && needed > 0;
-                            slot++) {
-                        ItemStack crystal = craftMatrix.getItem(slot);
-                        Holder<IAspect> aspect = ItemEssentiaCrystal.aspectOf(crystal);
-                        if (aspect != null
-                                && aspect.is(entry.aspect().unwrapKey().orElseThrow())) {
-                            int removed = Math.min(needed, crystal.getCount());
-                            craftMatrix.removeItem(slot, removed);
-                            needed -= removed;
-                        }
+        private void consumeCrystals(AspectList crystals) {
+            for (AspectInstance entry : crystals.entries()) {
+                int needed = entry.amount();
+                for (int slot = InventoryArcaneWorkbench.CRAFTING_SLOTS;
+                        slot < InventoryArcaneWorkbench.WAND_SLOT && needed > 0;
+                        slot++) {
+                    ItemStack crystal = craftMatrix.getItem(slot);
+                    Holder<IAspect> aspect = ItemEssentiaCrystal.aspectOf(crystal);
+                    if (aspect != null && aspect.is(entry.aspect().unwrapKey().orElseThrow())) {
+                        int removed = Math.min(needed, crystal.getCount());
+                        craftMatrix.removeItem(slot, removed);
+                        needed -= removed;
                     }
                 }
-            }
-
-            @Override
-            public void close() {
-                finished = true;
             }
         }
     }

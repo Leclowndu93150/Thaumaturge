@@ -3,16 +3,17 @@ package com.leclowndu93150.thaumaturge.content.focus.effect;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSplosion;
 import com.leclowndu93150.thaumaturge.registry.TCParticles;
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +36,8 @@ public final class FocusEffectPrimal implements FocusEffect {
     private static final int BASE_DAMAGE = 4;
     private static final float EXPLOSION_STRENGTH = 1.5F;
     private static final int CHAOS_CHANCE = 100;
+    private static final float CHAOS_FLUX = 5.0F;
+    private static final float CHAOS_TAINT_SPREAD = 6.0F;
 
     @Override
     public ResourceLocation id() {
@@ -80,7 +81,11 @@ public final class FocusEffectPrimal implements FocusEffect {
         if (level.getRandom().nextInt(CHAOS_CHANCE) == 0) {
             BlockPos pos = BlockPos.containing(origin);
             if (level.getRandom().nextBoolean()) {
-                taintSplosion(level, pos);
+                if (ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get() && !ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+                    TaintSplosion.burstOnSurface(level, pos, level.getRandom(), CHAOS_TAINT_SPREAD);
+                } else {
+                    AuraHelper.polluteAura(level, pos, CHAOS_FLUX, true);
+                }
             } else {
                 NodeGenerator.createRandomNodeAt(
                         level,
@@ -94,26 +99,6 @@ public final class FocusEffectPrimal implements FocusEffect {
             }
         }
         return true;
-    }
-
-    private static void taintSplosion(ServerLevel level, BlockPos center) {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            int x = center.getX()
-                    + (int) ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 6.0F);
-            int z = center.getZ()
-                    + (int) ((level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 6.0F);
-            if (!level.getRandom().nextBoolean()) {
-                continue;
-            }
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-            BlockPos target = new BlockPos(x, y, z);
-            if (!TaintBiomeManager.taintColumn(level, target)) {
-                continue;
-            }
-            if (level.getBlockState(target).canBeReplaced() && BlockTaintFibre.hasSolidAttachment(level, target)) {
-                level.setBlock(target, BlockTaintFibre.stateForWorld(level, target), Block.UPDATE_ALL);
-            }
-        }
     }
 
     @Override

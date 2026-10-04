@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.client.model.pipeline.QuadBakingVertexConsumer;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -19,7 +20,7 @@ public final class TCMeshQuadBaker {
 
     public static void bakePart(
             TCMeshPart part, TextureAtlasSprite sprite, int tintIndex, Matrix4f transform, List<BakedQuad> output) {
-        bakePart(part, sprite, tintIndex, transform, false, 0, 0, output);
+        bakePart(part, sprite, tintIndex, transform, false, false, 0, 0, output);
     }
 
     public static void bakePart(
@@ -29,7 +30,7 @@ public final class TCMeshQuadBaker {
             Matrix4f transform,
             boolean flipV,
             List<BakedQuad> output) {
-        bakePart(part, sprite, tintIndex, transform, flipV, 0, 0, output);
+        bakePart(part, sprite, tintIndex, transform, flipV, false, 0, 0, output);
     }
 
     public static void bakePart(
@@ -38,12 +39,25 @@ public final class TCMeshQuadBaker {
             int tintIndex,
             Matrix4f transform,
             boolean flipV,
+            boolean shade,
             int blockLight,
             int skyLight,
             List<BakedQuad> output) {
         QuadBakingVertexConsumer consumer = new QuadBakingVertexConsumer();
+        Matrix3f normalTransform = transform.normal(new Matrix3f());
         for (int quad = 0; quad < part.quadCount(); quad++) {
-            output.add(bakeQuad(part, quad, sprite, transform, tintIndex, flipV, blockLight, skyLight, consumer));
+            output.add(bakeQuad(
+                    part,
+                    quad,
+                    sprite,
+                    transform,
+                    normalTransform,
+                    tintIndex,
+                    flipV,
+                    shade,
+                    blockLight,
+                    skyLight,
+                    consumer));
         }
     }
 
@@ -52,12 +66,15 @@ public final class TCMeshQuadBaker {
             int quad,
             TextureAtlasSprite sprite,
             Matrix4f transform,
+            Matrix3f normalTransform,
             int tintIndex,
             boolean flipV,
+            boolean shade,
             int blockLight,
             int skyLight,
             QuadBakingVertexConsumer consumer) {
         Vector3f[] positions = new Vector3f[CORNERS_PER_QUAD];
+        Vector3f[] normals = new Vector3f[CORNERS_PER_QUAD];
         float[] us = new float[CORNERS_PER_QUAD];
         float[] vs = new float[CORNERS_PER_QUAD];
         for (int i = 0; i < CORNERS_PER_QUAD; i++) {
@@ -72,6 +89,9 @@ public final class TCMeshQuadBaker {
             }
             pos.mulPosition(transform);
             positions[i] = pos;
+            normals[i] = new Vector3f(
+                            part.normals()[vertex * 3], part.normals()[vertex * 3 + 1], part.normals()[vertex * 3 + 2])
+                    .mul(normalTransform);
             us[i] = sprite.getU(u);
             vs[i] = sprite.getV(flipV ? 1.0F - v : v);
         }
@@ -90,14 +110,15 @@ public final class TCMeshQuadBaker {
         consumer.setSprite(sprite);
         consumer.setDirection(facing);
         consumer.setTintIndex(tintIndex);
-        consumer.setShade(false);
-        consumer.setHasAmbientOcclusion(false);
+        consumer.setShade(shade);
+        consumer.setHasAmbientOcclusion(shade);
         for (int i = 0; i < CORNERS_PER_QUAD; i++) {
+            Vector3f vertexNormal = normals[i].lengthSquared() < NORMAL_EPS ? normal : normals[i].normalize();
             consumer.addVertex(positions[i].x, positions[i].y, positions[i].z)
                     .setColor(255, 255, 255, 255)
                     .setUv(us[i], vs[i])
                     .setUv2(blockLight, skyLight)
-                    .setNormal(normal.x, normal.y, normal.z);
+                    .setNormal(vertexNormal.x, vertexNormal.y, vertexNormal.z);
         }
         return consumer.bakeQuad();
     }

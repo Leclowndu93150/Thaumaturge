@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.crucible.BlockCrucible;
 import com.leclowndu93150.thaumaturge.content.decor.BlockAmber;
 import com.leclowndu93150.thaumaturge.content.decor.BlockBarrier;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandle;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockEffectShock;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotemCharged;
@@ -23,6 +24,7 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockStairsTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStonePorous;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStoneTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
 import com.leclowndu93150.thaumaturge.content.device.BlockArcaneEar;
@@ -62,7 +64,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnaceNozzle;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
@@ -91,6 +92,7 @@ import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockPlaceholder;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPedestal;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPillar;
+import com.leclowndu93150.thaumaturge.content.infusion.grindstone.BlockArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.metal.BlockMetalTC;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
@@ -122,6 +124,7 @@ import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantCinderpearl;
 import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantShimmerleaf;
 import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantVishroom;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSaplingTC;
+import com.leclowndu93150.thaumaturge.content.world.tree.BlockSilverwoodNodeLog;
 import com.leclowndu93150.thaumaturge.content.world.tree.TCTreeGrowers;
 import java.util.EnumMap;
 import java.util.Map;
@@ -131,15 +134,23 @@ import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.PoweredRailBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -147,6 +158,8 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCBlocks {
+    private static final int WOODEN_BUTTON_PRESS_TICKS = 30;
+
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(TCIds.MODID);
 
     public static final DeferredBlock<BlockWardedGlass> WARDED_GLASS = BLOCKS.registerBlock(
@@ -485,7 +498,8 @@ public final class TCBlocks {
                 .mapColor(MapColor.STONE)
                 .strength(2.5F, 3600000.0F)
                 .sound(SoundType.STONE)
-                .noLootTable();
+                .noOcclusion()
+                .dynamicShape();
     }
 
     private static BlockBehaviour.Properties advancedFurnacePlaceholderProps() {
@@ -571,6 +585,33 @@ public final class TCBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_AMBER = BLOCKS.registerBlock(
+            "deepslate_ore_amber",
+            Block::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE)
+                    .strength(3.0F, 5.0F)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_CINNABAR = BLOCKS.registerBlock(
+            "deepslate_ore_cinnabar",
+            Block::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE)
+                    .strength(3.5F, 5.0F)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops());
+
+    public static final DeferredBlock<Block> DEEPSLATE_ORE_QUARTZ = BLOCKS.registerBlock(
+            "deepslate_ore_quartz",
+            Block::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.DEEPSLATE)
+                    .strength(4.5F, 5.0F)
+                    .sound(SoundType.DEEPSLATE)
+                    .requiresCorrectToolForDrops());
+
     public static final Map<DyeColor, DeferredBlock<BlockNitor>> NITORS = new EnumMap<>(DyeColor.class);
 
     static {
@@ -590,6 +631,20 @@ public final class TCBlocks {
                     dye,
                     BLOCKS.registerBlock(
                             "candle_" + dye.getName(), props -> new BlockCandle(dye, props), candleProps(dye)));
+        }
+    }
+
+    public static final Map<CandleHolderMaterial, DeferredBlock<BlockCandleHolder>> CANDLE_HOLDERS =
+            new EnumMap<>(CandleHolderMaterial.class);
+
+    static {
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            CANDLE_HOLDERS.put(
+                    material,
+                    BLOCKS.registerBlock(
+                            "candle_holder_" + material.getSerializedName(),
+                            props -> new BlockCandleHolder(material, props),
+                            candleHolderProps(material)));
         }
     }
 
@@ -631,6 +686,15 @@ public final class TCBlocks {
                 .strength(0.1F)
                 .sound(SoundType.WOOL)
                 .lightLevel(state -> 14)
+                .noOcclusion();
+    }
+
+    private static BlockBehaviour.Properties candleHolderProps(CandleHolderMaterial material) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(material.mapColor())
+                .strength(material.strength())
+                .sound(SoundType.METAL)
+                .lightLevel(BlockCandleHolder::lightEmission)
                 .noOcclusion();
     }
 
@@ -677,6 +741,16 @@ public final class TCBlocks {
 
     //
 
+    public static final DeferredBlock<BlockArcaneGrindstone> ARCANE_GRINDSTONE = BLOCKS.registerBlock(
+            "arcane_grindstone",
+            BlockArcaneGrindstone::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .requiresCorrectToolForDrops()
+                    .strength(2.0F, 6.0F)
+                    .sound(SoundType.STONE)
+                    .pushReaction(PushReaction.BLOCK));
+
     public static final DeferredBlock<BlockInfusionMatrix> INFUSION_MATRIX = BLOCKS.registerBlock(
             "infusion_matrix",
             BlockInfusionMatrix::new,
@@ -684,8 +758,7 @@ public final class TCBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(5.0F, 10.0F)
                     .sound(SoundType.STONE)
-                    .noOcclusion()
-                    .lightLevel(s -> 15));
+                    .noOcclusion());
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ARCANE =
             BLOCKS.registerBlock("pedestal_arcane", BlockPedestal::new, pedestalProps());
@@ -1145,6 +1218,16 @@ public final class TCBlocks {
                     .lightLevel(state -> 5)
                     .ignitedByLava());
 
+    public static final DeferredBlock<BlockSilverwoodNodeLog> SILVERWOOD_NODE_LOG = BLOCKS.registerBlock(
+            "silverwood_node_log",
+            BlockSilverwoodNodeLog::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.0F, 5.0F)
+                    .sound(SoundType.WOOD)
+                    .lightLevel(state -> 5)
+                    .ignitedByLava());
+
     public static final DeferredBlock<RotatedPillarBlock> WOOD_SILVERWOOD = BLOCKS.registerBlock(
             "silverwood",
             RotatedPillarBlock::new,
@@ -1183,7 +1266,7 @@ public final class TCBlocks {
 
     public static final DeferredBlock<PoweredRailBlock> ACTIVATOR_RAIL = BLOCKS.registerBlock(
             "activator_rail",
-            PoweredRailBlock::new,
+            properties -> new PoweredRailBlock(properties, true),
             BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL));
 
     public static final DeferredBlock<Block> PLANK_GREATWOOD = BLOCKS.registerBlock(
@@ -1298,15 +1381,6 @@ public final class TCBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(4.0F, 10.0F)
                     .sound(SoundType.METAL)
-                    .requiresCorrectToolForDrops());
-
-    public static final DeferredBlock<BlockAlchemicalFurnace> ALCHEMICAL_FURNACE = BLOCKS.registerBlock(
-            "alchemical_furnace",
-            BlockAlchemicalFurnace::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
-                    .strength(3.0F, 17.0F)
-                    .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
     public static final DeferredBlock<BlockMetalTC> ADVANCED_ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock(
@@ -1428,6 +1502,126 @@ public final class TCBlocks {
                     .sound(SoundType.WOOD)
                     .ignitedByLava());
 
+    public static final DeferredBlock<DoorBlock> DOOR_GREATWOOD = BLOCKS.registerBlock(
+            "door_greatwood",
+            props -> new DoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_GREATWOOD = BLOCKS.registerBlock(
+            "trapdoor_greatwood",
+            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .isValidSpawn((state, level, pos, type) -> false)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceBlock> FENCE_GREATWOOD = BLOCKS.registerBlock(
+            "fence_greatwood",
+            FenceBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_GREATWOOD = BLOCKS.registerBlock(
+            "fence_gate_greatwood",
+            props -> new FenceGateBlock(WoodType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<ButtonBlock> BUTTON_GREATWOOD = BLOCKS.registerBlock(
+            "button_greatwood",
+            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_GREATWOOD = BLOCKS.registerBlock(
+            "pressure_plate_greatwood",
+            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .noCollission()
+                    .strength(0.5F)
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<DoorBlock> DOOR_SILVERWOOD = BLOCKS.registerBlock(
+            "door_silverwood",
+            props -> new DoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<TrapDoorBlock> TRAPDOOR_SILVERWOOD = BLOCKS.registerBlock(
+            "trapdoor_silverwood",
+            props -> new TrapDoorBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .isValidSpawn((state, level, pos, type) -> false)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceBlock> FENCE_SILVERWOOD = BLOCKS.registerBlock(
+            "fence_silverwood",
+            FenceBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<FenceGateBlock> FENCE_GATE_SILVERWOOD = BLOCKS.registerBlock(
+            "fence_gate_silverwood",
+            props -> new FenceGateBlock(WoodType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .ignitedByLava());
+
+    public static final DeferredBlock<ButtonBlock> BUTTON_SILVERWOOD = BLOCKS.registerBlock(
+            "button_silverwood",
+            props -> new ButtonBlock(BlockSetType.OAK, WOODEN_BUTTON_PRESS_TICKS, props),
+            BlockBehaviour.Properties.of().noCollission().strength(0.5F).pushReaction(PushReaction.DESTROY));
+
+    public static final DeferredBlock<PressurePlateBlock> PRESSURE_PLATE_SILVERWOOD = BLOCKS.registerBlock(
+            "pressure_plate_silverwood",
+            props -> new PressurePlateBlock(BlockSetType.OAK, props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .noCollission()
+                    .strength(0.5F)
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY));
+
     public static final DeferredBlock<BlockTable> TABLE_WOOD = BLOCKS.registerBlock(
             "table_wood",
             BlockTable::new,
@@ -1494,7 +1688,7 @@ public final class TCBlocks {
             BlockNode::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.NONE)
-                    .strength(2.0F, 200.0F)
+                    .strength(2.0F, 3600000.0F)
                     .noOcclusion()
                     .noLootTable()
                     .isValidSpawn((state, level, pos, type) -> false));

@@ -206,9 +206,11 @@ public final class ResearchProgressionEvents {
                     player.getY() > player.level().getMaxBuildHeight() * UP_HIGH_FRACTION);
         }
         if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0) return;
-        Holder<Biome> biome = player.level().getBiome(player.blockPosition());
-        milestone(player, knowledge, TCIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
-        milestone(player, knowledge, TCIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
+        if (player.level().hasChunkAt(player.blockPosition())) {
+            Holder<Biome> biome = player.level().getBiome(player.blockPosition());
+            milestone(player, knowledge, TCIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
+            milestone(player, knowledge, TCIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
+        }
         milestone(
                 player,
                 knowledge,

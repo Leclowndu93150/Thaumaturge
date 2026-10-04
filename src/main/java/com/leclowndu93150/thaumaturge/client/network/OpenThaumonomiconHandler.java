@@ -9,6 +9,6 @@ public final class OpenThaumonomiconHandler {
     private OpenThaumonomiconHandler() {}
 
     public static void handle(ClientboundOpenThaumonomiconPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> Minecraft.getInstance().setScreen(new ThaumonomiconBrowserScreen()));
+        context.enqueueWork(() -> Minecraft.getInstance().setScreen(ThaumonomiconBrowserScreen.reopen()));
     }
 }

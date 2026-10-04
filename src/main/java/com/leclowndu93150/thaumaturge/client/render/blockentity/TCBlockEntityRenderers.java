@@ -59,6 +59,7 @@ public final class TCBlockEntityRenderers {
                         BlockEntityEldritchAltar::getEyes));
         event.registerBlockEntityRenderer(TCBlockEntities.ELDRITCH_PORTAL.get(), EldritchPortalRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.ELDRITCH_NOTHING.get(), EldritchNothingRenderer::new);
+        event.registerBlockEntityRenderer(TCBlockEntities.HOLE.get(), HoleRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.ELDRITCH_LOCK.get(), EldritchLockRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.PATTERN_CRAFTER.get(), PatternCrafterRenderer::new);
         event.registerBlockEntityRenderer(TCBlockEntities.NODE.get(), NodeRenderer::new);

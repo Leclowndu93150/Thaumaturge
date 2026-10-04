@@ -81,13 +81,12 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
 
     @Override
     public boolean matches(IArcaneCraftingInput input, Level level) {
-        if (!super.matches(input, level)) return false;
         if (input.ingredientCount() != this.ingredients.size()) {
             return false;
         } else if (!this.isSimple) {
             ArrayList<ItemStack> nonEmptyItems = new ArrayList<>(input.ingredientCount());
 
-            for (ItemStack item : input.items().subList(0, 9)) {
+            for (ItemStack item : input.items().subList(0, input.width() * input.height())) {
                 if (!item.isEmpty()) {
                     nonEmptyItems.add(item);
                 }
@@ -118,7 +117,7 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
 
     @Override
     public ItemStack assemble(IArcaneCraftingInput input, HolderLookup.Provider registries) {
-        return this.result.copy();
+        return assembleResult(this.result, input);
     }
 
     @Override

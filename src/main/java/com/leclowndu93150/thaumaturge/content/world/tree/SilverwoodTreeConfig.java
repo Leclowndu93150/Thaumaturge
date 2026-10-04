@@ -8,7 +8,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 public record SilverwoodTreeConfig(
-        Block log, Block leaves, int minHeight, int extraHeight, Optional<Block> flower, boolean node)
+        Block log,
+        Block leaves,
+        int minHeight,
+        int extraHeight,
+        Optional<Block> flower,
+        boolean node,
+        boolean preventNaturalOverlap)
         implements FeatureConfiguration {
     public static final Codec<SilverwoodTreeConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     BuiltInRegistries.BLOCK.byNameCodec().fieldOf("log").forGetter(SilverwoodTreeConfig::log),
@@ -19,6 +25,9 @@ public record SilverwoodTreeConfig(
                             .byNameCodec()
                             .optionalFieldOf("flower")
                             .forGetter(SilverwoodTreeConfig::flower),
-                    Codec.BOOL.optionalFieldOf("node", false).forGetter(SilverwoodTreeConfig::node))
+                    Codec.BOOL.optionalFieldOf("node", false).forGetter(SilverwoodTreeConfig::node),
+                    Codec.BOOL
+                            .optionalFieldOf("prevent_natural_overlap", false)
+                            .forGetter(SilverwoodTreeConfig::preventNaturalOverlap))
             .apply(instance, SilverwoodTreeConfig::new));
 }

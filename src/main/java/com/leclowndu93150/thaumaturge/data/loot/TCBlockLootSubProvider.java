@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.data.loot;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
+import com.leclowndu93150.thaumaturge.content.decor.HeldCandle;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
@@ -17,6 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
@@ -35,6 +38,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.neoforged.neoforge.registries.DeferredBlock;
 
 public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     private static final float AMBER_CURIO_CHANCE = 0.1F;
@@ -47,6 +51,30 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(LootItem.lootTableItem(block)));
+    }
+
+    private LootTable.Builder candleHolderTable(Block holder) {
+        LootTable.Builder table = LootTable.lootTable()
+                .withPool(this.applyExplosionCondition(
+                        holder,
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(holder))));
+        for (HeldCandle held : HeldCandle.values()) {
+            if (!held.isPresent()) {
+                continue;
+            }
+            Item candle = TCItems.CANDLES.get(held.dye().orElseThrow()).get();
+            table.withPool(this.applyExplosionCondition(
+                    holder,
+                    LootPool.lootPool()
+                            .setRolls(ConstantValue.exactly(1.0F))
+                            .add(LootItem.lootTableItem(candle))
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(holder)
+                                    .setProperties(StatePropertiesPredicate.Builder.properties()
+                                            .hasProperty(BlockCandleHolder.CANDLE, held)))));
+        }
+        return table;
     }
 
     private LootTable.Builder crystalTable(BlockCrystal block) {
@@ -189,6 +217,9 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                                                                 CopyComponentsFunction.Source.BLOCK_ENTITY)
                                                         .include(TCDataComponents.NODE_DATA.get()))))));
 
+        for (DeferredBlock<BlockCandleHolder> holder : TCBlocks.CANDLE_HOLDERS.values()) {
+            add(holder.get(), candleHolderTable(holder.get()));
+        }
         for (DyeColor dye : DyeColor.values()) {
             dropSelf(TCBlocks.CANDLES.get(dye).get());
             add(
@@ -263,6 +294,7 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.POTTED_SAPLING_SILVERWOOD.get(), createPotFlowerItemTable(TCBlocks.SAPLING_SILVERWOOD.get()));
         dropSelf(TCBlocks.LOG_GREATWOOD.get());
         dropSelf(TCBlocks.LOG_SILVERWOOD.get());
+        add(TCBlocks.SILVERWOOD_NODE_LOG.get(), createSingleItemTable(TCItems.LOG_SILVERWOOD.get()));
         dropSelf(TCBlocks.WOOD_GREATWOOD.get());
         dropSelf(TCBlocks.WOOD_SILVERWOOD.get());
         dropSelf(TCBlocks.STRIPPED_LOG_GREATWOOD.get());
@@ -313,14 +345,8 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
     }
 
     private void generateResources() {
-        add(
-                TCBlocks.ORE_AMBER.get(),
-                b -> createOreDrop(b, TCItems.AMBER.get())
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
-                                .when(this.doesNotHaveSilkTouch())
-                                .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE))
-                                .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
+        add(TCBlocks.ORE_AMBER.get(), this::amberOreTable);
+        add(TCBlocks.DEEPSLATE_ORE_AMBER.get(), this::amberOreTable);
         add(TCBlocks.MIRROR.get(), this::mirrorTable);
         add(TCBlocks.MIRROR_ESSENTIA.get(), this::mirrorTable);
         add(TCBlocks.MANA_POD.get(), this::manaPodTable);
@@ -335,13 +361,14 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
                                                 .getOrThrow(Enchantments.FORTUNE),
                                         VENT_CURIO_CHANCES))
                                 .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get()))));
-        dropSelf(TCBlocks.ORE_CINNABAR.get());
+        add(TCBlocks.ORE_CINNABAR.get(), b -> createOreDrop(b, TCItems.RAW_CINNABAR.get()));
+        add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), b -> createOreDrop(b, TCItems.RAW_CINNABAR.get()));
         add(TCBlocks.ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
+        add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), b -> createOreDrop(b, Items.QUARTZ));
 
         dropSelf(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
-        dropSelf(TCBlocks.ALCHEMICAL_FURNACE.get());
         dropSelf(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
-        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.ALCHEMICAL_FURNACE.get());
+        dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), TCBlocks.SMELTER_BASIC.get());
         dropOther(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), TCBlocks.ALEMBIC.get());
         dropOther(
                 TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(), TCBlocks.ALCHEMICAL_CONSTRUCT.get());
@@ -393,6 +420,19 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         add(TCBlocks.SLAB_ELDRITCH.get(), this::createSlabItemTable);
         dropSelf(TCBlocks.STAIRS_GREATWOOD.get());
         dropSelf(TCBlocks.STAIRS_SILVERWOOD.get());
+        dropSelf(TCBlocks.ARCANE_GRINDSTONE.get());
+        add(TCBlocks.DOOR_GREATWOOD.get(), this::createDoorTable);
+        dropSelf(TCBlocks.TRAPDOOR_GREATWOOD.get());
+        dropSelf(TCBlocks.FENCE_GREATWOOD.get());
+        dropSelf(TCBlocks.FENCE_GATE_GREATWOOD.get());
+        dropSelf(TCBlocks.BUTTON_GREATWOOD.get());
+        dropSelf(TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        add(TCBlocks.DOOR_SILVERWOOD.get(), this::createDoorTable);
+        dropSelf(TCBlocks.TRAPDOOR_SILVERWOOD.get());
+        dropSelf(TCBlocks.FENCE_SILVERWOOD.get());
+        dropSelf(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        dropSelf(TCBlocks.BUTTON_SILVERWOOD.get());
+        dropSelf(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         dropSelf(TCBlocks.TABLE_WOOD.get());
         dropSelf(TCBlocks.TABLE_STONE.get());
         dropSelf(TCBlocks.PAVING_STONE_TRAVEL.get());
@@ -428,6 +468,10 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.MATRIX_COST.get());
         add(TCBlocks.JAR_BRAIN.get(), bannerTable(TCBlocks.JAR_BRAIN.get()));
         dropOther(TCBlocks.GOLEM_BUILDER.get(), Blocks.PISTON);
+        dropOther(TCBlocks.PLACEHOLDER_IRON_BARS.get(), Blocks.IRON_BARS);
+        dropOther(TCBlocks.PLACEHOLDER_CAULDRON.get(), Blocks.CAULDRON);
+        dropOther(TCBlocks.PLACEHOLDER_ANVIL.get(), Blocks.ANVIL);
+        dropOther(TCBlocks.PLACEHOLDER_TABLE.get(), TCBlocks.TABLE_STONE.get());
         dropSelf(TCBlocks.PEDESTAL_ARCANE.get());
         dropSelf(TCBlocks.RECHARGE_PEDESTAL.get());
         dropSelf(TCBlocks.PEDESTAL_ANCIENT.get());
@@ -435,5 +479,14 @@ public final class TCBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TCBlocks.PILLAR_ARCANE.get());
         dropSelf(TCBlocks.PILLAR_ANCIENT.get());
         dropSelf(TCBlocks.PILLAR_ELDRITCH.get());
+    }
+
+    private LootTable.Builder amberOreTable(Block block) {
+        return createOreDrop(block, TCItems.AMBER.get())
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1))
+                        .when(this.doesNotHaveSilkTouch())
+                        .when(LootItemRandomChanceCondition.randomChance(AMBER_CURIO_CHANCE))
+                        .add(LootItem.lootTableItem(TCItems.CURIO_PRESERVED.get())));
     }
 }

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
+import com.leclowndu93150.thaumaturge.content.golem.press.GolemPressShapes;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
@@ -29,6 +31,43 @@ public class BlockPlaceholder extends Block {
     public BlockPlaceholder(Properties properties, boolean visible) {
         super(properties);
         this.visible = visible;
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)
+                || state.is(TCBlocks.PLACEHOLDER_ANVIL)
+                || state.is(TCBlocks.PLACEHOLDER_CAULDRON)
+                || state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 0; y++) {
+                    for (int z = -1; z <= 1; z++) {
+                        BlockPos corePos = pos.offset(x, y, z);
+                        BlockState core = level.getBlockState(corePos);
+                        if (core.is(TCBlocks.GOLEM_BUILDER)) {
+                            Direction facing = core.getValue(BlockGolemBuilder.FACING);
+                            BlockPos offset = pos.subtract(corePos);
+                            Direction right = facing.getClockWise();
+                            Direction back = facing.getOpposite();
+                            BlockPos expected;
+                            if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)) {
+                                expected = BlockPos.ZERO.above();
+                            } else if (state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+                                expected = BlockPos.ZERO.relative(right);
+                            } else if (state.is(TCBlocks.PLACEHOLDER_CAULDRON)) {
+                                expected = BlockPos.ZERO.relative(back);
+                            } else {
+                                expected = BlockPos.ZERO.relative(right).relative(back);
+                            }
+                            if (offset.equals(expected)) {
+                                return GolemPressShapes.at(facing, offset);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return super.getShape(state, level, pos, context);
     }
 
     protected boolean propagatesSkylightDown(BlockState state) {
@@ -93,9 +132,7 @@ public class BlockPlaceholder extends Block {
                         if (level.getBlockState(controllerPos).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
                             BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, controllerPos, pos);
                             level.setBlock(
-                                    controllerPos,
-                                    TCBlocks.ALCHEMICAL_FURNACE.get().defaultBlockState(),
-                                    Block.UPDATE_ALL);
+                                    controllerPos, TCBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
                             break restoreAdvancedFurnace;
                         }
                     }

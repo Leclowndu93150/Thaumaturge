@@ -364,14 +364,20 @@ public final class RecipeDisplayWidget {
 
     private static void drawOutput(GuiGraphics graphics, int cx, int cy, ItemStack output) {
         if (output.isEmpty()) return;
-        graphics.renderItem(output, cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
+        drawStack(graphics, output, cx + OUTPUT_OFFSET_X, cy + OUTPUT_OFFSET_Y);
+    }
+
+    private static void drawStack(GuiGraphics graphics, ItemStack stack, int x, int y) {
+        graphics.renderItem(stack, x, y);
+        graphics.renderItemDecorations(Minecraft.getInstance().font, stack, x, y);
     }
 
     private static void drawInputs(GuiGraphics graphics, int cx, int cy, Layout layout) {
         for (Slot slot : layout.slots) {
             ItemStack stack = pickRotating(slot.cycle, slot.counter);
             if (!stack.isEmpty()) {
-                graphics.renderItem(
+                drawStack(
+                        graphics,
                         stack,
                         cx + GRID_ANCHOR_X + slot.col * GRID_STRIDE,
                         cy + GRID_ANCHOR_Y + slot.row * GRID_STRIDE);
@@ -385,7 +391,8 @@ public final class RecipeDisplayWidget {
         for (int a = 0; a < sz; a++) {
             ItemStack stack = crystals.get(a);
             if (stack.isEmpty()) continue;
-            graphics.renderItem(
+            drawStack(
+                    graphics,
                     stack,
                     cx + CRYSTAL_BASE_OFFSET_X - sz * CRYSTAL_HALF_STRIDE + a * CRYSTAL_STRIDE,
                     cy + CRYSTAL_OFFSET_Y);
@@ -598,11 +605,11 @@ public final class RecipeDisplayWidget {
         drawAspectGrid(graphics, font, cx + CRUCIBLE_ASPECT_X, cy + CRUCIBLE_ASPECT_Y, display.aspects(), 3);
         ItemStack result = resultOf(display, registries());
         if (!result.isEmpty()) {
-            graphics.renderItem(result, cx + CRUCIBLE_RESULT_X, cy + CRUCIBLE_RESULT_Y);
+            drawStack(graphics, result, cx + CRUCIBLE_RESULT_X, cy + CRUCIBLE_RESULT_Y);
         }
         ItemStack catalyst = pickRotating(cycle(display.catalyst()), 0);
         if (!catalyst.isEmpty()) {
-            graphics.renderItem(catalyst, cx + CRUCIBLE_CATALYST_X, cy + CRUCIBLE_CATALYST_Y);
+            drawStack(graphics, catalyst, cx + CRUCIBLE_CATALYST_X, cy + CRUCIBLE_CATALYST_Y);
         }
     }
 
@@ -618,18 +625,18 @@ public final class RecipeDisplayWidget {
         drawAspectGrid(graphics, font, cx + INFUSION_ASPECT_X, cy + INFUSION_ASPECT_Y, display.aspects(), 5);
         ItemStack result = display.resultItem();
         if (!result.isEmpty()) {
-            graphics.renderItem(result, cx + CRUCIBLE_RESULT_X, cy + INFUSION_RESULT_Y);
+            drawStack(graphics, result, cx + CRUCIBLE_RESULT_X, cy + INFUSION_RESULT_Y);
         }
         ItemStack catalyst = pickRotating(cycle(display.catalyst()), 0);
         if (!catalyst.isEmpty()) {
-            graphics.renderItem(catalyst, cx + CRUCIBLE_RESULT_X, cy + INFUSION_CATALYST_Y);
+            drawStack(graphics, catalyst, cx + CRUCIBLE_RESULT_X, cy + INFUSION_CATALYST_Y);
         }
         List<Ingredient> components = display.components();
         for (int a = 0; a < components.size(); a++) {
             ItemStack stack = pickRotating(cycle(components.get(a)), a + 1);
             if (!stack.isEmpty()) {
                 int[] offset = infusionRingOffset(a, components.size());
-                graphics.renderItem(stack, cx + offset[0], cy + INFUSION_RING_CENTER_Y + offset[1]);
+                drawStack(graphics, stack, cx + offset[0], cy + INFUSION_RING_CENTER_Y + offset[1]);
             }
         }
         int inst = Math.min(INFUSION_INSTABILITY_MAX, display.instability() / 2);
@@ -666,8 +673,7 @@ public final class RecipeDisplayWidget {
         List<ItemStack> ingredients = blueprintIngredients(display.blueprintId());
         for (int a = 0; a < ingredients.size(); a++) {
             int ix = cx + CONSTRUCT_INGREDIENT_X + a * CONSTRUCT_INGREDIENT_STRIDE;
-            graphics.renderItem(ingredients.get(a), ix, cy + CONSTRUCT_INGREDIENT_Y);
-            graphics.renderItemDecorations(font, ingredients.get(a), ix, cy + CONSTRUCT_INGREDIENT_Y);
+            drawStack(graphics, ingredients.get(a), ix, cy + CONSTRUCT_INGREDIENT_Y);
         }
     }
 

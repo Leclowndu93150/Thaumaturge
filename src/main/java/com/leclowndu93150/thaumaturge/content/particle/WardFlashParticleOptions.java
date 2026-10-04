@@ -47,7 +47,11 @@ public record WardFlashParticleOptions(Direction face, float hitX, float hitY, f
      */
     public static WardFlashParticleOptions at(BlockPos pos, Direction face, @Nullable Vec3 hit) {
         if (hit == null) {
-            return new WardFlashParticleOptions(face, CENTRE, CENTRE, CENTRE);
+            return new WardFlashParticleOptions(
+                    face,
+                    CENTRE + CENTRE * face.getStepX(),
+                    CENTRE + CENTRE * face.getStepY(),
+                    CENTRE + CENTRE * face.getStepZ());
         }
         return new WardFlashParticleOptions(
                 face, (float) (hit.x - pos.getX()), (float) (hit.y - pos.getY()), (float) (hit.z - pos.getZ()));

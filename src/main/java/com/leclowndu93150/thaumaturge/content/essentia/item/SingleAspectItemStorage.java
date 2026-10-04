@@ -40,7 +40,7 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
     }
 
     @Override
-    public ItemEssentiaTransferResult insert(Holder<IAspect> aspect, int amount, boolean simulate) {
+    public ItemEssentiaTransferResult insert(Holder<IAspect> aspect, int amount) {
         if (amount <= 0 || !canInsert(aspect)) return unchanged();
         AspectList contents = contents();
         int moved = Math.min(amount, capacity - contents.totalAmount());
@@ -51,7 +51,7 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
     }
 
     @Override
-    public ItemEssentiaTransferResult extract(Holder<IAspect> aspect, int amount, boolean simulate) {
+    public ItemEssentiaTransferResult extract(Holder<IAspect> aspect, int amount) {
         if (amount <= 0 || stack.getCount() != 1) return unchanged();
         AspectList contents = contents();
         int moved = Math.min(amount, contents.amountOf(aspect));

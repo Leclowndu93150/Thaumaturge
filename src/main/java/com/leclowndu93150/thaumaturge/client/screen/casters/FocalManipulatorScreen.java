@@ -51,8 +51,9 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final ResourceLocation TEX3 = TCIds.rl("textures/gui/gui_wandtable3.png");
     private static final ResourceLocation TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
     private static final ResourceLocation TEX_COMPLEXITY = TCIds.rl("textures/gui/complex.png");
-    private static final ResourceLocation TEX_COST_XP = TCIds.rl("textures/gui/costxp.png");
-    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/gui/costvis.png");
+    private static final ResourceLocation TEX_COST_XP =
+            ResourceLocation.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png");
+    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/item/essentia_crystal.png");
     private static final ResourceLocation ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
     private static final ResourceLocation ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
     private static final ResourceLocation ROOT_KEY = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "root");
@@ -80,6 +81,13 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final int INFO_COMPLEXITY_Y = 39;
     private static final int INFO_XP_Y = 53;
     private static final int INFO_VIS_Y = 67;
+    private static final int XP_ICON_SIZE = 9;
+    private static final int XP_ICON_U = 3;
+    private static final int XP_ICON_V = 3;
+    private static final int XP_ICON_LEFT_W = 5;
+    private static final int XP_ICON_RIGHT_W = 4;
+    private static final int XP_ICON_SHEET = 16;
+    private static final int VIS_ICON_TINT = 0xFF55FFFF;
     private static final int STAT_TEXT_X = 252;
     private static final int STAT_TEXT_Y_NUDGE = 4;
     private static final int STAT_COMPLEXITY_Y = 36;
@@ -184,6 +192,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private int sMaxX;
     private int sMaxY;
     private boolean valid;
+    private boolean emptyNodes;
+    private boolean validCrystals;
+    private boolean creativeBuild;
+    private int playerLevel;
     private boolean draggingCanvas;
     private double lastDragX;
     private double lastDragY;
@@ -223,6 +235,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         nameField.setBordered(false);
         nameField.setMaxLength(NAME_MAX);
         nameField.setResponder(this::onNameChanged);
+        addRenderableWidget(nameField);
         if (table != null) {
             if (table.focusName.isEmpty() && !menu.getSlot(0).getItem().isEmpty()) {
                 table.focusName = menu.getSlot(0).getItem().getHoverName().getString();
@@ -281,6 +294,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             lastDataStamp = table.clientDataStamp;
             gatherInfo(false);
         }
+        refreshValidity(false);
     }
 
     @Override
@@ -318,9 +332,26 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private void drawStats(GuiGraphics graphics, int mouseX, int mouseY) {
         drawStatIcon(
-                graphics, TEX_COMPLEXITY, INFO_COMPLEXITY_Y, "gui.thaumaturge.wandtable.complexity", mouseX, mouseY);
-        drawStatIcon(graphics, TEX_COST_XP, INFO_XP_Y, "gui.thaumaturge.wandtable.xp_cost", mouseX, mouseY);
-        drawStatIcon(graphics, TEX_COST_VIS, INFO_VIS_Y, "gui.thaumaturge.wandtable.vis_cost", mouseX, mouseY);
+                graphics,
+                FocalManipulatorScreen::drawComplexityIcon,
+                INFO_COMPLEXITY_Y,
+                "gui.thaumaturge.wandtable.complexity",
+                mouseX,
+                mouseY);
+        drawStatIcon(
+                graphics,
+                FocalManipulatorScreen::drawXpCostIcon,
+                INFO_XP_Y,
+                "gui.thaumaturge.wandtable.xp_cost",
+                mouseX,
+                mouseY);
+        drawStatIcon(
+                graphics,
+                FocalManipulatorScreen::drawVisCostIcon,
+                INFO_VIS_Y,
+                "gui.thaumaturge.wandtable.vis_cost",
+                mouseX,
+                mouseY);
         if (maxComplexity > 0) {
             graphics.drawString(
                     font,
@@ -385,9 +416,43 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         }
     }
 
-    private void drawStatIcon(
-            GuiGraphics graphics, ResourceLocation texture, int y, String tooltipKey, int mouseX, int mouseY) {
-        graphics.blit(texture, leftPos + INFO_X, topPos + y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+    private static void drawComplexityIcon(GuiGraphics graphics, int x, int y) {
+        graphics.blit(TEX_COMPLEXITY, x, y, 0, 0, INFO_W, INFO_H, INFO_W, INFO_H);
+    }
+
+    private static void drawXpCostIcon(GuiGraphics graphics, int x, int y) {
+        int iconX = x + (INFO_W - XP_ICON_SIZE) / 2;
+        int iconY = y + (INFO_H - XP_ICON_SIZE) / 2;
+        graphics.blit(
+                TEX_COST_XP,
+                iconX,
+                iconY,
+                XP_ICON_U,
+                XP_ICON_V,
+                XP_ICON_LEFT_W,
+                XP_ICON_SIZE,
+                XP_ICON_SHEET,
+                XP_ICON_SHEET);
+        graphics.blit(
+                TEX_COST_XP,
+                iconX + XP_ICON_LEFT_W,
+                iconY,
+                XP_ICON_RIGHT_W,
+                XP_ICON_SIZE,
+                XP_ICON_U + XP_ICON_RIGHT_W,
+                XP_ICON_V,
+                -XP_ICON_RIGHT_W,
+                XP_ICON_SIZE,
+                XP_ICON_SHEET,
+                XP_ICON_SHEET);
+    }
+
+    private static void drawVisCostIcon(GuiGraphics graphics, int x, int y) {
+        GuiBlend.blitTinted(graphics, TEX_COST_VIS, x, y, 0.0F, 0.0F, INFO_W, INFO_H, INFO_W, INFO_H, VIS_ICON_TINT);
+    }
+
+    private void drawStatIcon(GuiGraphics graphics, StatIcon icon, int y, String tooltipKey, int mouseX, int mouseY) {
+        icon.draw(graphics, leftPos + INFO_X, topPos + y);
         if (mouseX >= leftPos + INFO_X
                 && mouseX < leftPos + INFO_X + INFO_W
                 && mouseY >= topPos + y
@@ -697,9 +762,14 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (nameField != null && nameField.mouseClicked(mouseX, mouseY, button)) {
-            setFocused(nameField);
-            return true;
+        if (nameField != null) {
+            if (nameField.mouseClicked(mouseX, mouseY, button)) {
+                setFocused(nameField);
+                return true;
+            }
+            if (getFocused() == nameField) {
+                setFocused(null);
+            }
         }
         if (table != null && table.vis <= 0.0F && !table.data.isEmpty()) {
             if (lastNodeHover >= 0) {
@@ -1101,13 +1171,16 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             addRenderableWidget(buttonConfirm);
         }
         if (nameField != null) {
-            removeWidget(nameField);
-            if (table != null && !table.data.isEmpty()) {
-                addRenderableWidget(nameField);
+            nameField.visible = table != null && !table.data.isEmpty();
+            if (!nameField.visible && getFocused() == nameField) {
+                setFocused(null);
             }
         }
         if (table == null) {
             return;
+        }
+        if (nameField != null) {
+            table.focusName = nameField.getValue();
         }
         FocusElementNode selected = table.data.get(selectedNode);
         FocusElement selectedElement = selected != null ? selected.resolve() : null;
@@ -1143,7 +1216,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         if (focus.getItem() instanceof ItemFocus focusItem) {
             maxComplexity = focusItem.getMaxComplexity();
         }
-        boolean emptyNodes = false;
+        emptyNodes = false;
         Map<String, Integer> compCount = new HashMap<>();
         Map<ResourceKey<IAspect>, Integer> crystalAspects = new LinkedHashMap<>();
         for (FocusElementNode fn : table.data.values()) {
@@ -1164,29 +1237,20 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         costCast = totalComplexity / 5.0F;
         costVis = totalComplexity * 10 + maxComplexity / 5;
         costXp = (int) Math.max(1L, Math.round(Math.sqrt(totalComplexity)));
-        boolean validCrystals = false;
         if (!crystalAspects.isEmpty() && minecraft != null && minecraft.player != null && minecraft.level != null) {
-            validCrystals = true;
             List<ItemStack> stacks = new ArrayList<>();
             var registry = minecraft.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
             for (var entry : crystalAspects.entrySet()) {
-                ItemStack crystal = EssentiaCrystalFactory.of(registry.getOrThrow(entry.getKey()), entry.getValue());
-                stacks.add(crystal);
-                if (!carrying(crystal)) {
-                    validCrystals = false;
-                }
+                stacks.add(EssentiaCrystalFactory.of(registry.getOrThrow(entry.getKey()), entry.getValue()));
             }
             components = stacks;
         }
         gatherPartsList();
-        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
-        int playerLevel = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
-        valid = totalComplexity <= maxComplexity && !emptyNodes && validCrystals && (creative || costXp <= playerLevel);
-        updateConfirmTooltip(emptyNodes, validCrystals, playerLevel);
+        refreshValidity(true);
         calcScrollBounds();
         clampScroll();
         rebuildSliders();
-        if (table.focusName.isEmpty() && !focus.isEmpty()) {
+        if (table.focusName.isEmpty() && !focus.isEmpty() && (nameField == null || !nameField.isFocused())) {
             table.focusName = focus.getHoverName().getString();
             if (nameField != null) {
                 nameField.setValue(table.focusName);
@@ -1195,6 +1259,31 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         if (sync) {
             sendData();
         }
+    }
+
+    private void refreshValidity(boolean force) {
+        boolean crystals = components != null && !components.isEmpty();
+        if (crystals) {
+            for (ItemStack stack : components) {
+                if (!carrying(stack)) {
+                    crystals = false;
+                    break;
+                }
+            }
+        }
+        boolean creative = minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild;
+        int level = minecraft != null && minecraft.player != null ? minecraft.player.experienceLevel : 0;
+        if (!force && crystals == validCrystals && creative == creativeBuild && level == playerLevel) {
+            return;
+        }
+        validCrystals = crystals;
+        creativeBuild = creative;
+        playerLevel = level;
+        valid = totalComplexity <= maxComplexity
+                && !emptyNodes
+                && validCrystals
+                && (creativeBuild || costXp <= playerLevel);
+        updateConfirmTooltip();
     }
 
     private void rebuildSliders() {
@@ -1267,7 +1356,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
         }
     }
 
-    private void updateConfirmTooltip(boolean emptyNodes, boolean validCrystals, int playerLevel) {
+    private void updateConfirmTooltip() {
         if (buttonConfirm == null) {
             return;
         }
@@ -1297,8 +1386,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             if (components == null || components.isEmpty()) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.no_effects"));
             }
-            if (costXp > playerLevel
-                    && !(minecraft != null && minecraft.player != null && minecraft.player.getAbilities().instabuild)) {
+            if (costXp > playerLevel && !creativeBuild) {
                 text.append(newline("gui.thaumaturge.wandtable.problem.xp", costXp));
             }
             if (valid) {
@@ -1330,5 +1418,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             }
         }
         return false;
+    }
+
+    @FunctionalInterface
+    private interface StatIcon {
+        void draw(GuiGraphics graphics, int x, int y);
     }
 }

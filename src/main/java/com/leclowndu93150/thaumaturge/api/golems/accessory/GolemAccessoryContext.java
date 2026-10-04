@@ -1,16 +1,23 @@
 package com.leclowndu93150.thaumaturge.api.golems.accessory;
 
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Objects;
 
-/** Public callback context for one accessory namespace on one golem. */
-public record GolemAccessoryContext(IGolemAPI golem, GolemAccessory accessory, GolemAccessoryState state) {
-    public Optional<UUID> ownerIdentity() {
-        return golem.ownerIdentity();
-    }
-
-    public boolean isInactive() {
-        return golem.isInactive();
+/**
+ * The golem and accessory a {@link GolemAccessoryBehavior} callback runs for.
+ *
+ * @param golem     the golem wearing the accessory
+ * @param accessory the accessory
+ * @since 1.0.0
+ */
+public record GolemAccessoryContext(IGolemAPI golem, GolemAccessory accessory) {
+    /**
+     * Validates the components.
+     *
+     * @throws NullPointerException when a component is null
+     */
+    public GolemAccessoryContext {
+        Objects.requireNonNull(golem, "golem");
+        Objects.requireNonNull(accessory, "accessory");
     }
 }

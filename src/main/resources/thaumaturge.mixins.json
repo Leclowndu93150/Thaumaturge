@@ -8,6 +8,7 @@
     "server.network.ServerGamePacketListenerImplAccessor",
     "world.entity.ExperienceOrbAccessor",
     "world.entity.MobAccessor",
+    "world.entity.ai.BrainMixin",
     "world.entity.monster.SlimeAccessor",
     "world.item.alchemy.PotionBrewingAccessor",
     "world.item.alchemy.PotionBrewingMixAccessor",
@@ -17,6 +18,10 @@
   ],
   "client": [
     "client.gui.GuiGraphicsAccessor",
+    "client.lighting.BlockLightEngineMixin",
+    "client.model.AgeableListModelMixin",
+    "client.model.HierarchicalModelMixin",
+    "client.model.ListModelMixin",
     "client.particle.ParticleEngineMixin",
     "client.renderer.entity.LivingEntityRendererMixin",
     "client.iris.ExtendedShaderMixin",

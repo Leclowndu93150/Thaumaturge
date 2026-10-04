@@ -6,15 +6,13 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue WUSS_MODE;
-    public static final ModConfigSpec.IntValue TAINT_SPREAD_RATE;
+    public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
+    public static final ModConfigSpec.IntValue TAINT_FRONTIER_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
-    public static final ModConfigSpec.BooleanValue GENERATE_TAINTED_LANDS;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
     public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
-    public static final ModConfigSpec.IntValue MAGICAL_FOREST_REGION_WEIGHT;
-    public static final ModConfigSpec.IntValue TAINTED_LANDS_REGION_WEIGHT;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
@@ -50,24 +48,17 @@ public final class ThaumaturgeCommonConfig {
 
         builder.push("world");
 
-        MAGICAL_FOREST_REGION_WEIGHT = builder.comment(
-                        "Controls Magical Forest spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
-                .defineInRange("magicalForestRegionWeight", 6, 1, 100);
-        TAINTED_LANDS_REGION_WEIGHT = builder.comment(
-                        "Controls Tainted Lands spawn frequency relative to other regions. Higher values increase frequency. Default preserves current frequency.")
-                .defineInRange("taintedLandsRegionWeight", 1, 1, 100);
-
         WUSS_MODE = builder.comment("Disables Warp, Taint spread, and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
-                        "Controls Tainted Lands spread speed. Higher values slow spreading; 0 disables biome takeover. Requires two adjacent taint blocks.")
-                .defineInRange("taintSpreadRate", 200, 0, 100000);
+                        "The % chance of taint fibres spreading on a block tick. Setting this to 0 will effectively stop taint fibre spread.")
+                .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);
+        TAINT_FRONTIER_RATE = builder.comment(
+                        "How quickly the Tainted Lands biome spreads outward, Thaumcraft 4 style. Fibrous taint tries to take over a neighbouring column with a chance of 1 in (taintFrontierRate * 5) per random tick, and only with at least two adjacent taint blocks. Higher is slower. 0 stops the biome from spreading while existing taint stays active.")
+                .defineInRange("taintFrontierRate", 200, 0, 100000);
         TAINT_SPREAD_AREA = builder.comment(
                         "Taint Seed influence radius in blocks. Seeds accelerate outbreaks but are not required for ordinary taint spread.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
-        GENERATE_TAINTED_LANDS = builder.comment(
-                        "Allows natural Tainted Lands generation. Does not affect Tainted Lands created through taint spread or outbreaks.")
-                .define("generateTaintedLands", true);
         TAINT_FROM_FLUX = builder.comment(
                         "Allows deep, exposed Flux Goo to develop into Fibrous Taint and Tainted Lands.")
                 .define("taintFromFlux", true);
@@ -123,7 +114,7 @@ public final class ThaumaturgeCommonConfig {
         builder.pop(2);
 
         HUNGRY_NODE_BLOCK_EAT_RANGE = builder.comment(
-                        "Maximum block-eating ray length in blocks. Higher values increase reach, not entity or item pulling range.")
+                        "Maximum block-eating ray length in blocks. Dropped items are pulled from this range plus half a block; the entity pulling range is not affected.")
                 .defineInRange("hungryNodeBlockEatRange", 16, 1, 64);
         SCALE_HUNGRY_NODE_RANGE_BY_MODIFIER = builder.comment(
                         "Scales hungry node block-eating range by quality. Uses the minimum and maximum ranges below instead of the fixed range.")
@@ -170,16 +161,16 @@ public final class ThaumaturgeCommonConfig {
 
         FLUX_SCRUBBER_CHARGES_PER_ROLL = builder.comment(
                         "Flux Goo or Gas units cleaned per Praecantatio recovery attempt. Lower values increase recovery frequency.")
-                .defineInRange("chargesPerRoll", 2, 1, 64);
+                .defineInRange("chargesPerRoll", 4, 1, 64);
         FLUX_SCRUBBER_ESSENTIA_CHANCE = builder.comment(
                         "Chance (0-1) of recovering Praecantatio per roll. 1.0 guarantees recovery.")
-                .defineInRange("essentiaChance", 0.8, 0.0, 1.0);
+                .defineInRange("essentiaChance", 0.25, 0.0, 1.0);
         FLUX_SCRUBBER_ESSENTIA_PER_ROLL = builder.comment(
                         "Praecantatio produced per successful recovery roll. Increase capacity to accommodate larger amounts.")
                 .defineInRange("essentiaPerRoll", 1, 0, 64);
         FLUX_SCRUBBER_ESSENTIA_CAPACITY = builder.comment(
                         "Maximum Praecantatio stored before the scrubber must be drained by an attached pipe or jar.")
-                .defineInRange("essentiaCapacity", 16, 1, 1024);
+                .defineInRange("essentiaCapacity", 4, 1, 1024);
 
         builder.pop();
         SPEC = builder.build();

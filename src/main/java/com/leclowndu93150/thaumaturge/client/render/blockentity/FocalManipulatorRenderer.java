@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
+import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,7 +26,8 @@ import org.joml.Matrix4f;
 public final class FocalManipulatorRenderer implements BlockEntityRenderer<BlockEntityFocalManipulator> {
     private static final float FOCUS_HEIGHT = 0.8F;
     private static final float FOCUS_BOB_PERIOD = 14.0F;
-    private static final float FOCUS_BOB_SCALE = 0.2F;
+    private static final float FOCUS_HOVER_PHASE = 0.2F;
+    private static final float ITEM_ENTITY_BOB_HEIGHT = 0.1F;
     private static final float CRYSTAL_RING_HEIGHT = 1.05F;
     private static final float CRYSTAL_RING_RADIUS = 0.4F;
     private static final float CRYSTAL_SCALE = 0.5F;
@@ -33,16 +35,13 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final float GLOW_RING_HEIGHT = 1.3F;
     private static final float GLOW_HALF = 0.175F;
     private static final float GLOW_ALPHA = 0.66F;
-    private static final int GLOW_GRID = 64;
-    private static final int GLOW_FRAME_START = 320;
-    private static final int GLOW_FRAMES = 16;
     private static final int EMISSIVE_LIGHT = 0xF000F0;
     private static final float RAY_LIFT = 0.475F;
     private static final long RAY_SEED = 187L;
     private static final float RAY_ALPHA = 0.66F;
 
     private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
 
     private final RandomSource rayRandom = RandomSource.create();
 
@@ -62,12 +61,11 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
 
         ItemStack focus = table.focusStack();
         if (!focus.isEmpty()) {
-            float lift = LegacyItemLift.centerLift(focus, ItemDisplayContext.GROUND);
+            float lift = LegacyItemLift.centerLift(focus, ItemDisplayContext.GROUND)
+                    + Mth.sin(Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_HOVER_PHASE + FOCUS_HOVER_PHASE)
+                            * ITEM_ENTITY_BOB_HEIGHT;
             poseStack.pushPose();
-            poseStack.translate(
-                    0.5F,
-                    FOCUS_HEIGHT + Mth.sin(ticks / FOCUS_BOB_PERIOD) * FOCUS_BOB_SCALE * 0.5F + FOCUS_BOB_SCALE * 0.5F,
-                    0.5F);
+            poseStack.translate(0.5F, FOCUS_HEIGHT, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(ticks % 360.0F));
             poseStack.translate(0.0F, lift, 0.0F);
             ItemRenderHelper.render(focus, ItemDisplayContext.GROUND, poseStack, buffers, light, overlay, 0);
@@ -94,6 +92,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             poseStack.translate(0.5F, GLOW_RING_HEIGHT, 0.5F);
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
             poseStack.translate(0.0F, bob, CRYSTAL_RING_RADIUS);
+            poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
             poseStack.mulPose(camera.rotation());
             drawGlow(buffers, poseStack, ticks, r, g, b);
             poseStack.popPose();
@@ -102,8 +101,8 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
             poseStack.translate(0.0F, bob, CRYSTAL_RING_RADIUS);
             poseStack.scale(CRYSTAL_SCALE, CRYSTAL_SCALE, CRYSTAL_SCALE);
-            drawRay(poseStack, buffers, angle, a, r, g, b, ticks);
-            drawRay(poseStack, buffers, angle, (a + 1) * 5, r, g, b, ticks);
+            drawRay(poseStack, buffers, angle, a, bob, r, g, b, ticks);
+            drawRay(poseStack, buffers, angle, (a + 1) * 5, bob, r, g, b, ticks);
             poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
             poseStack.translate(0.0F, crystalLift, 0.0F);
             ItemRenderHelper.render(crystal, ItemDisplayContext.GROUND, poseStack, buffers, light, overlay, 0);
@@ -113,12 +112,11 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
 
     private static void drawGlow(
             MultiBufferSource buffers, PoseStack poseStack, float ticks, float r, float g, float b) {
-        int frame = GLOW_FRAME_START + (int) ticks % GLOW_FRAMES;
-        float texFrame = 1.0F / GLOW_GRID;
-        float u0 = (frame % GLOW_GRID) * texFrame;
-        float v0 = (frame / GLOW_GRID) * texFrame;
-        float u1 = u0 + texFrame;
-        float v1 = v0 + texFrame;
+        int frame = (int) ticks % ParticleTextures.STAR_GLINT_FRAMES;
+        float u0 = StripUv.u0(frame, ParticleTextures.STAR_GLINT_FRAMES);
+        float v0 = StripUv.V0;
+        float u1 = StripUv.u1(frame, ParticleTextures.STAR_GLINT_FRAMES);
+        float v1 = StripUv.V1;
         int tint = ARGB32.colorFromFloat(GLOW_ALPHA, r, g, b);
         VertexConsumer buffer = buffers.getBuffer(GLOW_TYPE);
         Matrix4f mat = poseStack.last().pose();
@@ -145,6 +143,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             MultiBufferSource buffers,
             float angle,
             int num,
+            float bob,
             float r,
             float g,
             float b,
@@ -153,7 +152,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         float pan = Mth.sin((ticks + num * 10) / 15.0F) * 15.0F;
         float aperture = Mth.sin((ticks + num * 10) / 14.0F) * 2.0F;
         poseStack.pushPose();
-        poseStack.translate(0.0F, RAY_LIFT, 0.0F);
+        poseStack.translate(0.0F, RAY_LIFT + bob, 0.0F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));
         poseStack.mulPose(Axis.YP.rotationDegrees(rayRandom.nextFloat() * 360.0F));

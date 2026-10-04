@@ -11,7 +11,14 @@ public interface ResearchGated {
         return ResearchGate.passes(player, researchGate().orElse(null));
     }
 
-    default ResearchStatus researchStatus(Player player) {
-        return ResearchStatus.evaluate(player, researchGate());
+    /**
+     * Evaluates this recipe's research gate for a player.
+     *
+     * @param player the player
+     * @return whether the recipe is ungated, unlocked or locked for the player
+     * @since 1.0.0
+     */
+    default ResearchGateStatus gateStatus(Player player) {
+        return ResearchGateStatus.of(player, researchGate());
     }
 }

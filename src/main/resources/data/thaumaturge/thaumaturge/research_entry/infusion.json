@@ -32,7 +32,15 @@
           "items": [
             "thaumaturge:phial"
           ],
-          "amount": 1
+          "amount": 1,
+          "components": {
+            "thaumaturge:aspects": [
+              {
+                "aspect": "thaumaturge:aer",
+                "amount": 10
+              }
+            ]
+          }
         }
       ],
       "required_knowledge": [

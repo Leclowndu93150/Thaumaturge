@@ -89,9 +89,10 @@ public final class NodeGenerator {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.getBiome(pos).is(TCBiomes.TAINTED_LANDS)) {
             return false;
         }
+        NodeType rolledType = requiredType == NodeType.HUNGRY ? NodeType.NORMAL : requiredType;
         for (int attempt = 0; attempt < 64; attempt++) {
             NodeData data = rollRandomNodeData(
-                    level, pos, random, false, false, false, DEFAULT_SPECIAL_RARITY, DEFAULT_BASE_AURA);
+                    level, pos, random, false, false, false, DEFAULT_SPECIAL_RARITY, DEFAULT_BASE_AURA, rolledType);
             if (data == null) {
                 continue;
             }
@@ -128,21 +129,19 @@ public final class NodeGenerator {
             boolean small,
             int specialRarity,
             int baseAura) {
-        HolderLookup.RegistryLookup<IAspect> aspectRegistry =
-                level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        List<Holder<IAspect>> basicAspects = new ArrayList<>();
-        List<Holder<IAspect>> complexAspects = new ArrayList<>();
-        aspectRegistry.listElements().forEach(holder -> {
-            if (holder.value().isPrimal()) {
-                basicAspects.add(holder);
-            } else {
-                complexAspects.add(holder);
-            }
-        });
-        if (basicAspects.isEmpty() || complexAspects.isEmpty()) {
-            return null;
-        }
+        return rollRandomNodeData(level, pos, random, silverwood, eerie, small, specialRarity, baseAura, null);
+    }
 
+    private static @Nullable NodeData rollRandomNodeData(
+            ServerLevelAccessor level,
+            BlockPos pos,
+            RandomSource random,
+            boolean silverwood,
+            boolean eerie,
+            boolean small,
+            int specialRarity,
+            int baseAura,
+            @Nullable NodeType requiredType) {
         NodeType type = NodeType.NORMAL;
         if (silverwood) {
             type = NodeType.PURE;
@@ -174,6 +173,24 @@ public final class NodeGenerator {
                 type = NodeType.TAINTED;
                 biomeAura = Math.round(biomeAura * 1.5F);
             }
+        }
+        if (requiredType != null && type != requiredType) {
+            return null;
+        }
+
+        HolderLookup.RegistryLookup<IAspect> aspectRegistry =
+                level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        List<Holder<IAspect>> basicAspects = new ArrayList<>();
+        List<Holder<IAspect>> complexAspects = new ArrayList<>();
+        aspectRegistry.listElements().forEach(holder -> {
+            if (holder.value().isPrimal()) {
+                basicAspects.add(holder);
+            } else {
+                complexAspects.add(holder);
+            }
+        });
+        if (basicAspects.isEmpty() || complexAspects.isEmpty()) {
+            return null;
         }
         if (silverwood || small) {
             biomeAura /= 4;

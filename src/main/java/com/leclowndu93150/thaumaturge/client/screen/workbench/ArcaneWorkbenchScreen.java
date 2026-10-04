@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.SlotCrystalEssentia;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.mojang.math.Axis;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -58,7 +59,10 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
 
     @Override
     protected void renderSlotTooltip(GuiGraphics graphics, Slot slot, int mouseX, int mouseY) {
-        if (slot instanceof SlotCrystalEssentia) {
+        if (slot instanceof SlotCrystalEssentia && wandTooltip != null) {
+            graphics.renderComponentTooltip(font, List.of(slot.getItem().getHoverName(), wandTooltip), mouseX, mouseY);
+            wandTooltip = null;
+        } else if (slot instanceof SlotCrystalEssentia) {
             graphics.renderTooltip(font, slot.getItem().getHoverName(), mouseX, mouseY);
         } else {
             super.renderSlotTooltip(graphics, slot, mouseX, mouseY);

@@ -32,11 +32,10 @@ public final class AspectTagRenderer {
     private static final DecimalFormat AMOUNT_FORMAT = new DecimalFormat("#######.##");
 
     private static final int BONUS_OFFSET = -4;
-    private static final int BONUS_BADGE_V = 80;
     private static final int BONUS_BADGE_SIZE = 16;
     private static final int BONUS_BADGE_STRIDE = 16;
     private static final int BONUS_BADGE_CYCLE = 16;
-    private static final int BONUS_BADGE_TEXTURE_SIZE = 256;
+    private static final int BONUS_BADGE_TEXTURE_WIDTH = BONUS_BADGE_STRIDE * BONUS_BADGE_CYCLE;
 
     private AspectTagRenderer() {}
 
@@ -281,15 +280,15 @@ public final class AspectTagRenderer {
         int u = frame * BONUS_BADGE_STRIDE;
         GuiBlend.blitTinted(
                 graphics,
-                ParticleTextures.PARTICLES,
+                ParticleTextures.BONUS_GLINT,
                 (int) x + BONUS_OFFSET,
                 (int) y + BONUS_OFFSET,
                 (float) u,
-                (float) BONUS_BADGE_V,
+                0.0F,
                 BONUS_BADGE_SIZE,
                 BONUS_BADGE_SIZE,
-                BONUS_BADGE_TEXTURE_SIZE,
-                BONUS_BADGE_TEXTURE_SIZE,
+                BONUS_BADGE_TEXTURE_WIDTH,
+                BONUS_BADGE_SIZE,
                 0xFFFFFFFF);
         if (bonus > 1) {
             String text = Integer.toString(bonus);

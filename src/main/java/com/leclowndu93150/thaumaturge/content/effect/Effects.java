@@ -38,6 +38,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class Effects {
@@ -1247,7 +1249,8 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            AABB bs = level.getBlockState(pos).getShape(level, pos).bounds();
+            VoxelShape shape = level.getBlockState(pos).getShape(level, pos);
+            AABB bs = shape.isEmpty() ? Shapes.block().bounds() : shape.bounds();
             for (int a = 0; a < 8; a++) {
                 double x = pos.getX() + bs.minX + rand.nextFloat() * (bs.maxX - bs.minX);
                 double y = pos.getY() + bs.minY + rand.nextFloat() * (bs.maxY - bs.minY);

@@ -157,7 +157,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         IArcaneRecipe arcane = ThaumaturgeCraftingManager.findMatchingArcaneRecipe(level, input, sp);
         if (arcane != null) {
             tile.refreshAura();
-            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp);
+            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(arcane, craftingInventory, sp, tile.craftingContext(sp));
             if (WorkbenchPayment.canCraft(plan, tile)) {
                 result = arcane.assemble(input, level.registryAccess());
             }
@@ -232,13 +232,21 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     public void clicked(int slotId, int button, ClickType containerInput, Player player) {
         if (slotId == RESULT_SLOT
                 && containerInput == ClickType.PICKUP
-                && !getCarried().isEmpty()) {
+                && !getCarried().isEmpty()
+                && !resultFitsOnCarried(getCarried())) {
             return;
         }
         if (slotId == WAND_SLOT && getCarried().getItem() instanceof ItemWand wand && wand.isStaff(getCarried())) {
             TCActionBar.sendPurple(player, "tc.workbench.staff");
         }
         super.clicked(slotId, button, containerInput, player);
+    }
+
+    private boolean resultFitsOnCarried(ItemStack carried) {
+        ItemStack result = resultContainer.getItem(0);
+        return !result.isEmpty()
+                && ItemStack.isSameItemSameComponents(carried, result)
+                && carried.getCount() + result.getCount() <= carried.getMaxStackSize();
     }
 
     @Override

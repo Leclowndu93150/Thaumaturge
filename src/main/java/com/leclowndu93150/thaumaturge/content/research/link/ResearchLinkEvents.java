@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchEvent;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,16 +25,16 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class ResearchLinkEvents {
     private static final int SYNC_INTERVAL_TICKS = 100;
-    private static final Set<UUID> CHANGED_PLAYERS = new HashSet<>();
 
     private ResearchLinkEvents() {}
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         MinecraftServer server = event.getServer();
-        if (!CHANGED_PLAYERS.isEmpty()) {
-            Set<UUID> changed = Set.copyOf(CHANGED_PLAYERS);
-            CHANGED_PLAYERS.clear();
+        ResearchLinkData data = ResearchLinkData.get(server);
+        if (!data.pendingPlayers().isEmpty()) {
+            Set<UUID> changed = Set.copyOf(data.pendingPlayers());
+            data.pendingPlayers().clear();
             for (UUID playerId : changed) {
                 ServerPlayer player = server.getPlayerList().getPlayer(playerId);
                 if (player != null) syncPlayerLinks(player);
@@ -44,7 +43,6 @@ public final class ResearchLinkEvents {
         if (server.getTickCount() % SYNC_INTERVAL_TICKS != 0) {
             return;
         }
-        ResearchLinkData data = ResearchLinkData.get(server);
         if (data.links().isEmpty()) {
             return;
         }
@@ -69,7 +67,9 @@ public final class ResearchLinkEvents {
     }
 
     private static void queue(ResearchEvent event) {
-        if (event.player() instanceof ServerPlayer player) CHANGED_PLAYERS.add(player.getUUID());
+        if (event.player() instanceof ServerPlayer player) {
+            ResearchLinkData.get(player.server).pendingPlayers().add(player.getUUID());
+        }
     }
 
     @SubscribeEvent
@@ -156,6 +156,9 @@ public final class ResearchLinkEvents {
                         .orElse(null);
                 if (holder == null) {
                     progressed |= ResearchManager.unlock(player, research);
+                    if (shared.getValue().complete() && knowledge.isResearchKnown(research)) {
+                        progressed |= ResearchManager.complete(player, research);
+                    }
                     continue;
                 }
                 IResearchEntry entry = holder.value();
@@ -176,6 +179,9 @@ public final class ResearchLinkEvents {
             IResearchEntry entry,
             ResearchLinkData.Progress shared) {
         boolean changed = ResearchManager.unlock(player, research);
+        if (!knowledge.isResearchKnown(research)) {
+            return false;
+        }
         int targetStage = shared.complete()
                 ? entry.stages().size()
                 : Math.min(shared.stage(), entry.stages().size());

@@ -1,168 +1,164 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
-import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
+import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
+import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction.Failure;
+import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction.Result;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingStore;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
-import com.leclowndu93150.thaumaturge.api.recipe.ResearchStatus;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
-/** Internal implementation behind the supported transaction facade. */
-public final class ArcaneCraftingTransactions {
-    private ArcaneCraftingTransactions() {}
+public final class ArcaneCraftingTransactions implements ArcaneCraftingTransaction.Bindings {
 
-    public static ArcaneCraftingTransaction.Inspection inspect(
+    @Override
+    public Result preview(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
+        return run(context, player, input, null, true);
+    }
+
+    @Override
+    public ArcaneCraftingTransaction.Inspection inspect(
             ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        ArcaneCraftingTransaction.Failure invalid = validateCall(context, player);
-        if (invalid != ArcaneCraftingTransaction.Failure.NONE) {
+        Failure invalid = validate(context, player);
+        if (invalid != Failure.NONE) {
             return ArcaneCraftingTransaction.Inspection.failure(invalid);
         }
-        Match match = match(context, player, input);
-        if (match.failure() != ArcaneCraftingTransaction.Failure.NONE) {
-            if (match.holder() == null) {
-                return ArcaneCraftingTransaction.Inspection.failure(match.failure());
-            }
-            return inspection(context, player, input, match, false);
+        Match match = match(context.level(), player, input);
+        if (match.holder() == null) {
+            return ArcaneCraftingTransaction.Inspection.failure(match.failure());
         }
-        return inspection(context, player, input, match, true);
-    }
-
-    private static ArcaneCraftingTransaction.Inspection inspection(
-            ArcaneWorkbenchContext context,
-            ServerPlayer player,
-            IArcaneCraftingInput input,
-            Match match,
-            boolean successful) {
-        IArcaneRecipe recipe = match.recipe();
+        IArcaneRecipe recipe = match.holder().value();
+        ArcaneCraftingTransaction.Requirements requirements = new ArcaneCraftingTransaction.Requirements(
+                recipe.getBaseVis(), recipe.getCrystals(), recipe.getIngredients());
         return new ArcaneCraftingTransaction.Inspection(
-                successful,
                 match.failure(),
-                match.holder().id(),
+                ResourceKey.create(Registries.RECIPE, match.holder().id()),
                 recipe.assemble(input, context.level().registryAccess()),
-                recipe.getRemainingItems(input),
-                new ArcaneCraftingTransaction.Requirements(
-                        recipe.getBaseVis(), recipe.getCrystals(), recipe.getIngredients()),
-                successful ? recipe.researchStatus(player) : ResearchStatus.LOCKED);
+                remainders(recipe, input),
+                requirements,
+                recipe.gateStatus(player));
     }
 
-    public static ArcaneCraftingTransaction.Result preview(
-            ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        ArcaneCraftingTransaction.Failure invalid = validateCall(context, player);
-        if (invalid != ArcaneCraftingTransaction.Failure.NONE) {
-            return ArcaneCraftingTransaction.Result.failure(invalid);
-        }
-        Match match = match(context, player, input);
-        if (match.failure() != ArcaneCraftingTransaction.Failure.NONE) {
-            return ArcaneCraftingTransaction.Result.failure(match.failure());
-        }
-        IArcaneRecipe recipe = match.recipe();
-        WorkbenchPayment.Plan plan = WorkbenchPayment.plan(recipe, input, player, context);
-        BlockEntityArcaneWorkbench tile = placedWorkbench(context);
-        if (tile != null) tile.refreshAura();
-        boolean affordable = WorkbenchPayment.reserve(plan, tile, player, input, context) != null;
-        if (!affordable) {
-            return result(
-                    context, recipe, input, plan, false, false, ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE);
-        }
-        return result(context, recipe, input, plan, false, true, ArcaneCraftingTransaction.Failure.NONE);
-    }
-
-    public static ArcaneCraftingTransaction.Result commit(
+    @Override
+    public Result craft(
             ArcaneWorkbenchContext context,
             ServerPlayer player,
             IArcaneCraftingInput input,
-            IArcaneCraftingStore store) {
-        ArcaneCraftingTransaction.Failure invalid = validateCall(context, player);
-        if (invalid != ArcaneCraftingTransaction.Failure.NONE) {
-            return ArcaneCraftingTransaction.Result.failure(invalid);
-        }
-        Match initial = match(context, player, input);
-        if (initial.failure() != ArcaneCraftingTransaction.Failure.NONE) {
-            return ArcaneCraftingTransaction.Result.failure(initial.failure());
-        }
-        List<ItemStack> grid = gridSnapshot(input);
-        try (IArcaneCraftingStore.Reservation reservation = store.reserve(grid)) {
-            if (reservation == null || !reservation.isValid()) {
-                return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.INGREDIENTS_CHANGED);
-            }
-            Match current = match(context, player, input);
-            if (current.failure() != ArcaneCraftingTransaction.Failure.NONE
-                    || !current.holder().id().equals(initial.holder().id())) {
-                return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.INGREDIENTS_CHANGED);
-            }
-            IArcaneRecipe recipe = current.recipe();
-            BlockEntityArcaneWorkbench tile = placedWorkbench(context);
-            if (tile != null) tile.refreshAura();
-            WorkbenchPayment.Plan plan = WorkbenchPayment.plan(recipe, input, player, context);
-            WorkbenchPayment.PaymentReservation payment = WorkbenchPayment.reserve(plan, tile, player, input, context);
-            if (!reservation.isValid() || payment == null) {
-                return ArcaneCraftingTransaction.Result.failure(ArcaneCraftingTransaction.Failure.PAYMENT_UNAVAILABLE);
-            }
-
-            ArcaneCraftingTransaction.Result result =
-                    result(context, recipe, input, plan, true, true, ArcaneCraftingTransaction.Failure.NONE);
-            WorkbenchPayment.commit(payment, player, input, context);
-            reservation.commit(result.output(), result.remainders(), plan.crystalsToConsume());
-            ResearchProgressionEvents.recordCrafted(player, result.output());
-            return result;
-        }
+            IArcaneCraftingStore store,
+            boolean simulate) {
+        return run(context, player, input, store, simulate);
     }
 
-    private static ArcaneCraftingTransaction.Result result(
+    private static Result run(
             ArcaneWorkbenchContext context,
-            IArcaneRecipe recipe,
+            ServerPlayer player,
             IArcaneCraftingInput input,
-            WorkbenchPayment.Plan plan,
-            boolean committed,
-            boolean affordable,
-            ArcaneCraftingTransaction.Failure failure) {
+            @Nullable IArcaneCraftingStore store,
+            boolean simulate) {
+        Failure invalid = validate(context, player);
+        if (invalid != Failure.NONE) {
+            return Result.failure(invalid);
+        }
+        Match match = match(context.level(), player, input);
+        if (match.failure() != Failure.NONE) {
+            return Result.failure(match.failure());
+        }
+        IArcaneRecipe recipe = match.holder().value();
         ItemStack output = recipe.assemble(input, context.level().registryAccess());
-        List<ItemStack> remainders = recipe.getRemainingItems(input);
-        ArcaneCraftCost cost = new ArcaneCraftCost(
-                plan.fullWand(), plan.wandCentivis(), plan.crystalsToConsume(), plan.auraVis(), affordable);
-        return new ArcaneCraftingTransaction.Result(
-                failure == ArcaneCraftingTransaction.Failure.NONE, committed, failure, output, remainders, cost);
+        List<ItemStack> remainders = remainders(recipe, input);
+        BlockEntityArcaneWorkbench tile = placedWorkbench(context);
+        if (tile != null) {
+            tile.refreshAura();
+        }
+        WorkbenchPayment.Plan plan = WorkbenchPayment.plan(recipe, input, player, context);
+        WorkbenchPayment.PaymentReservation payment = WorkbenchPayment.reserve(plan, tile, player, input, context);
+        ItemStack wand = payment == null ? null : WorkbenchPayment.paidWand(plan, input.wandStack());
+        if (payment == null || wand == null) {
+            return new Result(Failure.PAYMENT_UNAVAILABLE, output, remainders, plan.cost());
+        }
+        if (store == null) {
+            return new Result(Failure.NONE, output, remainders, plan.cost());
+        }
+        IArcaneCraftingStore.Consumption consumption =
+                new IArcaneCraftingStore.Consumption(grid(input), remainders, plan.crystalsToConsume(), wand);
+        if (!store.consume(consumption, true)) {
+            return new Result(Failure.INGREDIENTS_CHANGED, output, remainders, plan.cost());
+        }
+        if (simulate) {
+            return new Result(Failure.NONE, output, remainders, plan.cost());
+        }
+        WorkbenchPayment.commit(payment, player, input, context);
+        if (!store.consume(consumption, false)) {
+            Thaumaturge.LOGGER.error(
+                    "Arcane craft store at {} changed between its check and the craft; the payment was already made",
+                    context.blockPosition().orElse(null));
+            return new Result(Failure.INGREDIENTS_CHANGED, output, remainders, plan.cost());
+        }
+        ResearchProgressionEvents.recordCrafted(player, output);
+        return new Result(Failure.NONE, output, remainders, plan.cost());
     }
 
-    private static ArcaneCraftingTransaction.Failure validateCall(ArcaneWorkbenchContext context, ServerPlayer player) {
+    private static Failure validate(ArcaneWorkbenchContext context, ServerPlayer player) {
         if (!context.level().getServer().isSameThread()) {
-            return ArcaneCraftingTransaction.Failure.NOT_SERVER_THREAD;
+            return Failure.NOT_SERVER_THREAD;
         }
         if (context.level() != player.serverLevel() || !context.actingPlayer().equals(player.getUUID())) {
-            return ArcaneCraftingTransaction.Failure.INVALID_CONTEXT;
+            return Failure.INVALID_CONTEXT;
         }
-        return ArcaneCraftingTransaction.Failure.NONE;
+        return Failure.NONE;
     }
 
-    private static Match match(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        RecipeHolder<? extends IArcaneRecipe> holder =
-                context.level().getRecipeManager().getAllRecipesFor(TCRecipeTypes.ARCANE.get()).stream()
-                        .filter(candidate -> candidate.value().matches(input, context.level()))
-                        .findFirst()
-                        .orElse(null);
-        if (holder == null) return new Match(null, ArcaneCraftingTransaction.Failure.NO_RECIPE);
-        if (!holder.value().doesPassGate(player)) {
-            return new Match(holder, ArcaneCraftingTransaction.Failure.RESEARCH_LOCKED);
+    private static Match match(ServerLevel level, ServerPlayer player, IArcaneCraftingInput input) {
+        RecipeHolder<? extends IArcaneRecipe> locked = null;
+        for (RecipeHolder<? extends IArcaneRecipe> holder :
+                level.getRecipeManager().getAllRecipesFor(TCRecipeTypes.ARCANE.get())) {
+            if (holder.value().matches(input, level)) {
+                if (holder.value().doesPassGate(player)) {
+                    return new Match(holder, Failure.NONE);
+                }
+                if (locked == null) {
+                    locked = holder;
+                }
+            }
         }
-        return new Match(holder, ArcaneCraftingTransaction.Failure.NONE);
+        return locked == null ? new Match(null, Failure.NO_RECIPE) : new Match(locked, Failure.RESEARCH_LOCKED);
     }
 
-    private static List<ItemStack> gridSnapshot(IArcaneCraftingInput input) {
-        return input.items().subList(0, input.width() * input.height()).stream()
-                .map(ItemStack::copy)
-                .toList();
+    private static List<ItemStack> grid(IArcaneCraftingInput input) {
+        List<ItemStack> grid = new ArrayList<>(input.width() * input.height());
+        for (int y = 0; y < input.height(); y++) {
+            for (int x = 0; x < input.width(); x++) {
+                grid.add(input.getItem(x, y).copy());
+            }
+        }
+        return grid;
+    }
+
+    private static List<ItemStack> remainders(IArcaneRecipe recipe, IArcaneCraftingInput input) {
+        List<ItemStack> all = recipe.getRemainingItems(input);
+        int size = input.width() * input.height();
+        List<ItemStack> remainders = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            remainders.add(i < all.size() ? all.get(i).copy() : ItemStack.EMPTY);
+        }
+        return remainders;
     }
 
     private static @Nullable BlockEntityArcaneWorkbench placedWorkbench(ArcaneWorkbenchContext context) {
-        if (context.kind() != ArcaneWorkbenchContext.Kind.PLACED) return null;
+        if (context.kind() != ArcaneWorkbenchContext.Kind.PLACED) {
+            return null;
+        }
         return context.blockPosition()
                 .map(context.level()::getBlockEntity)
                 .filter(BlockEntityArcaneWorkbench.class::isInstance)
@@ -170,10 +166,5 @@ public final class ArcaneCraftingTransactions {
                 .orElse(null);
     }
 
-    private record Match(
-            @Nullable RecipeHolder<? extends IArcaneRecipe> holder, ArcaneCraftingTransaction.Failure failure) {
-        private @Nullable IArcaneRecipe recipe() {
-            return holder == null ? null : holder.value();
-        }
-    }
+    private record Match(@Nullable RecipeHolder<? extends IArcaneRecipe> holder, Failure failure) {}
 }

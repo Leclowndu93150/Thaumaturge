@@ -4,12 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
+import com.leclowndu93150.thaumaturge.content.decor.HeldCandle;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
@@ -57,6 +59,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
@@ -66,6 +70,14 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
 
 public final class TCModelProvider implements DataProvider {
+    private static final ResourceLocation DEEPSLATE_TEXTURE = ResourceLocation.withDefaultNamespace("block/deepslate");
+    private static final ResourceLocation BLOCK_PARENT = ResourceLocation.withDefaultNamespace("block/block");
+    private static final int FULL_CUBE = 16;
+    private static final ResourceLocation VANILLA_GRINDSTONE =
+            ResourceLocation.withDefaultNamespace("block/grindstone");
+    private static final int QUARTER_TURNS = 4;
+    private static final int HALF_TURN = 2;
+    private static final int NORTH_TO_SOUTH_TURNS = 2;
 
     private static final ModelTemplate THREE_LAYERED_ITEM = new ModelTemplate(
             Optional.of(ResourceLocation.withDefaultNamespace("item/generated")),
@@ -73,6 +85,8 @@ public final class TCModelProvider implements DataProvider {
             TextureSlot.LAYER0,
             TextureSlot.LAYER1,
             TextureSlot.LAYER2);
+    private static final ModelTemplate CONDENSER_RETEXTURED = new ModelTemplate(
+            Optional.of(TCIds.rl("block/condenser")), Optional.empty(), TextureSlot.SIDE, TextureSlot.PARTICLE);
 
     private static final ResourceLocation GENERATED_PARENT = ResourceLocation.withDefaultNamespace("item/generated");
     private static final ResourceLocation BEWLR_BLOCK_PARENT = TCIds.rl("item/bewlr_block");
@@ -80,6 +94,7 @@ public final class TCModelProvider implements DataProvider {
     private static final ResourceLocation PROPERTY_LOADED = TCIds.rl("loaded");
     private static final ResourceLocation PROPERTY_NOTE_COMPLETE = TCIds.rl("note_complete");
     private static final ResourceLocation PROPERTY_FILLED = TCIds.rl("filled");
+    private static final ResourceLocation PROPERTY_MARKED = TCIds.rl("marked");
     private static final ResourceLocation PROPERTY_VERDANT_TYPE = TCIds.rl("verdant_type");
     private static final ResourceLocation PROPERTY_CELESTIAL_BODY = TCIds.rl("celestial_body");
     private static final ResourceLocation PROPERTY_WAND_IS_STAFF = TCIds.rl("wand_is_staff");
@@ -254,7 +269,8 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.CHUNK_MUTTON.get());
         flatItem(TCItems.TRIPLE_MEAT_TREAT.get());
         flatItem(TCItems.JAR_BRACE.get());
-        flatItem(TCItems.LABEL.get());
+        flatItem(TCItems.TAINTED_GOO.get());
+        flatItem(TCItems.TAINT_TENDRIL.get());
         flatItem(TCItems.BOTTLE_TAINT.get());
         flatItem(TCItems.VIS_RESONATOR.get());
         flatItem(TCItems.THAUMIC_SLIME_SPAWN_EGG.get());
@@ -320,9 +336,11 @@ public final class TCModelProvider implements DataProvider {
         blockModels.createTrivialCube(TCBlocks.ORE_AMBER.get());
         blockModels.createTrivialCube(TCBlocks.ORE_CINNABAR.get());
         blockModels.createTrivialCube(TCBlocks.ORE_QUARTZ.get());
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_AMBER.get(), "ore_amber_overlay");
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_CINNABAR.get(), "ore_cinnabar_overlay");
+        deepslateOre(TCBlocks.DEEPSLATE_ORE_QUARTZ.get(), "ore_quartz_overlay");
 
         blockModels.createTrivialCube(TCBlocks.ALCHEMICAL_CONSTRUCT.get());
-        registerAlchemicalFurnace();
         blockModels.createTrivialCube(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get());
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(
                         TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get(), vName("advanced_alchemical_furnace_base"))
@@ -396,6 +414,7 @@ public final class TCModelProvider implements DataProvider {
         flatItem(TCItems.CLUSTER_SILVER.get());
         flatItem(TCItems.CLUSTER_LEAD.get());
         flatItem(TCItems.CLUSTER_TIN.get());
+        flatItem(TCItems.RAW_CINNABAR.get());
         flatItem(TCItems.CLUSTER_CINNABAR.get());
         flatItem(TCItems.CLUSTER_QUARTZ.get());
 
@@ -454,6 +473,51 @@ public final class TCModelProvider implements DataProvider {
         return v(TCIds.rl("block/" + blockModelName));
     }
 
+    private void deepslateOre(Block block, String overlay) {
+        ResourceLocation model = ModelLocationUtils.getModelLocation(block);
+        ResourceLocation overlayTexture = blockTexture(overlay);
+        modelOutput.accept(model, () -> {
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", BLOCK_PARENT.toString());
+            root.addProperty("render_type", "minecraft:cutout");
+            JsonObject textures = new JsonObject();
+            textures.addProperty("particle", DEEPSLATE_TEXTURE.toString());
+            textures.addProperty("base", DEEPSLATE_TEXTURE.toString());
+            textures.addProperty("overlay", overlayTexture.toString());
+            root.add("textures", textures);
+            JsonArray elements = new JsonArray();
+            elements.add(fullCube("#base"));
+            elements.add(fullCube("#overlay"));
+            root.add("elements", elements);
+            return root;
+        });
+        simpleBlock(block, model);
+        delegateItem(block.asItem(), model);
+    }
+
+    private static JsonObject fullCube(String texture) {
+        JsonObject element = new JsonObject();
+        element.add("from", coords(0, 0, 0));
+        element.add("to", coords(FULL_CUBE, FULL_CUBE, FULL_CUBE));
+        JsonObject faces = new JsonObject();
+        for (Direction dir : Direction.values()) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", texture);
+            face.addProperty("cullface", dir.getSerializedName());
+            faces.add(dir.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        return element;
+    }
+
+    private static JsonArray coords(int x, int y, int z) {
+        JsonArray array = new JsonArray();
+        array.add(x);
+        array.add(y);
+        array.add(z);
+        return array;
+    }
+
     private void simpleBlock(Block block, ResourceLocation model) {
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(block, v(model)));
     }
@@ -472,6 +536,21 @@ public final class TCModelProvider implements DataProvider {
 
     private void simpleFromExisting(Block block, String modelName) {
         simpleBlock(block, TCIds.rl("block/" + modelName));
+    }
+
+    private void registerCondenser() {
+        Block block = TCBlocks.CONDENSER.get();
+        ResourceLocation on = TCIds.rl("block/condenser");
+        ResourceLocation offTexture = blockTexture("condenser_off");
+        ResourceLocation off = CONDENSER_RETEXTURED.create(
+                TCIds.rl("block/condenser_off"),
+                new TextureMapping().put(TextureSlot.SIDE, offTexture).put(TextureSlot.PARTICLE, offTexture),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block)
+                .with(PropertyDispatch.property(BlockStateProperties.ENABLED)
+                        .select(true, v(on))
+                        .select(false, v(off))));
+        delegateItem(block.asItem(), on);
     }
 
     private void delegateItem(Item item, ResourceLocation model) {
@@ -661,6 +740,17 @@ public final class TCModelProvider implements DataProvider {
             simpleBlock(candle, model);
             delegateItem(candle.asItem(), model);
         }
+        for (CandleHolderMaterial material : CandleHolderMaterial.values()) {
+            BlockCandleHolder holder = TCBlocks.CANDLE_HOLDERS.get(material).get();
+            ResourceLocation empty = TCIds.rl("block/candle_holder_" + material.getSerializedName());
+            ResourceLocation filled = TCIds.rl("block/candle_holder_" + material.getSerializedName() + "_filled");
+            PropertyDispatch.C1<HeldCandle> candles = PropertyDispatch.property(BlockCandleHolder.CANDLE);
+            for (HeldCandle held : HeldCandle.values()) {
+                candles = candles.select(held, v(held.isPresent() ? filled : empty));
+            }
+            blockStateOutput.accept(MultiVariantGenerator.multiVariant(holder).with(candles));
+            delegateItem(holder.asItem(), empty);
+        }
     }
 
     private void registerBaubleItems() {
@@ -797,22 +887,6 @@ public final class TCModelProvider implements DataProvider {
         delegateItem(block.asItem(), TCIds.rl("block/" + modelName + "_off"));
     }
 
-    private void registerAlchemicalFurnace() {
-        ResourceLocation model = TCIds.rl("block/alchemical_furnace");
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ALCHEMICAL_FURNACE.get(), v(model))
-                .with(PropertyDispatch.properties(BlockAlchemicalFurnace.LIT, BlockStateProperties.HORIZONTAL_FACING)
-                        .generate((lit, facing) -> switch (facing) {
-                            case EAST ->
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90);
-                            case SOUTH ->
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180);
-                            case WEST ->
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270);
-                            default -> Variant.variant();
-                        })));
-        delegateItem(TCItems.ALCHEMICAL_FURNACE.get(), model);
-    }
-
     private void registerDeconstructionTable() {
         registerInvisibleBlock(TCBlocks.DECONSTRUCTION_TABLE.get());
         delegateItem(TCBlocks.DECONSTRUCTION_TABLE.get().asItem(), TCIds.rl("item/deconstruction_table_base"));
@@ -842,7 +916,23 @@ public final class TCModelProvider implements DataProvider {
 
     private void registerNitor(DyeColor dye) {
         registerInvisibleBlock(TCBlocks.NITORS.get(dye).get());
-        delegateItem(TCItems.NITORS.get(dye).get(), TCIds.rl("item/nitor"));
+        modelOutput.accept(
+                ModelLocationUtils.getModelLocation(TCItems.NITORS.get(dye).get()), () -> {
+                    JsonObject model = new JsonObject();
+                    model.addProperty("loader", "neoforge:separate_transforms");
+                    JsonObject flat = new JsonObject();
+                    flat.addProperty("parent", TCIds.rl("item/nitor").toString());
+                    model.add("base", flat);
+                    JsonObject inHand = new JsonObject();
+                    inHand.addProperty("parent", BEWLR_BLOCK_PARENT.toString());
+                    JsonObject perspectives = new JsonObject();
+                    perspectives.add("firstperson_lefthand", inHand);
+                    perspectives.add("firstperson_righthand", inHand);
+                    perspectives.add("thirdperson_lefthand", inHand);
+                    perspectives.add("thirdperson_righthand", inHand);
+                    model.add("perspectives", perspectives);
+                    return model;
+                });
     }
 
     private void registerInfusionAltar() {
@@ -992,17 +1082,19 @@ public final class TCModelProvider implements DataProvider {
 
     private void registerActivatorRail() {
         Block block = TCBlocks.ACTIVATOR_RAIL.get();
-        ResourceLocation flat = ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), modelOutput);
+        BiConsumer<ResourceLocation, Supplier<JsonElement>> cutoutOutput =
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get()));
+        ResourceLocation flat = ModelTemplates.RAIL_FLAT.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation risingNE =
-                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), modelOutput);
+                ModelTemplates.RAIL_RAISED_NE.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation risingSW =
-                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), modelOutput);
+                ModelTemplates.RAIL_RAISED_SW.create(block, TextureMapping.rail(block), cutoutOutput);
         ResourceLocation flatOn = ModelTemplates.RAIL_FLAT.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ResourceLocation risingNEOn = ModelTemplates.RAIL_RAISED_NE.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ResourceLocation risingSWOn = ModelTemplates.RAIL_RAISED_SW.createWithSuffix(
-                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), modelOutput);
+                block, "_on", TextureMapping.rail(TextureMapping.getBlockTexture(block, "_on")), cutoutOutput);
         ModelTemplates.FLAT_ITEM.create(
                 ModelLocationUtils.getModelLocation(block.asItem()),
                 TextureMapping.layer0(TextureMapping.getBlockTexture(block)),
@@ -1059,7 +1151,7 @@ public final class TCModelProvider implements DataProvider {
         registerFacingDevice(TCBlocks.ESSENTIA_INPUT.get(), "essentia_input", false);
         registerFacingDevice(TCBlocks.ESSENTIA_OUTPUT.get(), "essentia_output", false);
 
-        simpleFromExisting(TCBlocks.CONDENSER.get(), "condenser");
+        registerCondenser();
         simpleFromExisting(TCBlocks.STABILIZER.get(), "stabilizer");
         simpleFromExisting(TCBlocks.VOID_SIPHON.get(), "void_siphon");
         registerLattice(TCBlocks.CONDENSER_LATTICE.get(), "condenser_lattice_core");
@@ -1328,6 +1420,10 @@ public final class TCModelProvider implements DataProvider {
         simpleFromExisting(TCBlocks.LEAVES_SILVERWOOD.get(), "leaves_silverwood");
         log(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.WOOD_GREATWOOD.get());
         log(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.WOOD_SILVERWOOD.get());
+        axisPillar(
+                TCBlocks.SILVERWOOD_NODE_LOG.get(),
+                TCIds.rl("block/log_silverwood"),
+                TCIds.rl("block/log_silverwood_horizontal"));
         log(TCBlocks.STRIPPED_LOG_GREATWOOD.get(), TCBlocks.STRIPPED_WOOD_GREATWOOD.get());
         log(TCBlocks.STRIPPED_LOG_SILVERWOOD.get(), TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
     }
@@ -1583,6 +1679,23 @@ public final class TCModelProvider implements DataProvider {
                 blockTexture("eldritch_stone_3"));
         stairsFromTexture(TCBlocks.STAIRS_GREATWOOD.get(), blockTexture("plank_greatwood"));
         stairsFromTexture(TCBlocks.STAIRS_SILVERWOOD.get(), blockTexture("plank_silverwood"));
+        arcaneGrindstone();
+        woodFamily(
+                blockTexture("plank_greatwood"),
+                TCBlocks.DOOR_GREATWOOD.get(),
+                TCBlocks.TRAPDOOR_GREATWOOD.get(),
+                TCBlocks.FENCE_GREATWOOD.get(),
+                TCBlocks.FENCE_GATE_GREATWOOD.get(),
+                TCBlocks.BUTTON_GREATWOOD.get(),
+                TCBlocks.PRESSURE_PLATE_GREATWOOD.get());
+        woodFamily(
+                blockTexture("plank_silverwood"),
+                TCBlocks.DOOR_SILVERWOOD.get(),
+                TCBlocks.TRAPDOOR_SILVERWOOD.get(),
+                TCBlocks.FENCE_SILVERWOOD.get(),
+                TCBlocks.FENCE_GATE_SILVERWOOD.get(),
+                TCBlocks.BUTTON_SILVERWOOD.get(),
+                TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
         existingModelWithItem(TCBlocks.TABLE_WOOD.get(), "table_wood");
         existingModelWithItem(TCBlocks.TABLE_STONE.get(), "table_stone");
         paving(TCBlocks.PAVING_STONE_TRAVEL.get(), "paving_stone_travel");
@@ -1667,20 +1780,73 @@ public final class TCModelProvider implements DataProvider {
     }
 
     private void itemGrate() {
-        ResourceLocation open = ModelTemplates.CUBE_ALL.create(
-                TCBlocks.ITEM_GRATE.get(),
-                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate")),
-                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
-        ResourceLocation closed = ModelTemplates.CUBE_ALL.createWithSuffix(
-                TCBlocks.ITEM_GRATE.get(),
-                "_closed",
-                new TextureMapping().put(TextureSlot.ALL, blockTexture("item_grate_closed")),
-                (id, json) -> modelOutput.accept(id, () -> cutout(json.get())));
+        ResourceLocation open = TCIds.rl("block/item_grate");
+        ResourceLocation closed = TCIds.rl("block/item_grate_closed");
+        modelOutput.accept(open, () -> itemGrateModel(false));
+        modelOutput.accept(closed, () -> itemGrateModel(true));
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TCBlocks.ITEM_GRATE.get())
                 .with(PropertyDispatch.property(com.leclowndu93150.thaumaturge.content.device.BlockItemGrate.OPEN)
                         .select(true, v(open))
                         .select(false, v(closed))));
         delegateItem(TCBlocks.ITEM_GRATE.get().asItem(), open);
+    }
+
+    private static JsonObject itemGrateModel(boolean closed) {
+        JsonObject root = new JsonObject();
+        root.addProperty("parent", "minecraft:block/block");
+        root.addProperty("render_type", "minecraft:cutout");
+        JsonObject textures = new JsonObject();
+        ResourceLocation grateTexture = blockTexture("item_grate");
+        textures.addProperty("particle", grateTexture.toString());
+        textures.addProperty("all", grateTexture.toString());
+        textures.addProperty("hatch", blockTexture("item_grate_closed").toString());
+        root.add("textures", textures);
+
+        JsonObject element = new JsonObject();
+        element.add("from", insetCoords(0, 14, 0));
+        element.add("to", insetCoords(16, 16, 16));
+        JsonObject faces = new JsonObject();
+        JsonObject top = new JsonObject();
+        top.addProperty("texture", "#all");
+        top.addProperty("cullface", Direction.UP.getSerializedName());
+        faces.add(Direction.UP.getSerializedName(), top);
+        JsonObject bottom = new JsonObject();
+        bottom.addProperty("texture", "#all");
+        bottom.addProperty("cullface", Direction.DOWN.getSerializedName());
+        faces.add(Direction.DOWN.getSerializedName(), bottom);
+        for (Direction direction : List.of(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST)) {
+            JsonObject face = new JsonObject();
+            face.addProperty("texture", "#all");
+            face.addProperty("cullface", direction.getSerializedName());
+            JsonArray uv = new JsonArray();
+            uv.add(0);
+            uv.add(15);
+            uv.add(16);
+            uv.add(16);
+            face.add("uv", uv);
+            faces.add(direction.getSerializedName(), face);
+        }
+        element.add("faces", faces);
+        JsonArray elements = new JsonArray();
+        elements.add(element);
+        if (closed) {
+            JsonObject hatch = new JsonObject();
+            hatch.add("from", insetCoords(0, 14, 0));
+            hatch.add("to", insetCoords(16, 16, 16));
+            JsonObject hatchTop = new JsonObject();
+            hatchTop.addProperty("texture", "#hatch");
+            hatchTop.addProperty("cullface", Direction.UP.getSerializedName());
+            JsonObject hatchFaces = new JsonObject();
+            hatchFaces.add(Direction.UP.getSerializedName(), hatchTop);
+            JsonObject hatchBottom = new JsonObject();
+            hatchBottom.addProperty("texture", "#hatch");
+            hatchBottom.addProperty("cullface", Direction.DOWN.getSerializedName());
+            hatchFaces.add(Direction.DOWN.getSerializedName(), hatchBottom);
+            hatch.add("faces", hatchFaces);
+            elements.add(hatch);
+        }
+        root.add("elements", elements);
+        return root;
     }
 
     private void wardedGlass() {
@@ -1847,6 +2013,177 @@ public final class TCModelProvider implements DataProvider {
                         .select(SlabType.TOP, v(topModel))
                         .select(SlabType.DOUBLE, v(doubleModel))));
         delegateItem(slab.asItem(), bottomModel);
+    }
+
+    private void woodFamily(
+            ResourceLocation plankTexture,
+            Block door,
+            Block trapdoor,
+            Block fence,
+            Block fenceGate,
+            Block button,
+            Block pressurePlate) {
+        BiConsumer<ResourceLocation, Supplier<JsonElement>> cutoutOutput =
+                (id, json) -> modelOutput.accept(id, () -> cutout(json.get()));
+        TextureMapping doorTextures = TextureMapping.door(door);
+        ResourceLocation bottomLeft = ModelTemplates.DOOR_BOTTOM_LEFT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomLeftOpen = ModelTemplates.DOOR_BOTTOM_LEFT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomRight = ModelTemplates.DOOR_BOTTOM_RIGHT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation bottomRightOpen =
+                ModelTemplates.DOOR_BOTTOM_RIGHT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topLeft = ModelTemplates.DOOR_TOP_LEFT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topLeftOpen = ModelTemplates.DOOR_TOP_LEFT_OPEN.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topRight = ModelTemplates.DOOR_TOP_RIGHT.create(door, doorTextures, cutoutOutput);
+        ResourceLocation topRightOpen = ModelTemplates.DOOR_TOP_RIGHT_OPEN.create(door, doorTextures, cutoutOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(door)
+                .with(doorHalf(
+                        doorHalf(
+                                PropertyDispatch.properties(
+                                        BlockStateProperties.HORIZONTAL_FACING,
+                                        BlockStateProperties.DOUBLE_BLOCK_HALF,
+                                        BlockStateProperties.DOOR_HINGE,
+                                        BlockStateProperties.OPEN),
+                                DoubleBlockHalf.LOWER,
+                                bottomLeft,
+                                bottomLeftOpen,
+                                bottomRight,
+                                bottomRightOpen),
+                        DoubleBlockHalf.UPPER,
+                        topLeft,
+                        topLeftOpen,
+                        topRight,
+                        topRightOpen)));
+        flatItem(door.asItem());
+
+        TextureMapping trapdoorTextures = TextureMapping.defaultTexture(trapdoor);
+        ResourceLocation trapdoorTop = ModelTemplates.TRAPDOOR_TOP.create(trapdoor, trapdoorTextures, cutoutOutput);
+        ResourceLocation trapdoorBottom =
+                ModelTemplates.TRAPDOOR_BOTTOM.create(trapdoor, trapdoorTextures, cutoutOutput);
+        ResourceLocation trapdoorOpen = ModelTemplates.TRAPDOOR_OPEN.create(trapdoor, trapdoorTextures, cutoutOutput);
+        PropertyDispatch.C3<Direction, Half, Boolean> trapdoorStates = PropertyDispatch.properties(
+                BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.HALF, BlockStateProperties.OPEN);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            for (Half half : Half.values()) {
+                trapdoorStates.select(facing, half, false, v(half == Half.TOP ? trapdoorTop : trapdoorBottom));
+                trapdoorStates.select(
+                        facing, half, true, v(trapdoorOpen).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            }
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(trapdoor).with(trapdoorStates));
+        delegateItem(trapdoor.asItem(), trapdoorBottom);
+
+        TextureMapping plank = new TextureMapping().put(TextureSlot.TEXTURE, plankTexture);
+        ResourceLocation fencePost = ModelTemplates.FENCE_POST.create(fence, plank, modelOutput);
+        ResourceLocation fenceSide = ModelTemplates.FENCE_SIDE.create(fence, plank, modelOutput);
+        MultiPartGenerator fenceParts = MultiPartGenerator.multiPart(fence).with(v(fencePost));
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            fenceParts.with(
+                    Condition.condition().term(PipeBlock.PROPERTY_BY_DIRECTION.get(facing), true),
+                    v(fenceSide)
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.UV_LOCK, true));
+        }
+        blockStateOutput.accept(fenceParts);
+        delegateItem(fence.asItem(), ModelTemplates.FENCE_INVENTORY.create(fence, plank, modelOutput));
+
+        ResourceLocation gateOpen = ModelTemplates.FENCE_GATE_OPEN.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateClosed = ModelTemplates.FENCE_GATE_CLOSED.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateWallOpen = ModelTemplates.FENCE_GATE_WALL_OPEN.create(fenceGate, plank, modelOutput);
+        ResourceLocation gateWallClosed = ModelTemplates.FENCE_GATE_WALL_CLOSED.create(fenceGate, plank, modelOutput);
+        PropertyDispatch.C1<Direction> gateFacing = PropertyDispatch.property(BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            gateFacing.select(
+                    facing, Variant.variant().with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN)));
+        }
+        blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(fenceGate, Variant.variant().with(VariantProperties.UV_LOCK, true))
+                        .with(gateFacing)
+                        .with(PropertyDispatch.properties(BlockStateProperties.IN_WALL, BlockStateProperties.OPEN)
+                                .select(false, false, v(gateClosed))
+                                .select(true, false, v(gateWallClosed))
+                                .select(false, true, v(gateOpen))
+                                .select(true, true, v(gateWallOpen))));
+        delegateItem(fenceGate.asItem(), gateClosed);
+
+        ResourceLocation buttonUp = ModelTemplates.BUTTON.create(button, plank, modelOutput);
+        ResourceLocation buttonDown = ModelTemplates.BUTTON_PRESSED.create(button, plank, modelOutput);
+        PropertyDispatch.C2<AttachFace, Direction> buttonFacing =
+                PropertyDispatch.properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            buttonFacing.select(
+                    AttachFace.FLOOR,
+                    facing,
+                    Variant.variant().with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            buttonFacing.select(
+                    AttachFace.WALL,
+                    facing,
+                    Variant.variant()
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                            .with(VariantProperties.UV_LOCK, true));
+            buttonFacing.select(
+                    AttachFace.CEILING,
+                    facing,
+                    Variant.variant()
+                            .with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(button)
+                .with(PropertyDispatch.property(BlockStateProperties.POWERED)
+                        .select(false, v(buttonUp))
+                        .select(true, v(buttonDown)))
+                .with(buttonFacing));
+        delegateItem(button.asItem(), ModelTemplates.BUTTON_INVENTORY.create(button, plank, modelOutput));
+
+        ResourceLocation plateUp = ModelTemplates.PRESSURE_PLATE_UP.create(pressurePlate, plank, modelOutput);
+        ResourceLocation plateDown = ModelTemplates.PRESSURE_PLATE_DOWN.create(pressurePlate, plank, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(pressurePlate)
+                .with(PropertyDispatch.property(BlockStateProperties.POWERED)
+                        .select(false, v(plateUp))
+                        .select(true, v(plateDown))));
+        delegateItem(pressurePlate.asItem(), plateUp);
+    }
+
+    private static VariantProperties.Rotation turnsFromNorth(Direction facing, int extraTurns) {
+        return VariantProperties.Rotation.values()[
+                Math.floorMod(facing.get2DDataValue() + NORTH_TO_SOUTH_TURNS + extraTurns, QUARTER_TURNS)];
+    }
+
+    private void arcaneGrindstone() {
+        Block block = TCBlocks.ARCANE_GRINDSTONE.get();
+        ResourceLocation wheel = blockTexture("arcane_stone_1");
+        ResourceLocation frame = blockTexture("metal_thaumium");
+        ResourceLocation model = ModelLocationUtils.getModelLocation(block);
+        modelOutput.accept(model, () -> {
+            JsonObject textures = new JsonObject();
+            textures.addProperty("pivot", frame.toString());
+            textures.addProperty("round", wheel.toString());
+            textures.addProperty("side", wheel.toString());
+            textures.addProperty("particle", wheel.toString());
+            textures.addProperty("leg", frame.toString());
+            JsonObject root = new JsonObject();
+            root.addProperty("parent", VANILLA_GRINDSTONE.toString());
+            root.add("textures", textures);
+            return root;
+        });
+        PropertyDispatch.C2<AttachFace, Direction> placement =
+                PropertyDispatch.properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING);
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            placement.select(
+                    AttachFace.FLOOR, facing, v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0)));
+            placement.select(
+                    AttachFace.WALL,
+                    facing,
+                    v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, 0))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90));
+            placement.select(
+                    AttachFace.CEILING,
+                    facing,
+                    v(model).with(VariantProperties.Y_ROT, turnsFromNorth(facing, HALF_TURN))
+                            .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180));
+        }
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block).with(placement));
+        delegateItem(block.asItem(), model);
     }
 
     private void stairsFromTexture(Block block, ResourceLocation all) {
@@ -2123,6 +2460,7 @@ public final class TCModelProvider implements DataProvider {
 
     private void containerItemModels() {
         registerPhial();
+        registerLabel();
         registerPrimordialPearl();
     }
 
@@ -2138,6 +2476,20 @@ public final class TCModelProvider implements DataProvider {
                 TCItems.PHIAL.get(),
                 Map.of("layer0", TextureMapping.getItemTexture(TCItems.PHIAL.get())),
                 List.of(new ItemOverride(PROPERTY_FILLED, 1.0F, filled)));
+    }
+
+    private void registerLabel() {
+        ResourceLocation marked = ModelLocationUtils.getModelLocation(TCItems.LABEL.get(), "_marked");
+        ModelTemplates.TWO_LAYERED_ITEM.create(
+                marked,
+                TextureMapping.layered(
+                        TextureMapping.getItemTexture(TCItems.LABEL.get()),
+                        TextureMapping.getItemTexture(TCItems.LABEL.get(), "_overlay")),
+                modelOutput);
+        generatedOverridesItem(
+                TCItems.LABEL.get(),
+                Map.of("layer0", TextureMapping.getItemTexture(TCItems.LABEL.get())),
+                List.of(new ItemOverride(PROPERTY_MARKED, 1.0F, marked)));
     }
 
     private void registerPrimordialPearl() {

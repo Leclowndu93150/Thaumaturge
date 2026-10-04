@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
@@ -39,8 +39,9 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityCrucible extends BlockEntity implements IAspectContainer {
+public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectContainer {
 
     public static final int TANK_CAPACITY = 1000;
     public static final int MAX_ASPECT = 100;
@@ -199,32 +200,23 @@ public class BlockEntityCrucible extends BlockEntity implements IAspectContainer
         return aspects;
     }
 
-    @Override
-    public void setAspects(AspectList aspects) {}
+    public int addAspects(@Nullable Holder<IAspect> aspect, int amount) {
+        if (aspect == null
+                || amount <= 0
+                || !(level instanceof ServerLevel serverLevel)
+                || !serverLevel.getServer().isSameThread()) {
+            return 0;
+        }
 
-    @Override
-    public boolean doesContainerAccept(Holder<IAspect> aspect) {
-        return false;
-    }
+        int currentAmount = aspects.amountOf(aspect);
+        if (amount > Integer.MAX_VALUE - currentAmount) {
+            return 0;
+        }
 
-    @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
-        return 0;
-    }
-
-    @Override
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
-        return false;
-    }
-
-    @Override
-    public boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
-        return false;
-    }
-
-    @Override
-    public int containerContains(Holder<IAspect> aspect) {
-        return 0;
+        aspects = aspects.add(aspect, amount);
+        setChanged();
+        syncToClient();
+        return amount;
     }
 
     @Override

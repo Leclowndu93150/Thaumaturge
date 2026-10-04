@@ -104,6 +104,11 @@ public class CrucibleRecipe implements Recipe<CrucibleRecipeInput>, ResearchGate
         return TCRecipeTypes.CRUCIBLE.get();
     }
 
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
     public AspectList aspects() {
         return aspects;
     }

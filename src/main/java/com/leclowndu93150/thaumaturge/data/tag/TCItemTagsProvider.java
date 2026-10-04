@@ -37,10 +37,22 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
         copy(BlockTags.SLABS, ItemTags.SLABS);
         copy(BlockTags.WOODEN_STAIRS, ItemTags.WOODEN_STAIRS);
         copy(BlockTags.WOODEN_SLABS, ItemTags.WOODEN_SLABS);
+        copy(BlockTags.WOODEN_DOORS, ItemTags.WOODEN_DOORS);
+        copy(BlockTags.WOODEN_TRAPDOORS, ItemTags.WOODEN_TRAPDOORS);
+        copy(BlockTags.WOODEN_FENCES, ItemTags.WOODEN_FENCES);
+        copy(BlockTags.FENCE_GATES, ItemTags.FENCE_GATES);
+        copy(BlockTags.WOODEN_BUTTONS, ItemTags.WOODEN_BUTTONS);
+        copy(BlockTags.WOODEN_PRESSURE_PLATES, ItemTags.WOODEN_PRESSURE_PLATES);
+        copy(Tags.Blocks.FENCES_WOODEN, Tags.Items.FENCES_WOODEN);
+        copy(Tags.Blocks.FENCE_GATES_WOODEN, Tags.Items.FENCE_GATES_WOODEN);
         copy(BlockTags.FLOWERS, ItemTags.FLOWERS);
         copy(TCBlockTags.MAGICAL_PLANTS, TCItemTags.MAGICAL_PLANTS);
         copy(TCBlockTags.GREATWOOD_LOGS, TCItemTags.GREATWOOD_LOGS);
-        copy(TCBlockTags.SILVERWOOD_LOGS, TCItemTags.SILVERWOOD_LOGS);
+        tag(TCItemTags.SILVERWOOD_LOGS)
+                .add(TCItems.LOG_SILVERWOOD.get())
+                .add(TCItems.WOOD_SILVERWOOD.get())
+                .add(TCItems.STRIPPED_LOG_SILVERWOOD.get())
+                .add(TCItems.STRIPPED_WOOD_SILVERWOOD.get());
         copy(TCBlockTags.PLANKS_GREATWOOD, TCItemTags.PLANKS_GREATWOOD);
         copy(TCBlockTags.PLANKS_SILVERWOOD, TCItemTags.PLANKS_SILVERWOOD);
         copy(TCBlockTags.PLANKS, TCItemTags.PLANKS);
@@ -50,6 +62,79 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
             tag(TCItemTags.CANDLES).add(TCItems.CANDLES.get(dye).get());
             tag(TCItemTags.NITORS).add(TCItems.NITORS.get(dye).get());
         }
+
+        tag(TCItemTags.WANDS).add(TCItems.WAND.get(), TCItems.PECH_WAND.get());
+        tag(TCItemTags.WAND_RODS)
+                .add(
+                        TCItems.WAND_ROD_GREATWOOD.get(),
+                        TCItems.WAND_ROD_OBSIDIAN.get(),
+                        TCItems.WAND_ROD_BLAZE.get(),
+                        TCItems.WAND_ROD_ICE.get(),
+                        TCItems.WAND_ROD_QUARTZ.get(),
+                        TCItems.WAND_ROD_BONE.get(),
+                        TCItems.WAND_ROD_REED.get(),
+                        TCItems.WAND_ROD_SILVERWOOD.get(),
+                        TCItems.STAFF_ROD_GREATWOOD.get(),
+                        TCItems.STAFF_ROD_OBSIDIAN.get(),
+                        TCItems.STAFF_ROD_BLAZE.get(),
+                        TCItems.STAFF_ROD_ICE.get(),
+                        TCItems.STAFF_ROD_QUARTZ.get(),
+                        TCItems.STAFF_ROD_BONE.get(),
+                        TCItems.STAFF_ROD_REED.get(),
+                        TCItems.STAFF_ROD_SILVERWOOD.get(),
+                        TCItems.STAFF_ROD_PRIMAL.get());
+        tag(TCItemTags.WAND_CAPS)
+                .add(
+                        TCItems.WAND_CAP_IRON.get(),
+                        TCItems.WAND_CAP_COPPER.get(),
+                        TCItems.WAND_CAP_GOLD.get(),
+                        TCItems.WAND_CAP_SILVER_INERT.get(),
+                        TCItems.WAND_CAP_SILVER.get(),
+                        TCItems.WAND_CAP_THAUMIUM_INERT.get(),
+                        TCItems.WAND_CAP_THAUMIUM.get(),
+                        TCItems.WAND_CAP_VOID_INERT.get(),
+                        TCItems.WAND_CAP_VOID.get());
+        tag(TCItemTags.VIS_CRYSTALS).add(TCItems.ESSENTIA_CRYSTAL.get());
+        tag(TCItemTags.PLACEABLE_CRYSTALS)
+                .add(
+                        TCItems.CRYSTAL_AER.get(),
+                        TCItems.CRYSTAL_IGNIS.get(),
+                        TCItems.CRYSTAL_AQUA.get(),
+                        TCItems.CRYSTAL_TERRA.get(),
+                        TCItems.CRYSTAL_ORDO.get(),
+                        TCItems.CRYSTAL_PERDITIO.get(),
+                        TCItems.CRYSTAL_VITIUM.get());
+        tag(TCItemTags.GOLEM_SEALS)
+                .add(
+                        TCItems.SEAL_BLANK.get(),
+                        TCItems.SEAL_PICKUP.get(),
+                        TCItems.SEAL_PICKUP_ADVANCED.get(),
+                        TCItems.SEAL_FILL.get(),
+                        TCItems.SEAL_FILL_ADVANCED.get(),
+                        TCItems.SEAL_EMPTY.get(),
+                        TCItems.SEAL_EMPTY_ADVANCED.get(),
+                        TCItems.SEAL_HARVEST.get(),
+                        TCItems.SEAL_BUTCHER.get(),
+                        TCItems.SEAL_GUARD.get(),
+                        TCItems.SEAL_GUARD_ADVANCED.get(),
+                        TCItems.SEAL_LUMBER.get(),
+                        TCItems.SEAL_BREAKER.get(),
+                        TCItems.SEAL_BREAKER_ADVANCED.get(),
+                        TCItems.SEAL_USE.get(),
+                        TCItems.SEAL_PROVIDER.get(),
+                        TCItems.SEAL_STOCK.get());
+        tag(TCItemTags.RESEARCH_NOTES).add(TCItems.RESEARCH_NOTE.get(), TCItems.CELESTIAL_NOTES.get());
+        tag(TCItemTags.LOOT_CONTAINERS)
+                .add(
+                        TCItems.LOOT_BAG_COMMON.get(),
+                        TCItems.LOOT_BAG_UNCOMMON.get(),
+                        TCItems.LOOT_BAG_RARE.get(),
+                        TCItems.LOOT_URN_COMMON.get(),
+                        TCItems.LOOT_URN_UNCOMMON.get(),
+                        TCItems.LOOT_URN_RARE.get(),
+                        TCItems.LOOT_CRATE_COMMON.get(),
+                        TCItems.LOOT_CRATE_UNCOMMON.get(),
+                        TCItems.LOOT_CRATE_RARE.get());
 
         tag(TCItemTags.MEAT_CHUNKS)
                 .add(
@@ -62,8 +147,12 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
 
         copy(TCBlockTags.ORES_AMBER, TCItemTags.ORES_AMBER);
         copy(TCBlockTags.ORES_CINNABAR, TCItemTags.ORES_CINNABAR);
-        tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get());
+        tag(TCItemTags.ORES_QUARTZ).add(TCItems.ORE_QUARTZ.get()).add(TCItems.DEEPSLATE_ORE_QUARTZ.get());
+        copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
+        copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
         tag(Tags.Items.ORES).addTags(TCItemTags.ORES_AMBER, TCItemTags.ORES_CINNABAR, TCItemTags.ORES_QUARTZ);
+        tag(TCItemTags.RAW_MATERIALS_CINNABAR).add(TCItems.RAW_CINNABAR.get());
+        tag(Tags.Items.RAW_MATERIALS).addTag(TCItemTags.RAW_MATERIALS_CINNABAR);
         tag(TCItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TCBlockTags.STORAGE_BLOCKS_AMBER, TCItemTags.STORAGE_BLOCKS_AMBER);
@@ -127,6 +216,7 @@ public final class TCItemTagsProvider extends ItemTagsProvider {
                         Tags.Items.ORES_DIAMOND,
                         Tags.Items.ORES_EMERALD,
                         TCItemTags.ORES_CINNABAR,
+                        TCItemTags.RAW_MATERIALS_CINNABAR,
                         TCItemTags.ORES_AMBER);
         tag(TCItemTags.RARE_EARTH_CHANCE_NORMAL)
                 .addOptionalTag(TCItemTags.ORES_SILVER)

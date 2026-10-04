@@ -1,0 +1,11 @@
+{
+  "type": "lithostitched:replace_partially",
+  "dimension": "minecraft:overworld",
+  "targets": [
+    "minecraft:forest",
+    "minecraft:flower_forest"
+  ],
+  "replacement": "thaumaturge:magical_forest",
+  "parameters": {},
+  "region": "thaumaturge:magical_forest"
+}

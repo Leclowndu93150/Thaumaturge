@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.capability.ResearchStatus;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
+import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import com.mojang.serialization.Codec;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -258,13 +258,18 @@ public final class PlayerKnowledge implements IPlayerKnowledge {
         knowledge.putAll(other.knowledge);
     }
 
-    public void applyAutoUnlock(HolderLookup.Provider registries) {
-        registries
+    public void applyAutoUnlock(ServerPlayer player) {
+        player.registryAccess()
                 .lookup(IResearchEntry.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements().forEach(holder -> {
-                    if (holder.value().hasMeta(ResearchEntryMeta.AUTOUNLOCK)) {
-                        holder.unwrapKey().ifPresent(k -> addResearch(k.location()));
+                    if (!holder.value().hasMeta(ResearchEntryMeta.AUTOUNLOCK)) {
+                        return;
                     }
+                    holder.unwrapKey().map(ResourceKey::location).ifPresent(id -> {
+                        if (!research.contains(id) && ResearchUnlockConditions.passes(player, this, id)) {
+                            addResearch(id);
+                        }
+                    });
                 }));
     }
 

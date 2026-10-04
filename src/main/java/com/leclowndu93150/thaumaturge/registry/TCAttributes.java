@@ -9,7 +9,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -20,7 +19,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class TCAttributes {
-    private static final double DEFAULT_TAINTED_ATTACK = 2.0;
+    private static final double DEFAULT_ATTACK_DAMAGE = 2.0;
 
     public static final DeferredRegister<Attribute> ATTRIBUTES =
             DeferredRegister.create(BuiltInRegistries.ATTRIBUTE, TCIds.MODID);
@@ -28,13 +27,6 @@ public final class TCAttributes {
     public static final Holder<Attribute> VIS_DISCOUNT = ATTRIBUTES.register(
             "vis_discount",
             () -> new PercentageAttribute("attributes.thaumaturge.vis_discount", 0, 0, 1).setSyncable(true));
-
-    public static final Holder<Attribute> CHAMPION_MOD = ATTRIBUTES.register(
-            "champion_mod",
-            () -> new RangedAttribute("attributes.thaumaturge.champion_mod", -2.0, -2.0, 100.0).setSyncable(true));
-
-    public static final Holder<Attribute> TAINTED_MOD = ATTRIBUTES.register(
-            "tainted_mod", () -> new RangedAttribute("attributes.thaumaturge.tainted_mod", 0.0, 0.0, 1.0));
 
     private TCAttributes() {}
 
@@ -64,10 +56,8 @@ public final class TCAttributes {
         event.add(EntityType.PLAYER, VIS_DISCOUNT);
         for (EntityType<? extends LivingEntity> type : event.getTypes()) {
             if (type != EntityType.PLAYER) {
-                event.add(type, CHAMPION_MOD);
-                event.add(type, TAINTED_MOD);
                 if (!event.has(type, Attributes.ATTACK_DAMAGE)) {
-                    event.add(type, Attributes.ATTACK_DAMAGE, DEFAULT_TAINTED_ATTACK);
+                    event.add(type, Attributes.ATTACK_DAMAGE, DEFAULT_ATTACK_DAMAGE);
                 }
             }
         }

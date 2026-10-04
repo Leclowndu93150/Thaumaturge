@@ -594,6 +594,24 @@
         "amount": 2
       }
     ],
+    "#c:raw_materials/cinnabar": [
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:alkimia",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 2
+      }
+    ],
     "#c:raw_materials/gold": [
       {
         "aspect": "thaumaturge:metallum",
@@ -5288,6 +5306,26 @@
         "amount": 5
       }
     ],
+    "thaumaturge:tainted_goo": [
+      {
+        "aspect": "thaumaturge:vitium",
+        "amount": 15
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:taint_tendril": [
+      {
+        "aspect": "thaumaturge:vitium",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:desiderium",
+        "amount": 5
+      }
+    ],
     "thaumaturge:bottle_taint": [
       {
         "aspect": "thaumaturge:vitium",
@@ -5778,7 +5816,39 @@
         "amount": 10
       }
     ],
+    "thaumaturge:deepslate_ore_amber": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:vinculum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:vitreus",
+        "amount": 10
+      }
+    ],
     "thaumaturge:ore_cinnabar": [
+      {
+        "aspect": "thaumaturge:terra",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:metallum",
+        "amount": 10
+      },
+      {
+        "aspect": "thaumaturge:alkimia",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:mortuus",
+        "amount": 5
+      }
+    ],
+    "thaumaturge:deepslate_ore_cinnabar": [
       {
         "aspect": "thaumaturge:terra",
         "amount": 5
@@ -5856,6 +5926,32 @@
       {
         "aspect": "thaumaturge:perditio",
         "amount": 10
+      }
+    ],
+    "thaumaturge:void_seed": [
+      {
+        "aspect": "thaumaturge:herba",
+        "amount": 5
+      },
+      {
+        "aspect": "thaumaturge:tenebrae",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:vacuos",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:alienis",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:praecantatio",
+        "amount": 2
+      },
+      {
+        "aspect": "thaumaturge:victus",
+        "amount": 1
       }
     ],
     "thaumaturge:quicksilver": [

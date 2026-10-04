@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchAddendum;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEvent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
+import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
@@ -53,6 +54,7 @@ public final class ResearchManager {
         if (knowledge.isResearchKnown(research)) return false;
         IResearchEntry entry = entry(player, research).orElse(null);
         if (entry != null && !parentsSatisfied(knowledge, entry)) return false;
+        if (!ResearchUnlockConditions.passes(player, knowledge, research)) return false;
         ResearchEvent.Unlocked event = new ResearchEvent.Unlocked(player, research);
         if (NeoForge.EVENT_BUS.post(event).isCanceled()) return false;
         boolean changed = knowledge.addResearch(research);
@@ -147,7 +149,7 @@ public final class ResearchManager {
 
     public static void applyAutoUnlock(ServerPlayer player) {
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
-        knowledge.applyAutoUnlock(player.registryAccess());
+        knowledge.applyAutoUnlock(player);
         knowledge.sync(player);
     }
 
@@ -261,6 +263,7 @@ public final class ResearchManager {
                 if (knowledge.isResearchComplete(sibling)) continue;
                 IResearchEntry siblingEntry = entry(player, sibling).orElse(null);
                 if (siblingEntry != null && !parentsSatisfied(knowledge, siblingEntry)) continue;
+                if (!ResearchUnlockConditions.passes(player, knowledge, sibling)) continue;
                 if (!knowledge.isResearchKnown(sibling)) {
                     knowledge.addResearch(sibling);
                 }

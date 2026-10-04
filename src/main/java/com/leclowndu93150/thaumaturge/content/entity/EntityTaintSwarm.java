@@ -36,7 +36,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
             SynchedEntityData.defineId(EntityTaintSwarm.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ATTACK_RANGE = 3;
-    private static final int ATTACK_COOLDOWN = 25;
+    private static final int ATTACK_COOLDOWN = 15;
     private static final int WEAKNESS_DURATION = 100;
     private static final float SELF_DAMAGE_SUMMONED = 5.0F;
     // No swarm model: its body is a cloud of roughly thirty attached particles.
@@ -116,27 +116,33 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
             attackTicks--;
         }
         LivingEntity target = this.getTarget();
-        if (target == null) {
+        if (target == null || !target.isAlive()) {
             if (isSummoned()) {
                 this.hurt(server.damageSources().generic(), SELF_DAMAGE_SUMMONED);
-                return;
+            } else {
+                updateTaintedFreeFlight(server);
             }
-            updateTaintedFreeFlight(server);
             return;
         }
 
         // Swarms actively fly toward their victim; merely assigning a target is insufficient
         // with a FlyingMoveControl and no pathing attack goal.
-        this.moveControl.setWantedPosition(
-                target.getX(), target.getY() + target.getEyeHeight() * 0.5, target.getZ(), 0.65);
+        this.moveControl.setWantedPosition(target.getX(), target.getEyeY(), target.getZ(), 1.0);
         if (attackTicks > 0) {
             return;
         }
         double distSq = this.distanceToSqr(target);
-        if (distSq < ATTACK_RANGE * ATTACK_RANGE) {
+        if (distSq < ATTACK_RANGE * ATTACK_RANGE
+                && this.hasLineOfSight(target)
+                && target.getBoundingBox().maxY > this.getBoundingBox().minY
+                && target.getBoundingBox().minY < this.getBoundingBox().maxY) {
             attackTicks = ATTACK_COOLDOWN + this.random.nextInt(10);
-            this.doHurtTarget(target);
-            target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
+            Vec3 targetMotion = target.getDeltaMovement();
+            if (this.doHurtTarget(target)) {
+                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
+            }
+            target.setDeltaMovement(targetMotion);
+            this.playSound(TCSounds.SWARMATTACK.get(), 0.3F, 0.9F + this.random.nextFloat() * 0.2F);
         }
     }
 

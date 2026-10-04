@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
+import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
+import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.InfusionCrumbsParticleOptions;
@@ -44,10 +46,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityInfusionMatrix extends BlockEntity
-        implements IGogglesDisplayExtended, IInteractWithCaster {
+        implements IGogglesDisplayExtended, IInteractWithCaster, ReadOnlyAspectContainer {
     public static final float STABILITY_CAP = 25.0F;
     private static final float STABILITY_FLOOR = -100.0F;
     private static final int IDLE_VALIDATE_INTERVAL = 100;
@@ -96,6 +99,11 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
 
     public AspectList remainingEssentia() {
         return job == null ? AspectList.EMPTY : job.essentia();
+    }
+
+    @Override
+    public AspectList getAspects() {
+        return remainingEssentia();
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityInfusionMatrix matrix) {
@@ -438,13 +446,17 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             return;
         }
         ItemStack catalyst = pedestal.getItem();
-        ItemStack result = preserveCatalystDamage(job.result(), catalyst);
-        pedestal.setItem(result);
-        Optional<InfusionCraftJob> finished = Optional.ofNullable(job);
-        job = null;
-        finished.flatMap(InfusionCraftJob::player)
+        ServerPlayer crafter = job.player()
                 .map(uuid -> level.getServer().getPlayerList().getPlayer(uuid))
-                .ifPresent(player -> awardCraft(player, result));
+                .orElse(null);
+        InfusionCraftedEvent event = NeoForge.EVENT_BUS.post(new InfusionCraftedEvent(
+                level, worldPosition, crafter, catalyst.copy(), preserveCatalystDamage(job.result(), catalyst)));
+        ItemStack result = event.getResult();
+        pedestal.setItem(result);
+        job = null;
+        if (crafter != null && !result.isEmpty()) {
+            awardCraft(crafter, result);
+        }
         InfusionFx.pedestalBamf(level, centralPedestal());
         level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();

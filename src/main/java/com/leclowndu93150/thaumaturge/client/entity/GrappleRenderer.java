@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
+import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -30,7 +31,7 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/grappler.png");
     private static final ResourceLocation ROPE = TCIds.rl("textures/misc/rope.png");
     private static final RenderType ROPE_TYPE = TCRenderTypes.fxTranslucent(ROPE);
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
 
     private static final double ROPE_RADIUS = 0.025;
     private static final int ROPE_SIDES = 4;
@@ -68,10 +69,11 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
         poseStack.popPose();
         float bob = Mth.sin(ticks / 5.0F) * 0.2F + 0.2F;
         float glowScale = 1.0F + bob;
-        float u0 = (1 + ticks % 6) / 32.0F;
-        float u1 = u0 + 0.03125F;
-        float v0 = 0.21875F;
-        float v1 = v0 + 0.03125F;
+        int frame = ticks % ParticleTextures.GOLEM_ORB_FRAMES;
+        float u0 = StripUv.u0(frame, ParticleTextures.GOLEM_ORB_FRAMES);
+        float u1 = StripUv.u1(frame, ParticleTextures.GOLEM_ORB_FRAMES);
+        float v0 = StripUv.V0;
+        float v1 = StripUv.V1;
         int glowTint = ARGB32.colorFromFloat(GLOW_ALPHA, 1.0F, 1.0F, 1.0F);
         float half = GLOW_HALF * glowScale;
         Vec3 glowOrigin = entity.getPosition(partialTicks);

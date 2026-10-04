@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -96,7 +97,7 @@ public enum EssentiaComponentProvider implements IBlockComponentProvider {
             if (accessor.showDetails()) {
                 tooltip.add(Component.translatable(
                         "jade.thaumaturge.flux_scrubber.power",
-                        Math.round(data.getFloat("ScrubberPower") / 0.05F * 100.0F)));
+                        Math.min(100, data.getInt("ScrubberPower") * 100 / BlockEntityFluxScrubber.WORK_POWER)));
             }
         }
     }

@@ -9,6 +9,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
+import com.leclowndu93150.thaumaturge.content.aura.relay.LinkedRelaySource;
+import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TCNbt;
@@ -199,9 +201,10 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
                     cursor.setWithOffset(worldPosition, x, y, z);
                     if (!(level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) || !relay.isLinked())
                         continue;
-                    BlockEntityNode source = relay.resolveSource(level);
-                    if (source == null || !sources.add(source.getBlockPos())) continue;
-                    drained += source.drainCentivis(aspect, request - drained);
+                    LinkedRelaySource source = relay.resolveSource(level);
+                    if (source == null || !sources.add(source.position())) continue;
+                    drained +=
+                            VisRelayNetwork.drainNow(source, aspect.unwrapKey().orElseThrow(), request - drained);
                 }
             }
         }

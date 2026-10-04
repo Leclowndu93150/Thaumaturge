@@ -128,7 +128,7 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
             tag.putInt(CAPACITY, BlockEntityFluxScrubber.essentiaCapacity());
             tag.putString(AREA, "flux_scrubber");
             tag.putInt("ScrubberCharges", scrubber.charges());
-            tag.putFloat("ScrubberPower", scrubber.power());
+            tag.putInt("ScrubberPower", scrubber.power());
             return;
         }
         if (blockEntity instanceof IAspectContainer container) {

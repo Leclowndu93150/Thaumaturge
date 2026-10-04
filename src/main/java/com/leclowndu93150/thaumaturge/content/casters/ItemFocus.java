@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
@@ -9,9 +11,13 @@ import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumRoot;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -90,6 +96,27 @@ public class ItemFocus extends Item {
     public float getVisCost(ItemStack focusStack) {
         FocusPackage core = getPackage(focusStack);
         return core == null ? 0.0F : (float) core.complexity() / VIS_COST_DIVISOR;
+    }
+
+    public AspectList getVisAspects(ItemStack focusStack, HolderLookup.Provider registries) {
+        FocusPackage core = getPackage(focusStack);
+        if (core == null) {
+            return AspectList.EMPTY;
+        }
+        HolderLookup.RegistryLookup<IAspect> lookup = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
+        AspectList aspects = AspectList.EMPTY;
+        for (ResourceLocation effectId : FocusEngine.effectIds(core)) {
+            FocusElement element = FocusEngine.element(effectId);
+            ResourceKey<IAspect> aspect = element == null ? null : element.aspect();
+            if (aspect == null) {
+                continue;
+            }
+            Optional<Holder.Reference<IAspect>> holder = lookup.get(aspect);
+            if (holder.isPresent()) {
+                aspects = aspects.add(holder.get(), 1);
+            }
+        }
+        return aspects;
     }
 
     public int getActivationTime(ItemStack focusStack) {

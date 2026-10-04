@@ -1,13 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.warp;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = TCIds.MODID)
 public final class WarpFogEvents {
@@ -20,12 +21,14 @@ public final class WarpFogEvents {
     private WarpFogEvents() {}
 
     @SubscribeEvent
-    public static void onClientTick(ClientTickEvent.Post event) {
-        WarpFogState.tick();
+    public static void onPlayerTick(PlayerTickEvent.Pre event) {
+        if (event.getEntity() instanceof LocalPlayer) {
+            WarpFogState.tick();
+        }
     }
 
     @SubscribeEvent
-    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+    public static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         WarpFogState.reset();
     }
 

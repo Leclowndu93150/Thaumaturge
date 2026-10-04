@@ -29,6 +29,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
     public static final MapCodec<BlockItemGrate> CODEC = simpleCodec(BlockItemGrate::new);
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    private static final VoxelShape SHAPE = Block.box(0.0, 14.0, 0.0, 16.0, 16.0, 16.0);
 
     public BlockItemGrate(BlockBehaviour.Properties properties) {
         super(properties);
@@ -48,6 +49,11 @@ public final class BlockItemGrate extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityItemGrate(pos, state);
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     @Override
@@ -77,7 +83,17 @@ public final class BlockItemGrate extends BaseEntityBlock {
                 && entityContext.getEntity() instanceof ItemEntity) {
             return Shapes.empty();
         }
-        return super.getCollisionShape(state, level, pos, context);
+        return SHAPE;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())
+                && !level.isClientSide()
+                && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) {
+            grate.dropContents();
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

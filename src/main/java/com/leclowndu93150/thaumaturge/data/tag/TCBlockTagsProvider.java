@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import java.util.concurrent.CompletableFuture;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public final class TCBlockTagsProvider extends BlockTagsProvider {
@@ -24,7 +26,53 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(BlockTags.DIRT).add(TCBlocks.GRASS_AMBIENT.get());
+        tag(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)
+                .addTag(BlockTags.BASE_STONE_OVERWORLD)
+                .addTag(BlockTags.DIRT)
+                .addTag(BlockTags.LUSH_GROUND_REPLACEABLE);
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
+        TagAppender<Block> candles = tag(TCBlockTags.CANDLES);
+        TCBlocks.CANDLES.values().forEach(candle -> candles.add(candle.getKey()));
+        tag(TCBlockTags.RESEARCH_BONUS_ORDO)
+                .addTag(TCBlockTags.CANDLES)
+                .addTag(BlockTags.BUTTONS)
+                .addTag(BlockTags.RAILS)
+                .addTag(BlockTags.FLOWER_POTS)
+                .add(
+                        Blocks.TORCH,
+                        Blocks.WALL_TORCH,
+                        Blocks.SOUL_TORCH,
+                        Blocks.SOUL_WALL_TORCH,
+                        Blocks.REDSTONE_TORCH,
+                        Blocks.REDSTONE_WALL_TORCH)
+                .add(
+                        Blocks.REDSTONE_WIRE,
+                        Blocks.LEVER,
+                        Blocks.REPEATER,
+                        Blocks.COMPARATOR,
+                        Blocks.LADDER,
+                        Blocks.TRIPWIRE,
+                        Blocks.TRIPWIRE_HOOK)
+                .add(
+                        Blocks.SKELETON_SKULL,
+                        Blocks.SKELETON_WALL_SKULL,
+                        Blocks.WITHER_SKELETON_SKULL,
+                        Blocks.WITHER_SKELETON_WALL_SKULL,
+                        Blocks.ZOMBIE_HEAD,
+                        Blocks.ZOMBIE_WALL_HEAD,
+                        Blocks.PLAYER_HEAD,
+                        Blocks.PLAYER_WALL_HEAD,
+                        Blocks.CREEPER_HEAD,
+                        Blocks.CREEPER_WALL_HEAD,
+                        Blocks.DRAGON_HEAD,
+                        Blocks.DRAGON_WALL_HEAD,
+                        Blocks.PIGLIN_HEAD,
+                        Blocks.PIGLIN_WALL_HEAD)
+                .add(Blocks.PISTON, Blocks.STICKY_PISTON, Blocks.PISTON_HEAD, Blocks.MOVING_PISTON);
+        tag(TCBlockTags.ARCANE_WORKBENCH_CHARGER_HOSTS)
+                .add(TCBlocks.ARCANE_WORKBENCH.get())
+                .add(TCBlocks.FOCAL_MANIPULATOR.get());
         tag(TCBlockTags.INFUSION_STABILISERS)
                 .add(Blocks.SKELETON_SKULL)
                 .add(Blocks.SKELETON_WALL_SKULL)
@@ -74,6 +122,44 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.STAIRS_SILVERWOOD.get())
                 .add(TCBlocks.TABLE_WOOD.get());
 
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(TCBlocks.NODE_STABILIZER.get())
+                .add(TCBlocks.NODE_STABILIZER_ADVANCED.get())
+                .add(TCBlocks.NODE_TRANSDUCER.get())
+                .add(TCBlocks.VIS_RELAY.get())
+                .add(TCBlocks.CRUCIBLE.get())
+                .add(TCBlocks.THAUMATORIUM.get())
+                .add(TCBlocks.THAUMATORIUM_TOP.get())
+                .add(TCBlocks.GOLEM_BUILDER.get())
+                .add(TCBlocks.PLACEHOLDER_IRON_BARS.get())
+                .add(TCBlocks.PLACEHOLDER_CAULDRON.get())
+                .add(TCBlocks.PLACEHOLDER_ANVIL.get())
+                .add(TCBlocks.PLACEHOLDER_TABLE.get())
+                .add(TCBlocks.CONDENSER.get())
+                .add(TCBlocks.PATTERN_CRAFTER.get())
+                .add(TCBlocks.POTION_SPRAYER.get())
+                .add(TCBlocks.DIOPTRA.get())
+                .add(TCBlocks.LAMP_ARCANE.get())
+                .add(TCBlocks.LAMP_GROWTH.get())
+                .add(TCBlocks.LAMP_FERTILITY.get())
+                .add(TCBlocks.EVERFULL_URN.get())
+                .add(TCBlocks.VOID_SIPHON.get());
+        tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(TCBlocks.DECONSTRUCTION_TABLE.get())
+                .add(TCBlocks.LEVITATOR.get())
+                .add(TCBlocks.BRAIN_BOX.get())
+                .add(TCBlocks.ARCANE_EAR.get())
+                .add(TCBlocks.ARCANE_EAR_TOGGLE.get())
+                .add(TCBlocks.HUNGRY_CHEST.get())
+                .add(TCBlocks.VIS_GENERATOR.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(TCBlocks.ARCANE_GRINDSTONE.get())
+                .add(TCBlocks.ESSENTIA_CRYSTALIZER.get())
+                .add(TCBlocks.ESSENTIA_RESERVOIR.get())
+                .add(TCBlocks.GOLEM_FETTER.get())
+                .add(TCBlocks.ITEM_GRATE.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(TCBlocks.ARCANE_DOOR.get()).add(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+
         tag(BlockTags.SLABS)
                 .add(TCBlocks.SLAB_GREATWOOD.get())
                 .add(TCBlocks.SLAB_SILVERWOOD.get())
@@ -93,6 +179,32 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.STAIRS_ELDRITCH.get());
 
         tag(BlockTags.WOODEN_STAIRS).add(TCBlocks.STAIRS_GREATWOOD.get()).add(TCBlocks.STAIRS_SILVERWOOD.get());
+
+        tag(BlockTags.WOODEN_DOORS).add(TCBlocks.DOOR_GREATWOOD.get()).add(TCBlocks.DOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_TRAPDOORS).add(TCBlocks.TRAPDOOR_GREATWOOD.get()).add(TCBlocks.TRAPDOOR_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_FENCES).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(BlockTags.FENCE_GATES).add(TCBlocks.FENCE_GATE_GREATWOOD.get()).add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_BUTTONS).add(TCBlocks.BUTTON_GREATWOOD.get()).add(TCBlocks.BUTTON_SILVERWOOD.get());
+        tag(BlockTags.WOODEN_PRESSURE_PLATES)
+                .add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get())
+                .add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCES_WOODEN).add(TCBlocks.FENCE_GREATWOOD.get()).add(TCBlocks.FENCE_SILVERWOOD.get());
+        tag(Tags.Blocks.FENCE_GATES_WOODEN)
+                .add(TCBlocks.FENCE_GATE_GREATWOOD.get())
+                .add(TCBlocks.FENCE_GATE_SILVERWOOD.get());
+        tag(BlockTags.MINEABLE_WITH_AXE)
+                .add(TCBlocks.DOOR_GREATWOOD.get())
+                .add(TCBlocks.TRAPDOOR_GREATWOOD.get())
+                .add(TCBlocks.FENCE_GREATWOOD.get())
+                .add(TCBlocks.FENCE_GATE_GREATWOOD.get())
+                .add(TCBlocks.BUTTON_GREATWOOD.get())
+                .add(TCBlocks.PRESSURE_PLATE_GREATWOOD.get())
+                .add(TCBlocks.DOOR_SILVERWOOD.get())
+                .add(TCBlocks.TRAPDOOR_SILVERWOOD.get())
+                .add(TCBlocks.FENCE_SILVERWOOD.get())
+                .add(TCBlocks.FENCE_GATE_SILVERWOOD.get())
+                .add(TCBlocks.BUTTON_SILVERWOOD.get())
+                .add(TCBlocks.PRESSURE_PLATE_SILVERWOOD.get());
 
         tag(TCBlockTags.ELDRITCH_OBELISK_PARTS)
                 .add(TCBlocks.ELDRITCH_ALTAR.get())
@@ -126,6 +238,10 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())
                 .add(TCBlocks.METAL_BRASS_BLOCK.get())
                 .add(TCBlocks.METAL_VOID_BLOCK.get());
+
+        for (DeferredBlock<BlockCandleHolder> holder : TCBlocks.CANDLE_HOLDERS.values()) {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(holder.get());
+        }
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TCBlocks.METAL_THAUMIUM_BLOCK.get())
@@ -198,15 +314,26 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(TCBlockTags.SCAN_CLAY).add(Blocks.CLAY).addTag(BlockTags.TERRACOTTA);
 
-        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get());
-        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get());
-        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get());
+        tag(TCBlockTags.ORES_AMBER).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
+        tag(TCBlockTags.ORES_CINNABAR).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
+        tag(Tags.Blocks.ORES_QUARTZ).add(TCBlocks.ORE_QUARTZ.get()).add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_STONE)
+                .add(TCBlocks.ORE_AMBER.get())
+                .add(TCBlocks.ORE_CINNABAR.get())
+                .add(TCBlocks.ORE_QUARTZ.get());
+        tag(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE)
+                .add(TCBlocks.DEEPSLATE_ORE_AMBER.get())
+                .add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get())
+                .add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get());
         tag(Tags.Blocks.ORES).addTags(TCBlockTags.ORES_AMBER, TCBlockTags.ORES_CINNABAR, TCBlockTags.ORES_QUARTZ);
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TCBlocks.ORE_AMBER.get())
                 .add(TCBlocks.ORE_CINNABAR.get())
                 .add(TCBlocks.ORE_QUARTZ.get())
+                .add(TCBlocks.DEEPSLATE_ORE_AMBER.get())
+                .add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get())
+                .add(TCBlocks.DEEPSLATE_ORE_QUARTZ.get())
                 .add(TCBlocks.SMELTER_BASIC.get())
                 .add(TCBlocks.SMELTER_THAUMIUM.get())
                 .add(TCBlocks.SMELTER_VOID.get())
@@ -238,9 +365,9 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.PILLAR_ELDRITCH.get())
                 .add(TCBlocks.RECHARGE_PEDESTAL.get());
 
-        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get());
+        tag(BlockTags.NEEDS_STONE_TOOL).add(TCBlocks.ORE_AMBER.get()).add(TCBlocks.DEEPSLATE_ORE_AMBER.get());
 
-        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(TCBlocks.ORE_CINNABAR.get()).add(TCBlocks.DEEPSLATE_ORE_CINNABAR.get());
 
         tag(TCBlockTags.PORTABLE_HOLE_BLACKLIST);
 
@@ -263,13 +390,20 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
 
         tag(TCBlockTags.SILVERWOOD_LOGS)
                 .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get())
                 .add(TCBlocks.WOOD_SILVERWOOD.get())
                 .add(TCBlocks.STRIPPED_LOG_SILVERWOOD.get())
                 .add(TCBlocks.STRIPPED_WOOD_SILVERWOOD.get());
 
-        tag(BlockTags.OVERWORLD_NATURAL_LOGS).add(TCBlocks.LOG_GREATWOOD.get()).add(TCBlocks.LOG_SILVERWOOD.get());
+        tag(BlockTags.OVERWORLD_NATURAL_LOGS)
+                .add(TCBlocks.LOG_GREATWOOD.get())
+                .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get());
 
-        tag(BlockTags.SNAPS_GOAT_HORN).add(TCBlocks.LOG_GREATWOOD.get()).add(TCBlocks.LOG_SILVERWOOD.get());
+        tag(BlockTags.SNAPS_GOAT_HORN)
+                .add(TCBlocks.LOG_GREATWOOD.get())
+                .add(TCBlocks.LOG_SILVERWOOD.get())
+                .add(TCBlocks.SILVERWOOD_NODE_LOG.get());
 
         tag(BlockTags.FLOWERS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get());
 
@@ -277,6 +411,20 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.PLANT_SHIMMERLEAF.get())
                 .add(TCBlocks.PLANT_CINDERPEARL.get())
                 .add(TCBlocks.PLANT_VISHROOM.get());
+
+        tag(TCBlockTags.MAGICAL_FOREST_FLOWERS)
+                .add(Blocks.DANDELION)
+                .add(Blocks.POPPY)
+                .add(Blocks.BLUE_ORCHID)
+                .add(Blocks.ALLIUM)
+                .add(Blocks.AZURE_BLUET)
+                .add(Blocks.RED_TULIP)
+                .add(Blocks.ORANGE_TULIP)
+                .add(Blocks.WHITE_TULIP)
+                .add(Blocks.PINK_TULIP)
+                .add(Blocks.OXEYE_DAISY)
+                .add(Blocks.CORNFLOWER)
+                .add(Blocks.LILY_OF_THE_VALLEY);
 
         tag(Tags.Blocks.STRIPPED_LOGS)
                 .add(TCBlocks.STRIPPED_LOG_GREATWOOD.get())

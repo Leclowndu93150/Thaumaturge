@@ -262,6 +262,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.elemental_sword.toggle", "Sneak + right-click to toggle the whirlwind");
         add("item.thaumaturge.jar_brace", "Brass Lid Brace");
         add("item.thaumaturge.label", "Label");
+        add("item.thaumaturge.marked_label", "Marked Label");
         add("item.thaumaturge.salis_mundus", "Salis Mundus");
         add(
                 "tooltip.thaumaturge.salis_mundus.desc",
@@ -325,12 +326,18 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.nitor_black", "Black Nitor");
 
         ResearchTextEn.addAll(this::add);
+        CommandTextEn.addAll(this::add);
+        LoreBookTextEn.addAll(this::add);
 
         add("key.thaumaturge.thaumonomicon", "Open Thaumonomicon");
         add("gui.thaumaturge.entry.advance", "Mark As Read");
         add("tc.stage.complete", "Complete");
+        add("tc.stage.completed", "Completed");
         add("tc.stage.hold", "Completing...");
         add("tc.research.complete", "Research Complete!");
+        add("tc.research.stage.history", "Stage %1$d / %2$d");
+        add("tc.research.previous_stage", "Previous stage");
+        add("tc.research.next_stage", "Next stage");
         add("tc.aspect.name", "Aspects of Essentia");
         add("tc.knowledge.name", "Knowledge Totals");
         add("tc.aspect.primal", "Primal Aspect");
@@ -338,7 +345,6 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tc.aspect.unknown.short", "???");
         add("tc.aspect.unknown.desc", "Its nature is not yet understood.");
         add("tc.aspect.composition", "%1$s + %2$s");
-        add("tc.aspect.progress", "Aspects known %1$s/%2$s");
         add("tc.discoveryerror.derive", "To understand this you must first derive an aspect of %1$s.");
         add("tc.addendumtext", "§oAddendum %1$s§r");
 
@@ -367,9 +373,11 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.ore_amber", "Amber Bearing Stone");
         add("block.thaumaturge.ore_cinnabar", "Cinnabar Ore");
         add("block.thaumaturge.ore_quartz", "Quartz Ore");
+        add("block.thaumaturge.deepslate_ore_amber", "Amber Bearing Deepslate");
+        add("block.thaumaturge.deepslate_ore_cinnabar", "Deepslate Cinnabar Ore");
+        add("block.thaumaturge.deepslate_ore_quartz", "Deepslate Quartz Ore");
 
         add("block.thaumaturge.alchemical_construct", "Alchemical Construct");
-        add("block.thaumaturge.alchemical_furnace", "Alchemical Furnace");
         add("block.thaumaturge.advanced_alchemical_construct", "Advanced Alchemical Construct");
         add("block.thaumaturge.advanced_alchemical_furnace", "Advanced Alchemical Furnace");
         add("block.thaumaturge.advanced_alchemical_furnace_nozzle", "Advanced Alchemical Furnace Nozzle");
@@ -409,6 +417,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.cluster_silver", "Native Silver Cluster");
         add("item.thaumaturge.cluster_lead", "Native Lead Cluster");
         add("item.thaumaturge.cluster_tin", "Native Tin Cluster");
+        add("item.thaumaturge.raw_cinnabar", "Raw Cinnabar");
         add("item.thaumaturge.cluster_cinnabar", "Native Cinnabar Cluster");
         add("item.thaumaturge.cluster_quartz", "Native Quartz Cluster");
 
@@ -545,6 +554,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.sapling_silverwood", "Silverwood Sapling");
         add("block.thaumaturge.log_greatwood", "Greatwood Log");
         add("block.thaumaturge.log_silverwood", "Silverwood Log");
+        add("block.thaumaturge.silverwood_node_log", "Silverwood Log");
         add("block.thaumaturge.greatwood", "Greatwood");
         add("block.thaumaturge.silverwood", "Silverwood");
         add("block.thaumaturge.stripped_log_greatwood", "Stripped Greatwood Log");
@@ -565,6 +575,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.vishroom", "Vishroom");
         add("block.thaumaturge.grass_ambient", "Ambient Grass Block");
         add("biome.thaumaturge.magical_forest", "Magical Forest");
+        add("biome.thaumaturge.magical_forest_caves", "Magical Forest Caves");
         add("biome.thaumaturge.eerie", "Eerie");
         add("biome.thaumaturge.eldritch", "Eldritch");
         add("biome.thaumaturge.tainted_lands", "Tainted Lands");
@@ -601,13 +612,6 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.taint_spore_stalk", "Taint Spore Stalk");
         add("entity.thaumaturge.taint_spore", "Taint Spore");
         add("entity.thaumaturge.taint_spore_swarmer", "Taint Spore Swarmer");
-        add("entity.thaumaturge.taint_creeper", "Tainted Creeper");
-        add("entity.thaumaturge.taint_cow", "Tainted Cow");
-        add("entity.thaumaturge.taint_pig", "Tainted Pig");
-        add("entity.thaumaturge.taint_chicken", "Tainted Chicken");
-        add("entity.thaumaturge.taint_sheep", "Tainted Sheep");
-        add("entity.thaumaturge.taint_villager", "Tainted Villager");
-        add("entity.thaumaturge.taint_spider", "Tainted Crawler");
 
         add("effect.thaumaturge.vis_exhaust", "Vis Exhaust");
         add("effect.thaumaturge.infectious_vis_exhaust", "Flux Phage");
@@ -642,6 +646,8 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("entity.thaumaturge.falling_taint", "Falling Taint");
         add("entity.thaumaturge.bottle_taint", "Bottle of Tainted Goo");
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
+        add("item.thaumaturge.tainted_goo", "Tainted Goo");
+        add("item.thaumaturge.taint_tendril", "Taint Tendril");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
         add("entity.thaumaturge.brainy_drowned", "Angry Drowned");
@@ -952,6 +958,10 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.cloth_chest", "Apprentice's Robes");
         add("item.thaumaturge.cloth_legs", "Apprentice's Leggings");
         add("item.thaumaturge.cloth_boots", "Apprentice's Boots");
+
+        add("block.thaumaturge.candle_holder_brass", "Brass Candle Holder");
+        add("block.thaumaturge.candle_holder_thaumium", "Thaumium Candle Holder");
+        add("block.thaumaturge.candle_holder_void", "Void Metal Candle Holder");
 
         for (DyeColor dye : DyeColor.values()) {
             add("block.thaumaturge.candle_" + dye.getName(), dyeName(dye) + " Tallow Candle");
@@ -1476,6 +1486,20 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.slab_eldritch", "Eldritch Stone Slab");
         add("block.thaumaturge.stairs_greatwood", "Greatwood Stairs");
         add("block.thaumaturge.stairs_silverwood", "Silverwood Stairs");
+        add("block.thaumaturge.arcane_grindstone", "Arcane Grindstone");
+        add("gui.thaumaturge.arcane_grindstone.title", "Strip Infusions");
+        add("block.thaumaturge.door_greatwood", "Greatwood Door");
+        add("block.thaumaturge.trapdoor_greatwood", "Greatwood Trapdoor");
+        add("block.thaumaturge.fence_greatwood", "Greatwood Fence");
+        add("block.thaumaturge.fence_gate_greatwood", "Greatwood Fence Gate");
+        add("block.thaumaturge.button_greatwood", "Greatwood Button");
+        add("block.thaumaturge.pressure_plate_greatwood", "Greatwood Pressure Plate");
+        add("block.thaumaturge.door_silverwood", "Silverwood Door");
+        add("block.thaumaturge.trapdoor_silverwood", "Silverwood Trapdoor");
+        add("block.thaumaturge.fence_silverwood", "Silverwood Fence");
+        add("block.thaumaturge.fence_gate_silverwood", "Silverwood Fence Gate");
+        add("block.thaumaturge.button_silverwood", "Silverwood Button");
+        add("block.thaumaturge.pressure_plate_silverwood", "Silverwood Pressure Plate");
         add("block.thaumaturge.table_wood", "Wood Table");
         add("block.thaumaturge.table_stone", "Stone Table");
         add("block.thaumaturge.paving_stone_travel", "Paving Stone of Travel");
@@ -1562,22 +1586,24 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.loot_bag_rare", "Rare Treasure");
         add("tc.lootbag", "Click to open, or keep to trade.");
         add("champion.thaumaturge.name", "%1$s %2$s");
-        add("champion.mod.bold", "Bold");
-        add("champion.mod.spine", "Spined");
-        add("champion.mod.armor", "Armored");
-        add("champion.mod.mighty", "Mighty");
-        add("champion.mod.grim", "Grim");
-        add("champion.mod.warded", "Warded");
-        add("champion.mod.warp", "Warped");
-        add("champion.mod.undying", "Undying");
-        add("champion.mod.fiery", "Fiery");
-        add("champion.mod.sickly", "Sickly");
-        add("champion.mod.venomous", "Venomous");
-        add("champion.mod.vampiric", "Vampiric");
-        add("champion.mod.infested", "Infested");
-        add("champion.mod.tainted", "Tainted");
-        add("attributes.thaumaturge.champion_mod", "Champion Modifier");
-        add("attributes.thaumaturge.tainted_mod", "Tainted Modifier");
+        add("mob_trait.thaumaturge.bold", "Bold");
+        add("mob_trait.thaumaturge.spine", "Spined");
+        add("mob_trait.thaumaturge.armor", "Armored");
+        add("mob_trait.thaumaturge.mighty", "Mighty");
+        add("mob_trait.thaumaturge.grim", "Grim");
+        add("mob_trait.thaumaturge.warded", "Warded");
+        add("mob_trait.thaumaturge.warp", "Warped");
+        add("mob_trait.thaumaturge.undying", "Undying");
+        add("mob_trait.thaumaturge.fiery", "Fiery");
+        add("mob_trait.thaumaturge.sickly", "Sickly");
+        add("mob_trait.thaumaturge.venomous", "Venomous");
+        add("mob_trait.thaumaturge.vampiric", "Vampiric");
+        add("mob_trait.thaumaturge.infested", "Infested");
+        add("mob_trait.thaumaturge.tainted", "Tainted");
+        add("mob_trait.thaumaturge.taint_grazing", "Taint Grazing");
+        add("mob_trait.thaumaturge.taint_blast", "Taint Blast");
+        add("mob_trait.thaumaturge.taint_brood", "Taint Brood");
+        add("mob_trait.thaumaturge.leaping", "Leaping");
         add("block.thaumaturge.loot_crate_common", "Common Crate");
         add("block.thaumaturge.loot_crate_uncommon", "Uncommon Crate");
         add("block.thaumaturge.loot_crate_rare", "Rare Crate");
@@ -1744,6 +1770,7 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("jade.thaumaturge.transducer.status.2", "Node energized");
         add("jade.thaumaturge.transducer.charge", "Charge: %s%%");
         add("jade.thaumaturge.relay.linked_node", "Linked to energized node");
+        add("jade.thaumaturge.relay.linked_source", "Linked to %s");
         add("jade.thaumaturge.relay.linked", "Linked");
         add("jade.thaumaturge.relay.linked_relay", "Linked through %s relays");
         add("jade.thaumaturge.relay.unlinked", "No energized node in range");
@@ -1774,7 +1801,6 @@ public final class TCEnglishProvider extends LanguageProvider {
     private void addJadeMode(String path, String label) {
         String key = "config.jade.plugin_thaumaturge.display." + path;
         add(key, label);
-        add(key + "_always", "Always");
         add(key + "_goggles", "Goggles");
     }
 }

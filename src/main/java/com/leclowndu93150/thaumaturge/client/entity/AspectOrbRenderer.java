@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
+import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,12 +17,9 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
-    private static final RenderType ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.PARTICLES);
+    private static final RenderType ORB_TYPE = TCRenderTypes.fxAlphaAdditiveBlurred(ParticleTextures.ORB_GLOW);
 
-    private static final int FRAME_COUNT = 16;
     private static final int FRAMES_PER_TICK = 2;
-    private static final float ROW_V0 = 0.5F;
-    private static final float ROW_V1 = 0.5625F;
     private static final float BASE_SCALE = 0.1F;
     private static final float AGE_SCALE = 0.3F;
     private static final float ALPHA = 0.5F;
@@ -45,9 +43,9 @@ public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
         float scale = BASE_SCALE
                 + AGE_SCALE * ((float) (EntityAspectOrb.MAX_AGE - entity.getAge()) / EntityAspectOrb.MAX_AGE);
-        int frame = entity.tickCount * FRAMES_PER_TICK % FRAME_COUNT;
-        float u0 = frame / (float) FRAME_COUNT;
-        float u1 = (frame + 1) / (float) FRAME_COUNT;
+        int frame = entity.tickCount * FRAMES_PER_TICK % ParticleTextures.ORB_GLOW_FRAMES;
+        float u0 = StripUv.u0(frame, ParticleTextures.ORB_GLOW_FRAMES);
+        float u1 = StripUv.u1(frame, ParticleTextures.ORB_GLOW_FRAMES);
         int tint = ARGB32.color((int) (ALPHA * 255.0F), entity.getAspectColor());
         Vec3 origin = entity.getPosition(partialTicks);
         LateWorldRenderQueue.enqueue(origin, (latePose, lateBuffers) -> {
@@ -59,25 +57,25 @@ public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
 
     private static void writeOrb(VertexConsumer buffer, Matrix4f mat, float u0, float u1, int tint) {
         buffer.addVertex(mat, -HALF, -Y_OFFSET, 0.0F)
-                .setUv(u0, ROW_V1)
+                .setUv(u0, StripUv.V1)
                 .setColor(tint)
                 .setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, HALF, -Y_OFFSET, 0.0F)
-                .setUv(u1, ROW_V1)
+                .setUv(u1, StripUv.V1)
                 .setColor(tint)
                 .setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, HALF, 1.0F - Y_OFFSET, 0.0F)
-                .setUv(u1, ROW_V0)
+                .setUv(u1, StripUv.V0)
                 .setColor(tint)
                 .setLight(EMISSIVE_LIGHT);
         buffer.addVertex(mat, -HALF, 1.0F - Y_OFFSET, 0.0F)
-                .setUv(u0, ROW_V0)
+                .setUv(u0, StripUv.V0)
                 .setColor(tint)
                 .setLight(EMISSIVE_LIGHT);
     }
 
     @Override
     public ResourceLocation getTextureLocation(EntityAspectOrb entity) {
-        return ParticleTextures.PARTICLES;
+        return ParticleTextures.ORB_GLOW;
     }
 }

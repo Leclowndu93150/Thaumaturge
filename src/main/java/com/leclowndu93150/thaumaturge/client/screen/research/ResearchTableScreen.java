@@ -76,7 +76,6 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
     private static final int ARROW_PREV_X = 27;
     private static final int ARROW_NEXT_X = 51;
     private static final int ARROW_Y = 119;
-    private static final float PALETTE_TAG_SCALE = 0.8F;
     private static final int ARROW_W = 24;
     private static final int ARROW_H = 8;
     private static final int ARROW_PREV_U = 184;
@@ -250,27 +249,25 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         int start = page * PAGE_STEP;
         int drawn = 0;
         Holder<IAspect> hovered = null;
+        BlockEntityResearchTable table = table();
         for (int i = start; i < aspects.size() && drawn < PALETTE_SLOTS; i++, drawn++) {
             Holder<IAspect> aspect = aspects.get(i);
             int x = leftPos + PALETTE_X + (drawn / PALETTE_ROWS) * PALETTE_CELL;
             int y = topPos + PALETTE_Y + (drawn % PALETTE_ROWS) * PALETTE_CELL;
             float alpha = availableOf(aspect) > 0 ? 1.0F : 0.33F;
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0);
-            graphics.pose().scale(PALETTE_TAG_SCALE, PALETTE_TAG_SCALE, 1F);
+            int bonus = table == null ? 0 : table.bonusAspects().amountOf(aspect);
             AspectTagRenderer.render(
                     graphics,
                     font,
-                    1.0,
-                    1.0,
+                    (double) x,
+                    (double) y,
                     aspect,
                     pool().amount(AspectPools.idOf(aspect)),
-                    0,
+                    bonus,
                     0.0,
                     AspectTagRenderer.BlendMode.ALPHA,
                     alpha,
                     false);
-            graphics.pose().popPose();
             if (mouseX >= x && mouseX < x + PALETTE_CELL && mouseY >= y && mouseY < y + PALETTE_CELL) {
                 hovered = aspect;
             }
@@ -897,9 +894,9 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         boolean bonus1 = table != null
                 && pool().amount(AspectPools.idOf(select1)) <= 0
                 && table.bonusAspects().amountOf(select1) > 0;
-        boolean bonus2 = table != null
-                && pool().amount(AspectPools.idOf(select2)) <= 0
-                && table.bonusAspects().amountOf(select2) > 0;
+        int secondPoolAmount = pool().amount(AspectPools.idOf(select2)) - (select1.equals(select2) && !bonus1 ? 1 : 0);
+        boolean bonus2 =
+                table != null && secondPoolAmount <= 0 && table.bonusAspects().amountOf(select2) > 0;
         PacketDistributor.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
         playSound(TCSounds.HHON.get(), 0.3F, 1.0F);

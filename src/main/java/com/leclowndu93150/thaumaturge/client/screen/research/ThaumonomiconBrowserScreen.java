@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
+import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.research.ConnectorRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
@@ -31,13 +32,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Item;
@@ -161,6 +165,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private static @Nullable ResourceLocation persistedCategoryId = null;
     private static int persistedCatScrollPos = 0;
     private static boolean persistedSearching = false;
+    private static @Nullable ResourceLocation persistedEntryId = null;
 
     private final List<Holder.Reference<IResearchCategory>> categoriesTC = new ArrayList<>();
     private final List<Holder.Reference<IResearchCategory>> categoriesOther = new ArrayList<>();
@@ -199,6 +204,26 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         super(Component.empty());
         this.curMouseX = this.guiMapX = this.tempMapX = persistedX;
         this.curMouseY = this.guiMapY = this.tempMapY = persistedY;
+    }
+
+    public static Screen reopen() {
+        ThaumonomiconBrowserScreen browser = new ThaumonomiconBrowserScreen();
+        Minecraft minecraft = Minecraft.getInstance();
+        if (persistedEntryId == null || minecraft.player == null) {
+            return browser;
+        }
+        ResourceLocation entryId = persistedEntryId;
+        return minecraft
+                .player
+                .registryAccess()
+                .lookup(IResearchEntry.REGISTRY_KEY)
+                .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entryId)))
+                .<Screen>map(holder -> new EntryDetailScreen(holder, entryId, browser))
+                .orElse(browser);
+    }
+
+    public static void rememberEntry(@Nullable ResourceLocation entryId) {
+        persistedEntryId = entryId;
     }
 
     @Override
@@ -379,11 +404,16 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         return true;
     }
 
+    private boolean conditionsPass(IPlayerKnowledge knowledge, EntryNode node) {
+        if (minecraft.player == null || knowledge.isResearchKnown(node.id)) return true;
+        return ResearchUnlockConditions.passes(minecraft.player, knowledge, node.id);
+    }
+
     private boolean canUnlockResearch(IPlayerKnowledge knowledge, EntryNode node) {
         for (ResearchParent parent : node.entry.parents()) {
             if (!parent.isSatisfiedBy(knowledge)) return false;
         }
-        return true;
+        return conditionsPass(knowledge, node);
     }
 
     private void onSearchChanged(String query) {
@@ -472,8 +502,10 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             graphics.pose().pushPose();
             graphics.pose().scale(1.0F / screenZoom, 1.0F / screenZoom, 1F);
             renderBackgroundLayers(graphics, locX, locY);
+            graphics.enableScissor(START_X, START_Y, START_X + screenX, START_Y + screenY);
             renderConnectors(graphics, locX, locY);
             renderEntries(graphics, mouseX, mouseY, locX, locY);
+            graphics.disableScissor();
             graphics.pose().popPose();
         } else if (searching) {
             renderSearchResults(graphics, mouseX, mouseY);
@@ -1152,6 +1184,10 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                     s = Component.translatable(parentNode.entry.nameKey()).getString();
                 }
                 lines.add(Component.literal("@@" + ChatFormatting.YELLOW + " - " + s));
+            }
+            for (Component message : ResearchUnlockConditions.lockedMessages(minecraft.player, knowledge, node.id)) {
+                lines.add(
+                        Component.literal("@@" + ChatFormatting.YELLOW + " - ").append(message));
             }
         }
         if (knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH)) {

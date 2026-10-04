@@ -180,10 +180,6 @@ public final class EntityAspectsProvider extends DataMapProvider {
                 TCEntities.THAUMIC_SLIME.get(),
                 list(TCAspects.VICTUS, 5, TCAspects.AQUA, 5, TCAspects.VITIUM, 5, TCAspects.ALKIMIA, 5));
         add(b, TCEntities.TAINTACLE.get(), list(TCAspects.VITIUM, 15, TCAspects.BESTIA, 10));
-        add(b, TCEntities.TAINT_COW.get(), list(TCAspects.VITIUM, 3, TCAspects.TERRA, 3));
-        add(b, TCEntities.TAINT_PIG.get(), list(TCAspects.VITIUM, 2, TCAspects.TERRA, 2));
-        add(b, TCEntities.TAINT_SHEEP.get(), list(TCAspects.VITIUM, 2, TCAspects.TERRA, 2));
-        add(b, TCEntities.TAINT_CHICKEN.get(), list(TCAspects.VITIUM, 2, TCAspects.VOLATUS, 2, TCAspects.AER, 1));
         add(b, TCEntities.TAINT_SPORE.get(), list(TCAspects.VITIUM, 2, TCAspects.AER, 2));
         add(b, TCEntities.TAINT_SPORE_SWARMER.get(), list(TCAspects.VITIUM, 2, TCAspects.AER, 2));
         add(b, TCEntities.TAINT_SEED.get(), list(TCAspects.VITIUM, 20, TCAspects.AURAM, 10, TCAspects.HERBA, 5));

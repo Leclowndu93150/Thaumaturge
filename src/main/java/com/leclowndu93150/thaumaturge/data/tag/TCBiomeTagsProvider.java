@@ -50,12 +50,14 @@ public final class TCBiomeTagsProvider extends TagsProvider<Biome> {
                 .add(Biomes.WOODED_BADLANDS);
         tag(BiomeTags.IS_OVERWORLD)
                 .add(TCBiomes.MAGICAL_FOREST)
+                .add(TCBiomes.MAGICAL_FOREST_CAVES)
                 .add(TCBiomes.EERIE)
                 .add(TCBiomes.ELDRITCH)
                 .add(TCBiomes.TAINTED_LANDS);
         tag(BiomeTags.IS_FOREST).add(TCBiomes.MAGICAL_FOREST);
         tag(TCBiomeTags.IS_MAGICAL)
                 .add(TCBiomes.MAGICAL_FOREST)
+                .add(TCBiomes.MAGICAL_FOREST_CAVES)
                 .add(TCBiomes.EERIE)
                 .add(TCBiomes.ELDRITCH)
                 .add(TCBiomes.TAINTED_LANDS);

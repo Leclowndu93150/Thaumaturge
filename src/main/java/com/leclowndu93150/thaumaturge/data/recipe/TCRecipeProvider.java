@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
@@ -18,6 +19,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.label.LabelFilterRecipe;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.CrucibleRecipeBuilder;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.InfusionEnchantmentRecipeBuilder;
@@ -80,6 +82,7 @@ import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 public final class TCRecipeProvider extends RecipeProvider {
+    private static final int ARCANE_GRINDSTONE_VIS = 50;
 
     private RecipeOutput output;
     private HolderLookup.Provider registries;
@@ -162,6 +165,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.LABEL))
                 .save(output, TCIds.MODID + ":label_clear");
 
+        SpecialRecipeBuilder.special(category -> LabelFilterRecipe.INSTANCE)
+                .save(output, TCIds.rl("label_filter").toString());
+
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, TCItems.JAR_BRACE, 2)
                 .pattern("SBS")
                 .pattern("B B")
@@ -209,6 +215,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output);
 
         oreSmelting(TCItems.QUICKSILVER, TCItemTags.ORES_CINNABAR, 1F, "quicksilver");
+        rawSmelting(TCItems.QUICKSILVER, TCItemTags.RAW_MATERIALS_CINNABAR, 0.7F, "quicksilver", "raw_cinnabar");
         oreSmelting(TCItems.AMBER, TCItemTags.ORES_AMBER, 1F, "amber");
         oreSmelting(Items.QUARTZ, Tags.Items.ORES_QUARTZ, 0.2F, "quartz");
 
@@ -275,6 +282,47 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('S', Tags.Items.STRINGS)
                 .define('T', TCItems.TALLOW.get())
                 .unlockedBy("has_tallow", has(TCItems.TALLOW.get()))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.BRASS)
+                                .get()),
+                        10)
+                .aspect(TCAspects.IGNIS, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_BRASS)
+                .define('P', TCItemTags.PLATES_BRASS)
+                .gate(gate("candle_holders", 1))
+                .unlockedBy("has", has(TCItemTags.PLATES_BRASS))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.THAUMIUM)
+                                .get()),
+                        25)
+                .aspect(TCAspects.IGNIS, 1)
+                .aspect(TCAspects.ORDO, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_THAUMIUM)
+                .define('P', TCItemTags.PLATES_THAUMIUM)
+                .gate(gate("candle_holders", 2))
+                .unlockedBy("has", has(TCItemTags.PLATES_THAUMIUM))
+                .save(output);
+        arcaneShaped(
+                        new ItemStack(TCItems.CANDLE_HOLDERS
+                                .get(CandleHolderMaterial.VOID)
+                                .get()),
+                        50)
+                .aspect(TCAspects.IGNIS, 1)
+                .aspect(TCAspects.PERDITIO, 1)
+                .pattern(" N ")
+                .pattern("NPN")
+                .define('N', TCItemTags.NUGGETS_VOID_METAL)
+                .define('P', TCItemTags.PLATES_VOID_METAL)
+                .gate(gate("candle_holders", 3))
+                .unlockedBy("has", has(TCItemTags.PLATES_VOID_METAL))
                 .save(output);
         for (DyeColor dye : DyeColor.values()) {
             ShapelessRecipeBuilder.shapeless(
@@ -373,6 +421,18 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .group(group)
                 .unlockedBy("has", this.has(oreTag))
                 .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_ore");
+    }
+
+    private void rawSmelting(ItemLike item, TagKey<Item> rawTag, float xp, String group, String rawName) {
+        SimpleCookingRecipeBuilder.smelting(Ingredient.of(rawTag), RecipeCategory.MISC, item, xp, 200)
+                .group(group)
+                .unlockedBy("has", this.has(rawTag))
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_from_" + rawName);
+
+        SimpleCookingRecipeBuilder.blasting(Ingredient.of(rawTag), RecipeCategory.MISC, item, xp, 100)
+                .group(group)
+                .unlockedBy("has", this.has(rawTag))
+                .save(this.output, TCIds.MODID + ":" + getItemName(item) + "_blasting_from_" + rawName);
     }
 
     private void clusterSmelting(ItemLike item, ItemLike cluster, String group) {
@@ -496,6 +556,71 @@ public final class TCRecipeProvider extends RecipeProvider {
         stairsRecipe(TCBlocks.STAIRS_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
         slabRecipe(TCBlocks.SLAB_GREATWOOD.get(), TCItemTags.PLANKS_GREATWOOD);
         slabRecipe(TCBlocks.SLAB_SILVERWOOD.get(), TCItemTags.PLANKS_SILVERWOOD);
+        arcaneShaped(new ItemStack(TCItems.ARCANE_GRINDSTONE.get()), ARCANE_GRINDSTONE_VIS)
+                .aspect(TCAspects.ORDO, 2)
+                .aspect(TCAspects.PERDITIO, 2)
+                .pattern(" T ")
+                .pattern("TGT")
+                .pattern(" T ")
+                .define('T', TCItemTags.INGOTS_THAUMIUM)
+                .define('G', Items.GRINDSTONE)
+                .gate(gate("infusion_enchantment"))
+                .unlockedBy("has", has(TCItemTags.INGOTS_THAUMIUM))
+                .save(output);
+        doorBuilder(TCBlocks.DOOR_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_door")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_trapdoor")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_fence")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        buttonBuilder(TCBlocks.BUTTON_GREATWOOD.get(), Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_button")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        pressurePlateBuilder(
+                        RecipeCategory.REDSTONE,
+                        TCBlocks.PRESSURE_PLATE_GREATWOOD.get(),
+                        Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
+                .group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_GREATWOOD))
+                .save(output);
+        doorBuilder(TCBlocks.DOOR_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_door")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        trapdoorBuilder(TCBlocks.TRAPDOOR_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_trapdoor")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceBuilder(TCBlocks.FENCE_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_fence")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        fenceGateBuilder(TCBlocks.FENCE_GATE_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_fence_gate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        buttonBuilder(TCBlocks.BUTTON_SILVERWOOD.get(), Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_button")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
+        pressurePlateBuilder(
+                        RecipeCategory.REDSTONE,
+                        TCBlocks.PRESSURE_PLATE_SILVERWOOD.get(),
+                        Ingredient.of(TCItemTags.PLANKS_SILVERWOOD))
+                .group("wooden_pressure_plate")
+                .unlockedBy("has", has(TCItemTags.PLANKS_SILVERWOOD))
+                .save(output);
         slabRecipe(TCBlocks.SLAB_ARCANE_STONE.get(), TCBlocks.STONE_ARCANE.get());
         slabRecipe(TCBlocks.SLAB_ARCANE_BRICK.get(), TCBlocks.STONE_ARCANE_BRICK.get());
         slabRecipe(TCBlocks.SLAB_ANCIENT.get(), TCBlocks.STONE_ANCIENT.get());
@@ -564,9 +689,11 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_BARRIER.get(), 4), 50)
                 .aspect(TCAspects.IGNIS, 1)
                 .aspect(TCAspects.ORDO, 1)
-                .pattern("SS")
-                .pattern("SS")
+                .pattern("SAS")
+                .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('A', TCItems.CRYSTAL_IGNIS)
+                .define('B', TCItems.CRYSTAL_ORDO)
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -574,9 +701,11 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_TRAVEL.get(), 4), 50)
                 .aspect(TCAspects.AER, 1)
                 .aspect(TCAspects.TERRA, 1)
-                .pattern("SS")
-                .pattern("SS")
+                .pattern("SAS")
+                .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
+                .define('A', TCItems.CRYSTAL_AER)
+                .define('B', TCItems.CRYSTAL_TERRA)
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -1548,28 +1677,27 @@ public final class TCRecipeProvider extends RecipeProvider {
                         new ItemStack(Blocks.MOSSY_COBBLESTONE),
                         Ingredient.of(Blocks.COBBLESTONE))
                 .aspect(TCAspects.HERBA, 2)
-                .aspect(TCAspects.PRAECANTATIO, 1)
                 .gate(gate("hedge_alchemy", 2))
                 .unlockedBy("has", has(Blocks.COBBLESTONE))
                 .save(output, TCIds.MODID + ":crucible/mossy_cobblestone");
 
         new CrucibleRecipeBuilder(
-                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.PACKED_ICE))
+                        aspects,
+                        RecipeCategory.MISC,
+                        new ItemStack(Blocks.MOSSY_STONE_BRICKS),
+                        Ingredient.of(Blocks.STONE_BRICKS))
+                .aspect(TCAspects.HERBA, 2)
+                .gate(gate("hedge_alchemy", 2))
+                .unlockedBy("has", has(Blocks.STONE_BRICKS))
+                .save(output, TCIds.MODID + ":crucible/mossy_stone_bricks");
+
+        new CrucibleRecipeBuilder(
+                        aspects, RecipeCategory.MISC, new ItemStack(Blocks.ICE), Ingredient.of(Blocks.SNOW_BLOCK))
                 .aspect(TCAspects.ORDO, 1)
                 .aspect(TCAspects.GELUM, 1)
                 .gate(gate("hedge_alchemy", 2))
-                .unlockedBy("has", has(Blocks.PACKED_ICE))
+                .unlockedBy("has", has(Blocks.SNOW_BLOCK))
                 .save(output, TCIds.MODID + ":crucible/ice");
-
-        new CrucibleRecipeBuilder(
-                        aspects,
-                        RecipeCategory.MISC,
-                        new ItemStack(Blocks.CRACKED_STONE_BRICKS),
-                        Ingredient.of(Blocks.STONE_BRICKS))
-                .aspect(TCAspects.PERDITIO, 2)
-                .gate(gate("hedge_alchemy", 2))
-                .unlockedBy("has", has(Blocks.STONE_BRICKS))
-                .save(output, TCIds.MODID + ":crucible/cracked_stone_bricks");
 
         new CrucibleRecipeBuilder(
                         aspects, RecipeCategory.MISC, new ItemStack(Items.BONE_MEAL, 4), Ingredient.of(Items.BONE))
@@ -1662,17 +1790,18 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .unlockedBy("has", has(TCItems.VOID_SEED.get()))
                 .save(output, TCIds.MODID + ":crucible/void_ingot");
 
-        clusterRecipe(TCItems.CLUSTER_IRON, Tags.Items.ORES_IRON);
-        clusterRecipe(TCItems.CLUSTER_GOLD, Tags.Items.ORES_GOLD);
-        clusterRecipe(TCItems.CLUSTER_COPPER, Tags.Items.ORES_COPPER);
+        clusterRecipe(TCItems.CLUSTER_IRON, Tags.Items.RAW_MATERIALS_IRON);
+        clusterRecipe(TCItems.CLUSTER_GOLD, Tags.Items.RAW_MATERIALS_GOLD);
+        clusterRecipe(TCItems.CLUSTER_COPPER, Tags.Items.RAW_MATERIALS_COPPER);
         clusterRecipe(TCItems.CLUSTER_TIN, TCItemTags.ORES_TIN);
         clusterRecipe(TCItems.CLUSTER_SILVER, TCItemTags.ORES_SILVER);
         clusterRecipe(TCItems.CLUSTER_LEAD, TCItemTags.ORES_LEAD);
-        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.ORES_CINNABAR);
+        clusterRecipe(TCItems.CLUSTER_CINNABAR, TCItemTags.RAW_MATERIALS_CINNABAR);
         clusterRecipe(TCItems.CLUSTER_QUARTZ, Tags.Items.ORES_QUARTZ);
 
-        transmutationRecipe(Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
-        transmutationRecipe(Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
+        transmutationRecipe("iron_nugget", Items.IRON_NUGGET, Tags.Items.NUGGETS_IRON, TCAspects.METALLUM);
+        transmutationRecipe(
+                "gold_nugget", Items.GOLD_NUGGET, Tags.Items.NUGGETS_GOLD, TCAspects.METALLUM, TCAspects.DESIDERIUM);
 
         new CrucibleRecipeBuilder(
                         aspects,
@@ -1697,7 +1826,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output.withConditions(new NotCondition(new TagEmptyCondition(oreTag))));
     }
 
-    private void transmutationRecipe(ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
+    private void transmutationRecipe(
+            String name, ItemLike result, TagKey<Item> catalyst, ResourceKey<IAspect>... costs) {
         HolderLookup<IAspect> aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
         CrucibleRecipeBuilder builder = new CrucibleRecipeBuilder(
                         aspects, RecipeCategory.MISC, new ItemStack(result, 3), Ingredient.of(catalyst))
@@ -1709,7 +1839,9 @@ public final class TCRecipeProvider extends RecipeProvider {
                 builder.aspect(cost, 1);
             }
         }
-        builder.save(output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))));
+        builder.save(
+                output.withConditions(new NotCondition(new TagEmptyCondition(catalyst))),
+                TCIds.MODID + ":crucible/" + name + "_transmutation");
     }
 
     private void buildArcaneWorkbenchRecipes() {
@@ -1841,6 +1973,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShapeless(new ItemStack(TCItems.TUBE_RESTRICT.get()), 10)
                 .aspect(TCAspects.TERRA)
                 .requires(TCItems.TUBE)
+                .requires(Tags.Items.STONES)
                 .gate(gate("tubes"))
                 .unlockedBy("has", has(TCItems.TUBE))
                 .save(output);
@@ -1848,6 +1981,7 @@ public final class TCRecipeProvider extends RecipeProvider {
         arcaneShapeless(new ItemStack(TCItems.TUBE_ONEWAY.get()), 10)
                 .aspect(TCAspects.AQUA)
                 .requires(TCItems.TUBE)
+                .requires(Tags.Items.DYES_BLUE)
                 .gate(gate("tubes"))
                 .unlockedBy("has", has(TCItems.TUBE))
                 .save(output);
@@ -1921,19 +2055,6 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .define('P', TCItemTags.PLANKS_GREATWOOD)
                 .gate(gate("tubes"))
                 .unlockedBy("has", has(TCItemTags.PLATES_IRON))
-                .save(output);
-
-        arcaneShaped(new ItemStack(TCItems.ALCHEMICAL_FURNACE.get()), 10)
-                .aspect(TCAspects.IGNIS, 5)
-                .aspect(TCAspects.AQUA, 5)
-                .pattern("SCS")
-                .pattern("SFS")
-                .pattern("SSS")
-                .define('S', TCItems.STONE_ARCANE)
-                .define('C', TCItems.CRUCIBLE)
-                .define('F', Items.FURNACE)
-                .gate(gate("essentia_smelter"))
-                .unlockedBy("has", has(TCItems.CRUCIBLE))
                 .save(output);
 
         // Retain both the total cost and each primal requirement
@@ -2514,12 +2635,12 @@ public final class TCRecipeProvider extends RecipeProvider {
                         aspects,
                         RecipeCategory.MISC,
                         new ItemStack(TCItems.EVERFULL_URN.get()),
-                        Ingredient.of(Items.FLOWER_POT))
+                        Ingredient.of(Items.DECORATED_POT))
                 .aspect(TCAspects.AQUA, 30)
                 .aspect(TCAspects.FABRICO, 10)
                 .aspect(TCAspects.TERRA, 10)
                 .gate(gate("everfull_urn"))
-                .unlockedBy("has", has(Items.FLOWER_POT))
+                .unlockedBy("has", has(Items.DECORATED_POT))
                 .save(output);
 
         arcaneShaped(new ItemStack(TCItems.VIS_GENERATOR.get()), 25)

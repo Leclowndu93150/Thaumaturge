@@ -157,15 +157,13 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
             int y = i / 3;
             IRecipeSlotBuilder slot =
                     builder.addInputSlot(GRID_ORIGIN_X + x * GRID_SPACING, GRID_ORIGIN_Y + y * GRID_SPACING);
-            try {
+            if (i < ingredients.size()) {
                 slot.addIngredients(ingredients.get(i));
-            } catch (Exception ignored) {
             }
         }
     }
 
     private void layoutCrystals(IRecipeLayoutBuilder builder, AspectList crystals) {
-        if (crystals.isEmpty()) return;
         int index = 0;
         List<AspectInstance> aspects = crystals.entries().stream()
                 .sorted(Comparator.comparingInt(

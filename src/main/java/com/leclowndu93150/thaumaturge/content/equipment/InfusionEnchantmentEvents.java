@@ -12,10 +12,14 @@ import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -35,6 +39,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -43,7 +48,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
@@ -58,6 +65,13 @@ public final class InfusionEnchantmentEvents {
     private static final float TC_QUARTZ_NUGGET_CHANCE = 0.05F;
 
     private static final ThreadLocal<Boolean> DESTRUCTIVE_RECURSION = ThreadLocal.withInitial(() -> false);
+    private static final Map<UUID, DestructiveTarget> DESTRUCTIVE_TARGETS = new HashMap<>();
+
+    private record DestructiveTarget(ResourceKey<Level> dimension, BlockPos pos, Direction face) {
+        private boolean matches(ServerLevel level, BlockPos pos) {
+            return dimension.equals(level.dimension()) && this.pos.equals(pos);
+        }
+    }
 
     private InfusionEnchantmentEvents() {}
 
@@ -188,6 +202,31 @@ public final class InfusionEnchantmentEvents {
     }
 
     @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getLevel().isClientSide()) {
+            return;
+        }
+        Player player = event.getEntity();
+        ItemStack held = player.getMainHandItem();
+        if (event.getAction() == Action.ABORT
+                || player.isShiftKeyDown()
+                || !InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
+                || !held.isCorrectToolForDrops(event.getLevel().getBlockState(event.getPos()))) {
+            DESTRUCTIVE_TARGETS.remove(player.getUUID());
+            return;
+        }
+        DESTRUCTIVE_TARGETS.put(
+                player.getUUID(),
+                new DestructiveTarget(
+                        event.getLevel().dimension(), event.getPos().immutable(), event.getFace()));
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        DESTRUCTIVE_TARGETS.remove(event.getEntity().getUUID());
+    }
+
+    @SubscribeEvent
     public static void onBlockDrops(BlockDropsEvent event) {
         ServerLevel level = event.getLevel();
         BlockState state = event.getState();
@@ -197,6 +236,7 @@ public final class InfusionEnchantmentEvents {
         if (!(breaker instanceof Player player)) {
             return;
         }
+        DestructiveTarget target = DESTRUCTIVE_TARGETS.remove(player.getUUID());
         ItemStack held = player.getMainHandItem();
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.REFINING)) {
@@ -229,7 +269,9 @@ public final class InfusionEnchantmentEvents {
                 && held.isCorrectToolForDrops(state)) {
             DESTRUCTIVE_RECURSION.set(true);
             try {
-                Direction face = Direction.getNearest(player.getViewVector(1.0F));
+                Direction face = target != null && target.matches(level, pos)
+                        ? target.face()
+                        : Direction.getNearest(player.getViewVector(1.0F));
                 for (int aa = -1; aa <= 1; aa++) {
                     for (int bb = -1; bb <= 1; bb++) {
                         if (aa == 0 && bb == 0) {
@@ -281,10 +323,20 @@ public final class InfusionEnchantmentEvents {
         }
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.LAMPLIGHT) && !player.isShiftKeyDown()) {
-            if (level.isEmptyBlock(pos) && level.getMaxLocalRawBrightness(pos) < GLIMMER_LIGHT_THRESHOLD) {
+            if (level.isEmptyBlock(pos) && settledLight(level, pos) < GLIMMER_LIGHT_THRESHOLD) {
                 level.setBlock(pos, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
             }
         }
+    }
+
+    private static int settledLight(ServerLevel level, BlockPos pos) {
+        int light = level.getRawBrightness(pos, 0);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (Direction direction : Direction.values()) {
+            cursor.setWithOffset(pos, direction);
+            light = Math.max(light, level.getRawBrightness(cursor, 0) - 1);
+        }
+        return light;
     }
 
     @SubscribeEvent

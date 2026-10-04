@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEntityHole;
+import com.leclowndu93150.thaumaturge.content.focus.FocusFX;
 import com.leclowndu93150.thaumaturge.content.particle.RiftShardParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
@@ -19,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -69,6 +71,9 @@ public final class FocusEffectRift implements FocusEffect {
             return false;
         }
         Level level = ctx.level();
+        if (level instanceof ServerLevel serverLevel) {
+            FocusFX.impact(serverLevel, target.getLocation(), id());
+        }
         float maxdis = settings.value("depth") * ctx.power();
         int dur = DURATION_TICKS_FACTOR * settings.value("duration");
         int distance = 0;
@@ -103,6 +108,7 @@ public final class FocusEffectRift implements FocusEffect {
                 && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
             hole.configure(bs, max, count, side);
             hole.setChanged();
+            level.sendBlockUpdated(pos, hole.getBlockState(), hole.getBlockState(), Block.UPDATE_CLIENTS);
         }
         return true;
     }

@@ -1,0 +1,12 @@
+{
+  "type": "lithostitched:replace_partially",
+  "dimension": "minecraft:overworld",
+  "targets": [
+    "minecraft:forest",
+    "minecraft:flower_forest",
+    "minecraft:beach"
+  ],
+  "replacement": "thaumaturge:tainted_lands",
+  "parameters": {},
+  "region": "thaumaturge:tainted_lands"
+}

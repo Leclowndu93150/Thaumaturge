@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.network.ClientboundAspectGainPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundUpdateJEIAspectListPayload;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import java.util.Collection;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -242,6 +243,37 @@ public final class AspectPools {
                         SoundSource.PLAYERS,
                         0.5F,
                         1.0F);
+    }
+
+    public static void setForCommand(ServerPlayer player, Collection<? extends Holder<IAspect>> aspects, int amount) {
+        AspectPoolData data = data(player);
+        for (Holder<IAspect> aspect : aspects) {
+            ResourceLocation id = idOf(aspect);
+            data.discover(id);
+            data.add(id, amount - data.amount(id));
+        }
+        sync(player);
+    }
+
+    public static void takeForCommand(ServerPlayer player, Collection<? extends Holder<IAspect>> aspects, int amount) {
+        AspectPoolData data = data(player);
+        for (Holder<IAspect> aspect : aspects) {
+            data.add(idOf(aspect), -amount);
+        }
+        sync(player);
+    }
+
+    public static void discoverForCommand(ServerPlayer player, Collection<? extends Holder<IAspect>> aspects) {
+        AspectPoolData data = data(player);
+        for (Holder<IAspect> aspect : aspects) {
+            data.discover(idOf(aspect));
+        }
+        sync(player);
+    }
+
+    public static void resetForCommand(ServerPlayer player) {
+        data(player).copyFrom(new AspectPoolData());
+        seedIfNew(player);
     }
 
     public static ResourceLocation idOf(Holder<IAspect> aspect) {

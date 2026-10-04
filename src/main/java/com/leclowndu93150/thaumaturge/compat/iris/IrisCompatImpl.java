@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 /** Iris-only implementation loaded reflectively by {@link IrisCompat}. */
 public final class IrisCompatImpl {
     private static final String ALPHA_TEST_UNIFORM = "AlphaTestValue";
-    private static final ResourceLocation NODE_TEXTURE = TCIds.rl("textures/misc/nodes.png");
+    private static final ResourceLocation NODE_TEXTURE = TCIds.rl("textures/misc/auranodes.png");
 
     private IrisCompatImpl() {}
 

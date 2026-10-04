@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public final class TCBiomes {
     public static final ResourceKey<Biome> MAGICAL_FOREST = key("magical_forest");
+    public static final ResourceKey<Biome> MAGICAL_FOREST_CAVES = key("magical_forest_caves");
     public static final ResourceKey<Biome> EERIE = key("eerie");
     public static final ResourceKey<Biome> ELDRITCH = key("eldritch");
     public static final ResourceKey<Biome> TAINTED_LANDS = key("tainted_lands");
@@ -64,6 +65,7 @@ public final class TCBiomes {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         context.register(MAGICAL_FOREST, magicalForest(placed, carvers));
+        context.register(MAGICAL_FOREST_CAVES, magicalForestCaves(placed, carvers));
         context.register(EERIE, eerie(placed, carvers));
         context.register(ELDRITCH, eldritch(placed, carvers));
         context.register(TAINTED_LANDS, taintedLands(placed, carvers));
@@ -100,6 +102,45 @@ public final class TCBiomes {
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MANA_PODS);
         generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, VegetationPlacements.PATCH_WATERLILY);
         BiomeDefaultFeatures.addDefaultExtraVegetation(generation);
+
+        return new Biome.BiomeBuilder()
+                .hasPrecipitation(true)
+                .temperature(MAGICAL_FOREST_TEMPERATURE)
+                .downfall(MAGICAL_FOREST_DOWNFALL)
+                .specialEffects(new BiomeSpecialEffects.Builder()
+                        .skyColor(calculateSkyColor(MAGICAL_FOREST_TEMPERATURE))
+                        .fogColor(DEFAULT_FOG_COLOR)
+                        .waterColor(MAGICAL_FOREST_WATER)
+                        .waterFogColor(DEFAULT_WATER_FOG_COLOR)
+                        .grassColorOverride(MAGICAL_FOREST_GRASS)
+                        .foliageColorOverride(MAGICAL_FOREST_FOLIAGE)
+                        .build())
+                .mobSpawnSettings(mobs.build())
+                .generationSettings(generation.build())
+                .build();
+    }
+
+    private static Biome magicalForestCaves(
+            HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers) {
+        MobSpawnSettings.Builder mobs = new MobSpawnSettings.Builder();
+        BiomeDefaultFeatures.commonSpawns(mobs);
+        mobs.addSpawn(MobCategory.MONSTER, new MobSpawnSettings.SpawnerData(TCEntities.WISP.get(), 20, 1, 2));
+
+        BiomeGenerationSettings.Builder generation = new BiomeGenerationSettings.Builder(placed, carvers);
+        globalGeneration(generation);
+        BiomeDefaultFeatures.addDefaultOres(generation);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_GRASS);
+        generation.addFeature(
+                GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_AMBIENT_GRASS);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_POND);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_TREES);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_MUSHROOMS);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_FLORA);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_VISHROOMS);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_SHIMMERLEAFS);
+        generation.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_MANA_PODS);
+        generation.addFeature(GenerationStep.Decoration.UNDERGROUND_DECORATION, TCPlacedFeatures.MAGICAL_CAVE_CRYSTALS);
+        generation.addFeature(GenerationStep.Decoration.TOP_LAYER_MODIFICATION, TCPlacedFeatures.MAGICAL_CAVE_NODES);
 
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(true)
@@ -181,7 +222,7 @@ public final class TCBiomes {
                 .build();
     }
     /**
-     * Tainted Lands. It may occur naturally through the small TerraBlender taint region
+     * Tainted Lands. It may occur naturally through the small worldgen region
      * and can also overwrite already-generated terrain when an active infestation expands.
      */
     private static Biome taintedLands(

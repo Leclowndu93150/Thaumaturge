@@ -20,8 +20,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -39,8 +37,8 @@ public final class FocusEffectFrost implements FocusEffect {
 
     private static final int BASE_DAMAGE = 3;
     private static final int POWER_COMPLEXITY_FACTOR = 2;
-    private static final int SLOW_TICKS_PER_DURATION = 20;
-    private static final float POTENCY_DIVISOR = 3.0F;
+    private static final int FROZEN_TICKS_PER_DURATION = 20;
+    private static final int THAW_PER_TICK = 2;
     private static final float MAX_FREEZE_RADIUS = 16.0F;
     private static final int FREEZE_RADIUS_FACTOR = 2;
     private static final int MELT_DELAY_MIN = 60;
@@ -81,11 +79,11 @@ public final class FocusEffectFrost implements FocusEffect {
         if (target instanceof EntityHitResult entityHit && entityHit.getEntity() != null) {
             Entity struck = entityHit.getEntity();
             float damage = damageForDisplay(settings, ctx.power());
-            int duration = SLOW_TICKS_PER_DURATION * settings.value("duration");
-            int potency = (int) (1.0F + settings.value("power") * ctx.power() / POTENCY_DIVISOR);
+            int frozenTicks = FROZEN_TICKS_PER_DURATION * settings.value("duration");
             struck.hurt(level.damageSources().thrown(struck, ctx.caster()), damage);
-            if (struck instanceof LivingEntity living) {
-                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, potency));
+            if (struck instanceof LivingEntity living && living.canFreeze()) {
+                living.setTicksFrozen(Math.max(
+                        living.getTicksFrozen(), living.getTicksRequiredToFreeze() + frozenTicks * THAW_PER_TICK));
             }
         } else if (target instanceof BlockHitResult blockHit) {
             float f = Math.min(MAX_FREEZE_RADIUS, FREEZE_RADIUS_FACTOR * settings.value("power") * ctx.power());

@@ -20,6 +20,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -50,6 +51,12 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
     @Override
     protected boolean isRandomlyTicking() {
         return true;
+    }
+
+    @Override
+    protected boolean canBeReplacedWith(
+            FluidState state, BlockGetter level, BlockPos pos, Fluid fluid, Direction direction) {
+        return false;
     }
 
     @Override

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public final class WispyMoteParticle extends TCParticle {
+    private static final int EMISSIVE_LIGHT = 0x00F000F0;
     private static final int FRAME_COUNT = 16;
     private static final float PEAK_ALPHA = 0.6F;
     private static final float START_SIZE = 0.1F;
@@ -24,6 +25,7 @@ public final class WispyMoteParticle extends TCParticle {
     private static final double SPEED_LIMIT = 0.35;
 
     private final int targetEntityId;
+    private final boolean emissive;
     private Entity target;
 
     private WispyMoteParticle(
@@ -41,6 +43,7 @@ public final class WispyMoteParticle extends TCParticle {
         this.lifetime = (int) (options.age() + options.age() / 2.0F * this.random.nextFloat());
         this.gravity = options.gravity();
         this.targetEntityId = options.targetEntityId();
+        this.emissive = options.emissive();
         this.alpha = 0.0F;
         setMoonWind(WIND_SCALE);
     }
@@ -60,6 +63,11 @@ public final class WispyMoteParticle extends TCParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return TCParticleLayers.additiveSoft(this.sheet);
+    }
+
+    @Override
+    protected int getLightColor(float partialTick) {
+        return this.emissive ? EMISSIVE_LIGHT : super.getLightColor(partialTick);
     }
 
     private void seekTarget() {

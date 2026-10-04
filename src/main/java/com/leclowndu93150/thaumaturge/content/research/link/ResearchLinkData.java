@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,11 @@ public final class ResearchLinkData extends SavedData {
             new SavedData.Factory<>(ResearchLinkData::new, ResearchLinkData::load, DataFixTypes.LEVEL);
 
     private final List<Link> links;
+    private final Set<UUID> pendingPlayers = new HashSet<>();
+
+    Set<UUID> pendingPlayers() {
+        return pendingPlayers;
+    }
 
     public ResearchLinkData() {
         this(List.of());

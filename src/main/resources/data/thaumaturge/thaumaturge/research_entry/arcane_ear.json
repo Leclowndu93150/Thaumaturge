@@ -28,7 +28,6 @@
       "text": "research.thaumaturge.arcane_ear.stage_1",
       "recipes": [
         "thaumaturge:arcane_workbench/arcane_ear",
-        "thaumaturge:arcane_ear_toggle",
         "thaumaturge:arcane_ear_toggle"
       ]
     }

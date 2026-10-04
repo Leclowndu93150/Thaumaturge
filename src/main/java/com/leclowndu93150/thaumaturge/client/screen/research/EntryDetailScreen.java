@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
+import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget;
@@ -73,6 +74,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int PANE_W = 256;
@@ -112,9 +114,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int CHECKMARK_V = 207;
     private static final int CHECKMARK_SIZE = 10;
     private static final int CHECKMARK_OFFSET_X = 8;
+    private static final int PREREQ_ICON_SIZE = 16;
+    private static final int PREREQ_ICON_TEX_SIZE = 32;
+    private static final int PREREQ_UNKNOWN_TINT = 0xFF80BFFF;
+    private static final String PREREQ_MAP_PREFIX = "m_";
+    private static final String PREREQ_CHEST_PREFIX = "c_";
+    private static final String PREREQ_FLASK_PREFIX = "f_";
     private static final int CHECKMARK_DEPTH = 300;
 
-    private static final int REQ_TOP_Y_OFFSET = 210 - 16;
+    private static final int REQ_TOP_Y_OFFSET = 210 - 25;
     private static final int REQ_ROW_STEP = 18;
 
     private static final int COMPLETE_BUTTON_OFFSET_X = 20;
@@ -150,6 +158,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int BACK_W = 20;
     private static final int BACK_H = 12;
     private static final int BACK_OFFSET_X = 118;
+    private static final int STAGE_HISTORY_LEFT_X = 6;
+    private static final int STAGE_HISTORY_RIGHT_X = 86;
+    private static final int STAGE_HISTORY_CENTER_X = 52;
+    private static final int STAGE_HISTORY_DRAW_Y_OFFSET = 185;
+    private static final int STAGE_HISTORY_HIT_Y = 184;
+    private static final int STAGE_HISTORY_HIT_SIZE = 12;
 
     private static final int RECIPE_NAV_LEFT_OFFSET_X = 40;
     private static final int RECIPE_NAV_RIGHT_OFFSET_X = 204;
@@ -181,6 +195,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int RECIPE_BOOKMARK_TIP_W = 4;
     private static final int RECIPE_BOOKMARK_ICON_OFFSET = 7;
     private static final int RECIPE_BOOKMARK_TINT_SELECTED = 0xFFFF8080;
+    private static final int RECIPE_BOOKMARK_CYCLE_TICKS = 20;
     private static final int RECIPE_BOOKMARK_TINT_NORMAL = 0xFFFFFFFF;
 
     private static final int LABEL_TINT = 0x40FFFFFF;
@@ -300,7 +315,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final long HOLD_TIMEOUT_TICKS = 60;
     private int rhash;
     private boolean isComplete;
+    private int selectedStageIndex = -1;
     private int renderedStage = -1;
+    private int renderedProgressStage = -1;
     private boolean renderedComplete;
     private int renderedAddenda = -1;
     private final Deque<ResourceLocation> history = new ArrayDeque<>();
@@ -310,6 +327,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         this.entry = entry;
         this.entryId = entryId;
         this.parent = parent;
+        ThaumonomiconBrowserScreen.rememberEntry(entryId);
     }
 
     @Override
@@ -337,9 +355,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void rebuildPages() {
-        int currentStageIndex = currentStageIndex();
-        IResearchStage stage = entry.value().stages().get(currentStageIndex);
-        rhash = entryId.toString().hashCode() + currentStageIndex * 50;
+        int progressStage = currentStageIndex();
+        int displayedStage = displayedStageIndex();
+        IResearchStage stage = entry.value().stages().get(displayedStage);
+        rhash = entryId.toString().hashCode() + displayedStage * 50;
         List<String> addendaKeys = new ArrayList<>();
         for (ResearchAddendum addendum : unlockedAddenda()) {
             addendaKeys.add(addendum.textKey());
@@ -350,12 +369,19 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 stage.textKey(),
                 addendaKeys,
                 activeKnowledgeRowCount(),
-                isComplete,
+                false,
                 !stage.requiredResearch().isEmpty(),
                 !stage.obtain().isEmpty(),
                 !stage.craft().isEmpty(),
-                !stage.requiredKnowledge().isEmpty());
-        renderedStage = currentStageIndex;
+                !stage.requiredKnowledge().isEmpty(),
+                entry.value().stages().size() > 1
+                        && progressStage > 0
+                        && stage.requiredResearch().isEmpty()
+                        && stage.obtain().isEmpty()
+                        && stage.craft().isEmpty()
+                        && stage.requiredKnowledge().isEmpty());
+        renderedStage = displayedStage;
+        renderedProgressStage = progressStage;
         renderedComplete = isComplete;
         renderedAddenda = addendaKeys.size();
     }
@@ -364,7 +390,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     public void tick() {
         super.tick();
         int stageIndex = currentStageIndex();
-        if (stageIndex != renderedStage
+        if (displayedStageIndex() != renderedStage
+                || stageIndex != renderedProgressStage
                 || isComplete != renderedComplete
                 || unlockedAddenda().size() != renderedAddenda) {
             rebuildPages();
@@ -391,8 +418,19 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private List<ResourceLocation> displayRecipes(IResearchStage stage) {
         List<ResearchAddendum> addenda = unlockedAddenda();
-        if (addenda.isEmpty()) return stage.recipes();
         List<ResourceLocation> all = new ArrayList<>(stage.recipes());
+
+        List<IResearchStage> stages = entry.value().stages();
+        int finalStageIndex = stages.size() - 1;
+        if (hasRedundantFinalStage(stages)
+                && currentStageIndex() == finalStageIndex
+                && stage == stages.get(finalStageIndex - 1)) {
+            for (ResourceLocation recipe : stages.get(finalStageIndex).recipes()) {
+                if (!all.contains(recipe)) all.add(recipe);
+            }
+        }
+
+        if (addenda.isEmpty()) return all;
         for (ResearchAddendum addendum : addenda) {
             for (ResourceLocation rid : addendum.recipes()) {
                 if (!all.contains(rid)) all.add(rid);
@@ -447,6 +485,69 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         return Math.min(Math.max(0, rawStage), total - 1);
     }
 
+    private int displayedStageIndex() {
+        int progressStage = currentStageIndex();
+        if (selectedStageIndex >= 0) return Math.min(selectedStageIndex, progressStage);
+        if (progressStage == entry.value().stages().size() - 1
+                && hasRedundantFinalStage(entry.value().stages())) {
+            return progressStage - 1;
+        }
+        return progressStage;
+    }
+
+    static boolean hasRedundantFinalStage(List<IResearchStage> stages) {
+        if (stages.size() < 2) return false;
+
+        IResearchStage previous = stages.get(stages.size() - 2);
+        IResearchStage last = stages.getLast();
+        return (!previous.requiredResearch().isEmpty()
+                        || !previous.obtain().isEmpty()
+                        || !previous.craft().isEmpty()
+                        || !previous.requiredKnowledge().isEmpty())
+                && last.requiredResearch().isEmpty()
+                && last.obtain().isEmpty()
+                && last.craft().isEmpty()
+                && last.requiredKnowledge().isEmpty()
+                && previous.textKey().equals(last.textKey())
+                && last.recipes().containsAll(previous.recipes())
+                && previous.construct().equals(last.construct())
+                && previous.knowledge().equals(last.knowledge())
+                && previous.warp() == last.warp();
+    }
+
+    private boolean completedStageView() {
+        int progressStage = currentStageIndex();
+        return isComplete || displayedStageIndex() < progressStage;
+    }
+
+    private boolean canNavigateStageHistory() {
+        return currentPage == 0 && hasStageHistory();
+    }
+
+    private boolean hasStageHistory() {
+        return entry.value().stages().size() > 1
+                && currentStageIndex() > 0
+                && !hasRedundantFinalStage(entry.value().stages())
+                && !insertOpen()
+                && history.isEmpty();
+    }
+
+    private void stepHistoryStage(int delta) {
+        int target = displayedStageIndex() + delta;
+        if (target >= 0 && target <= currentStageIndex()) {
+            selectHistoryStage(target);
+        }
+    }
+
+    private void selectHistoryStage(int stageIndex) {
+        int progressStage = currentStageIndex();
+        int clamped = Mth.clamp(stageIndex, 0, progressStage);
+        selectedStageIndex = clamped == progressStage ? -1 : clamped;
+        currentPage = 0;
+        rebuildPages();
+        playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+    }
+
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -457,7 +558,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
         renderPaneBackground(graphics);
-        IResearchStage stage = entry.value().stages().get(currentStageIndex());
+        IResearchStage stage = entry.value().stages().get(displayedStageIndex());
         boolean insertOpen = insertOpen();
         int pageMouseX = insertOpen ? Integer.MIN_VALUE : mouseX;
         int pageMouseY = insertOpen ? Integer.MIN_VALUE : mouseY;
@@ -596,7 +697,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void renderRequirements(GuiGraphics graphics, IResearchStage stage, int x, int mouseX, int mouseY) {
         if (minecraft == null || minecraft.player == null) return;
         if (currentPage > 0) return;
-        if (isComplete) return;
+        boolean completedStage = completedStageView();
         Player player = minecraft.player;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
         int reqY = sh + REQ_TOP_Y_OFFSET;
@@ -613,25 +714,44 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             hasAny = true;
             renderRowLabel(graphics, x, reqY, LABEL_RESEARCH_V, mouseX, mouseY);
             renderResearchPrereqs(
-                    graphics, stage.requiredResearch(), knowledge, x, reqY, mouseX, mouseY, researchSatisfied);
+                    graphics,
+                    stage.requiredResearch(),
+                    knowledge,
+                    x,
+                    reqY,
+                    mouseX,
+                    mouseY,
+                    researchSatisfied,
+                    completedStage);
         }
         if (!stage.obtain().isEmpty()) {
             reqY -= REQ_ROW_STEP;
             hasAny = true;
             renderRowLabel(graphics, x, reqY, LABEL_OBTAIN_V, mouseX, mouseY);
-            renderItemRow(graphics, stage.obtain(), x, reqY, gameTime, mouseX, mouseY, true, obtainSatisfied);
+            renderItemRow(
+                    graphics, stage.obtain(), x, reqY, gameTime, mouseX, mouseY, true, obtainSatisfied, completedStage);
         }
         if (!stage.craft().isEmpty()) {
             reqY -= REQ_ROW_STEP;
             hasAny = true;
             renderRowLabel(graphics, x, reqY, LABEL_CRAFT_V, mouseX, mouseY);
-            renderItemRow(graphics, stage.craft(), x, reqY, gameTime, mouseX, mouseY, false, craftSatisfied);
+            renderItemRow(
+                    graphics, stage.craft(), x, reqY, gameTime, mouseX, mouseY, false, craftSatisfied, completedStage);
         }
         if (!stage.requiredKnowledge().isEmpty()) {
             reqY -= REQ_ROW_STEP;
             hasAny = true;
             renderRowLabel(graphics, x, reqY, LABEL_KNOW_V, mouseX, mouseY);
-            renderKnowledgeRow(graphics, stage.requiredKnowledge(), knowledge, x, reqY, mouseX, mouseY, knowSatisfied);
+            renderKnowledgeRow(
+                    graphics,
+                    stage.requiredKnowledge(),
+                    knowledge,
+                    x,
+                    reqY,
+                    mouseX,
+                    mouseY,
+                    knowSatisfied,
+                    completedStage);
         }
         if (hasAny) {
             reqY -= 12;
@@ -654,7 +774,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (allMet) {
                 int hrx = x + COMPLETE_BUTTON_OFFSET_X;
                 int hry = reqY + COMPLETE_BUTTON_Y_OFFSET;
-                if (hold) {
+                if (completedStage) {
+                    Component label = Component.translatable("tc.stage.completed");
+                    int lblWidth = font.width(label);
+                    graphics.drawString(font, label, x + 52 - lblWidth / 2, reqY - 4, COMPLETE_LABEL_COLOR, true);
+                } else if (hold) {
                     Component holdLabel = Component.translatable("tc.stage.hold");
                     int lblWidth = font.width(holdLabel);
                     graphics.drawString(font, holdLabel, x + 52 - lblWidth / 2, reqY - 4, COMPLETE_LABEL_COLOR, true);
@@ -678,7 +802,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     graphics.drawString(font, label, x + 52 - lblWidth / 2, reqY - 4, COMPLETE_LABEL_COLOR, true);
                 }
             }
-        } else {
+        } else if (!completedStage) {
             PacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
         }
     }
@@ -695,7 +819,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private void renderWarpIndicator(GuiGraphics graphics, IResearchStage stage, int x, int y, int mouseX, int mouseY) {
         if (minecraft == null || minecraft.player == null) return;
-        if (isComplete) return;
+        if (isComplete && displayedStageIndex() == currentStageIndex()) return;
         int warp = stage.warp();
         if (warp <= 0) return;
         if (warp > 5) warp = 5;
@@ -776,7 +900,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int mouseX,
             int mouseY,
             boolean obtain,
-            boolean[] satisfied) {
+            boolean[] satisfied,
+            boolean completedStage) {
         int spacing = reqs.size() > 6 ? SLOT_BUDGET / reqs.size() : SLOT_DEFAULT_SPACING;
         int shift = SLOT_BASE_SHIFT;
         int innerX = x + SLOT_INNER_OFFSET_X;
@@ -787,10 +912,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             ItemStack stack = pickRotatingItem(req, i);
             if (!stack.isEmpty()) {
                 graphics.renderItem(stack, slotX, y);
+                graphics.renderItemDecorations(font, stack, slotX, y);
             }
-            boolean met = obtain
-                    ? countMatching(player, req) >= req.amount()
-                    : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req);
+            boolean met = completedStage
+                    || (obtain
+                            ? countMatching(player, req) >= req.amount()
+                            : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req));
             satisfied[i] = met;
             if (met) {
                 renderCheckmark(graphics, slotX, y);
@@ -814,7 +941,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int y,
             int mouseX,
             int mouseY,
-            boolean[] satisfied) {
+            boolean[] satisfied,
+            boolean completedStage) {
         int spacing = prereqs.size() > 6 ? SLOT_BUDGET / prereqs.size() : SLOT_DEFAULT_SPACING;
         int shift = SLOT_BASE_SHIFT;
         int innerX = x + SLOT_INNER_OFFSET_X;
@@ -825,15 +953,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (aspect != null) {
                 AspectTagRenderer.render(graphics, slotX, y, aspect);
             } else {
-                graphics.drawString(
-                        font,
-                        Component.literal("?").withStyle(ChatFormatting.GOLD),
-                        slotX + 5,
-                        y + 4,
-                        0xFFFFFFFF,
-                        true);
+                drawPrereqIcon(graphics, slotX, y, prereq);
             }
-            boolean met = knowledge.isResearchComplete(prereq);
+            boolean met = completedStage || knowledge.isResearchComplete(prereq);
             satisfied[i] = met;
             if (met) {
                 renderCheckmark(graphics, slotX, y);
@@ -843,6 +965,51 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             }
             shift += spacing;
         }
+    }
+
+    private void drawPrereqIcon(GuiGraphics graphics, int x, int y, ResourceLocation prereq) {
+        Optional<Holder.Reference<IResearchEntry>> entry = minecraft
+                .player
+                .registryAccess()
+                .lookup(IResearchEntry.REGISTRY_KEY)
+                .flatMap(lookup -> lookup.get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, prereq)));
+        if (entry.isPresent()) {
+            EntryIconRenderer.drawResearchIcon(
+                    graphics,
+                    x,
+                    y,
+                    EntryIconRenderer.resolveIcon(entry.get().value(), minecraft.player.tickCount),
+                    false);
+            return;
+        }
+        ResourceLocation flagIcon = prereqFlagIcon(prereq.getPath());
+        GuiBlend.blitTinted(
+                graphics,
+                flagIcon != null ? flagIcon : UNKNOWN_ASPECT_TEXTURE,
+                x,
+                y,
+                PREREQ_ICON_SIZE,
+                PREREQ_ICON_SIZE,
+                0.0F,
+                0.0F,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                PREREQ_ICON_TEX_SIZE,
+                flagIcon != null ? 0xFFFFFFFF : PREREQ_UNKNOWN_TINT);
+    }
+
+    private static @Nullable ResourceLocation prereqFlagIcon(String path) {
+        if (path.startsWith(PREREQ_MAP_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_MAP;
+        }
+        if (path.startsWith(PREREQ_CHEST_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_CHEST;
+        }
+        if (path.startsWith(PREREQ_FLASK_PREFIX)) {
+            return TCScreenTextures.RESEARCH_PREREQ_FLASK;
+        }
+        return null;
     }
 
     private @Nullable Holder<IAspect> aspectPrerequisite(ResourceLocation researchId) {
@@ -892,7 +1059,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private int[] knowledgeSlotXs(List<KnowledgeReward> rewards, int innerX, int spacing) {
         int[] slotXs = new int[rewards.size()];
         int observationChips = ResearchNotes.stageObservationCost(
-                        entry.value(), entry.value().stages().get(currentStageIndex()))
+                        entry.value(), entry.value().stages().get(displayedStageIndex()))
                 .entries()
                 .size();
         int shift = SLOT_BASE_SHIFT;
@@ -921,15 +1088,16 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int y,
             int mouseX,
             int mouseY,
-            boolean[] satisfied) {
+            boolean[] satisfied,
+            boolean completedStage) {
         int spacing = knowledgeSpacing(rewards.size());
         int innerX = x + SLOT_INNER_OFFSET_X;
         int[] slotXs = knowledgeSlotXs(rewards, innerX, spacing);
-        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
+        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), displayedStageIndex());
         AspectList observationCost = ResearchNotes.stageObservationCost(
-                entry.value(), entry.value().stages().get(currentStageIndex()));
+                entry.value(), entry.value().stages().get(displayedStageIndex()));
         boolean observationAfford =
-                observationCost.isEmpty() || AspectPools.canAfford(minecraft.player, observationCost);
+                completedStage || observationCost.isEmpty() || AspectPools.canAfford(minecraft.player, observationCost);
         boolean observationDrawn = false;
         for (int i = 0; i < rewards.size(); i++) {
             KnowledgeReward reward = rewards.get(i);
@@ -938,7 +1106,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (reward.type() == KnowledgeType.THEORY) {
                 ResourceLocation learnKey = ResearchNoteData.learnKey(entryId, theoryOrdinal);
                 theoryOrdinal++;
-                met = knowledge.isResearchKnown(learnKey);
+                met = completedStage || knowledge.isResearchKnown(learnKey);
                 graphics.renderItem(new ItemStack(TCItems.RESEARCH_NOTE.get()), slotX, y);
                 if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                     List<Component> lines = new ArrayList<>();
@@ -969,7 +1137,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 for (int a = 0; a < entries.size(); a++) {
                     AspectInstance instance = entries.get(a);
                     int chipX = slotX + a * spacing;
-                    if (AspectPools.isDiscovered(minecraft.player, instance.aspect())) {
+                    boolean aspectDiscovered = AspectPools.isDiscovered(minecraft.player, instance.aspect());
+                    if (aspectDiscovered) {
                         int have = AspectPools.amount(minecraft.player, instance.aspect());
                         float alpha = 1.0F;
                         if (have < instance.amount()) {
@@ -985,9 +1154,6 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                                     .append(Component.literal(" " + have + "/" + instance.amount()))
                                     .withStyle(have >= instance.amount() ? ChatFormatting.GREEN : ChatFormatting.RED));
                             DeferredTooltip.set(lines, mouseX, mouseY);
-                        }
-                        if (have >= instance.amount()) {
-                            renderCheckmark(graphics, chipX, y);
                         }
                     } else {
                         GuiBlend.blitTinted(
@@ -1012,6 +1178,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                                     .withStyle(ChatFormatting.GRAY));
                             DeferredTooltip.set(lines, mouseX, mouseY);
                         }
+                    }
+                    if (completedStage
+                            || aspectDiscovered
+                                    && AspectPools.amount(minecraft.player, instance.aspect()) >= instance.amount()) {
+                        renderCheckmark(graphics, chipX, y);
                     }
                 }
             }
@@ -1112,7 +1283,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 slotY += space;
                 continue;
             }
-            Recipe<?> recipe = displays.get(0).value();
+            Recipe<?> recipe = displays.get(minecraft.player.tickCount / RECIPE_BOOKMARK_CYCLE_TICKS % displays.size())
+                    .value();
             ItemStack result = RecipeDisplayWidget.displayResultOf(recipe, minecraft.level.registryAccess());
             int x = sw + RECIPE_BOOKMARK_OFFSET_X;
             int shJitter = rng.nextInt(3);
@@ -1774,6 +1946,64 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 graphics.drawString(font, Component.translatable("recipe.return"), mouseX, mouseY, textColor, true);
             }
         }
+        if (canNavigateStageHistory()) {
+            int displayedStage = displayedStageIndex();
+            int progressStage = currentStageIndex();
+            if (displayedStage > 0) {
+                int leftX = sw + STAGE_HISTORY_LEFT_X;
+                drawTexturedRectScaled(
+                        graphics,
+                        leftX,
+                        sh + STAGE_HISTORY_DRAW_Y_OFFSET,
+                        ARROW_LEFT_U,
+                        ARROW_V,
+                        ARROW_W,
+                        ARROW_H,
+                        bob);
+                if (mouseInside(
+                        leftX - 1,
+                        sh + STAGE_HISTORY_HIT_Y,
+                        STAGE_HISTORY_HIT_SIZE,
+                        STAGE_HISTORY_HIT_SIZE,
+                        mouseX,
+                        mouseY)) {
+                    DeferredTooltip.set(Component.translatable("tc.research.previous_stage"), mouseX, mouseY);
+                }
+            }
+            if (displayedStage < progressStage) {
+                int rightX = sw + STAGE_HISTORY_RIGHT_X;
+                drawTexturedRectScaled(
+                        graphics,
+                        rightX,
+                        sh + STAGE_HISTORY_DRAW_Y_OFFSET,
+                        ARROW_RIGHT_U,
+                        ARROW_V,
+                        ARROW_W,
+                        ARROW_H,
+                        bob);
+                if (mouseInside(
+                        rightX - 1,
+                        sh + STAGE_HISTORY_HIT_Y,
+                        STAGE_HISTORY_HIT_SIZE,
+                        STAGE_HISTORY_HIT_SIZE,
+                        mouseX,
+                        mouseY)) {
+                    DeferredTooltip.set(Component.translatable("tc.research.next_stage"), mouseX, mouseY);
+                }
+            }
+            Component label = Component.translatable(
+                    "tc.research.stage.history",
+                    displayedStage + 1,
+                    entry.value().stages().size());
+            int labelWidth = font.width(label);
+            graphics.drawString(
+                    font,
+                    label,
+                    sw + STAGE_HISTORY_CENTER_X - labelWidth / 2,
+                    sh + STAGE_HISTORY_DRAW_Y_OFFSET + 2,
+                    TEXT_LINE_COLOR,
+                    false);
+        }
     }
 
     private boolean insertOpen() {
@@ -1835,7 +2065,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 1) {
-            onClose();
+            returnToBrowser();
             return true;
         }
         if (button == 0) {
@@ -1868,6 +2098,26 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (mx >= backX && mx < backX + BACK_W && my >= backY && my < backY + BACK_H) {
                 goBack();
                 return true;
+            }
+            if (canNavigateStageHistory()) {
+                int displayedStage = displayedStageIndex();
+                int progressStage = currentStageIndex();
+                int stageNavY = sh + STAGE_HISTORY_HIT_Y;
+                int leftX = sw + STAGE_HISTORY_LEFT_X - 1;
+                int rightX = sw + STAGE_HISTORY_RIGHT_X - 1;
+                if (displayedStage > 0
+                        && mouseInside(
+                                leftX, stageNavY, STAGE_HISTORY_HIT_SIZE, STAGE_HISTORY_HIT_SIZE, (int) mx, (int) my)) {
+                    selectHistoryStage(displayedStage - 1);
+                    return true;
+                }
+                if (displayedStage < progressStage
+                        && mouseInside(
+                                rightX, stageNavY, STAGE_HISTORY_HIT_SIZE, STAGE_HISTORY_HIT_SIZE, (int) mx, (int)
+                                        my)) {
+                    selectHistoryStage(displayedStage + 1);
+                    return true;
+                }
             }
             int aspectHitX = sw - 48;
             int aspectHitY = sh + BOOKMARK_ASPECT_CLICK_Y;
@@ -1928,7 +2178,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 return true;
             }
             if (showingConstruct) {
-                IResearchStage stage = entry.value().stages().get(currentStageIndex());
+                IResearchStage stage = entry.value().stages().get(displayedStageIndex());
                 ResearchConstruct construct = stage.construct().orElse(null);
                 if (construct != null) {
                     int previewCenterX = (width - 256) / 2 + 128;
@@ -1998,7 +2248,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     return true;
                 }
             }
-            IResearchStage stage = entry.value().stages().get(currentStageIndex());
+            IResearchStage stage = entry.value().stages().get(displayedStageIndex());
             int hitRecipe = hitRecipeBookmark(mx, my, stage);
             if (hitRecipe >= 0) {
                 ResourceLocation rid = displayRecipes(stage).get(hitRecipe);
@@ -2024,10 +2274,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
-            if (currentPage == 0 && !isComplete && !insertOpen() && handleTheoryNoteClick(mx, my, stage)) {
+            if (currentPage == 0 && !completedStageView() && !insertOpen() && handleTheoryNoteClick(mx, my, stage)) {
                 return true;
             }
-            if (currentPage == 0 && !isComplete && !hold && !insertOpen()) {
+            if (currentPage == 0 && !completedStageView() && !hold && !insertOpen()) {
                 if (hitStageComplete(mx, my, stage)) {
                     PacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
                     playSound(TCSounds.WRITE.get(), 0.66F, 1.0F);
@@ -2210,7 +2460,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int innerX = sw + SLOT_INNER_OFFSET_X;
         int[] slotXs = knowledgeSlotXs(rewards, innerX, spacing);
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
-        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
+        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), displayedStageIndex());
         for (int i = 0; i < rewards.size(); i++) {
             if (rewards.get(i).type() != KnowledgeType.THEORY) {
                 continue;
@@ -2250,7 +2500,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             craftSatisfied[i] = ResearchManager.isCraftSatisfied(
                     player, knowledge, stage.craft().get(i));
         }
-        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), currentStageIndex());
+        int theoryOrdinal = ResearchNotes.theoryRowsBefore(entry.value(), displayedStageIndex());
         for (int i = 0; i < stage.requiredKnowledge().size(); i++) {
             KnowledgeReward reward = stage.requiredKnowledge().get(i);
             if (reward.type() == KnowledgeType.THEORY) {
@@ -2294,16 +2544,30 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     @Override
     public void onClose() {
-        if (shownRecipe != null || showingAspects || showingKnowledge || showingConstruct) {
-            shownRecipe = null;
-            showingAspects = false;
-            showingKnowledge = false;
-            showingConstruct = false;
-            history.clear();
-            playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        if (!closeInsert()) {
+            super.onClose();
+        }
+    }
+
+    private void returnToBrowser() {
+        if (closeInsert()) {
             return;
         }
+        ThaumonomiconBrowserScreen.rememberEntry(null);
         if (minecraft != null) minecraft.setScreen(parent);
+    }
+
+    private boolean closeInsert() {
+        if (shownRecipe == null && !showingAspects && !showingKnowledge && !showingConstruct) {
+            return false;
+        }
+        shownRecipe = null;
+        showingAspects = false;
+        showingKnowledge = false;
+        showingConstruct = false;
+        history.clear();
+        playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        return true;
     }
 
     @Override
@@ -2312,7 +2576,46 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             onClose();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        switch (keyCode) {
+            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_UP, GLFW.GLFW_KEY_PAGE_UP -> {
+                if (!insertOpen()) {
+                    prevPage();
+                }
+                return true;
+            }
+            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_DOWN, GLFW.GLFW_KEY_PAGE_DOWN -> {
+                if (!insertOpen()) {
+                    nextPage();
+                }
+                return true;
+            }
+            case GLFW.GLFW_KEY_BACKSPACE -> {
+                goBack();
+                return true;
+            }
+            default -> {
+                return super.keyPressed(keyCode, scanCode, modifiers);
+            }
+        }
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (insertOpen() || scrollY == 0.0) {
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+        if (hasShiftDown()) {
+            if (hasStageHistory()) {
+                stepHistoryStage(scrollY > 0.0 ? -1 : 1);
+            }
+            return true;
+        }
+        if (scrollY > 0.0) {
+            prevPage();
+        } else {
+            nextPage();
+        }
+        return true;
     }
 
     @Override

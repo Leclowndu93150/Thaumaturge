@@ -38,9 +38,7 @@ public final class DeviceCapabilities {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 TCBlockEntities.ITEM_GRATE.get(),
-                (be, side) -> side == Direction.UP && be.getBlockState().getValue(BlockItemGrate.OPEN)
-                        ? be.inventory()
-                        : null);
+                (be, side) -> side == Direction.UP ? be.inventory() : null);
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK, TCBlockEntities.EVERFULL_URN.get(), (be, side) -> be.getTank());
         event.registerBlockEntity(

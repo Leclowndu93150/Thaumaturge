@@ -45,6 +45,7 @@ public final class ScanEntryBootstrap {
                 blockReg,
                 TCBlocks.LOG_GREATWOOD.get(),
                 TCBlocks.LOG_SILVERWOOD.get(),
+                TCBlocks.SILVERWOOD_NODE_LOG.get(),
                 TCBlocks.WOOD_GREATWOOD.get(),
                 TCBlocks.WOOD_SILVERWOOD.get(),
                 TCBlocks.STRIPPED_LOG_GREATWOOD.get(),
@@ -61,7 +62,11 @@ public final class ScanEntryBootstrap {
                 blocks(
                         blockReg,
                         concat(
-                                List.of(TCBlocks.ORE_AMBER.get(), TCBlocks.ORE_CINNABAR.get()),
+                                List.of(
+                                        TCBlocks.ORE_AMBER.get(),
+                                        TCBlocks.ORE_CINNABAR.get(),
+                                        TCBlocks.DEEPSLATE_ORE_AMBER.get(),
+                                        TCBlocks.DEEPSLATE_ORE_CINNABAR.get()),
                                 List.of(
                                         TCBlocks.CRYSTAL_AER.get(),
                                         TCBlocks.CRYSTAL_IGNIS.get(),
@@ -223,8 +228,20 @@ public final class ScanEntryBootstrap {
         register(ctx, "dragonbreath", "scanned/dragonbreath", null, items(itemReg, Items.DRAGON_BREATH), null);
         register(ctx, "totemundying", "scanned/totemundying", null, items(itemReg, Items.TOTEM_OF_UNDYING), null);
         register(ctx, "pechwand", "scanned/pechwand", null, items(itemReg, TCItems.PECH_WAND.get()), null);
-        register(ctx, "oreamber", "scanned/oreamber", blocks(blockReg, TCBlocks.ORE_AMBER.get()), null, null);
-        register(ctx, "orecinnabar", "scanned/orecinnabar", blocks(blockReg, TCBlocks.ORE_CINNABAR.get()), null, null);
+        register(
+                ctx,
+                "oreamber",
+                "scanned/oreamber",
+                blocks(blockReg, TCBlocks.ORE_AMBER.get(), TCBlocks.DEEPSLATE_ORE_AMBER.get()),
+                null,
+                null);
+        register(
+                ctx,
+                "orecinnabar",
+                "scanned/orecinnabar",
+                blocks(blockReg, TCBlocks.ORE_CINNABAR.get(), TCBlocks.DEEPSLATE_ORE_CINNABAR.get()),
+                null,
+                null);
         register(
                 ctx,
                 "plantcinderpearl",

@@ -13,13 +13,16 @@ import com.leclowndu93150.thaumaturge.data.datamap.AuraModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.ChampionWhitelistProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.EntityAspectsProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.FuelValuesProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.GolemAccessoryItemProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.InfernalBonusProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.StrippingProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.TaintedProfileProvider;
 import com.leclowndu93150.thaumaturge.data.lang.TCEnglishProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCEntityLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGameplayLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TCGlobalLootModifierProvider;
+import com.leclowndu93150.thaumaturge.data.loot.TCTaintedLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.model.TCModelProvider;
 import com.leclowndu93150.thaumaturge.data.recipe.TCRecipeProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TCBiomeTagsProvider;
@@ -80,6 +83,8 @@ public final class TCDataGenerators {
         event.createProvider(EntityAspectsProvider::new);
         event.createProvider(ChampionWhitelistProvider::new);
         event.createProvider(InfernalBonusProvider::new);
+        event.createProvider(GolemAccessoryItemProvider::new);
+        event.createProvider(TaintedProfileProvider::new);
         event.createProvider(StrippingProvider::new);
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
@@ -103,6 +108,8 @@ public final class TCDataGenerators {
                         new LootTableProvider.SubProviderEntry(TCBlockLootSubProvider::new, LootContextParamSets.BLOCK),
                         new LootTableProvider.SubProviderEntry(
                                 TCEntityLootSubProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(
+                                TCTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                         new LootTableProvider.SubProviderEntry(
                                 TCGameplayLootSubProvider::new, LootContextParamSets.CHEST)),
                 lookupProvider));

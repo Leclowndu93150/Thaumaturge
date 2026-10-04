@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,16 +38,39 @@ public final class BlockWorkQueues {
             float durability,
             float durabilityMax,
             int delay,
-            float visCost) {
+            float visCost,
+            @Nullable ResourceKey<IAspect> visAspect) {
 
         BreakerTask withDelay(int delay) {
             return new BreakerTask(
-                    pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
+                    pos,
+                    source,
+                    playerId,
+                    fx,
+                    silk,
+                    fortune,
+                    strength,
+                    durability,
+                    durabilityMax,
+                    delay,
+                    visCost,
+                    visAspect);
         }
 
         BreakerTask withDurability(float durability) {
             return new BreakerTask(
-                    pos, source, playerId, fx, silk, fortune, strength, durability, durabilityMax, delay, visCost);
+                    pos,
+                    source,
+                    playerId,
+                    fx,
+                    silk,
+                    fortune,
+                    strength,
+                    durability,
+                    durabilityMax,
+                    delay,
+                    visCost,
+                    visAspect);
         }
 
         public static final class Builder {
@@ -60,6 +85,7 @@ public final class BlockWorkQueues {
             private float durabilityMax = 1.0F;
             private int delay;
             private float visCost;
+            private @Nullable ResourceKey<IAspect> visAspect;
 
             Builder(BlockPos pos, BlockState source, Player player) {
                 this.pos = pos.immutable();
@@ -98,8 +124,9 @@ public final class BlockWorkQueues {
                 return this;
             }
 
-            public Builder visCost(float visCost) {
+            public Builder visCost(float visCost, ResourceKey<IAspect> visAspect) {
                 this.visCost = visCost;
+                this.visAspect = visAspect;
                 return this;
             }
 
@@ -117,7 +144,8 @@ public final class BlockWorkQueues {
                                 durability,
                                 durabilityMax,
                                 delay,
-                                visCost));
+                                visCost,
+                                visAspect));
             }
         }
     }
@@ -136,7 +164,8 @@ public final class BlockWorkQueues {
             boolean silk,
             int fortune,
             Predicate<SwapContext> allowSwap,
-            float visCost) {
+            float visCost,
+            @Nullable ResourceKey<IAspect> visAspect) {
 
         SwapperTask spreadTo(BlockPos neighbour) {
             return new SwapperTask(
@@ -153,7 +182,8 @@ public final class BlockWorkQueues {
                     silk,
                     fortune,
                     allowSwap,
-                    visCost);
+                    visCost,
+                    visAspect);
         }
 
         public static final class Builder {
@@ -171,6 +201,7 @@ public final class BlockWorkQueues {
             private int fortune;
             private Predicate<SwapContext> allowSwap = context -> true;
             private float visCost;
+            private @Nullable ResourceKey<IAspect> visAspect;
 
             Builder(BlockPos pos, @Nullable BlockState source, @Nullable BlockState target, Player player) {
                 this.pos = pos.immutable();
@@ -216,8 +247,9 @@ public final class BlockWorkQueues {
                 return this;
             }
 
-            public Builder visCost(float visCost) {
+            public Builder visCost(float visCost, ResourceKey<IAspect> visAspect) {
                 this.visCost = visCost;
+                this.visAspect = visAspect;
                 return this;
             }
 
@@ -238,7 +270,8 @@ public final class BlockWorkQueues {
                                 silk,
                                 fortune,
                                 allowSwap,
-                                visCost));
+                                visCost,
+                                visAspect));
             }
         }
     }

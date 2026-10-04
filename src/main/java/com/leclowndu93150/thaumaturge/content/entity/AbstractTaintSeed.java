@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
@@ -141,9 +142,7 @@ public abstract class AbstractTaintSeed extends Monster implements ITaintedMob {
     private void applyAuraTouch(ServerLevel server) {
         double radius = getArea() * FLUX_TAINT_RADIUS_MULT;
         for (LivingEntity target : server.getEntitiesOfClass(
-                LivingEntity.class,
-                this.getBoundingBox().inflate(radius),
-                e -> e != this && !(e instanceof ITaintedMob))) {
+                LivingEntity.class, this.getBoundingBox().inflate(radius), e -> e != this && !MobTraits.isTainted(e))) {
             target.addEffect(new MobEffectInstance(
                     TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
         }
