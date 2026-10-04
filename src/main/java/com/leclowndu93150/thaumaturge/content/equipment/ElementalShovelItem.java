@@ -148,7 +148,7 @@ public final class ElementalShovelItem extends Item implements IArchitect {
     }
 
     @Override
-    public List<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
+    public List<BlockPos> previewBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
         List<BlockPos> blocks = new ArrayList<>();
         if (!player.isShiftKeyDown()) {
             return blocks;
@@ -167,7 +167,7 @@ public final class ElementalShovelItem extends Item implements IArchitect {
     }
 
     @Override
-    public @Nullable HitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity caster) {
+    public @Nullable HitResult aim(ItemStack stack, Level level, LivingEntity caster) {
         double range = caster instanceof Player player ? player.blockInteractionRange() : 4.5;
         Vec3 eye = caster.getEyePosition();
         Vec3 end = eye.add(caster.getViewVector(1.0F).scale(range));
@@ -175,12 +175,12 @@ public final class ElementalShovelItem extends Item implements IArchitect {
     }
 
     @Override
-    public boolean useBlockHighlight(ItemStack stack) {
+    public boolean replacesBlockHighlight(ItemStack stack) {
         return true;
     }
 
     @Override
-    public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, EnumAxis axis) {
+    public boolean showsAxis(ItemStack stack, Level level, Player player, Direction side, Direction.Axis axis) {
         return false;
     }
 }

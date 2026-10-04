@@ -69,7 +69,7 @@ final class JadeConfig {
             return switch (this) {
                 case OFF -> false;
                 case ON -> true;
-                case GOGGLES -> GogglesAccess.wearsGoggles(accessor.getPlayer());
+                case GOGGLES -> GogglesAccess.wearsRevealingGear(accessor.getPlayer());
             };
         }
     }

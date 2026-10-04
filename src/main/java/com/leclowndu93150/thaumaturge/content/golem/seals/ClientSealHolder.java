@@ -19,7 +19,7 @@ public final class ClientSealHolder {
     }
 
     public static void put(SealEntity seal) {
-        SEALS.put(seal.getSealPos(), seal);
+        SEALS.put(seal.pos(), seal);
     }
 
     public static void remove(SealPos pos) {

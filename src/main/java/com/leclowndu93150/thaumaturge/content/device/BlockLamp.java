@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -24,6 +25,12 @@ public abstract class BlockLamp extends BaseEntityBlock {
     protected BlockLamp(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.DOWN).setValue(BlockStateProperties.ENABLED, false));
+    }
+
+    public static void showLit(Level level, BlockPos pos, BlockState state, boolean lit) {
+        if (state.getValue(BlockStateProperties.ENABLED) != lit) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, lit), Block.UPDATE_ALL);
+        }
     }
 
     @Override

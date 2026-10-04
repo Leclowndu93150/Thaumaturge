@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -17,14 +16,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import org.jspecify.annotations.Nullable;
 
-public class CrimsonBladeItem extends Item implements IWarpingGear {
+public class CrimsonBladeItem extends Item {
     private static final int REPAIR_INTERVAL_TICKS = 20;
     private static final int CRIMSON_BLADE_WARP = 2;
     private static final int WEAKNESS_TICKS = 60;
     private static final int HUNGER_TICKS = 120;
 
     public CrimsonBladeItem(Properties properties) {
-        super(properties);
+        super(GearWarp.with(properties, CRIMSON_BLADE_WARP));
     }
 
     @Override
@@ -50,8 +49,4 @@ public class CrimsonBladeItem extends Item implements IWarpingGear {
         super.appendHoverText(stack, context, display, tooltip, flag);
     }
 
-    @Override
-    public int getWarp(ItemStack stack, LivingEntity wearer) {
-        return CRIMSON_BLADE_WARP;
-    }
 }

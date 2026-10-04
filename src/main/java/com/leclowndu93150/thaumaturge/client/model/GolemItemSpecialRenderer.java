@@ -26,7 +26,7 @@ public final class GolemItemSpecialRenderer implements SpecialModelRenderer<Gole
 
     @Override
     public GolemProperties extractArgument(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault()).copy();
+        return stack.getOrDefault(TCDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
     }
 
     @Override

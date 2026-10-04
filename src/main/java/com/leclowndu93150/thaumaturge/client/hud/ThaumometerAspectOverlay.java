@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -87,7 +88,7 @@ public final class ThaumometerAspectOverlay {
             drawTags(event.getPoseStack(), mc, pos.getX(), pos.getY() + SPACE_ABOVE_LIFT, pos.getZ(), nodeAspects, Direction.UP);
             return;
         }
-        ItemStack pick = ScanningManager.getItemFromParms(mc.player, pos);
+        ItemStack pick = ScanningManager.stackOf(mc.player, ScanTarget.block(pos));
         if (pick.isEmpty()) {
             resetAnimation();
             return;

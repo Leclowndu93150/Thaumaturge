@@ -15,8 +15,8 @@ public final class SealGuiOpener {
             return;
         }
         serverPlayer.openMenu(new SimpleMenuProvider((containerId, inventory, menuPlayer) -> new MenuSealBase(containerId, inventory, seal), Component.translatable("gui.thaumaturge.seal")), buf -> {
-            buf.writeBlockPos(seal.getSealPos().pos());
-            buf.writeEnum(seal.getSealPos().face());
+            buf.writeBlockPos(seal.pos().pos());
+            buf.writeEnum(seal.pos().face());
         });
     }
 }

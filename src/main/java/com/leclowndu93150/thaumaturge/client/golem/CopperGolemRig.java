@@ -73,7 +73,7 @@ public final class CopperGolemRig extends CopperGolemModel {
         if (!(renderState instanceof GolemRenderState state) || state.props == null) {
             return;
         }
-        boolean walking = state.props.getLegs() != TCGolemParts.LEGS_ROLLER.get() && state.props.getLegs() != TCGolemParts.LEGS_FLYER.get();
+        boolean walking = state.props.legs() != TCGolemParts.LEGS_ROLLER.get() && state.props.legs() != TCGolemParts.LEGS_FLYER.get();
         rightLeg.visible = walking;
         leftLeg.visible = walking;
         antenna.visible = state.accessories.stream().noneMatch(accessory -> accessory.group() == GolemAccessory.Group.HAT);
@@ -84,7 +84,7 @@ public final class CopperGolemRig extends CopperGolemModel {
         if (state.attackTime > 0.0F) {
             rightArm.xRot -= Mth.sin(state.attackTime * Mth.PI) * 1.8F;
         }
-        if (state.combat && state.props.getArms() == TCGolemParts.ARMS_DARTS.get()) {
+        if (state.combat && state.props.arms() == TCGolemParts.ARMS_DARTS.get()) {
             rightArm.xRot = leftArm.xRot = -Mth.HALF_PI + state.xRot * Mth.DEG_TO_RAD;
             rightArm.yRot = leftArm.yRot = 0.0F;
             rightArm.zRot = leftArm.zRot = 0.0F;

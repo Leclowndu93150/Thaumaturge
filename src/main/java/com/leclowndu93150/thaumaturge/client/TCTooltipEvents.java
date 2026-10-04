@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.infusion.IInfusionStabiliser;
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -48,10 +48,9 @@ public final class TCTooltipEvents {
         if (warp > 0) {
             event.getToolTip().add(1, Component.translatable("item.thaumaturge.warping").withStyle(ChatFormatting.DARK_PURPLE));
         }
-        if (event.getItemStack().getItem() instanceof IRechargable rechargable) {
-            event.getToolTip().add(1,
-                    Component.translatable("tooltip.thaumaturge.charge", RechargeAccess.getCharge(event.getItemStack()), rechargable.getMaxCharge(event.getItemStack(), event.getEntity()))
-                            .withStyle(ChatFormatting.AQUA));
+        ChargeProfile charge = RechargeAccess.profile(event.getItemStack());
+        if (charge != null) {
+            event.getToolTip().add(1, Component.translatable("tooltip.thaumaturge.charge", RechargeAccess.getCharge(event.getItemStack()), charge.capacity()).withStyle(ChatFormatting.AQUA));
         }
         if (event.getItemStack().getItem() instanceof BlockItem blockItem && isStabiliser(blockItem.getBlock()) && KnowledgeAccess.of(event.getEntity()).isResearchComplete(INFUSION_RESEARCH)) {
             event.getToolTip().add(Component.translatable("tooltip.thaumaturge.infusion_stabiliser").withStyle(ChatFormatting.DARK_PURPLE));

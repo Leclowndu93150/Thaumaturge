@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
 import com.leclowndu93150.thaumaturge.registry.TCAttachments;
@@ -13,7 +14,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,23 +21,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class GrappleGunItem extends Item implements IRechargable {
+public final class GrappleGunItem extends Item {
     private static final int MAX_CHARGE = 100;
     private static final float LAUNCH_PITCH_OFFSET = -5.0F;
     private static final float LAUNCH_VELOCITY = 1.5F;
 
     public GrappleGunItem(Properties properties) {
-        super(properties);
-    }
-
-    @Override
-    public int getMaxCharge(ItemStack stack, LivingEntity holder) {
-        return MAX_CHARGE;
-    }
-
-    @Override
-    public ChargeDisplay showInHud(ItemStack stack, LivingEntity holder) {
-        return ChargeDisplay.NORMAL;
+        super(properties.component(TCDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
     }
 
     @Override

@@ -64,8 +64,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
     public void extractRenderState(EntityThaumaturgeGolem entity, GolemRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         ArmedEntityRenderState.extractArmedEntityRenderState(entity, state, itemModelResolver, partialTicks);
-        state.props = ((GolemProperties) entity.getProperties()).copy();
-        state.color = entity.getGolemColor();
+        state.props = entity.properties();
+        state.color = entity.color();
         state.bodyRot = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
         state.headYawDelta = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot) - state.bodyRot;
         state.pitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
@@ -92,7 +92,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
         state.holdingItem = !held.isEmpty();
         state.heldItemIsBlock = held.getItem() instanceof BlockItem;
         itemModelResolver.updateForTopItem(state.heldItem, held, ItemDisplayContext.FIXED, entity.level(), entity, 0);
-        List<ItemStack> carrying = entity.getCarrying();
+        List<ItemStack> carrying = entity.hands().contents();
         ItemStack hauled = carrying.size() > 1 ? carrying.get(1) : ItemStack.EMPTY;
         state.haulingItem = !hauled.isEmpty();
         state.haulerItemIsBlock = hauled.getItem() instanceof BlockItem;
@@ -124,7 +124,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
     }
 
     public static void submitParts(CopperGolemRig model, GolemAccessoryRenderTable accessoryRenderers, GolemRenderState state, PoseStack pose, SubmitNodeCollector collector, boolean xray, int color) {
-        Identifier material = state.props.getMaterial().texture();
+        Identifier material = state.props.material().texture();
         Identifier skin = GolemSkins.forMaterial(material);
         RenderType skinType = xray ? xrayType(skin) : ARGB.alpha(color) < 255 ? RenderTypes.entityTranslucent(skin) : RenderTypes.entityCutout(skin);
         collector.submitModel(model, state, pose, skinType, state.lightCoords, OverlayTexture.NO_OVERLAY, color, null, 0, null);
@@ -169,10 +169,10 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
 
     private static List<GolemPartModel> attachedParts(GolemProperties props, GolemPartModel.AttachPoint point) {
         List<GolemPartModel> out = new ArrayList<>();
-        addPart(out, props.getHead().model(), point);
-        addPart(out, props.getArms().model(), point);
-        addPart(out, props.getLegs().model(), point);
-        addPart(out, props.getAddon().model(), point);
+        addPart(out, props.head().model(), point);
+        addPart(out, props.arms().model(), point);
+        addPart(out, props.legs().model(), point);
+        addPart(out, props.addon().model(), point);
         return out;
     }
 

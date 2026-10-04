@@ -4,10 +4,10 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedAlchemicalFurnaceStructure;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockSmelter;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectItemStorage;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import net.minecraft.core.Direction;
@@ -56,8 +56,8 @@ public final class TCCapabilities {
     }
 
     private static void devices(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_GROWTH.get(), (be, side) -> be);
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be);
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_GROWTH.get(), (be, side) -> be.intake());
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be.intake());
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.ESSENTIA_RESERVOIR.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
@@ -93,11 +93,12 @@ public final class TCCapabilities {
     }
 
     private static void essentiaItems(RegisterCapabilitiesEvent event) {
-        event.registerItem(EssentiaCapabilities.CONTAINER, (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(), TCItems.PHIAL.get(), TCItems.ESSENTIA_CRYSTAL.get(), TCItems.MANA_BEAN.get(),
-                TCItems.JAR_NORMAL.get(), TCItems.JAR_VOID.get());
-        event.registerItem(EssentiaCapabilities.ITEM_STORAGE, (stack, ctx) -> new SingleAspectItemStorage(stack, (IEssentiaContainerItem) stack.getItem(), jarCapacity(stack), false),
-                TCItems.JAR_NORMAL.get(), TCItems.JAR_VOID.get());
-        event.registerItem(EssentiaCapabilities.ITEM_STORAGE, (stack, ctx) -> new SingleAspectItemStorage(stack, TCItems.PHIAL.get(), PhialItem.BASE_AMOUNT, true), TCItems.PHIAL.get());
+        event.registerItem(EssentiaCapabilities.CONTAINER, (stack, ctx) -> ComponentEssentia.phial(stack), TCItems.PHIAL.get());
+        event.registerItem(EssentiaCapabilities.CONTAINER, (stack, ctx) -> ComponentEssentia.crystal(stack), TCItems.ESSENTIA_CRYSTAL.get(), TCItems.MANA_BEAN.get());
+        event.registerItem(EssentiaCapabilities.CONTAINER, (stack, ctx) -> ComponentEssentia.jar(stack), TCItems.JAR_NORMAL.get(), TCItems.JAR_VOID.get());
+        event.registerItem(EssentiaCapabilities.ITEM_STORAGE, (stack, ctx) -> new SingleAspectItemStorage(stack, ComponentEssentia::jar, jarCapacity(stack), false), TCItems.JAR_NORMAL.get(),
+                TCItems.JAR_VOID.get());
+        event.registerItem(EssentiaCapabilities.ITEM_STORAGE, (stack, ctx) -> new SingleAspectItemStorage(stack, ComponentEssentia::phial, PhialItem.BASE_AMOUNT, true), TCItems.PHIAL.get());
     }
 
     private static int jarCapacity(ItemStack stack) {

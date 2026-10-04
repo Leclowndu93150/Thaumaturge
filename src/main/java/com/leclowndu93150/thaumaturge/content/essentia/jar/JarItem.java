@@ -3,11 +3,9 @@ package com.leclowndu93150.thaumaturge.content.essentia.jar;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,40 +21,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class JarItem extends BlockItem implements IEssentiaContainerItem {
+public class JarItem extends BlockItem {
 
     public JarItem(Block block, Properties properties) {
         super(block, properties);
     }
 
     @Override
-    public AspectList getAspects(ItemStack stack) {
-        EssentiaList essentia = stack.get(TCDataComponents.ESSENTIA_CONTENTS);
-        return essentia == null ? AspectList.EMPTY : essentia.contents();
-    }
-
-    @Override
-    public void setAspects(ItemStack stack, AspectList aspects) {
-        if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TCDataComponents.ESSENTIA_CONTENTS);
-            return;
-        }
-        stack.set(TCDataComponents.ESSENTIA_CONTENTS, new EssentiaList(aspects));
-    }
-
-    @Override
-    public boolean ignoreContainedAspects() {
-        return false;
-    }
-
-    @Override
     public boolean isBarVisible(ItemStack stack) {
-        return !getAspects(stack).isEmpty();
+        return !ComponentEssentia.jar(stack).getAspects().isEmpty();
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        AspectList list = getAspects(stack);
+        AspectList list = ComponentEssentia.jar(stack).getAspects();
         if (list.isEmpty()) {
             return 0;
         }
@@ -67,7 +45,7 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        AspectList list = getAspects(stack);
+        AspectList list = ComponentEssentia.jar(stack).getAspects();
         if (list.isEmpty()) {
             return 0;
         }
@@ -88,7 +66,7 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
         if (player == null)
             return super.useOn(context);
         if (level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic) {
-            AspectList aspects = getAspects(stack);
+            AspectList aspects = ComponentEssentia.jar(stack).getAspects();
             // We use Direction.UP to allow insertion/extraction from all faces with fials
             if (alembic.aspectKey() != null) {
                 Holder<IAspect> aspect = EssentiaTransportHelper.resolve(level, alembic.aspectKey());
@@ -102,7 +80,7 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
                         int taken = alembic.takeEssentia(aspect, alembicAmount, Direction.UP);
                         if (taken > 0) {
                             ItemStack filled = stack.copyWithCount(1);
-                            setAspects(filled, aspects.add(aspect, taken));
+                            ComponentEssentia.jar(filled).setAspects(aspects.add(aspect, taken));
                             if (stack.getCount() == 1) {
                                 player.setItemInHand(context.getHand(), filled);
                             } else {

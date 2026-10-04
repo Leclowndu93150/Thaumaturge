@@ -1,8 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.content.entity.eldritch.CastingArms;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -11,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -40,11 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchGuardian extends Monster implements RangedAttackMob, IEldritchMob {
-    private static final byte ARM_LIFT_LEFT_EVENT = 15;
-    private static final byte ARM_LIFT_RIGHT_EVENT = 16;
-    private static final float ARM_LIFT_BLAST = 0.5F;
-    private static final float ARM_LIFT_DECAY = 0.05F;
+public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
     private static final float SCREECH_CHANCE = 0.15F;
     private static final int WITHER_TICKS = 400;
     private static final int FOG_INTERVAL_TICKS = 100;
@@ -53,9 +49,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
     private static final float ORB_SPEED = 1.1F;
     private static final float ORB_SPREAD = 2.0F;
 
-    public float armLiftL;
-    public float armLiftR;
-    private boolean lastBlast;
+    private final CastingArms arms = new CastingArms(this);
 
     public EntityEldritchGuardian(EntityType<? extends EntityEldritchGuardian> type, Level level) {
         super(type, level);
@@ -102,12 +96,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
     public void tick() {
         super.tick();
         if (this.level().isClientSide()) {
-            if (this.armLiftL > 0.0F) {
-                this.armLiftL -= ARM_LIFT_DECAY;
-            }
-            if (this.armLiftR > 0.0F) {
-                this.armLiftR -= ARM_LIFT_DECAY;
-            }
+            this.arms.relax();
         } else if ((this.tickCount == 0 || this.tickCount % FOG_INTERVAL_TICKS == 0) && this.level().getDifficulty() != Difficulty.EASY) {
             double rangeSq = this.level().getDifficulty() == Difficulty.HARD ? FOG_RANGE_HARD_SQ : FOG_RANGE_SQ;
             for (Player player : this.level().players()) {
@@ -134,12 +123,8 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
     public void performRangedAttack(LivingEntity target, float velocity) {
         if (this.random.nextFloat() > SCREECH_CHANCE) {
             EntityEldritchOrb blast = new EntityEldritchOrb(this.level(), this);
-            this.lastBlast = !this.lastBlast;
-            this.level().broadcastEntityEvent(this, this.lastBlast ? ARM_LIFT_RIGHT_EVENT : ARM_LIFT_LEFT_EVENT);
-            int rr = this.lastBlast ? 90 : 180;
-            double xx = Mth.cos((this.getYRot() + rr) % 360.0F / 180.0F * (float) Math.PI) * 0.5F;
-            double zz = Mth.sin((this.getYRot() + rr) % 360.0F / 180.0F * (float) Math.PI) * 0.5F;
-            blast.setPos(blast.getX() - xx, blast.getY(), blast.getZ() - zz);
+            Vec3 hand = this.arms.castFromNextHand();
+            blast.setPos(blast.getX() + hand.x, blast.getY(), blast.getZ() + hand.z);
             Vec3 v = target.position().add(target.getDeltaMovement().scale(10.0)).subtract(this.position()).normalize();
             blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
             this.playSound(TCSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
@@ -153,13 +138,13 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
         }
     }
 
+    public CastingArms arms() {
+        return this.arms;
+    }
+
     @Override
     public void handleEntityEvent(byte event) {
-        if (event == ARM_LIFT_LEFT_EVENT) {
-            this.armLiftL = ARM_LIFT_BLAST;
-        } else if (event == ARM_LIFT_RIGHT_EVENT) {
-            this.armLiftR = ARM_LIFT_BLAST;
-        } else {
+        if (!this.arms.receive(event)) {
             super.handleEntityEvent(event);
         }
     }
@@ -171,7 +156,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
     @Override
     protected boolean considersEntityAsAlly(Entity entity) {
-        return entity instanceof IEldritchMob || super.considersEntityAsAlly(entity);
+        return entity.is(ThaumaturgeEntityTypeTags.ELDRITCH) || super.considersEntityAsAlly(entity);
     }
 
     @Override

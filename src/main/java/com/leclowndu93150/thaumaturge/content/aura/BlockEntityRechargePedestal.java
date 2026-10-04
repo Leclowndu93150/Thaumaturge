@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -60,7 +60,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
     }
 
     public static boolean accepts(ItemStack stack) {
-        return !stack.isEmpty() && (stack.getItem() instanceof ItemWand || stack.getItem() instanceof IRechargable);
+        return !stack.isEmpty() && (stack.getItem() instanceof ItemWand || RechargeAccess.isRechargeable(stack));
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityRechargePedestal pedestal) {
@@ -150,7 +150,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
                         if (WandVisHelper.getVis(wand, key) >= WandVisHelper.getMaxVis(wand)) {
                             continue;
                         }
-                        if (node.takeFromContainer(entry.aspect(), 1)) {
+                        if (node.drain(entry.aspect(), 1)) {
                             WandVisHelper.addVis(wand, key, 1, true);
                             node.setChanged();
                             level.sendBlockUpdated(cursor.immutable(), node.getBlockState(), node.getBlockState(), 3);

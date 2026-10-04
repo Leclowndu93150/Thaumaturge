@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.TCResearchEntries;
@@ -63,8 +64,8 @@ public final class ThaumometerItem extends Item {
         return beginScanAt(player, hand, resolveTarget(level, player));
     }
 
-    static InteractionResult beginScanAt(Player player, InteractionHand hand, @Nullable Object target) {
-        if (!ScanningManager.isThingStillScannable(player, target)) {
+    static InteractionResult beginScanAt(Player player, InteractionHand hand, ScanTarget target) {
+        if (!ScanningManager.isStillScannable(player, target)) {
             return InteractionResult.PASS;
         }
         if (!player.level().isClientSide())
@@ -100,17 +101,20 @@ public final class ThaumometerItem extends Item {
         if (USE_DURATION_TICKS - remaining < SCAN_RELEASE_TOLERANCE_TICKS) {
             return false;
         }
-        Object target = resolveTarget(level, player);
-        if (!ScanningManager.isThingStillScannable(player, target)) {
+        ScanTarget target = resolveTarget(level, player);
+        if (!ScanningManager.isStillScannable(player, target)) {
             return false;
         }
-        ScanningManager.scanTheThing(player, target);
+        ScanningManager.scan(player, target);
         return true;
     }
 
-    public static @Nullable Object resolveTarget(Level level, Player player) {
+    public static ScanTarget resolveTarget(Level level, Player player) {
         HitResult hitResult = ScanRaycastHelper.performRaycast(player, ClipContext.Fluid.SOURCE_ONLY);
-        return hitResult.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) hitResult).getBlockPos() : hitResult instanceof EntityHitResult result ? result.getEntity() : null;
+        if (hitResult.getType() == HitResult.Type.BLOCK) {
+            return ScanTarget.block(((BlockHitResult) hitResult).getBlockPos());
+        }
+        return hitResult instanceof EntityHitResult result ? ScanTarget.entity(result.getEntity()) : ScanTarget.sky();
     }
 
     @Override

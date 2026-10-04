@@ -33,8 +33,8 @@ public final class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGu
     @Override
     public void extractRenderState(EntityEldritchGuardian entity, EldritchGuardianRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
-        state.armLiftL = entity.armLiftL;
-        state.armLiftR = entity.armLiftR;
+        state.armLiftL = entity.arms().leftLift();
+        state.armLiftR = entity.arms().rightLift();
         Entity viewer = Minecraft.getInstance().getCameraEntity();
         if (viewer == null) {
             state.alpha = NEAR_ALPHA;

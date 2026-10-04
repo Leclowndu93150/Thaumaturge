@@ -31,8 +31,6 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotemCharged;
 import com.leclowndu93150.thaumaturge.content.decor.BlockPavingStone;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStairsTC;
-import com.leclowndu93150.thaumaturge.content.decor.BlockStonePorous;
-import com.leclowndu93150.thaumaturge.content.decor.BlockStoneTC;
 import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
@@ -46,7 +44,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampGrowth;
-import com.leclowndu93150.thaumaturge.content.device.BlockLevitator;
+import com.leclowndu93150.thaumaturge.content.device.levitator.BlockLevitator;
 import com.leclowndu93150.thaumaturge.content.device.BlockRedstoneRelay;
 import com.leclowndu93150.thaumaturge.content.device.BlockStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
@@ -127,14 +125,14 @@ import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbenchChar
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
 import com.leclowndu93150.thaumaturge.content.world.plant.BlockGrassAmbient;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantCinderpearl;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantShimmerleaf;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantVishroom;
+import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantBlock;
+import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantTraits;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSaplingTC;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSilverwoodNodeLog;
 import com.leclowndu93150.thaumaturge.content.world.tree.TCTreeGrowers;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
@@ -320,8 +318,6 @@ public final class TCBlocks {
         return props.mapColor(MapColor.METAL).strength(0.5F, 5.0F).sound(SoundType.METAL).noOcclusion();
     }
 
-    //
-
     public static final DeferredBlock<Block> ORE_AMBER = BLOCKS.registerBlock("ore_amber", Block::new,
             props -> props.mapColor(MapColor.STONE).strength(1.5F, 5.0F).sound(SoundType.STONE).requiresCorrectToolForDrops());
 
@@ -395,8 +391,6 @@ public final class TCBlocks {
         return BlockBehaviour.Properties.of().mapColor(dye.getMapColor()).strength(0.1F).sound(SoundType.WOOL).lightLevel(state -> 15).noOcclusion().noCollision().pushReaction(PushReaction.DESTROY);
     }
 
-    //
-
     public static final DeferredBlock<BlockCrystal> CRYSTAL_AER = registerCrystal("crystal_aer", TCAspects.AER, false);
     public static final DeferredBlock<BlockCrystal> CRYSTAL_IGNIS = registerCrystal("crystal_ignis", TCAspects.IGNIS, false);
     public static final DeferredBlock<BlockCrystal> CRYSTAL_AQUA = registerCrystal("crystal_aqua", TCAspects.AQUA, false);
@@ -409,8 +403,6 @@ public final class TCBlocks {
         return BLOCKS.registerBlock(name, props -> new BlockCrystal(props, aspect, flux),
                 props -> props.mapColor(MapColor.NONE).strength(0.25F).sound(TCSoundTypes.CRYSTAL.get()).lightLevel(state -> 1).noOcclusion().randomTicks().pushReaction(PushReaction.DESTROY));
     }
-
-    //
 
     public static final DeferredBlock<BlockArcaneGrindstone> ARCANE_GRINDSTONE = BLOCKS.registerBlock("arcane_grindstone", BlockArcaneGrindstone::new,
             props -> props.mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(2.0F, 6.0F).sound(SoundType.STONE).pushReaction(PushReaction.BLOCK));
@@ -470,23 +462,23 @@ public final class TCBlocks {
 
     public static final DeferredBlock<BlockPillar> PILLAR_ELDRITCH = BLOCKS.registerBlock("pillar_eldritch", BlockPillar::new, TCBlocks::pillarProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ARCANE = BLOCKS.registerBlock("stone_arcane", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> STONE_ARCANE = BLOCKS.registerBlock("stone_arcane", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ARCANE_BRICK = BLOCKS.registerBlock("stone_arcane_brick", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> STONE_ARCANE_BRICK = BLOCKS.registerBlock("stone_arcane_brick", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ANCIENT = BLOCKS.registerBlock("stone_ancient", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> STONE_ANCIENT = BLOCKS.registerBlock("stone_ancient", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ANCIENT_TILE = BLOCKS.registerBlock("stone_ancient_tile", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> STONE_ANCIENT_TILE = BLOCKS.registerBlock("stone_ancient_tile", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ANCIENT_ROCK = BLOCKS.registerBlock("stone_ancient_rock", props -> new BlockStoneTC(props, true), TCBlocks::unbreakableProps);
+    public static final DeferredBlock<Block> STONE_ANCIENT_ROCK = BLOCKS.registerBlock("stone_ancient_rock", Block::new, TCBlocks::unbreakableProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ANCIENT_GLYPHED = BLOCKS.registerBlock("stone_ancient_glyphed", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> STONE_ANCIENT_GLYPHED = BLOCKS.registerBlock("stone_ancient_glyphed", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ANCIENT_DOORWAY = BLOCKS.registerBlock("stone_ancient_doorway", props -> new BlockStoneTC(props, true), TCBlocks::unbreakableProps);
+    public static final DeferredBlock<Block> STONE_ANCIENT_DOORWAY = BLOCKS.registerBlock("stone_ancient_doorway", Block::new, TCBlocks::unbreakableProps);
 
-    public static final DeferredBlock<BlockStoneTC> STONE_ELDRITCH_TILE = BLOCKS.registerBlock("stone_eldritch_tile", props -> new BlockStoneTC(props, false), TCBlocks::eldritchTileProps);
+    public static final DeferredBlock<Block> STONE_ELDRITCH_TILE = BLOCKS.registerBlock("stone_eldritch_tile", Block::new, TCBlocks::eldritchTileProps);
 
-    public static final DeferredBlock<BlockStonePorous> STONE_POROUS = BLOCKS.registerBlock("stone_porous", BlockStonePorous::new, TCBlocks::porousProps);
+    public static final DeferredBlock<Block> STONE_POROUS = BLOCKS.registerBlock("stone_porous", Block::new, TCBlocks::porousProps);
 
     public static final DeferredBlock<BlockStairsTC> STAIRS_ARCANE = BLOCKS.registerBlock("stairs_arcane", props -> new BlockStairsTC(STONE_ARCANE.get().defaultBlockState(), props),
             TCBlocks::stoneProps);
@@ -497,9 +489,9 @@ public final class TCBlocks {
     public static final DeferredBlock<BlockStairsTC> STAIRS_ANCIENT = BLOCKS.registerBlock("stairs_ancient", props -> new BlockStairsTC(STONE_ANCIENT.get().defaultBlockState(), props),
             TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> MATRIX_SPEED = BLOCKS.registerBlock("matrix_speed", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> MATRIX_SPEED = BLOCKS.registerBlock("matrix_speed", Block::new, TCBlocks::stoneProps);
 
-    public static final DeferredBlock<BlockStoneTC> MATRIX_COST = BLOCKS.registerBlock("matrix_cost", props -> new BlockStoneTC(props, false), TCBlocks::stoneProps);
+    public static final DeferredBlock<Block> MATRIX_COST = BLOCKS.registerBlock("matrix_cost", Block::new, TCBlocks::stoneProps);
 
     public static final DeferredBlock<BlockVisBattery> VIS_BATTERY = BLOCKS.registerBlock("vis_battery", BlockVisBattery::new,
             props -> props.mapColor(MapColor.STONE).strength(0.5F).sound(SoundType.STONE).randomTicks().lightLevel(state -> state.getValue(BlockVisBattery.CHARGE)));
@@ -594,8 +586,6 @@ public final class TCBlocks {
         return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.0F, 5.0F).sound(SoundType.STONE).requiresCorrectToolForDrops();
     }
 
-    //
-
     public static final DeferredBlock<BlockSaplingTC> SAPLING_GREATWOOD = BLOCKS.registerBlock("sapling_greatwood", props -> new BlockSaplingTC(TCTreeGrowers.GREATWOOD, props),
             props -> props.mapColor(MapColor.PLANT).noCollision().randomTicks().instabreak().sound(SoundType.GRASS).pushReaction(PushReaction.DESTROY));
 
@@ -649,15 +639,16 @@ public final class TCBlocks {
         return props.mapColor(MapColor.PLANT).strength(0.2F).randomTicks().sound(SoundType.GRASS).noOcclusion().ignitedByLava().pushReaction(PushReaction.DESTROY);
     }
 
-    //
-
-    public static final DeferredBlock<BlockPlantShimmerleaf> PLANT_SHIMMERLEAF = BLOCKS.registerBlock("shimmerleaf", BlockPlantShimmerleaf::new,
+    public static final DeferredBlock<MagicPlantBlock> PLANT_SHIMMERLEAF = BLOCKS.registerBlock("shimmerleaf",
+            props -> new MagicPlantBlock(TCBlockTags.SHIMMERLEAF_SOIL, MagicPlantTraits.SHIMMERLEAF_GLINTS, Optional.empty(), props),
             props -> props.mapColor(MapColor.PLANT).noCollision().instabreak().sound(SoundType.GRASS).lightLevel(state -> 6).pushReaction(PushReaction.DESTROY).noOcclusion());
 
-    public static final DeferredBlock<BlockPlantCinderpearl> PLANT_CINDERPEARL = BLOCKS.registerBlock("cinderpearl", BlockPlantCinderpearl::new,
+    public static final DeferredBlock<MagicPlantBlock> PLANT_CINDERPEARL = BLOCKS.registerBlock("cinderpearl",
+            props -> new MagicPlantBlock(TCBlockTags.CINDERPEARL_SOIL, MagicPlantTraits.CINDERPEARL_EMBERS, Optional.empty(), props),
             props -> props.mapColor(MapColor.COLOR_ORANGE).noCollision().instabreak().sound(SoundType.GRASS).lightLevel(state -> 8).pushReaction(PushReaction.DESTROY).noOcclusion());
 
-    public static final DeferredBlock<BlockPlantVishroom> PLANT_VISHROOM = BLOCKS.registerBlock("vishroom", BlockPlantVishroom::new,
+    public static final DeferredBlock<MagicPlantBlock> PLANT_VISHROOM = BLOCKS.registerBlock("vishroom",
+            props -> new MagicPlantBlock(TCBlockTags.VISHROOM_SOIL, MagicPlantTraits.VISHROOM_SPORES, MagicPlantTraits.VISHROOM_NAUSEA, props),
             props -> props.mapColor(MapColor.COLOR_PURPLE).noCollision().instabreak().sound(SoundType.GRASS).lightLevel(state -> 6).pushReaction(PushReaction.DESTROY).noOcclusion());
 
     public static final DeferredBlock<FlowerPotBlock> POTTED_SAPLING_GREATWOOD = pottedPlant("potted_sapling_greatwood", SAPLING_GREATWOOD);
@@ -671,8 +662,6 @@ public final class TCBlocks {
 
     public static final DeferredBlock<BlockGrassAmbient> GRASS_AMBIENT = BLOCKS.registerBlock("grass_ambient", BlockGrassAmbient::new,
             props -> props.mapColor(MapColor.GRASS).strength(0.6F).sound(SoundType.GRASS).randomTicks());
-
-    //
 
     public static final DeferredBlock<BlockMetalTC> ALCHEMICAL_CONSTRUCT = BLOCKS.registerBlock("alchemical_construct", BlockMetalTC::new,
             props -> props.mapColor(MapColor.METAL).strength(4.0F, 10.0F).sound(SoundType.METAL).requiresCorrectToolForDrops());

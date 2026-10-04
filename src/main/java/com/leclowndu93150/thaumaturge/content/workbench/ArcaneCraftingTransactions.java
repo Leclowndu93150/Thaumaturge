@@ -41,7 +41,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
             return ArcaneCraftingTransaction.Inspection.failure(match.failure());
         }
         ArcaneCraftingRecipe recipe = match.holder().value();
-        ArcaneCraftingTransaction.Requirements requirements = new ArcaneCraftingTransaction.Requirements(recipe.getBaseVis(), recipe.getCrystals(), recipe.placementInfo().ingredients());
+        ArcaneCraftingTransaction.Requirements requirements = new ArcaneCraftingTransaction.Requirements(recipe.visCost(), recipe.crystalCost(), recipe.placementInfo().ingredients());
         return new ArcaneCraftingTransaction.Inspection(match.failure(), match.holder().id(), recipe.assemble(input), remainders(recipe, input), requirements, recipe.gateStatus(player));
     }
 

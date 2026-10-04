@@ -2,7 +2,8 @@ package com.leclowndu93150.thaumaturge.content.essentia.storage;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
+import java.util.function.Function;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.ItemEssentiaTransferResult;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
@@ -17,20 +18,20 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
     private static final float FEEDBACK_VOLUME = 0.25F;
 
     private final ItemStack stack;
-    private final IEssentiaContainerItem container;
+    private final Function<ItemStack, ? extends IItemEssentia> view;
     private final int capacity;
     private final boolean wholeLoads;
 
-    public SingleAspectItemStorage(ItemStack stack, IEssentiaContainerItem container, int capacity, boolean wholeLoads) {
+    public SingleAspectItemStorage(ItemStack stack, Function<ItemStack, ? extends IItemEssentia> view, int capacity, boolean wholeLoads) {
         this.stack = stack.copy();
-        this.container = container;
+        this.view = view;
         this.capacity = capacity;
         this.wholeLoads = wholeLoads;
     }
 
     @Override
     public AspectList contents() {
-        return container.getAspects(stack);
+        return view.apply(stack).getAspects();
     }
 
     @Override
@@ -58,7 +59,7 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
             return unchanged();
         }
         ItemStack result = stack.copy();
-        container.setAspects(result, contents.add(aspect, moved));
+        view.apply(result).setAspects(contents.add(aspect, moved));
         return new ItemEssentiaTransferResult(moved, result);
     }
 
@@ -74,7 +75,7 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
             return unchanged();
         }
         ItemStack result = stack.copy();
-        container.setAspects(result, contents.reduce(aspect, moved));
+        view.apply(result).setAspects(contents.reduce(aspect, moved));
         return new ItemEssentiaTransferResult(moved, result);
     }
 

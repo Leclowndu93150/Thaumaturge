@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import net.minecraft.resources.Identifier;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class TravellerBootsItem extends Item implements IRechargable {
+public final class TravellerBootsItem extends Item {
     private static final int MAX_CHARGE = 240;
     private static final int ENERGY_PER_CHARGE = 60;
     private static final int ENERGY_INTERVAL_TICKS = 20;
@@ -33,7 +34,7 @@ public final class TravellerBootsItem extends Item implements IRechargable {
     private static final AttributeModifier JUMP_MODIFIER = new AttributeModifier(Identifier.fromNamespaceAndPath(TCIds.MODID, "traveller_jump"), JUMP_BOOST, AttributeModifier.Operation.ADD_VALUE);
 
     public TravellerBootsItem(Properties properties) {
-        super(properties);
+        super(properties.component(TCDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ON_CHANGE)));
     }
 
     @Override
@@ -103,13 +104,4 @@ public final class TravellerBootsItem extends Item implements IRechargable {
 
     private static final Vec3 FORWARD = new Vec3(0.0, 0.0, 1.0);
 
-    @Override
-    public int getMaxCharge(ItemStack stack, LivingEntity holder) {
-        return MAX_CHARGE;
-    }
-
-    @Override
-    public ChargeDisplay showInHud(ItemStack stack, LivingEntity holder) {
-        return ChargeDisplay.PERIODIC;
-    }
 }

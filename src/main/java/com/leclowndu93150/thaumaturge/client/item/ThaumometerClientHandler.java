@@ -1,5 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedEntity;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedBlock;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
@@ -9,10 +12,8 @@ import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -66,10 +67,10 @@ public final class ThaumometerClientHandler {
         }
         HitResult hitResult = ScanRaycastHelper.performRaycast(player, ClipContext.Fluid.SOURCE_ONLY);
         // Here we use the Type instead of an instanceof because, a miss is an instance of BlockHitResult
-        if (hitResult.getType() == HitResult.Type.BLOCK && ScanningManager.isThingStillScannable(player, ((BlockHitResult) hitResult).getBlockPos())) {
+        if (hitResult.getType() == HitResult.Type.BLOCK && ScanningManager.isStillScannable(player, ScanTarget.block(((BlockHitResult) hitResult).getBlockPos()))) {
             ClientEffects.scanHighlight(mc.level, ((BlockHitResult) hitResult).getBlockPos());
         }
-        if (hitResult instanceof EntityHitResult result && ScanningManager.isThingStillScannable(player, result.getEntity())) {
+        if (hitResult instanceof EntityHitResult result && ScanningManager.isStillScannable(player, ScanTarget.entity(result.getEntity()))) {
             ClientEffects.scanHighlight(result.getEntity());
         }
     }
@@ -82,8 +83,8 @@ public final class ThaumometerClientHandler {
         }
         Level level = player.level();
         int elapsed = player.getTicksUsingItem();
-        Object target = ThaumometerItem.resolveTarget(level, player);
-        if (!ScanningManager.isThingStillScannable(player, target)) {
+        ScanTarget target = ThaumometerItem.resolveTarget(level, player);
+        if (!ScanningManager.isStillScannable(player, target)) {
             player.stopUsingItem();
             scanTargetKey = null;
             return;
@@ -107,22 +108,22 @@ public final class ThaumometerClientHandler {
         }
     }
 
-    private static String keyOf(@Nullable Object target) {
-        if (target instanceof Entity entity) {
+    private static String keyOf(ScanTarget target) {
+        if (target instanceof ScannedEntity(var entity)) {
             return "e:" + entity.getId();
         }
-        if (target instanceof BlockPos pos) {
+        if (target instanceof ScannedBlock(var pos)) {
             return "b:" + pos.asLong();
         }
         return "none";
     }
 
-    private static void drawScanTickFx(Level level, @Nullable Object target) {
+    private static void drawScanTickFx(Level level, ScanTarget target) {
         RandomSource rand = level.getRandom();
-        if (target instanceof Entity entity) {
+        if (target instanceof ScannedEntity(var entity)) {
             ClientEffects.blockRunes(level, entity.getX() - 0.5, entity.getY() + entity.getEyeHeight() / 2.0F, entity.getZ() - 0.5, 0.3F + rand.nextFloat() * 0.7F, 0.0F,
                     0.3F + rand.nextFloat() * 0.7F, (int) (entity.getBbHeight() * RUNE_ENTITY_HEIGHT_SCALE), RUNE_GRAVITY);
-        } else if (target instanceof BlockPos pos) {
+        } else if (target instanceof ScannedBlock(var pos)) {
             ClientEffects.blockRunes(level, pos.getX(), pos.getY() + 0.25, pos.getZ(), 0.3F + rand.nextFloat() * 0.7F, 0.0F, 0.3F + rand.nextFloat() * 0.7F, RUNE_BLOCK_DURATION, RUNE_GRAVITY);
         }
     }

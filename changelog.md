@@ -1,4 +1,50 @@
 ------------------------------------------------------
+Version 0.2.1
+------------------------------------------------------
+Changes
+- levitator saves its range as "reach" (short, medium, long, far) and its vis buffer as "charge"; the old "range" and "vis" tags are dropped
+- following items no longer save a "type" tag and only send their collector on spawn
+- lamps of fertility no longer sync their charges to clients
+- lamps of growth and fertility only show lit while fuelled and unpowered
+- lamps of growth and fertility expose their essentia intake as the transport capability instead of the block entity
+- bellows animate from the world clock and puff on the server, nothing is ticked client side anymore
+- scribing tools are recognised through the thaumaturge:scribing_tools item tag
+- cinderpearl, shimmerleaf and vishroom read their soil from the thaumaturge:cinderpearl_soil, shimmerleaf_soil and vishroom_soil block tags
+- ancient rock and ancient doorways keep withers and dragons out through the vanilla wither_immune and dragon_immune tags
+- turrets and arcane bores placed in creative no longer use up the item
+- greatwoods and magical forest big oaks generate through the vanilla tree feature with the new thaumaturge:crown_trunk_placer, thaumaturge:crown_foliage_placer and thaumaturge:spider_nest types; the thaumaturge:big_tree and thaumaturge:big_magic_tree feature types are gone
+- silverwoods generate through the vanilla tree feature with thaumaturge:silverwood_trunk_placer, thaumaturge:leaf_cell_foliage_placer, thaumaturge:detached_leaf_pruner and thaumaturge:scattered_flowers; the thaumaturge:silverwood_tree feature type is gone
+- api: remove IScribeTools, tag items with thaumaturge:scribing_tools instead
+- golem seals are assembled from parts; advanced seals are the basic seal with a bigger filter, visible options and the smart trait, and every seal keeps its old behaviour, options and save data
+- seal filter items keep their components when saved and synced
+- the harvest seal remembers its replant spots even while replanting is switched off
+- golem builds stored on golem items are immutable values
+- api: seals are ISealBehavior jobs registered as SealType entries built from parts (filter, area, settings, trait gates, placement, placer); ISeal, ISealConfigArea, ISealConfigFilter, ISealConfigToggles and ISealGui are gone, use SealType.builder, SealSetting, SealPanel, SealFilterSpec and ISealFilter
+- api: ISealEntity exposes type(), behavior(), filter(), setting()/setSetting(), markChanged() and plain accessor names (pos, priority, color, area, isLocked, isRedstoneControlled, owner); getSeal, syncToClient and tickSealEntity are gone
+- api: Task targets a TaskTarget (BlockTarget or EntityTarget) created with Task.atBlock/Task.onEntity; TYPE_BLOCK/TYPE_ENTITY, getType and the get-prefixed accessors are gone, setSuspended is suspend(), setCompletion is recordAttempt(), canGolemPerformTask is canBePerformedBy()
+- api: IGolemAPI carries items through hands() (IGolemHands); holdItem, dropItem, canCarry, canCarryAmount, isCarrying and getCarrying moved there, getGolemEntity/getGolemWorld/getProperties/getGolemColor are asEntity/level/properties/color
+- api: IGolemProperties is immutable; setters are replaced by withMaterial/withHead/withArms/withLegs/withAddon/withRank and getters lost their get prefix, generateComponents is components()
+- api: IGolemFunction and the IHeadFunction/ILegFunction/IAddonFunction/IArmFunction sub-interfaces are replaced by IGolemPartAbility and IGolemArmAbility; GolemPart.function() is ability()
+- api: GolemHelper.createSeal is sealType(), getPosInArea and getBoundsForArea moved to SealArea.cell and SealArea.bounds
+- eldritch and tainted mobs are recognised through the thaumaturge:eldritch and thaumaturge:tainted entity type tags
+- goggles of revealing, the void robe hood and goggled fortress helms reveal through the thaumaturge:goggles_upgrade component; any item carrying it now works as goggles
+- void gear, crimson robes, the crimson blade, the void robe and the primal crusher carry their warp in the thaumaturge:warp component
+- the grapple gun, traveller's boots and verdant charm are rechargeable through the new thaumaturge:rechargeable component
+- api: IEldritchMob and ITaintedMob are gone, tag entity types with ThaumaturgeEntityTypeTags.ELDRITCH / TAINTED instead
+- api: IGoggles and IRevealer are gone, give items the thaumaturge:goggles_upgrade component; GogglesAccess.wearsGoggles and revealsNodes are wearsRevealingGear, isRevealing tests a stack, Curios hooks only implement anyCurioMatches
+- api: IGogglesDisplayExtended is IGogglesReadout with readout() returning a list and readoutAnchor()
+- api: IRechargable is gone, give items a ChargeProfile through the thaumaturge:rechargeable component; RechargeAccess gained profile and isRechargeable, ChargeDisplay values are NEVER, ALWAYS, ON_CHANGE
+- api: IWarpingGear only covers wearer-dependent warp and its method is warp(); fixed warp belongs in the thaumaturge:warp component
+- api: IEssentiaContainerItem is IItemEssentia, a per-stack view returned by EssentiaCapabilities.CONTAINER with no stack parameters; ignoreContainedAspects is countsTowardItemAspects
+- api: IAspectContainer verbs are accepts, fill, drain, holds and amountOf (holds and amountOf have defaults)
+- api: IArcaneRecipe getBaseVis/getCrystals are visCost/crystalCost
+- api: IArchitect methods are aim, replacesBlockHighlight, previewBlocks and showsAxis, which takes a vanilla Direction.Axis
+- api: ITaintBlock moved to api.taint and its die method is decay
+- api: IScanThing is IScannable (matches, research, onScanned, rescannable, refusal) and takes a sealed ScanTarget instead of an Object; ScanningManager methods are register, scan, isStillScannable, stackOf and aspectsOf
+- api: ScanBlock, ScanBlockState, ScanItem, ScanEntity and ScanAspect are gone, build subjects with the Scans factories (blocks, blockState, blockTag, item, itemTag, entityType, entities, aspect, matching); entity subjects take a Predicate<Entity> instead of a class
+- fixed celestial observation never starting: the thaumometer refused to scan the sky because the sky subject grants no research key
+
+------------------------------------------------------
 Version 0.2.0
 ------------------------------------------------------
 Additions

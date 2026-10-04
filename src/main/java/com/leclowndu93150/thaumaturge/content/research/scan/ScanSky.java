@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.content.research.scan;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
+import com.leclowndu93150.thaumaturge.api.research.scan.IScannable;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedSky;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
@@ -24,15 +26,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public final class ScanSky implements IScanThing {
+public final class ScanSky implements IScannable {
     private static final int TICKS_PER_DAY = 24000;
     private static final int YAW_TOLERANCE = 10;
     private static final int PITCH_TOLERANCE = 7;
     private static final Identifier NODES_RESEARCH = TCIds.rl("nodes");
 
     @Override
-    public boolean checkThing(Player player, @Nullable Object target) {
-        if (target != null || !isLookingSkyward(player)) {
+    public boolean matches(Player player, ScanTarget target) {
+        if (!(target instanceof ScannedSky) || !isLookingSkyward(player)) {
             return false;
         }
         SkyAngles angles = SkyAngles.of(player);
@@ -40,8 +42,8 @@ public final class ScanSky implements IScanThing {
     }
 
     @Override
-    public void onSuccess(Player player, @Nullable Object target) {
-        if (target != null || !(player instanceof ServerPlayer serverPlayer) || !isLookingSkyward(player)) {
+    public void onScanned(Player player, ScanTarget target) {
+        if (!(target instanceof ScannedSky) || !(player instanceof ServerPlayer serverPlayer) || !isLookingSkyward(player)) {
             return;
         }
         SkyAngles angles = SkyAngles.of(player);
@@ -59,7 +61,7 @@ public final class ScanSky implements IScanThing {
     }
 
     @Override
-    public @Nullable Identifier getResearchKey(Player player, @Nullable Object target) {
+    public @Nullable Identifier research(Player player, ScanTarget target) {
         return null;
     }
 

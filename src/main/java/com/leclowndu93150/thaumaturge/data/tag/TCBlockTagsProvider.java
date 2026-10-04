@@ -27,6 +27,8 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
                 .add(TCBlocks.POTTED_CINDERPEARL.get()).add(TCBlocks.POTTED_VISHROOM.get());
 
         tag(TCBlockTags.LAMP_GROWTH_BLACKLIST);
+        tag(BlockTags.WITHER_IMMUNE).add(TCBlocks.STONE_ANCIENT_ROCK.get()).add(TCBlocks.STONE_ANCIENT_DOORWAY.get());
+        tag(BlockTags.DRAGON_IMMUNE).add(TCBlocks.STONE_ANCIENT_ROCK.get()).add(TCBlocks.STONE_ANCIENT_DOORWAY.get());
         tag(TCBlockTags.ARCANE_WORKBENCH_CHARGER_HOSTS).add(TCBlocks.ARCANE_WORKBENCH.get()).add(TCBlocks.FOCAL_MANIPULATOR.get());
         tag(TCBlockTags.PHYSICAL_FLUX).add(TCBlocks.FLUX_GOO.get()).add(TCBlocks.FLUX_GAS.get());
         tag(TCBlockTags.FLUX_SCRUBBABLE).addTag(TCBlockTags.PHYSICAL_FLUX);
@@ -51,6 +53,9 @@ public final class TCBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.PRESSURE_PLATES).add(TCBlocks.ARCANE_PRESSURE_PLATE.get());
         tag(TCBlockTags.MAGICAL_PLANTS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get()).add(TCBlocks.PLANT_VISHROOM.get());
         tag(BlockTags.FLOWERS).add(TCBlocks.PLANT_SHIMMERLEAF.get()).add(TCBlocks.PLANT_CINDERPEARL.get());
+        tag(TCBlockTags.CINDERPEARL_SOIL).addTag(BlockTags.SAND).addTag(BlockTags.SUBSTRATE_OVERWORLD).addTag(BlockTags.TERRACOTTA);
+        tag(TCBlockTags.SHIMMERLEAF_SOIL).addTag(BlockTags.SUBSTRATE_OVERWORLD);
+        tag(TCBlockTags.VISHROOM_SOIL).add(Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.PODZOL, Blocks.COARSE_DIRT, Blocks.MYCELIUM, Blocks.MOSS_BLOCK, Blocks.STONE).add(TCBlocks.GRASS_AMBIENT.get());
         tag(TCBlockTags.MAGICAL_FOREST_FLOWERS).add(Blocks.DANDELION, Blocks.POPPY, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.AZURE_BLUET, Blocks.RED_TULIP, Blocks.ORANGE_TULIP, Blocks.WHITE_TULIP,
                 Blocks.PINK_TULIP, Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.LILY_OF_THE_VALLEY);
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(TCBlocks.TUBE.get()).add(TCBlocks.TUBE_VALVE.get()).add(TCBlocks.TUBE_RESTRICT.get()).add(TCBlocks.TUBE_FILTER.get()).add(TCBlocks.TUBE_ONEWAY.get())

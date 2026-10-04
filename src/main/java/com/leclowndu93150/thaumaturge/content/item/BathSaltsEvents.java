@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
@@ -20,8 +21,16 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 public final class BathSaltsEvents {
     private static final double FLOAT_RESPONSE = 0.35;
     private static final double MAX_VERTICAL_SPEED = 0.08;
+    private static final int DISSOLVE_TICKS = 200;
 
     private BathSaltsEvents() {}
+
+    @SubscribeEvent
+    public static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof ItemEntity itemEntity && itemEntity.getItem().is(TCItems.BATH_SALTS.get())) {
+            itemEntity.lifespan = DISSOLVE_TICKS;
+        }
+    }
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Post event) {

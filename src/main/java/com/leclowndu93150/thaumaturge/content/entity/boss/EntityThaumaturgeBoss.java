@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import java.util.HashMap;
@@ -246,7 +246,7 @@ public class EntityThaumaturgeBoss extends Monster {
 
     @Override
     public boolean considersEntityAsAlly(Entity other) {
-        return other instanceof IEldritchMob || super.considersEntityAsAlly(other);
+        return other.is(ThaumaturgeEntityTypeTags.ELDRITCH) || super.considersEntityAsAlly(other);
     }
 
     @Override

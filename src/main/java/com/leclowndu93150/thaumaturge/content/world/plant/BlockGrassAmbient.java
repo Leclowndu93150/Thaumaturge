@@ -3,10 +3,10 @@ package com.leclowndu93150.thaumaturge.content.world.plant;
 import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
@@ -15,11 +15,19 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class BlockGrassAmbient extends GrassBlock {
-    private static final int MOTE_SEARCH_RANGE = 8;
-    private static final int MOTE_MIN_Y = 50;
-    private static final int MOTE_AGE = 400;
-    private static final float MOTE_GRAVITY = -0.01F;
-    private static final int CAVE_MOTE_CHANCE = 5;
+    private static final int CAVE_GLOW_ONE_IN = 5;
+    private static final int DARKNESS_THRESHOLD = 5;
+    private static final int WISP_REACH = 8;
+    private static final int WISP_SCAN_TOP = 5;
+    private static final int WISP_SCAN_STEPS = 10;
+    private static final int WISP_FLOOR_Y = 50;
+    private static final int WISP_LIFETIME = 320;
+    private static final int WISP_LIFETIME_SPREAD = 100;
+    private static final float WISP_BUOYANCY = -0.008F;
+    private static final float WISP_HUE_MIN = 0.28F;
+    private static final float WISP_HUE_SPAN = 0.22F;
+    private static final float WISP_SATURATION_MIN = 0.25F;
+    private static final float WISP_SATURATION_SPAN = 0.3F;
 
     public BlockGrassAmbient(BlockBehaviour.Properties properties) {
         super(properties);
@@ -27,34 +35,36 @@ public final class BlockGrassAmbient extends GrassBlock {
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        BlockPos above = pos.above();
         if (level.getBiome(pos).is(TCBiomes.MAGICAL_FOREST_CAVES)) {
-            if (random.nextInt(CAVE_MOTE_CHANCE) == 0 && level.isEmptyBlock(pos.above())) {
-                spawnMote(level, pos.above(), random, true);
+            if (random.nextInt(CAVE_GLOW_ONE_IN) == 0 && level.isEmptyBlock(above)) {
+                releaseWisp(level, above, random, true);
             }
             return;
         }
-        int skyLight = level.getBrightness(LightLayer.SKY, pos.above()) - level.getSkyDarken();
-        float angle = level.environmentAttributes().getValue(EnvironmentAttributes.SUN_ANGLE, pos) * (float) (Math.PI / 180.0);
-        float target = angle < (float) Math.PI ? 0.0F : (float) (Math.PI * 2);
-        angle += (target - angle) * 0.2F;
-        skyLight = Math.round(skyLight * Mth.cos(angle));
-        skyLight = Mth.clamp(skyLight, 0, 15);
-        if (4 + skyLight * 2 < 1 + random.nextInt(13)) {
-            int dx = Mth.nextInt(random, -MOTE_SEARCH_RANGE, MOTE_SEARCH_RANGE);
-            int dz = Mth.nextInt(random, -MOTE_SEARCH_RANGE, MOTE_SEARCH_RANGE);
-            BlockPos target2 = pos.offset(dx, 5, dz);
-            for (int q = 0; q < 10 && target2.getY() > MOTE_MIN_Y && !level.getBlockState(target2).is(Blocks.GRASS_BLOCK); q++) {
-                target2 = target2.below();
-            }
-            if (level.getBlockState(target2).is(Blocks.GRASS_BLOCK)) {
-                spawnMote(level, target2.above(), random, false);
-            }
+        int daylight = level.isDarkOutside() ? 0 : Math.max(0, level.getBrightness(LightLayer.SKY, above) - level.getSkyDarken());
+        if (daylight < DARKNESS_THRESHOLD && random.nextInt(DARKNESS_THRESHOLD + 2) > daylight) {
+            seedNearbyGrass(level, pos, random);
         }
     }
 
-    private static void spawnMote(Level level, BlockPos pos, RandomSource random, boolean emissive) {
-        WispyMoteParticleOptions data = new WispyMoteParticleOptions(ARGB.colorFromFloat(1.0F, 0.4F + random.nextFloat() * 0.6F, 0.6F + random.nextFloat() * 0.4F, 0.6F + random.nextFloat() * 0.4F),
-                MOTE_AGE, MOTE_GRAVITY, WispyMoteParticleOptions.NO_ENTITY, emissive);
-        level.addParticle(data, pos.getX() + random.nextFloat(), pos.getY(), pos.getZ() + random.nextFloat(), 0.0, 0.0, 0.0);
+    private static void seedNearbyGrass(Level level, BlockPos origin, RandomSource random) {
+        BlockPos.MutableBlockPos probe = origin.mutable().move(Mth.nextInt(random, -WISP_REACH, WISP_REACH), WISP_SCAN_TOP, Mth.nextInt(random, -WISP_REACH, WISP_REACH));
+        for (int step = 0; step < WISP_SCAN_STEPS && probe.getY() > WISP_FLOOR_Y; step++) {
+            if (level.getBlockState(probe).is(Blocks.GRASS_BLOCK)) {
+                releaseWisp(level, probe.above(), random, false);
+                return;
+            }
+            probe.move(Direction.DOWN);
+        }
+    }
+
+    private static void releaseWisp(Level level, BlockPos at, RandomSource random, boolean glowing) {
+        float hue = WISP_HUE_MIN + random.nextFloat() * WISP_HUE_SPAN;
+        float saturation = WISP_SATURATION_MIN + random.nextFloat() * WISP_SATURATION_SPAN;
+        int color = ARGB.opaque(Mth.hsvToRgb(hue, saturation, 1.0F));
+        int lifetime = WISP_LIFETIME + random.nextInt(WISP_LIFETIME_SPREAD);
+        level.addParticle(new WispyMoteParticleOptions(color, lifetime, WISP_BUOYANCY, WispyMoteParticleOptions.NO_ENTITY, glowing), at.getX() + random.nextDouble(), at.getY(),
+                at.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
     }
 }

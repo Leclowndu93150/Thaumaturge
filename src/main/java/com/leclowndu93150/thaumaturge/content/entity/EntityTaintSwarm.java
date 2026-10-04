@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class EntityTaintSwarm extends Monster implements ITaintedMob {
+public final class EntityTaintSwarm extends Monster {
     private static final EntityDataAccessor<Boolean> SUMMONED = SynchedEntityData.defineId(EntityTaintSwarm.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ATTACK_RANGE = 3;

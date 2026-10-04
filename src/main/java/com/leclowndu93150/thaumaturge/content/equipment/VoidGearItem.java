@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -9,12 +8,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-public class VoidGearItem extends Item implements IWarpingGear {
+public class VoidGearItem extends Item {
     private static final int REPAIR_INTERVAL_TICKS = 20;
     static final int VOID_GEAR_WARP = 1;
 
     public VoidGearItem(Properties properties) {
-        super(properties);
+        this(properties, VOID_GEAR_WARP);
+    }
+
+    protected VoidGearItem(Properties properties, int warp) {
+        super(GearWarp.with(properties, warp));
     }
 
     static void selfRepairTick(ItemStack stack, Entity entity) {
@@ -29,8 +32,4 @@ public class VoidGearItem extends Item implements IWarpingGear {
         selfRepairTick(stack, entity);
     }
 
-    @Override
-    public int getWarp(ItemStack stack, LivingEntity wearer) {
-        return VOID_GEAR_WARP;
-    }
 }

@@ -6,13 +6,13 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TCItemTags;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import java.util.List;
@@ -134,7 +134,7 @@ public final class ResearchNotes {
         Inventory inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.getItem() instanceof IScribeTools && stack.getDamageValue() < stack.getMaxDamage()) {
+            if (stack.is(TCItemTags.SCRIBING_TOOLS) && stack.getDamageValue() < stack.getMaxDamage()) {
                 if (!simulate) {
                     stack.setDamageValue(stack.getDamageValue() + 1);
                 }

@@ -23,7 +23,7 @@ public final class EssentiaTests {
                 return;
             }
             Holder<IAspect> ignis = resolve(helper, TCAspects.IGNIS);
-            int leftover = jar.addToContainer(ignis, BlockEntityJar.CAPACITY + 50);
+            int leftover = jar.fill(ignis, BlockEntityJar.CAPACITY + 50);
             if (leftover != 50) {
                 helper.fail("Expected 50 leftover past capacity, got " + leftover);
                 return;
@@ -43,8 +43,8 @@ public final class EssentiaTests {
             }
             Holder<IAspect> ignis = resolve(helper, TCAspects.IGNIS);
             Holder<IAspect> aqua = resolve(helper, TCAspects.AQUA);
-            jar.addToContainer(ignis, 10);
-            int leftover = jar.addToContainer(aqua, 10);
+            jar.fill(ignis, 10);
+            int leftover = jar.fill(aqua, 10);
             if (leftover != 10) {
                 helper.fail("Jar accepted a second aspect type; leftover " + leftover);
                 return;
@@ -58,9 +58,9 @@ public final class EssentiaTests {
                 return;
             }
             Holder<IAspect> ignis = resolve(helper, TCAspects.IGNIS);
-            jar.addToContainer(ignis, 40);
-            if (!jar.takeFromContainer(ignis, 25)) {
-                helper.fail("takeFromContainer refused a valid withdrawal");
+            jar.fill(ignis, 40);
+            if (!jar.drain(ignis, 25)) {
+                helper.fail("drain refused a valid withdrawal");
                 return;
             }
             int stored = jar.getContents(helper.getLevel().registryAccess()).amountOf(ignis);
@@ -68,8 +68,8 @@ public final class EssentiaTests {
                 helper.fail("Expected 15 essentia after withdrawal, found " + stored);
                 return;
             }
-            if (jar.takeFromContainer(ignis, 100)) {
-                helper.fail("takeFromContainer allowed overdraw");
+            if (jar.drain(ignis, 100)) {
+                helper.fail("drain allowed overdraw");
                 return;
             }
             helper.succeed();

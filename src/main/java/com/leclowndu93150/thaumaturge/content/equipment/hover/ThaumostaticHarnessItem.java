@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import java.util.function.Consumer;
@@ -52,10 +53,10 @@ public final class ThaumostaticHarnessItem extends Item implements IHoverGear, I
     }
 
     private static @Nullable AspectInstance potentia(ItemStack jar) {
-        if (!(jar.getItem() instanceof JarItem jarItem)) {
+        if (!(jar.getItem() instanceof JarItem)) {
             return null;
         }
-        for (AspectInstance entry : jarItem.getAspects(jar).entries()) {
+        for (AspectInstance entry : ComponentEssentia.jar(jar).getAspects().entries()) {
             if (entry.aspect().is(TCAspects.POTENTIA) && entry.amount() > 0) {
                 return entry;
             }
@@ -78,10 +79,11 @@ public final class ThaumostaticHarnessItem extends Item implements IHoverGear, I
     public void consumeHoverFuel(ItemStack stack) {
         ItemStack jar = getJar(stack);
         AspectInstance fuel = potentia(jar);
-        if (fuel == null || !(jar.getItem() instanceof JarItem jarItem)) {
+        if (fuel == null || !(jar.getItem() instanceof JarItem)) {
             return;
         }
-        jarItem.setAspects(jar, jarItem.getAspects(jar).remove(fuel.aspect(), 1));
+        ComponentEssentia<?> contents = ComponentEssentia.jar(jar);
+        contents.setAspects(contents.getAspects().remove(fuel.aspect(), 1));
         setJar(stack, jar);
     }
 
@@ -110,8 +112,8 @@ public final class ThaumostaticHarnessItem extends Item implements IHoverGear, I
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
         ItemStack jar = getJar(stack);
-        if (jar.getItem() instanceof JarItem jarItem) {
-            for (AspectInstance entry : jarItem.getAspects(jar).sortedByTag()) {
+        if (jar.getItem() instanceof JarItem) {
+            for (AspectInstance entry : ComponentEssentia.jar(jar).getAspects().sortedByTag()) {
                 tooltip.accept(Component.translatable("tooltip.thaumaturge.thaumostatic_harness.fuel", AspectComponents.name(entry.aspect()), entry.amount()).withStyle(ChatFormatting.GRAY));
             }
         }

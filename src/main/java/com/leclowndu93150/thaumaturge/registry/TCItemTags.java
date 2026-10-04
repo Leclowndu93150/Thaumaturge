@@ -77,6 +77,7 @@ public final class TCItemTags {
     public static final TagKey<Item> ARMORS_BOOTS = common("armors/boots");
 
     public static final TagKey<Item> CANDLES = key("candles");
+    public static final TagKey<Item> SCRIBING_TOOLS = key("scribing_tools");
 
     private TCItemTags() {}
 

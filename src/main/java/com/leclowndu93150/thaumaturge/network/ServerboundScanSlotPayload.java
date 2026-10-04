@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
@@ -31,7 +32,7 @@ public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayloa
                 return;
             }
             if (payload.slot() == SELF) {
-                ScanningManager.scanTheThing(player, player);
+                ScanningManager.scan(player, ScanTarget.entity(player));
                 return;
             }
             if (payload.slot() < 0 || payload.slot() >= menu.slots.size()) {
@@ -39,7 +40,7 @@ public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayloa
             }
             Slot slot = menu.getSlot(payload.slot());
             if (slot.hasItem() && slot.mayPickup(player) && !(slot instanceof ResultSlot)) {
-                ScanningManager.scanTheThing(player, slot.getItem());
+                ScanningManager.scan(player, ScanTarget.stack(slot.getItem()));
             }
         });
     }
