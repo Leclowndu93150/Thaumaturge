@@ -12,6 +12,7 @@ Changes
 - cinderpearl, shimmerleaf and vishroom read their soil from the thaumaturge:cinderpearl_soil, shimmerleaf_soil and vishroom_soil block tags
 - ancient rock and ancient doorways keep withers and dragons out through the vanilla wither_immune and dragon_immune tags
 - turrets and arcane bores placed in creative no longer use up the item
+- greatwoods and magical forest big oaks generate through the vanilla tree feature with the new thaumaturge:crown_trunk_placer, thaumaturge:crown_foliage_placer and thaumaturge:spider_nest types; the thaumaturge:big_tree and thaumaturge:big_magic_tree feature types are gone
 - api: remove IScribeTools, tag items with thaumaturge:scribing_tools instead
 
 ------------------------------------------------------

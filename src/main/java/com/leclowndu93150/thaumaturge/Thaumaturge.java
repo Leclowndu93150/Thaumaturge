@@ -65,6 +65,7 @@ public final class Thaumaturge {
         TCBlocks.register(modBus);
         TCItems.register(modBus);
         TCFeatures.register(modBus);
+        TCTreePlacers.register(modBus);
         TCBiomeModifierSerializers.register(modBus);
         TCStructures.register(modBus);
         TCBlockEntities.register(modBus);
