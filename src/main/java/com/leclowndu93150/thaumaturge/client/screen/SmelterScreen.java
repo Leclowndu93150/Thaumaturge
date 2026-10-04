@@ -1,41 +1,52 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
 import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TCGauge;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-public class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
+public final class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
+    private static final Identifier SHEET = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+    private static final int SHEET_SIZE = 256;
+    private static final int PANEL_WIDTH = 176;
+    private static final int PANEL_HEIGHT = 166;
 
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+    private static final TCGauge FLAME = new TCGauge(SHEET, SHEET_SIZE, 176, 0, 16, 20);
+    private static final int FLAME_X = 80;
+    private static final int FLAME_Y = 26;
 
-    protected SmelterScreen(MenuSmelter menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, TEXTURE, 176, 166);
+    private static final TCGauge PROGRESS = new TCGauge(SHEET, SHEET_SIZE, 216, 0, 9, 46);
+    private static final int PROGRESS_X = 106;
+    private static final int PROGRESS_Y = 13;
+
+    private static final TCGauge VIS = new TCGauge(SHEET, SHEET_SIZE, 200, 0, 8, 48);
+    private static final int VIS_X = 61;
+    private static final int VIS_Y = 12;
+
+    private static final TCGauge VIS_GLASS = new TCGauge(SHEET, SHEET_SIZE, 232, 0, 10, 55);
+    private static final int VIS_GLASS_X = 60;
+    private static final int VIS_GLASS_Y = 8;
+
+    SmelterScreen(MenuSmelter menu, Inventory inventory, Component title) {
+        super(menu, inventory, title, SHEET, PANEL_WIDTH, PANEL_HEIGHT);
     }
 
     @Override
-    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) {}
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {}
 
     @Override
     protected void extractBackgroundOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        if (menu.blockEntity() != null) {
-            BlockEntitySmelter smelter = menu.blockEntity();
-            int scaledBurnTime = smelter.getBurnTimeRemainingScaled(20);
-            if (scaledBurnTime > 0) {
-                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 80, y + 26 + 20 - scaledBurnTime, 176, 20 - scaledBurnTime, 16, scaledBurnTime, 256, 256);
-            }
-
-            int scaledCookTime = smelter.getCookProgressScaled(46);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 106, y + 13 + 46 - scaledCookTime, 216, 46 - scaledCookTime, 9, scaledCookTime, 256, 256);
-            int visScaled = smelter.getVisScaled(46);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 61, y + 12 + 48 - visScaled, 200, 48 - visScaled, 8, visScaled, 256, 256);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x + 60, y + 8, 232, 0, 10, 55, 256, 256);
+        BlockEntitySmelter smelter = menu.blockEntity();
+        if (smelter == null) {
+            return;
         }
+        FLAME.extractRising(graphics, leftPos + FLAME_X, topPos + FLAME_Y, smelter.getBurnTimeRemainingScaled(FLAME.height()));
+        PROGRESS.extractRising(graphics, leftPos + PROGRESS_X, topPos + PROGRESS_Y, smelter.getCookProgressScaled(PROGRESS.height()));
+        VIS.extractRising(graphics, leftPos + VIS_X, topPos + VIS_Y, smelter.getVisScaled(VIS.height()));
+        VIS_GLASS.extractFull(graphics, leftPos + VIS_GLASS_X, topPos + VIS_GLASS_Y);
     }
 }

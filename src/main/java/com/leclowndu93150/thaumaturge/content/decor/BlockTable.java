@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.ResearchTablePart;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TCItemTags;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public final class BlockTable extends Block {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (this != TCBlocks.TABLE_WOOD.get() || !(stack.getItem() instanceof IScribeTools)) {
+        if (this != TCBlocks.TABLE_WOOD.get() || !stack.is(TCItemTags.SCRIBING_TOOLS)) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {

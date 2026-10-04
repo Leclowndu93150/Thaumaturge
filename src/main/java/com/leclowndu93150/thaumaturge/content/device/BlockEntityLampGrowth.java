@@ -1,10 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
-import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
+import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
+import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -37,15 +35,15 @@ import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-public final class BlockEntityLampGrowth extends BlockEntity implements IEssentiaTransport {
+public final class BlockEntityLampGrowth extends BlockEntity implements EssentiaIntakeHost {
     private static final int MAX_CHARGES = 20;
     private static final int SCAN_DISTANCE = 6;
     private static final int SUCTION = 128;
     private static final int DRAW_INTERVAL = 5;
 
+    private final EssentiaIntake intake = new EssentiaIntake(this, TCAspects.HERBA, SUCTION, DRAW_INTERVAL);
     private boolean reserve;
     private int charges = -1;
-    private int drawDelay;
     private BlockPos lastTarget = BlockPos.ZERO;
     private BlockState lastTargetState = null;
     private final List<BlockPos> checklist = new ArrayList<>();
@@ -61,21 +59,15 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
                 lamp.charges = MAX_CHARGES;
                 lamp.reserve = false;
                 lamp.setChanged();
-            } else if (lamp.drawEssentia()) {
+            } else if (lamp.intake.pullOne()) {
                 lamp.charges = MAX_CHARGES;
                 lamp.setChanged();
             }
-            state = level.getBlockState(pos);
-            if (lamp.charges <= 0) {
-                if (state.getValue(BlockStateProperties.ENABLED)) {
-                    level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, false), Block.UPDATE_ALL);
-                }
-            } else if (!powered && !state.getValue(BlockStateProperties.ENABLED)) {
-                level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, true), Block.UPDATE_ALL);
-            }
         }
-        if (!lamp.reserve && lamp.drawEssentia()) {
+        BlockLamp.showLit(level, pos, state, lamp.charges > 0 && !powered);
+        if (!lamp.reserve && lamp.intake.pullOne()) {
             lamp.reserve = true;
+            lamp.setChanged();
         }
         if (lamp.charges == 0) {
             lamp.charges = -1;
@@ -147,79 +139,18 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
         return false;
     }
 
-    private boolean drawEssentia() {
-        if (++drawDelay % DRAW_INTERVAL != 0 || level == null) {
-            return false;
-        }
-        Direction facing = getBlockState().getValue(BlockStateProperties.FACING);
-        IEssentiaTransport ic = EssentiaFlowHandler.transport(level, getBlockPos().relative(facing), facing.getOpposite());
-        if (ic == null || !ic.canOutputTo(facing.getOpposite())) {
-            return false;
-        }
-        if (ic.getSuctionAmount(facing.getOpposite()) >= getSuctionAmount(facing)) {
-            return false;
-        }
-        return ic.takeEssentia(herba(), 1, facing.getOpposite()) == 1;
-    }
-
-    private Holder<IAspect> herba() {
-        return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.HERBA);
+    public EssentiaIntake intake() {
+        return intake;
     }
 
     @Override
-    public boolean isConnectable(Direction face) {
-        return face == getBlockState().getValue(BlockStateProperties.FACING);
+    public Direction intakeFace() {
+        return getBlockState().getValue(BlockStateProperties.FACING);
     }
 
     @Override
-    public boolean canInputFrom(Direction face) {
-        return isConnectable(face);
-    }
-
-    @Override
-    public boolean canOutputTo(Direction face) {
-        return false;
-    }
-
-    @Override
-    public void setSuction(Holder<IAspect> aspect, int amount) {}
-
-    @Override
-    public Holder<IAspect> getSuctionType(Direction face) {
-        return herba();
-    }
-
-    @Override
-    public int getSuctionAmount(Direction face) {
-        if (face != getBlockState().getValue(BlockStateProperties.FACING)) {
-            return 0;
-        }
-        return reserve && charges > 0 ? 0 : SUCTION;
-    }
-
-    @Override
-    public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        return 0;
-    }
-
-    @Override
-    public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        return 0;
-    }
-
-    @Override
-    public Holder<IAspect> getEssentiaType(Direction face) {
-        return null;
-    }
-
-    @Override
-    public int getEssentiaAmount(Direction face) {
-        return 0;
-    }
-
-    @Override
-    public int getMinimumSuction() {
-        return 0;
+    public boolean wantsEssentia() {
+        return !reserve || charges <= 0;
     }
 
     @Override

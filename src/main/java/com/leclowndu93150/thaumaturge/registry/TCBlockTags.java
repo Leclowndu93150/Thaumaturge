@@ -16,6 +16,9 @@ public final class TCBlockTags {
 
     public static final TagKey<Block> MAGICAL_PLANTS = key("magical_plants");
     public static final TagKey<Block> MAGICAL_FOREST_FLOWERS = key("magical_forest_flowers");
+    public static final TagKey<Block> CINDERPEARL_SOIL = key("cinderpearl_soil");
+    public static final TagKey<Block> SHIMMERLEAF_SOIL = key("shimmerleaf_soil");
+    public static final TagKey<Block> VISHROOM_SOIL = key("vishroom_soil");
 
     public static final TagKey<Block> GREATWOOD_LOGS = key("greatwood_logs");
     public static final TagKey<Block> SILVERWOOD_LOGS = key("silverwood_logs");

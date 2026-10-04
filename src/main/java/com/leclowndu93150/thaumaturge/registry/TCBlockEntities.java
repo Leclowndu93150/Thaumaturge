@@ -19,7 +19,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampGrowth;
-import com.leclowndu93150.thaumaturge.content.device.BlockEntityLevitator;
+import com.leclowndu93150.thaumaturge.content.device.levitator.BlockEntityLevitator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityRedstoneRelay;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVisGenerator;

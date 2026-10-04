@@ -52,6 +52,9 @@ public class BlockBellows extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.BELLOWS.get(), BlockEntityBellows::staticTick);
+        if (level.isClientSide()) {
+            return null;
+        }
+        return createTickerHelper(type, TCBlockEntities.BELLOWS.get(), BlockEntityBellows::serverTick);
     }
 }

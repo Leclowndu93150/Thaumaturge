@@ -49,14 +49,11 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
             }
             poseStack.translate(-0.5, -0.5, -0.5);
 
-            // BAG
             {
                 poseStack.pushPose();
                 poseStack.translate(0, 0.5F, 0F);
                 poseStack.translate(0F, (state.scale + 0.1F) * -0.5f, 0F);
                 poseStack.scale(1F, (state.scale + 0.1F), 1F);
-                // poseStack.translate(0F, -0.5F, 0F);
-                // poseStack.scale(1f,2F,1f);
                 submitNodeCollector.submitMultiLayerBlockModel(poseStack, state.parts[2], true, new int[0], state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 
                 if (state.breakProgress != null)
@@ -64,7 +61,6 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
                 poseStack.popPose();
             }
 
-            // Top Plank
             {
                 poseStack.pushPose();
                 poseStack.translate(0F, (1 - state.scale) * -0.25F, 0F);
@@ -75,7 +71,6 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
                 poseStack.popPose();
             }
 
-            // Bottom Plank
             {
                 poseStack.pushPose();
                 poseStack.translate(0F, (1 - state.scale) * 0.25F, 0F);
@@ -94,7 +89,7 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
     public void extractRenderState(BlockEntityBellows blockEntity, BellowsRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.facing = blockEntity.getBlockState().getValue(BlockBellows.FACING);
-        state.scale = blockEntity.inflation;
+        state.scale = blockEntity.inflation(partialTicks);
         state.seed = blockEntity.getBlockState().getSeed(blockEntity.getBlockPos());
         BlockEntity be = blockEntity.getLevel().getBlockEntity(blockEntity.getBlockPos().relative(state.facing));
         if (be != null && be instanceof BlockEntityTubeBuffer)

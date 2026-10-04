@@ -56,8 +56,8 @@ public final class TCCapabilities {
     }
 
     private static void devices(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_GROWTH.get(), (be, side) -> be);
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be);
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_GROWTH.get(), (be, side) -> be.intake());
+        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be.intake());
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TCBlockEntities.ESSENTIA_RESERVOIR.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);

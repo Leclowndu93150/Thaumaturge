@@ -57,6 +57,7 @@ public final class TCItemTagsProvider extends BlockTagCopyingItemTagProvider {
             tag(TCItemTags.NITORS).add(TCItems.NITORS.get(dye).get());
         }
 
+        tag(TCItemTags.SCRIBING_TOOLS).add(TCItems.SCRIBING_TOOLS.get());
         tag(TCItemTags.WANDS).add(TCItems.WAND.get(), TCItems.PECH_WAND.get());
         tag(TCItemTags.WAND_RODS).add(TCItems.WAND_ROD_GREATWOOD.get(), TCItems.WAND_ROD_OBSIDIAN.get(), TCItems.WAND_ROD_BLAZE.get(), TCItems.WAND_ROD_ICE.get(), TCItems.WAND_ROD_QUARTZ.get(),
                 TCItems.WAND_ROD_BONE.get(), TCItems.WAND_ROD_REED.get(), TCItems.WAND_ROD_SILVERWOOD.get(), TCItems.STAFF_ROD_GREATWOOD.get(), TCItems.STAFF_ROD_OBSIDIAN.get(),

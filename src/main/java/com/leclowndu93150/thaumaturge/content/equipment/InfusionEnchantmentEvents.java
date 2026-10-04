@@ -56,7 +56,6 @@ import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 @EventBusSubscriber(modid = TCIds.MODID)
 public final class InfusionEnchantmentEvents {
-    private static final int FOLLOW_TYPE = 10;
     private static final float REFINING_CHANCE_PER_LEVEL = 0.125F;
     private static final int SOUNDING_DAMAGE = 5;
     private static final float ARCING_DAMAGE_FRACTION = 0.5F;
@@ -255,7 +254,7 @@ public final class InfusionEnchantmentEvents {
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.COLLECTOR) && !player.isShiftKeyDown()) {
             for (ItemEntity drop : event.getDrops()) {
-                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player, FOLLOW_TYPE);
+                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 level.addFreshEntity(follow);
@@ -294,7 +293,7 @@ public final class InfusionEnchantmentEvents {
             List<ItemEntity> drops = List.copyOf(event.getDrops());
             event.getDrops().clear();
             for (ItemEntity drop : drops) {
-                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player, FOLLOW_TYPE);
+                EntityFollowingItem follow = new EntityFollowingItem(level, drop.getX(), drop.getY(), drop.getZ(), drop.getItem().copy(), player);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 event.getDrops().add(follow);
@@ -322,7 +321,7 @@ public final class InfusionEnchantmentEvents {
             remaining = remaining.remove(entry.aspect(), 1);
             ItemStack crystal = EssentiaCrystalFactory.of(entry.aspect());
             if (collector) {
-                event.getDrops().add(new EntityFollowingItem(level, x, y, z, crystal, player, FOLLOW_TYPE));
+                event.getDrops().add(new EntityFollowingItem(level, x, y, z, crystal, player));
             } else {
                 event.getDrops().add(new ItemEntity(level, x, y, z, crystal));
             }

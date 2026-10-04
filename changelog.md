@@ -1,4 +1,20 @@
 ------------------------------------------------------
+Version 0.2.1
+------------------------------------------------------
+Changes
+- levitator saves its range as "reach" (short, medium, long, far) and its vis buffer as "charge"; the old "range" and "vis" tags are dropped
+- following items no longer save a "type" tag and only send their collector on spawn
+- lamps of fertility no longer sync their charges to clients
+- lamps of growth and fertility only show lit while fuelled and unpowered
+- lamps of growth and fertility expose their essentia intake as the transport capability instead of the block entity
+- bellows animate from the world clock and puff on the server, nothing is ticked client side anymore
+- scribing tools are recognised through the thaumaturge:scribing_tools item tag
+- cinderpearl, shimmerleaf and vishroom read their soil from the thaumaturge:cinderpearl_soil, shimmerleaf_soil and vishroom_soil block tags
+- ancient rock and ancient doorways keep withers and dragons out through the vanilla wither_immune and dragon_immune tags
+- turrets and arcane bores placed in creative no longer use up the item
+- api: remove IScribeTools, tag items with thaumaturge:scribing_tools instead
+
+------------------------------------------------------
 Version 0.2.0
 ------------------------------------------------------
 Additions

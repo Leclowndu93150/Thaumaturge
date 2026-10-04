@@ -1,4 +1,4 @@
-package com.leclowndu93150.thaumaturge.content.device;
+package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -91,7 +91,7 @@ public final class BlockLevitator extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityLevitator levitator)) {
             return InteractionResult.PASS;
         }
-        levitator.increaseRange(player);
+        levitator.cycleReach(player);
         level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.KEY.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         return InteractionResult.SUCCESS;
     }
