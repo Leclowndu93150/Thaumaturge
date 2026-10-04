@@ -276,6 +276,10 @@ public final class TCCommands {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             ResourceKey<IResearchEntry> key = ResourceKeyArgument.getRegistryKey(ctx, "entry", IResearchEntry.REGISTRY_KEY, ERROR_INVALID_GATE);
             PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
+            if (!knowledge.isResearchKnown(key.identifier())) {
+                ctx.getSource().sendSuccess(() -> Component.literal(String.format("Research %s is not known", key.identifier())), false);
+                return Command.SINGLE_SUCCESS;
+            }
             if (knowledge.removeResearch(key.identifier())) {
                 knowledge.sync(player);
                 ctx.getSource().sendSuccess(() -> Component.literal(String.format("Revoked research %s ", key.identifier())), false);
@@ -297,6 +301,10 @@ public final class TCCommands {
             BlockPos pos = player.blockPosition();
             ResourceKey<IResearchEntry> key = ResourceKeyArgument.getRegistryKey(ctx, "entry", IResearchEntry.REGISTRY_KEY, ERROR_INVALID_GATE);
             Holder<IResearchEntry> holder = level.registryAccess().lookupOrThrow(IResearchEntry.REGISTRY_KEY).getOrThrow(key);
+            if (((PlayerKnowledge) KnowledgeAccess.of(player)).isResearchComplete(key.identifier())) {
+                ctx.getSource().sendSuccess(() -> Component.literal(String.format("Research %s is already complete", key.identifier())), false);
+                return Command.SINGLE_SUCCESS;
+            }
             if (ResearchManager.complete(player, key.identifier())) {
                 ResearchManager.setStage(player, key.identifier(), holder.value().stages().size());
                 ctx.getSource().sendSuccess(() -> Component.literal(String.format("Unlocked research %s ", key.identifier())), false);

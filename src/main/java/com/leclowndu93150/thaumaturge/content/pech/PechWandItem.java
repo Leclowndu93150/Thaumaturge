@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 
 public final class PechWandItem extends Item {
     private static final Identifier PREREQUISITE = TCIds.rl("base_auromancy");
-    private static final Identifier REVEALED_RESEARCH = TCIds.rl("focuspech");
+    private static final Identifier REVEALED_RESEARCH = TCIds.rl("scanned/pechwand");
     private static final List<KnowledgeGrant> INSIGHTS = List.of(new KnowledgeGrant(KnowledgeType.OBSERVATION, 3, 2), new KnowledgeGrant(KnowledgeType.THEORY, 5, 4));
     private static final float STUDY_VOLUME = 0.5F;
     private static final float STUDY_PITCH = 0.42F;
