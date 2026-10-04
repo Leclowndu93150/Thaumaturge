@@ -442,7 +442,11 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
         if (amounts != null) {
             builder.add(amounts);
         }
-        builder.add(WandTooltips.costSummary(registries, pctByPrimal));
+        Component discount = WandTooltips.costSummary(registries, pctByPrimal);
+        if (discount != null) {
+            builder.add(discount);
+        }
+
         ItemStack focusStack = getFocusStack(stack);
         if (focusStack.getItem() instanceof ItemFocus focus) {
             builder.add(Component.translatable(

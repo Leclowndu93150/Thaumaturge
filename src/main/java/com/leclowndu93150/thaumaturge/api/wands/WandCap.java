@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.api.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -9,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 /**
  * A wand cap type. Caps determine how efficiently a wand spends its stored primal vis: the
  * cost of any drain is multiplied by the cap's cost modifier, so values below 1 are discounts.
- * A cap may declare special aspects that use a different modifier than the base one.
+ * A cap may declare special aspects that share a modifier, or individual modifiers per aspect.
  *
  * @since 1.0.0
  */
@@ -21,6 +22,7 @@ public final class WandCap {
     private final float baseCostModifier;
     private final List<ResourceKey<IAspect>> specialCostAspects;
     private final float specialCostModifier;
+    private final Map<ResourceKey<IAspect>, Float> aspectCostModifiers;
     private final int craftCost;
     private final ResourceLocation texture;
 
@@ -40,9 +42,36 @@ public final class WandCap {
             float specialCostModifier,
             int craftCost,
             ResourceLocation texture) {
+        this(baseCostModifier, specialCostAspects, specialCostModifier, Map.of(), craftCost, texture);
+    }
+
+    /**
+     * Creates a cap with independent cost modifiers for individual aspects.
+     *
+     * @param baseCostModifier the fallback vis cost multiplier for unlisted aspects
+     * @param aspectCostModifiers aspect-specific vis cost multipliers, copied immutably
+     * @param craftCost the crafting cost factor used for wand assembly
+     * @param texture the texture rendered on wand models built with this cap
+     */
+    public WandCap(
+            float baseCostModifier,
+            Map<ResourceKey<IAspect>, Float> aspectCostModifiers,
+            int craftCost,
+            ResourceLocation texture) {
+        this(baseCostModifier, List.of(), 0.0F, aspectCostModifiers, craftCost, texture);
+    }
+
+    private WandCap(
+            float baseCostModifier,
+            List<ResourceKey<IAspect>> specialCostAspects,
+            float specialCostModifier,
+            Map<ResourceKey<IAspect>, Float> aspectCostModifiers,
+            int craftCost,
+            ResourceLocation texture) {
         this.baseCostModifier = baseCostModifier;
         this.specialCostAspects = List.copyOf(specialCostAspects);
         this.specialCostModifier = specialCostModifier;
+        this.aspectCostModifiers = Map.copyOf(aspectCostModifiers);
         this.craftCost = craftCost;
         this.texture = texture;
     }
@@ -75,7 +104,8 @@ public final class WandCap {
      * @return the applicable cost multiplier
      */
     public float costModifier(ResourceKey<IAspect> aspect) {
-        return specialCostAspects.contains(aspect) ? specialCostModifier : baseCostModifier;
+        return aspectCostModifiers.getOrDefault(
+                aspect, specialCostAspects.contains(aspect) ? specialCostModifier : baseCostModifier);
     }
 
     /**

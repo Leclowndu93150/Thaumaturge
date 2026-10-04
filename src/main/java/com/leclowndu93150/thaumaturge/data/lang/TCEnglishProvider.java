@@ -1011,8 +1011,9 @@ public final class TCEnglishProvider extends LanguageProvider {
         add("tc.dust.noresearch", "The dust sparkles with promise, but you lack the knowledge to direct it");
         add("tc.workbench.staff", "A staff is too unwieldy to use at the workbench");
         add("tooltip.thaumaturge.wand.capacity", "Capacity %s");
-        add("tooltip.thaumaturge.wand.cost", "Vis cost %s%%");
-        add("tooltip.thaumaturge.wand.cost.except", "Vis cost %1$s%% (%2$s)");
+        add("tooltip.thaumaturge.wand.discount", "Vis discount: %s%%");
+        add("tooltip.thaumaturge.wand.discount.aspects", "Vis discount: %s");
+        add("tooltip.thaumaturge.wand.discount.aspect", "%1$s: %2$s%%");
         add("item.thaumaturge.wand_cap_iron", "Iron Cap");
         add("item.thaumaturge.wand_cap_copper", "Copper Cap");
         add("item.thaumaturge.wand_cap_gold", "Gold Cap");
