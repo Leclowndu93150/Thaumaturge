@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import net.minecraft.core.BlockPos;
@@ -42,7 +41,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchCrab extends Monster implements IEldritchMob {
+public class EntityEldritchCrab extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_HELM = SynchedEntityData.defineId(EntityEldritchCrab.class, EntityDataSerializers.BOOLEAN);
 
     private static final double HELM_SPEED = 0.275;

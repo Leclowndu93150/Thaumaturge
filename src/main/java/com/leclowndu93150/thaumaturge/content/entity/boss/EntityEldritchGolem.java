@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
@@ -48,7 +47,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldritchMob, RangedAttackMob {
+public class EntityEldritchGolem extends EntityThaumaturgeBoss implements RangedAttackMob {
     private static final EntityDataAccessor<Boolean> HEADLESS = SynchedEntityData.defineId(EntityEldritchGolem.class, EntityDataSerializers.BOOLEAN);
     private static final String HEADLESS_KEY = "headless";
     private static final byte SWING_EVENT = 4;

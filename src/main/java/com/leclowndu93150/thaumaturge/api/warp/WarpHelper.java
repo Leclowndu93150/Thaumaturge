@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.warp;
 
+import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -56,9 +57,8 @@ public final class WarpHelper {
     }
 
     /**
-     * Computes the warp a single stack contributes while held or worn: the
-     * {@link com.leclowndu93150.thaumaturge.api.items.IWarpingGear} value plus
-     * any {@code thaumaturge:warp} data-map entry on the item.
+     * Computes the warp a single stack contributes while held or worn: the {@link IWarpingGear} value, plus the stack's
+     * {@code thaumaturge:warp} data component, plus any {@code thaumaturge:warp} data-map entry on the item.
      *
      * @param stack the stack to evaluate; empty stacks contribute zero
      * @param wearer the entity holding or wearing the stack

@@ -6,7 +6,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import java.util.List;
@@ -34,8 +35,9 @@ public final class AspectContainerTooltipHandler {
         if (stack.isEmpty()) {
             return;
         }
-        if (stack.getItem() instanceof IEssentiaContainerItem container) {
-            renderAspectList(container.getAspects(stack), event.getToolTip());
+        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        if (essentia != null) {
+            renderAspectList(essentia.getAspects(), event.getToolTip());
         }
 
         if (stack.getItem() instanceof ILabel label) {

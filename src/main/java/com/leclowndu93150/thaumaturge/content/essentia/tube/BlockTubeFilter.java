@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.tube;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.MapCodec;
@@ -67,12 +67,10 @@ public final class BlockTubeFilter extends BlockTube {
             return InteractionResult.PASS;
         if (filter.aspectFilter() != null)
             return InteractionResult.PASS;
-        IEssentiaContainerItem container = stack.getCapability(EssentiaCapabilities.CONTAINER);
-        if (container == null)
+        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        if (essentia == null || essentia.getAspects().isEmpty())
             return InteractionResult.PASS;
-        if (container.getAspects(stack) == null || container.getAspects(stack).isEmpty())
-            return InteractionResult.PASS;
-        AspectInstance first = container.getAspects(stack).entries().get(0);
+        AspectInstance first = essentia.getAspects().entries().get(0);
         ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
         if (key == null)
             return InteractionResult.PASS;

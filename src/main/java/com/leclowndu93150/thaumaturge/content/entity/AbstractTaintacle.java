@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -24,7 +23,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
+public abstract class AbstractTaintacle extends Monster {
     private static final double SPAWN_SPACING_HORIZONTAL = 24.0;
     private static final double SPAWN_SPACING_VERTICAL = 8.0;
     private static final int SUBSTRATE_CHECK_INTERVAL = 20;

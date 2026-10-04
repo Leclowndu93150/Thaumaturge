@@ -107,19 +107,19 @@ public final class FocusMediumPlan implements FocusMedium, IArchitect {
     }
 
     @Override
-    public @Nullable HitResult getArchitectMOP(ItemStack stack, Level level, LivingEntity caster) {
+    public @Nullable HitResult aim(ItemStack stack, Level level, LivingEntity caster) {
         Vec3 start = caster.position().add(0.0, caster.getEyeHeight(), 0.0);
         Vec3 end = caster.getLookAngle().scale(PLAN_RANGE).add(start);
         return FocusRayTrace.clipBlocks(level, caster, start, end);
     }
 
     @Override
-    public boolean useBlockHighlight(ItemStack stack) {
+    public boolean replacesBlockHighlight(ItemStack stack) {
         return false;
     }
 
     @Override
-    public boolean showAxis(ItemStack stack, Level level, Player player, Direction side, EnumAxis axis) {
+    public boolean showsAxis(ItemStack stack, Level level, Player player, Direction side, Direction.Axis axis) {
         if (stack.isEmpty()) {
             return false;
         }
@@ -132,14 +132,14 @@ public final class FocusMediumPlan implements FocusMedium, IArchitect {
             };
         }
         return switch (side.getAxis()) {
-            case Y -> axis == EnumAxis.X && (dim == 0 || dim == 1) || axis == EnumAxis.Z && (dim == 0 || dim == 2);
-            case Z -> axis == EnumAxis.Y && (dim == 0 || dim == 1) || axis == EnumAxis.X && (dim == 0 || dim == 2);
-            case X -> axis == EnumAxis.Y && (dim == 0 || dim == 1) || axis == EnumAxis.Z && (dim == 0 || dim == 2);
+            case Y -> axis == Direction.Axis.X && (dim == 0 || dim == 1) || axis == Direction.Axis.Z && (dim == 0 || dim == 2);
+            case Z -> axis == Direction.Axis.Y && (dim == 0 || dim == 1) || axis == Direction.Axis.X && (dim == 0 || dim == 2);
+            case X -> axis == Direction.Axis.Y && (dim == 0 || dim == 1) || axis == Direction.Axis.Z && (dim == 0 || dim == 2);
         };
     }
 
     @Override
-    public List<BlockPos> getArchitectBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
+    public List<BlockPos> previewBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
         return collectBlocks(stack, level, pos, side, methodOf(stack));
     }
 

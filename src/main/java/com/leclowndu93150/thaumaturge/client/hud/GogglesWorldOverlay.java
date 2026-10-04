@@ -45,7 +45,7 @@ public final class GogglesWorldOverlay {
         if (mc.level == null || mc.player == null || mc.options.hideGui) {
             return;
         }
-        if (!GogglesAccess.wearsGoggles(mc.player)) {
+        if (!GogglesAccess.wearsRevealingGear(mc.player)) {
             resetAnimation();
             return;
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.MapCodec;
@@ -62,7 +62,7 @@ public final class BlockEffectSap extends Block {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
-        if (level.isClientSide() || entity instanceof IEldritchMob) {
+        if (level.isClientSide() || entity.is(ThaumaturgeEntityTypeTags.ELDRITCH)) {
             return;
         }
         if (!(entity instanceof LivingEntity living) || living.hasEffect(MobEffects.WITHER)) {

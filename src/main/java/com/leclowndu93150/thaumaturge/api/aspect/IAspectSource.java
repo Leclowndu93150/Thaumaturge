@@ -21,7 +21,6 @@ package com.leclowndu93150.thaumaturge.api.aspect;
  * @since 1.0.0
  */
 public interface IAspectSource extends IAspectContainer {
-
     /**
      * Whether source discovery should skip this container for now.
      *

@@ -100,7 +100,7 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
     }
 
     @Override
-    public int getBaseVis() {
+    public int visCost() {
         return vis;
     }
 
@@ -119,7 +119,7 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
     }
 
     @Override
-    public AspectList getCrystals() {
+    public AspectList crystalCost() {
         return aspects;
     }
 }

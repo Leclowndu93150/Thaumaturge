@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCItems;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public class EntityInhabitedZombie extends Zombie implements IEldritchMob {
+public class EntityInhabitedZombie extends Zombie {
     private static final float GEAR_CHANCE_HARD = 0.9F;
     private static final float GEAR_CHANCE = 0.6F;
     private static final int BURST_PARTICLES = 20;

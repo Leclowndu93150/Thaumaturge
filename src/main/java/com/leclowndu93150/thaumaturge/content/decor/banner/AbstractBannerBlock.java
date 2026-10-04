@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor.banner;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -54,7 +55,7 @@ public abstract class AbstractBannerBlock extends Block implements EntityBlock {
         if (clearing) {
             banner.setAspect(null);
         } else {
-            AspectList aspects = ((PhialItem) stack.getItem()).getAspects(stack);
+            AspectList aspects = ComponentEssentia.phial(stack).getAspects();
             if (aspects.isEmpty()) {
                 return InteractionResult.PASS;
             }

@@ -7,10 +7,8 @@ import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
 import net.minecraft.resources.Identifier;
 import java.util.Map;
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -46,7 +44,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class EntityEldritchHierophant extends EntityThaumaturgeBoss implements IEldritchMob {
+public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
     public static final float MODEL_SCALE = 0.75F;
     private static final EntityDataAccessor<Integer> ACTION = SynchedEntityData.defineId(EntityEldritchHierophant.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Long> ACTION_START = SynchedEntityData.defineId(EntityEldritchHierophant.class, EntityDataSerializers.LONG);

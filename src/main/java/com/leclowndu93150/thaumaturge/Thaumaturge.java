@@ -10,6 +10,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCrystalAccess;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
+import com.leclowndu93150.thaumaturge.content.equipment.GogglesBindings;
+import com.leclowndu93150.thaumaturge.content.equipment.RechargeBindings;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
@@ -118,8 +120,8 @@ public final class Thaumaturge {
         GolemHelper.bind(new GolemBindings());
         AspectPoolAccess.bind(new AspectPoolBindings());
         ResearchGate.bind(ResearchManager::doesPassGate);
-        RechargeAccess.bind(TCDataComponents.CHARGE);
-        GogglesAccess.bind(() -> TCAttributes.VIS_DISCOUNT);
+        RechargeAccess.bind(new RechargeBindings());
+        GogglesAccess.bind(new GogglesBindings());
         FocusEngine.bindRegistry(TCFocusElements.registry());
 
         if (ModList.get().isLoaded(TCIds.CURIOS))

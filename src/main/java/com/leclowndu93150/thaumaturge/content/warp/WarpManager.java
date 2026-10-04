@@ -77,7 +77,7 @@ public final class WarpManager {
         }
         int warp = 0;
         if (stack.getItem() instanceof IWarpingGear gear) {
-            warp += gear.getWarp(stack, wearer);
+            warp += gear.warp(stack, wearer);
         }
         ItemWarp mapped = stack.getItem().builtInRegistryHolder().getData(TCDataMaps.ITEM_WARP);
         if (mapped != null) {

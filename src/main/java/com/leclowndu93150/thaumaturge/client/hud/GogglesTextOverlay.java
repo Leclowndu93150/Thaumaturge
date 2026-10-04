@@ -2,9 +2,10 @@ package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
-import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
+import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import java.util.List;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -34,33 +35,33 @@ public final class GogglesTextOverlay {
         if (mc.level == null || mc.player == null || mc.options.hideGui) {
             return;
         }
-        if (!GogglesAccess.wearsGoggles(mc.player)) {
+        if (!GogglesAccess.wearsRevealingGear(mc.player)) {
             return;
         }
         if (!(mc.hitResult instanceof BlockHitResult hit) || mc.hitResult.getType() != HitResult.Type.BLOCK) {
             return;
         }
         BlockPos pos = hit.getBlockPos();
-        IGogglesDisplayExtended display;
+        IGogglesReadout display;
         boolean blockForm = false;
-        if (mc.level.getBlockEntity(pos) instanceof IGogglesDisplayExtended be) {
+        if (mc.level.getBlockEntity(pos) instanceof IGogglesReadout be) {
             display = be;
-        } else if (mc.level.getBlockState(pos).getBlock() instanceof IGogglesDisplayExtended block) {
+        } else if (mc.level.getBlockState(pos).getBlock() instanceof IGogglesReadout block) {
             display = block;
             blockForm = true;
         } else {
             return;
         }
-        Component[] lines = display.getIGogglesText();
-        if (lines.length == 0) {
+        List<Component> lines = display.readout();
+        if (lines.isEmpty()) {
             return;
         }
-        Vec3 offset = display.getIGogglesTextOffset();
+        Vec3 offset = display.readoutAnchor();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
-        for (int i = 0; i < lines.length; i++) {
-            float lineShift = (i - lines.length / 2.0F) / LINE_SPACING_DIVISOR;
+        for (int i = 0; i < lines.size(); i++) {
+            float lineShift = (i - lines.size() / 2.0F) / LINE_SPACING_DIVISOR;
             double y = pos.getY() + offset.y + (blockForm ? lineShift : -lineShift);
-            drawTextInAir(event.getPoseStack(), mc, buffers, pos.getX() + offset.x, y, pos.getZ() + offset.z, lines[i]);
+            drawTextInAir(event.getPoseStack(), mc, buffers, pos.getX() + offset.x, y, pos.getZ() + offset.z, lines.get(i));
         }
         buffers.endBatch();
     }

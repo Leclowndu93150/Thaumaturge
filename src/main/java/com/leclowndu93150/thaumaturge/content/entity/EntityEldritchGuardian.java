@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.CastingArms;
@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchGuardian extends Monster implements RangedAttackMob, IEldritchMob {
+public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
     private static final float SCREECH_CHANCE = 0.15F;
     private static final int WITHER_TICKS = 400;
     private static final int FOG_INTERVAL_TICKS = 100;
@@ -156,7 +156,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
     @Override
     protected boolean considersEntityAsAlly(Entity entity) {
-        return entity instanceof IEldritchMob || super.considersEntityAsAlly(entity);
+        return entity.is(ThaumaturgeEntityTypeTags.ELDRITCH) || super.considersEntityAsAlly(entity);
     }
 
     @Override

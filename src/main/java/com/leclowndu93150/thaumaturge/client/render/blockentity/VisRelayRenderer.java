@@ -81,7 +81,7 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         state.opacity = sincePulse < BlockEntityVisRelay.PULSE_TICKS ? PULSE_OPACITY : Math.max(IDLE_OPACITY, PULSE_OPACITY - OPACITY_DECAY * (sincePulse - BlockEntityVisRelay.PULSE_TICKS));
         float slide = player.tickCount + partialTicks;
         state.scroll = -slide * SCROLL_FAST - Mth.floor(-slide * SCROLL_SLOW);
-        state.revealing = GogglesAccess.revealsNodes(player);
+        state.revealing = GogglesAccess.wearsRevealingGear(player);
         state.flareFrame = (int) (now % ParticleTextures.STAR_GLINT_FRAMES);
     }
 

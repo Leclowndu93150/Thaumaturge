@@ -422,29 +422,29 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     }
 
     @Override
-    public boolean doesContainerAccept(Holder<IAspect> aspect) {
+    public boolean accepts(Holder<IAspect> aspect) {
         return aspectFilter == null || aspectFilter.equals(aspect.getKey());
     }
 
     @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
+    public int fill(Holder<IAspect> aspect, int amount) {
         ResourceKey<IAspect> key = aspect.unwrapKey().orElse(null);
         return key == null ? amount : doAddToContainer(key, amount);
     }
 
     @Override
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    public boolean drain(Holder<IAspect> aspect, int amount) {
         ResourceKey<IAspect> key = aspect.unwrapKey().orElse(null);
         return key != null && doTakeFromContainer(key, amount);
     }
 
     @Override
-    public boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
+    public boolean holds(Holder<IAspect> aspect, int amount) {
         return this.amount >= amount && Objects.equals(this.aspect, aspect.getKey());
     }
 
     @Override
-    public int containerContains(Holder<IAspect> aspect) {
+    public int amountOf(Holder<IAspect> aspect) {
         return Objects.equals(this.aspect, aspect.getKey()) ? this.amount : 0;
     }
 

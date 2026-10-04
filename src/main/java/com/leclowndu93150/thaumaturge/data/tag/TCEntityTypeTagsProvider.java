@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.tag;
 
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.registry.TCEntities;
 import com.leclowndu93150.thaumaturge.registry.TCEntityTags;
 import java.util.concurrent.CompletableFuture;
@@ -29,6 +30,12 @@ public final class TCEntityTypeTagsProvider extends KeyTagProvider<EntityType<?>
         tag(EntityTypeTags.INVERTED_HEALING_AND_HARM).add(key(TCEntities.ELDRITCH_GUARDIAN.get())).add(key(TCEntities.INHABITED_ZOMBIE.get())).add(key(TCEntities.BRAINY_ZOMBIE.get()))
                 .add(key(TCEntities.GIANT_BRAINY_ZOMBIE.get())).add(key(TCEntities.BRAINY_DROWNED.get())).add(key(TCEntities.BRAINY_HUSK.get()));
         tag(TCEntityTags.TAINT_CONVERSION_IMMUNE).add(key(TCEntities.THAUMATURGE_GOLEM.get()));
+        tag(ThaumaturgeEntityTypeTags.ELDRITCH).add(key(TCEntities.MIND_SPIDER.get())).add(key(TCEntities.ELDRITCH_CRAB.get())).add(key(TCEntities.INHABITED_ZOMBIE.get()))
+                .add(key(TCEntities.ELDRITCH_GUARDIAN.get())).add(key(TCEntities.ELDRITCH_GOLEM.get())).add(key(TCEntities.ELDRITCH_WARDEN.get())).add(key(TCEntities.ELDRITCH_HIEROPHANT.get()))
+                .add(key(TCEntities.TAINTACLE_GIANT.get()));
+        tag(ThaumaturgeEntityTypeTags.TAINTED).add(key(TCEntities.THAUMIC_SLIME.get())).add(key(TCEntities.TAINT_CRAWLER.get())).add(key(TCEntities.TAINT_SWARM.get()))
+                .add(key(TCEntities.TAINT_SEED.get())).add(key(TCEntities.TAINT_SEED_PRIME.get())).add(key(TCEntities.TAINT_SPORE.get())).add(key(TCEntities.TAINT_SPORE_SWARMER.get()))
+                .add(key(TCEntities.TAINTACLE.get())).add(key(TCEntities.TAINTACLE_SMALL.get())).add(key(TCEntities.TAINTACLE_GIANT.get()));
         tag(EntityTypeTags.WITHER_FRIENDS).add(key(TCEntities.ELDRITCH_GUARDIAN.get()));
     }
 

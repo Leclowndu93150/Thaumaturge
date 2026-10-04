@@ -1,18 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IGoggles;
-import com.leclowndu93150.thaumaturge.api.items.IRevealer;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 
-public final class FortressArmorItem extends Item implements IGoggles, IRevealer {
+public final class FortressArmorItem extends Item {
     public static final int NO_MASK = -1;
 
     public FortressArmorItem(Properties properties) {
@@ -26,16 +23,6 @@ public final class FortressArmorItem extends Item implements IGoggles, IRevealer
     public static int mask(ItemStack stack) {
         Integer mask = stack.get(TCDataComponents.FORTRESS_MASK.get());
         return mask == null ? NO_MASK : mask;
-    }
-
-    @Override
-    public boolean showIngamePopups(ItemStack stack, LivingEntity wearer) {
-        return hasGoggles(stack);
-    }
-
-    @Override
-    public boolean showNodes(ItemStack stack, LivingEntity wearer) {
-        return hasGoggles(stack);
     }
 
     @Override

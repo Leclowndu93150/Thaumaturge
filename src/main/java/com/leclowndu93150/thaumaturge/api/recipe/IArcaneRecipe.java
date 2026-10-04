@@ -11,9 +11,15 @@ import net.minecraft.world.item.crafting.Recipe;
  * @since 1.0.0
  */
 public interface IArcaneRecipe extends ResearchGated, Recipe<IArcaneCraftingInput> {
-    int getBaseVis();
+    /**
+     * @return the vis one craft draws from the aura or a wand, before vis discounts
+     */
+    int visCost();
 
-    AspectList getCrystals();
+    /**
+     * @return the crystal essentia one craft consumes from the workbench crystal slots; empty when the recipe needs none
+     */
+    AspectList crystalCost();
 
     /**
      * Returns what one craft leaves behind, such as empty buckets.

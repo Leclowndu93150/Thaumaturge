@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.DoubleHighBlockItem;
 import com.leclowndu93150.thaumaturge.content.warding.ItemArcaneKey;
 import com.leclowndu93150.thaumaturge.TCIds;
@@ -644,6 +645,7 @@ public final class TCItems {
     public static final DeferredItem<GogglesItem> GOGGLES_REVEALING = ITEMS.registerItem("goggles_revealing", GogglesItem::new,
             props -> props.stacksTo(1).durability(GOGGLES_DURABILITY).enchantable(GOGGLES_ENCHANTMENT_VALUE).rarity(Rarity.RARE)
                     .component(DataComponents.EQUIPPABLE, Equippable.builder(EquipmentSlot.HEAD).setEquipSound(SoundEvents.ARMOR_EQUIP_LEATHER).setAsset(GOGGLES_REVEALING_ASSET).build())
+                    .component(TCDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE)
                     .attributes(ItemAttributeModifiers.builder()
                             .add(Attributes.ARMOR, new AttributeModifier(GOGGLES_REVEALING_ASSET.identifier(), 1, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.HEAD)
                             .add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(GOGGLES_REVEALING_ASSET.identifier(), 1, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.HEAD).build()));
@@ -656,7 +658,7 @@ public final class TCItems {
             props -> props.humanoidArmor(TCMaterials.ARMOR_FORTRESS, ArmorType.LEGGINGS).rarity(Rarity.RARE));
 
     public static final DeferredItem<VoidRobeArmorItem> VOID_ROBE_HELM = ITEMS.registerItem("void_robe_helm", VoidRobeArmorItem::new,
-            props -> props.humanoidArmor(TCMaterials.ARMOR_VOID_ROBE, ArmorType.HELMET).rarity(Rarity.EPIC));
+            props -> props.humanoidArmor(TCMaterials.ARMOR_VOID_ROBE, ArmorType.HELMET).rarity(Rarity.EPIC).component(TCDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE));
     public static final DeferredItem<VoidRobeArmorItem> VOID_ROBE_CHEST = ITEMS.registerItem("void_robe_chest", VoidRobeArmorItem::new,
             props -> props.humanoidArmor(TCMaterials.ARMOR_VOID_ROBE, ArmorType.CHESTPLATE).rarity(Rarity.EPIC));
     public static final DeferredItem<VoidRobeArmorItem> VOID_ROBE_LEGS = ITEMS.registerItem("void_robe_legs", VoidRobeArmorItem::new,

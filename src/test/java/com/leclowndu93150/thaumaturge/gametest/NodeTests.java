@@ -88,7 +88,7 @@ public final class NodeTests {
             }
             node.setEnergized(true);
             for (AspectInstance entry : List.copyOf(node.getAspects().entries())) {
-                node.takeFromContainer(entry.aspect(), entry.amount());
+                node.drain(entry.aspect(), entry.amount());
             }
             if (node.getAspects().totalAmount() != 0) {
                 helper.fail("Failed to deplete the node before the refill check");
@@ -111,7 +111,7 @@ public final class NodeTests {
             }
             node.setEnergized(true);
             for (AspectInstance entry : List.copyOf(node.getAspects().entries())) {
-                node.takeFromContainer(entry.aspect(), entry.amount());
+                node.drain(entry.aspect(), entry.amount());
             }
             AuraHelper.addVis(helper.getLevel(), helper.absolutePos(NODE_POS), REFILL_VIS);
             helper.runAfterDelay(REFILL_WAIT_TICKS, () -> {

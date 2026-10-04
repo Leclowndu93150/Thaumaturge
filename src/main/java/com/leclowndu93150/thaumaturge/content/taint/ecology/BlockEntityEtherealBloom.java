@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
-import com.leclowndu93150.thaumaturge.content.taint.block.ITaintBlock;
+import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -106,7 +106,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
                 cursor.set(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
                 BlockState state = level.getBlockState(cursor);
                 if (state.getBlock() instanceof ITaintBlock taintBlock) {
-                    taintBlock.die(level, cursor.immutable(), state);
+                    taintBlock.decay(level, cursor.immutable(), state);
                     worked = true;
                     break;
                 }

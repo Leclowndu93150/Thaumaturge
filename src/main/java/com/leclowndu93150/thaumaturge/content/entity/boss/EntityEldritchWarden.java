@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -51,7 +50,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob, IEldritchMob {
+public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob {
     private static final BossTitles TITLES = new BossTitles("entity.thaumaturge.eldritch_warden.name.custom", List.of("Aphoom-Zhah", "Basatan", "Chaugnar Faugn", "Mnomquah", "Nyogtha", "Oorn",
             "Shaikorth", "Rhan-Tegoth", "Rhogog", "Shudde M'ell", "Vulthoom", "Yag-Kosha", "Yibb-Tstll", "Zathog", "Zushakon"));
     private static final byte EMERGE_EVENT = 18;

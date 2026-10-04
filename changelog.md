@@ -26,6 +26,23 @@ Changes
 - api: IGolemProperties is immutable; setters are replaced by withMaterial/withHead/withArms/withLegs/withAddon/withRank and getters lost their get prefix, generateComponents is components()
 - api: IGolemFunction and the IHeadFunction/ILegFunction/IAddonFunction/IArmFunction sub-interfaces are replaced by IGolemPartAbility and IGolemArmAbility; GolemPart.function() is ability()
 - api: GolemHelper.createSeal is sealType(), getPosInArea and getBoundsForArea moved to SealArea.cell and SealArea.bounds
+- eldritch and tainted mobs are recognised through the thaumaturge:eldritch and thaumaturge:tainted entity type tags
+- goggles of revealing, the void robe hood and goggled fortress helms reveal through the thaumaturge:goggles_upgrade component; any item carrying it now works as goggles
+- void gear, crimson robes, the crimson blade, the void robe and the primal crusher carry their warp in the thaumaturge:warp component
+- the grapple gun, traveller's boots and verdant charm are rechargeable through the new thaumaturge:rechargeable component
+- api: IEldritchMob and ITaintedMob are gone, tag entity types with ThaumaturgeEntityTypeTags.ELDRITCH / TAINTED instead
+- api: IGoggles and IRevealer are gone, give items the thaumaturge:goggles_upgrade component; GogglesAccess.wearsGoggles and revealsNodes are wearsRevealingGear, isRevealing tests a stack, Curios hooks only implement anyCurioMatches
+- api: IGogglesDisplayExtended is IGogglesReadout with readout() returning a list and readoutAnchor()
+- api: IRechargable is gone, give items a ChargeProfile through the thaumaturge:rechargeable component; RechargeAccess gained profile and isRechargeable, ChargeDisplay values are NEVER, ALWAYS, ON_CHANGE
+- api: IWarpingGear only covers wearer-dependent warp and its method is warp(); fixed warp belongs in the thaumaturge:warp component
+- api: IEssentiaContainerItem is IItemEssentia, a per-stack view returned by EssentiaCapabilities.CONTAINER with no stack parameters; ignoreContainedAspects is countsTowardItemAspects
+- api: IAspectContainer verbs are accepts, fill, drain, holds and amountOf (holds and amountOf have defaults)
+- api: IArcaneRecipe getBaseVis/getCrystals are visCost/crystalCost
+- api: IArchitect methods are aim, replacesBlockHighlight, previewBlocks and showsAxis, which takes a vanilla Direction.Axis
+- api: ITaintBlock moved to api.taint and its die method is decay
+- api: IScanThing is IScannable (matches, research, onScanned, rescannable, refusal) and takes a sealed ScanTarget instead of an Object; ScanningManager methods are register, scan, isStillScannable, stackOf and aspectsOf
+- api: ScanBlock, ScanBlockState, ScanItem, ScanEntity and ScanAspect are gone, build subjects with the Scans factories (blocks, blockState, blockTag, item, itemTag, entityType, entities, aspect, matching); entity subjects take a Predicate<Entity> instead of a class
+- fixed celestial observation never starting: the thaumometer refused to scan the sky because the sky subject grants no research key
 
 ------------------------------------------------------
 Version 0.2.0

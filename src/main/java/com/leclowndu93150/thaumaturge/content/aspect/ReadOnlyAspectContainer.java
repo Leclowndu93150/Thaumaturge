@@ -11,27 +11,27 @@ public interface ReadOnlyAspectContainer extends IAspectContainer {
     default void setAspects(AspectList aspects) {}
 
     @Override
-    default boolean doesContainerAccept(Holder<IAspect> aspect) {
+    default boolean accepts(Holder<IAspect> aspect) {
         return false;
     }
 
     @Override
-    default int addToContainer(Holder<IAspect> aspect, int amount) {
+    default int fill(Holder<IAspect> aspect, int amount) {
         return amount;
     }
 
     @Override
-    default boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    default boolean drain(Holder<IAspect> aspect, int amount) {
         return false;
     }
 
     @Override
-    default boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
+    default boolean holds(Holder<IAspect> aspect, int amount) {
         return false;
     }
 
     @Override
-    default int containerContains(Holder<IAspect> aspect) {
+    default int amountOf(Holder<IAspect> aspect) {
         return 0;
     }
 }

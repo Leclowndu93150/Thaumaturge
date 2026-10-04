@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.api.research.scan;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
@@ -12,13 +11,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import org.jspecify.annotations.Nullable;
 
 /**
  * Data-driven scannable subject loaded from datapacks under {@code thaumaturge/scan}. Each entry
@@ -31,7 +28,7 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>The {@link ScanningManager} evaluates every loaded entry on each scan attempt; no
  * registration call is needed. Subjects that require code (custom predicates, gating, dynamic
- * keys) implement {@link IScanThing} instead.
+ * keys) implement {@link IScannable} instead.
  *
  * @param key the research key granted when the target matches
  * @param blocks blocks matched in world or as items, empty to match no blocks
@@ -56,25 +53,19 @@ public record ScanEntry(Identifier key, Optional<HolderSet<Block>> blocks, Optio
             .apply(instance, ScanEntry::new));
 
     /**
-     * Whether the given scan target matches this entry.
-     *
-     * @param player the scanning player, used for level access
-     * @param target the scan target; position, entity, stack, or {@code null}
-     * @return {@code true} when the target matches any declared set
+     * @param player the scanning player, for level access
+     * @param target the scan target
+     * @return whether the target is one of the listed blocks, items or entity types; listed blocks also match their item form
      */
-    public boolean matches(Player player, @Nullable Object target) {
-        if (target instanceof BlockPos pos) {
+    public boolean matches(Player player, ScanTarget target) {
+        if (target instanceof ScannedBlock(var pos)) {
             return blocks.isPresent() && blocks.get().contains(player.level().getBlockState(pos).typeHolder());
         }
-        if (target instanceof Entity entity && !(entity instanceof ItemEntity)) {
-            return entities.isPresent() && entities.get().contains(entity.getType().builtInRegistryHolder());
+        Entity creature = target.creature();
+        if (creature != null) {
+            return entities.isPresent() && entities.get().contains(creature.getType().builtInRegistryHolder());
         }
-        ItemStack stack = ItemStack.EMPTY;
-        if (target instanceof ItemStack targetStack) {
-            stack = targetStack;
-        } else if (target instanceof ItemEntity itemEntity) {
-            stack = itemEntity.getItem();
-        }
+        ItemStack stack = target.carriedStack();
         if (stack.isEmpty()) {
             return false;
         }

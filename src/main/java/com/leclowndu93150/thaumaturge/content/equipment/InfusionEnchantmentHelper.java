@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
 import java.util.List;
@@ -73,7 +73,7 @@ public final class InfusionEnchantmentHelper {
                 return true;
             }
         }
-        return stack.getItem() instanceof IRechargable && classes.contains("chargable");
+        return RechargeAccess.isRechargeable(stack) && classes.contains("chargable");
     }
 
     private static boolean dealsAttackDamage(ItemStack stack) {
