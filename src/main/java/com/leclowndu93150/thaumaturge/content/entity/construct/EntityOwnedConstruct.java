@@ -1,10 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
+import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import java.util.Optional;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -30,12 +28,13 @@ import net.minecraft.world.scores.PlayerTeam;
 import org.jspecify.annotations.Nullable;
 
 public abstract class EntityOwnedConstruct extends PathfinderMob implements OwnableEntity {
-    private static final EntityDataAccessor<Byte> OWNED_FLAGS = SynchedEntityData.defineId(EntityOwnedConstruct.class, EntityDataSerializers.BYTE);
-    private static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> OWNER = SynchedEntityData.defineId(EntityOwnedConstruct.class,
+    private static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> MASTER = SynchedEntityData.defineId(EntityOwnedConstruct.class,
             EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
-    private static final int OWNED_BIT = 4;
+    private static final String MASTER_KEY = "Owner";
+    private static final String COMMISSIONED_KEY = "v";
+    private static final int CHATTER_INTERVAL = 240;
 
-    private boolean validSpawn;
+    private boolean commissioned;
 
     protected EntityOwnedConstruct(EntityType<? extends EntityOwnedConstruct> type, Level level) {
         super(type, level);
@@ -44,35 +43,75 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         super.defineSynchedData(entityData);
-        entityData.define(OWNED_FLAGS, (byte) 0);
-        entityData.define(OWNER, Optional.empty());
+        entityData.define(MASTER, Optional.empty());
     }
 
     public boolean isOwned() {
-        return (entityData.get(OWNED_FLAGS) & OWNED_BIT) != 0;
-    }
-
-    public void setOwned(boolean owned) {
-        byte flags = entityData.get(OWNED_FLAGS);
-        if (owned) {
-            entityData.set(OWNED_FLAGS, (byte) (flags | OWNED_BIT));
-        } else {
-            entityData.set(OWNED_FLAGS, (byte) (flags & ~OWNED_BIT));
-        }
+        return entityData.get(MASTER).isPresent();
     }
 
     @Override
     public @Nullable EntityReference<LivingEntity> getOwnerReference() {
-        return entityData.get(OWNER).orElse(null);
+        return entityData.get(MASTER).orElse(null);
     }
 
     public void setOwner(LivingEntity owner) {
-        entityData.set(OWNER, Optional.of(EntityReference.of(owner)));
-        setOwned(true);
+        entityData.set(MASTER, Optional.of(EntityReference.of(owner)));
     }
 
     public boolean isOwner(LivingEntity entity) {
-        return entity == getOwner();
+        return isOwned() && entity == getOwner();
+    }
+
+    public void setValidSpawn() {
+        commissioned = true;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (getTarget() != null && isAlliedTo(getTarget())) {
+            setTarget(null);
+        }
+        if (!commissioned && !level().isClientSide()) {
+            discard();
+        }
+    }
+
+    @Override
+    public @Nullable PlayerTeam getTeam() {
+        LivingEntity master = isOwned() ? getOwner() : null;
+        return master != null ? master.getTeam() : super.getTeam();
+    }
+
+    @Override
+    protected boolean considersEntityAsAlly(Entity other) {
+        LivingEntity master = isOwned() ? getOwner() : null;
+        if (master != null) {
+            return other == master || master.isAlliedTo(other);
+        }
+        return super.considersEntityAsAlly(other);
+    }
+
+    @Override
+    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (isRemoved() || player.isShiftKeyDown() || player.getMainHandItem().is(Items.NAME_TAG)) {
+            return InteractionResult.PASS;
+        }
+        if (level().isClientSide() || isOwner(player)) {
+            return super.mobInteract(player, hand);
+        }
+        TCActionBar.sendPurple(player, "tc.notowned");
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void die(DamageSource cause) {
+        boolean announce = level() instanceof ServerLevel server && server.getGameRules().get(GameRules.SHOW_DEATH_MESSAGES) && hasCustomName();
+        if (announce && getOwner() instanceof ServerPlayer master) {
+            master.sendSystemMessage(getCombatTracker().getDeathMessage());
+        }
+        super.die(cause);
     }
 
     @Override
@@ -83,6 +122,16 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     @Override
     public boolean canBreatheUnderwater() {
         return true;
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    public int getAmbientSoundInterval() {
+        return CHATTER_INTERVAL;
     }
 
     @Override
@@ -101,98 +150,16 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
     }
 
     @Override
-    public int getAmbientSoundInterval() {
-        return 240;
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return false;
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (getTarget() != null && isAlliedTo(getTarget())) {
-            setTarget(null);
-        }
-        if (!level().isClientSide() && !validSpawn) {
-            discard();
-        }
-    }
-
-    public void setValidSpawn() {
-        validSpawn = true;
-    }
-
-    @Override
     protected void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
-        output.putBoolean("v", validSpawn);
-        EntityReference.store(getOwnerReference(), output, "Owner");
+        output.putBoolean(COMMISSIONED_KEY, commissioned);
+        EntityReference.store(getOwnerReference(), output, MASTER_KEY);
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
-        validSpawn = input.getBooleanOr("v", false);
-        EntityReference<LivingEntity> owner = EntityReference.readWithOldOwnerConversion(input, "Owner", level());
-        if (owner != null) {
-            entityData.set(OWNER, Optional.of(owner));
-            setOwned(true);
-        } else {
-            entityData.set(OWNER, Optional.empty());
-            setOwned(false);
-        }
-    }
-
-    @Override
-    public @Nullable PlayerTeam getTeam() {
-        if (isOwned()) {
-            LivingEntity owner = getOwner();
-            if (owner != null) {
-                return owner.getTeam();
-            }
-        }
-        return super.getTeam();
-    }
-
-    @Override
-    protected boolean considersEntityAsAlly(Entity other) {
-        if (isOwned()) {
-            LivingEntity owner = getOwner();
-            if (other == owner) {
-                return true;
-            }
-            if (owner != null) {
-                return owner.isAlliedTo(other);
-            }
-        }
-        return super.considersEntityAsAlly(other);
-    }
-
-    @Override
-    public void die(DamageSource cause) {
-        if (level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.SHOW_DEATH_MESSAGES) && hasCustomName() && getOwner() instanceof ServerPlayer player) {
-            player.sendSystemMessage(getCombatTracker().getDeathMessage());
-        }
-        super.die(cause);
-    }
-
-    @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (isRemoved()) {
-            return InteractionResult.PASS;
-        }
-        if (player.isShiftKeyDown() || player.getMainHandItem().is(Items.NAME_TAG)) {
-            return InteractionResult.PASS;
-        }
-        if (!level().isClientSide() && !isOwner(player)) {
-            if (player instanceof ServerPlayer serverPlayer) {
-                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(Component.translatable("tc.notowned").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
-            }
-            return InteractionResult.SUCCESS;
-        }
-        return super.mobInteract(player, hand);
+        commissioned = input.getBooleanOr(COMMISSIONED_KEY, false);
+        entityData.set(MASTER, Optional.ofNullable(EntityReference.readWithOldOwnerConversion(input, MASTER_KEY, level())));
     }
 }

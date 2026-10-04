@@ -2,10 +2,10 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
-import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
+import com.leclowndu93150.thaumaturge.content.entity.eldritch.LeadingAim;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
 import com.leclowndu93150.thaumaturge.registry.TCSounds;
@@ -49,80 +49,200 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldritchMob, RangedAttackMob {
-    private static final EntityDataAccessor<Boolean> DATA_HEADLESS = SynchedEntityData.defineId(EntityEldritchGolem.class, EntityDataSerializers.BOOLEAN);
-
-    private static final byte ATTACK_EVENT = 4;
-    private static final byte ARC_EVENT = 19;
-    private static final int SPAWN_INVULN_TICKS = 100;
-    private static final int BONUS_ARMOR = 6;
-    private static final float MELEE_FACTOR = 0.75F;
-    private static final double MELEE_KNOCKUP = 0.2;
+    private static final EntityDataAccessor<Boolean> HEADLESS = SynchedEntityData.defineId(EntityEldritchGolem.class, EntityDataSerializers.BOOLEAN);
+    private static final String HEADLESS_KEY = "headless";
+    private static final byte SWING_EVENT = 4;
+    private static final double SPEED = 0.3;
+    private static final double STRIKE = 10.0;
+    private static final double HEALTH = 400.0;
+    private static final double PLATING = 6.0;
+    private static final double CHARGE_PACE = 1.1;
+    private static final double WANDER_PACE = 0.8;
+    private static final float GAZE_RANGE = 8.0F;
+    private static final double BEAM_MIN_DISTANCE = 3.0;
+    private static final double BEAM_PACE = 1.0;
+    private static final int BEAM_INTERVAL = 5;
+    private static final float BEAM_RANGE = 24.0F;
+    private static final float BEAM_SPEED = 0.66F;
+    private static final float BEAM_SPREAD = 5.0F;
+    private static final float AIM_TURN = 30.0F;
+    private static final int AWAKENING = 100;
+    private static final float AWAKENING_MEND = 2.0F;
+    private static final int SWING_RECOVERY = 10;
+    private static final float SWING_SHARE = 0.75F;
+    private static final double SWING_LIFT = 0.2;
     private static final float HEADLESS_FLING = 1.5F;
-    private static final int ATTACK_COOLDOWN = 10;
-    private static final int BEAM_CHARGE_MAX = 150;
-    private static final float SOFT_BLOCK_HARDNESS = 0.15F;
-    private static final float HEAD_EXPLOSION_POWER = 2.0F;
-    private static final int ARC_DURATION_BASE = 8;
-    private static final int ARC_COLOR = 0xA6FFFF;
+    private static final double FLING_RISE = 0.1;
+    private static final float DECAPITATION_BLAST = 2.0F;
+    private static final float HEAD_OFFSET = 0.75F;
+    private static final float TRAMPLE_HARDNESS = 0.15F;
+    private static final int STOMP_ODDS = 5;
+    private static final double STRIDE_SQ = 2.5000003E-7F;
+    private static final double DUST_LIFT = 0.1;
+    private static final double DUST_SPRAY = 4.0;
+    private static final double DUST_RISE = 0.5;
 
-    private int beamCharge;
-    private boolean chargingBeam;
-    private int arcing;
-    private BlockPos arcTarget = BlockPos.ZERO;
-    private int attackTimer;
+    private final GolemBeamCore beamCore = new GolemBeamCore(this);
+    private boolean beamArmed;
+    private int swingCooldown;
 
     public EntityEldritchGolem(EntityType<? extends EntityEldritchGolem> type, Level level) {
         super(type, level);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBossAttributes().add(Attributes.MOVEMENT_SPEED, 0.3).add(Attributes.ATTACK_DAMAGE, 10.0).add(Attributes.MAX_HEALTH, 400.0).add(Attributes.ARMOR, BONUS_ARMOR);
+        return createBossAttributes().add(Attributes.MOVEMENT_SPEED, SPEED).add(Attributes.ATTACK_DAMAGE, STRIKE).add(Attributes.MAX_HEALTH, HEALTH).add(Attributes.ARMOR, PLATING);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false));
-        this.goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 0.8));
-        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.8));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        goalSelector.addGoal(0, new FloatGoal(this));
+        goalSelector.addGoal(3, new MeleeAttackGoal(this, CHARGE_PACE, false));
+        goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, WANDER_PACE));
+        goalSelector.addGoal(7, new RandomStrollGoal(this, WANDER_PACE));
+        goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, GAZE_RANGE));
+        goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+        targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         super.defineSynchedData(entityData);
-        entityData.define(DATA_HEADLESS, false);
+        entityData.define(HEADLESS, false);
     }
 
     public boolean isHeadless() {
-        return this.entityData.get(DATA_HEADLESS);
+        return entityData.get(HEADLESS);
     }
 
-    public void setHeadless(boolean headless) {
-        this.entityData.set(DATA_HEADLESS, headless);
+    public int swingCooldown() {
+        return swingCooldown;
+    }
+
+    @Override
+    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
+        spawnTimer = AWAKENING;
+        ChampionHelper.makeChampion(this, true);
+        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
     @Override
     public void generateName() {
-        MobTraits.champion(this).ifPresent(trait -> this.setCustomName(Component.translatable("entity.thaumaturge.eldritch_golem.name.custom", MobTraitNames.of(trait))));
+        MobTraits.champion(this).ifPresent(trait -> setCustomName(Component.translatable("entity.thaumaturge.eldritch_golem.name.custom", MobTraitNames.of(trait))));
     }
 
     @Override
-    protected void addAdditionalSaveData(ValueOutput output) {
-        super.addAdditionalSaveData(output);
-        output.putBoolean("headless", this.isHeadless());
-    }
-
-    @Override
-    protected void readAdditionalSaveData(ValueInput input) {
-        super.readAdditionalSaveData(input);
-        this.setHeadless(input.getBooleanOr("headless", false));
-        if (this.isHeadless()) {
-            this.makeHeadless();
+    public void tick() {
+        super.tick();
+        if (!(level() instanceof ServerLevel server)) {
+            return;
         }
+        if (getSpawnTimer() > 0) {
+            heal(AWAKENING_MEND);
+        }
+        if (isHeadless()) {
+            beamCore.tick(server);
+        }
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (swingCooldown > 0) {
+            swingCooldown--;
+        }
+        boolean stomping = getDeltaMovement().horizontalDistanceSqr() > STRIDE_SQ && random.nextInt(STOMP_ODDS) == 0;
+        BlockPos feet = blockPosition();
+        BlockState underfoot = level().getBlockState(feet);
+        if (level().isClientSide()) {
+            if (stomping && !underfoot.isAir()) {
+                kickUpDust(underfoot);
+            }
+            return;
+        }
+        if (stomping && underfoot.getBlock() instanceof BlockLoot) {
+            level().destroyBlock(feet, true);
+            underfoot = level().getBlockState(feet);
+        }
+        float hardness = underfoot.getDestroySpeed(level(), feet);
+        if (!underfoot.isAir() && hardness >= 0.0F && hardness <= TRAMPLE_HARDNESS) {
+            level().destroyBlock(feet, true);
+        }
+    }
+
+    private void kickUpDust(BlockState underfoot) {
+        level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, underfoot), getX() + (random.nextFloat() - 0.5) * getBbWidth(), getBoundingBox().minY + DUST_LIFT,
+                getZ() + (random.nextFloat() - 0.5) * getBbWidth(), DUST_SPRAY * (random.nextFloat() - 0.5), DUST_RISE, (random.nextFloat() - 0.5) * DUST_SPRAY);
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+        if (!isHeadless() && damage > getHealth() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            loseHead(level);
+            return false;
+        }
+        return super.hurtServer(level, source, damage);
+    }
+
+    private void loseHead(ServerLevel level) {
+        entityData.set(HEADLESS, true);
+        spawnTimer = AWAKENING;
+        float bearing = getYRot() % 360.0F * Mth.DEG_TO_RAD;
+        level.explode(this, getX() + Mth.cos(bearing) * HEAD_OFFSET, getEyeY(), getZ() + Mth.sin(bearing) * HEAD_OFFSET, DECAPITATION_BLAST, false, Level.ExplosionInteraction.NONE);
+        armBeam();
+    }
+
+    private void armBeam() {
+        if (!beamArmed) {
+            beamArmed = true;
+            goalSelector.addGoal(2, new LongRangeAttackGoal(this, BEAM_MIN_DISTANCE, BEAM_PACE, BEAM_INTERVAL, BEAM_INTERVAL, BEAM_RANGE));
+        }
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (swingCooldown > 0) {
+            return false;
+        }
+        swingCooldown = SWING_RECOVERY;
+        level.broadcastEntityEvent(this, SWING_EVENT);
+        boolean landed = target.hurtServer(level, damageSources().mobAttack(this), (float) getAttributeValue(Attributes.ATTACK_DAMAGE) * SWING_SHARE);
+        if (landed) {
+            target.setDeltaMovement(target.getDeltaMovement().add(0.0, SWING_LIFT, 0.0));
+            if (isHeadless()) {
+                float bearing = getYRot() * Mth.DEG_TO_RAD;
+                target.push(-Mth.sin(bearing) * HEADLESS_FLING, FLING_RISE, Mth.cos(bearing) * HEADLESS_FLING);
+            }
+        }
+        return landed;
+    }
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float velocity) {
+        if (!beamCore.ready() || !hasLineOfSight(target)) {
+            return;
+        }
+        beamCore.spend(random);
+        Vec3 heart = target.getBoundingBox().getCenter();
+        getLookControl().setLookAt(heart.x, heart.y, heart.z, AIM_TURN, AIM_TURN);
+        Vec3 look = getLookAngle();
+        EntityGolemOrb orb = new EntityGolemOrb(level(), this, target, false);
+        orb.setPos(orb.getX() + look.x, orb.getY(), orb.getZ() + look.z);
+        Vec3 aim = LeadingAim.at(this, target);
+        orb.shoot(aim.x, aim.y, aim.z, BEAM_SPEED, BEAM_SPREAD);
+        playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + random.nextFloat() * 0.1F);
+        level().addFreshEntity(orb);
+    }
+
+    @Override
+    public void handleEntityEvent(byte event) {
+        if (event != SWING_EVENT) {
+            super.handleEntityEvent(event);
+            return;
+        }
+        swingCooldown = SWING_RECOVERY;
+        playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
     }
 
     @Override
@@ -137,150 +257,21 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
+        playSound(SoundEvents.IRON_GOLEM_STEP, 1.0F, 1.0F);
     }
 
     @Override
-    public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
-        this.spawnTimer = SPAWN_INVULN_TICKS;
-        ChampionHelper.makeChampion(this, true);
-        return super.finalizeSpawn(level, difficulty, reason, data);
+    protected void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean(HEADLESS_KEY, isHeadless());
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
-        if (this.attackTimer > 0) {
-            this.attackTimer--;
-        }
-        Vec3 movement = this.getDeltaMovement();
-        if (movement.x * movement.x + movement.z * movement.z > 2.5000003E-7F && this.random.nextInt(5) == 0) {
-            BlockState state = this.level().getBlockState(this.blockPosition());
-            if (!state.isAir()) {
-                this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), this.getX() + (this.random.nextFloat() - 0.5) * this.getBbWidth(), this.getBoundingBox().minY + 0.1,
-                        this.getZ() + (this.random.nextFloat() - 0.5) * this.getBbWidth(), 4.0 * (this.random.nextFloat() - 0.5), 0.5, (this.random.nextFloat() - 0.5) * 4.0);
-            }
-            if (!this.level().isClientSide() && state.getBlock() instanceof BlockLoot) {
-                this.level().destroyBlock(this.blockPosition(), true);
-            }
-        }
-        if (!this.level().isClientSide()) {
-            BlockState state = this.level().getBlockState(this.blockPosition());
-            float hardness = state.getDestroySpeed(this.level(), this.blockPosition());
-            if (!state.isAir() && hardness >= 0.0F && hardness <= SOFT_BLOCK_HARDNESS) {
-                this.level().destroyBlock(this.blockPosition(), true);
-            }
-        }
-    }
-
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
-        if (damage > this.getHealth() && !this.isHeadless() && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            this.setHeadless(true);
-            this.spawnTimer = SPAWN_INVULN_TICKS;
-            double xx = Mth.cos(this.getYRot() % 360.0F / 180.0F * Mth.PI) * 0.75F;
-            double zz = Mth.sin(this.getYRot() % 360.0F / 180.0F * Mth.PI) * 0.75F;
-            level.explode(this, this.getX() + xx, this.getY() + this.getEyeHeight(), this.getZ() + zz, HEAD_EXPLOSION_POWER, false, Level.ExplosionInteraction.NONE);
-            this.makeHeadless();
-            return false;
-        }
-        return super.hurtServer(level, source, damage);
-    }
-
-    public int getAttackTimer() {
-        return this.attackTimer;
-    }
-
-    private void makeHeadless() {
-        this.goalSelector.addGoal(2, new LongRangeAttackGoal(this, 3.0, 1.0, 5, 5, 24.0F));
-    }
-
-    @Override
-    public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (this.attackTimer > 0) {
-            return false;
-        }
-        this.attackTimer = ATTACK_COOLDOWN;
-        this.level().broadcastEntityEvent(this, ATTACK_EVENT);
-        boolean hit = target.hurtServer(level, this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * MELEE_FACTOR);
-        if (hit) {
-            target.setDeltaMovement(target.getDeltaMovement().add(0.0, MELEE_KNOCKUP, 0.0));
-            if (this.isHeadless()) {
-                target.push(-Mth.sin(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING, 0.1, Mth.cos(this.getYRot() * Mth.PI / 180.0F) * HEADLESS_FLING);
-            }
-        }
-        return hit;
-    }
-
-    @Override
-    public void performRangedAttack(LivingEntity target, float velocity) {
-        if (!this.hasLineOfSight(target) || this.chargingBeam || this.beamCharge <= 0) {
-            return;
-        }
-        this.beamCharge -= 15 + this.random.nextInt(5);
-        this.getLookControl().setLookAt(target.getX(), target.getBoundingBox().minY + target.getBbHeight() / 2.0F, target.getZ(), 30.0F, 30.0F);
-        Vec3 look = this.getLookAngle();
-        EntityGolemOrb blast = new EntityGolemOrb(this.level(), this, target, false);
-        blast.setPos(blast.getX() + look.x, blast.getY(), blast.getZ() + look.z);
-        double dx = target.getX() + target.getDeltaMovement().x - this.getX();
-        double dy = target.getY() - this.getY() - target.getBbHeight() / 2.0F;
-        double dz = target.getZ() + target.getDeltaMovement().z - this.getZ();
-        blast.shoot(dx, dy, dz, 0.66F, 5.0F);
-        this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
-        this.level().addFreshEntity(blast);
-    }
-
-    @Override
-    public void handleEntityEvent(byte event) {
-        if (event == ATTACK_EVENT) {
-            this.attackTimer = ATTACK_COOLDOWN;
-            this.playSound(SoundEvents.IRON_GOLEM_ATTACK, 1.0F, 1.0F);
-        } else {
-            super.handleEntityEvent(event);
-        }
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (!this.level().isClientSide()) {
-            if (this.getSpawnTimer() > 0) {
-                this.heal(2.0F);
-            }
-            if (this.isHeadless() && this.beamCharge <= 0) {
-                this.chargingBeam = true;
-            }
-            if (this.isHeadless() && this.chargingBeam) {
-                this.beamCharge++;
-                if (this.tickCount % 5 == 0) {
-                    this.sendJacobsArc((ServerLevel) this.level());
-                }
-                if (this.beamCharge == BEAM_CHARGE_MAX) {
-                    this.chargingBeam = false;
-                }
-            }
-        }
-    }
-
-    private void sendJacobsArc(ServerLevel level) {
-        if (this.arcing > 0) {
-            this.arcing--;
-            Effects.arcLightning(level, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0)).to(Vec3.atBottomCenterOf(this.arcTarget.above())).color(ARC_COLOR).send();
-            return;
-        }
-        float radius = 2.0F + this.random.nextFloat() * 2.0F;
-        double radians = Math.toRadians(this.random.nextInt(360));
-        int bx = Mth.floor(this.getX() + radius * Math.cos(radians));
-        int by = Mth.floor(this.getY());
-        int bz = Mth.floor(this.getZ() + radius * Math.sin(radians));
-        BlockPos pos = new BlockPos(bx, by, bz);
-        for (int step = 0; step < 5 && this.level().isEmptyBlock(pos); step++) {
-            pos = pos.below();
-        }
-        if (this.level().isEmptyBlock(pos.above()) && !this.level().isEmptyBlock(pos)) {
-            this.arcTarget = pos;
-            this.arcing = ARC_DURATION_BASE + this.random.nextInt(5);
-            this.playSound(TCSounds.JACOBS.get(), 0.8F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+    protected void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        entityData.set(HEADLESS, input.getBooleanOr(HEADLESS_KEY, false));
+        if (isHeadless()) {
+            armBeam();
         }
     }
 }

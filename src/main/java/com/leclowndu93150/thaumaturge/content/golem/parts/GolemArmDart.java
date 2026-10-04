@@ -26,14 +26,8 @@ public final class GolemArmDart implements GolemArm.IArmFunction {
     @Override
     public void onRangedAttack(IGolemAPI golem, LivingEntity target, float power) {
         LivingEntity shooter = golem.getGolemEntity();
-        EntityGolemDart dart = new EntityGolemDart(golem.getGolemWorld(), shooter);
-        float damage = (float) shooter.getAttributeValue(Attributes.ATTACK_DAMAGE) / DAMAGE_DIVISOR;
-        dart.setBaseDamage(damage + power + golem.getGolemWorld().getRandom().nextGaussian() * 0.25);
-        double dx = target.getX() - shooter.getX();
-        double dy = target.getBoundingBox().minY + target.getEyeHeight() + power * power - dart.getY();
-        double dz = target.getZ() - shooter.getZ();
-        dart.shoot(dx, dy, dz, DART_VELOCITY, DART_INACCURACY);
-        golem.getGolemWorld().addFreshEntity(dart);
+        double damage = (float) shooter.getAttributeValue(Attributes.ATTACK_DAMAGE) / DAMAGE_DIVISOR + power + golem.getGolemWorld().getRandom().nextGaussian() * 0.25;
+        EntityGolemDart.loose(shooter, target, damage, power * power, DART_VELOCITY, DART_INACCURACY);
         shooter.playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (golem.getGolemWorld().getRandom().nextFloat() * 0.4F + 0.8F));
     }
 
