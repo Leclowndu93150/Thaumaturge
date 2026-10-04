@@ -13,6 +13,7 @@ Changes
 - ancient rock and ancient doorways keep withers and dragons out through the vanilla wither_immune and dragon_immune tags
 - turrets and arcane bores placed in creative no longer use up the item
 - greatwoods and magical forest big oaks generate through the vanilla tree feature with the new thaumaturge:crown_trunk_placer, thaumaturge:crown_foliage_placer and thaumaturge:spider_nest types; the thaumaturge:big_tree and thaumaturge:big_magic_tree feature types are gone
+- silverwoods generate through the vanilla tree feature with thaumaturge:silverwood_trunk_placer, thaumaturge:leaf_cell_foliage_placer, thaumaturge:detached_leaf_pruner and thaumaturge:scattered_flowers; the thaumaturge:silverwood_tree feature type is gone
 - api: remove IScribeTools, tag items with thaumaturge:scribing_tools instead
 
 ------------------------------------------------------

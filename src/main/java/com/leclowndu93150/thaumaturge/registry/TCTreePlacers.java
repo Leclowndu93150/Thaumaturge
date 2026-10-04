@@ -4,6 +4,10 @@ import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownFoliagePlacer;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownTrunkPlacer;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.SpiderNestDecorator;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.DetachedLeafPruner;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.LeafCellFoliagePlacer;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.ScatteredFlowersDecorator;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.SilverwoodTrunkPlacer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
@@ -23,6 +27,15 @@ public final class TCTreePlacers {
             () -> new FoliagePlacerType<>(CrownFoliagePlacer.CODEC));
     public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<SpiderNestDecorator>> SPIDER_NEST = TREE_DECORATORS.register("spider_nest",
             () -> new TreeDecoratorType<>(SpiderNestDecorator.CODEC));
+
+    public static final DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<SilverwoodTrunkPlacer>> SILVERWOOD_TRUNK = TRUNK_PLACERS.register("silverwood_trunk_placer",
+            () -> new TrunkPlacerType<>(SilverwoodTrunkPlacer.CODEC));
+    public static final DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<LeafCellFoliagePlacer>> LEAF_CELL_FOLIAGE = FOLIAGE_PLACERS.register("leaf_cell_foliage_placer",
+            () -> new FoliagePlacerType<>(LeafCellFoliagePlacer.CODEC));
+    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DetachedLeafPruner>> DETACHED_LEAF_PRUNER = TREE_DECORATORS.register("detached_leaf_pruner",
+            () -> new TreeDecoratorType<>(DetachedLeafPruner.CODEC));
+    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<ScatteredFlowersDecorator>> SCATTERED_FLOWERS = TREE_DECORATORS.register("scattered_flowers",
+            () -> new TreeDecoratorType<>(ScatteredFlowersDecorator.CODEC));
 
     private TCTreePlacers() {}
 

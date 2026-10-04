@@ -15,8 +15,6 @@ import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraConfig
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraFeature;
 import com.leclowndu93150.thaumaturge.content.world.taint.TaintBiomeConfig;
 import com.leclowndu93150.thaumaturge.content.world.taint.TaintBiomeFeature;
-import com.leclowndu93150.thaumaturge.content.world.tree.SilverwoodTreeConfig;
-import com.leclowndu93150.thaumaturge.content.world.tree.SilverwoodTreeFeature;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -26,8 +24,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class TCFeatures {
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, TCIds.MODID);
-
-    public static final DeferredHolder<Feature<?>, SilverwoodTreeFeature> SILVERWOOD_TREE = FEATURES.register("silverwood_tree", () -> new SilverwoodTreeFeature(SilverwoodTreeConfig.CODEC));
 
     public static final DeferredHolder<Feature<?>, CrystalClusterFeature> CRYSTAL_CLUSTER = FEATURES.register("crystal_cluster", () -> new CrystalClusterFeature(CrystalClusterConfig.CODEC));
 

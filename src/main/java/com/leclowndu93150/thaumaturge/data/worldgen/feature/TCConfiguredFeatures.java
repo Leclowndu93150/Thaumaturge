@@ -7,16 +7,20 @@ import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalClusterConfig;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraConfig;
 import com.leclowndu93150.thaumaturge.content.world.taint.TaintBiomeConfig;
-import com.leclowndu93150.thaumaturge.content.world.tree.SilverwoodTreeConfig;
 import com.leclowndu93150.thaumaturge.content.world.tree.TCTreeGrowers;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownFoliagePlacer;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownRule;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownShape;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.CrownTrunkPlacer;
 import com.leclowndu93150.thaumaturge.content.world.tree.crown.SpiderNestDecorator;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.DetachedLeafPruner;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.LeafCellFoliagePlacer;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.ScatteredFlowersDecorator;
+import com.leclowndu93150.thaumaturge.content.world.tree.silverwood.SilverwoodTrunkPlacer;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import com.leclowndu93150.thaumaturge.registry.TCFeatures;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
@@ -170,6 +174,15 @@ public final class TCConfiguredFeatures {
                 .decorators(decorators).build();
     }
 
+    private static TreeConfiguration silverwoodTree(int minHeight, int extraHeight, boolean growNodes, boolean keepApart, Optional<Block> flower) {
+        List<TreeDecorator> decorators = new ArrayList<>();
+        decorators.add(DetachedLeafPruner.INSTANCE);
+        flower.ifPresent(block -> decorators.add(new ScatteredFlowersDecorator(block)));
+        return new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(TCBlocks.LOG_SILVERWOOD.get()), new SilverwoodTrunkPlacer(minHeight, extraHeight - 1, 0, growNodes, keepApart),
+                BlockStateProvider.simple(TCBlocks.LEAVES_SILVERWOOD.get()), new LeafCellFoliagePlacer(ConstantInt.ZERO, ConstantInt.ZERO), new TwoLayersFeatureSize(1, 0, 0)).ignoreVines()
+                .decorators(List.copyOf(decorators)).build();
+    }
+
     private static Holder<PlacedFeature> patch(Holder<ConfiguredFeature<?, ?>> feature, int tries) {
         return PlacementUtils.inlinePlaced(feature, CountPlacement.of(tries), RandomOffsetPlacement.ofTriangle(PATCH_XZ_SPREAD, PATCH_Y_SPREAD),
                 BlockPredicateFilter.forPredicate(BlockPredicate.ONLY_IN_AIR_PREDICATE));
@@ -187,13 +200,12 @@ public final class TCConfiguredFeatures {
                 new ConfiguredFeature<>(Feature.TREE, crownTree(TCBlocks.LOG_GREATWOOD.get(), TCBlocks.LEAVES_GREATWOOD.get(), greatwoodShape, CrownRule.OPEN_AIR, false, List.of())));
         CrownShape magicOakShape = new CrownShape(1, MAGIC_OAK_TRUNK_SHARE, MAGIC_OAK_BRANCH_SLOPE, MAGIC_OAK_CROWN_WIDTH, false);
         context.register(BIG_MAGIC_TREE, new ConfiguredFeature<>(Feature.TREE, crownTree(Blocks.OAK_LOG, Blocks.OAK_LEAVES, magicOakShape, CrownRule.REPLACEABLE, true, List.of())));
-        context.register(SILVERWOOD_TREE, new ConfiguredFeature<>(TCFeatures.SILVERWOOD_TREE.get(), new SilverwoodTreeConfig(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.LEAVES_SILVERWOOD.get(),
-                SILVERWOOD_NATURAL_MIN_HEIGHT, SILVERWOOD_NATURAL_EXTRA_HEIGHT, Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()), true, true)));
-        context.register(SILVERWOOD_TREE_GROWN, new ConfiguredFeature<>(TCFeatures.SILVERWOOD_TREE.get(),
-                new SilverwoodTreeConfig(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.LEAVES_SILVERWOOD.get(), SILVERWOOD_GROWN_MIN_HEIGHT, SILVERWOOD_GROWN_EXTRA_HEIGHT, Optional.empty(), true, false)));
+        context.register(SILVERWOOD_TREE,
+                new ConfiguredFeature<>(Feature.TREE, silverwoodTree(SILVERWOOD_NATURAL_MIN_HEIGHT, SILVERWOOD_NATURAL_EXTRA_HEIGHT, true, true, Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()))));
+        context.register(SILVERWOOD_TREE_GROWN, new ConfiguredFeature<>(Feature.TREE, silverwoodTree(SILVERWOOD_GROWN_MIN_HEIGHT, SILVERWOOD_GROWN_EXTRA_HEIGHT, true, false, Optional.empty())));
 
-        context.register(SILVERWOOD_TREE_CAVE, new ConfiguredFeature<>(TCFeatures.SILVERWOOD_TREE.get(), new SilverwoodTreeConfig(TCBlocks.LOG_SILVERWOOD.get(), TCBlocks.LEAVES_SILVERWOOD.get(),
-                MAGICAL_CAVE_SILVERWOOD_BASE_HEIGHT, MAGICAL_CAVE_SILVERWOOD_EXTRA_HEIGHT, Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()), false, false)));
+        context.register(SILVERWOOD_TREE_CAVE, new ConfiguredFeature<>(Feature.TREE,
+                silverwoodTree(MAGICAL_CAVE_SILVERWOOD_BASE_HEIGHT, MAGICAL_CAVE_SILVERWOOD_EXTRA_HEIGHT, false, false, Optional.of(TCBlocks.PLANT_SHIMMERLEAF.get()))));
         context.register(MAGICAL_CAVE_GREATWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
                 new TreeConfiguration.TreeConfigurationBuilder(BlockStateProvider.simple(TCBlocks.LOG_GREATWOOD.get()),
                         new StraightTrunkPlacer(MAGICAL_CAVE_GREATWOOD_BASE_HEIGHT, MAGICAL_CAVE_GREATWOOD_EXTRA_HEIGHT, 0), BlockStateProvider.simple(TCBlocks.LEAVES_GREATWOOD.get()),
