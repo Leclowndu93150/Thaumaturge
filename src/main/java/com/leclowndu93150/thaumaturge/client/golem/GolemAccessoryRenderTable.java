@@ -17,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModLoader;
 
 public final class GolemAccessoryRenderTable {
+    public static final GolemAccessoryRenderTable EMPTY = new GolemAccessoryRenderTable(Map.of());
     private final Map<GolemAccessoryAnchor, Map<Identifier, List<GolemAccessoryRenderer>>> renderers;
 
     private GolemAccessoryRenderTable(Map<GolemAccessoryAnchor, Map<Identifier, List<GolemAccessoryRenderer>>> renderers) {
@@ -34,6 +35,10 @@ public final class GolemAccessoryRenderTable {
     }
 
     public void submit(GolemAccessoryAnchor anchor, GolemRenderState state, PoseStack poseStack, SubmitNodeCollector collector) {
+        submit(anchor, state, poseStack, collector, -1);
+    }
+
+    public void submit(GolemAccessoryAnchor anchor, GolemRenderState state, PoseStack poseStack, SubmitNodeCollector collector, int color) {
         Map<Identifier, List<GolemAccessoryRenderer>> byAccessory = renderers.get(anchor);
         if (byAccessory == null || state.accessories.isEmpty()) {
             return;
@@ -45,7 +50,7 @@ public final class GolemAccessoryRenderTable {
                 continue;
             }
             if (context == null) {
-                context = new GolemAccessoryRenderContext(state.lightCoords, state.ageInTicks, state.accessoryStates);
+                context = new GolemAccessoryRenderContext(state.lightCoords, state.ageInTicks, state.accessoryStates, color);
             }
             for (GolemAccessoryRenderer renderer : accessoryRenderers) {
                 renderer.submit(poseStack, collector, context);

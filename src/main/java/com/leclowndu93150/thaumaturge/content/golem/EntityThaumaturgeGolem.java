@@ -458,6 +458,12 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
+    public void aiStep() {
+        super.aiStep();
+        updateSwingTime();
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (!level().isClientSide() && isFettered()) {

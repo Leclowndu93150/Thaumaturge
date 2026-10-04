@@ -5,10 +5,10 @@ import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryStateVi
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.accessory.GolemAccessoryStates;
 import java.util.List;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.CopperGolemRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 
-public class GolemRenderState extends EntityRenderState {
+public class GolemRenderState extends CopperGolemRenderState {
     public GolemProperties props;
     public byte color;
     public float bodyRot;
@@ -16,7 +16,6 @@ public class GolemRenderState extends EntityRenderState {
     public float pitch;
     public float walkPos;
     public float walkSpeed;
-    public float attackTime;
     public double speedSq;
     public float yawDelta;
     public float wheelRotation;

@@ -39,6 +39,7 @@ public class TCModelsHandlers {
 
     @SubscribeEvent
     public static void onRegisterItemModels(RegisterSpecialModelRendererEvent event) {
+        event.register(TCIds.rl("golem"), GolemItemSpecialRenderer.Unbaked.MAP_CODEC);
         event.register(JAR_MODEL_ID, JarItemSpecialRenderer.Unbaked.MAP_CODEC);
         event.register(JAR_BRAIN_MODEL_ID, JarBrainItemSpecialRenderer.Unbaked.MAP_CODEC);
         event.register(JAR_NODE_MODEL_ID, JarNodeItemSpecialRenderer.Unbaked.MAP_CODEC);

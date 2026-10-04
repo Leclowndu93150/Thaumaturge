@@ -246,9 +246,7 @@ public final class TCModelProvider extends ModelProvider {
         itemModels.generateFlatItem(TCItems.SEAL_PROVIDER.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(TCItems.SEAL_STOCK.get(), ModelTemplates.FLAT_ITEM);
 
-        Identifier golemModel = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(TCItems.GOLEM_PLACER.get()), TextureMapping.layer0(TCItems.GOLEM_PLACER.get()),
-                itemModels.modelOutput);
-        itemModels.itemModelOutput.accept(TCItems.GOLEM_PLACER.get(), ItemModelUtils.tintedModel(golemModel, new GolemMaterialTint()));
+        itemModels.itemModelOutput.accept(TCItems.GOLEM_PLACER.get(), new SpecialModelWrapper.Unbaked(TCIds.rl("item/golem_base"), Optional.empty(), new GolemItemSpecialRenderer.Unbaked()));
 
         Identifier inlayDot = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_dot");
         Identifier inlaySide = Identifier.fromNamespaceAndPath(TCIds.MODID, "block/inlay_side");

@@ -9,9 +9,14 @@ import java.util.Objects;
  * @param lightCoords the packed light at the golem
  * @param ageInTicks  the golem's age in ticks, including the partial tick, for animation
  * @param states      the synced behaviour states of the accessories the golem wears
+ * @param color       ARGB render tint, including the golem's visibility alpha
  * @since 1.0.0
  */
-public record GolemAccessoryRenderContext(int lightCoords, float ageInTicks, GolemAccessoryStateView states) {
+public record GolemAccessoryRenderContext(int lightCoords, float ageInTicks, GolemAccessoryStateView states, int color) {
+    public GolemAccessoryRenderContext(int lightCoords, float ageInTicks, GolemAccessoryStateView states) {
+        this(lightCoords, ageInTicks, states, -1);
+    }
+
     /**
      * Validates the components.
      *

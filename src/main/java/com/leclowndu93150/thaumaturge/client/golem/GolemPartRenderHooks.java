@@ -33,7 +33,7 @@ public final class GolemPartRenderHooks {
         @Override
         public void preRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, GolemPartModel.LimbSide side, float partialTick) {
             if (partName.equals("wheel")) {
-                poseStack.translate(0.0, -0.375, 0.0);
+                poseStack.translate(0.0, -2.5 / 16.0, 0.0);
                 poseStack.mulPose(Axis.XN.rotationDegrees(state.wheelRotation));
             }
         }
@@ -45,7 +45,7 @@ public final class GolemPartRenderHooks {
             if (partName.startsWith("claw")) {
                 float open = state.attackTime * 4.1F;
                 open = open * open;
-                poseStack.translate(0.0, -0.2, 0.0);
+                poseStack.translate(0.0, -1.5 / 16.0, 0.0);
                 poseStack.mulPose((partName.endsWith("1") ? Axis.XP : Axis.XN).rotationDegrees(open));
             }
         }
@@ -55,7 +55,7 @@ public final class GolemPartRenderHooks {
         @Override
         public void preRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, GolemPartModel.LimbSide side, float partialTick) {
             if (partName.equals("grinder")) {
-                poseStack.translate(0.0, -0.34, 0.0);
+                poseStack.translate(0.0, -1.0 / 16.0, 0.0);
                 float angle = (state.ageInTicks) / 2.0F + state.grinderRot + (side == GolemPartModel.LimbSide.LEFT ? 22 : 0);
                 poseStack.mulPose((side == GolemPartModel.LimbSide.LEFT ? Axis.XN : Axis.XP).rotationDegrees(angle));
             }
@@ -82,15 +82,12 @@ public final class GolemPartRenderHooks {
     static final class HaulerHook implements GolemPartRenderHook {
         @Override
         public void postRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, SubmitNodeCollector collector, GolemPartModel.LimbSide side) {
-            if (!state.haulingItem) {
+            if (!state.haulingItem || !partName.equals("cargo")) {
                 return;
             }
             poseStack.pushPose();
-            poseStack.scale(0.375F, 0.375F, 0.375F);
-            poseStack.translate(0.0F, 0.33F, 0.825F);
-            if (!state.haulerItemIsBlock) {
-                poseStack.translate(0.0F, 0.0F, -0.25F);
-            }
+            poseStack.translate(0.0F, 3.0F / 16.0F, 6.5F / 16.0F);
+            poseStack.scale(0.45F, 0.45F, 0.45F);
             state.haulerItem.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
         }

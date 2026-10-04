@@ -18,6 +18,14 @@ public final class GolemMeshes {
 
     private GolemMeshes() {}
 
+    public static void clear() {
+        CACHE.clear();
+    }
+
+    public static Identifier texture(TCMeshPart part, Identifier fallback) {
+        return part.materialSlot().contains(":") ? Identifier.parse(part.materialSlot()) : fallback;
+    }
+
     public static TCMesh get(Identifier meshLocation) {
         return CACHE.computeIfAbsent(meshLocation, location -> {
             try {
