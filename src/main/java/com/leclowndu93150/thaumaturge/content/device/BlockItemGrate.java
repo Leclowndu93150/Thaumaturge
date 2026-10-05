@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
+import com.leclowndu93150.thaumaturge.registry.TCSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -67,6 +69,7 @@ public final class BlockItemGrate extends BaseEntityBlock {
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         level.setBlock(pos, state.cycle(OPEN), UPDATE_CLIENTS);
         level.invalidateCapabilities(pos);
+        playToggleSound(level, pos, !state.getValue(OPEN));
         if (!level.isClientSide()
                 && !state.getValue(OPEN)
                 && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) {
@@ -103,7 +106,14 @@ public final class BlockItemGrate extends BaseEntityBlock {
         if (powered != state.getValue(POWERED)) {
             level.setBlock(pos, state.setValue(OPEN, powered).setValue(POWERED, powered), UPDATE_CLIENTS);
             level.invalidateCapabilities(pos);
+            if (powered != state.getValue(OPEN)) playToggleSound(level, pos, powered);
             if (powered && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) grate.eject();
+        }
+    }
+
+    private static void playToggleSound(Level level, BlockPos pos, boolean open) {
+        if (!level.isClientSide()) {
+            level.playSound(null, pos, TCSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, open ? 1.0F : 0.9F);
         }
     }
 
