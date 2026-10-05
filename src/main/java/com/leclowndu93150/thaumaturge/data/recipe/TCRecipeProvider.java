@@ -687,25 +687,21 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .save(output, TCIds.MODID + ":amber_block_from_brick");
 
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_BARRIER.get(), 4), 50)
-                .aspect(TCAspects.IGNIS, 1)
-                .aspect(TCAspects.ORDO, 1)
                 .pattern("SAS")
                 .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
-                .define('A', TCItems.CRYSTAL_IGNIS)
-                .define('B', TCItems.CRYSTAL_ORDO)
+                .define('A', crystal(TCAspects.IGNIS))
+                .define('B', crystal(TCAspects.ORDO))
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
 
         arcaneShaped(new ItemStack(TCItems.PAVING_STONE_TRAVEL.get(), 4), 50)
-                .aspect(TCAspects.AER, 1)
-                .aspect(TCAspects.TERRA, 1)
                 .pattern("SAS")
                 .pattern("SBS")
                 .define('S', TCItems.STONE_ARCANE_BRICK)
-                .define('A', TCItems.CRYSTAL_AER)
-                .define('B', TCItems.CRYSTAL_TERRA)
+                .define('A', crystal(TCAspects.AER))
+                .define('B', crystal(TCAspects.TERRA))
                 .gate(artificeGate)
                 .unlockedBy("has", has(TCItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -913,8 +909,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                                 TCItems.ELEMENTAL_AXE.get(),
                                 Map.of(InfusionEnchantment.COLLECTOR, 1, InfusionEnchantment.BURROWING, 1)),
                         Ingredient.of(TCItems.THAUMIUM_AXE.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AQUA.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AQUA.get()))
+                .component(crystal(TCAspects.AQUA))
+                .component(crystal(TCAspects.AQUA))
                 .component(Ingredient.of(TCItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .aspect(TCAspects.AQUA, 60)
@@ -930,8 +926,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                                 TCItems.ELEMENTAL_PICKAXE.get(),
                                 Map.of(InfusionEnchantment.REFINING, 1, InfusionEnchantment.SOUNDING, 2)),
                         Ingredient.of(TCItems.THAUMIUM_PICKAXE.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_IGNIS.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TCAspects.IGNIS))
+                .component(crystal(TCAspects.IGNIS))
                 .component(Ingredient.of(TCItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .aspect(TCAspects.IGNIS, 30)
@@ -946,8 +942,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         enchantedTool(TCItems.ELEMENTAL_SWORD.get(), Map.of(InfusionEnchantment.ARCING, 2)),
                         Ingredient.of(TCItems.THAUMIUM_SWORD.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
+                .component(crystal(TCAspects.AER))
+                .component(crystal(TCAspects.AER))
                 .component(Ingredient.of(TCItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .aspect(TCAspects.AER, 30)
@@ -962,8 +958,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                         RecipeCategory.TOOLS,
                         enchantedTool(TCItems.ELEMENTAL_SHOVEL.get(), Map.of(InfusionEnchantment.DESTRUCTIVE, 1)),
                         Ingredient.of(TCItems.THAUMIUM_SHOVEL.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TCAspects.TERRA))
+                .component(crystal(TCAspects.TERRA))
                 .component(Ingredient.of(TCItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .aspect(TCAspects.TERRA, 60)
@@ -977,8 +973,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                         RecipeCategory.TOOLS,
                         new ItemStack(TCItems.ELEMENTAL_HOE.get()),
                         Ingredient.of(TCItems.THAUMIUM_HOE.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_ORDO.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_PERDITIO.get()))
+                .component(crystal(TCAspects.ORDO))
+                .component(crystal(TCAspects.PERDITIO))
                 .component(Ingredient.of(TCItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TCItemTags.PLANKS_GREATWOOD))
                 .aspect(TCAspects.ORDO, 30)
@@ -1034,8 +1030,8 @@ public final class TCRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         new ItemStack(TCItems.TRAVELLER_BOOTS.get()),
                         Ingredient.of(Items.LEATHER_BOOTS))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
+                .component(crystal(TCAspects.AER))
+                .component(crystal(TCAspects.AER))
                 .component(Ingredient.of(TCItems.FABRIC.get()))
                 .component(Ingredient.of(TCItems.FABRIC.get()))
                 .component(Ingredient.of(Tags.Items.FEATHERS))
@@ -2594,10 +2590,10 @@ public final class TCRecipeProvider extends RecipeProvider {
                         Ingredient.of(TCItems.LAMP_ARCANE.get()))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Items.BONE_MEAL))
-                .component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TCAspects.TERRA))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Items.BONE_MEAL))
-                .component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TCAspects.TERRA))
                 .aspect(TCAspects.HERBA, 20)
                 .aspect(TCAspects.LUX, 15)
                 .aspect(TCAspects.VICTUS, 15)
@@ -2614,10 +2610,10 @@ public final class TCRecipeProvider extends RecipeProvider {
                         Ingredient.of(TCItems.LAMP_ARCANE.get()))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Tags.Items.CROPS_WHEAT))
-                .component(Ingredient.of(TCItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TCAspects.IGNIS))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Tags.Items.CROPS_CARROT))
-                .component(Ingredient.of(TCItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TCAspects.IGNIS))
                 .aspect(TCAspects.BESTIA, 20)
                 .aspect(TCAspects.LUX, 15)
                 .aspect(TCAspects.VICTUS, 15)
@@ -3285,11 +3281,11 @@ public final class TCRecipeProvider extends RecipeProvider {
                         new ItemStack(TCItems.AMULET_VIS_CRAFTED.get()),
                         Ingredient.of(TCItems.AMULET_MUNDANE.get()))
                 .component(Ingredient.of(TCItems.VIS_RESONATOR.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_IGNIS.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AQUA.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_TERRA.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_ORDO.get()))
+                .component(crystal(TCAspects.AER))
+                .component(crystal(TCAspects.IGNIS))
+                .component(crystal(TCAspects.AQUA))
+                .component(crystal(TCAspects.TERRA))
+                .component(crystal(TCAspects.ORDO))
                 .aspect(TCAspects.AURAM, 50)
                 .aspect(TCAspects.POTENTIA, 100)
                 .aspect(TCAspects.VACUOS, 50)
@@ -3342,7 +3338,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                 .component(Ingredient.of(TCItems.TRIPLE_MEAT_TREAT.get()))
                 .component(crystal(TCAspects.DESIDERIUM))
                 .component(potion(Potions.STRONG_REGENERATION))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
+                .component(crystal(TCAspects.AER))
                 .aspect(TCAspects.DESIDERIUM, 80)
                 .aspect(TCAspects.AER, 80)
                 .instability(5)
@@ -3354,7 +3350,7 @@ public final class TCRecipeProvider extends RecipeProvider {
                         RecipeCategory.MISC,
                         new ItemStack(TCItems.CLOUD_RING.get()),
                         Ingredient.of(TCItems.RING_MUNDANE.get()))
-                .component(Ingredient.of(TCItems.CRYSTAL_AER.get()))
+                .component(crystal(TCAspects.AER))
                 .component(Ingredient.of(Tags.Items.FEATHERS))
                 .aspect(TCAspects.AER, 50)
                 .instability(1)
