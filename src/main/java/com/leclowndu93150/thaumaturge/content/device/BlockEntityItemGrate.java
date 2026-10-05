@@ -14,6 +14,11 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public final class BlockEntityItemGrate extends BlockEntity {
     private final ItemStackHandler inventory = new ItemStackHandler(1) {
         @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return canEject();
+        }
+
+        @Override
         protected void onContentsChanged(int slot) {
             setChanged();
             eject();
@@ -28,8 +33,12 @@ public final class BlockEntityItemGrate extends BlockEntity {
         return inventory;
     }
 
+    private boolean canEject() {
+        return level != null && !level.isClientSide() && getBlockState().getValue(BlockItemGrate.OPEN);
+    }
+
     public void eject() {
-        if (level == null || level.isClientSide() || !getBlockState().getValue(BlockItemGrate.OPEN)) return;
+        if (!canEject()) return;
         ItemStack stack = inventory.getStackInSlot(0);
         if (stack.isEmpty()) return;
         inventory.setStackInSlot(0, ItemStack.EMPTY);

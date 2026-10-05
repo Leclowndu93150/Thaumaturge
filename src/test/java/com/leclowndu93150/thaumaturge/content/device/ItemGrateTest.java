@@ -12,6 +12,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,7 @@ class ItemGrateTest {
         BlockState state = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
         BlockEntityItemGrate grate = new BlockEntityItemGrate(pos, state);
         when(level.getBlockState(pos)).thenReturn(state);
+        when(level.getBlockState(pos.below())).thenReturn(Blocks.AIR.defaultBlockState());
         grate.setLevel(level);
         ItemStack stack = new ItemStack(Items.STONE, 64);
         assertTrue(grate.inventory().insertItem(0, stack, false).isEmpty());
@@ -40,6 +42,23 @@ class ItemGrateTest {
         assertEquals(20.875, item.getBoundingBox().maxY, 0.001);
         assertTrue(item.getDeltaMovement().y < 0);
         assertTrue(grate.inventory().getStackInSlot(0).isEmpty());
+    }
+
+    @Test
+    void cachedHandlerRejectsRealAndSimulatedInsertionAfterClosing() {
+        Level level = mock(Level.class);
+        BlockState open = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
+        grate.setLevel(level);
+        when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(Blocks.AIR.defaultBlockState());
+        var handler = grate.inventory();
+        ItemStack stack = new ItemStack(Items.STONE, 64);
+        assertTrue(handler.insertItem(0, stack, true).isEmpty());
+        grate.setBlockState(open.setValue(BlockItemGrate.OPEN, false));
+        assertSame(stack, handler.insertItem(0, stack, true));
+        assertSame(stack, handler.insertItem(0, stack, false));
+        assertTrue(handler.getStackInSlot(0).isEmpty());
+        verify(level, never()).addFreshEntity(any());
     }
 
     @Test
