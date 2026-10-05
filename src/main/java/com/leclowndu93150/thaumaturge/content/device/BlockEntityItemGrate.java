@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,8 +33,11 @@ public final class BlockEntityItemGrate extends BlockEntity {
         ItemStack stack = inventory.getStackInSlot(0);
         if (stack.isEmpty()) return;
         inventory.setStackInSlot(0, ItemStack.EMPTY);
-        Containers.dropItemStack(
-                level, worldPosition.getX() + 0.5, worldPosition.getY() - 0.15, worldPosition.getZ() + 0.5, stack);
+        ItemEntity item = new ItemEntity(
+                level, worldPosition.getX() + 0.5, worldPosition.getY() + 0.625, worldPosition.getZ() + 0.5, stack);
+        item.setDeltaMovement(0.0, -0.1, 0.0);
+        item.setDefaultPickUpDelay();
+        level.addFreshEntity(item);
         setChanged();
     }
 
