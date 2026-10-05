@@ -107,8 +107,8 @@ public final class BlockItemGrate extends BaseEntityBlock {
             level.setBlock(pos, state.setValue(OPEN, powered).setValue(POWERED, powered), UPDATE_CLIENTS);
             level.invalidateCapabilities(pos);
             if (powered != state.getValue(OPEN)) playToggleSound(level, pos, powered);
-            if (powered && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) grate.eject();
         }
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof BlockEntityItemGrate grate) grate.eject();
     }
 
     private static void playToggleSound(Level level, BlockPos pos, boolean open) {

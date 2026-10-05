@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TCBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -34,7 +35,10 @@ public final class BlockEntityItemGrate extends BlockEntity {
     }
 
     private boolean canEject() {
-        return level != null && !level.isClientSide() && getBlockState().getValue(BlockItemGrate.OPEN);
+        if (level == null || level.isClientSide() || !getBlockState().getValue(BlockItemGrate.OPEN)) return false;
+        BlockPos below = worldPosition.below();
+        BlockState state = level.getBlockState(below);
+        return state.is(TCBlocks.INFERNAL_FURNACE.get()) || !state.isSolidRender(level, below);
     }
 
     public void eject() {
