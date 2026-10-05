@@ -25,6 +25,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
 import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
@@ -1122,7 +1123,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             return null;
         }
         BlockPos target = hit.getBlockPos();
-        if (target.equals(pos) || target.distSqr(pos) > (double) range * range) {
+        if (target.equals(pos) || target.distSqr(pos) > (double) range * range || WardHandler.isWarded(level, target)) {
             return null;
         }
         BlockState state = level.getBlockState(target);
