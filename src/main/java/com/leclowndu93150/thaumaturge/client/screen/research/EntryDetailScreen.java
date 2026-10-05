@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.screen.research;
 import com.leclowndu93150.thaumaturge.TCIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -24,6 +25,7 @@ import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget;
+import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget.ItemHit;
 import com.leclowndu93150.thaumaturge.client.screen.AbstractTCScreen;
 import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
 import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
@@ -321,6 +323,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private boolean renderedComplete;
     private int renderedAddenda = -1;
     private final Deque<ResourceLocation> history = new ArrayDeque<>();
+    private final List<ItemHit> renderedItemHits = new ArrayList<>();
+    private final List<AspectHit> renderedAspectHits = new ArrayList<>();
+
+    public record AspectHit(AspectInstance aspect, int x, int y) {
+        public boolean contains(double mouseX, double mouseY) {
+            return mouseX >= x && mouseX < x + SLOT_HIT_SIZE && mouseY >= y && mouseY < y + SLOT_HIT_SIZE;
+        }
+    }
 
     public EntryDetailScreen(Holder<IResearchEntry> entry, ResourceLocation entryId, @Nullable Screen parent) {
         super(Component.translatable(entry.value().nameKey()));
@@ -332,6 +342,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     @Override
     protected void init() {
+        renderedItemHits.clear();
+        renderedAspectHits.clear();
         super.init();
         sw = (width - PANE_W) / 2;
         sh = (height - PANE_H) / 2;
@@ -557,6 +569,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     @Override
     public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(graphics, mouseX, mouseY, partialTick);
+        renderedItemHits.clear();
+        renderedAspectHits.clear();
         renderPaneBackground(graphics);
         IResearchStage stage = entry.value().stages().get(displayedStageIndex());
         boolean insertOpen = insertOpen();
@@ -566,6 +580,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         renderTextPages(graphics, pageBaseY, pageMouseX, pageMouseY);
         renderRequirements(graphics, stage, sw, pageMouseX, pageMouseY);
         renderWarpIndicator(graphics, stage, sw, sh + CONTENT_Y_OFFSET + TITLE_Y_ADVANCE, pageMouseX, pageMouseY);
+        if (insertOpen) {
+            renderedItemHits.clear();
+            renderedAspectHits.clear();
+        }
         graphics.flush();
         if (knowsResearch(KNOWLEDGETYPES_RESEARCH) && entryId.equals(KNOWLEDGETYPES_RESEARCH)) {
             drawKnowledges(graphics, sw, sh + KNOW_INPAGE_INSERT_INPAGE_Y_OFFSET - 16, pageMouseX, pageMouseY, true);
@@ -911,6 +929,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int slotX = innerX + shift;
             ItemStack stack = pickRotatingItem(req, i);
             if (!stack.isEmpty()) {
+                renderedItemHits.add(new ItemHit(stack, slotX, y));
                 graphics.renderItem(stack, slotX, y);
                 graphics.renderItemDecorations(font, stack, slotX, y);
             }
@@ -951,6 +970,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int slotX = innerX + shift;
             Holder<IAspect> aspect = aspectPrerequisite(prereq);
             if (aspect != null) {
+                renderedAspectHits.add(new AspectHit(new AspectInstance(aspect, 1), slotX, y));
                 AspectTagRenderer.render(graphics, slotX, y, aspect);
             } else {
                 drawPrereqIcon(graphics, slotX, y, prereq);
@@ -1107,7 +1127,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 ResourceLocation learnKey = ResearchNoteData.learnKey(entryId, theoryOrdinal);
                 theoryOrdinal++;
                 met = completedStage || knowledge.isResearchKnown(learnKey);
-                graphics.renderItem(new ItemStack(TCItems.RESEARCH_NOTE.get()), slotX, y);
+                ItemStack note = new ItemStack(TCItems.RESEARCH_NOTE.get());
+                renderedItemHits.add(new ItemHit(note, slotX, y));
+                graphics.renderItem(note, slotX, y);
                 if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                     List<Component> lines = new ArrayList<>();
                     lines.add(Component.translatable(
@@ -1139,6 +1161,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     int chipX = slotX + a * spacing;
                     boolean aspectDiscovered = AspectPools.isDiscovered(minecraft.player, instance.aspect());
                     if (aspectDiscovered) {
+                        renderedAspectHits.add(new AspectHit(instance, chipX, y));
                         int have = AspectPools.amount(minecraft.player, instance.aspect());
                         float alpha = 1.0F;
                         if (have < instance.amount()) {
@@ -1315,12 +1338,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     TCScreenTextures.TEX_SIZE,
                     TCScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
+            int itemX = x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le;
+            if (!result.isEmpty()) {
+                renderedItemHits.add(new ItemHit(result, itemX, slotY - 1));
+            }
             RecipeDisplayWidget.renderBookmarkIcon(
-                    graphics,
-                    x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le,
-                    slotY - 1,
-                    recipe,
-                    minecraft.level.registryAccess());
+                    graphics, itemX, slotY - 1, recipe, minecraft.level.registryAccess());
             if (hoverState && !result.isEmpty()) {
                 DeferredTooltip.setItem(result, mouseX, mouseY);
             }
@@ -2047,6 +2070,41 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int index = (int) ((slotIndex + System.currentTimeMillis() / 1000L) % size);
         if (index < 0) index += size;
         return new ItemStack(req.items().get(index), Math.max(1, req.amount()), req.components());
+    }
+
+    /** Returns the topmost item target for recipe-viewer integrations. */
+    public @Nullable ItemHit itemUnderMouse(double mouseX, double mouseY) {
+        if (minecraft == null || minecraft.player == null || minecraft.level == null) return null;
+        // Bookmarks are drawn last; use the same positions and rotating stacks as the rendered frame.
+        for (int i = renderedItemHits.size() - 1; i >= 0; i--) {
+            ItemHit hit = renderedItemHits.get(i);
+            if (hit.contains(mouseX, mouseY)) return hit;
+        }
+        if (showingAspects || showingKnowledge || showingConstruct || shownRecipe == null) return null;
+        List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
+        if (displays.isEmpty()) return null;
+        RecipeHolder<?> current = displays.get(Mth.clamp(recipePage, 0, displays.size() - 1));
+        int paperX = (width - INSERT_PAPER_SIZE) / 2;
+        int paperY = (height - INSERT_PAPER_SIZE) / 2;
+        return RecipeDisplayWidget.hoverItemForDisplay(
+                paperX + INSERT_PAPER_SIZE / 2 - RecipeDisplayWidget.width() / 2,
+                paperY + INSERT_PAPER_SIZE / 2 - RecipeDisplayWidget.height() / 2,
+                current,
+                mouseX,
+                mouseY);
+    }
+
+    /** Returns a visible, discovered aspect requirement for recipe-viewer integrations. */
+    public @Nullable AspectHit aspectUnderMouse(double mouseX, double mouseY) {
+        if (minecraft == null || minecraft.player == null || minecraft.level == null || insertOpen()) return null;
+        for (int i = renderedAspectHits.size() - 1; i >= 0; i--) {
+            AspectHit hit = renderedAspectHits.get(i);
+            if (hit.contains(mouseX, mouseY)
+                    && AspectKnowledgeAccess.isKnown(hit.aspect().aspect())) {
+                return hit;
+            }
+        }
+        return null;
     }
 
     private int countMatching(Player player, ResearchRequirement req) {
