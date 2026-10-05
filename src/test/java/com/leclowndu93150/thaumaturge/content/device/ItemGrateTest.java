@@ -62,6 +62,53 @@ class ItemGrateTest {
     }
 
     @Test
+    void blockedExitRejectsInsertionButFluidsGlassAndFurnaceRemainValid() {
+        Level level = mock(Level.class);
+        BlockState open = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
+        grate.setLevel(level);
+        ItemStack stack = new ItemStack(Items.STONE, 64);
+        when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(Blocks.STONE.defaultBlockState());
+        assertSame(stack, grate.inventory().insertItem(0, stack, true));
+        assertSame(stack, grate.inventory().insertItem(0, stack, false));
+        assertTrue(grate.inventory().getStackInSlot(0).isEmpty());
+        verify(level, never()).addFreshEntity(any());
+        for (BlockState exit : new BlockState[] {
+            Blocks.AIR.defaultBlockState(),
+            Blocks.WATER.defaultBlockState(),
+            Blocks.GLASS.defaultBlockState(),
+            TCBlocks.INFERNAL_FURNACE.get().defaultBlockState()
+        }) {
+            when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(exit);
+            assertTrue(grate.inventory().insertItem(0, stack, true).isEmpty());
+            assertTrue(grate.inventory().getStackInSlot(0).isEmpty());
+        }
+    }
+
+    @Test
+    void savedContentsWaitForExitToClearAndEjectOnNeighborUpdate() throws Exception {
+        Level level = mock(Level.class);
+        var randomField = Level.class.getDeclaredField("random");
+        randomField.setAccessible(true);
+        randomField.set(level, net.minecraft.util.RandomSource.create(0));
+        BlockItemGrate block = TCBlocks.ITEM_GRATE.get();
+        BlockState open = block.defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
+        grate.setLevel(level);
+        when(level.getBlockState(BlockPos.ZERO)).thenReturn(open);
+        when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(Blocks.STONE.defaultBlockState());
+        when(level.getBlockEntity(BlockPos.ZERO)).thenReturn(grate);
+        ItemStack stack = new ItemStack(Items.STONE, 12);
+        grate.inventory().setStackInSlot(0, stack);
+        assertSame(stack, grate.inventory().getStackInSlot(0));
+        verify(level, never()).addFreshEntity(any());
+        when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(Blocks.AIR.defaultBlockState());
+        block.neighborChanged(open, level, BlockPos.ZERO, Blocks.STONE, BlockPos.ZERO.below(), false);
+        assertTrue(grate.inventory().getStackInSlot(0).isEmpty());
+        verify(level).addFreshEntity(any(ItemEntity.class));
+    }
+
+    @Test
     void manualAndRedstoneTransitionsPlaySoundButPowerOnlyChangeDoesNot() {
         Level level = mock(Level.class);
         BlockItemGrate block = TCBlocks.ITEM_GRATE.get();
