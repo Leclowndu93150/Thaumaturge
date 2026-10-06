@@ -122,7 +122,8 @@ public final class TCGolemParts {
             () -> new GolemAddon(List.of(TCIds.rl("mind_clockwork")), TCIds.rl("textures/block/base_metal.png"), null, List.of(), null, List.of()));
 
     public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_ARMORED = ADDONS.register("armored",
-            () -> new GolemAddon(List.of(TCIds.rl("golem_combat_adv")), partIcon("addon_armored"), new GolemPartModel(obj("golem_armor"), null, GolemPartModel.AttachPoint.BODY),
+            () -> GolemAddon.withModels(List.of(TCIds.rl("golem_combat_adv")), partIcon("addon_armored"),
+                    List.of(new GolemPartModel(obj("golem_armor"), null, GolemPartModel.AttachPoint.BODY), new GolemPartModel(obj("golem_armor_pauldrons"), null, GolemPartModel.AttachPoint.ARMS)),
                     List.of(GolemComponent.base(), GolemComponent.base(), GolemComponent.base(), GolemComponent.base()), null, List.of(TCGolemTraits.ARMORED, TCGolemTraits.HEAVY)));
 
     public static final DeferredHolder<GolemAddon, GolemAddon> ADDON_FIGHTER = ADDONS.register("fighter", () -> new GolemAddon(List.of(TCIds.rl("seal_guard")), partIcon("addon_fighter"), null,

@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 
 public final class GolemPartRenderHooks {
     private static final Map<GolemPartModel, GolemPartRenderHook> HOOKS = new IdentityHashMap<>();
+    private static final String OUTER_SUFFIX = "_outer";
 
     private GolemPartRenderHooks() {}
 
@@ -27,6 +28,20 @@ public final class GolemPartRenderHooks {
         HOOKS.put(TCGolemParts.ARMS_BREAKERS.get().model(), new BreakersHook());
         HOOKS.put(TCGolemParts.ARMS_DARTS.get().model(), new DartsHook());
         HOOKS.put(TCGolemParts.ADDON_HAULER.get().model(), new HaulerHook());
+        for (GolemPartModel model : TCGolemParts.ADDON_ARMORED.get().models()) {
+            if (model.attachPoint() == GolemPartModel.AttachPoint.ARMS) {
+                HOOKS.put(model, new PauldronHook());
+            }
+        }
+    }
+
+    static final class PauldronHook implements GolemPartRenderHook {
+        @Override
+        public void preRenderObjectPart(String partName, GolemRenderState state, PoseStack poseStack, GolemPartModel.LimbSide side, float partialTick) {
+            if (side == GolemPartModel.LimbSide.LEFT && partName.endsWith(OUTER_SUFFIX)) {
+                poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            }
+        }
     }
 
     static final class WheelHook implements GolemPartRenderHook {
