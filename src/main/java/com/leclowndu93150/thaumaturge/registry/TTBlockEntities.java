@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
-import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.decor.BlockEntityBarrierStone;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BlockEntityBanner;
@@ -59,7 +59,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeFilte
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeOneway;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeRestrict;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeValve;
-import com.leclowndu93150.thaumaturge.content.focus.BlockEntityHole;
+import com.leclowndu93150.thaumaturge.content.spell.block.BlockEntityHole;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;

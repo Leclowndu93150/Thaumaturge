@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.client.screen.casters.FocalManipulatorScreen;
+import com.leclowndu93150.thaumaturge.client.screen.casters.focal.FocalManipulatorScreen;
 import com.leclowndu93150.thaumaturge.client.screen.casters.FocusPouchScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.ArcaneBoreScreen;
 import com.leclowndu93150.thaumaturge.client.screen.construct.TurretAdvancedScreen;

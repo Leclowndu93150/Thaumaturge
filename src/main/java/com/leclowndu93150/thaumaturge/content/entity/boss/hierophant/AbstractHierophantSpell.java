@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss.hierophant;
 
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.EntityHitResult;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
-import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -38,14 +38,14 @@ public abstract class AbstractHierophantSpell extends Entity {
 
     private final Set<UUID> hit = new HashSet<>();
     private @Nullable EntityEldritchHierophant owner;
-    private @Nullable FocusPackage continuation;
+    private @Nullable SpellContinuation continuation;
 
     protected AbstractHierophantSpell(EntityType<? extends AbstractHierophantSpell> type, Level level) {
         super(type, level);
         setNoGravity(true);
     }
 
-    public final void cast(EntityEldritchHierophant caster, FocusPackage continuation, Vec3 position, Vec3 direction, boolean left) {
+    public final void cast(EntityEldritchHierophant caster, SpellContinuation continuation, Vec3 position, Vec3 direction, boolean left) {
         owner = caster;
         entityData.set(CASTER_YAW, caster.getYRot());
         this.continuation = continuation;
@@ -117,8 +117,7 @@ public abstract class AbstractHierophantSpell extends Entity {
             }
             hit.add(target.getUUID());
             struck = true;
-            final Trajectory trajectory = new Trajectory(origin, aim.subtract(origin).normalize());
-            FocusEngine.run(level, continuation, owner, new CastStreams(new Trajectory[]{trajectory}, new HitResult[]{new EntityHitResult(target, aim)}));
+            Spells.resume(level, continuation, List.of(new SpellTarget(new EntityHitResult(target, aim), aim, aim.subtract(origin).normalize())));
         }
         return struck;
     }

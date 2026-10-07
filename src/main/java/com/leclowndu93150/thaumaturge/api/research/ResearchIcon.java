@@ -5,15 +5,15 @@ import net.minecraft.resources.Identifier;
 
 /**
  * Icon shown on a research entry's node in the Thaumonomicon. An icon is a full texture path,
- * an item identifier, or a focus element reference; entries may declare several icons, which
+ * an item identifier, or a spell part reference; entries may declare several icons, which
  * the browser cycles through while the node is visible.
  *
- * <p>The serialized form is a single string. Strings prefixed with {@code focus:} name a focus
- * element whose tinted part icon is rendered; strings ending in {@code .png} are treated as
+ * <p>The serialized form is a single string. Strings prefixed with {@code focus:} name a spell
+ * part whose tinted icon is rendered; strings ending in {@code .png} are treated as
  * texture paths; anything else is treated as an item identifier, matching the legacy research
  * JSON convention.
  *
- * @param id the texture path, item identifier, or focus element identifier
+ * @param id the texture path, item identifier, or spell part identifier
  * @param kind how {@link #id} is resolved when the icon is rendered
  * @since 1.0.0
  */
@@ -27,7 +27,7 @@ public record ResearchIcon(Identifier id, Kind kind) {
         ITEM,
         /** {@link ResearchIcon#id()} is a full texture path. */
         TEXTURE,
-        /** {@link ResearchIcon#id()} names a focus element registered with the caster system. */
+        /** {@link ResearchIcon#id()} names a spell part from the {@code thaumaturge:spell_part} registry. */
         FOCUS
     }
 
@@ -52,9 +52,9 @@ public record ResearchIcon(Identifier id, Kind kind) {
     }
 
     /**
-     * Creates a focus element icon.
+     * Creates a spell part icon.
      *
-     * @param id the focus element identifier
+     * @param id the spell part identifier
      * @return the icon
      */
     public static ResearchIcon ofFocus(Identifier id) {

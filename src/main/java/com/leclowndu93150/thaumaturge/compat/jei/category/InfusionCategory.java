@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.recipe.FocusElementIngredient;
+import com.leclowndu93150.thaumaturge.content.spell.item.SpellPartIngredient;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
@@ -103,7 +103,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     }
 
     private static void addIngredient(IRecipeSlotBuilder slot, Ingredient ingredient) {
-        if (ingredient.getCustomIngredient() instanceof FocusElementIngredient focus) {
+        if (ingredient.getCustomIngredient() instanceof SpellPartIngredient focus) {
             slot.addItemStacks(focus.displayStacks());
         } else {
             slot.add(ingredient);

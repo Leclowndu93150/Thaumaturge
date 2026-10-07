@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FocusMineModel;
-import com.leclowndu93150.thaumaturge.content.entity.EntityFocusMine;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellMine;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -16,7 +16,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 
-public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine, FocusMineRenderer.State> {
+public final class FocusMineRenderer extends EntityRenderer<SpellMine, FocusMineRenderer.State> {
     private static final Identifier TEXTURE = TTIds.rl("textures/entity/focus_mine.png");
     private static final float PULSE_PERIOD = 5.0F;
     private static final float PULSE_AMPLITUDE = 0.25F;
@@ -46,11 +46,11 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine, Foc
     }
 
     @Override
-    public void extractRenderState(EntityFocusMine entity, State state, float partialTicks) {
+    public void extractRenderState(SpellMine entity, State state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.ticks = entity.tickCount + partialTicks;
-        state.armed = entity.isArmed();
-        state.color = entity.renderColor();
+        state.armed = entity.armed();
+        state.color = entity.color();
     }
 
     @Override

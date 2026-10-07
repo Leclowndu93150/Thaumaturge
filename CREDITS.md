@@ -97,6 +97,8 @@ Every aspect icon and the focus icons come from [game-icons.net](https://game-ic
 | `textures/aspects/vitreus.png` | Delapouite, edited by woxayz | https://game-icons.net/1x1/delapouite/plain-circle.html |
 | `textures/aspects/volatus.png` | game-icons.net contributors, edited by woxayz | https://game-icons.net |
 | `textures/foci/air.png` | Lorc, edited by ordeaux | https://game-icons.net/1x1/lorc/tornado.html |
+| `textures/foci/beam.png` | Lorc | https://game-icons.net/1x1/lorc/laser-blast.html |
+| `textures/foci/blink.png` | Lorc | https://game-icons.net/1x1/lorc/teleport.html |
 | `textures/foci/bolt.png` | Lorc, edited by ordeaux | https://game-icons.net/1x1/lorc/thunder-struck.html |
 | `textures/foci/bounce.png` | Lorc | https://game-icons.net/1x1/lorc/divert.html |
 | `textures/foci/break.png` | Delapouite, edited by ordeaux | https://game-icons.net/1x1/delapouite/hammer-break.html |
@@ -105,21 +107,28 @@ Every aspect icon and the focus icons come from [game-icons.net](https://game-ic
 | `textures/foci/chain.png` | Lorc | https://game-icons.net/1x1/lorc/crossed-chains.html |
 | `textures/foci/cloud.png` | Lorc | https://game-icons.net/1x1/lorc/fluffy-trefoil.html |
 | `textures/foci/curse.png` | Lorc, edited by ordeaux | https://game-icons.net/1x1/lorc/death-note.html |
+| `textures/foci/echo.png` | Lorc | https://game-icons.net/1x1/lorc/echo-ripples.html |
 | `textures/foci/exchange.png` | Lorc | https://game-icons.net/1x1/lorc/back-forth.html |
+| `textures/foci/fan.png` | Delapouite | https://game-icons.net/1x1/delapouite/split-arrows.html |
 | `textures/foci/fire.png` | Lorc | https://game-icons.net/1x1/lorc/flaming-sheet.html |
 | `textures/foci/flux.png` | Lorc | https://game-icons.net/1x1/lorc/star-swirl.html |
 | `textures/foci/fortune.png` | Lorc | https://game-icons.net/1x1/lorc/gems.html |
 | `textures/foci/frost.png` | Lorc | https://game-icons.net/1x1/lorc/snowflake-1.html |
 | `textures/foci/frugal.png` | Lorc | https://game-icons.net/1x1/lorc/dripping-stone.html |
+| `textures/foci/harvest.png` | Delapouite | https://game-icons.net/1x1/delapouite/sickle.html |
 | `textures/foci/heal.png` | Lorc | https://game-icons.net/1x1/lorc/heart-bottle.html |
+| `textures/foci/imbue.png` | Lorc | https://game-icons.net/1x1/lorc/magic-palm.html |
 | `textures/foci/lingering.png` | Lorc | https://game-icons.net/1x1/lorc/clockwork.html |
+| `textures/foci/lob.png` | Lorc | https://game-icons.net/1x1/lorc/meteor-impact.html |
 | `textures/foci/mine.png` | Lorc | https://game-icons.net/1x1/lorc/mace-head.html |
+| `textures/foci/pierce.png` | Lorc | https://game-icons.net/1x1/lorc/pierced-body.html |
 | `textures/foci/plan.png` | Lorc | https://game-icons.net/1x1/lorc/cubeforce.html |
 | `textures/foci/potency.png` | Lorc | https://game-icons.net/1x1/lorc/eclipse-flare.html |
 | `textures/foci/projectile.png` | Lorc | https://game-icons.net/1x1/lorc/burning-round-shot.html |
 | `textures/foci/quicken.png` | Lorc | https://game-icons.net/1x1/lorc/wingfoot.html |
 | `textures/foci/rift.png` | Lorc | https://game-icons.net/1x1/lorc/vibrating-ball.html |
 | `textures/foci/seeker.png` | Lorc | https://game-icons.net/1x1/lorc/unfriendly-fire.html |
+| `textures/foci/self.png` | Lorc | https://game-icons.net/1x1/lorc/inner-self.html |
 | `textures/foci/silk.png` | Lorc | https://game-icons.net/1x1/lorc/magic-palm.html |
 | `textures/foci/silktouch.png` | Lorc | https://game-icons.net/1x1/lorc/magic-palm.html |
 | `textures/foci/spellbat.png` | Lorc | https://game-icons.net/1x1/lorc/batwing-emblem.html |

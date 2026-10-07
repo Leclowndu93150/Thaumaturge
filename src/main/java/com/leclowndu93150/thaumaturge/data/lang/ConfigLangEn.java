@@ -36,8 +36,9 @@ final class ConfigLangEn {
             Map.entry("world.noSleep", "Salis Mundus Without Sleeping"), Map.entry("sounds", "Sounds"), Map.entry("sounds.nostress", "No Stress"), Map.entry("golems", "Golems"),
             Map.entry("golems.showGolemEmotes", "Golem Emotes"), Map.entry("fluxScrubber", "Flux Scrubber"), Map.entry("fluxScrubber.chargesPerRoll", "Charges per Roll"),
             Map.entry("fluxScrubber.essentiaChance", "Essentia Chance"), Map.entry("fluxScrubber.essentiaPerRoll", "Essentia per Roll"),
-            Map.entry("fluxScrubber.essentiaCapacity", "Essentia Capacity"), Map.entry("infernal_furnace", "Infernal Furnace"),
-            Map.entry("infernal_furnace.lavaTurnIntoBlaze", "Lava Becomes a Blaze"));
+            Map.entry("fluxScrubber.essentiaCapacity", "Essentia Capacity"), Map.entry("infernal_furnace", "Infernal Furnace"), Map.entry("infernal_furnace.lavaTurnIntoBlaze", "Lava Becomes a Blaze"),
+            Map.entry("spells", "Spells"), Map.entry("spells.maxEntitiesPerTick", "Entities per Cast per Tick"), Map.entry("spells.maxBlocksPerTick", "Blocks per Cast per Tick"),
+            Map.entry("spells.maxNodesPerRun", "Nodes per Cast Step"), Map.entry("spells.maxDelayedPerLevel", "Delayed Spells per Level"));
 
     private ConfigLangEn() {}
 

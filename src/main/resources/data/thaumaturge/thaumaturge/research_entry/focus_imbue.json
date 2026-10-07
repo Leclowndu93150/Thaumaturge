@@ -1,0 +1,47 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_imbue.title",
+  "parents": [
+    "thaumaturge:focus_heal"
+  ],
+  "column": -1,
+  "row": 8,
+  "icons": [
+    "focus:thaumaturge:imbue"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_imbue.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_imbue.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:victus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:vinculum",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

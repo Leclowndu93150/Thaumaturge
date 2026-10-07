@@ -1,12 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
+import net.minecraft.core.RegistryAccess;
+import java.util.Optional;
+import com.leclowndu93150.thaumaturge.content.spell.effect.WardEffect;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
-import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectWard;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -160,22 +163,18 @@ public final class WardOverlayRenderer {
     }
 
     private static boolean hasWard(ItemStack stack) {
-        if (!(stack.getItem() instanceof ICaster caster)) {
+        if (!(stack.getItem() instanceof ICaster caster) || Minecraft.getInstance().level == null) {
             return false;
         }
-        FocusPackage core = ItemFocus.getPackage(caster.getFocusStack(stack));
-        return core != null && containsWard(core);
-    }
-
-    private static boolean containsWard(FocusPackage core) {
-        for (FocusUnit unit : core.units()) {
-            if (FocusEffectWard.ID.equals(unit.element())) {
+        Spell spell = Spells.spellOf(caster.getFocusStack(stack));
+        if (spell == null) {
+            return false;
+        }
+        RegistryAccess registries = Minecraft.getInstance().level.registryAccess();
+        for (SpellNode node : spell.nodes()) {
+            Optional<SpellPart> part = Spells.part(registries, node.part());
+            if (part.isPresent() && part.get().behavior() instanceof WardEffect) {
                 return true;
-            }
-            for (FocusPackage branch : unit.branches()) {
-                if (containsWard(branch)) {
-                    return true;
-                }
             }
         }
         return false;

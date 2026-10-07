@@ -119,10 +119,12 @@ public final class TTEntityRenderers {
         event.registerEntityRenderer(TTEntities.TAINT_SWARM.get(), TaintSwarmRenderer::new);
         event.registerEntityRenderer(TTEntities.TAINTACLE.get(), context -> new TaintacleRenderer(context, TAINTACLE_SHADOW));
         event.registerEntityRenderer(TTEntities.TAINTACLE_SMALL.get(), context -> new TaintacleRenderer(context, TAINTACLE_SMALL_SHADOW));
-        event.registerEntityRenderer(TTEntities.FOCUS_PROJECTILE.get(), FocusProjectileRenderer::new);
+        event.registerEntityRenderer(TTEntities.FOCUS_PROJECTILE.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FOCUS_CLOUD.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FOCUS_MINE.get(), FocusMineRenderer::new);
         event.registerEntityRenderer(TTEntities.SPELL_BAT.get(), SpellBatRenderer::new);
+        event.registerEntityRenderer(TTEntities.SPELL_WALL.get(), NoModelRenderer::new);
+        event.registerEntityRenderer(TTEntities.SPELL_SPRITE.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FALLING_TAINT.get(), FallingTaintRenderer::new);
         event.registerEntityRenderer(TTEntities.BOTTLE_TAINT.get(), BottleTaintRenderer::new);
         event.registerEntityRenderer(TTEntities.SPECIAL_ITEM.get(), SpecialItemRenderer::new);

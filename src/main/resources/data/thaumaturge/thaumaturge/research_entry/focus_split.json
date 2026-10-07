@@ -7,8 +7,7 @@
   "column": 5,
   "row": -3,
   "icons": [
-    "focus:thaumaturge:split_target",
-    "focus:thaumaturge:split_trajectory"
+    "focus:thaumaturge:branch"
   ],
   "stages": [
     {

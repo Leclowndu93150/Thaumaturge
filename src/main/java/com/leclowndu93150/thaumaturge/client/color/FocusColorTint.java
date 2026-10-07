@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import net.minecraft.world.item.ItemStackTemplate;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.client.casters.FocusColors;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -14,7 +16,9 @@ public record FocusColorTint() implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
-        return OPAQUE | ItemFocus.getFocusColor(stack);
+        ItemStackTemplate socketed = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
+        ItemStack focus = socketed != null ? socketed.create() : stack;
+        return OPAQUE | FocusColors.of(focus);
     }
 
     @Override

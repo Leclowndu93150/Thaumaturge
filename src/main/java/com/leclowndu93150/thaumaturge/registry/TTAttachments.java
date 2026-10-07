@@ -1,10 +1,11 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.content.spell.engine.DelayedSpells;
+import com.leclowndu93150.thaumaturge.content.spell.engine.CastBudgets;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureState;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
-import com.leclowndu93150.thaumaturge.content.entity.FocusCloudCooldowns;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitRuntime;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
@@ -64,8 +65,9 @@ public final class TTAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<RunicShieldState>> RUNIC_SHIELD = register("runic_shield", () -> AttachmentType.builder(RunicShieldState::new).build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FocusCloudCooldowns>> FOCUS_CLOUD_COOLDOWNS = register("focus_cloud_cooldowns",
-            () -> AttachmentType.builder(FocusCloudCooldowns::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<CastBudgets>> SPELL_BUDGETS = register("spell_budgets", () -> AttachmentType.builder(CastBudgets::new).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DelayedSpells>> DELAYED_SPELLS = register("delayed_spells", () -> AttachmentType.builder(DelayedSpells::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BlockWorkQueues>> BLOCK_WORK_QUEUES = register("block_work_queues",
             () -> AttachmentType.builder(BlockWorkQueues::new).build());

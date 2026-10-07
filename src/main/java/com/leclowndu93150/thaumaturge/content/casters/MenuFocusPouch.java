@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -102,7 +103,7 @@ public final class MenuFocusPouch extends AbstractContainerMenu {
             if (!moveItemStackTo(moved, FocusPouchItem.SIZE, slots.size(), true)) {
                 return ItemStack.EMPTY;
             }
-        } else if (!(moved.getItem() instanceof ItemFocus) || !moveItemStackTo(moved, 0, FocusPouchItem.SIZE, false)) {
+        } else if (!FocusItems.isFocus(moved) || !moveItemStackTo(moved, 0, FocusPouchItem.SIZE, false)) {
             return ItemStack.EMPTY;
         }
         if (moved.isEmpty()) {
@@ -126,7 +127,7 @@ public final class MenuFocusPouch extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return stack.getItem() instanceof ItemFocus;
+            return FocusItems.isFocus(stack);
         }
     }
 }

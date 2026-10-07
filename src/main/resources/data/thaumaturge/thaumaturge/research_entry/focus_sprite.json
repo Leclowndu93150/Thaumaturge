@@ -1,0 +1,47 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_sprite.title",
+  "parents": [
+    "thaumaturge:focus_spellbat"
+  ],
+  "column": 6,
+  "row": 6,
+  "icons": [
+    "focus:thaumaturge:sprite"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_sprite.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:alchemy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_sprite.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:spiritus",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:lux",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

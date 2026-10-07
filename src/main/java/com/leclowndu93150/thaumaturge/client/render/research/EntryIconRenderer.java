@@ -1,10 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
+import net.minecraft.resources.ResourceKey;
+import com.leclowndu93150.thaumaturge.client.screen.casters.SpellPartIcons;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
-import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
@@ -63,10 +62,7 @@ public final class EntryIconRenderer {
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
-    private static final Identifier FOCUS_EFFECT_BACK = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_effect.png");
-    private static final Identifier FOCUS_MEDIUM_BACK = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
-    private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;
     private static final int FOCUS_GLYPH_LOCKED_ALPHA = 50;
 
@@ -176,27 +172,13 @@ public final class EntryIconRenderer {
     public record FocusIcon(Identifier elementId) {
     }
 
-    public static void drawFocusIcon(GuiGraphicsExtractor graphics, int centerX, int centerY, Identifier elementId, boolean locked) {
-        FocusElement element = FocusEngine.element(elementId);
-        if (element == null) {
+    public static void drawFocusIcon(GuiGraphicsExtractor graphics, int centerX, int centerY, Identifier partId, boolean locked) {
+        if (Minecraft.getInstance().level == null) {
             return;
         }
-        int color = (FOCUS_BACK_ALPHA << 24) | (FocusEngine.color(elementId) & 0x00FFFFFF);
-        if (element instanceof FocusEffect) {
-            blitCentered(graphics, FOCUS_EFFECT_BACK, centerX, centerY, Math.round(FOCUS_PART_SCALE * 0.9F), color);
-        } else if (element instanceof FocusMedium) {
-            blitCentered(graphics, FOCUS_MEDIUM_BACK, centerX, centerY, Math.round(FOCUS_PART_SCALE * 0.9F), color);
-        }
-        int glyphAlpha = locked ? FOCUS_GLYPH_LOCKED_ALPHA : FOCUS_GLYPH_ALPHA;
-        Identifier glyph = FocusEngine.icon(elementId);
-        if (glyph != null) {
-            blitCentered(graphics, glyph, centerX, centerY, Math.round(FOCUS_PART_SCALE / 2.0F), (glyphAlpha << 24) | 0x00FFFFFF);
-        }
-    }
-
-    private static void blitCentered(GuiGraphicsExtractor graphics, Identifier texture, int cx, int cy, int size, int color) {
-        int half = size / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, cx - half, cy - half, 0.0F, 0.0F, size, size, 32, 32, 32, 32, color);
+        float alpha = (locked ? FOCUS_GLYPH_LOCKED_ALPHA : FOCUS_GLYPH_ALPHA) / 255.0F;
+        SpellPartIcons.draw(graphics, Minecraft.getInstance().level.registryAccess(), ResourceKey.create(SpellPart.REGISTRY_KEY, partId), centerX, centerY, Math.round(FOCUS_PART_SCALE * 0.9F),
+                Math.round(FOCUS_PART_SCALE / 2.0F), Math.round(FOCUS_PART_SCALE), alpha);
     }
 
     private static void drawTextureIcon(GuiGraphicsExtractor graphics, int iconX, int iconY, Identifier texture, boolean locked) {

@@ -1,11 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import java.util.Optional;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
-import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
@@ -85,8 +86,8 @@ public final class CasterManager {
         }
         for (int slot = 0; slot < main.size(); slot++) {
             ItemStack stack = main.get(slot);
-            if (stack.getItem() instanceof ItemFocus focus) {
-                String sortKey = focus.getSortingHelper(stack);
+            if (FocusItems.isFocus(stack)) {
+                String sortKey = FocusItems.sortKey(stack);
                 if (sortKey != null) {
                     foci.put(sortKey, slot);
                 }
@@ -147,8 +148,8 @@ public final class CasterManager {
         NonNullList<ItemStack> contents = FocusPouchItem.getInventory(pouch);
         for (int slot = 0; slot < contents.size(); slot++) {
             ItemStack stack = contents.get(slot);
-            if (stack.getItem() instanceof ItemFocus focus) {
-                String sortKey = focus.getSortingHelper(stack);
+            if (FocusItems.isFocus(stack)) {
+                String sortKey = FocusItems.sortKey(stack);
                 if (sortKey != null) {
                     foci.put(sortKey, slot + pouchId * POUCH_SLOT_OFFSET);
                 }
@@ -163,7 +164,7 @@ public final class CasterManager {
         }
         NonNullList<ItemStack> contents = FocusPouchItem.getInventory(pouchStack);
         ItemStack focus = contents.get(focusSlot);
-        if (!(focus.getItem() instanceof ItemFocus)) {
+        if (!FocusItems.isFocus(focus)) {
             return ItemStack.EMPTY;
         }
         ItemStack copy = focus.copy();
@@ -199,8 +200,7 @@ public final class CasterManager {
         if (!(casterStack.getItem() instanceof ICaster caster)) {
             return;
         }
-        FocusPackage core = ItemFocus.getPackage(caster.getFocusStack(casterStack));
-        if (core == null || !containsArchitect(core)) {
+        if (!containsArchitect(caster.getFocusStack(casterStack), level)) {
             return;
         }
         int dim = getAreaDim(casterStack);
@@ -241,30 +241,18 @@ public final class CasterManager {
         }
     }
 
-    private static boolean containsArchitect(FocusPackage core) {
-        for (FocusUnit unit : core.units()) {
-            if (FocusEngine.element(unit.element()) instanceof IArchitect) {
+    private static boolean containsArchitect(ItemStack focus, Level level) {
+        Spell spell = Spells.spellOf(focus);
+        if (spell == null) {
+            return false;
+        }
+        for (SpellNode node : spell.nodes()) {
+            Optional<SpellPart> part = Spells.part(level.registryAccess(), node.part());
+            if (part.isPresent() && part.get().behavior() instanceof IArchitect) {
                 return true;
             }
         }
         return false;
-    }
-
-    public static int socketedPlanMethod(ItemStack casterStack) {
-        if (!(casterStack.getItem() instanceof ICaster caster)) {
-            return 0;
-        }
-        FocusPackage core = ItemFocus.getPackage(caster.getFocusStack(casterStack));
-        if (core == null) {
-            return 0;
-        }
-        for (FocusUnit unit : core.units()) {
-            FocusElement element = FocusEngine.element(unit.element());
-            if (element instanceof IArchitect) {
-                return FocusSettings.of(element, unit.settings()).value("method");
-            }
-        }
-        return 0;
     }
 
     private static CasterArea area(ItemStack stack) {

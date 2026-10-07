@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
-import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
@@ -111,13 +111,13 @@ final class JadeMachineDetails {
         data.summary("jade.thaumaturge.machine.stored_items", stored);
     }
     static void focal(BlockEntityFocalManipulator machine, JadeDetailBuilder data) {
-        data.detail("jade.thaumaturge.focal.vis", Math.round(machine.vis));
+        data.detail("jade.thaumaturge.focal.vis", Math.round(machine.vis()));
         if (machine.focusStack().isEmpty())
             data.summary("jade.thaumaturge.focal.no_focus");
-        else if (machine.focusName.isEmpty())
+        else if (machine.name().isEmpty())
             data.summary("jade.thaumaturge.focal.focus_inserted");
         else
-            data.summary("jade.thaumaturge.focal.focus", machine.focusName);
+            data.summary("jade.thaumaturge.focal.focus", machine.name());
     }
     private static void progress(JadeDetailBuilder data, int value, int maximum) {
         if (maximum > 0)

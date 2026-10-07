@@ -1,12 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss.hierophant;
 
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
-import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
+import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import net.minecraft.resources.Identifier;
-import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import java.util.List;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -281,12 +287,12 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
             case SWIPE_LEFT, SWIPE_RIGHT -> {
                 final boolean left = action == HierophantAction.SWIPE_LEFT;
                 final Vec3 hand = releaseHand(left);
-                castSpell(TTFocusElements.ELDRITCH_CRESCENT.getId(), hand, aimFrom(hand), 0.9F, left);
+                castSpell(TTIds.ELDRITCH_CRESCENT, hand, aimFrom(hand), 0.9F, left);
                 level.playSound(null, blockPosition(), TTSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, action == HierophantAction.SWIPE_LEFT ? 0.85F : 0.65F);
             }
             case THROW -> {
                 final Vec3 hand = releaseHand(false);
-                castSpell(TTFocusElements.ELDRITCH_HAMMER.getId(), hand, aimFrom(hand), 1.6F, false);
+                castSpell(TTIds.ELDRITCH_HAMMER, hand, aimFrom(hand), 1.6F, false);
                 level.playSound(null, blockPosition(), TTSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, 0.5F);
             }
             case CAST -> {
@@ -305,7 +311,7 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
                 level.playSound(null, blockPosition(), TTSounds.EGATTACK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
             }
             case NOVA -> {
-                castSpell(TTFocusElements.ELDRITCH_NOVA.getId(), ground(level, position()), Vec3.directionFromRotation(0, getYRot()), 1.2F, false);
+                castSpell(TTIds.ELDRITCH_NOVA, ground(level, position()), Vec3.directionFromRotation(0, getYRot()), 1.2F, false);
                 level.playSound(null, blockPosition(), TTSounds.SHOCK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
                 Effects.bamf(level, position().add(0, HAND_HEIGHT, 0)).color(0.4F, 0.2F, 0.55F).send();
             }
@@ -320,12 +326,15 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
         }
         final Vec3 seal = ground(level, position);
         Effects.arcBolt(level, releaseHand(false)).to(seal.add(0, 0.5, 0)).color(ARC_COLOR).send();
-        castSpell(TTFocusElements.ELDRITCH_SIGIL.getId(), seal, Vec3.directionFromRotation(0, getYRot()), 1.4F, false);
+        castSpell(TTIds.ELDRITCH_SIGIL, seal, Vec3.directionFromRotation(0, getYRot()), 1.4F, false);
     }
 
     private void castSpell(Identifier medium, Vec3 origin, Vec3 direction, float power, boolean left) {
-        final FocusPackage spell = FocusPackage.builder().caster(this).power(spellDamage() * power).add(medium, Map.of("left", left ? 1 : 0)).add(TTFocusElements.ELDRITCH_REND.getId()).build();
-        FocusEngine.cast(this, spell, new CastStreams(new Trajectory[]{new Trajectory(origin, direction)}, null));
+        final SpellNode rend = SpellNode.of(ResourceKey.create(SpellPart.REGISTRY_KEY, TTIds.ELDRITCH_REND));
+        final SpellNode carrier = SpellNode.of(ResourceKey.create(SpellPart.REGISTRY_KEY, medium)).withSetting("left", left ? 1 : 0).then(rend);
+        final Spell spell = new Spell(CastStyle.INSTANT, SpellNode.of(Spell.ORIGIN).then(carrier));
+        final SpellTarget start = new SpellTarget(BlockHitResult.miss(origin, Direction.UP, BlockPos.containing(origin)), origin, direction);
+        Spells.cast(this, ItemStack.EMPTY, spell, List.of(start), spellDamage() * power);
     }
 
     private Vec3 ground(ServerLevel level, Vec3 at) {

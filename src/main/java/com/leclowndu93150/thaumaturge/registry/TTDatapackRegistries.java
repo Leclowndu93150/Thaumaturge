@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
+import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
@@ -26,5 +28,7 @@ public final class TTDatapackRegistries {
         event.dataPackRegistry(IResearchEntry.REGISTRY_KEY, ResearchEntry.CODEC, ResearchEntry.CODEC);
         event.dataPackRegistry(ScanEntry.REGISTRY_KEY, ScanEntry.CODEC, ScanEntry.CODEC);
         event.dataPackRegistry(PechTradeTable.REGISTRY_KEY, PechTradeTable.CODEC);
+        event.dataPackRegistry(SpellPart.REGISTRY_KEY, SpellPart.CODEC, SpellPart.CODEC);
+        event.dataPackRegistry(AspectAffinity.REGISTRY_KEY, AspectAffinity.CODEC, AspectAffinity.CODEC);
     }
 }

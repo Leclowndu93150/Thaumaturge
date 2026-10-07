@@ -1,10 +1,15 @@
 package com.leclowndu93150.thaumaturge;
 
+import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
+import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
+import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
+import com.leclowndu93150.thaumaturge.content.spell.engine.SpellBindings;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCrystalAccess;
@@ -85,7 +90,9 @@ public final class Thaumaturge {
         TTAttributes.register(modBus);
         TTChunkGenerators.register(modBus);
         TTPlacementModifiers.register(modBus);
-        TTFocusElements.register(modBus);
+        TTSpellBehaviors.register(modBus);
+        TTSpellActions.register(modBus);
+        TTSpellFx.register(modBus);
         TTGolemTraits.register(modBus);
         TTMobTraits.register(modBus);
         TTGolemParts.register(modBus);
@@ -122,7 +129,8 @@ public final class Thaumaturge {
         ResearchGate.bind(ResearchManager::doesPassGate);
         RechargeAccess.bind(new RechargeBindings());
         GogglesAccess.bind(new GogglesBindings());
-        FocusEngine.bindRegistry(TTFocusElements.registry());
+        SpellRegistries.bind(TTSpellBehaviors.registry(), TTSpellActions.registry(), TTSpellFx.registry());
+        Spells.bind(new SpellBindings());
 
         if (ModList.get().isLoaded(TTIds.CURIOS))
             ThaumaturgeCuriosCompat.init(modBus);

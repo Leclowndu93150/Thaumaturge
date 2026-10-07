@@ -5,11 +5,13 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import java.text.DecimalFormat;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -126,10 +128,11 @@ public final class CasterHudOverlay implements GuiLayer {
 
         int max = WandVisHelper.getMaxVis(casterStack);
         ItemStack focusStack = wand.getFocusStack(casterStack);
-        boolean hasFocus = focusStack.getItem() instanceof ItemFocus;
+        boolean hasFocus = FocusItems.isFocus(focusStack);
         Map<ResourceKey<IAspect>, Integer> costSplit = null;
-        if (hasFocus && focusStack.getItem() instanceof ItemFocus focus && focus.getVisCost(focusStack) > 0.0F) {
-            costSplit = WandVisHelper.primalSplit(Math.round(focus.getVisCost(focusStack) * WandEconomy.CENTIVIS_PER_VIS), focus.getVisAspects(focusStack, player.registryAccess()));
+        Optional<SpellSummary> summary = hasFocus ? FocusItems.summary(focusStack, player.registryAccess(), null) : Optional.empty();
+        if (summary.isPresent() && summary.get().vis() > 0.0F) {
+            costSplit = FocusItems.visSplit(summary.get(), 1.0F, player.registryAccess());
         }
         float costModifier = wand.getConsumptionModifier(casterStack, player, false);
         boolean sneak = player.isShiftKeyDown();

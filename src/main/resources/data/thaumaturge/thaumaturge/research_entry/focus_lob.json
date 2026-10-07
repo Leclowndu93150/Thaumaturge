@@ -1,0 +1,48 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_lob.title",
+  "parents": [
+    "thaumaturge:focus_projectile"
+  ],
+  "column": 3,
+  "row": -1,
+  "icons": [
+    "focus:thaumaturge:lob",
+    "focus:thaumaturge:wall"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_lob.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_lob.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:terra",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

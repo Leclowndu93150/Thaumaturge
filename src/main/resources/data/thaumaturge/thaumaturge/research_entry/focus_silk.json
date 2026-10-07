@@ -1,0 +1,48 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_silk.title",
+  "parents": [
+    "thaumaturge:focus_break"
+  ],
+  "column": 1,
+  "row": 7,
+  "icons": [
+    "focus:thaumaturge:silk_touch",
+    "focus:thaumaturge:fortune"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_silk.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_silk.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:instrumentum",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:desiderium",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

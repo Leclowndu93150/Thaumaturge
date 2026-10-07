@@ -20,20 +20,22 @@ public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayloa
             ServerboundCasterKeyPayload::new);
 
     public static void handle(ServerboundCasterKeyPayload payload, IPayloadContext ctx) {
-        Player player = ctx.player();
-        ItemStack main = player.getMainHandItem();
-        if (main.getItem() instanceof ElementalShovelItem) {
-            ElementalShovelItem.cycleOrientation(main);
-            return;
-        }
-        if (main.getItem() instanceof ICaster) {
-            CasterManager.toggleMisc(main, player.level(), player, payload.mod());
-            return;
-        }
-        ItemStack off = player.getOffhandItem();
-        if (off.getItem() instanceof ICaster) {
-            CasterManager.toggleMisc(off, player.level(), player, payload.mod());
-        }
+        ctx.enqueueWork(() -> {
+            Player player = ctx.player();
+            ItemStack main = player.getMainHandItem();
+            if (main.getItem() instanceof ElementalShovelItem) {
+                ElementalShovelItem.cycleOrientation(main);
+                return;
+            }
+            if (main.getItem() instanceof ICaster) {
+                CasterManager.toggleMisc(main, player.level(), player, payload.mod());
+                return;
+            }
+            ItemStack off = player.getOffhandItem();
+            if (off.getItem() instanceof ICaster) {
+                CasterManager.toggleMisc(off, player.level(), player, payload.mod());
+            }
+        });
     }
 
     @Override

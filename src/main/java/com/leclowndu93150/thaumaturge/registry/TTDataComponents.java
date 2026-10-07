@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.registry;
 
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
@@ -53,8 +53,8 @@ public final class TTDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<AspectInstance>> CRYSTAL_ASPECT = DATA_COMPONENTS.registerComponentType("crystal_aspect",
             builder -> builder.persistent(AspectInstance.CODEC).networkSynchronized(AspectInstance.STREAM_CODEC));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<FocusPackage>> FOCUS_PACKAGE = DATA_COMPONENTS.registerComponentType("focus_package",
-            builder -> builder.persistent(FocusPackage.CODEC).networkSynchronized(FocusPackage.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Spell>> SPELL = DATA_COMPONENTS.registerComponentType("spell",
+            builder -> builder.persistent(Spell.CODEC).networkSynchronized(Spell.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStackTemplate>> SOCKETED_FOCUS = DATA_COMPONENTS.registerComponentType("socketed_focus",
             builder -> builder.persistent(ItemStackTemplate.CODEC).networkSynchronized(ItemStackTemplate.STREAM_CODEC));

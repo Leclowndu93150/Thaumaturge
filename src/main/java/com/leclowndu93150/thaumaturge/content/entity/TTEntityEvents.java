@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistLeader;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistPortalGreater;
@@ -80,7 +81,7 @@ public final class TTEntityEvents {
         event.put(TTEntities.TAINT_SPORE_SWARMER.get(), EntityTaintSporeSwarmer.createAttributes().build());
         event.put(TTEntities.TAINTACLE.get(), EntityTaintacle.createAttributes().build());
         event.put(TTEntities.TAINTACLE_SMALL.get(), EntityTaintacleSmall.createAttributes().build());
-        event.put(TTEntities.SPELL_BAT.get(), EntitySpellBat.createAttributes().build());
+        event.put(TTEntities.SPELL_BAT.get(), SpellBat.createAttributes().build());
         event.put(TTEntities.THAUMATURGE_GOLEM.get(), EntityThaumaturgeGolem.createAttributes().build());
         event.put(TTEntities.PECH.get(), EntityPech.createAttributes().build());
         event.put(TTEntities.ELDRITCH_CRAB.get(), EntityEldritchCrab.createAttributes().build());

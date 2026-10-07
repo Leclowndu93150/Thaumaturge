@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -45,7 +46,7 @@ public final class FocusPouchItem extends Item {
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
         int count = 0;
         for (ItemStack focus : getInventory(stack)) {
-            if (focus.getItem() instanceof ItemFocus) {
+            if (FocusItems.isFocus(focus)) {
                 count++;
             }
         }

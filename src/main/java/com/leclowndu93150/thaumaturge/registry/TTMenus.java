@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.content.infusion.grindstone.MenuArcaneGrindstone;
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
 import com.leclowndu93150.thaumaturge.content.device.MenuVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.mirror.MenuHandMirror;

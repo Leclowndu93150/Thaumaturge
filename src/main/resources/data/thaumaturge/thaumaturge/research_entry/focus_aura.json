@@ -1,0 +1,48 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_aura.title",
+  "parents": [
+    "thaumaturge:focus_projectile"
+  ],
+  "column": 1,
+  "row": 1,
+  "icons": [
+    "focus:thaumaturge:aura",
+    "focus:thaumaturge:self"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_aura.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_aura.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:aer",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:humanus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

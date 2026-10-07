@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
-import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -78,7 +78,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
         }
         state.crystals.clear();
         state.crystalColors.clear();
-        List<AspectInstance> entries = table.crystalsSync.entries();
+        List<AspectInstance> entries = table.crystals().entries();
         for (AspectInstance instance : entries) {
             ItemStackRenderState itemState = new ItemStackRenderState();
             itemModelResolver.updateForTopItem(itemState, EssentiaCrystalFactory.of(instance.aspect()), ItemDisplayContext.GROUND, table.getLevel(), null, 0);

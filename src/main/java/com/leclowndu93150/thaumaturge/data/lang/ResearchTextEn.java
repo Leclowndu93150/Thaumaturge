@@ -183,7 +183,7 @@ public final class ResearchTextEn {
         add.accept("research.thaumaturge.focus_projectile.stage_1",
                 "I can now place the energy of the focus into a magical projectile that I can hurl at enemies or blocks. The projectile is slow, but I can increase it's speed by increasing the complexity.<BR>Further research might allow me to refine these projectiles even further. Studying other kinds of projectiles closely should inspire me. This might involve some personal risk...");
         add.accept("research.thaumaturge.focus_projectile.stage_2",
-                "I have discoverd methods to improve the utility of projectile even further!<LINE>§nBouncy§0<BR>When this projectile hits a solid surface it will bounce off. This projectile cannot effect blocks anymore as it will bounce off any block it contacts.<BR>§nSeek Hostiles§0<BR>Projectiles with this special property will automatically redirect their flight path towards hostile targets ahead of them.<BR>§nSeek Friendlies§0<BR>Similar to Seek Hostiles, this projectile will seek out friendly targets.");
+                "Studying other projectiles has taught me two new modifiers.<LINE>§nBounce§0<BR>Projectiles that follow it rebound off solid surfaces instead of striking them.<BR>§nHoming§0<BR>Carriers that follow it steer toward nearby enemies on their own.");
         add.accept("research.thaumaturge.focus_bolt.title", "Focus Medium: Bolt");
         add.accept("research.thaumaturge.focus_bolt.stage_0",
                 "Hurling magical projectiles is a chore sometimes. They are hard to aim and take time to travel to the intended target.<BR>Maybe there is a way I can extend the functionality of the the Touch medium.");
@@ -207,11 +207,6 @@ public final class ResearchTextEn {
                 "Seeing the lingering effects the end dragon's breath causes has given me some ideas. I might be able to duplicate the effects as a focus medium.");
         add.accept("research.thaumaturge.focus_cloud.stage_1",
                 "Much like lingering potions can be used to create a static effect in the world, the Cloud medium can be used to create a field of energy that periodically applies focus effects to entities and blocks caught within.<BR>The strength of effects linked to this medium will be reduced significantly.");
-        add.accept("research.thaumaturge.focus_split.title", "Focus Modifier: Split");
-        add.accept("research.thaumaturge.focus_split.stage_0",
-                "While the Scatter modifier has proven quite useful, it is technically a failure. I realise now that my original plan was too ambititious.<BR>I should start smaller.");
-        add.accept("research.thaumaturge.focus_split.stage_1",
-                "I have managed to draw up designs for two new focus modifiers. The first splits a single target result into two, allowing me to have two different effects apply to the target.<BR>The second modifier does the same, except it splits trajectories.<BR>The only downside is that the split reduces to power of any effects placed below them, though I mitigate the full impact somewhat.<BR>Much to my suprise I have discovered that these modifiers can be split recursivly allowing for some interesting focal designs. ");
         add.accept("research.thaumaturge.recharge_pedestal.title", "Recharge Pedestal");
     }
 
