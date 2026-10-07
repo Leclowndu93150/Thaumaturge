@@ -243,7 +243,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
         if (CasterTriggerRegistry.hasTrigger(state)) {
             return CasterTriggerRegistry.performTrigger(level, stack, player, pos, side, state)
                     ? InteractionResult.SUCCESS
-                    : InteractionResult.FAIL;
+                    : InteractionResult.PASS;
         }
         ItemStack focusStack = getFocusStack(stack);
         if (!focusStack.isEmpty() && player.isShiftKeyDown() && blockEntity == null) {
