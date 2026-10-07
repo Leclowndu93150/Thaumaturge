@@ -40,7 +40,7 @@ public final class ElementalHoeItem extends HoeItem {
                         player,
                         context.getHand(),
                         new BlockHitResult(Vec3.atCenterOf(pp), context.getClickedFace(), pp, false));
-                if (super.useOn(offset) == InteractionResult.SUCCESS) {
+                if (super.useOn(offset).consumesAction()) {
                     if (level instanceof ServerLevel serverLevel) {
                         Effects.Bamf bamf = Effects.bamf(
                                         serverLevel, new Vec3(pp.getX() + 0.5, pp.getY() + 1.01, pp.getZ() + 0.5))
@@ -54,13 +54,16 @@ public final class ElementalHoeItem extends HoeItem {
                 }
             }
         }
-        if (!did && BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), level, pos)) {
-            context.getItemInHand()
-                    .hurtAndBreak(BONEMEAL_DAMAGE, player, LivingEntity.getSlotForHand(context.getHand()));
-            if (!level.isClientSide()) {
-                level.levelEvent(LEVEL_EVENT_BONEMEAL, pos, BONEMEAL_EVENT_DATA);
-            }
+        if (did) {
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        return InteractionResult.SUCCESS;
+        if (!BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), level, pos, player)) {
+            return InteractionResult.PASS;
+        }
+        context.getItemInHand().hurtAndBreak(BONEMEAL_DAMAGE, player, LivingEntity.getSlotForHand(context.getHand()));
+        if (!level.isClientSide()) {
+            level.levelEvent(LEVEL_EVENT_BONEMEAL, pos, BONEMEAL_EVENT_DATA);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 }
