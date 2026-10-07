@@ -44,9 +44,9 @@ public final class ThaumometerItem extends Item {
 
     // Runs before the block's own use handler so scanning a container doesn't open its screen instead.
     @Override
-    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null || player.isShiftKeyDown()) {
+        if (player == null) {
             return InteractionResult.PASS;
         }
         return beginScan(context.getLevel(), player, context.getHand());
@@ -54,9 +54,6 @@ public final class ThaumometerItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (player.isShiftKeyDown()) {
-            return InteractionResultHolder.pass(player.getItemInHand(hand));
-        }
         return new InteractionResultHolder<>(beginScan(level, player, hand), player.getItemInHand(hand));
     }
 
