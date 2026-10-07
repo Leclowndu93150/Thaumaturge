@@ -164,6 +164,6 @@ public abstract class TTParticle extends SingleQuadParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return this.sheet != null ? TTParticleLayers.additiveNoDepth(this.sheet) : ParticleRenderType.TERRAIN_SHEET;
+        return this.sheet != null ? TTParticleLayers.additive(this.sheet) : ParticleRenderType.TERRAIN_SHEET;
     }
 }
