@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.legacy;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.List;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 public final class LegacyRegistryAliases {
-    private static final List<RenamedEntry> RENAMES = List.of(new RenamedEntry(Registries.ITEM, TCIds.rl("turret_bore"), TCIds.rl("arcane_bore")));
+    private static final List<RenamedEntry> RENAMES = List.of(new RenamedEntry(Registries.ITEM, TTIds.rl("turret_bore"), TTIds.rl("arcane_bore")));
 
     private LegacyRegistryAliases() {}
 
@@ -31,7 +31,7 @@ public final class LegacyRegistryAliases {
 
     private static void alias(Registry<?> registry) {
         for (Identifier id : List.copyOf(registry.keySet())) {
-            if (!TCIds.MODID.equals(id.getNamespace())) {
+            if (!TTIds.MODID.equals(id.getNamespace())) {
                 continue;
             }
             Identifier legacy = Identifier.fromNamespaceAndPath(LegacyIds.LEGACY_NAMESPACE, id.getPath());

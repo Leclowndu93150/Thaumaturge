@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.data.datamap;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedProfile;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
-import com.leclowndu93150.thaumaturge.registry.TCLootTables;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,19 +34,19 @@ public final class TaintedProfileProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        Builder<TaintedProfile, EntityType<?>> b = builder(TCDataMaps.TAINTED_PROFILE);
-        add(b, EntityType.COW, new TaintedProfile(stats(40.0, 6.0, 0.27, 0.0), true, true, List.of(), true, Optional.of(TCLootTables.TAINTED_COW)));
-        add(b, EntityType.PIG, new TaintedProfile(stats(20.0, 4.0, 0.275, LIVESTOCK_ARMOR), true, true, List.of(), true, Optional.of(TCLootTables.TAINTED_PIG)));
+        Builder<TaintedProfile, EntityType<?>> b = builder(TTDataMaps.TAINTED_PROFILE);
+        add(b, EntityType.COW, new TaintedProfile(stats(40.0, 6.0, 0.27, 0.0), true, true, List.of(), true, Optional.of(TTLootTables.TAINTED_COW)));
+        add(b, EntityType.PIG, new TaintedProfile(stats(20.0, 4.0, 0.275, LIVESTOCK_ARMOR), true, true, List.of(), true, Optional.of(TTLootTables.TAINTED_PIG)));
         add(b, EntityType.CHICKEN,
-                new TaintedProfile(stats(8.0, 3.0, 0.4, LIVESTOCK_ARMOR), true, true, List.<Holder<MobTrait>>of(TCMobTraits.LEAPING), true, Optional.of(TCLootTables.TAINTED_CHICKEN)));
+                new TaintedProfile(stats(8.0, 3.0, 0.4, LIVESTOCK_ARMOR), true, true, List.<Holder<MobTrait>>of(TTMobTraits.LEAPING), true, Optional.of(TTLootTables.TAINTED_CHICKEN)));
         add(b, EntityType.SHEEP,
-                new TaintedProfile(stats(20.0, 3.0, 0.25, LIVESTOCK_ARMOR), true, false, List.<Holder<MobTrait>>of(TCMobTraits.TAINT_GRAZING), true, Optional.of(TCLootTables.TAINTED_SHEEP)));
-        add(b, EntityType.VILLAGER, new TaintedProfile(stats(30.0, 4.0, 0.3, 0.0), false, false, List.of(), true, Optional.of(TCLootTables.TAINTED_VILLAGER)));
+                new TaintedProfile(stats(20.0, 3.0, 0.25, LIVESTOCK_ARMOR), true, false, List.<Holder<MobTrait>>of(TTMobTraits.TAINT_GRAZING), true, Optional.of(TTLootTables.TAINTED_SHEEP)));
+        add(b, EntityType.VILLAGER, new TaintedProfile(stats(30.0, 4.0, 0.3, 0.0), false, false, List.of(), true, Optional.of(TTLootTables.TAINTED_VILLAGER)));
         Map<Holder<Attribute>, Double> creeper = new LinkedHashMap<>();
         creeper.put(Attributes.MAX_HEALTH, 24.0);
         creeper.put(Attributes.MOVEMENT_SPEED, 0.28);
         creeper.put(Attributes.FOLLOW_RANGE, FOLLOW_RANGE);
-        add(b, EntityType.CREEPER, new TaintedProfile(creeper, false, false, List.<Holder<MobTrait>>of(TCMobTraits.TAINT_BLAST), false, Optional.of(TCLootTables.TAINTED_CREEPER)));
+        add(b, EntityType.CREEPER, new TaintedProfile(creeper, false, false, List.<Holder<MobTrait>>of(TTMobTraits.TAINT_BLAST), false, Optional.of(TTLootTables.TAINTED_CREEPER)));
     }
 
     private static Map<Holder<Attribute>, Double> stats(double health, double attack, double speed, double armor) {

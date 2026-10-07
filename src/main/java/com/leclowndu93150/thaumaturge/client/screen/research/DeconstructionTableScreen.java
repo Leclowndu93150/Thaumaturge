@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import com.leclowndu93150.thaumaturge.network.ServerboundDeconCollectPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -22,8 +22,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class DeconstructionTableScreen extends AbstractTCContainerScreen<MenuDeconstructionTable> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_decontable.png");
+public final class DeconstructionTableScreen extends AbstractTTContainerScreen<MenuDeconstructionTable> {
+    private static final Identifier TEXTURE = TTIds.rl("textures/gui/gui_decontable.png");
 
     private static final int GUI_W = 176;
     private static final int GUI_H = 166;
@@ -79,7 +79,7 @@ public final class DeconstructionTableScreen extends AbstractTCContainerScreen<M
                     && event.y() < topPos + RESULT_Y + RESULT_SIZE) {
                 ClientPacketDistributor.sendToServer(new ServerboundDeconCollectPayload(menu.pos()));
                 if (minecraft != null && minecraft.player != null) {
-                    minecraft.player.playSound(TCSounds.HHON.get(), 0.3F, 1.0F);
+                    minecraft.player.playSound(TTSounds.HHON.get(), 0.3F, 1.0F);
                 }
                 return true;
             }

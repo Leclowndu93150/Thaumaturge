@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.CastingArms;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -65,7 +65,7 @@ final class FieldFrenzy {
     private void ring(ServerLevel level) {
         arms.raiseBoth();
         RandomSource random = caster.getRandom();
-        Block sap = TCBlocks.EFFECT_SAP.get();
+        Block sap = TTBlocks.EFFECT_SAP.get();
         double radius = (LENGTH - remaining) / RING_GROWTH;
         int stride = 1 + remaining / SPOKE_THINNING;
         int centreX = Mth.floor(caster.getX());
@@ -82,7 +82,7 @@ final class FieldFrenzy {
                 Effects.arcBolt(level, caster.position().add(0.0, caster.getBbHeight() / 2.0, 0.0)).to(Vec3.atCenterOf(spot)).color(BOLT_COLOR).send();
             }
         }
-        caster.playSound(TCSounds.ZAP.get(), 1.0F, ZAP_PITCH + random.nextFloat() * ZAP_PITCH_SPREAD);
+        caster.playSound(TTSounds.ZAP.get(), 1.0F, ZAP_PITCH + random.nextFloat() * ZAP_PITCH_SPREAD);
     }
 
     private void recall(ServerLevel level) {

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +37,7 @@ public final class MagicalCavePondFeature extends Feature<NoneFeatureConfigurati
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
         BlockPos surface = origin.below();
-        if (!level.getBlockState(origin).isAir() || !level.getBlockState(surface).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
+        if (!level.getBlockState(origin).isAir() || !level.getBlockState(surface).is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
             return false;
         }
 
@@ -82,8 +82,8 @@ public final class MagicalCavePondFeature extends Feature<NoneFeatureConfigurati
                 waterPos.set(cellSurface).move(Direction.DOWN);
                 support.set(waterPos).move(Direction.DOWN);
                 above.set(cellSurface).move(Direction.UP);
-                cells[index(dx, dz)] = level.getBlockState(cellSurface).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE) && level.getBlockState(above).isAir()
-                        && level.getBlockState(waterPos).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE) && level.getBlockState(support).isFaceSturdy(level, support, Direction.UP);
+                cells[index(dx, dz)] = level.getBlockState(cellSurface).is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE) && level.getBlockState(above).isAir()
+                        && level.getBlockState(waterPos).is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE) && level.getBlockState(support).isFaceSturdy(level, support, Direction.UP);
             }
         }
         return cells;

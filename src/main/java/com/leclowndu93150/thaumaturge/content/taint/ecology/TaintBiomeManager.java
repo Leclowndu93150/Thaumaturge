@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -32,12 +32,12 @@ public final class TaintBiomeManager {
     private TaintBiomeManager() {}
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos) && level.getBiome(pos).is(TCBiomeTags.IS_TAINTED);
+        return level.hasChunkAt(pos) && level.getBiome(pos).is(TTBiomeTags.IS_TAINTED);
     }
 
     public static boolean isChangedColumn(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        TaintColumns columns = chunk == null ? null : chunk.getExistingDataOrNull(TCAttachments.TAINT_COLUMNS.get());
+        TaintColumns columns = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
         return columns != null && columns.isChanged(QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getZ()));
     }
 
@@ -45,7 +45,7 @@ public final class TaintBiomeManager {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || isTainted(level, pos) || level.getBiome(pos).is(BiomeTags.IS_RIVER) || TaintBlooms.isProtected(level, pos)) {
             return false;
         }
-        return replaceColumn(level, pos, TCBiomes.TAINTED_LANDS);
+        return replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
     }
 
     public static boolean replaceColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> biomeKey) {
@@ -61,7 +61,7 @@ public final class TaintBiomeManager {
         }
         Holder<Biome> replacement = level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biomeKey);
         rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, sampler) -> replacement);
-        setChanged(chunk, quartX, quartZ, biomeKey.equals(TCBiomes.TAINTED_LANDS));
+        setChanged(chunk, quartX, quartZ, biomeKey.equals(TTBiomes.TAINTED_LANDS));
         return true;
     }
 
@@ -94,7 +94,7 @@ public final class TaintBiomeManager {
     }
 
     private static boolean isTaintedBiome(Holder<Biome> biome) {
-        return biome.is(TCBiomeTags.IS_TAINTED);
+        return biome.is(TTBiomeTags.IS_TAINTED);
     }
 
     private static int[] nearestCleanOffset(BiomeSource source, int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
@@ -122,13 +122,13 @@ public final class TaintBiomeManager {
     }
 
     private static void setChanged(LevelChunk chunk, int quartX, int quartZ, boolean changed) {
-        TaintColumns columns = changed ? chunk.getData(TCAttachments.TAINT_COLUMNS.get()) : chunk.getExistingDataOrNull(TCAttachments.TAINT_COLUMNS.get());
+        TaintColumns columns = changed ? chunk.getData(TTAttachments.TAINT_COLUMNS.get()) : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
         if (columns == null) {
             return;
         }
         columns.setChanged(quartX, quartZ, changed);
         if (columns.isEmpty()) {
-            chunk.removeData(TCAttachments.TAINT_COLUMNS.get());
+            chunk.removeData(TTAttachments.TAINT_COLUMNS.get());
         }
         chunk.markUnsaved();
     }

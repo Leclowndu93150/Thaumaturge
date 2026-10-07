@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeValve;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import org.jspecify.annotations.Nullable;
 
 public final class TubeValveRenderer implements BlockEntityRenderer<BlockEntityTubeValve, TubeValveRenderState> {
-    public static final Identifier MODEL_ID = TCIds.rl("block/tube_valve_head");
+    public static final Identifier MODEL_ID = TTIds.rl("block/tube_valve_head");
     public static final StandaloneModelKey<BlockStateModel> MODEL = new StandaloneModelKey<>(MODEL_ID::toString);
 
     public TubeValveRenderer(BlockEntityRendererProvider.Context context) {}

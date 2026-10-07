@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.debug.client;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class RaycastDebugOverlay implements GuiLayer {
 
     public static @Nullable HitResult serverHitResult = null;

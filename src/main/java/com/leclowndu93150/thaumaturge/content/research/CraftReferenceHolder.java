@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
@@ -13,7 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class CraftReferenceHolder {
     private static volatile Set<Item> items = Set.of();
 

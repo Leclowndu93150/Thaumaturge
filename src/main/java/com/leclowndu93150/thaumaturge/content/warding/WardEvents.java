@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class WardEvents {
     private WardEvents() {}
 

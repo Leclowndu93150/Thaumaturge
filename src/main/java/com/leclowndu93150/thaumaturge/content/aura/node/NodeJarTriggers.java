@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CasterTriggerRegistry;
 import com.leclowndu93150.thaumaturge.api.casters.ICasterTriggerManager;
 import net.minecraft.core.BlockPos;
@@ -15,7 +15,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.Tags;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class NodeJarTriggers implements ICasterTriggerManager {
     private static final int EVENT_JAR_NODE = 0;
 

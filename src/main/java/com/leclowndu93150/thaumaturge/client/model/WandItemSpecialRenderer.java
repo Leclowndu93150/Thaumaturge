@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -36,11 +36,11 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
     public record WandArg(WandCap cap, WandRod rod, boolean sceptre, boolean hasFocus, int focusColor) {
     }
 
-    private static final Identifier WAND_TEXTURE = TCIds.rl("textures/models/wand.png");
-    private static final Identifier SCRIPT_TEXTURE = TCIds.rl("textures/misc/script.png");
+    private static final Identifier WAND_TEXTURE = TTIds.rl("textures/models/wand.png");
+    private static final Identifier SCRIPT_TEXTURE = TTIds.rl("textures/misc/script.png");
 
     private static final RenderType RUNES = RenderType.create("tc_wand_runes",
-            RenderSetup.builder(TCRenderPipelines.ENTITY_ADDITIVE_EMISSIVE).withTexture("Sampler0", SCRIPT_TEXTURE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.ENTITY_ADDITIVE_EMISSIVE).withTexture("Sampler0", SCRIPT_TEXTURE).useLightmap().createRenderSetup());
 
     private static final float PX = 0.0625F;
     private static final int TEX_W = 32;
@@ -111,7 +111,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
 
     private static void submitRod(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff, float ticks) {
         int rodLight = arg.rod().glow() ? (int) (200.0F + Mth.sin((int) ticks) * 5.0F + 5.0F) : light;
-        RenderType rodType = TCFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
+        RenderType rodType = TTFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.translate(0.0F, -0.1F, 0.0F);
@@ -140,7 +140,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
     }
 
     private static void submitCaps(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, int light, boolean staff) {
-        RenderType capType = TCFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
+        RenderType capType = TTFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.scale(1.3F, CAP_STAFF_SCALE_Y, 1.3F);
@@ -160,7 +160,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
     }
 
     private static void submitFocus(WandArg arg, PoseStack poseStack, SubmitNodeCollector collector, boolean staff, float ticks) {
-        RenderType focusType = TCFlatRenderTypes.entityTranslucentFlat(WAND_TEXTURE);
+        RenderType focusType = TTFlatRenderTypes.entityTranslucentFlat(WAND_TEXTURE);
         poseStack.pushPose();
         if (staff) {
             poseStack.translate(0.0F, FOCUS_STAFF_LIFT, 0.0F);
@@ -263,7 +263,7 @@ public final class WandItemSpecialRenderer implements SpecialModelRenderer<WandI
     public static WandArg extract(ItemStack stack) {
         WandParts parts = WandVisHelper.getParts(stack);
         ItemStack focusStack = ItemStack.EMPTY;
-        var template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
+        var template = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
         if (template != null) {
             focusStack = template.create();
         }

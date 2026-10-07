@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCPlacementModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTPlacementModifiers;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +42,14 @@ public final class MagicalCaveFloorPlacement extends PlacementModifier {
             if (section.hasOnlyAir()) {
                 airAbove = true;
             } else if (!section.maybeHas(BlockState::isAir)) {
-                if (airAbove && section.getBlockState(localX, y & 15, localZ).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
+                if (airAbove && section.getBlockState(localX, y & 15, localZ).is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
                     floors.add(new BlockPos(origin.getX(), y + 1, origin.getZ()));
                 }
                 airAbove = false;
             } else {
                 for (; y >= sectionBottom; y--) {
                     BlockState state = section.getBlockState(localX, y & 15, localZ);
-                    if (airAbove && state.is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
+                    if (airAbove && state.is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
                         floors.add(new BlockPos(origin.getX(), y + 1, origin.getZ()));
                     }
                     airAbove = state.isAir();
@@ -63,6 +63,6 @@ public final class MagicalCaveFloorPlacement extends PlacementModifier {
 
     @Override
     public PlacementModifierType<?> type() {
-        return TCPlacementModifiers.MAGICAL_CAVE_FLOOR.get();
+        return TTPlacementModifiers.MAGICAL_CAVE_FLOOR.get();
     }
 }

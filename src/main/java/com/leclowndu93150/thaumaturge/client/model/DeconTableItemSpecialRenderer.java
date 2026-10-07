@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.DeconTableModel;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
@@ -23,7 +23,7 @@ import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 public final class DeconTableItemSpecialRenderer implements NoDataSpecialModelRenderer {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/decontable.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/decontable.png");
     private static final float BOOK_Y = 1.02F;
     private static final float BOOK_SCALE = 0.8F;
     private static final float IN_FRAME_SCALE = 0.5128205F;
@@ -43,7 +43,7 @@ public final class DeconTableItemSpecialRenderer implements NoDataSpecialModelRe
         poseStack.popPose();
 
         ItemStackRenderState book = new ItemStackRenderState();
-        Minecraft.getInstance().getItemModelResolver().updateForTopItem(book, new ItemStack(TCItems.THAUMOMETER.get()), ItemDisplayContext.FIXED, null, null, 0);
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(book, new ItemStack(TTItems.THAUMOMETER.get()), ItemDisplayContext.FIXED, null, null, 0);
         poseStack.pushPose();
         poseStack.translate(0.5F, BOOK_Y, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
@@ -65,7 +65,7 @@ public final class DeconTableItemSpecialRenderer implements NoDataSpecialModelRe
 
         @Override
         public @Nullable SpecialModelRenderer<Void> bake(SpecialModelRenderer.BakingContext context) {
-            return new DeconTableItemSpecialRenderer(new DeconTableModel(context.entityModelSet().bakeLayer(TCModelLayers.DECONSTRUCTION_TABLE)));
+            return new DeconTableItemSpecialRenderer(new DeconTableModel(context.entityModelSet().bakeLayer(TTModelLayers.DECONSTRUCTION_TABLE)));
         }
 
         @Override

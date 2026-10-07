@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.link;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -65,7 +65,7 @@ public final class ResearchLinkData extends SavedData {
     public static final Codec<ResearchLinkData> CODEC = RecordCodecBuilder
             .create(builder -> builder.group(Link.CODEC.listOf().fieldOf("links").forGetter(data -> data.links)).apply(builder, ResearchLinkData::new));
 
-    public static final SavedDataType<ResearchLinkData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "research_share"), ResearchLinkData::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<ResearchLinkData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "research_share"), ResearchLinkData::new, CODEC, DataFixTypes.LEVEL);
 
     private final List<Link> links;
     private final Set<UUID> pendingPlayers = new HashSet<>();

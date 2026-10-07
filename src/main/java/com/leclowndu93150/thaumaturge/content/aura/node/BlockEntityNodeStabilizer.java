@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -12,7 +12,7 @@ public class BlockEntityNodeStabilizer extends BlockEntity {
     public int count;
 
     public BlockEntityNodeStabilizer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.NODE_STABILIZER.get(), pos, state);
+        super(TTBlockEntities.NODE_STABILIZER.get(), pos, state);
     }
 
     public boolean isAdvanced() {

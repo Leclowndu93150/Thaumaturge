@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,7 +18,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.context.ContextKey;
 
 public final class HoverRingLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
-    public static final ContextKey<Boolean> HOVERING = new ContextKey<>(TCIds.rl("hovering"));
+    public static final ContextKey<Boolean> HOVERING = new ContextKey<>(TTIds.rl("hovering"));
 
     private static final float RING_Y = 0.2F;
     private static final float RING_Z = 0.55F;
@@ -40,7 +40,7 @@ public final class HoverRingLayer extends RenderLayer<AvatarRenderState, PlayerM
         if (state.isInvisible || !state.getRenderDataOrDefault(HOVERING, false)) {
             return;
         }
-        RenderType renderType = TCFlatRenderTypes.entityAdditiveFlat(ParticleTextures.LIGHTNING_RING);
+        RenderType renderType = TTFlatRenderTypes.entityAdditiveFlat(ParticleTextures.LIGHTNING_RING);
         float v0 = Math.floorMod((int) state.ageInTicks, ParticleTextures.LIGHTNING_RING_FRAMES) * FRAME_HEIGHT;
         poseStack.pushPose();
         getParentModel().body.translateAndRotate(poseStack);

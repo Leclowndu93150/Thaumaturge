@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.spa;
 
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -36,10 +36,10 @@ public abstract class PurifyingFluid extends BaseFlowingFluid {
             double damp = 1.0 - quanta / 2.0;
             entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
         }
-        if (!level.isClientSide() && fs.isSource() && entity instanceof ServerPlayer player && !player.hasEffect(TCMobEffects.WARP_WARD)) {
+        if (!level.isClientSide() && fs.isSource() && entity instanceof ServerPlayer player && !player.hasEffect(TTMobEffects.WARP_WARD)) {
             int permanent = WarpHelper.getWarp(player).get(WarpType.PERMANENT);
             int div = permanent > 0 ? Math.max(1, (int) Math.sqrt(permanent)) : 1;
-            player.addEffect(new MobEffectInstance(TCMobEffects.WARP_WARD, Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
+            player.addEffect(new MobEffectInstance(TTMobEffects.WARP_WARD, Math.min(WARD_MAX_TICKS, WARD_BUDGET_TICKS / div), 0, true, true));
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }
     }

@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class KnowledgeGainOverlay implements GuiLayer {
-    private static final Identifier BOOK = TCIds.rl("textures/item/thaumonomicon.png");
-    private static final Identifier KNOW_OBSERVATION = TCIds.rl("textures/research/knowledge_observation.png");
-    private static final Identifier KNOW_THEORY = TCIds.rl("textures/research/knowledge_theory.png");
+    private static final Identifier BOOK = TTIds.rl("textures/item/thaumonomicon.png");
+    private static final Identifier KNOW_OBSERVATION = TTIds.rl("textures/research/knowledge_observation.png");
+    private static final Identifier KNOW_THEORY = TTIds.rl("textures/research/knowledge_theory.png");
 
     private static final LinkedBlockingQueue<Tracker> TRACKERS = new LinkedBlockingQueue<>();
     private static float bookFade;
@@ -154,7 +154,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
             graphics.pose().pushMatrix();
             graphics.pose().translate(x - size / 2.0F, y - size / 2.0F);
             graphics.pose().scale(size / GLOW_FRAME_SIZE, size / GLOW_FRAME_SIZE);
-            graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, spark.texture, 0, 0, frame * GLOW_FRAME_SIZE, 0.0F, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE,
+            graphics.blit(TTRenderPipelines.GUI_TEXTURED_ADDITIVE, spark.texture, 0, 0, frame * GLOW_FRAME_SIZE, 0.0F, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE,
                     GLOW_STRIP_WIDTH, GLOW_FRAME_SIZE, tint);
             graphics.pose().popMatrix();
         }
@@ -178,7 +178,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-size / 2.0F, -size / 2.0F);
         graphics.pose().scale(size / GLOW_FRAME_SIZE, size / GLOW_FRAME_SIZE);
-        graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, ParticleTextures.STAR_GLINT, 0, 0, frame * GLOW_FRAME_SIZE, 0.0F, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE,
+        graphics.blit(TTRenderPipelines.GUI_TEXTURED_ADDITIVE, ParticleTextures.STAR_GLINT, 0, 0, frame * GLOW_FRAME_SIZE, 0.0F, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE, GLOW_FRAME_SIZE,
                 GLOW_STRIP_WIDTH, GLOW_FRAME_SIZE, tint);
         graphics.pose().popMatrix();
     }
@@ -187,7 +187,7 @@ public final class KnowledgeGainOverlay implements GuiLayer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(-size / 2.0F, -size / 2.0F);
         graphics.pose().scale(size / ICON_TEX_SIZE, size / ICON_TEX_SIZE);
-        graphics.blit(additive ? TCRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0.0F, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE,
+        graphics.blit(additive ? TTRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0.0F, 0.0F, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE, ICON_TEX_SIZE,
                 ICON_TEX_SIZE, ICON_TEX_SIZE, tint);
         graphics.pose().popMatrix();
     }

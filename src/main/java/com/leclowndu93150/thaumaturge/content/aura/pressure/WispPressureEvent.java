@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -26,13 +26,13 @@ public final class WispPressureEvent extends AbstractFluxPressureEvent {
         if (spawn.getY() >= level.getMaxY() || !level.hasChunkAt(spawn)) {
             return false;
         }
-        WispEntity wisp = TCEntities.WISP.get().create(level, EntitySpawnReason.EVENT);
+        WispEntity wisp = TTEntities.WISP.get().create(level, EntitySpawnReason.EVENT);
         if (wisp == null) {
             return false;
         }
         wisp.snapTo(spawn.getX() + 0.5, spawn.getY() + 0.5, spawn.getZ() + 0.5, 0.0F, 0.0F);
         if (level.getRandom().nextInt(VITIUM_CHANCE) == 0) {
-            wisp.setAspect(TCAspects.VITIUM.identifier());
+            wisp.setAspect(TTAspects.VITIUM.identifier());
         }
         if (!level.noCollision(wisp)) {
             wisp.discard();

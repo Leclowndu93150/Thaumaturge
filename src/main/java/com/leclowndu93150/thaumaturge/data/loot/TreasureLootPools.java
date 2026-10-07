@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.loot;
 
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -33,7 +33,7 @@ public final class TreasureLootPools {
     public static LootPool.Builder treasurePool(HolderLookup.Provider registries, int rarity, NumberProvider rolls) {
         LootPool.Builder pool = LootPool.lootPool().setRolls(rolls);
         pool.add(nugget(rarity));
-        pool.add(counted(TCItems.SALIS_MUNDUS.get(), 1, 3 + rarity * 3));
+        pool.add(counted(TTItems.SALIS_MUNDUS.get(), 1, 3 + rarity * 3));
         pool.add(counted(Items.CHORUS_FRUIT, 1, 5));
         pool.add(counted(Items.COMPASS, 1, 5));
         pool.add(counted(Items.COOKIE, 1, 5));
@@ -86,6 +86,6 @@ public final class TreasureLootPools {
     }
 
     private static LootPoolEntryContainer.Builder<?> pearl(int weight, int damage) {
-        return LootItem.lootTableItem(TCItems.PRIMORDIAL_PEARL.get()).setWeight(weight).apply(SetItemDamageFunction.setDamage(ConstantValue.exactly((float) damage / PrimordialPearlItem.MAX_DAMAGE)));
+        return LootItem.lootTableItem(TTItems.PRIMORDIAL_PEARL.get()).setWeight(weight).apply(SetItemDamageFunction.setDamage(ConstantValue.exactly((float) damage / PrimordialPearlItem.MAX_DAMAGE)));
     }
 }

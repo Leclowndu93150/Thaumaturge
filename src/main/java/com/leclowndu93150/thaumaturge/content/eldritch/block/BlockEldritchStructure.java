@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -42,7 +42,7 @@ public class BlockEldritchStructure extends Block {
             for (int yy = -SWEEP_Y; yy <= SWEEP_Y; yy++) {
                 for (int zz = -SWEEP_XZ; zz <= SWEEP_XZ; zz++) {
                     BlockPos target = pos.offset(xx, yy, zz);
-                    if (serverLevel.getBlockState(target).is(TCBlockTags.ELDRITCH_OBELISK_PARTS)) {
+                    if (serverLevel.getBlockState(target).is(TTBlockTags.ELDRITCH_OBELISK_PARTS)) {
                         serverLevel.removeBlock(target, false);
                     }
                 }

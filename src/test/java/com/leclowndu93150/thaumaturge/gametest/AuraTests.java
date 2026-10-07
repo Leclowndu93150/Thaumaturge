@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.gametest;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
 import net.minecraft.core.BlockPos;
 
 public final class AuraTests {
@@ -10,7 +10,7 @@ public final class AuraTests {
 
     private AuraTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("aura/vis_add_drain_roundtrip", 20, helper -> {
             BlockPos pos = helper.absolutePos(SPOT);
             float before = AuraHelper.getVis(helper.getLevel(), pos);

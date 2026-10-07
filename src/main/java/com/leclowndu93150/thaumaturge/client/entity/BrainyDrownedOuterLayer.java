@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.resources.Identifier;
 
 public final class BrainyDrownedOuterLayer extends RenderLayer<ZombieRenderState, DrownedModel> {
-    private static final Identifier OUTER_LAYER = TCIds.rl("textures/entity/brainy_drowned_outer_layer.png");
+    private static final Identifier OUTER_LAYER = TTIds.rl("textures/entity/brainy_drowned_outer_layer.png");
 
     private final DrownedModel model;
     private final DrownedModel babyModel;

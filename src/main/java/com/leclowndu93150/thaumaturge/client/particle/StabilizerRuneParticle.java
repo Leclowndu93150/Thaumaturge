@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class StabilizerRuneParticle extends TCParticle {
+public final class StabilizerRuneParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final float START_ALPHA = 0.3F;
     private static final float FRICTION = 1.01F;
@@ -29,7 +29,7 @@ public final class StabilizerRuneParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<StabilizerRuneParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("stabilizer_rune");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("stabilizer_rune");
 
         @Override
         public Particle createParticle(StabilizerRuneParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

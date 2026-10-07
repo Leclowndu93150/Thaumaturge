@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class FlameFanParticle extends TCParticle {
+public final class FlameFanParticle extends TTParticle {
     private static final int FRAME_COUNT = 10;
     private static final int LIFETIME = 10;
     private static final float FRICTION = 0.75F;
@@ -27,7 +27,7 @@ public final class FlameFanParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<FlameFanParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("flame_fan");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("flame_fan");
 
         @Override
         public Particle createParticle(FlameFanParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

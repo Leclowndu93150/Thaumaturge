@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -41,7 +41,7 @@ public final class SpiderNestDecorator extends TreeDecorator {
 
     @Override
     protected TreeDecoratorType<?> type() {
-        return TCTreePlacers.SPIDER_NEST.get();
+        return TTTreePlacers.SPIDER_NEST.get();
     }
 
     @Override

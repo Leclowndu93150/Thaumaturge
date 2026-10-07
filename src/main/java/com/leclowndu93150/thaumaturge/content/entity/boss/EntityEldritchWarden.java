@@ -12,8 +12,8 @@ import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.CastingArms;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.LeadingAim;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -180,7 +180,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
     }
 
     private void seepSap(ServerLevel level) {
-        BlockState sap = TCBlocks.EFFECT_SAP.get().defaultBlockState();
+        BlockState sap = TTBlocks.EFFECT_SAP.get().defaultBlockState();
         for (int corner = 0; corner < 4; corner++) {
             double sideX = corner % 2 == 0 ? -SAP_FOOTPRINT : SAP_FOOTPRINT;
             double sideZ = corner / 2 == 0 ? -SAP_FOOTPRINT : SAP_FOOTPRINT;
@@ -232,7 +232,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         orb.setPos(orb.getX() + hand.x, orb.getY() - HAND_DROP, orb.getZ() + hand.z);
         Vec3 aim = LeadingAim.at(this, target);
         orb.shoot(aim.x, aim.y, aim.z, ORB_SPEED, ORB_SPREAD);
-        playSound(TCSounds.EGATTACK.get(), ORB_VOLUME, 1.0F + random.nextFloat() * 0.1F);
+        playSound(TTSounds.EGATTACK.get(), ORB_VOLUME, 1.0F + random.nextFloat() * 0.1F);
         level().addFreshEntity(orb);
     }
 
@@ -244,7 +244,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
         if (target instanceof ServerPlayer player) {
             WarpHelper.addWarp(player, SCREECH_WARP + random.nextInt(SCREECH_WARP_SPREAD), WarpType.TEMPORARY);
         }
-        playSound(TCSounds.EGSCREECH.get(), SCREECH_VOLUME, 1.0F + random.nextFloat() * 0.1F);
+        playSound(TTSounds.EGSCREECH.get(), SCREECH_VOLUME, 1.0F + random.nextFloat() * 0.1F);
     }
 
     @Override
@@ -263,12 +263,12 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.EGIDLE.get();
+        return TTSounds.EGIDLE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.EGDEATH.get();
+        return TTSounds.EGDEATH.get();
     }
 
     @Override

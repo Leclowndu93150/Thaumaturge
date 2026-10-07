@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,12 +32,12 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
     private static final int SUCTION = 128;
     private static final int INTAKE_INTERVAL = 5;
 
-    private final EssentiaIntake intake = new EssentiaIntake(this, TCAspects.DESIDERIUM, SUCTION, INTAKE_INTERVAL);
+    private final EssentiaIntake intake = new EssentiaIntake(this, TTAspects.DESIDERIUM, SUCTION, INTAKE_INTERVAL);
     private int charge;
     private int pairingCooldown;
 
     public BlockEntityLampFertility(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LAMP_FERTILITY.get(), pos, state);
+        super(TTBlockEntities.LAMP_FERTILITY.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampFertility lamp) {

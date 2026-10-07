@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint.overlay;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.client.taint.overlay.pattern.TexturePixels;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -38,7 +38,7 @@ public final class TaintSkinResources {
     }
 
     public Identifier register(NativeImage image) {
-        Identifier id = TCIds.rl(TaintTextures.DYNAMIC_ROOT + registered.size());
+        Identifier id = TTIds.rl(TaintTextures.DYNAMIC_ROOT + registered.size());
         textureManager.register(id, new DynamicTexture(id::toString, image));
         registered.add(id);
         return id;

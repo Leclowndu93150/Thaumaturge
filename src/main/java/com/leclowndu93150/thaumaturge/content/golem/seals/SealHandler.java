@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public final class SealHandler {
     private SealHandler() {}
 
     private static SealWorldIndex index(ServerLevel level) {
-        return level.getData(TCAttachments.SEAL_INDEX);
+        return level.getData(TTAttachments.SEAL_INDEX);
     }
 
     public static @Nullable SealEntity getSealEntity(Level level, @Nullable SealPos pos) {
@@ -75,7 +75,7 @@ public final class SealHandler {
         }
         index.seals().put(seal.pos(), seal);
         LevelChunk chunk = level.getChunkAt(seal.pos().pos());
-        SealsChunkData data = chunk.getData(TCAttachments.SEALS);
+        SealsChunkData data = chunk.getData(TTAttachments.SEALS);
         if (!data.seals().contains(seal)) {
             data.seals().add(seal);
         }
@@ -92,7 +92,7 @@ public final class SealHandler {
         seal.behavior().onRemoved(level, seal);
         if (level.hasChunkAt(pos.pos())) {
             LevelChunk chunk = level.getChunkAt(pos.pos());
-            chunk.getData(TCAttachments.SEALS).seals().remove(seal);
+            chunk.getData(TTAttachments.SEALS).seals().remove(seal);
             chunk.markUnsaved();
         }
         if (!quiet) {
@@ -105,7 +105,7 @@ public final class SealHandler {
 
     public static void loadChunkSeals(ServerLevel level, LevelChunk chunk) {
         SealWorldIndex index = index(level);
-        for (SealEntity seal : chunk.getData(TCAttachments.SEALS).seals()) {
+        for (SealEntity seal : chunk.getData(TTAttachments.SEALS).seals()) {
             index.seals().putIfAbsent(seal.pos(), seal);
         }
     }

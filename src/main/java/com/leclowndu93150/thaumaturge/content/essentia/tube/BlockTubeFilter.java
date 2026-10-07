@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -27,7 +27,7 @@ public final class BlockTubeFilter extends BlockTube {
     public static final MapCodec<BlockTubeFilter> CODEC = simpleCodec(BlockTubeFilter::new);
 
     public BlockTubeFilter(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties, TubeGeometry.FILTER);
     }
 
     @Override
@@ -44,7 +44,7 @@ public final class BlockTubeFilter extends BlockTube {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide())
             return null;
-        return createTickerHelper(type, TCBlockEntities.TUBE_FILTER.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+        return createTickerHelper(type, TTBlockEntities.TUBE_FILTER.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class BlockTubeFilter extends BlockTube {
         if (player.isSecondaryUseActive() && filter.aspectFilter() != null) {
             if (!level.isClientSide()) {
                 filter.setAspectFilter(null);
-                level.playSound(null, pos, TCSounds.KEY.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, TTSounds.KEY.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.SUCCESS;
         }
@@ -76,7 +76,7 @@ public final class BlockTubeFilter extends BlockTube {
             return InteractionResult.PASS;
         if (!level.isClientSide()) {
             filter.setAspectFilter(key);
-            level.playSound(null, pos, TCSounds.KEY.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, TTSounds.KEY.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }

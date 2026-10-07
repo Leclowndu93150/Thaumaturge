@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.gametest;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.core.Holder;
@@ -23,11 +23,11 @@ public final class ResearchTests {
         return FakePlayerFactory.get(helper.getLevel(), new GameProfile(UUID.nameUUIDFromBytes(name.getBytes()), name));
     }
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("research/knowledge_roundtrip", 40, helper -> {
             ServerPlayer player = testPlayer(helper, "tc_knowledge_test");
             PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
-            Identifier key = TCIds.rl("gametest/knowledge_roundtrip");
+            Identifier key = TTIds.rl("gametest/knowledge_roundtrip");
             if (knowledge.isResearchKnown(key)) {
                 helper.fail("Fresh mock player already knows the test research");
                 return;
@@ -47,7 +47,7 @@ public final class ResearchTests {
 
         r.add("research/aspect_pool_grant_and_spend", 40, helper -> {
             ServerPlayer player = testPlayer(helper, "tc_pool_test");
-            Holder<IAspect> ignis = resolve(helper, TCAspects.IGNIS);
+            Holder<IAspect> ignis = resolve(helper, TTAspects.IGNIS);
             Identifier id = AspectPools.idOf(ignis);
             AspectPools.grant(player, ignis, 5);
             int afterGrant = AspectPools.data(player).amount(id);

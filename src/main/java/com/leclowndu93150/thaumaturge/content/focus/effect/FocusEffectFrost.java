@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -33,7 +33,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectFrost implements FocusEffect {
-    private static final Identifier KEY = TCIds.rl("frost");
+    private static final Identifier KEY = TTIds.rl("frost");
 
     private static final int BASE_DAMAGE = 3;
     private static final int POWER_COMPLEXITY_FACTOR = 2;
@@ -51,12 +51,12 @@ public final class FocusEffectFrost implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_elemental"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_elemental"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.GELUM;
+        return TTAspects.GELUM;
     }
 
     @Override

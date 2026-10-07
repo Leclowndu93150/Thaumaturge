@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -49,8 +49,8 @@ import org.jspecify.annotations.Nullable;
 public class EntityCultistLeader extends EntityThaumaturgeBoss implements RangedAttackMob {
     private static final BossTitles TITLES = new BossTitles("entity.thaumaturge.cultist_leader.name.custom",
             List.of("Alberic", "Anselm", "Bastian", "Beturian", "Chabier", "Chorache", "Chuse", "Dodorol", "Ebardo", "Ferrando", "Fertus", "Guillen", "Larpe", "Obano", "Zelipe"));
-    private static final Map<EquipmentSlot, Supplier<? extends Item>> PRAETOR_KIT = Map.of(EquipmentSlot.HEAD, TCItems.CRIMSON_PRAETOR_HELM, EquipmentSlot.CHEST, TCItems.CRIMSON_PRAETOR_CHEST,
-            EquipmentSlot.LEGS, TCItems.CRIMSON_PRAETOR_LEGS, EquipmentSlot.FEET, TCItems.CRIMSON_BOOTS);
+    private static final Map<EquipmentSlot, Supplier<? extends Item>> PRAETOR_KIT = Map.of(EquipmentSlot.HEAD, TTItems.CRIMSON_PRAETOR_HELM, EquipmentSlot.CHEST, TTItems.CRIMSON_PRAETOR_CHEST,
+            EquipmentSlot.LEGS, TTItems.CRIMSON_PRAETOR_LEGS, EquipmentSlot.FEET, TTItems.CRIMSON_BOOTS);
     private static final int EXPERIENCE = 40;
     private static final double SPEED = 0.32;
     private static final double HEALTH = 150.0;
@@ -99,7 +99,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData data) {
         PRAETOR_KIT.forEach((slot, item) -> setItemSlot(slot, new ItemStack(item.get())));
-        setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(level.getDifficulty() == Difficulty.EASY ? TCItems.VOID_SWORD.get() : TCItems.CRIMSON_BLADE.get()));
+        setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(level.getDifficulty() == Difficulty.EASY ? TTItems.VOID_SWORD.get() : TTItems.CRIMSON_BLADE.get()));
         if (random.nextFloat() < BLADE_ENCHANT_CHANCE * difficulty.getSpecialMultiplier()) {
             EnchantmentHelper.enchantItemFromProvider(getMainHandItem(), level.registryAccess(), VanillaEnchantmentProviders.MOB_SPAWN_EQUIPMENT, difficulty, random);
         }
@@ -147,13 +147,13 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
         orb.setPos(orb.getX() + orb.getDeltaMovement().x / 2.0, orb.getY(), orb.getZ() + orb.getDeltaMovement().z / 2.0);
         Vec3 aim = heart.subtract(position().add(0.0, getBbHeight() / 2.0F, 0.0));
         orb.shoot(aim.x, aim.y + ORB_LOFT, aim.z, ORB_SPEED, ORB_SPREAD);
-        playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + random.nextFloat() * 0.1F);
+        playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + random.nextFloat() * 0.1F);
         level().addFreshEntity(orb);
     }
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        spawnAtLocation(level, new ItemStack(TCItems.LOOT_BAG_RARE.get()), 1.5F);
+        spawnAtLocation(level, new ItemStack(TTItems.LOOT_BAG_RARE.get()), 1.5F);
     }
 
     @Override

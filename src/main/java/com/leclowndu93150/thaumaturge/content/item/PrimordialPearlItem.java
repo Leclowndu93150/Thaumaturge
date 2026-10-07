@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -25,7 +25,7 @@ public final class PrimordialPearlItem extends Item {
         if (instance.getOrDefault(DataComponents.DAMAGE, 0) + 1 >= MAX_DAMAGE) {
             return null;
         }
-        return new ItemStackTemplate(TCItems.PRIMORDIAL_PEARL, DataComponentPatch.builder().set(DataComponents.DAMAGE, instance.getOrDefault(DataComponents.DAMAGE, 0) + 1).build());
+        return new ItemStackTemplate(TTItems.PRIMORDIAL_PEARL, DataComponentPatch.builder().set(DataComponents.DAMAGE, instance.getOrDefault(DataComponents.DAMAGE, 0) + 1).build());
     }
 
     @Override

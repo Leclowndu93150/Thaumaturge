@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -26,6 +26,6 @@ public record ArcaneCraftingRecipeDisplay(int width, int height, boolean shapele
 
     @Override
     public Type<ArcaneCraftingRecipeDisplay> type() {
-        return TCRecipeTypes.ARCANE_DISPLAY.get();
+        return TTRecipeTypes.ARCANE_DISPLAY.get();
     }
 }

@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeCreakPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeVentPayload;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.Codec;
 import java.nio.ByteBuffer;
 import net.minecraft.core.BlockPos;
@@ -60,7 +60,7 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport, 
     protected final boolean[] openSides = new boolean[]{true, true, true, true, true, true};
 
     public BlockEntityTube(BlockPos pos, BlockState state) {
-        this(TCBlockEntities.TUBE.get(), pos, state);
+        this(TTBlockEntities.TUBE.get(), pos, state);
     }
 
     protected BlockEntityTube(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -245,8 +245,8 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport, 
         if (!(player.pick(player.blockInteractionRange(), 0.0F, false) instanceof BlockHitResult hit) || !hit.getBlockPos().equals(pos)) {
             return false;
         }
-        int subHit = BlockTube.resolveSubHit(hit, pos);
-        if (subHit == 6 && !isSideOpen(hit.getDirection())) {
+        int subHit = BlockEssentiaTransport.resolveSubHit(getBlockState(), hit, pos);
+        if (subHit == TubeGeometry.CORE_HIT && !isSideOpen(hit.getDirection())) {
             subHit = hit.getDirection().ordinal();
         }
         if (!handleCasterClick(subHit)) {
@@ -292,7 +292,7 @@ public class BlockEntityTube extends BlockEntity implements IEssentiaTransport, 
     }
 
     public void playToolSound(Level level, BlockPos pos) {
-        level.playSound(null, pos, TCSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+        level.playSound(null, pos, TTSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
     }
 
     @Override

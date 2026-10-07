@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.aspect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import java.text.DecimalFormat;
@@ -20,7 +20,7 @@ public final class AspectTagRenderer {
     public static final int TAG_SIZE = 16;
     public static final int TEXTURE_SIZE = 32;
 
-    private static final Identifier UNKNOWN_TEXTURE = TCIds.rl("textures/aspects/_unknown.png");
+    private static final Identifier UNKNOWN_TEXTURE = TTIds.rl("textures/aspects/_unknown.png");
     private static final float UNKNOWN_ALPHA = 0.45F;
     private static final float DEDUCIBLE_ALPHA = 1.0F;
 
@@ -97,7 +97,7 @@ public final class AspectTagRenderer {
     private static void drawIcon(GuiGraphicsExtractor graphics, double x, double y, double z, Holder<IAspect> aspect, BlendMode blend, float alpha, boolean bw) {
         IAspect value = aspect.value();
         int color = colorOf(value, alpha, bw);
-        RenderPipeline pipeline = blend == BlendMode.ADDITIVE ? TCRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED;
+        RenderPipeline pipeline = blend == BlendMode.ADDITIVE ? TTRenderPipelines.GUI_TEXTURED_ADDITIVE : RenderPipelines.GUI_TEXTURED;
         graphics.pose().pushMatrix();
         graphics.pose().translate((float) x, (float) y);
         graphics.blit(pipeline, value.texture(), 0, 0, 0.0F, 0.0F, TAG_SIZE, TAG_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, color);

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.IGolemHands;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.List;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public final class GolemHands implements IGolemHands {
     }
 
     private List<EquipmentSlot> hands() {
-        return golem.properties().hasTrait(TCGolemTraits.HAULER.get()) ? TWO_HANDS : ONE_HAND;
+        return golem.properties().hasTrait(TTGolemTraits.HAULER.get()) ? TWO_HANDS : ONE_HAND;
     }
 
     @Override

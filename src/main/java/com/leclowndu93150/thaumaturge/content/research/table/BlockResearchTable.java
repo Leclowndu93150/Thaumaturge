@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
-import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,27 +41,16 @@ public final class BlockResearchTable extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<ResearchTablePart> PART = EnumProperty.create("part", ResearchTablePart.class);
 
-    private static final VoxelShape SHAPE_TOP = box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
-    private static final Map<Direction, VoxelShape> SHAPES = buildShapes();
+    private static final VoxelShape TRESTLE = Shapes.or(box(0.0, 14.0, 0.0, 16.0, 16.0, 16.0), box(2.0, 11.0, 0.0, 3.0, 14.0, 12.0), box(4.0, 11.0, 12.0, 12.0, 14.0, 13.0),
+            box(2.0, 1.0, 12.0, 4.0, 14.0, 14.0), box(12.0, 1.0, 12.0, 14.0, 14.0, 14.0), box(4.0, 7.0, 12.0, 12.0, 9.0, 14.0), box(4.0, 2.0, 12.0, 12.0, 3.0, 14.0),
+            box(1.0, 0.0, 11.0, 15.0, 1.0, 15.0), box(7.0, 3.0, 0.0, 9.0, 5.0, 14.0), box(7.0, 2.0, 14.0, 9.0, 6.0, 15.0));
+    private static final Map<Direction, VoxelShape> MAIN_SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(TRESTLE, box(13.0, 11.0, 0.0, 14.0, 14.0, 3.0), box(9.0, 11.0, 3.0, 13.0, 14.0, 12.0),
+            box(13.0, 10.0, 3.0, 14.0, 14.0, 12.0), box(14.0, 11.0, 4.0, 15.0, 13.0, 11.0), box(15.0, 11.0, 7.0, 16.0, 13.0, 8.0)));
+    private static final Map<Direction, VoxelShape> EXT_SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(TRESTLE, box(13.0, 11.0, 0.0, 14.0, 14.0, 12.0)));
 
     public BlockResearchTable(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, ResearchTablePart.MAIN));
-    }
-
-    private static Map<Direction, VoxelShape> buildShapes() {
-        Map<Direction, VoxelShape> shapes = new EnumMap<>(Direction.class);
-        for (Direction facing : Direction.Plane.HORIZONTAL) {
-            Direction legSide = facing.getOpposite();
-            VoxelShape legs = switch (legSide) {
-                case WEST -> Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0));
-                case EAST -> Shapes.or(box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
-                case NORTH -> Shapes.or(box(2.0, 0.0, 2.0, 6.0, 12.0, 6.0), box(10.0, 0.0, 2.0, 14.0, 12.0, 6.0));
-                default -> Shapes.or(box(2.0, 0.0, 10.0, 6.0, 12.0, 14.0), box(10.0, 0.0, 10.0, 14.0, 12.0, 14.0));
-            };
-            shapes.put(facing, Shapes.or(SHAPE_TOP, legs));
-        }
-        return shapes;
     }
 
     @Override
@@ -106,12 +95,13 @@ public final class BlockResearchTable extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES.get(state.getValue(FACING));
+        Map<Direction, VoxelShape> shapes = state.getValue(PART) == ResearchTablePart.MAIN ? MAIN_SHAPES : EXT_SHAPES;
+        return shapes.get(state.getValue(FACING));
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES.get(state.getValue(FACING));
+        return getShape(state, level, pos, context);
     }
 
     @Override
@@ -150,7 +140,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.RESEARCH_TABLE.get(), BlockEntityResearchTable::serverTick);
+        return createTickerHelper(type, TTBlockEntities.RESEARCH_TABLE.get(), BlockEntityResearchTable::serverTick);
     }
 
     @Override
@@ -159,7 +149,7 @@ public final class BlockResearchTable extends BaseEntityBlock {
         BlockPos partnerPos = pos.relative(facing);
         BlockState partner = level.getBlockState(partnerPos);
         if (partner.is(this) && partner.getValue(FACING) == facing.getOpposite() && partner.getValue(PART) != state.getValue(PART)) {
-            level.setBlock(partnerPos, TCBlocks.TABLE_WOOD.get().defaultBlockState(), 3);
+            level.setBlock(partnerPos, TTBlocks.TABLE_WOOD.get().defaultBlockState(), 3);
         }
     }
 }

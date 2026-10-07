@@ -14,9 +14,9 @@ import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -74,7 +74,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
     private final TableInventory inventory = new TableInventory();
 
     public BlockEntityFocalManipulator(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.FOCAL_MANIPULATOR.get(), pos, state);
+        super(TTBlockEntities.FOCAL_MANIPULATOR.get(), pos, state);
     }
 
     public ItemStacksResourceHandler items() {
@@ -118,7 +118,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
         ItemStack focus = focusStack();
         if (!(focus.getItem() instanceof ItemFocus)) {
             vis = 0.0F;
-            level.playSound(null, worldPosition, TCSounds.WANDFAIL.get(), SoundSource.BLOCKS, 0.33F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.WANDFAIL.get(), SoundSource.BLOCKS, 0.33F, 1.0F);
             syncToClient();
             return;
         }
@@ -148,7 +148,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
     }
 
     private float spendAura(ServerLevel level, float amount) {
-        if (level.getBlockState(worldPosition.above()).getBlock() != TCBlocks.ARCANE_WORKBENCH_CHARGER.get()) {
+        if (level.getBlockState(worldPosition.above()).getBlock() != TTBlocks.ARCANE_WORKBENCH_CHARGER.get()) {
             return AuraHelper.drainVis(level, worldPosition, amount, false);
         }
         float remaining = amount;
@@ -216,7 +216,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
         setChanged();
         syncToClient();
         if (level != null) {
-            level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         return true;
     }
@@ -260,7 +260,7 @@ public final class BlockEntityFocalManipulator extends BlockEntity implements Me
         if (focus.getItem() instanceof ItemFocus) {
             FocusPackage core = generateFocus();
             if (core != null) {
-                level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 if (!focusName.isEmpty()) {
                     focus.set(DataComponents.CUSTOM_NAME, Component.literal(focusName));
                 }

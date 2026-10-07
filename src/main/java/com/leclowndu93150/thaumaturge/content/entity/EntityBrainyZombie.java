@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -23,7 +23,7 @@ public class EntityBrainyZombie extends Zombie {
     }
 
     public static boolean checkBrainyZombieSpawnRules(EntityType<? extends Monster> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
-        return !level.getBiome(pos).is(TCBiomeTags.IS_TAINTED) && Monster.checkMonsterSpawnRules(type, level, reason, pos, random);
+        return !level.getBiome(pos).is(TTBiomeTags.IS_TAINTED) && Monster.checkMonsterSpawnRules(type, level, reason, pos, random);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -37,10 +37,10 @@ public class EntityBrainyZombie extends Zombie {
 
     @Override
     protected void doUnderWaterConversion(ServerLevel level) {
-        if (!EventHooks.canLivingConvert(this, TCEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
+        if (!EventHooks.canLivingConvert(this, TTEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
             return;
         }
-        this.convertToZombieType(level, TCEntities.BRAINY_DROWNED.get());
+        this.convertToZombieType(level, TTEntities.BRAINY_DROWNED.get());
         if (!this.isSilent()) {
             level.levelEvent(null, CONVERSION_EVENT, this.blockPosition(), 0);
         }

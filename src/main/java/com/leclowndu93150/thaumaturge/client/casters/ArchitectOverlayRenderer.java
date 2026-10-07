@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCFXPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -34,13 +34,13 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ArchitectOverlayRenderer {
-    private static final Identifier FRAME_CORNER = TCIds.rl("textures/misc/frame_corner.png");
-    private static final Identifier FRAME_SIDE = TCIds.rl("textures/misc/frame_side.png");
-    private static final Identifier ARROWS = TCIds.rl("textures/misc/architect_arrows.png");
+    private static final Identifier FRAME_CORNER = TTIds.rl("textures/misc/frame_corner.png");
+    private static final Identifier FRAME_SIDE = TTIds.rl("textures/misc/frame_side.png");
+    private static final Identifier ARROWS = TTIds.rl("textures/misc/architect_arrows.png");
 
-    private static final RenderPipeline PIPELINE = TCFXPipelines.additiveTexturedNoDepth(TCIds.rl("pipeline/architect_overlay"));
+    private static final RenderPipeline PIPELINE = TTFXPipelines.additiveTexturedNoDepth(TTIds.rl("pipeline/architect_overlay"));
     private static final RenderType SIDE_TYPE = makeType("thaumaturge_architect_side", FRAME_SIDE);
     private static final RenderType CORNER_TYPE = makeType("thaumaturge_architect_corner", FRAME_CORNER);
     private static final RenderType ARROWS_TYPE = makeType("thaumaturge_architect_arrows", ARROWS);

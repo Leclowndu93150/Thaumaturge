@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.eldritch.block;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +22,7 @@ public final class BlockEntityEldritchTrap extends BlockEntity {
     private int count = 20;
 
     public BlockEntityEldritchTrap(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_TRAP.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_TRAP.get(), pos, state);
     }
 
     public void serverTick(Level level, BlockPos pos) {

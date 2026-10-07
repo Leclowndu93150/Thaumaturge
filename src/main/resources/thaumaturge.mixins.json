@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.leclowndu93150.thaumaturge.mixin",
-  "plugin": "com.leclowndu93150.thaumaturge.TCMixinPlugin",
+  "plugin": "com.leclowndu93150.thaumaturge.TTMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "data.recipes.RecipeProviderAccessor",

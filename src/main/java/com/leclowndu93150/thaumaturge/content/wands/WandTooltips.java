@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -72,7 +72,7 @@ public final class WandTooltips {
 
     public static Component capCostSummary(HolderLookup.@Nullable Provider registries, WandCap cap) {
         Map<ResourceKey<IAspect>, Integer> pctByPrimal = new LinkedHashMap<>();
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             pctByPrimal.put(primal, Math.round(cap.costModifier(primal) * 100.0F));
         }
         return costSummary(registries, pctByPrimal);

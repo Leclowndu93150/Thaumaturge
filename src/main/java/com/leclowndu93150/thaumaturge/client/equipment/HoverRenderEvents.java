@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import net.minecraft.client.entity.ClientAvatarEntity;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.renderstate.AvatarRenderStateModifier;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class HoverRenderEvents {
     private HoverRenderEvents() {}
 

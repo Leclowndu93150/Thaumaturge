@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,7 +45,7 @@ public final class MenuResearchTable extends AbstractContainerMenu {
     }
 
     public MenuResearchTable(int containerId, Inventory playerInventory, @Nullable BlockEntityResearchTable blockEntity) {
-        super(TCMenus.RESEARCH_TABLE.get(), containerId);
+        super(TTMenus.RESEARCH_TABLE.get(), containerId);
         this.blockEntity = blockEntity;
         this.items = blockEntity != null ? blockEntity.items() : new ItemStacksResourceHandler(BlockEntityResearchTable.SLOT_COUNT);
         this.access = blockEntity != null ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()) : ContainerLevelAccess.NULL;
@@ -112,7 +112,7 @@ public final class MenuResearchTable extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.RESEARCH_TABLE.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.RESEARCH_TABLE.get());
     }
 
     @Override

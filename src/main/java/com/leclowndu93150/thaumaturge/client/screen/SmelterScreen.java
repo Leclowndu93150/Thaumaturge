@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCGauge;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTGauge;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -9,25 +9,25 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-public final class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
-    private static final Identifier SHEET = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+public final class SmelterScreen extends AbstractTTContainerScreen<MenuSmelter> {
+    private static final Identifier SHEET = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_smelter.png");
     private static final int SHEET_SIZE = 256;
     private static final int PANEL_WIDTH = 176;
     private static final int PANEL_HEIGHT = 166;
 
-    private static final TCGauge FLAME = new TCGauge(SHEET, SHEET_SIZE, 176, 0, 16, 20);
+    private static final TTGauge FLAME = new TTGauge(SHEET, SHEET_SIZE, 176, 0, 16, 20);
     private static final int FLAME_X = 80;
     private static final int FLAME_Y = 26;
 
-    private static final TCGauge PROGRESS = new TCGauge(SHEET, SHEET_SIZE, 216, 0, 9, 46);
+    private static final TTGauge PROGRESS = new TTGauge(SHEET, SHEET_SIZE, 216, 0, 9, 46);
     private static final int PROGRESS_X = 106;
     private static final int PROGRESS_Y = 13;
 
-    private static final TCGauge VIS = new TCGauge(SHEET, SHEET_SIZE, 200, 0, 8, 48);
+    private static final TTGauge VIS = new TTGauge(SHEET, SHEET_SIZE, 200, 0, 8, 48);
     private static final int VIS_X = 61;
     private static final int VIS_Y = 12;
 
-    private static final TCGauge VIS_GLASS = new TCGauge(SHEET, SHEET_SIZE, 232, 0, 10, 55);
+    private static final TTGauge VIS_GLASS = new TTGauge(SHEET, SHEET_SIZE, 232, 0, 10, 55);
     private static final int VIS_GLASS_X = 60;
     private static final int VIS_GLASS_Y = 8;
 

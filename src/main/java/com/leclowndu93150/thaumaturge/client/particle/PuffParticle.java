@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class PuffParticle extends TCParticle {
+public final class PuffParticle extends TTParticle {
     private static final int FRAME_COUNT = 5;
     private static final int BASE_LIFETIME = 20;
     private static final float START_SIZE = 0.3F;
@@ -36,11 +36,11 @@ public final class PuffParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("puff");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("puff");
 
         @Override
         public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

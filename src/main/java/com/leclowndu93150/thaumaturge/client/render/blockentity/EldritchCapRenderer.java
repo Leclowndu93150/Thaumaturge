@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.function.ToIntFunction;
@@ -24,9 +24,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEntityRenderer<T, EldritchCapRenderState> {
-    public static final Identifier CAP_TEXTURE = TCIds.rl("textures/entity/obelisk_cap.png");
-    public static final Identifier CAP_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_cap_2.png");
-    public static final Identifier ALTAR_TEXTURE = TCIds.rl("textures/entity/obelisk_cap_altar.png");
+    public static final Identifier CAP_TEXTURE = TTIds.rl("textures/entity/obelisk_cap.png");
+    public static final Identifier CAP_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_cap_2.png");
+    public static final Identifier ALTAR_TEXTURE = TTIds.rl("textures/entity/obelisk_cap_altar.png");
+    public static final Identifier ALTAR_MODEL = TTIds.rl("models/mesh/obelisk_cap_altar.ttmesh");
 
     private static final float EYE_OFFSET = 0.46F;
     private static final float EYE_HEIGHT = 0.2F;
@@ -35,13 +36,15 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
     private static final float IN_FRAME_SCALE = 0.5128205F;
     private static final float IN_FRAME_DROP = -0.05F;
 
+    private final Identifier model;
     private final Identifier texture;
     private final Identifier textureOuter;
     private final ToIntFunction<T> eyeCount;
     private final ItemModelResolver itemModelResolver;
     private ItemStack eyeStack = ItemStack.EMPTY;
 
-    public EldritchCapRenderer(BlockEntityRendererProvider.Context context, Identifier texture, Identifier textureOuter, ToIntFunction<T> eyeCount) {
+    public EldritchCapRenderer(BlockEntityRendererProvider.Context context, Identifier model, Identifier texture, Identifier textureOuter, ToIntFunction<T> eyeCount) {
+        this.model = model;
         this.texture = texture;
         this.textureOuter = textureOuter;
         this.eyeCount = eyeCount;
@@ -60,7 +63,7 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
         state.outerLands = cap.getLevel() != null && cap.getLevel().dimension() == OuterLands.DIMENSION;
         if (state.eyes > 0) {
             if (eyeStack.isEmpty()) {
-                eyeStack = new ItemStack(TCItems.ELDRITCH_EYE.get());
+                eyeStack = new ItemStack(TTItems.ELDRITCH_EYE.get());
             }
             ItemStackRenderState itemState = new ItemStackRenderState();
             itemModelResolver.updateForTopItem(itemState, eyeStack, ItemDisplayContext.FIXED, cap.getLevel(), null, 0);
@@ -76,7 +79,7 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        EldritchObeliskRenderer.submitCap(poseStack, collector, type, state.lightCoords);
+        EldritchObeliskRenderer.submitCap(model, poseStack, collector, type, state.lightCoords);
         poseStack.popPose();
         if (state.eye == null) {
             return;

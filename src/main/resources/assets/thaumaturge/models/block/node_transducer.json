@@ -1,7 +1,7 @@
 {
   "loader": "thaumaturge:mesh",
   "parent": "block/block",
-  "model": "thaumaturge:models/mesh/node_stabilizer.tcmesh",
+  "model": "thaumaturge:models/mesh/node_stabilizer.ttmesh",
   "textures": {
     "texture": "thaumaturge:block/node_converter",
     "particle": "#texture"

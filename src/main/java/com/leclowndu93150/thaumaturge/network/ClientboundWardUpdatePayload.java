@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
 public record ClientboundWardUpdatePayload(BlockPos pos, Optional<UUID> owner) implements CustomPacketPayload {
-    public static final Type<ClientboundWardUpdatePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "ward_update"));
+    public static final Type<ClientboundWardUpdatePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "ward_update"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundWardUpdatePayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ClientboundWardUpdatePayload::pos,
             ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC), ClientboundWardUpdatePayload::owner, ClientboundWardUpdatePayload::new);

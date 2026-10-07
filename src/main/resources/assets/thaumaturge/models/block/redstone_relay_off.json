@@ -1,223 +1,107 @@
 {
-  "parent": "minecraft:block/block",
-  "textures": {
-    "particle": "thaumaturge:block/redstone_relay_off",
-    "torch": "minecraft:block/redstone_torch_off",
-    "slab": "minecraft:block/smooth_stone",
-    "top": "thaumaturge:block/redstone_relay_off",
-    "side": "thaumaturge:block/levitator_side_off"
-  },
-  "elements": [
-    {
-      "from": [
-        0,
-        0,
-        0
-      ],
-      "to": [
-        16,
-        2,
-        16
-      ],
-      "faces": {
-        "up": {
-          "texture": "#top"
-        },
-        "down": {
-          "texture": "#slab",
-          "cullface": "down"
-        },
-        "west": {
-          "texture": "#slab",
-          "cullface": "west"
-        },
-        "east": {
-          "texture": "#slab",
-          "cullface": "east"
-        },
-        "north": {
-          "texture": "#slab",
-          "cullface": "north"
-        },
-        "south": {
-          "texture": "#slab",
-          "cullface": "south"
-        }
-      }
-    },
-    {
-      "from": [
-        7,
-        2,
-        3
-      ],
-      "to": [
-        9,
-        7,
-        5
-      ],
-      "faces": {
-        "up": {
-          "uv": [
-            7,
-            6,
-            9,
-            8
-          ],
-          "texture": "#torch"
-        },
-        "down": {
-          "uv": [
-            7,
-            13,
-            9,
-            15
-          ],
-          "texture": "#torch"
-        },
-        "west": {
-          "uv": [
-            7,
-            6,
-            9,
-            11
-          ],
-          "texture": "#torch"
-        },
-        "east": {
-          "uv": [
-            7,
-            6,
-            9,
-            11
-          ],
-          "texture": "#torch"
-        },
-        "north": {
-          "uv": [
-            7,
-            6,
-            9,
-            11
-          ],
-          "texture": "#torch"
-        },
-        "south": {
-          "uv": [
-            7,
-            6,
-            9,
-            11
-          ],
-          "texture": "#torch"
-        }
-      }
-    },
-    {
-      "from": [
-        2,
-        2,
-        2
-      ],
-      "to": [
-        6,
-        4,
-        6
-      ],
-      "faces": {
-        "up": {
-          "texture": "#top"
-        },
-        "west": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "north": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "south": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        }
-      }
-    },
-    {
-      "from": [
-        6,
-        2,
-        10
-      ],
-      "to": [
-        10,
-        4,
-        14
-      ],
-      "faces": {
-        "up": {
-          "texture": "#top"
-        },
-        "west": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "north": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        },
-        "south": {
-          "uv": [
-            6,
-            16,
-            10,
-            14
-          ],
-          "texture": "#side"
-        }
-      }
-    }
-  ]
+	"parent": "minecraft:block/block",
+	"textures": {
+		"particle": "thaumaturge:block/redstone_relay_off",
+		"top": "thaumaturge:block/redstone_relay_off",
+		"slab": "block/smooth_stone",
+		"torch": "block/redstone_torch_off"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [0, 0, 0],
+			"to": [16, 1, 16],
+			"faces": {
+				"north": {"uv": [0, 15, 16, 16], "texture": "#slab", "cullface": "north"},
+				"east": {"uv": [0, 15, 16, 16], "texture": "#slab", "cullface": "east"},
+				"south": {"uv": [0, 15, 16, 16], "texture": "#slab", "cullface": "south"},
+				"west": {"uv": [0, 15, 16, 16], "texture": "#slab", "cullface": "west"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#top"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#slab", "cullface": "down"}
+			}
+		},
+		{
+			"name": "plate",
+			"from": [1, 1, 1],
+			"to": [15, 2, 15],
+			"faces": {
+				"north": {"uv": [1, 14, 15, 15], "texture": "#slab"},
+				"east": {"uv": [1, 14, 15, 15], "texture": "#slab"},
+				"south": {"uv": [1, 14, 15, 15], "texture": "#slab"},
+				"west": {"uv": [1, 14, 15, 15], "texture": "#slab"},
+				"up": {"uv": [1, 1, 15, 15], "texture": "#top"}
+			}
+		},
+		{
+			"name": "dial_a_ring",
+			"from": [2, 2, 2],
+			"to": [6, 3, 6],
+			"faces": {
+				"north": {"uv": [2, 2, 6, 3], "texture": "#top"},
+				"east": {"uv": [2, 2, 6, 3], "texture": "#top"},
+				"south": {"uv": [2, 2, 6, 3], "texture": "#top"},
+				"west": {"uv": [2, 2, 6, 3], "texture": "#top"},
+				"up": {"uv": [2, 2, 6, 6], "texture": "#top"}
+			}
+		},
+		{
+			"name": "dial_a_cap",
+			"from": [3, 3, 3],
+			"to": [5, 4, 5],
+			"faces": {
+				"north": {"uv": [3, 3, 5, 4], "texture": "#top"},
+				"east": {"uv": [3, 3, 5, 4], "texture": "#top"},
+				"south": {"uv": [3, 3, 5, 4], "texture": "#top"},
+				"west": {"uv": [3, 3, 5, 4], "texture": "#top"},
+				"up": {"uv": [3, 3, 5, 5], "texture": "#top"}
+			}
+		},
+		{
+			"name": "dial_b_ring",
+			"from": [6, 2, 10],
+			"to": [10, 3, 14],
+			"faces": {
+				"north": {"uv": [6, 10, 10, 11], "texture": "#top"},
+				"east": {"uv": [6, 10, 10, 11], "texture": "#top"},
+				"south": {"uv": [6, 10, 10, 11], "texture": "#top"},
+				"west": {"uv": [6, 10, 10, 11], "texture": "#top"},
+				"up": {"uv": [6, 10, 10, 14], "texture": "#top"}
+			}
+		},
+		{
+			"name": "dial_b_cap",
+			"from": [7, 3, 11],
+			"to": [9, 4, 13],
+			"faces": {
+				"north": {"uv": [7, 11, 9, 12], "texture": "#top"},
+				"east": {"uv": [7, 11, 9, 12], "texture": "#top"},
+				"south": {"uv": [7, 11, 9, 12], "texture": "#top"},
+				"west": {"uv": [7, 11, 9, 12], "texture": "#top"},
+				"up": {"uv": [7, 11, 9, 13], "texture": "#top"}
+			}
+		},
+		{
+			"name": "torch_shaft",
+			"from": [7, 2, 3],
+			"to": [9, 6, 5],
+			"faces": {
+				"north": {"uv": [7, 8, 9, 12], "texture": "#torch"},
+				"east": {"uv": [7, 8, 9, 12], "texture": "#torch"},
+				"south": {"uv": [7, 8, 9, 12], "texture": "#torch"},
+				"west": {"uv": [7, 8, 9, 12], "texture": "#torch"}
+			}
+		},
+		{
+			"name": "torch_head",
+			"from": [7, 6, 3],
+			"to": [9, 7, 5],
+			"faces": {
+				"north": {"uv": [7, 6, 9, 7], "texture": "#torch"},
+				"east": {"uv": [7, 6, 9, 7], "texture": "#torch"},
+				"south": {"uv": [7, 6, 9, 7], "texture": "#torch"},
+				"west": {"uv": [7, 6, 9, 7], "texture": "#torch"},
+				"up": {"uv": [7, 6, 9, 8], "texture": "#torch"}
+			}
+		}
+	]
 }

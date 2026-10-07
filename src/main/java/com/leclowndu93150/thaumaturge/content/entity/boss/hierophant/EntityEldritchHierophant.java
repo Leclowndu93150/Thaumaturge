@@ -4,12 +4,12 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
 import net.minecraft.resources.Identifier;
 import java.util.Map;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityThaumaturgeBoss;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -246,9 +246,9 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
     private void begin(ServerLevel level, HierophantAction action) {
         setAction(action);
         final SoundEvent sound = switch (action) {
-            case SUMMON, CAST -> TCSounds.CHANT.get();
-            case NOVA -> TCSounds.EGSCREECH.get();
-            default -> TCSounds.RUNICSHIELDCHARGE.get();
+            case SUMMON, CAST -> TTSounds.CHANT.get();
+            case NOVA -> TTSounds.EGSCREECH.get();
+            default -> TTSounds.RUNICSHIELDCHARGE.get();
         };
         level.playSound(null, blockPosition(), sound, SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
     }
@@ -281,13 +281,13 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
             case SWIPE_LEFT, SWIPE_RIGHT -> {
                 final boolean left = action == HierophantAction.SWIPE_LEFT;
                 final Vec3 hand = releaseHand(left);
-                castSpell(TCFocusElements.ELDRITCH_CRESCENT.getId(), hand, aimFrom(hand), 0.9F, left);
-                level.playSound(null, blockPosition(), TCSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, action == HierophantAction.SWIPE_LEFT ? 0.85F : 0.65F);
+                castSpell(TTFocusElements.ELDRITCH_CRESCENT.getId(), hand, aimFrom(hand), 0.9F, left);
+                level.playSound(null, blockPosition(), TTSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, action == HierophantAction.SWIPE_LEFT ? 0.85F : 0.65F);
             }
             case THROW -> {
                 final Vec3 hand = releaseHand(false);
-                castSpell(TCFocusElements.ELDRITCH_HAMMER.getId(), hand, aimFrom(hand), 1.6F, false);
-                level.playSound(null, blockPosition(), TCSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, 0.5F);
+                castSpell(TTFocusElements.ELDRITCH_HAMMER.getId(), hand, aimFrom(hand), 1.6F, false);
+                level.playSound(null, blockPosition(), TTSounds.WIND.get(), SoundSource.HOSTILE, SOUND_VOLUME, 0.5F);
             }
             case CAST -> {
                 int marked = 0;
@@ -302,11 +302,11 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
                     mark(level, getTarget().position().add(side));
                     mark(level, getTarget().position().subtract(side));
                 }
-                level.playSound(null, blockPosition(), TCSounds.EGATTACK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
+                level.playSound(null, blockPosition(), TTSounds.EGATTACK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
             }
             case NOVA -> {
-                castSpell(TCFocusElements.ELDRITCH_NOVA.getId(), ground(level, position()), Vec3.directionFromRotation(0, getYRot()), 1.2F, false);
-                level.playSound(null, blockPosition(), TCSounds.SHOCK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
+                castSpell(TTFocusElements.ELDRITCH_NOVA.getId(), ground(level, position()), Vec3.directionFromRotation(0, getYRot()), 1.2F, false);
+                level.playSound(null, blockPosition(), TTSounds.SHOCK.get(), SoundSource.HOSTILE, SOUND_VOLUME, SOUND_PITCH);
                 Effects.bamf(level, position().add(0, HAND_HEIGHT, 0)).color(0.4F, 0.2F, 0.55F).send();
             }
             default -> {
@@ -320,11 +320,11 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
         }
         final Vec3 seal = ground(level, position);
         Effects.arcBolt(level, releaseHand(false)).to(seal.add(0, 0.5, 0)).color(ARC_COLOR).send();
-        castSpell(TCFocusElements.ELDRITCH_SIGIL.getId(), seal, Vec3.directionFromRotation(0, getYRot()), 1.4F, false);
+        castSpell(TTFocusElements.ELDRITCH_SIGIL.getId(), seal, Vec3.directionFromRotation(0, getYRot()), 1.4F, false);
     }
 
     private void castSpell(Identifier medium, Vec3 origin, Vec3 direction, float power, boolean left) {
-        final FocusPackage spell = FocusPackage.builder().caster(this).power(spellDamage() * power).add(medium, Map.of("left", left ? 1 : 0)).add(TCFocusElements.ELDRITCH_REND.getId()).build();
+        final FocusPackage spell = FocusPackage.builder().caster(this).power(spellDamage() * power).add(medium, Map.of("left", left ? 1 : 0)).add(TTFocusElements.ELDRITCH_REND.getId()).build();
         FocusEngine.cast(this, spell, new CastStreams(new Trajectory[]{new Trajectory(origin, direction)}, null));
     }
 
@@ -356,7 +356,7 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
             yHeadRot = getYRot();
         }
         if (isAlive() && getTarget() != null && tickCount % AMBIENT_INTERVAL == 0 && level() instanceof ServerLevel server) {
-            server.playSound(null, blockPosition(), TCSounds.EGIDLE.get(), SoundSource.HOSTILE, 0.8F, 0.6F);
+            server.playSound(null, blockPosition(), TTSounds.EGIDLE.get(), SoundSource.HOSTILE, 0.8F, 0.6F);
         }
     }
 
@@ -404,11 +404,11 @@ public final class EntityEldritchHierophant extends EntityThaumaturgeBoss {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.EGATTACK.get();
+        return TTSounds.EGATTACK.get();
     }
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.EGDEATH.get();
+        return TTSounds.EGDEATH.get();
     }
 
     @Override

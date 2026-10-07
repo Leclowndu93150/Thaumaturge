@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -23,10 +23,10 @@ public class EntityBrainyHusk extends Husk {
 
     @Override
     protected void doUnderWaterConversion(ServerLevel level) {
-        if (!EventHooks.canLivingConvert(this, TCEntities.BRAINY_ZOMBIE.get(), timer -> this.conversionTime = timer)) {
+        if (!EventHooks.canLivingConvert(this, TTEntities.BRAINY_ZOMBIE.get(), timer -> this.conversionTime = timer)) {
             return;
         }
-        this.convertToZombieType(level, TCEntities.BRAINY_ZOMBIE.get());
+        this.convertToZombieType(level, TTEntities.BRAINY_ZOMBIE.get());
         if (!this.isSilent()) {
             level.levelEvent(null, CONVERSION_EVENT, this.blockPosition(), 0);
         }

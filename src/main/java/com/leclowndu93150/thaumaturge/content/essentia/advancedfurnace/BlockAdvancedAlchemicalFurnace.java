@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -34,7 +34,7 @@ import org.jspecify.annotations.Nullable;
 public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     public static final MapCodec<BlockAdvancedAlchemicalFurnace> CODEC = simpleCodec(BlockAdvancedAlchemicalFurnace::new);
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
-    private static final Identifier RESEARCH = TCIds.rl("advanced_alchemical_furnace");
+    private static final Identifier RESEARCH = TTIds.rl("advanced_alchemical_furnace");
     private static final VoxelShape INPUT_COLLISION = Block.box(0.0, 0.0, 0.0, 16.0, 11.2, 16.0);
     private static final int ITEM_INTAKE_INTERVAL = 10;
 
@@ -108,6 +108,6 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), BlockEntityAdvancedAlchemicalFurnace::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), BlockEntityAdvancedAlchemicalFurnace::serverTick);
     }
 }

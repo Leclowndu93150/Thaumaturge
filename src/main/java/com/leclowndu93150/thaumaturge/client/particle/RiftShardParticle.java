@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class RiftShardParticle extends TCParticle {
+public final class RiftShardParticle extends TTParticle {
     private static final int FRAME_COUNT = 16;
     private static final int BASE_LIFETIME = 16;
     private static final float FRICTION = 0.75F;
@@ -28,7 +28,7 @@ public final class RiftShardParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<RiftShardParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("rift_shard");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("rift_shard");
 
         @Override
         public Particle createParticle(RiftShardParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

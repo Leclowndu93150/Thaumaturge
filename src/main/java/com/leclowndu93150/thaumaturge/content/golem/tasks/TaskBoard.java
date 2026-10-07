@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +29,7 @@ public final class TaskBoard {
     private int lastId;
 
     public static TaskBoard of(Level level) {
-        return level.getData(TCAttachments.GOLEM_TASKS);
+        return level.getData(TTAttachments.GOLEM_TASKS);
     }
 
     public List<ProvisionRequest> wants() {

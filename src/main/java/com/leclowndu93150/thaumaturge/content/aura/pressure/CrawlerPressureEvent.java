@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -21,7 +21,7 @@ public final class CrawlerPressureEvent extends AbstractFluxPressureEvent {
     @Override
     public boolean fire(ServerLevel level, BlockPos origin, FluxPressureState state) {
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, origin);
-        EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(level, EntitySpawnReason.EVENT);
+        EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level, EntitySpawnReason.EVENT);
         if (crawler == null) {
             return false;
         }

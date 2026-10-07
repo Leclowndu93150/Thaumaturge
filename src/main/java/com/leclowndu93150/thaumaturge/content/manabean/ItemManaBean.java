@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.manabean;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCEffectTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTEffectTags;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -40,7 +40,7 @@ public final class ItemManaBean extends Item {
     }
 
     public static @Nullable Holder<IAspect> aspectOf(ItemStack stack) {
-        AspectInstance stored = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance stored = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         return stored == null ? null : stored.aspect();
     }
 
@@ -48,7 +48,7 @@ public final class ItemManaBean extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
         if (level instanceof ServerLevel serverLevel && entity instanceof ServerPlayer player) {
             RandomSource random = serverLevel.getRandom();
-            Optional<Holder<MobEffect>> rolled = serverLevel.registryAccess().lookupOrThrow(TCEffectTags.MANA_BEAN_EFFECTS.registry()).get(TCEffectTags.MANA_BEAN_EFFECTS)
+            Optional<Holder<MobEffect>> rolled = serverLevel.registryAccess().lookupOrThrow(TTEffectTags.MANA_BEAN_EFFECTS.registry()).get(TTEffectTags.MANA_BEAN_EFFECTS)
                     .flatMap(set -> set.getRandomElement(random));
             rolled.ifPresent(effect -> {
                 if (effect.value().isInstantenous()) {
@@ -67,7 +67,7 @@ public final class ItemManaBean extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
-        if (!stack.has(TCDataComponents.CRYSTAL_ASPECT.get())) {
+        if (!stack.has(TTDataComponents.CRYSTAL_ASPECT.get())) {
             assignRandomAspect(stack, level);
         }
     }
@@ -76,7 +76,7 @@ public final class ItemManaBean extends Item {
         List<Holder.Reference<IAspect>> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().toList();
         if (!aspects.isEmpty()) {
             Holder<IAspect> aspect = aspects.get(level.getRandom().nextInt(aspects.size()));
-            stack.set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
+            stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
         }
     }
 
@@ -95,7 +95,7 @@ public final class ItemManaBean extends Item {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        level.setBlock(podPos, TCBlocks.MANA_POD.get().defaultBlockState(), 3);
+        level.setBlock(podPos, TTBlocks.MANA_POD.get().defaultBlockState(), 3);
         if (level.getBlockEntity(podPos) instanceof BlockEntityManaPod pod) {
             Holder<IAspect> aspect = aspectOf(context.getItemInHand());
             if (aspect != null) {

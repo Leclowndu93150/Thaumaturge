@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.EldritchGuardianModel;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchWarden;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,12 +16,12 @@ public final class EldritchWardenRenderer extends MobRenderer<EntityEldritchWard
         public float height;
     }
 
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/eldritch_warden.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/eldritch_warden.png");
     private static final float SHADOW = 0.5F;
     private static final float SPAWN_TICKS = 150.0F;
 
     public EldritchWardenRenderer(EntityRendererProvider.Context context) {
-        super(context, new EldritchGuardianModel(context.bakeLayer(TCModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
+        super(context, new EldritchGuardianModel(context.bakeLayer(TTModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
     }
 
     @Override
@@ -34,6 +34,7 @@ public final class EldritchWardenRenderer extends MobRenderer<EntityEldritchWard
         super.extractRenderState(entity, state, partialTicks);
         state.armLiftL = entity.arms().leftLift();
         state.armLiftR = entity.arms().rightLift();
+        EldritchGuardianRenderer.extractCombat(entity, state, partialTicks);
         state.alpha = 1.0F;
         state.spawnFraction = entity.getSpawnTimer() / SPAWN_TICKS;
         state.height = entity.getBbHeight();

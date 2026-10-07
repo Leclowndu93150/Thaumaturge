@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -18,7 +18,7 @@ public record CrystalAspectTint(int fallback) implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {
-        AspectInstance instance = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         if (instance == null) {
             return ARGB.opaque(fallback);
         }

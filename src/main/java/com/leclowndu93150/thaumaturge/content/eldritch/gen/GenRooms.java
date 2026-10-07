@@ -5,9 +5,9 @@ import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -142,8 +142,8 @@ public final class GenRooms extends GenCommonPieces {
             }
         }
         stairCorners(ctx, cell, x, z, y);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
         EldritchArenaShapes.genObelisk(ctx.level, x + 8, y + 4, z + 8);
     }
 
@@ -240,15 +240,15 @@ public final class GenRooms extends GenCommonPieces {
             ctx.placeBlock(x + 4, y + 2, z + 6 + g, GenContext.STAIR_DIRECTIONAL, Direction.WEST, cell);
         }
         generateConnections(ctx, cx, cz, y, cell, 3, true);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-        EntitySpecialItem item = new EntitySpecialItem(ctx.level.getLevel(), x + 8.5, y + 3.5, z + 8.5, new ItemStack(TCItems.RUNED_TABLET.get()));
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        EntitySpecialItem item = new EntitySpecialItem(ctx.level.getLevel(), x + 8.5, y + 3.5, z + 8.5, new ItemStack(TTItems.RUNED_TABLET.get()));
         item.setDeltaMovement(0.0, 0.0, 0.0);
         item.setUnlimitedLifetime();
         ctx.level.addFreshEntity(item);
         Difficulty difficulty = ctx.level.getDifficulty();
         int guardians = 2 + (difficulty == Difficulty.HARD ? 2 : difficulty == Difficulty.NORMAL ? 1 : 0);
         for (int qq = 0; qq < guardians; qq++) {
-            EntityEldritchGuardian guardian = new EntityEldritchGuardian(TCEntities.ELDRITCH_GUARDIAN.get(), ctx.level.getLevel());
+            EntityEldritchGuardian guardian = new EntityEldritchGuardian(TTEntities.ELDRITCH_GUARDIAN.get(), ctx.level.getLevel());
             double gx = x + 8.5 + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
             double gz = z + 8.5 + Mth.randomBetweenInclusive(ctx.random, 1, 3) * Mth.randomBetweenInclusive(ctx.random, -1, 1);
             guardian.snapTo(gx, y + 2, gz, 0.0F, 0.0F);
@@ -305,7 +305,7 @@ public final class GenRooms extends GenCommonPieces {
                 if (ctx.random.nextBoolean()) {
                     ctx.placeBlock(x + a, y + 8, z + b, GenContext.CRUST, cell);
                 } else if (ctx.random.nextBoolean() && ctx.level.isEmptyBlock(new BlockPos(x + a, y + 8, z + b))) {
-                    ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TCBlocks.CRYSTAL_VITIUM.get().defaultBlockState(), 3);
+                    ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TTBlocks.CRYSTAL_VITIUM.get().defaultBlockState(), 3);
                 }
             }
         }
@@ -359,11 +359,11 @@ public final class GenRooms extends GenCommonPieces {
                     boolean crate = ctx.random.nextFloat() < 0.2F;
                     BlockState loot;
                     if (roll < 0.15F) {
-                        loot = crate ? TCBlocks.LOOT_CRATE_RARE.get().defaultBlockState() : TCBlocks.LOOT_URN_RARE.get().defaultBlockState();
+                        loot = crate ? TTBlocks.LOOT_CRATE_RARE.get().defaultBlockState() : TTBlocks.LOOT_URN_RARE.get().defaultBlockState();
                     } else if (roll < 0.4F) {
-                        loot = crate ? TCBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState();
+                        loot = crate ? TTBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState() : TTBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState();
                     } else {
-                        loot = crate ? TCBlocks.LOOT_CRATE_COMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_COMMON.get().defaultBlockState();
+                        loot = crate ? TTBlocks.LOOT_CRATE_COMMON.get().defaultBlockState() : TTBlocks.LOOT_URN_COMMON.get().defaultBlockState();
                     }
                     ctx.level.setBlock(target, loot, 3);
                 }
@@ -416,8 +416,8 @@ public final class GenRooms extends GenCommonPieces {
                         ctx.placeBlock(x + a, y + 9, z + b, GenContext.STONE, cell);
                     }
                     if (a == 5 && b == 5 || a == 5 && b == 11 || a == 11 && b == 5 || a == 11 && b == 11) {
-                        ctx.level.setBlock(new BlockPos(x + a, y + 3, z + b), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-                        ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+                        ctx.level.setBlock(new BlockPos(x + a, y + 3, z + b), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+                        ctx.level.setBlock(new BlockPos(x + a, y + 8, z + b), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
                     }
                 }
             }
@@ -436,27 +436,27 @@ public final class GenRooms extends GenCommonPieces {
         crystalPillar(ctx, x + 5, y, z + 11);
         crystalPillar(ctx, x + 11, y, z + 5);
         crystalPillar(ctx, x + 11, y, z + 11);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 2, z + 8), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 3, z + 8), TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x + 8, y + 4, z + 8), bottomSlab(), 3);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 9, z + 8), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-        ctx.level.setBlock(new BlockPos(x + 8, y + 8, z + 8), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 9, z + 8), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x + 8, y + 8, z + 8), TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x + 8, y + 7, z + 8), topSlab(), 3);
         generateConnections(ctx, cx, cz, y, cell, 3, true);
     }
 
     private static void crystalPillar(GenContext ctx, int x, int y, int z) {
-        ctx.level.setBlock(new BlockPos(x, y + 4, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x, y + 4, z), TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x, y + 5, z), bottomSlab(), 3);
-        ctx.level.setBlock(new BlockPos(x, y + 7, z), TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
+        ctx.level.setBlock(new BlockPos(x, y + 7, z), TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState(), 3);
         ctx.level.setBlock(new BlockPos(x, y + 6, z), topSlab(), 3);
     }
 
     private static BlockState bottomSlab() {
-        return TCBlocks.SLAB_ARCANE_STONE.get().defaultBlockState();
+        return TTBlocks.SLAB_ARCANE_STONE.get().defaultBlockState();
     }
 
     private static BlockState topSlab() {
-        return TCBlocks.SLAB_ARCANE_STONE.get().defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
+        return TTBlocks.SLAB_ARCANE_STONE.get().defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP);
     }
 }

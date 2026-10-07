@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -25,8 +25,8 @@ public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityT
         public float headPitch;
     }
 
-    private static final Identifier MODEL = TCIds.rl("models/mesh/crossbow_advanced.tcmesh");
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/crossbow_advanced.png");
+    private static final Identifier MODEL = TTIds.rl("models/mesh/crossbow_advanced.ttmesh");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/crossbow_advanced.png");
     private static final float BASE_LIFT = 0.75F;
     private static final float SHADOW = 0.5F;
     private static final float HURT_JIGGLE_DIVISOR = 500.0F;
@@ -58,7 +58,7 @@ public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityT
     @Override
     public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
-        TCMesh mesh = GolemMeshes.get(MODEL);
+        TTMesh mesh = GolemMeshes.get(MODEL);
         int color = -1;
         poseStack.pushPose();
         poseStack.translate(0.0F, BASE_LIFT, 0.0F);
@@ -98,10 +98,10 @@ public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityT
         poseStack.popPose();
     }
 
-    private static void submitPart(TCMesh mesh, String name, PoseStack poseStack, SubmitNodeCollector collector, int color, State state) {
+    private static void submitPart(TTMesh mesh, String name, PoseStack poseStack, SubmitNodeCollector collector, int color, State state) {
         RenderType type = RenderTypes.entityCutout(TEXTURE);
         int light = state.lightCoords;
-        for (TCMeshPart part : mesh.parts()) {
+        for (TTMeshPart part : mesh.parts()) {
             if (name.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, color));
             }

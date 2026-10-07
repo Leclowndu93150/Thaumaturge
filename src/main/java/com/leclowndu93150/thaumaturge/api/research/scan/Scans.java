@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.api.research.scan;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.api.research.TCResearchCategories;
+import com.leclowndu93150.thaumaturge.api.research.TTResearchCategories;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
@@ -133,9 +133,9 @@ public final class Scans {
      */
     public static IScannable aspect(Identifier research, Holder<IAspect> aspect) {
         return new PredicateScan(research, (player, target) -> ScanningManager.aspectsOf(player, target).amountOf(aspect) > 0, (player, target) -> {
-            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.AUROMANCY.identifier(), ASPECT_OBSERVATION);
-            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.BASICS.identifier(), ASPECT_OBSERVATION);
-            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TCResearchCategories.ALCHEMY.identifier(), ASPECT_OBSERVATION);
+            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TTResearchCategories.AUROMANCY.identifier(), ASPECT_OBSERVATION);
+            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TTResearchCategories.BASICS.identifier(), ASPECT_OBSERVATION);
+            ScanningManager.addKnowledge(player, KnowledgeType.OBSERVATION, TTResearchCategories.ALCHEMY.identifier(), ASPECT_OBSERVATION);
         });
     }
 

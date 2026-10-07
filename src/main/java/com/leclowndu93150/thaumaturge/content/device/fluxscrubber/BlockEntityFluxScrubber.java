@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -49,7 +49,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
     public BlockEntityFluxScrubber(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.FLUX_SCRUBBER.get(), pos, state);
+        super(TTBlockEntities.FLUX_SCRUBBER.get(), pos, state);
     }
 
     public static int essentiaCapacity() {
@@ -98,9 +98,9 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
             drawCooldown--;
             return;
         }
-        int drained = VisRelayNetwork.drainEverySourceNear(level, pos, TCAspects.AER, POWER_REQUEST);
+        int drained = VisRelayNetwork.drainEverySourceNear(level, pos, TTAspects.AER, POWER_REQUEST);
         if (drained < POWER_REQUEST) {
-            drained += VisRelayNetwork.drainNodesNear(level, pos, TCAspects.AER, POWER_REQUEST - drained);
+            drained += VisRelayNetwork.drainNodesNear(level, pos, TTAspects.AER, POWER_REQUEST - drained);
         }
         if (drained > 0) {
             power += drained;
@@ -155,7 +155,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     }
 
     private @Nullable Holder<IAspect> praecantatio() {
-        return level == null ? null : level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.PRAECANTATIO);
+        return level == null ? null : level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.PRAECANTATIO);
     }
 
     @Override
@@ -198,7 +198,7 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face) || aspect == null || amount <= 0 || essentia <= 0 || !aspect.is(TCAspects.PRAECANTATIO)) {
+        if (!canOutputTo(face) || aspect == null || amount <= 0 || essentia <= 0 || !aspect.is(TTAspects.PRAECANTATIO)) {
             return 0;
         }
         int taken = Math.min(amount, essentia);

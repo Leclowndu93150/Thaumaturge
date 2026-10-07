@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -101,7 +101,7 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
         if (level().isClientSide() || isOwner(player)) {
             return super.mobInteract(player, hand);
         }
-        TCActionBar.sendPurple(player, "tc.notowned");
+        TTActionBar.sendPurple(player, "tc.notowned");
         return InteractionResult.SUCCESS;
     }
 
@@ -136,17 +136,17 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CLACK.get();
+        return TTSounds.CLACK.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.CLACK.get();
+        return TTSounds.CLACK.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.TOOL.get();
+        return TTSounds.TOOL.get();
     }
 
     @Override

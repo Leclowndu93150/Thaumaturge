@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -141,8 +141,8 @@ public final class BlockMirror extends BaseEntityBlock implements IEssentiaStrea
             return null;
         }
         if (essentia) {
-            return createTickerHelper(type, TCBlockEntities.MIRROR_ESSENTIA.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
+            return createTickerHelper(type, TTBlockEntities.MIRROR_ESSENTIA.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
         }
-        return createTickerHelper(type, TCBlockEntities.MIRROR.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
+        return createTickerHelper(type, TTBlockEntities.MIRROR.get(), (tickLevel, pos, tickState, mirror) -> mirror.serverTick(tickLevel, pos));
     }
 }

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.crystalizer;
 
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -20,12 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
     public static final MapCodec<BlockEssentiaCrystalizer> CODEC = simpleCodec(BlockEssentiaCrystalizer::new);
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromDown(Block.box(3.2, 0.0, 3.2, 12.8, 16.0, 12.8));
+    private static final VoxelShape BODY = Shapes.or(Block.box(5.0, 0.0, 5.0, 11.0, 1.0, 11.0), Block.box(2.0, 1.0, 2.0, 14.0, 3.0, 14.0), Block.box(5.0, 3.0, 5.0, 11.0, 10.0, 11.0),
+            Block.box(4.0, 4.0, 4.0, 12.0, 5.0, 12.0), Block.box(4.0, 8.0, 4.0, 12.0, 9.0, 12.0), Block.box(3.0, 10.0, 3.0, 13.0, 11.0, 13.0), Block.box(3.0, 11.0, 3.0, 4.0, 14.0, 4.0),
+            Block.box(12.0, 11.0, 3.0, 13.0, 14.0, 4.0), Block.box(3.0, 11.0, 12.0, 4.0, 14.0, 13.0), Block.box(12.0, 11.0, 12.0, 13.0, 14.0, 13.0));
+    private static final VoxelShape CRYSTALS = Shapes.or(Block.box(6.5, 11.0, 6.5, 9.5, 17.0, 9.5), Block.box(6.0, 11.0, 6.0, 10.0, 14.0, 10.0), Block.box(4.0, 11.0, 5.0, 6.0, 15.2, 7.0),
+            Block.box(3.5, 11.0, 4.5, 6.5, 13.1, 7.5), Block.box(9.0, 11.0, 10.0, 11.0, 15.2, 12.0), Block.box(8.5, 11.0, 9.5, 11.5, 13.1, 12.5));
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromDown(BODY);
+    private static final Map<Direction, VoxelShape> GROWING_SHAPES = DeviceShapes.facingShapesFromDown(Shapes.or(BODY, CRYSTALS));
 
     public BlockEssentiaCrystalizer(Properties properties) {
         super(properties);
@@ -59,7 +66,13 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES.get(state.getValue(BlockStateProperties.FACING));
+        Direction facing = state.getValue(BlockStateProperties.FACING);
+        return level.getBlockEntity(pos) instanceof BlockEntityEssentiaCrystalizer crystalizer && crystalizer.aspectKey() != null ? GROWING_SHAPES.get(facing) : SHAPES.get(facing);
+    }
+
+    @Override
+    public boolean hasDynamicShape() {
+        return true;
     }
 
     @Override
@@ -74,6 +87,6 @@ public final class BlockEssentiaCrystalizer extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), level.isClientSide() ? BlockEntityEssentiaCrystalizer::clientTick : BlockEntityEssentiaCrystalizer::serverTick);
+        return createTickerHelper(type, TTBlockEntities.ESSENTIA_CRYSTALIZER.get(), level.isClientSide() ? BlockEntityEssentiaCrystalizer::clientTick : BlockEntityEssentiaCrystalizer::serverTick);
     }
 }

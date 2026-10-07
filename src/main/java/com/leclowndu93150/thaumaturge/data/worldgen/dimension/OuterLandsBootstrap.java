@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.data.worldgen.dimension;
 
 import com.leclowndu93150.thaumaturge.content.eldritch.ChunkGeneratorOuter;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import java.util.Optional;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -36,6 +36,6 @@ public final class OuterLandsBootstrap {
 
     public static void bootstrapStems(BootstrapContext<LevelStem> context) {
         context.register(OuterLands.STEM, new LevelStem(context.lookup(Registries.DIMENSION_TYPE).getOrThrow(OuterLands.DIMENSION_TYPE),
-                new ChunkGeneratorOuter(context.lookup(Registries.BIOME).getOrThrow(TCBiomes.ELDRITCH))));
+                new ChunkGeneratorOuter(context.lookup(Registries.BIOME).getOrThrow(TTBiomes.ELDRITCH))));
     }
 }

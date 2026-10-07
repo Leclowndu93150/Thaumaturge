@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -10,8 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_pech.png");
+public class PechScreen extends AbstractTTContainerScreen<MenuPech> {
+    private static final Identifier TEXTURE = TTIds.rl("textures/gui/gui_pech.png");
     private static final int IMAGE_WIDTH = 175;
     private static final int IMAGE_HEIGHT = 232;
     private static final int TRADE_BUTTON_X = 67;
@@ -42,7 +42,7 @@ public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
         if (mx >= 0 && my >= 0 && mx < TRADE_BUTTON_SIZE && my < TRADE_BUTTON_SIZE && menu.canTrade()) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuPech.TRADE_BUTTON_ID);
             if (minecraft.player != null) {
-                minecraft.player.playSound(TCSounds.PECH_DICE.get(), DICE_VOLUME, 0.95F + minecraft.player.getRandom().nextFloat() * 0.1F);
+                minecraft.player.playSound(TTSounds.PECH_DICE.get(), DICE_VOLUME, 0.95F + minecraft.player.getRandom().nextFloat() * 0.1F);
             }
             return true;
         }

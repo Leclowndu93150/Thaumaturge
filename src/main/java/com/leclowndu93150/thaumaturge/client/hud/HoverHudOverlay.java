@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -47,14 +47,14 @@ public final class HoverHudOverlay implements GuiLayer {
         int middle = graphics.guiHeight() / 2;
         int fill = Math.min(FILL_MAX_H, Math.round((float) gear.getHoverFuel(worn) / gear.getMaxHoverFuel(worn) * FILL_MAX_H));
         if (fill > 0) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.HUD, FILL_X, middle + FILL_BOTTOM_OFFSET - fill, FILL_U, FILL_V + FILL_MAX_H - fill, FILL_W, fill, FILL_W, fill,
-                    TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, FILL_TINT);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.HUD, FILL_X, middle + FILL_BOTTOM_OFFSET - fill, FILL_U, FILL_V + FILL_MAX_H - fill, FILL_W, fill, FILL_W, fill,
+                    TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, FILL_TINT);
         }
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.HUD, FRAME_X, middle - FRAME_TOP_OFFSET, FRAME_U, FRAME_V, FRAME_W, FRAME_H, FRAME_W, FRAME_H, TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.HUD, FRAME_X, middle - FRAME_TOP_OFFSET, FRAME_U, FRAME_V, FRAME_W, FRAME_H, FRAME_W, FRAME_H, TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE);
         if (HoverManager.isHovering(player)) {
             int frame = player.tickCount % SPARK_FRAMES;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.HUD_HOVER_SPARK, ICON_X, middle - ICON_TOP_OFFSET, frame * SPARK_SIZE, 0.0F, SPARK_SIZE, SPARK_SIZE, SPARK_SIZE, SPARK_SIZE,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.HUD_HOVER_SPARK, ICON_X, middle - ICON_TOP_OFFSET, frame * SPARK_SIZE, 0.0F, SPARK_SIZE, SPARK_SIZE, SPARK_SIZE, SPARK_SIZE,
                     SPARK_STRIP_W, SPARK_SIZE, SPARK_TINT);
         }
         graphics.item(worn, ICON_X, middle - ICON_TOP_OFFSET);

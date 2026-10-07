@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.lighting;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class NitorDynamicLights {
     private static final int LIGHT_LEVEL = 15;
     private static volatile Sources current = new Sources(null, Map.of());

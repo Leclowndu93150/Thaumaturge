@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.infusion.IInfusionStabiliser;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockPedestal;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.HashSet;
 import java.util.Set;
@@ -78,11 +78,11 @@ public final class BlockInlay extends Block implements IInfusionStabiliser {
     }
 
     private static boolean connectsTo(BlockState state) {
-        return state.is(TCBlocks.INLAY.get()) || state.getBlock() instanceof BlockPedestal;
+        return state.is(TTBlocks.INLAY.get()) || state.getBlock() instanceof BlockPedestal;
     }
 
     private static boolean isSourceBlock(BlockGetter level, BlockPos pos) {
-        return level.getBlockState(pos).is(TCBlocks.STABILIZER.get());
+        return level.getBlockState(pos).is(TTBlocks.STABILIZER.get());
     }
 
     private static BlockState connectionState(BlockState state, LevelReader level, BlockPos pos) {

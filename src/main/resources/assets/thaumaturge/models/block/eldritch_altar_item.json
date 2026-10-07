@@ -1,14 +1,14 @@
 {
     "loader": "thaumaturge:mesh",
     "parent": "block/block",
-    "model": "thaumaturge:models/mesh/obelisk_cap.tcmesh",
+    "model": "thaumaturge:models/mesh/obelisk_cap_altar.ttmesh",
     "transform": {
         "origin": "center",
         "rotation": [-90, 0, 0],
         "translation": [0, -0.5, 0]
     },
     "textures": {
-        "texture": "thaumaturge:entity/obelisk_cap_altar",
+        "cap": "thaumaturge:entity/obelisk_cap_altar",
         "particle": "thaumaturge:block/eldritch_altar"
     }
 }

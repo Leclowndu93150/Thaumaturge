@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.math.Quadrant;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
@@ -19,7 +19,7 @@ import org.joml.Vector3fc;
 public final class WardedGlassUnbakedModel implements CustomUnbakedBlockStateModel {
     public static final WardedGlassUnbakedModel INSTANCE = new WardedGlassUnbakedModel();
     public static final MapCodec<WardedGlassUnbakedModel> CODEC = MapCodec.unit(INSTANCE);
-    public static final Identifier MODEL_TYPE = TCIds.rl("warded_glass");
+    public static final Identifier MODEL_TYPE = TTIds.rl("warded_glass");
 
     private static final String TEXTURE_PATH = "block/warded_glass";
     private static final Vector3fc FROM = new Vector3f(0.0F, 0.0F, 0.0F);
@@ -54,7 +54,7 @@ public final class WardedGlassUnbakedModel implements CustomUnbakedBlockStateMod
     }
 
     private static Material.Baked bakeMaterial(ModelBaker baker, String path) {
-        Identifier texture = TCIds.rl(path);
+        Identifier texture = TTIds.rl(path);
         return baker.materials().get(new Material(texture), texture::toString);
     }
 }

@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.golem.parts;
 
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.parts.IGolemPartAbility;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,7 @@ public final class GolemLegLevitator implements IGolemPartAbility {
             return;
         }
         RandomSource random = level.getRandom();
-        level.addParticle(TCParticles.GOLEM_TRAIL.get(), body.getX(), body.getY() + EXHAUST_HEIGHT, body.getZ(), random.nextGaussian() / EXHAUST_SPREAD, EXHAUST_FALL,
+        level.addParticle(TTParticles.GOLEM_TRAIL.get(), body.getX(), body.getY() + EXHAUST_HEIGHT, body.getZ(), random.nextGaussian() / EXHAUST_SPREAD, EXHAUST_FALL,
                 random.nextGaussian() / EXHAUST_SPREAD);
     }
 }

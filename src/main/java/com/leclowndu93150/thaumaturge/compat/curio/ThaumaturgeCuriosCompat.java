@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.compat.curio.client.HoverHarnessCurioRende
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
-import com.leclowndu93150.thaumaturge.registry.TCAttributes;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,14 +47,14 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     private static void registerCurio(RegisterCapabilitiesEvent event) {
-        registerPlain(event, TCItems.GOGGLES_REVEALING.get(), TCItems.AMULET_MUNDANE.get(), TCItems.RING_MUNDANE.get(), TCItems.GIRDLE_MUNDANE.get(), TCItems.RING_APPRENTICE.get(),
-                TCItems.AMULET_FANCY.get(), TCItems.RING_FANCY.get(), TCItems.GIRDLE_FANCY.get(), TCItems.CHARM_UNDYING.get(), TCItems.CLOUD_RING.get(), TCItems.CURIOSITY_BAND.get(),
-                TCItems.FOCUS_POUCH.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TCItems.AMULET_VIS.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TCItems.AMULET_VIS_CRAFTED.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TCItems.VERDANT_CHARM.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TCItems.VOIDSEER_CHARM.get());
-        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> new HoverHarnessCurio(stack), TCItems.THAUMOSTATIC_HARNESS.get());
+        registerPlain(event, TTItems.GOGGLES_REVEALING.get(), TTItems.AMULET_MUNDANE.get(), TTItems.RING_MUNDANE.get(), TTItems.GIRDLE_MUNDANE.get(), TTItems.RING_APPRENTICE.get(),
+                TTItems.AMULET_FANCY.get(), TTItems.RING_FANCY.get(), TTItems.GIRDLE_FANCY.get(), TTItems.CHARM_UNDYING.get(), TTItems.CLOUD_RING.get(), TTItems.CURIOSITY_BAND.get(),
+                TTItems.FOCUS_POUCH.get());
+        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS.get());
+        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS_CRAFTED.get());
+        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.VERDANT_CHARM.get());
+        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.VOIDSEER_CHARM.get());
+        event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> new HoverHarnessCurio(stack), TTItems.THAUMOSTATIC_HARNESS.get());
     }
 
     private static void registerPlain(RegisterCapabilitiesEvent event, Item... items) {
@@ -92,9 +92,9 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
-        ICurioRenderer.register(TCItems.GOGGLES_REVEALING.get(), GoggleCurioRenderer::new);
-        ICurioRenderer.register(TCItems.CURIOSITY_BAND.get(), CuriosityBandCurioRenderer::new);
-        ICurioRenderer.register(TCItems.THAUMOSTATIC_HARNESS.get(), HoverHarnessCurioRenderer::new);
+        ICurioRenderer.register(TTItems.GOGGLES_REVEALING.get(), GoggleCurioRenderer::new);
+        ICurioRenderer.register(TTItems.CURIOSITY_BAND.get(), CuriosityBandCurioRenderer::new);
+        ICurioRenderer.register(TTItems.THAUMOSTATIC_HARNESS.get(), HoverHarnessCurioRenderer::new);
     }
 
     public static List<ItemStack> equippedCurios(LivingEntity entity) {
@@ -197,7 +197,7 @@ public final class ThaumaturgeCuriosCompat {
         if (stack.getItem() instanceof IVisDiscountGear gear) {
             float contribution = (float) gear.getVisDiscount(stack) / 100;
             if (contribution != 0) {
-                event.addModifier(TCAttributes.VIS_DISCOUNT, new AttributeModifier(BuiltInRegistries.ITEM.getKey(stack.getItem()), contribution, AttributeModifier.Operation.ADD_VALUE));
+                event.addModifier(TTAttributes.VIS_DISCOUNT, new AttributeModifier(BuiltInRegistries.ITEM.getKey(stack.getItem()), contribution, AttributeModifier.Operation.ADD_VALUE));
             }
         }
     }

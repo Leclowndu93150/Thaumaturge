@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
-import com.leclowndu93150.thaumaturge.registry.TCSeals;
+import com.leclowndu93150.thaumaturge.registry.TTSeals;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.resources.Identifier;
@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 public final class GolemBindings implements GolemHelper.Bindings {
     @Override
     public Optional<SealType> sealType(Identifier id) {
-        return TCSeals.registry().getOptional(id);
+        return TTSeals.registry().getOptional(id);
     }
 
     @Override

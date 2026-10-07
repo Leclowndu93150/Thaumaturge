@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -25,12 +25,12 @@ public final class HoverManager {
     private static final float HUM_PITCH_SPREAD = 0.05F;
     private static final double IDLE_FALL_DAMPING = 0.75;
     private static final double FLIGHT_GRANT = 1.0;
-    private static final AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(TCIds.rl("hover_flight"), FLIGHT_GRANT, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(TTIds.rl("hover_flight"), FLIGHT_GRANT, AttributeModifier.Operation.ADD_VALUE);
 
     private HoverManager() {}
 
     public static boolean isHovering(Player player) {
-        return player.getData(TCAttachments.HOVERING);
+        return player.getData(TTAttachments.HOVERING);
     }
 
     public static ItemStack wornHoverGear(Player player) {
@@ -38,7 +38,7 @@ public final class HoverManager {
         if (chest.getItem() instanceof IHoverGear) {
             return chest;
         }
-        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS)) {
             return ThaumaturgeCuriosCompat.findCurio(player, stack -> stack.getItem() instanceof IHoverGear);
         }
         return ItemStack.EMPTY;
@@ -70,7 +70,7 @@ public final class HoverManager {
             keepAloft(player);
             player.resetFallDistance();
             if (player.tickCount % HUM_INTERVAL_TICKS == 0) {
-                play(player, TCSounds.JACOBS.get(), HUM_VOLUME, 1.0F + player.getRandom().nextFloat() * HUM_PITCH_SPREAD);
+                play(player, TTSounds.JACOBS.get(), HUM_VOLUME, 1.0F + player.getRandom().nextFloat() * HUM_PITCH_SPREAD);
             }
             return;
         }
@@ -82,7 +82,7 @@ public final class HoverManager {
     }
 
     public static void setHovering(ServerPlayer player, boolean hovering) {
-        player.setData(TCAttachments.HOVERING, hovering);
+        player.setData(TTAttachments.HOVERING, hovering);
         if (hovering) {
             keepAloft(player);
         } else {
@@ -95,12 +95,12 @@ public final class HoverManager {
         if (fuel <= 0) {
             return false;
         }
-        int charge = player.getData(TCAttachments.HOVER_CHARGE);
+        int charge = player.getData(TTAttachments.HOVER_CHARGE);
         if (charge < FUEL_INTERVAL_TICKS) {
-            player.setData(TCAttachments.HOVER_CHARGE, charge + 1);
+            player.setData(TTAttachments.HOVER_CHARGE, charge + 1);
             return true;
         }
-        player.setData(TCAttachments.HOVER_CHARGE, 0);
+        player.setData(TTAttachments.HOVER_CHARGE, 0);
         gear.consumeHoverFuel(stack);
         return fuel > 1;
     }
@@ -130,7 +130,7 @@ public final class HoverManager {
     }
 
     private static void playToggleSound(ServerPlayer player, boolean hovering) {
-        play(player, hovering ? TCSounds.HHON.get() : TCSounds.HHOFF.get(), TOGGLE_VOLUME, 1.0F);
+        play(player, hovering ? TTSounds.HHON.get() : TTSounds.HHOFF.get(), TOGGLE_VOLUME, 1.0F);
     }
 
     private static void play(ServerPlayer player, SoundEvent sound, float volume, float pitch) {

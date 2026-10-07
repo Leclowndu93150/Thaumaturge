@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorBase;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,13 +25,13 @@ import net.neoforged.neoforge.client.model.standalone.StandaloneModelKey;
 import org.jspecify.annotations.Nullable;
 
 public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirrorBase, MirrorRenderState> {
-    public static final Identifier FRAME_MODEL_ID = TCIds.rl("block/mirror");
-    public static final Identifier FRAME_ESSENTIA_MODEL_ID = TCIds.rl("block/mirror_essentia");
+    public static final Identifier FRAME_MODEL_ID = TTIds.rl("block/mirror");
+    public static final Identifier FRAME_ESSENTIA_MODEL_ID = TTIds.rl("block/mirror_essentia");
     public static final StandaloneModelKey<BlockStateModel> FRAME_MODEL = new StandaloneModelKey<>(FRAME_MODEL_ID::toString);
     public static final StandaloneModelKey<BlockStateModel> FRAME_ESSENTIA_MODEL = new StandaloneModelKey<>(FRAME_ESSENTIA_MODEL_ID::toString);
 
-    private static final Identifier PANE_TEXTURE = TCIds.rl("textures/block/mirrorpane.png");
-    private static final Identifier PANE_TRANS_TEXTURE = TCIds.rl("textures/block/mirrorpanetrans.png");
+    private static final Identifier PANE_TEXTURE = TTIds.rl("textures/block/mirrorpane.png");
+    private static final Identifier PANE_TRANS_TEXTURE = TTIds.rl("textures/block/mirrorpanetrans.png");
 
     private static final int[][] WINDOW_ROWS = {{2, 5, 11}, {3, 5, 11}, {4, 4, 12}, {5, 3, 13}, {6, 3, 13}, {7, 3, 13}, {8, 3, 13}, {9, 3, 13}, {10, 3, 13}, {11, 4, 12}, {12, 5, 11}, {13, 5, 11}};
     private static final float PIXEL = 1.0F / 16.0F;

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,7 +70,7 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
                         placeCenter(level, random, i, j, k);
                     }
                     if (!stop && isPillarColumn(x, z, i, k)) {
-                        level.setBlock(cursor.set(x, j + y, z), TCBlocks.OBSIDIAN_TOTEM.get().defaultBlockState(), PLACE_FLAGS);
+                        level.setBlock(cursor.set(x, j + y, z), TTBlocks.OBSIDIAN_TOTEM.get().defaultBlockState(), PLACE_FLAGS);
                         if (y >= PILLAR_STOP_MIN_HEIGHT && random.nextBoolean()) {
                             stop = true;
                             if (vines) {
@@ -93,18 +93,18 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static BlockState floorState(RandomSource random) {
-        return random.nextBoolean() ? TCBlocks.OBSIDIAN_TILE.get().defaultBlockState() : Blocks.OBSIDIAN.defaultBlockState();
+        return random.nextBoolean() ? TTBlocks.OBSIDIAN_TILE.get().defaultBlockState() : Blocks.OBSIDIAN.defaultBlockState();
     }
 
     private void placeCenter(WorldGenLevel level, RandomSource random, int i, int j, int k) {
-        level.setBlock(new BlockPos(i, j + 1, k), TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), PLACE_FLAGS);
+        level.setBlock(new BlockPos(i, j + 1, k), TTBlocks.OBSIDIAN_TILE.get().defaultBlockState(), PLACE_FLAGS);
         BlockPos chestPos = new BlockPos(i, j + 2, k);
         level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), PLACE_FLAGS);
         RandomizableContainer.setBlockEntityLootTable(level, random, chestPos, BuiltInLootTables.SIMPLE_DUNGEON);
         BlockPos spawnerPos = new BlockPos(i, j, k);
         level.setBlock(spawnerPos, Blocks.SPAWNER.defaultBlockState(), PLACE_FLAGS);
         if (level.getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawner) {
-            spawner.setEntityId(TCEntities.WISP.get(), random);
+            spawner.setEntityId(TTEntities.WISP.get(), random);
         }
     }
 
@@ -157,7 +157,7 @@ public final class HilltopStonesFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static boolean isGroundCover(BlockState state) {
-        return state.is(Blocks.SNOW) || state.is(Blocks.SHORT_GRASS) || state.is(BlockTags.SMALL_FLOWERS) || state.is(TCBlockTags.MAGICAL_PLANTS);
+        return state.is(Blocks.SNOW) || state.is(Blocks.SHORT_GRASS) || state.is(BlockTags.SMALL_FLOWERS) || state.is(TTBlockTags.MAGICAL_PLANTS);
     }
 
     private static boolean isValidGround(BlockState state) {

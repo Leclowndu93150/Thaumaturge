@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCFXPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityDioptra;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,9 +24,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDioptra, DioptraRenderState> {
-    private static final Identifier GRID_TEXTURE = TCIds.rl("textures/misc/gridblock.png");
-    private static final Identifier SIDE_TEXTURE = TCIds.rl("textures/entity/dioptra_side.png");
-    private static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(TCIds.rl("pipeline/dioptra"));
+    private static final Identifier GRID_TEXTURE = TTIds.rl("textures/misc/gridblock.png");
+    private static final Identifier SIDE_TEXTURE = TTIds.rl("textures/entity/dioptra_side.png");
+    private static final RenderPipeline PIPELINE = TTFXPipelines.additiveTextured(TTIds.rl("pipeline/dioptra"));
     private static final RenderType GRID_TYPE = RenderType.create("tc_dioptra_grid", RenderSetup.builder(PIPELINE).withTexture("Sampler0", GRID_TEXTURE).createRenderSetup());
     private static final RenderType SIDE_TYPE = RenderType.create("tc_dioptra_side", RenderSetup.builder(PIPELINE).withTexture("Sampler0", SIDE_TEXTURE).createRenderSetup());
 

@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public final class ThaumostaticHarnessScreen extends AbstractTCContainerScreen<MenuThaumostaticHarness> {
+public final class ThaumostaticHarnessScreen extends AbstractTTContainerScreen<MenuThaumostaticHarness> {
     private static final int WIDTH = 176;
     private static final int HEIGHT = 166;
     private static final int BLOCKED_X = 8;
@@ -17,7 +17,7 @@ public final class ThaumostaticHarnessScreen extends AbstractTCContainerScreen<M
     private static final int SLOT_SIZE = 18;
 
     public ThaumostaticHarnessScreen(MenuThaumostaticHarness menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, TCScreenTextures.THAUMOSTATIC_HARNESS, WIDTH, HEIGHT);
+        super(menu, inventory, title, TTScreenTextures.THAUMOSTATIC_HARNESS, WIDTH, HEIGHT);
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class ThaumostaticHarnessScreen extends AbstractTCContainerScreen<M
         if (menu.blockedHotbarSlot >= 0) {
             graphics.nextStratum();
             graphics.blit(RenderPipelines.GUI_TEXTURED, background(), BLOCKED_X + menu.blockedHotbarSlot * SLOT_SIZE, BLOCKED_Y, BLOCKED_U, BLOCKED_V, BLOCKED_SIZE, BLOCKED_SIZE,
-                    TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         }
     }
 }

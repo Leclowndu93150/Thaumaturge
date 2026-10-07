@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.item.PrimordialPearlItem;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -36,7 +36,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockNode extends Block implements EntityBlock {
-    private static final Identifier PRIMORDIAL_NODES_RESEARCH = TCIds.rl("primordial_nodes");
+    private static final Identifier PRIMORDIAL_NODES_RESEARCH = TTIds.rl("primordial_nodes");
     private static final float PEARL_FLUX = 25.0F;
     private static final float PEARL_EXPLOSION_BASE = 3.0F;
     private static final float PEARL_EXPLOSION_SPREAD = 5.0F;
@@ -69,7 +69,7 @@ public final class BlockNode extends Block implements EntityBlock {
     }
 
     public static @Nullable InteractionResult tryPrimordialPearl(ItemStack stack, Level level, BlockPos pos, Player player) {
-        if (!stack.is(TCItems.PRIMORDIAL_PEARL.get()) || stack.getDamageValue() > PrimordialPearlItem.PEARL_MAX_DAMAGE || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)
+        if (!stack.is(TTItems.PRIMORDIAL_PEARL.get()) || stack.getDamageValue() > PrimordialPearlItem.PEARL_MAX_DAMAGE || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)
                 || node.isEnergized()) {
             return null;
         }
@@ -113,7 +113,7 @@ public final class BlockNode extends Block implements EntityBlock {
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        ItemStack stack = new ItemStack(TCItems.CREATIVE_NODE_PLACER.get());
+        ItemStack stack = new ItemStack(TTItems.CREATIVE_NODE_PLACER.get());
         if (level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             stack.set(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(node.getType(), node.saveCustomOnly(level.registryAccess())));
             stack.applyComponents(node.collectComponents());
@@ -128,7 +128,7 @@ public final class BlockNode extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (type != TCBlockEntities.NODE.get()) {
+        if (type != TTBlockEntities.NODE.get()) {
             return null;
         }
         if (level.isClientSide()) {

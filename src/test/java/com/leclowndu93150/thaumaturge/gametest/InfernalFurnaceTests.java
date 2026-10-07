@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.gametest;
 
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
 public final class InfernalFurnaceTests {
     private InfernalFurnaceTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("infernal_furnace/idle_does_not_mark_changed", 20, helper -> {
             CountingFurnace furnace = createFurnace(helper);
             for (int tick = 0; tick < 200; tick++) {
@@ -66,7 +66,7 @@ public final class InfernalFurnaceTests {
         private int changes;
 
         private CountingFurnace(BlockPos pos) {
-            super(pos, TCBlocks.INFERNAL_FURNACE.get().defaultBlockState());
+            super(pos, TTBlocks.INFERNAL_FURNACE.get().defaultBlockState());
         }
 
         @Override

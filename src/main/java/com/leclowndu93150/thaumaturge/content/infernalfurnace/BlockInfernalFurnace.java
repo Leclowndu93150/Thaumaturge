@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,9 +90,9 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
                         continue;
                     }
                     BlockState bs = level.getBlockState(shellPos);
-                    if (bs.is(TCBlocks.NETHER_BRICKS_PLACEHOLDER)) {
+                    if (bs.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER)) {
                         level.setBlock(shellPos, Blocks.NETHER_BRICKS.defaultBlockState(), Block.UPDATE_ALL);
-                    } else if (bs.is(TCBlocks.OBSIDIAN_PLACEHOLDER)) {
+                    } else if (bs.is(TTBlocks.OBSIDIAN_PLACEHOLDER)) {
                         level.setBlock(shellPos, Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
                     }
                 }
@@ -151,7 +151,7 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.INFERNAL_FURNACE.get(), BlockEntityInfernalFurnace::staticTick);
+        return createTickerHelper(type, TTBlockEntities.INFERNAL_FURNACE.get(), BlockEntityInfernalFurnace::staticTick);
     }
 
     @Override

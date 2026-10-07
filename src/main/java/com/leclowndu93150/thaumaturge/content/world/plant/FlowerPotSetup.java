@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FlowerPotBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class FlowerPotSetup {
     private FlowerPotSetup() {}
 
@@ -16,11 +16,11 @@ public final class FlowerPotSetup {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             FlowerPotBlock flowerPot = (FlowerPotBlock) Blocks.FLOWER_POT;
-            flowerPot.addPlant(TCBlocks.SAPLING_GREATWOOD.getId(), TCBlocks.POTTED_SAPLING_GREATWOOD);
-            flowerPot.addPlant(TCBlocks.SAPLING_SILVERWOOD.getId(), TCBlocks.POTTED_SAPLING_SILVERWOOD);
-            flowerPot.addPlant(TCBlocks.PLANT_SHIMMERLEAF.getId(), TCBlocks.POTTED_SHIMMERLEAF);
-            flowerPot.addPlant(TCBlocks.PLANT_CINDERPEARL.getId(), TCBlocks.POTTED_CINDERPEARL);
-            flowerPot.addPlant(TCBlocks.PLANT_VISHROOM.getId(), TCBlocks.POTTED_VISHROOM);
+            flowerPot.addPlant(TTBlocks.SAPLING_GREATWOOD.getId(), TTBlocks.POTTED_SAPLING_GREATWOOD);
+            flowerPot.addPlant(TTBlocks.SAPLING_SILVERWOOD.getId(), TTBlocks.POTTED_SAPLING_SILVERWOOD);
+            flowerPot.addPlant(TTBlocks.PLANT_SHIMMERLEAF.getId(), TTBlocks.POTTED_SHIMMERLEAF);
+            flowerPot.addPlant(TTBlocks.PLANT_CINDERPEARL.getId(), TTBlocks.POTTED_CINDERPEARL);
+            flowerPot.addPlant(TTBlocks.PLANT_VISHROOM.getId(), TTBlocks.POTTED_VISHROOM);
         });
     }
 }

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.item;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.research.TCResearchEntries;
+import com.leclowndu93150.thaumaturge.api.research.TTResearchEntries;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
@@ -129,8 +129,8 @@ public final class ThaumometerItem extends Item {
         BlockPos pos = player.blockPosition();
         float flux = AuraHelper.getFlux(level, pos);
         boolean dangerous = flux > AuraHelper.getVis(level, pos) || flux > AuraHelper.getAuraBase(level, pos) / (float) FLUX_WARN_BASE_DIVISOR;
-        if (dangerous && !KnowledgeAccess.of(player).isResearchKnown(TCResearchEntries.FLUX)) {
-            ResearchManager.complete(player, TCResearchEntries.FLUX);
+        if (dangerous && !KnowledgeAccess.of(player).isResearchKnown(TTResearchEntries.FLUX)) {
+            ResearchManager.complete(player, TTResearchEntries.FLUX);
             player.sendOverlayMessage(Component.translatable("research.thaumaturge.flux.warn").withStyle(ChatFormatting.DARK_PURPLE));
         }
     }

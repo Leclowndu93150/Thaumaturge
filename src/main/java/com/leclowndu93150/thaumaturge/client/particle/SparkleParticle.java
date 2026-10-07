@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
-public final class SparkleParticle extends TCParticle {
+public final class SparkleParticle extends TTParticle {
     private static final int FRAMES_PER_ROW = 16;
     private static final int TOTAL_FRAMES = 32;
     private static final float SMALL_CHANCE = 0.2F;
@@ -59,7 +59,7 @@ public final class SparkleParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SparkleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("sparkle");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("sparkle");
 
         @Override
         public Particle createParticle(SparkleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -18,7 +18,7 @@ public record NoteColorTint(int fallback) implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {
-        ResearchNoteData data = stack.get(TCDataComponents.RESEARCH_NOTE.get());
+        ResearchNoteData data = stack.get(TTDataComponents.RESEARCH_NOTE.get());
         return ARGB.opaque(data == null ? fallback : data.color());
     }
 

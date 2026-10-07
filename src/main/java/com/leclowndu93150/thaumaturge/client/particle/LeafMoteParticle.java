@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class LeafMoteParticle extends TCParticle {
+public final class LeafMoteParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 4;
     private static final float ALPHA = 0.6F;
@@ -26,11 +26,11 @@ public final class LeafMoteParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("leaf_mote");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("leaf_mote");
 
         @Override
         public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

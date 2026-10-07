@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.pech;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable.PechTrade;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -37,54 +37,54 @@ public final class PechTradeBootstrap {
         HolderGetter<Enchantment> enchantments = ctx.lookup(Registries.ENCHANTMENT);
 
         List<PechTrade> forager = new ArrayList<>();
-        add(forager, 1, TCItems.CLUSTER_IRON.get());
-        add(forager, 1, TCItems.CLUSTER_GOLD.get());
-        add(forager, 1, TCItems.CLUSTER_CINNABAR.get());
-        add(forager, 1, TCItems.CLUSTER_QUARTZ.get());
-        add(forager, 1, TCItems.CLUSTER_COPPER.get());
+        add(forager, 1, TTItems.CLUSTER_IRON.get());
+        add(forager, 1, TTItems.CLUSTER_GOLD.get());
+        add(forager, 1, TTItems.CLUSTER_CINNABAR.get());
+        add(forager, 1, TTItems.CLUSTER_QUARTZ.get());
+        add(forager, 1, TTItems.CLUSTER_COPPER.get());
         add(forager, 2, Items.BLAZE_ROD);
-        add(forager, 2, TCBlocks.SAPLING_GREATWOOD.get());
+        add(forager, 2, TTBlocks.SAPLING_GREATWOOD.get());
         add(forager, 2, Items.DRAGON_BREATH);
         add(forager, 2, Items.COMPASS);
         add(forager, 3, Items.EXPERIENCE_BOTTLE);
         add(forager, 3, Items.EXPERIENCE_BOTTLE);
         add(forager, 3, Items.GOLDEN_APPLE);
-        add(forager, 4, TCItems.THAUMIUM_PICKAXE.get());
-        add(forager, 4, TCItems.THAUMIUM_AXE.get());
-        add(forager, 4, TCItems.THAUMIUM_HOE.get());
+        add(forager, 4, TTItems.THAUMIUM_PICKAXE.get());
+        add(forager, 4, TTItems.THAUMIUM_AXE.get());
+        add(forager, 4, TTItems.THAUMIUM_HOE.get());
         add(forager, 4, Items.SPECTRAL_ARROW);
         add(forager, 5, Items.ENCHANTED_GOLDEN_APPLE);
-        add(forager, 5, TCBlocks.SAPLING_SILVERWOOD.get());
+        add(forager, 5, TTBlocks.SAPLING_SILVERWOOD.get());
         add(forager, 5, Items.TOTEM_OF_UNDYING);
-        add(forager, 5, TCItems.CURIO_KNOWLEDGE.get());
+        add(forager, 5, TTItems.CURIO_KNOWLEDGE.get());
         register(ctx, "forager", forager);
 
         List<PechTrade> mage = new ArrayList<>();
-        mage.add(crystal(aspects, 1, TCAspects.AER));
-        mage.add(crystal(aspects, 1, TCAspects.TERRA));
-        mage.add(crystal(aspects, 1, TCAspects.IGNIS));
-        mage.add(crystal(aspects, 1, TCAspects.AQUA));
-        mage.add(crystal(aspects, 1, TCAspects.ORDO));
-        mage.add(crystal(aspects, 1, TCAspects.PERDITIO));
+        mage.add(crystal(aspects, 1, TTAspects.AER));
+        mage.add(crystal(aspects, 1, TTAspects.TERRA));
+        mage.add(crystal(aspects, 1, TTAspects.IGNIS));
+        mage.add(crystal(aspects, 1, TTAspects.AQUA));
+        mage.add(crystal(aspects, 1, TTAspects.ORDO));
+        mage.add(crystal(aspects, 1, TTAspects.PERDITIO));
         mage.add(potion(2, Potions.REGENERATION));
         mage.add(potion(2, Potions.HEALING));
-        mage.add(crystal(aspects, 2, TCAspects.VITIUM));
+        mage.add(crystal(aspects, 2, TTAspects.VITIUM));
         add(mage, 3, Items.EXPERIENCE_BOTTLE);
         add(mage, 3, Items.EXPERIENCE_BOTTLE);
-        mage.add(crystal(aspects, 3, TCAspects.AURAM));
+        mage.add(crystal(aspects, 3, TTAspects.AURAM));
         add(mage, 3, Items.GOLDEN_APPLE);
-        add(mage, 4, TCItems.CLOTH_BOOTS.get());
-        add(mage, 4, TCItems.CLOTH_CHEST.get());
-        add(mage, 4, TCItems.CLOTH_LEGS.get());
+        add(mage, 4, TTItems.CLOTH_BOOTS.get());
+        add(mage, 4, TTItems.CLOTH_CHEST.get());
+        add(mage, 4, TTItems.CLOTH_LEGS.get());
         add(mage, 5, Items.ENCHANTED_GOLDEN_APPLE);
-        add(mage, 5, TCItems.PECH_WAND.get());
-        add(mage, 5, TCItems.CURIO_KNOWLEDGE.get());
+        add(mage, 5, TTItems.PECH_WAND.get());
+        add(mage, 5, TTItems.CURIO_KNOWLEDGE.get());
         register(ctx, "mage", mage);
 
         List<PechTrade> stalker = new ArrayList<>();
         for (DyeColor dye : DyeColor.values()) {
             if (dye != DyeColor.WHITE) {
-                add(stalker, 1, TCBlocks.CANDLES.get(dye).get());
+                add(stalker, 1, TTBlocks.CANDLES.get(dye).get());
             }
         }
         add(stalker, 2, Items.GHAST_TEAR);
@@ -92,16 +92,16 @@ public final class PechTradeBootstrap {
         add(stalker, 3, Items.EXPERIENCE_BOTTLE);
         add(stalker, 3, Items.EXPERIENCE_BOTTLE);
         add(stalker, 3, Items.GOLDEN_APPLE);
-        add(stalker, 4, TCItems.ELDRITCH_EYE.get());
+        add(stalker, 4, TTItems.ELDRITCH_EYE.get());
         add(stalker, 4, Items.ENCHANTED_GOLDEN_APPLE);
         stalker.add(book(enchantments, 5, Enchantments.FLAME));
         stalker.add(book(enchantments, 5, Enchantments.INFINITY));
-        add(stalker, 5, TCItems.CURIO_KNOWLEDGE.get());
+        add(stalker, 5, TTItems.CURIO_KNOWLEDGE.get());
         register(ctx, "stalker", stalker);
     }
 
     private static void register(BootstrapContext<PechTradeTable> ctx, String name, List<PechTrade> trades) {
-        ctx.register(ResourceKey.create(PechTradeTable.REGISTRY_KEY, TCIds.rl(name)), new PechTradeTable(trades));
+        ctx.register(ResourceKey.create(PechTradeTable.REGISTRY_KEY, TTIds.rl(name)), new PechTradeTable(trades));
     }
 
     private static void add(List<PechTrade> trades, int tier, ItemLike item) {
@@ -109,8 +109,8 @@ public final class PechTradeBootstrap {
     }
 
     private static PechTrade crystal(HolderGetter<IAspect> aspects, int tier, ResourceKey<IAspect> aspect) {
-        DataComponentPatch patch = DataComponentPatch.builder().set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1)).build();
-        return new PechTrade(tier, new ItemStackTemplate(TCItems.ESSENTIA_CRYSTAL.get(), patch));
+        DataComponentPatch patch = DataComponentPatch.builder().set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspects.getOrThrow(aspect), 1)).build();
+        return new PechTrade(tier, new ItemStackTemplate(TTItems.ESSENTIA_CRYSTAL.get(), patch));
     }
 
     private static PechTrade potion(int tier, Holder<Potion> potion) {

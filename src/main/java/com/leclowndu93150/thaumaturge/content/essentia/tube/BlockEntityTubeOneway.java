@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public final class BlockEntityTubeOneway extends BlockEntityTube {
     public BlockEntityTubeOneway(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.TUBE_ONEWAY.get(), pos, state);
+        super(TTBlockEntities.TUBE_ONEWAY.get(), pos, state);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectExchange implements FocusEffect, IFocusBlockPicker {
-    private static final Identifier KEY = TCIds.rl("exchange");
+    private static final Identifier KEY = TTIds.rl("exchange");
 
     private static final int BASE_COMPLEXITY = 5;
     private static final int SILK_COMPLEXITY_FACTOR = 4;
@@ -49,12 +49,12 @@ public final class FocusEffectExchange implements FocusEffect, IFocusBlockPicker
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_exchange"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_exchange"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.PERMUTATIO;
+        return TTAspects.PERMUTATIO;
     }
 
     @Override

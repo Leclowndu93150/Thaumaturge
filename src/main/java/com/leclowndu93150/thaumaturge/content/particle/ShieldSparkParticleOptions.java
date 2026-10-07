@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,6 +24,6 @@ public record ShieldSparkParticleOptions(int color, float alpha, float scale, in
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.SHIELD_SPARK.get();
+        return TTParticles.SHIELD_SPARK.get();
     }
 }

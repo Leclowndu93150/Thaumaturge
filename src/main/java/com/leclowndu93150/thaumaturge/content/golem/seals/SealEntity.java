@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSeals;
+import com.leclowndu93150.thaumaturge.registry.TTSeals;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -62,7 +62,7 @@ public final class SealEntity implements ISealEntity {
     }
 
     private static DataResult<MapCodec<SealEntity>> formatFor(Identifier typeId) {
-        return TCSeals.registry().getOptional(typeId).map(type -> DataResult.success(format(typeId, type))).orElseGet(() -> DataResult.error(() -> "Unknown seal type " + typeId));
+        return TTSeals.registry().getOptional(typeId).map(type -> DataResult.success(format(typeId, type))).orElseGet(() -> DataResult.error(() -> "Unknown seal type " + typeId));
     }
 
     private static MapCodec<SealEntity> format(Identifier typeId, SealType type) {

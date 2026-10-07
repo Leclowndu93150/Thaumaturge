@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -25,18 +25,18 @@ public final class JarNodeItem extends BlockItem {
 
     @Override
     public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
-        if (stack.get(TCDataComponents.NODE_DATA.get()) == null) {
+        if (stack.get(TTDataComponents.NODE_DATA.get()) == null) {
             NodeData data = NodeGenerator.rollRandomNodeData(level, entity.blockPosition(), level.getRandom(), false, false, false, NodeGenerator.DEFAULT_SPECIAL_RARITY,
                     NodeGenerator.DEFAULT_BASE_AURA);
             if (data != null) {
-                stack.set(TCDataComponents.NODE_DATA.get(), data);
+                stack.set(TTDataComponents.NODE_DATA.get(), data);
             }
         }
     }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag flag) {
-        NodeData data = stack.get(TCDataComponents.NODE_DATA.get());
+        NodeData data = stack.get(TTDataComponents.NODE_DATA.get());
         if (data == null) {
             return;
         }

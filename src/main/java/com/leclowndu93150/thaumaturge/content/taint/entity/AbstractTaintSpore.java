@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -31,10 +31,13 @@ public abstract class AbstractTaintSpore extends Monster {
     private static final float DISPLAY_GROWTH_PER_TICK = 0.02F;
     private static final float STARVE_DAMAGE = 1.0F;
     private static final float UNSET_DISPLAY_SIZE = -1.0F;
+    private static final byte EVENT_RELEASE = 16;
+    private static final int RELEASE_TICKS = 30;
 
     private boolean burst;
     private float displaySize = UNSET_DISPLAY_SIZE;
     private float oldDisplaySize = UNSET_DISPLAY_SIZE;
+    private int releaseTicks;
 
     protected AbstractTaintSpore(EntityType<? extends AbstractTaintSpore> type, Level level) {
         super(type, level);
@@ -56,6 +59,9 @@ public abstract class AbstractTaintSpore extends Monster {
         super.tick();
         if (!level().isClientSide()) {
             return;
+        }
+        if (releaseTicks > 0) {
+            releaseTicks--;
         }
         float target = getSporeSize();
         if (displaySize < 0.0F) {
@@ -88,7 +94,7 @@ public abstract class AbstractTaintSpore extends Monster {
                 return;
             }
         }
-        if (requiresStalkSupport() && !server.getBlockState(blockPosition().below()).is(TCBlocks.TAINT_SPORE_STALK.get())) {
+        if (requiresStalkSupport() && !server.getBlockState(blockPosition().below()).is(TTBlocks.TAINT_SPORE_STALK.get())) {
             burst(server);
         }
     }
@@ -106,6 +112,23 @@ public abstract class AbstractTaintSpore extends Monster {
             return getSporeSize();
         }
         return Mth.lerp(partialTick, oldDisplaySize, displaySize);
+    }
+
+    public int releaseTicks() {
+        return releaseTicks;
+    }
+
+    protected final void signalRelease(ServerLevel level) {
+        level.broadcastEntityEvent(this, EVENT_RELEASE);
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == EVENT_RELEASE) {
+            releaseTicks = RELEASE_TICKS;
+        } else {
+            super.handleEntityEvent(id);
+        }
     }
 
     @Override
@@ -137,7 +160,7 @@ public abstract class AbstractTaintSpore extends Monster {
     private void demoteSupport(ServerLevel level) {
         BlockPos below = blockPosition().below();
         BlockState support = level.getBlockState(below);
-        if (support.is(TCBlocks.TAINT_SPORE_STALK.get()) && support.getValue(BlockTaintSporeStalk.MATURE)) {
+        if (support.is(TTBlocks.TAINT_SPORE_STALK.get()) && support.getValue(BlockTaintSporeStalk.MATURE)) {
             level.setBlock(below, support.setValue(BlockTaintSporeStalk.MATURE, false), Block.UPDATE_CLIENTS);
         }
     }

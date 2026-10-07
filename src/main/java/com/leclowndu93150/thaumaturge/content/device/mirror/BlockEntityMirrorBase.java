@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
@@ -214,14 +214,14 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
     protected void collectImplicitComponents(DataComponentMap.Builder builder) {
         super.collectImplicitComponents(builder);
         if (linked && link != null) {
-            builder.set(TCDataComponents.MIRROR_LINK.get(), link);
+            builder.set(TTDataComponents.MIRROR_LINK.get(), link);
         }
     }
 
     @Override
     protected void applyImplicitComponents(DataComponentGetter components) {
         super.applyImplicitComponents(components);
-        GlobalPos stored = components.get(TCDataComponents.MIRROR_LINK.get());
+        GlobalPos stored = components.get(TTDataComponents.MIRROR_LINK.get());
         if (stored != null) {
             link = stored;
             linked = false;

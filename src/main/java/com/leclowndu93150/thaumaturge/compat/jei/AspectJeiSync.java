@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.compat.jei.category.AspectCompositionCategory;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestSyncAspectPoolPayload;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -77,12 +77,12 @@ public final class AspectJeiSync {
     }
 
     private static @Nullable Identifier gatedAspectOf(ItemStack stack) {
-        if (stack.is(TCItems.ESSENTIA_CRYSTAL.get())) {
-            AspectInstance instance = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        if (stack.is(TTItems.ESSENTIA_CRYSTAL.get())) {
+            AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
             return instance == null ? null : AspectPools.idOf(instance.aspect());
         }
-        if (stack.is(TCItems.PHIAL.get())) {
-            AspectList aspects = stack.get(TCDataComponents.ASPECTS.get());
+        if (stack.is(TTItems.PHIAL.get())) {
+            AspectList aspects = stack.get(TTDataComponents.ASPECTS.get());
             if (aspects == null || aspects.isEmpty()) {
                 return null;
             }

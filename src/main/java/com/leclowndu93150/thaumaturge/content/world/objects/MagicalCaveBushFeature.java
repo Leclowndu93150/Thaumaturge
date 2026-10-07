@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +25,7 @@ public final class MagicalCaveBushFeature extends Feature<NoneFeatureConfigurati
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
         BlockPos logPos = context.origin();
-        if (!level.getBlockState(logPos).isAir() || !level.getBlockState(logPos.below()).is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
+        if (!level.getBlockState(logPos).isAir() || !level.getBlockState(logPos.below()).is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
             return false;
         }
 

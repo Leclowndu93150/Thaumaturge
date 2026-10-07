@@ -8,8 +8,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectRecipeContributor;
 import com.leclowndu93150.thaumaturge.content.wands.WandAspectVariants;
-import com.leclowndu93150.thaumaturge.registry.TCAspectContributors;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTAspectContributors;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +30,7 @@ public final class AspectIndexBuilder {
     private AspectIndexBuilder() {}
 
     public static AspectIndex build(RecipeManager recipes, HolderLookup.Provider registries) {
-        for (IAspectRecipeContributor contributor : TCAspectContributors.all()) {
+        for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
             contributor.beginBuild(recipes, registries);
         }
         RecursiveIndex index = new RecursiveIndex(collectBase(registries), recipes, registries);
@@ -38,7 +38,7 @@ public final class AspectIndexBuilder {
             index.resolve(item);
         }
         Map<Item, AspectList> resolved = index.resolved();
-        return AspectIndex.of(resolved, Map.of(TCItems.WAND.get(), WandAspectVariants.build(resolved)));
+        return AspectIndex.of(resolved, Map.of(TTItems.WAND.get(), WandAspectVariants.build(resolved)));
     }
 
     private static Map<Item, AspectList> collectBase(HolderLookup.Provider registries) {
@@ -97,7 +97,7 @@ public final class AspectIndexBuilder {
             visiting.add(item);
             try {
                 AspectList derived = AspectList.EMPTY;
-                for (IAspectRecipeContributor contributor : TCAspectContributors.all()) {
+                for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
                     Optional<AspectList> result = contributor.derive(item, recipes, registries, this);
                     if (result.isPresent() && !result.get().isEmpty()) {
                         derived = result.get();

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityInhabitedZombie;
-import com.leclowndu93150.thaumaturge.content.equipment.TCMaterials;
+import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import java.util.Optional;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.monster.zombie.BabyZombieModel;
@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 
 public final class InhabitedZombieRenderer extends AbstractZombieRenderer<EntityInhabitedZombie, ZombieRenderState, ZombieModel<ZombieRenderState>> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/czombie.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/czombie.png");
 
     public InhabitedZombieRenderer(EntityRendererProvider.Context context) {
         super(context, new ZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE)), new BabyZombieModel<>(context.bakeLayer(ModelLayers.ZOMBIE_BABY)),
@@ -39,12 +39,12 @@ public final class InhabitedZombieRenderer extends AbstractZombieRenderer<Entity
 
     private static ItemStack zombiePlate(ItemStack stack) {
         Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
-        if (equippable == null || !equippable.assetId().map(TCMaterials.ASSET_CULTIST_PLATE::equals).orElse(false)) {
+        if (equippable == null || !equippable.assetId().map(TTMaterials.ASSET_CULTIST_PLATE::equals).orElse(false)) {
             return stack;
         }
         ItemStack copy = stack.copy();
         copy.set(DataComponents.EQUIPPABLE,
-                new Equippable(equippable.slot(), equippable.equipSound(), Optional.of(TCMaterials.ASSET_ZOMBIE_PLATE), equippable.cameraOverlay(), equippable.allowedEntities(),
+                new Equippable(equippable.slot(), equippable.equipSound(), Optional.of(TTMaterials.ASSET_ZOMBIE_PLATE), equippable.cameraOverlay(), equippable.allowedEntities(),
                         equippable.dispensable(), equippable.swappable(), equippable.damageOnHurt(), equippable.equipOnInteract(), equippable.canBeSheared(), equippable.shearingSound()));
         return copy;
     }

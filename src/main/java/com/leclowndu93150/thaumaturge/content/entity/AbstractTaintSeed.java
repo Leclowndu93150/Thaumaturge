@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSeedRegistry;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -42,8 +42,10 @@ public abstract class AbstractTaintSeed extends Monster {
     private static final float ATTACK_ANIM_START = 0.5F;
     private static final float ATTACK_ANIM_DECAY = 0.75F;
     private static final float ATTACK_ANIM_EPSILON = 0.001F;
+    private static final int STRIKE_TICKS = 20;
 
     public float attackAnim;
+    private int strikeTicks;
 
     private boolean registered;
 
@@ -52,6 +54,10 @@ public abstract class AbstractTaintSeed extends Monster {
     }
 
     public abstract int getArea();
+
+    public int strikeTicks() {
+        return this.strikeTicks;
+    }
 
     public static AttributeSupplier.Builder createSeedAttributes(double maxHealth, double attackDamage) {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, maxHealth).add(Attributes.ATTACK_DAMAGE, attackDamage).add(Attributes.MOVEMENT_SPEED, 0.0)
@@ -68,7 +74,7 @@ public abstract class AbstractTaintSeed extends Monster {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         level.broadcastEntityEvent(this, EVENT_ATTACK);
-        this.playSound(TCSounds.TENTACLE.get(), this.getSoundVolume(), this.getVoicePitch());
+        this.playSound(TTSounds.TENTACLE.get(), this.getSoundVolume(), this.getVoicePitch());
         return super.doHurtTarget(level, target);
     }
 
@@ -76,6 +82,7 @@ public abstract class AbstractTaintSeed extends Monster {
     public void handleEntityEvent(byte id) {
         if (id == EVENT_ATTACK) {
             this.attackAnim = ATTACK_ANIM_START;
+            this.strikeTicks = STRIKE_TICKS;
         } else {
             super.handleEntityEvent(id);
         }
@@ -85,6 +92,9 @@ public abstract class AbstractTaintSeed extends Monster {
     public void aiStep() {
         super.aiStep();
         if (!(this.level() instanceof ServerLevel server)) {
+            if (this.strikeTicks > 0) {
+                this.strikeTicks--;
+            }
             if (this.attackAnim > 0.0F) {
                 this.attackAnim *= ATTACK_ANIM_DECAY;
                 if (this.attackAnim < ATTACK_ANIM_EPSILON) {
@@ -127,7 +137,7 @@ public abstract class AbstractTaintSeed extends Monster {
     private void applyAuraTouch(ServerLevel server) {
         double radius = getArea() * FLUX_TAINT_RADIUS_MULT;
         for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(radius), e -> e != this && !MobTraits.isTainted(e))) {
-            target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
+            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, Math.max(0, getArea() - 1), true, false, false));
         }
     }
 
@@ -152,16 +162,16 @@ public abstract class AbstractTaintSeed extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.GORE.get();
+        return TTSounds.GORE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.TENTACLE.get();
+        return TTSounds.TENTACLE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.TENTACLE.get();
+        return TTSounds.TENTACLE.get();
     }
 }

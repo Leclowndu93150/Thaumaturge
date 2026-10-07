@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
 import com.leclowndu93150.thaumaturge.client.render.BoreDrillFx;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
@@ -13,11 +13,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreRenderState, ArcaneBoreModel> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/arcanebore.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/arcanebore.png");
     private static final float SHADOW = 0.5F;
 
     public ArcaneBoreRenderer(EntityRendererProvider.Context context) {
-        super(context, new ArcaneBoreModel(context.bakeLayer(TCModelLayers.ARCANE_BORE)), SHADOW);
+        super(context, new ArcaneBoreModel(context.bakeLayer(TTModelLayers.ARCANE_BORE)), SHADOW);
     }
 
     @Override

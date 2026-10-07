@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchLock;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -29,7 +29,7 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEntityEldritchLock, EldritchLockRenderState> {
-    private static final Identifier CUBE_TEXTURE = TCIds.rl("textures/entity/eldritch_cube.png");
+    private static final Identifier CUBE_TEXTURE = TTIds.rl("textures/entity/eldritch_cube.png");
 
     private static final int ARMS = 4;
     private static final int ARM_CUBES = 4;
@@ -70,7 +70,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
         state.animationTime = viewEntity == null ? partialTicks : viewEntity.tickCount + partialTicks;
         if (state.count >= 0) {
             if (tabletStack.isEmpty()) {
-                tabletStack = new ItemStack(TCItems.RUNED_TABLET.get());
+                tabletStack = new ItemStack(TTItems.RUNED_TABLET.get());
             }
             ItemStackRenderState itemState = new ItemStackRenderState();
             itemModelResolver.updateForTopItem(itemState, tabletStack, ItemDisplayContext.FIXED, lock.getLevel(), null, 0);

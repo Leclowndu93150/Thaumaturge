@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -68,7 +68,7 @@ public final class DustTriggerSwapQueue {
     private static void enqueueInternal(ServerLevel level, PendingSwap entry) {
         ChunkPos cp = ChunkPos.containing(entry.pos());
         LevelChunk chunk = level.getChunk(cp.x(), cp.z());
-        DustTriggerSwapQueue queue = chunk.getData(TCAttachments.DUST_TRIGGER_QUEUE.get());
+        DustTriggerSwapQueue queue = chunk.getData(TTAttachments.DUST_TRIGGER_QUEUE.get());
         queue.add(entry);
         chunk.markUnsaved();
         ACTIVE.computeIfAbsent(level.dimension(), k -> ConcurrentHashMap.newKeySet()).add(cp);

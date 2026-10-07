@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class WispFlameParticle extends TCParticle {
+public final class WispFlameParticle extends TTParticle {
     private static final int FRAME_COUNT = 8;
     private static final int BASE_LIFETIME = 10;
     private static final float DRIFT = 0.0025F;
@@ -33,7 +33,7 @@ public final class WispFlameParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<WispFlameParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("wisp_flame");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("wisp_flame");
 
         @Override
         public Particle createParticle(WispFlameParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

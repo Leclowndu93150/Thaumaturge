@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.RandomSource;
@@ -36,7 +36,7 @@ public final class EntityFollowingItem extends ItemEntity implements IEntityWith
     }
 
     public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack, Entity collector) {
-        this(TCEntities.FOLLOWING_ITEM.get(), level);
+        this(TTEntities.FOLLOWING_ITEM.get(), level);
         setPos(x, y, z);
         setItem(stack);
         setYRot(random.nextFloat() * 360.0F);

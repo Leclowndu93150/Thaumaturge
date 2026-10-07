@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.misc;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
-import com.leclowndu93150.thaumaturge.api.research.TCResearchCategories;
+import com.leclowndu93150.thaumaturge.api.research.TTResearchCategories;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.research.KnowledgeGrant;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -30,9 +30,9 @@ import net.minecraft.world.level.Level;
 
 public final class ItemCurio extends Item {
     public enum Variant {
-        ARCANE(TCResearchCategories.AUROMANCY, false, false), PRESERVED(TCResearchCategories.ALCHEMY, false, false), ANCIENT(TCResearchCategories.GOLEMANCY, false, false), ELDRITCH(
-                TCResearchCategories.ELDRITCH, true,
-                false), KNOWLEDGE(TCResearchCategories.INFUSION, false, false), TWISTED(TCResearchCategories.ARTIFICE, false, false), RITES(TCResearchCategories.ELDRITCH, true, true);
+        ARCANE(TTResearchCategories.AUROMANCY, false, false), PRESERVED(TTResearchCategories.ALCHEMY, false, false), ANCIENT(TTResearchCategories.GOLEMANCY, false, false), ELDRITCH(
+                TTResearchCategories.ELDRITCH, true,
+                false), KNOWLEDGE(TTResearchCategories.INFUSION, false, false), TWISTED(TTResearchCategories.ARTIFICE, false, false), RITES(TTResearchCategories.ELDRITCH, true, true);
 
         private final ResourceKey<IResearchCategory> category;
         private final boolean warping;
@@ -45,7 +45,7 @@ public final class ItemCurio extends Item {
         }
     }
 
-    private static final Identifier CRIMSON_RITES_RESEARCH = TCIds.rl("crimson_rites");
+    private static final Identifier CRIMSON_RITES_RESEARCH = TTIds.rl("crimson_rites");
     private static final int RITES_WARP_THRESHOLD = 20;
     private static final int NORMAL_WARP = 1;
     private static final int TEMPORARY_WARP = 5;
@@ -71,7 +71,7 @@ public final class ItemCurio extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (player instanceof ServerPlayer serverPlayer) {
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.LEARN.get(), SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
             if (variant.rites && WarpHelper.getActualWarp(player) <= RITES_WARP_THRESHOLD) {
                 player.sendSystemMessage(Component.translatable("fail.crimsonrites").withStyle(ChatFormatting.DARK_PURPLE));
                 return InteractionResult.SUCCESS;

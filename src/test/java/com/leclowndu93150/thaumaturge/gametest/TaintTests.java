@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.gametest;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSeed;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
@@ -18,11 +18,11 @@ public final class TaintTests {
 
     private TaintTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("taint/seed_enables_spread", 80, helper -> {
             buildPlatform(helper);
             AuraHelper.addFlux(helper.getLevel(), helper.absolutePos(SEED_POS), 50.0F);
-            EntityTaintSeed seed = helper.spawn(TCEntities.TAINT_SEED.get(), SEED_POS);
+            EntityTaintSeed seed = helper.spawn(TTEntities.TAINT_SEED.get(), SEED_POS);
             helper.runAfterDelay(SETTLE_TICKS, () -> {
                 BlockPos center = helper.absolutePos(SEED_POS);
                 for (int i = 0; i < SPREAD_ATTEMPTS; i++) {
@@ -50,7 +50,7 @@ public final class TaintTests {
         int found = 0;
         BlockPos center = helper.absolutePos(SEED_POS);
         for (BlockPos pos : BlockPos.betweenClosed(center.offset(-SCAN_RADIUS, -1, -SCAN_RADIUS), center.offset(SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS))) {
-            if (helper.getLevel().getBlockState(pos).is(TCBlocks.TAINT_FIBRE.get())) {
+            if (helper.getLevel().getBlockState(pos).is(TTBlocks.TAINT_FIBRE.get())) {
                 found++;
             }
         }

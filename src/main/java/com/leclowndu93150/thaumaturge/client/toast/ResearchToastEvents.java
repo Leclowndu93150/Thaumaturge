@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.toast;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
@@ -19,7 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ResearchToastEvents {
     private static final int CHECK_INTERVAL_TICKS = 20;
     private static int tickCounter;

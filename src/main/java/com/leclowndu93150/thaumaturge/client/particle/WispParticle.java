@@ -76,7 +76,7 @@ public final class WispParticle extends SingleQuadParticle {
 
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     @Override
@@ -100,7 +100,7 @@ public final class WispParticle extends SingleQuadParticle {
     }
 
     public static final class Provider implements ParticleProvider<WispParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("wisp");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("wisp");
 
         @Override
         public Particle createParticle(WispParticleOptions options, ClientLevel level, double x, double y, double z, double xAux, double yAux, double zAux, RandomSource random) {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -10,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ThaumometerEntityInteractionEvents {
     private ThaumometerEntityInteractionEvents() {}
 

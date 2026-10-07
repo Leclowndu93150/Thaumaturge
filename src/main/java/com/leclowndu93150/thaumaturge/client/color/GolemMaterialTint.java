@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -16,7 +16,7 @@ public record GolemMaterialTint() implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
-        GolemProperties props = stack.get(TCDataComponents.GOLEM_PROPERTIES.get());
+        GolemProperties props = stack.get(TTDataComponents.GOLEM_PROPERTIES.get());
         if (props == null) {
             return DEFAULT;
         }

@@ -11,9 +11,9 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSeedRegistry;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -162,7 +162,7 @@ public final class TaintHelper {
         }
         BlockState targetState = level.getBlockState(target);
         float hardness = targetState.getDestroySpeed(level, target);
-        if (hardness < 0 || hardness > MAX_SPREAD_HARDNESS || targetState.is(TCBlockTags.TAINT_CONVERSION_IMMUNE)) {
+        if (hardness < 0 || hardness > MAX_SPREAD_HARDNESS || targetState.is(TTBlockTags.TAINT_CONVERSION_IMMUNE)) {
             return;
         }
 
@@ -179,7 +179,7 @@ public final class TaintHelper {
         if (isLeaves) {
             Direction logFace = findAdjacentTaintLog(level, target);
             if (logFace != null && random.nextFloat() < FEATURE_ON_LEAVES_CHANCE) {
-                level.setBlock(target, TCBlocks.TAINT_FEATURE.get().defaultBlockState().setValue(DirectionalBlock.FACING, logFace.getOpposite()), Block.UPDATE_ALL);
+                level.setBlock(target, TTBlocks.TAINT_FEATURE.get().defaultBlockState().setValue(DirectionalBlock.FACING, logFace.getOpposite()), Block.UPDATE_ALL);
             }
             return;
         }
@@ -236,18 +236,18 @@ public final class TaintHelper {
     }
 
     private static @Nullable BlockState convertedState(BlockState state, int adjacentTaint) {
-        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS && state.is(TCBlockTags.TAINT_CONVERTIBLE_LOG) && !(state.getBlock() instanceof ITaintBlock)) {
+        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_LOG) && !(state.getBlock() instanceof ITaintBlock)) {
             Direction.Axis axis = state.hasProperty(RotatedPillarBlock.AXIS) ? state.getValue(RotatedPillarBlock.AXIS) : Direction.Axis.Y;
-            return TCBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
+            return TTBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
         }
-        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS && state.is(TCBlockTags.TAINT_CONVERTIBLE_CRUST)) {
-            return TCBlocks.TAINT_CRUST.get().defaultBlockState();
+        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_CRUST)) {
+            return TTBlocks.TAINT_CRUST.get().defaultBlockState();
         }
-        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TCBlockTags.TAINT_CONVERTIBLE_SOIL)) {
-            return TCBlocks.TAINT_SOIL.get().defaultBlockState();
+        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_SOIL)) {
+            return TTBlocks.TAINT_SOIL.get().defaultBlockState();
         }
-        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TCBlockTags.TAINT_CONVERTIBLE_ROCK)) {
-            return TCBlocks.TAINT_ROCK.get().defaultBlockState();
+        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_ROCK)) {
+            return TTBlocks.TAINT_ROCK.get().defaultBlockState();
         }
         return null;
     }
@@ -274,13 +274,13 @@ public final class TaintHelper {
     }
 
     private static boolean tryCreateTaintSeed(ServerLevel level, BlockPos target, BlockState targetState, RandomSource random, boolean requireSeedEdge) {
-        if (!targetState.is(TCBlocks.TAINT_SOIL.get()) && !targetState.is(TCBlocks.TAINT_ROCK.get())) {
+        if (!targetState.is(TTBlocks.TAINT_SOIL.get()) && !targetState.is(TTBlocks.TAINT_ROCK.get())) {
             return false;
         }
         if (!level.getBlockState(target.above()).isAir() || AuraHelper.getFlux(level, target) < SEED_FLUX_THRESHOLD || requireSeedEdge && !isAtTaintSeedEdge(level, target)) {
             return false;
         }
-        EntityTaintSeed seed = TCEntities.TAINT_SEED.get().create(level, EntitySpawnReason.NATURAL);
+        EntityTaintSeed seed = TTEntities.TAINT_SEED.get().create(level, EntitySpawnReason.NATURAL);
         if (seed == null) {
             return false;
         }
@@ -309,7 +309,7 @@ public final class TaintHelper {
 
     private static @Nullable Direction findAdjacentTaintLog(ServerLevel level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
-            if (level.getBlockState(pos.relative(direction)).is(TCBlocks.TAINT_LOG.get())) {
+            if (level.getBlockState(pos.relative(direction)).is(TTBlocks.TAINT_LOG.get())) {
                 return direction;
             }
         }

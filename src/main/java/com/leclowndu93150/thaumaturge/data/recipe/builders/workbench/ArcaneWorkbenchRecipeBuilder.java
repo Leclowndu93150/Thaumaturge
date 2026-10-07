@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import com.leclowndu93150.thaumaturge.data.recipe.builders.SimpleRecipeBuilder;
@@ -34,7 +34,7 @@ public abstract class ArcaneWorkbenchRecipeBuilder<R extends ArcaneWorkbenchReci
     }
 
     public R allAspects() {
-        return aspect(TCAspects.AER).aspect(TCAspects.IGNIS).aspect(TCAspects.TERRA).aspect(TCAspects.AQUA).aspect(TCAspects.ORDO).aspect(TCAspects.PERDITIO);
+        return aspect(TTAspects.AER).aspect(TTAspects.IGNIS).aspect(TTAspects.TERRA).aspect(TTAspects.AQUA).aspect(TTAspects.ORDO).aspect(TTAspects.PERDITIO);
     }
 
     public R aspect(ResourceKey<IAspect> aspect) {

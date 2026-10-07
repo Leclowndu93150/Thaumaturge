@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.*;
 import com.leclowndu93150.thaumaturge.client.screen.pip.BlockPreviewRenderState;
 import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.mixin.client.gui.GuiGraphicsExtractorAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.*;
@@ -39,13 +39,13 @@ import org.joml.Matrix3x2f;
 import org.jspecify.annotations.Nullable;
 
 public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
-    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(Identifier.fromNamespaceAndPath(TCIds.MODID, "multiblock_dust_trigger"));
+    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(Identifier.fromNamespaceAndPath(TTIds.MODID, "multiblock_dust_trigger"));
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 108;
 
-    private static final IDrawable resultIcon = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
-    private static final IDrawable arrow = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
+    private static final IDrawable resultIcon = new AlphaDrawable(Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
+    private static final IDrawable arrow = new AlphaDrawable(Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 199, 168, 26, 26);
     private final IDrawable icon;
 
     private static final int DUST_SLOT_X = WIDTH / 2 - arrow.getWidth() / 2 - 20 - 18;
@@ -56,7 +56,7 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     private int rotation = 0;
 
     public MultiblockCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.SALIS_MUNDUS.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()));
     }
 
     @Override
@@ -92,7 +92,7 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<DustTrigger> holder, IFocusGroup focuses) {
 
         Component usage = Component.translatable("jei.thaumaturge.dust_trigger.target.multiblock");
-        builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1).add(TCItems.SALIS_MUNDUS.get()).addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
+        builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1).add(TTItems.SALIS_MUNDUS.get()).addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
         DustTrigger recipe = holder.value();
         Blueprint blueprint = lookupBlueprint(((DustTriggerMultiblockRecipe) recipe).blueprintId());

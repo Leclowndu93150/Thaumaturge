@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
@@ -26,7 +26,7 @@ import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,9 +128,9 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final int TAINTED_NODE_CONVERSION_INTERVAL = 100;
     private static final int TAINTED_NODE_CONVERSION_CHANCE = 500;
     private static final int FADING_CURE_MAGIC = 69;
-    private static final Identifier RESEARCH_NODE_TAPPER_1 = TCIds.rl("node_tapper_1");
-    private static final Identifier RESEARCH_NODE_TAPPER_2 = TCIds.rl("node_tapper_2");
-    private static final Identifier RESEARCH_NODE_PRESERVE = TCIds.rl("node_preserve");
+    private static final Identifier RESEARCH_NODE_TAPPER_1 = TTIds.rl("node_tapper_1");
+    private static final Identifier RESEARCH_NODE_TAPPER_2 = TTIds.rl("node_tapper_2");
+    private static final Identifier RESEARCH_NODE_PRESERVE = TTIds.rl("node_preserve");
     private static final int MAX_DECOMPOSE_DEPTH = 8;
     private static final int PEARL_PRIMAL_DROP = 2;
     private static final int PEARL_PRIMAL_SPREAD = 6;
@@ -170,7 +170,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     public BlockEntityNode(BlockPos pos, BlockState state) {
-        this(TCBlockEntities.NODE.get(), pos, state);
+        this(TTBlockEntities.NODE.get(), pos, state);
     }
 
     protected BlockEntityNode(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -214,7 +214,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private static boolean isIndexedNodeBlock(BlockState state) {
-        return state.is(TCBlocks.NODE.get()) || state.is(TCBlocks.SILVERWOOD_NODE_LOG.get());
+        return state.is(TTBlocks.NODE.get()) || state.is(TTBlocks.SILVERWOOD_NODE_LOG.get());
     }
 
     private static void removeDepletedNode(ServerLevel serverLevel, BlockPos pos) {
@@ -379,7 +379,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         if (level != null) {
             HolderLookup.RegistryLookup<IAspect> registry = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-            for (ResourceKey<IAspect> key : TCAspects.PRIMALS) {
+            for (ResourceKey<IAspect> key : TTAspects.PRIMALS) {
                 Holder<IAspect> primal = registry.getOrThrow(key);
                 int replacement = random.nextInt(researched ? PEARL_NEW_PRIMAL_MAX_RESEARCHED : PEARL_NEW_PRIMAL_MAX);
                 if (replacement > aspectsBase.amountOf(primal)) {
@@ -654,7 +654,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             nodeChange();
             return;
         }
-        boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION && serverLevel.getBiome(pos).is(TCBiomes.MAGICAL_FOREST);
+        boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST);
         if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;
@@ -802,7 +802,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             other.wait = other.regeneration / 2;
             other.setChanged();
             serverLevel.sendBlockUpdated(otherPos, other.getBlockState(), other.getBlockState(), 3);
-            serverLevel.playSound(null, otherPos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, 1.0F + random.nextFloat() * ZAP_PITCH_VARIATION);
+            serverLevel.playSound(null, otherPos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, 1.0F + random.nextFloat() * ZAP_PITCH_VARIATION);
             Effects.arcBolt(serverLevel, Vec3.atCenterOf(otherPos)).to(Vec3.atCenterOf(pos)).width(ZAP_WIDTH).send();
             return true;
         }
@@ -865,13 +865,13 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
                 TaintBiomeManager.taintColumn(serverLevel, target);
             }
         } else if (nodeType == NodeType.DARK) {
-            spreadBiomeColumn(serverLevel, pos, DARK_BIOME_SPREAD_RANGE, TCBiomes.EERIE);
+            spreadBiomeColumn(serverLevel, pos, DARK_BIOME_SPREAD_RANGE, TTBiomes.EERIE);
         } else if (nodeType == NodeType.PURE) {
             BlockPos target = randomBiomeTarget(serverLevel, pos, PURE_BIOME_SPREAD_RANGE);
             if (target != null && TaintBiomeManager.isTainted(serverLevel, target)) {
-                TaintBiomeManager.replaceColumn(serverLevel, target, TCBiomes.MAGICAL_FOREST);
+                TaintBiomeManager.replaceColumn(serverLevel, target, TTBiomes.MAGICAL_FOREST);
             } else if (nearSilverwood(serverLevel, pos)) {
-                spreadBiomeColumn(serverLevel, pos, PURE_BIOME_SPREAD_RANGE, TCBiomes.MAGICAL_FOREST);
+                spreadBiomeColumn(serverLevel, pos, PURE_BIOME_SPREAD_RANGE, TTBiomes.MAGICAL_FOREST);
             }
         }
     }
@@ -882,7 +882,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     cursor.setWithOffset(pos, dx, dy, dz);
-                    if (serverLevel.getBlockState(cursor).is(TCBlockTags.SILVERWOOD_LOGS)) {
+                    if (serverLevel.getBlockState(cursor).is(TTBlockTags.SILVERWOOD_LOGS)) {
                         return true;
                     }
                 }
@@ -1016,7 +1016,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         double x = pos.getX() + (random.nextDouble() - random.nextDouble()) * 5.0;
         double y = pos.getY() + random.nextInt(3) - 1;
         double z = pos.getZ() + (random.nextDouble() - random.nextDouble()) * 5.0;
-        EntityBrainyZombie zombie = TCEntities.BRAINY_ZOMBIE.get().create(serverLevel, EntitySpawnReason.EVENT);
+        EntityBrainyZombie zombie = TTEntities.BRAINY_ZOMBIE.get().create(serverLevel, EntitySpawnReason.EVENT);
         if (zombie == null) {
             return;
         }
@@ -1180,7 +1180,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             tap++;
         }
         WandParts parts = WandVisHelper.getParts(wandStack);
-        boolean starterWand = parts.rod() == TCWandParts.ROD_WOOD.get() && parts.cap() == TCWandParts.CAP_IRON.get();
+        boolean starterWand = parts.rod() == TTWandParts.ROD_WOOD.get() && parts.cap() == TTWandParts.CAP_IRON.get();
         boolean preserve = !player.isShiftKeyDown() && !starterWand && KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_PRESERVE);
         RandomSource random = serverLevel.getRandom();
         List<Holder<IAspect>> candidates = new ArrayList<>();

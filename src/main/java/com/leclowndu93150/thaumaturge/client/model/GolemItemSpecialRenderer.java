@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.client.golem.GolemAccessoryRenderTable;
 import com.leclowndu93150.thaumaturge.client.golem.GolemRenderState;
 import com.leclowndu93150.thaumaturge.client.golem.GolemRenderer;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import java.util.function.Consumer;
@@ -26,7 +26,7 @@ public final class GolemItemSpecialRenderer implements SpecialModelRenderer<Gole
 
     @Override
     public GolemProperties extractArgument(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
+        return stack.getOrDefault(TTDataComponents.GOLEM_PROPERTIES.get(), GolemProperties.createDefault());
     }
 
     @Override
@@ -37,7 +37,7 @@ public final class GolemItemSpecialRenderer implements SpecialModelRenderer<Gole
         model.setupAnim(state);
         pose.pushPose();
         pose.translate(0.5F, 0.05F, 0.5F);
-        pose.scale(-CopperGolemRig.SCALE, -CopperGolemRig.SCALE, CopperGolemRig.SCALE);
+        pose.scale(CopperGolemRig.SCALE, -CopperGolemRig.SCALE, -CopperGolemRig.SCALE);
         pose.translate(0.0F, -1.5F, 0.0F);
         GolemRenderer.submitParts(model, GolemAccessoryRenderTable.EMPTY, state, pose, collector, false, -1);
         pose.popPose();

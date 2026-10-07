@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.content.item.LabelItem;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
@@ -31,14 +31,14 @@ public final class LabelFilterRecipe extends CustomRecipe {
         boolean hasLabel = false;
         Holder<IAspect> aspect = null;
         for (ItemStack stack : input.items()) {
-            if (stack.is(TCItems.LABEL)) {
+            if (stack.is(TTItems.LABEL)) {
                 if (hasLabel)
                     return null;
                 hasLabel = true;
                 continue;
             }
 
-            if (stack.is(TCItems.PHIAL)) {
+            if (stack.is(TTItems.PHIAL)) {
                 if (aspect != null)
                     return null;
                 IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
@@ -74,7 +74,7 @@ public final class LabelFilterRecipe extends CustomRecipe {
         for (int slot = 0; slot < result.size(); ++slot) {
             ItemStack item = input.getItem(slot);
             ItemStackTemplate remainder = item.getCraftingRemainder();
-            if (item.is(TCItems.PHIAL))
+            if (item.is(TTItems.PHIAL))
                 result.set(slot, item.copyWithCount(1));
             else
                 result.set(slot, remainder != null ? remainder.create() : ItemStack.EMPTY);

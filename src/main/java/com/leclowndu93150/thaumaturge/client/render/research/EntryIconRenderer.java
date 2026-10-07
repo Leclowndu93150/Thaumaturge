@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
@@ -28,7 +28,7 @@ public final class EntryIconRenderer {
     public static final int ICON_REFERENCE_SIZE = 16;
     public static final int HIT_PADDING = 2;
 
-    public static final Identifier NODE_TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+    public static final Identifier NODE_TEXTURE = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/misc/auranodes.png");
     private static final int NODE_TEXTURE_SIZE = 2048;
     private static final int NODE_GRID = 32;
     private static final int NODE_FRAME_SIZE = NODE_TEXTURE_SIZE / NODE_GRID;
@@ -63,8 +63,8 @@ public final class EntryIconRenderer {
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
-    private static final Identifier FOCUS_EFFECT_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_effect.png");
-    private static final Identifier FOCUS_MEDIUM_BACK = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_medium.png");
+    private static final Identifier FOCUS_EFFECT_BACK = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_effect.png");
+    private static final Identifier FOCUS_MEDIUM_BACK = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
     private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;
@@ -231,8 +231,8 @@ public final class EntryIconRenderer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(FLAG_BADGE_SCALE, FLAG_BADGE_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, 0, 0, (float) u, (float) FLAG_BADGE_V, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BROWSER, 0, 0, (float) u, (float) FLAG_BADGE_V, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE, FLAG_BADGE_SIZE,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -249,13 +249,13 @@ public final class EntryIconRenderer {
         int half = Math.round(NODE_VISIBLE_SCALE * 0.5F);
         graphics.pose().pushMatrix();
         graphics.pose().translate(centerX, centerY);
-        graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, NODE_TEXTURE, -half, -half, (float) u, (float) v, Math.round(NODE_VISIBLE_SCALE), Math.round(NODE_VISIBLE_SCALE), NODE_FRAME_SIZE,
+        graphics.blit(TTRenderPipelines.GUI_TEXTURED_ADDITIVE, NODE_TEXTURE, -half, -half, (float) u, (float) v, Math.round(NODE_VISIBLE_SCALE), Math.round(NODE_VISIBLE_SCALE), NODE_FRAME_SIZE,
                 NODE_FRAME_SIZE, NODE_TEXTURE_SIZE, NODE_TEXTURE_SIZE, NODE_TINT);
         graphics.pose().popMatrix();
     }
 
     private static void blitFrame(GuiGraphicsExtractor graphics, int x, int y, int u, int v, int color) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, x, y, (float) u, (float) v, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE, color);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BROWSER, x, y, (float) u, (float) v, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, FRAME_SIZE, TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE, color);
     }
 }

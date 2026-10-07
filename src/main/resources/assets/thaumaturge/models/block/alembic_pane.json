@@ -1,0 +1,44 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "brass": "thaumaturge:block/metal_brass",
+  "metal": "thaumaturge:block/base_metal",
+  "ports": "thaumaturge:block/thaumatorium",
+  "glass": "minecraft:block/glass",
+  "particle": "#glass"
+ },
+ "elements": [
+  {
+   "from": [
+    3,
+    2,
+    2
+   ],
+   "to": [
+    13,
+    14,
+    3
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      3,
+      2,
+      13,
+      14
+     ],
+     "texture": "#glass"
+    },
+    "south": {
+     "uv": [
+      3,
+      2,
+      13,
+      14
+     ],
+     "texture": "#glass"
+    }
+   }
+  }
+ ]
+}

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
@@ -16,8 +16,8 @@ import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -56,7 +56,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
     }
 
     public BlockEntityRechargePedestal(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.RECHARGE_PEDESTAL.get(), pos, state);
+        super(TTBlockEntities.RECHARGE_PEDESTAL.get(), pos, state);
     }
 
     public static boolean accepts(ItemStack stack) {
@@ -107,7 +107,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
         if (source == null) {
             return false;
         }
-        for (ResourceKey<IAspect> key : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> key : TTAspects.PRIMALS) {
             int needCv = WandVisHelper.getMaxVis(wand) - WandVisHelper.getVis(wand, key);
             if (needCv <= 0) {
                 continue;
@@ -133,7 +133,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
     private boolean drawFromNodes(ServerLevel level) {
         ItemStack wand = getItem();
         WandParts parts = WandVisHelper.getParts(wand);
-        int min = parts.rod() == TCWandParts.ROD_WOOD.get() || parts.cap() == TCWandParts.CAP_IRON.get() ? 0 : 1;
+        int min = parts.rod() == TTWandParts.ROD_WOOD.get() || parts.cap() == TTWandParts.CAP_IRON.get() ? 0 : 1;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int xx = -NODE_DRAW_RANGE; xx <= NODE_DRAW_RANGE; xx++) {
             for (int yy = -NODE_DRAW_RANGE; yy <= NODE_DRAW_RANGE; yy++) {

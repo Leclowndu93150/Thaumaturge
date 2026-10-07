@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -73,7 +73,7 @@ public final class FluxLightning {
         }
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, new AABB(strike).inflate(HIT_RADIUS))) {
             target.hurtServer(level, level.damageSources().magic(), HIT_DAMAGE);
-            target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
+            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
         }
     }
 

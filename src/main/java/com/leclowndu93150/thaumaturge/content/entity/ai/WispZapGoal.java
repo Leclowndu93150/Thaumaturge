@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity.ai;
 
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
 import com.leclowndu93150.thaumaturge.network.ClientboundWispZapPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.EnumSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -69,7 +69,7 @@ public final class WispZapGoal extends Goal {
     }
 
     private void zap(LivingEntity target) {
-        wisp.playSound(TCSounds.ZAP.get(), 1.0F, ZAP_PITCH);
+        wisp.playSound(TTSounds.ZAP.get(), 1.0F, ZAP_PITCH);
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(wisp, new ClientboundWispZapPayload(wisp.getId(), target.getId()));
         if (!(wisp.level() instanceof ServerLevel server)) {
             return;

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
-import com.leclowndu93150.thaumaturge.client.model.entity.TCBannerModel;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
+import com.leclowndu93150.thaumaturge.client.model.entity.TTBannerModel;
 import com.leclowndu93150.thaumaturge.content.decor.banner.AbstractBannerBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
@@ -12,11 +12,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -26,7 +26,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -34,20 +33,23 @@ import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
 public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBanner, BannerRenderState> {
-    private static final Identifier TEX_BLANK = TCIds.rl("textures/entity/banner_blank.png");
-    private static final Identifier TEX_CULTIST = TCIds.rl("textures/entity/banner_cultist.png");
-    private static final float SWAY_BASE = 0.02F;
+    private static final Identifier TEX_BLANK = TTIds.rl("textures/entity/banner_blank.png");
+    private static final Identifier TEX_CULTIST = TTIds.rl("textures/entity/banner_cultist.png");
     private static final float SWAY_PERIOD = 11.0F;
-    private static final float WALL_FORWARD = -0.4125F;
+    private static final float WALL_FORWARD = -0.21875F;
+    private static final float MODEL_FLIP = 180.0F;
+    private static final int UPPER_CLOTH_SEGMENT = 0;
     private static final float ASPECT_HALF_WIDTH = 0.3F;
     private static final float ASPECT_TOP = 0.35F;
     private static final float ASPECT_BOTTOM = 0.95F;
     private static final float ASPECT_Z = -0.052F;
 
-    private final TCBannerModel model;
+    private final TTBannerModel frame;
+    private final TTBannerModel cloth;
 
     public BannerRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new TCBannerModel(context.bakeLayer(TCModelLayers.TC_BANNER));
+        this.frame = new TTBannerModel(context.bakeLayer(TTModelLayers.TC_BANNER), false);
+        this.cloth = new TTBannerModel(context.bakeLayer(TTModelLayers.TC_BANNER), true);
     }
 
     @Override
@@ -80,7 +82,7 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         }
         BlockPos pos = banner.getBlockPos();
         float time = (pos.getX() * 7 + pos.getY() * 9 + pos.getZ() * 13) + (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
-        state.sway = SWAY_BASE - Mth.sin(time / SWAY_PERIOD) * SWAY_BASE;
+        state.phase = time / SWAY_PERIOD;
     }
 
     @Override
@@ -93,28 +95,23 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F + state.yawDegrees));
         if (state.onWall) {
             poseStack.translate(0.0F, 1.0F, WALL_FORWARD);
-        } else {
-            submitPart(collector, poseStack, model.pole, texture, -1, state);
         }
-        submitPart(collector, poseStack, model.beam, texture, -1, state);
-        submitPart(collector, poseStack, model.tabLeft, texture, tint, state);
-        submitPart(collector, poseStack, model.tabRight, texture, tint, state);
-        model.cloth.xRot = state.sway;
-        submitPart(collector, poseStack, model.cloth, texture, tint, state);
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(MODEL_FLIP));
+        RenderType renderType = RenderTypes.entityCutout(texture);
+        collector.submitModel(frame, state, poseStack, renderType, state.lightCoords, OverlayTexture.NO_OVERLAY, -1, null, 0, null);
+        collector.submitModel(cloth, state, poseStack, renderType, state.lightCoords, OverlayTexture.NO_OVERLAY, tint, null, 0, null);
+        poseStack.popPose();
         if (state.aspectTexture != null) {
             submitAspect(collector, poseStack, state);
         }
         poseStack.popPose();
     }
 
-    private void submitPart(SubmitNodeCollector collector, PoseStack poseStack, ModelPart part, Identifier texture, int color, BannerRenderState state) {
-        collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(texture), state.lightCoords, OverlayTexture.NO_OVERLAY, null, color, null);
-    }
-
     private void submitAspect(SubmitNodeCollector collector, PoseStack poseStack, BannerRenderState state) {
         poseStack.pushPose();
         poseStack.translate(0.0F, -5.0F / 16.0F, 0.0F);
-        poseStack.mulPose(Axis.XP.rotation(state.sway));
+        poseStack.mulPose(Axis.XP.rotation(-TTBannerModel.clothBend(state.phase, UPPER_CLOTH_SEGMENT)));
         int light = state.lightCoords;
         collector.submitCustomGeometry(poseStack, RenderTypes.entityTranslucent(state.aspectTexture), (pose, buffer) -> {
             Matrix4fc mat = pose.pose();

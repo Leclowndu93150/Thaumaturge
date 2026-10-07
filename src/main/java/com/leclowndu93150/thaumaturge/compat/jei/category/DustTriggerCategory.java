@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
@@ -8,8 +8,8 @@ import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +40,7 @@ import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.Nullable;
 
 public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
-    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(TCRecipeTypes.DUST_TRIGGER.get());
+    public static final IRecipeHolderType<DustTrigger> RECIPE_TYPE = IRecipeHolderType.create(TTRecipeTypes.DUST_TRIGGER.get());
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 54;
@@ -54,10 +54,10 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
 
     private final IDrawable icon;
 
-    private final IDrawable resultIcon = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
+    private final IDrawable resultIcon = new AlphaDrawable(Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 41, 7, 30, 30);
 
     public DustTriggerCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.SALIS_MUNDUS.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()));
     }
 
     @Override
@@ -93,7 +93,7 @@ public final class DustTriggerCategory implements IRecipeCategory<RecipeHolder<D
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<DustTrigger> holder, IFocusGroup focuses) {
 
         Component usage = Component.translatable("jei.thaumaturge.dust_trigger.usage");
-        builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1).add(TCItems.SALIS_MUNDUS.get()).addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
+        builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1).add(TTItems.SALIS_MUNDUS.get()).addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
         DustTrigger recipe = holder.value();
         IRecipeSlotBuilder targetSlot = builder.addSlot(RecipeIngredientRole.CRAFTING_STATION, TARGET_SLOT_X + 1, TARGET_SLOT_Y + 1);

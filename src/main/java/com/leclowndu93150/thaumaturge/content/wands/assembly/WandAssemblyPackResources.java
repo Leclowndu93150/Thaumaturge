@@ -2,15 +2,15 @@ package com.leclowndu93150.thaumaturge.content.wands.assembly;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandCap;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandRod;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,27 +50,27 @@ public final class WandAssemblyPackResources implements PackResources {
         Map<Identifier, Identifier> rodItems = new LinkedHashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ItemWandCap capItem && capItem.cap() != null) {
-                Identifier partId = TCWandParts.caps().getKey(capItem.cap());
+                Identifier partId = TTWandParts.caps().getKey(capItem.cap());
                 if (partId != null) {
                     capItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
                 }
             } else if (item instanceof ItemWandRod rodItem && rodItem.rod() != null) {
-                Identifier partId = TCWandParts.rods().getKey(rodItem.rod());
+                Identifier partId = TTWandParts.rods().getKey(rodItem.rod());
                 if (partId != null) {
                     rodItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
                 }
             }
         }
-        Identifier woodRod = TCIds.rl("wood");
-        if (TCWandParts.rods().containsKey(woodRod)) {
+        Identifier woodRod = TTIds.rl("wood");
+        if (TTWandParts.rods().containsKey(woodRod)) {
             rodItems.putIfAbsent(woodRod, BuiltInRegistries.ITEM.getKey(Items.STICK));
         }
 
-        Identifier ironCap = TCIds.rl("iron");
+        Identifier ironCap = TTIds.rl("iron");
         for (Map.Entry<Identifier, Identifier> capEntry : capItems.entrySet()) {
-            WandCap cap = TCWandParts.caps().getValue(capEntry.getKey());
+            WandCap cap = TTWandParts.caps().getValue(capEntry.getKey());
             for (Map.Entry<Identifier, Identifier> rodEntry : rodItems.entrySet()) {
-                WandRod rod = TCWandParts.rods().getValue(rodEntry.getKey());
+                WandRod rod = TTWandParts.rods().getValue(rodEntry.getKey());
                 boolean starterCombo = capEntry.getKey().equals(ironCap) && rodEntry.getKey().equals(woodRod);
                 if (!starterCombo) {
                     int vis = WandEconomy.PRIMAL_COUNT * cap.craftCost() * rod.craftCost();
@@ -78,7 +78,7 @@ public final class WandAssemblyPackResources implements PackResources {
                 }
                 if (!rod.staff()) {
                     int vis = WandEconomy.PRIMAL_COUNT * (int) (cap.craftCost() * rod.craftCost() * WandEconomy.SCEPTRE_CRAFT_COST_FACTOR);
-                    out.put(recipeFile("sceptre", capEntry.getKey(), rodEntry.getKey()), recipe(capEntry, rodEntry, true, vis, TCIds.rl("sceptre").toString()));
+                    out.put(recipeFile("sceptre", capEntry.getKey(), rodEntry.getKey()), recipe(capEntry, rodEntry, true, vis, TTIds.rl("sceptre").toString()));
                 }
             }
         }
@@ -88,13 +88,13 @@ public final class WandAssemblyPackResources implements PackResources {
 
     private static String assemblyGate(WandRod rod) {
         Identifier gate = rod.assemblyResearch();
-        return gate != null ? gate.toString() : TCIds.rl("unlock_auromancy").toString();
+        return gate != null ? gate.toString() : TTIds.rl("unlock_auromancy").toString();
     }
 
     private static Identifier recipeFile(String kind, Identifier capId, Identifier rodId) {
-        boolean modPair = capId.getNamespace().equals(TCIds.MODID) && rodId.getNamespace().equals(TCIds.MODID);
+        boolean modPair = capId.getNamespace().equals(TTIds.MODID) && rodId.getNamespace().equals(TTIds.MODID);
         String name = modPair ? capId.getPath() + "_" + rodId.getPath() : capId.getNamespace() + "_" + capId.getPath() + "_" + rodId.getNamespace() + "_" + rodId.getPath();
-        return TCIds.rl("recipe/wand/" + kind + "/" + name + ".json");
+        return TTIds.rl("recipe/wand/" + kind + "/" + name + ".json");
     }
 
     private static byte[] recipe(Map.Entry<Identifier, Identifier> cap, Map.Entry<Identifier, Identifier> rod, boolean sceptre, int vis, String gate) {
@@ -103,7 +103,7 @@ public final class WandAssemblyPackResources implements PackResources {
         key.addProperty("R", rod.getValue().toString());
         JsonArray pattern = new JsonArray();
         if (sceptre) {
-            key.addProperty("P", BuiltInRegistries.ITEM.getKey(TCItems.PRIMAL_CHARM.get()).toString());
+            key.addProperty("P", BuiltInRegistries.ITEM.getKey(TTItems.PRIMAL_CHARM.get()).toString());
             pattern.add(" CP");
             pattern.add(" RC");
             pattern.add("C  ");
@@ -121,12 +121,12 @@ public final class WandAssemblyPackResources implements PackResources {
             parts.addProperty("sceptre", true);
         }
         JsonObject components = new JsonObject();
-        components.add(TCIds.rl("wand_parts").toString(), parts);
+        components.add(TTIds.rl("wand_parts").toString(), parts);
         JsonObject result = new JsonObject();
         result.add("components", components);
-        result.addProperty("id", TCIds.rl("wand").toString());
+        result.addProperty("id", TTIds.rl("wand").toString());
         JsonObject json = new JsonObject();
-        json.addProperty("type", TCIds.rl("arcane_workbench_shaped").toString());
+        json.addProperty("type", TTIds.rl("arcane_workbench_shaped").toString());
         json.add("crystals", new JsonArray());
         json.add("key", key);
         json.add("pattern", pattern);
@@ -152,7 +152,7 @@ public final class WandAssemblyPackResources implements PackResources {
 
     @Override
     public void listResources(PackType type, String namespace, String directory, ResourceOutput output) {
-        if (type != PackType.SERVER_DATA || !namespace.equals(TCIds.MODID)) {
+        if (type != PackType.SERVER_DATA || !namespace.equals(TTIds.MODID)) {
             return;
         }
         for (Map.Entry<Identifier, byte[]> entry : entries().entrySet()) {
@@ -165,7 +165,7 @@ public final class WandAssemblyPackResources implements PackResources {
 
     @Override
     public Set<String> getNamespaces(PackType type) {
-        return type == PackType.SERVER_DATA ? Set.of(TCIds.MODID) : Set.of();
+        return type == PackType.SERVER_DATA ? Set.of(TTIds.MODID) : Set.of();
     }
 
     @Override

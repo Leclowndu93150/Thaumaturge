@@ -1,45 +1,81 @@
 {
-    "ambientocclusion": false,
-    "textures": {
-        "side": "thaumaturge:block/tube",
-        "particle": "thaumaturge:block/base_metal"
+ "parent": "block/block",
+ "textures": {
+  "fittings": "thaumaturge:block/tube_fittings",
+  "particle": "#fittings"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    3,
+    5
+   ],
+   "to": [
+    11,
+    5,
+    11
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
     },
-    "elements": [
-        {
-            "from": [6, 1.76, 6],
-            "to": [10, 5.76, 10],
-            "faces": {
-                "up": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                },
-                "down": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                },
-                "west": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                },
-                "east": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                },
-                "north": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                },
-                "south": {
-                    "uv": [12, 11, 16, 15],
-                    "texture": "#side",
-                    "tintindex": 0
-                }
-            }
-        }
-    ]
+    "south": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "east": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "west": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "up": {
+     "uv": [
+      4.0,
+      0.0,
+      7.0,
+      3.0
+     ],
+     "texture": "#fittings"
+    },
+    "down": {
+     "uv": [
+      4.0,
+      0.0,
+      7.0,
+      3.0
+     ],
+     "texture": "#fittings"
+    }
+   }
+  }
+ ],
+ "texture_size": [
+  32,
+  32
+ ]
 }

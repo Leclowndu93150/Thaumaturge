@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.data.model.warding;
 
 import com.leclowndu93150.thaumaturge.client.warding.WardedGlassUnbakedModel;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -22,10 +22,10 @@ public final class WardedGlassModelGenerator {
     private WardedGlassModelGenerator() {}
 
     public static void register(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        Block glass = TCBlocks.WARDED_GLASS.get();
+        Block glass = TTBlocks.WARDED_GLASS.get();
         blockModels.blockStateOutput.accept(new SingleModelDefinition(glass, WardedGlassUnbakedModel.INSTANCE));
         Identifier itemModel = ModelTemplates.CUBE_ALL.createWithSuffix(glass, ITEM_MODEL_SUFFIX, TextureMapping.cube(glass), blockModels.modelOutput);
-        itemModels.itemModelOutput.accept(TCItems.WARDED_GLASS.get(), ItemModelUtils.plainModel(itemModel));
+        itemModels.itemModelOutput.accept(TTItems.WARDED_GLASS.get(), ItemModelUtils.plainModel(itemModel));
     }
 
     private record SingleModelDefinition(Block block, BlockStateModel.Unbaked model) implements BlockModelDefinitionGenerator {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -69,7 +69,7 @@ final class GolemBeamCore {
         if (!level.isEmptyBlock(spot) && level.isEmptyBlock(spot.above())) {
             arcFoot = spot.immutable();
             arcPulses = ARC_PULSES + random.nextInt(ARC_PULSE_SPREAD);
-            golem.playSound(TCSounds.JACOBS.get(), HUM_VOLUME, 1.0F + (random.nextFloat() - random.nextFloat()) * HUM_WOBBLE);
+            golem.playSound(TTSounds.JACOBS.get(), HUM_VOLUME, 1.0F + (random.nextFloat() - random.nextFloat()) * HUM_WOBBLE);
         }
     }
 }

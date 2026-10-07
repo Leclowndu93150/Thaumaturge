@@ -1,10 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -18,10 +21,16 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockFluxScrubber extends BaseEntityBlock {
     public static final MapCodec<BlockFluxScrubber> CODEC = simpleCodec(BlockFluxScrubber::new);
+
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(box(0.0, 0.0, 0.0, 16.0, 16.0, 2.0), box(2.0, 2.0, 2.0, 14.0, 14.0, 10.0),
+            box(3.0, 3.0, 10.0, 13.0, 13.0, 12.0), box(4.0, 4.0, 12.0, 12.0, 12.0, 13.0), box(5.0, 5.0, 12.8, 11.0, 11.0, 13.4), box(6.0, 6.0, 13.4, 10.0, 10.0, 16.0)));
 
     public BlockFluxScrubber(BlockBehaviour.Properties properties) {
         super(properties);
@@ -59,12 +68,17 @@ public final class BlockFluxScrubber extends BaseEntityBlock {
     }
 
     @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPES.get(state.getValue(BlockStateProperties.FACING));
+    }
+
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityFluxScrubber(pos, state);
     }
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, TCBlockEntities.FLUX_SCRUBBER.get(), BlockEntityFluxScrubber::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, TTBlockEntities.FLUX_SCRUBBER.get(), BlockEntityFluxScrubber::serverTick);
     }
 }

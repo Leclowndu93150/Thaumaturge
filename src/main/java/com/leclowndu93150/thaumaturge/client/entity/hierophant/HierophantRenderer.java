@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity.hierophant;
 
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldritchHierophant;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -15,9 +15,9 @@ public final class HierophantRenderer extends MobRenderer<EntityEldritchHieropha
     private static final double CULLING_MARGIN = 3;
 
     public HierophantRenderer(EntityRendererProvider.Context context) {
-        super(context, new HierophantModel(context.bakeLayer(TCModelLayers.ELDRITCH_HIEROPHANT)), SHADOW_RADIUS);
+        super(context, new HierophantModel(context.bakeLayer(TTModelLayers.ELDRITCH_HIEROPHANT)), SHADOW_RADIUS);
         addLayer(new HierophantCastingLayer(this));
-        addLayer(new HierophantEyeLayer(this, context.bakeLayer(TCModelLayers.ELDRITCH_HIEROPHANT)));
+        addLayer(new HierophantEyeLayer(this, context.bakeLayer(TTModelLayers.ELDRITCH_HIEROPHANT)));
     }
 
     @Override

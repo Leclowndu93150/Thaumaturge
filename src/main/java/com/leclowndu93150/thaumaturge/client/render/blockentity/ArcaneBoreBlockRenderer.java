@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
 import com.leclowndu93150.thaumaturge.client.render.BoreDrillFx;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
@@ -22,13 +22,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockEntityArcaneBore, ArcaneBoreBlockRenderState> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/arcanebore.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/arcanebore.png");
     private static final double BEAM_REACH = 6.0;
 
     private final ArcaneBoreModel model;
 
     public ArcaneBoreBlockRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new ArcaneBoreModel(context.bakeLayer(TCModelLayers.ARCANE_BORE));
+        this.model = new ArcaneBoreModel(context.bakeLayer(TTModelLayers.ARCANE_BORE));
     }
 
     @Override
@@ -43,7 +43,8 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
         state.pitch = bore.renderPitch(partialTicks);
         state.digging = bore.digging() && bore.boreActive();
         int ticks = (int) (bore.boreLevel().getGameTime() % Integer.MAX_VALUE);
-        state.beamUvScroll = BoreDrillFx.beamUvScroll(ticks + partialTicks);
+        state.ageInTicks = ticks + partialTicks;
+        state.beamUvScroll = BoreDrillFx.beamUvScroll(state.ageInTicks);
         state.beamSpin = BoreDrillFx.beamSpin(bore.boreLevel().getGameTime(), partialTicks);
         state.tip = BoreDrillFx.tipOffset(state.yaw, state.pitch, BlockEntityArcaneBore.EYE_HEIGHT).add(0.5, 0.0, 0.5);
         state.tipFrame = BoreDrillFx.tipFrame(ticks);
@@ -57,6 +58,7 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0F, EntityModel.MODEL_Y_OFFSET, 0.0F);
         model.setAim(state.yaw, state.pitch);
+        model.animate(state.ageInTicks, state.digging, state.beamSpin);
         collector.submitModelPart(model.root(), poseStack, RenderTypes.entityTranslucent(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
         if (state.digging) {

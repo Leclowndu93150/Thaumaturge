@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
@@ -42,7 +42,7 @@ public final class ItemArcaneKey extends Item {
         }
         BlockPos origin = ArcaneAccess.lockOrigin(state, context.getClickedPos());
         GlobalPos target = GlobalPos.of(level.dimension(), origin);
-        GlobalPos link = stack.get(TCDataComponents.ARCANE_KEY_LINK.get());
+        GlobalPos link = stack.get(TTDataComponents.ARCANE_KEY_LINK.get());
         if (link == null) {
             return bind(serverLevel, origin, target, stack, player);
         }
@@ -72,7 +72,7 @@ public final class ItemArcaneKey extends Item {
             return InteractionResult.FAIL;
         }
         ItemStack boundKey = stack.copyWithCount(1);
-        boundKey.set(TCDataComponents.ARCANE_KEY_LINK.get(), target);
+        boundKey.set(TTDataComponents.ARCANE_KEY_LINK.get(), target);
         stack.consume(1, player);
         if (!player.getInventory().add(boundKey)) {
             player.drop(boundKey, false);

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.recipe;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeSerializers;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeSerializers;
 import com.mojang.serialization.MapCodec;
 import java.util.HashSet;
 import java.util.List;
@@ -61,8 +61,8 @@ public final class SalisMundusRecipe extends CustomRecipe {
                 }
                 redstone = true;
             } else {
-                AspectInstance aspect = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
-                if (!stack.is(TCItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
+                AspectInstance aspect = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+                if (!stack.is(TTItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
                     return false;
                 }
                 if (crystals.size() >= REQUIRED_CRYSTALS || !crystals.add(aspect.aspect().getKey().identifier())) {
@@ -75,7 +75,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input) {
-        return new ItemStack(TCItems.SALIS_MUNDUS.get());
+        return new ItemStack(TTItems.SALIS_MUNDUS.get());
     }
 
     @Override
@@ -100,15 +100,15 @@ public final class SalisMundusRecipe extends CustomRecipe {
 
     @Override
     public List<RecipeDisplay> display() {
-        SlotDisplay crystal = new SlotDisplay.ItemSlotDisplay(TCItems.ESSENTIA_CRYSTAL.get().builtInRegistryHolder());
+        SlotDisplay crystal = new SlotDisplay.ItemSlotDisplay(TTItems.ESSENTIA_CRYSTAL.get().builtInRegistryHolder());
         return List.of(new ShapelessCraftingRecipeDisplay(
                 List.of(new SlotDisplay.ItemSlotDisplay(Items.FLINT.builtInRegistryHolder()), new SlotDisplay.ItemSlotDisplay(Items.BOWL.builtInRegistryHolder()),
                         new SlotDisplay.TagSlotDisplay(Tags.Items.DUSTS_REDSTONE), crystal, crystal, crystal),
-                new SlotDisplay.ItemSlotDisplay(TCItems.SALIS_MUNDUS.get().builtInRegistryHolder()), new SlotDisplay.ItemSlotDisplay(Blocks.CRAFTING_TABLE.asItem().builtInRegistryHolder())));
+                new SlotDisplay.ItemSlotDisplay(TTItems.SALIS_MUNDUS.get().builtInRegistryHolder()), new SlotDisplay.ItemSlotDisplay(Blocks.CRAFTING_TABLE.asItem().builtInRegistryHolder())));
     }
 
     @Override
     public RecipeSerializer<SalisMundusRecipe> getSerializer() {
-        return TCRecipeSerializers.SALIS_MUNDUS.get();
+        return TTRecipeSerializers.SALIS_MUNDUS.get();
     }
 }

@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -33,11 +33,11 @@ public final class ElementalShovelItem extends Item implements IArchitect {
     }
 
     public static int getOrientation(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.TOOL_ORIENTATION.get(), 0);
+        return stack.getOrDefault(TTDataComponents.TOOL_ORIENTATION.get(), 0);
     }
 
     public static void cycleOrientation(ItemStack stack) {
-        stack.set(TCDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % ORIENTATION_COUNT);
+        stack.set(TTDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % ORIENTATION_COUNT);
     }
 
     @Override

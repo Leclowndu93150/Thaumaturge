@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.crucible;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -93,7 +93,7 @@ public class BlockCrucible extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.CRUCIBLE.get(), BlockEntityCrucible::staticTick);
+        return createTickerHelper(type, TTBlockEntities.CRUCIBLE.get(), BlockEntityCrucible::staticTick);
     }
 
     @Override

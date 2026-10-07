@@ -5,13 +5,13 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -65,7 +65,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     int bellows = -1;
 
     public BlockEntitySmelter(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.SMELTER.get(), worldPosition, blockState);
+        super(TTBlockEntities.SMELTER.get(), worldPosition, blockState);
     }
 
     protected BlockEntitySmelter(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState) {
@@ -196,7 +196,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                     ItemStack fuel = inventory.getResource(1).toStack(inventory.getAmountAsInt(1));
                     ItemStack copy = fuel.copy();
                     if (!fuel.isEmpty()) {
-                        if (fuel.is(TCItems.ALUMENTUM))
+                        if (fuel.is(TTItems.ALUMENTUM))
                             this.speedBoost = true;
 
                         Item item = fuel.getItem();
@@ -251,7 +251,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                 int amount = instance.amount();
 
                 for (int q = 0; q < amount; q++) {
-                    if (level.getRandom().nextFloat() > (Objects.equals(instance.aspect().getKey(), TCAspects.VITIUM) ? getEfficiency() * 0.66F : getEfficiency())) {
+                    if (level.getRandom().nextFloat() > (Objects.equals(instance.aspect().getKey(), TTAspects.VITIUM) ? getEfficiency() * 0.66F : getEfficiency())) {
                         aspects = aspects.reduce(instance.aspect(), 1);
                         flux++;
                     }
@@ -337,9 +337,9 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     public int getSmelterType() {
-        if (getBlockState().is(TCBlocks.SMELTER_VOID))
+        if (getBlockState().is(TTBlocks.SMELTER_VOID))
             return 2;
-        if (getBlockState().is(TCBlocks.SMELTER_THAUMIUM))
+        if (getBlockState().is(TTBlocks.SMELTER_THAUMIUM))
             return 1;
         return 0;
     }

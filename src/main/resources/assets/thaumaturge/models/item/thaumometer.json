@@ -1,6 +1,6 @@
 {
     "loader": "thaumaturge:mesh",
-    "model": "thaumaturge:models/mesh/scanner.tcmesh",
+    "model": "thaumaturge:models/mesh/scanner.ttmesh",
     "flip_v": true,
     "textures": {
         "body": "thaumaturge:item/scanner",

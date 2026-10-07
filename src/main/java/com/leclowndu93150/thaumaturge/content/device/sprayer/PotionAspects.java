@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.mixin.world.item.alchemy.PotionBrewingAccessor;
 import com.leclowndu93150.thaumaturge.mixin.world.item.alchemy.PotionBrewingMixAccessor;
@@ -43,7 +43,7 @@ final class PotionAspects {
                 for (AspectInstance entry : reagentAspects.entries()) {
                     result = result.add(entry.aspect(), entry.amount());
                 }
-                result = result.add(resolve(level, TCAspects.ALKIMIA.identifier()), ALKIMIA_PER_REAGENT);
+                result = result.add(resolve(level, TTAspects.ALKIMIA.identifier()), ALKIMIA_PER_REAGENT);
                 anyReagent = true;
             }
             AspectList reduced = AspectList.EMPTY;
@@ -56,7 +56,7 @@ final class PotionAspects {
             result = reduced;
         }
         if (!anyReagent) {
-            result = result.add(resolve(level, TCAspects.PRAECANTATIO.identifier()), FALLBACK_AMOUNT).add(resolve(level, TCAspects.ALKIMIA.identifier()), FALLBACK_AMOUNT);
+            result = result.add(resolve(level, TTAspects.PRAECANTATIO.identifier()), FALLBACK_AMOUNT).add(resolve(level, TTAspects.ALKIMIA.identifier()), FALLBACK_AMOUNT);
         }
         return cull(result, ASPECT_CAP);
     }

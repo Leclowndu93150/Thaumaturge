@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.alchemy;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.api.damagesource.TCDamageTypes;
+import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageTypes;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import java.util.List;
@@ -14,7 +14,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class LiquidDeathEvents {
     private static final int ASPECTS_PER_EXTRA_CRYSTAL = 10;
 
@@ -23,7 +23,7 @@ public final class LiquidDeathEvents {
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
-        if (!(entity.level() instanceof ServerLevel level) || !event.getSource().is(TCDamageTypes.DISSOLVE)) {
+        if (!(entity.level() instanceof ServerLevel level) || !event.getSource().is(TTDamageTypes.DISSOLVE)) {
             return;
         }
         AspectList aspects = EntityAspects.of(entity);

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,6 +23,6 @@ public record WispFlameParticleOptions(int color, float alpha, float scale, floa
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.WISP_FLAME.get();
+        return TTParticles.WISP_FLAME.get();
     }
 }

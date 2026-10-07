@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +53,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
     private int latticeBlocks;
 
     public BlockEntityCondenser(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.CONDENSER.get(), pos, state);
+        super(TTBlockEntities.CONDENSER.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityCondenser condenser) {
@@ -87,8 +87,8 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
             q = server.getRandom().nextInt(unclogged.size());
         }
         BlockPos p = unclogged.get(q);
-        if (server.getBlockState(p).is(TCBlocks.CONDENSER_LATTICE.get())) {
-            server.setBlock(p, TCBlocks.CONDENSER_LATTICE_DIRTY.get().defaultBlockState(), Block.UPDATE_ALL);
+        if (server.getBlockState(p).is(TTBlocks.CONDENSER_LATTICE.get())) {
+            server.setBlock(p, TTBlocks.CONDENSER_LATTICE_DIRTY.get().defaultBlockState(), Block.UPDATE_ALL);
             latticeCount = -1.0F;
         }
     }
@@ -109,7 +109,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
             if (aspect == null) {
                 continue;
             }
-            if (aspect.is(TCAspects.VITIUM)) {
+            if (aspect.is(TTAspects.VITIUM)) {
                 makeLatticeDirty(server);
             } else {
                 essentia += ic.takeEssentia(aspect, 1, face.getOpposite());
@@ -155,8 +155,8 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
             }
             BlockPos p2 = pos.relative(face);
             BlockState bs = level.getBlockState(p2);
-            boolean lattice = bs.is(TCBlocks.CONDENSER_LATTICE.get());
-            boolean latticeDirty = bs.is(TCBlocks.CONDENSER_LATTICE_DIRTY.get());
+            boolean lattice = bs.is(TTBlocks.CONDENSER_LATTICE.get());
+            boolean latticeDirty = bs.is(TTBlocks.CONDENSER_LATTICE_DIRTY.get());
             if (skip && latticeDirty) {
                 clogged = true;
             }
@@ -166,7 +166,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
             if (history.contains(p2)) {
                 continue;
             }
-            if (face == Direction.DOWN && bs.is(TCBlocks.CONDENSER.get())) {
+            if (face == Direction.DOWN && bs.is(TTBlocks.CONDENSER.get())) {
                 latticeCount = -99.0F;
                 return;
             }
@@ -217,7 +217,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
 
     @Override
     public @Nullable Holder<IAspect> getEssentiaType(Direction face) {
-        return face == Direction.DOWN && flux > 0 && level != null ? level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM) : null;
+        return face == Direction.DOWN && flux > 0 && level != null ? level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM) : null;
     }
 
     @Override
@@ -227,7 +227,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face) || aspect != null && !aspect.is(TCAspects.VITIUM)) {
+        if (!canOutputTo(face) || aspect != null && !aspect.is(TTAspects.VITIUM)) {
             return 0;
         }
         int amt = Math.min(amount, flux);
@@ -243,7 +243,7 @@ public final class BlockEntityCondenser extends BlockEntity implements IEssentia
         if (!canInputFrom(face)) {
             return 0;
         }
-        if (aspect != null && aspect.is(TCAspects.VITIUM)) {
+        if (aspect != null && aspect.is(TTAspects.VITIUM)) {
             if (level instanceof ServerLevel server) {
                 makeLatticeDirty(server);
             }

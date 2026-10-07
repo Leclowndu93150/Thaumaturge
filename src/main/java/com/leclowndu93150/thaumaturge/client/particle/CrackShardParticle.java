@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class CrackShardParticle extends TCParticle {
+public final class CrackShardParticle extends TTParticle {
     private static final int TOTAL_FRAMES = 12;
     private static final int FRAMES_PER_VARIANT = 3;
     private static final float FRICTION = 0.8F;
@@ -29,7 +29,7 @@ public final class CrackShardParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<CrackShardParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("crack_shard");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("crack_shard");
 
         @Override
         public Particle createParticle(CrackShardParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

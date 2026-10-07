@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
 import com.leclowndu93150.thaumaturge.client.particle.ParticleSheet;
-import com.leclowndu93150.thaumaturge.client.particle.TCParticleSheets;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.particle.TTParticleSheets;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -21,8 +21,8 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public final class NitorItemSpecialRenderer implements NoDataSpecialModelRenderer {
-    private static final ParticleSheet CORE = TCParticleSheets.sheet("nitor_core");
-    private static final ParticleSheet FLAME = TCParticleSheets.sheet("wisp_flame");
+    private static final ParticleSheet CORE = TTParticleSheets.sheet("nitor_core");
+    private static final ParticleSheet FLAME = TTParticleSheets.sheet("wisp_flame");
     private static final int FLAME_COUNT = 6;
     private static final float FLAME_LIFETIME = 12.0F;
 
@@ -69,7 +69,7 @@ public final class NitorItemSpecialRenderer implements NoDataSpecialModelRendere
     }
 
     private static void submitQuad(PoseStack poseStack, SubmitNodeCollector collector, ParticleSheet sheet, float radius, int tint, float u0, float u1) {
-        collector.submitCustomGeometry(poseStack, TCFlatRenderTypes.entityAdditiveFlat(sheet.texture()), (pose, buffer) -> {
+        collector.submitCustomGeometry(poseStack, TTFlatRenderTypes.entityAdditiveFlat(sheet.texture()), (pose, buffer) -> {
             vertex(pose, buffer, -radius, -radius, u0, 1.0F, tint);
             vertex(pose, buffer, -radius, radius, u0, 0.0F, tint);
             vertex(pose, buffer, radius, radius, u1, 0.0F, tint);

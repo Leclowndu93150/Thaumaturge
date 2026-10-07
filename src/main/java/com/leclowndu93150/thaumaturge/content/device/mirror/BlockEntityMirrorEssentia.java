@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.content.infusion.EssentiaSources;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +22,7 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
     private @Nullable BlockPos targetSourcesCenter;
 
     public BlockEntityMirrorEssentia(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.MIRROR_ESSENTIA.get(), pos, state);
+        super(TTBlockEntities.MIRROR_ESSENTIA.get(), pos, state);
     }
 
     @Override

@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class FocusCloudParticle extends TCParticle {
+public final class FocusCloudParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 20;
     private static final float PEAK_ALPHA = 0.66F;
@@ -38,7 +38,7 @@ public final class FocusCloudParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("focus_cloud");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("focus_cloud");
 
         @Override
         public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

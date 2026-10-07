@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import java.util.Objects;
@@ -20,7 +20,7 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     private @Nullable ResourceKey<IAspect> aspectFilter;
 
     public BlockEntityTubeFilter(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.TUBE_FILTER.get(), pos, state);
+        super(TTBlockEntities.TUBE_FILTER.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspectFilter() {

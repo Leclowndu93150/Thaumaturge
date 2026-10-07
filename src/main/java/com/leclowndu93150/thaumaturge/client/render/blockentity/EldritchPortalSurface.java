@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,10 +13,10 @@ import net.minecraft.resources.Identifier;
 import org.joml.Matrix4fc;
 
 public final class EldritchPortalSurface {
-    public static final Identifier TUNNEL_TEXTURE = TCIds.rl("textures/misc/tunnel.png");
-    public static final Identifier PARTICLE_FIELD_TEXTURE = TCIds.rl("textures/misc/particlefield.png");
+    public static final Identifier TUNNEL_TEXTURE = TTIds.rl("textures/misc/tunnel.png");
+    public static final Identifier PARTICLE_FIELD_TEXTURE = TTIds.rl("textures/misc/particlefield.png");
 
-    public static final RenderType SURFACE = RenderType.create("tc_eldritch_portal_surface", RenderSetup.builder(TCRenderPipelines.PORTAL_SURFACE)
+    public static final RenderType SURFACE = RenderType.create("tc_eldritch_portal_surface", RenderSetup.builder(TTRenderPipelines.PORTAL_SURFACE)
             .withTexture("Sampler0", PARTICLE_FIELD_TEXTURE, () -> RenderSystem.getSamplerCache().getRepeat(FilterMode.LINEAR)).withTexture("Sampler1", TUNNEL_TEXTURE).createRenderSetup());
 
     private EldritchPortalSurface() {}

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import net.minecraft.core.BlockPos;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundGolemPressPayload(BlockPos pos, GolemProperties props, boolean craft) implements CustomPacketPayload {
-    public static final Type<ServerboundGolemPressPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "golem_press"));
+    public static final Type<ServerboundGolemPressPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "golem_press"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundGolemPressPayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC, ServerboundGolemPressPayload::pos,
             GolemProperties.STREAM_CODEC, ServerboundGolemPressPayload::props, ByteBufCodecs.BOOL, ServerboundGolemPressPayload::craft, ServerboundGolemPressPayload::new);

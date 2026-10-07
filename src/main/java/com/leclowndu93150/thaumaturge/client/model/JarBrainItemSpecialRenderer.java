@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.BrainModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.JarBrineModel;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,8 +19,8 @@ import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 public final class JarBrainItemSpecialRenderer implements NoDataSpecialModelRenderer {
-    private static final Identifier TEX_BRAIN = TCIds.rl("textures/entity/brain2.png");
-    private static final Identifier TEX_BRINE = TCIds.rl("textures/entity/jarbrine.png");
+    private static final Identifier TEX_BRAIN = TTIds.rl("textures/entity/brain2.png");
+    private static final Identifier TEX_BRINE = TTIds.rl("textures/entity/jarbrine.png");
     private static final float BRAIN_SCALE = 0.4F;
     private static final float BRAIN_LIFT = -0.77F;
 
@@ -42,7 +42,7 @@ public final class JarBrainItemSpecialRenderer implements NoDataSpecialModelRend
         poseStack.translate(0.0F, BRAIN_LIFT, 0.0F);
         poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
         poseStack.scale(BRAIN_SCALE, BRAIN_SCALE, BRAIN_SCALE);
-        collector.submitModelPart(brain.root, poseStack, RenderTypes.entityCutout(TEX_BRAIN), lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
+        collector.submitModelPart(brain.root(), poseStack, RenderTypes.entityCutout(TEX_BRAIN), lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
         poseStack.popPose();
 
         collector.submitModelPart(brine.root, poseStack, RenderTypes.entityTranslucent(TEX_BRINE), lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
@@ -60,8 +60,8 @@ public final class JarBrainItemSpecialRenderer implements NoDataSpecialModelRend
 
         @Override
         public @Nullable SpecialModelRenderer<Void> bake(SpecialModelRenderer.BakingContext context) {
-            return new JarBrainItemSpecialRenderer(new BrainModel(context.entityModelSet().bakeLayer(TCModelLayers.BRAIN)),
-                    new JarBrineModel(context.entityModelSet().bakeLayer(TCModelLayers.JAR_BRINE)));
+            return new JarBrainItemSpecialRenderer(new BrainModel(context.entityModelSet().bakeLayer(TTModelLayers.BRAIN)),
+                    new JarBrineModel(context.entityModelSet().bakeLayer(TTModelLayers.JAR_BRINE)));
         }
 
         @Override

@@ -1,9 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -16,17 +15,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class BlockTube extends BlockEssentiaTransport {
     public static final MapCodec<BlockTube> CODEC = simpleCodec(BlockTube::new);
 
-    private static final double CORE_MIN = 5.0 / 16.0;
-    private static final double CORE_MAX = 11.0 / 16.0;
-
     public BlockTube(BlockBehaviour.Properties properties) {
-        super(properties);
+        this(properties, TubeGeometry.PIPE);
+    }
+
+    protected BlockTube(BlockBehaviour.Properties properties, TubeGeometry geometry) {
+        super(properties, geometry);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class BlockTube extends BlockEssentiaTransport {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide())
             return null;
-        return createTickerHelper(type, TCBlockEntities.TUBE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+        return createTickerHelper(type, TTBlockEntities.TUBE.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 
     @Override
@@ -68,8 +67,8 @@ public class BlockTube extends BlockEssentiaTransport {
             return InteractionResult.SUCCESS;
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTube tube))
             return InteractionResult.PASS;
-        int subHit = resolveSubHit(hit, pos);
-        if (subHit == 6 && !tube.isSideOpen(hit.getDirection())) {
+        int subHit = resolveSubHit(state, hit, pos);
+        if (subHit == TubeGeometry.CORE_HIT && !tube.isSideOpen(hit.getDirection())) {
             subHit = hit.getDirection().ordinal();
         }
         if (tube.handleCasterClick(subHit)) {
@@ -78,22 +77,5 @@ public class BlockTube extends BlockEssentiaTransport {
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
-    }
-
-    public static int resolveSubHit(BlockHitResult hit, BlockPos pos) {
-        Vec3 local = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
-        if (local.y < CORE_MIN)
-            return Direction.DOWN.ordinal();
-        if (local.y > CORE_MAX)
-            return Direction.UP.ordinal();
-        if (local.z < CORE_MIN)
-            return Direction.NORTH.ordinal();
-        if (local.z > CORE_MAX)
-            return Direction.SOUTH.ordinal();
-        if (local.x < CORE_MIN)
-            return Direction.WEST.ordinal();
-        if (local.x > CORE_MAX)
-            return Direction.EAST.ordinal();
-        return 6;
     }
 }

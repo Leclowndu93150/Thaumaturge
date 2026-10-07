@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
 import com.leclowndu93150.thaumaturge.content.essentia.IBellowsPower;
 import com.leclowndu93150.thaumaturge.mixin.world.level.block.entity.AbstractFurnaceBlockEntityAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -21,7 +21,7 @@ public final class BlockEntityBellows extends BlockEntity implements IBellowsPow
     private static final float PUFF_PITCH_SPREAD = 0.08F;
 
     public BlockEntityBellows(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.BELLOWS.get(), pos, state);
+        super(TTBlockEntities.BELLOWS.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityBellows bellows) {

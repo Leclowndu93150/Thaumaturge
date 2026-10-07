@@ -1,78 +1,49 @@
 {
-  "parent": "minecraft:block/block",
-  "ambientocclusion": false,
-  "textures": {
-    "side": "thaumaturge:block/condenser_lattice",
-    "particle": "thaumaturge:block/condenser_lattice"
-  },
-  "elements": [
-    {
-      "from": [
-        5,
-        5,
-        5
-      ],
-      "to": [
-        11,
-        11,
-        11
-      ],
-      "faces": {
-        "up": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        },
-        "down": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        },
-        "west": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        },
-        "east": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        },
-        "north": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        },
-        "south": {
-          "uv": [
-            9,
-            9,
-            15,
-            15
-          ],
-          "texture": "#side"
-        }
-      }
-    }
-  ]
+	"parent": "minecraft:block/block",
+	"ambientocclusion": false,
+	"textures": {
+		"0": "thaumaturge:block/condenser_lattice",
+		"particle": "thaumaturge:block/condenser_lattice"
+	},
+	"elements": [
+		{
+			"name": "core_slab_x",
+			"from": [5, 6, 6],
+			"to": [11, 10, 10],
+			"faces": {
+				"north": {"uv": [9, 10, 15, 14], "texture": "#0"},
+				"east": {"uv": [10, 10, 14, 14], "texture": "#0"},
+				"south": {"uv": [9, 10, 15, 14], "texture": "#0"},
+				"west": {"uv": [10, 10, 14, 14], "texture": "#0"},
+				"up": {"uv": [9, 10, 15, 14], "texture": "#0"},
+				"down": {"uv": [9, 10, 15, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "core_slab_y",
+			"from": [6, 5, 6],
+			"to": [10, 11, 10],
+			"faces": {
+				"north": {"uv": [10, 9, 14, 15], "texture": "#0"},
+				"east": {"uv": [10, 9, 14, 15], "texture": "#0"},
+				"south": {"uv": [10, 9, 14, 15], "texture": "#0"},
+				"west": {"uv": [10, 9, 14, 15], "texture": "#0"},
+				"up": {"uv": [10, 10, 14, 14], "texture": "#0"},
+				"down": {"uv": [10, 10, 14, 14], "texture": "#0"}
+			}
+		},
+		{
+			"name": "core_slab_z",
+			"from": [6, 6, 5],
+			"to": [10, 10, 11],
+			"faces": {
+				"north": {"uv": [10, 10, 14, 14], "texture": "#0"},
+				"east": {"uv": [9, 10, 15, 14], "texture": "#0"},
+				"south": {"uv": [10, 10, 14, 14], "texture": "#0"},
+				"west": {"uv": [9, 10, 15, 14], "texture": "#0"},
+				"up": {"uv": [10, 9, 14, 15], "texture": "#0"},
+				"down": {"uv": [10, 9, 14, 15], "texture": "#0"}
+			}
+		}
+	]
 }

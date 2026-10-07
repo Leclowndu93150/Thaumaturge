@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
@@ -25,8 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 
 public final class CasterHudOverlay implements GuiLayer {
-    private static final Identifier HUD = TCIds.rl("textures/gui/hud.png");
-    private static final Identifier HUD_WAND = TCIds.rl("textures/gui/hud_wand.png");
+    private static final Identifier HUD = TTIds.rl("textures/gui/hud.png");
+    private static final Identifier HUD_WAND = TTIds.rl("textures/gui/hud_wand.png");
 
     private static final int[] previousVis = new int[WandEconomy.PRIMAL_COUNT];
     private static long changeSyncTime;
@@ -142,7 +142,7 @@ public final class CasterHudOverlay implements GuiLayer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(ANCHOR, dialY + ANCHOR);
         int count = 0;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             int amt = WandVisHelper.getVis(casterStack, primal);
             float primalCost = costSplit == null ? 0.0F : costSplit.getOrDefault(primal, 0) * costModifier / WandEconomy.CENTIVIS_PER_VIS;
             graphics.pose().pushMatrix();

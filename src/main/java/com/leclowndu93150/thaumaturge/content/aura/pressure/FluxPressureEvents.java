@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -14,7 +14,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class FluxPressureEvents {
     private static final double STACK_SUPPRESSION_RANGE_SQ = 32.0 * 32.0;
     private static final float COST_EPSILON = 0.001F;
@@ -28,7 +28,7 @@ public final class FluxPressureEvents {
 
     public static void queue(ServerLevel level, ChunkPos chunkPos) {
         if (isEnabled()) {
-            level.getData(TCAttachments.FLUX_PRESSURE).queue(new BlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ()));
+            level.getData(TTAttachments.FLUX_PRESSURE).queue(new BlockPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ()));
         }
     }
 
@@ -36,7 +36,7 @@ public final class FluxPressureEvents {
         if (!isEnabled()) {
             return false;
         }
-        FluxPressureState state = level.getData(TCAttachments.FLUX_PRESSURE);
+        FluxPressureState state = level.getData(TTAttachments.FLUX_PRESSURE);
         if (!event.allowedNearTaint() && (TaintHelper.isNearTaintSeed(level, origin) || state.hasRainNear(origin, STACK_SUPPRESSION_RANGE_SQ))) {
             return false;
         }
@@ -52,7 +52,7 @@ public final class FluxPressureEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        FluxPressureState state = level.getExistingDataOrNull(TCAttachments.FLUX_PRESSURE.get());
+        FluxPressureState state = level.getExistingDataOrNull(TTAttachments.FLUX_PRESSURE.get());
         if (state == null) {
             return;
         }

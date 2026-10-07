@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +53,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
     private float prevPitch;
 
     public BlockEntityArcaneBore(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ARCANE_BORE.get(), pos, state);
+        super(TTBlockEntities.ARCANE_BORE.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityArcaneBore bore) {
@@ -179,7 +179,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
 
     @Override
     public FakePlayer boreDigger(ServerLevel level) {
-        return TCFakePlayer.BORE.at(level, borePosition().add(0.0, EYE_HEIGHT, 0.0), yaw, pitch);
+        return TTFakePlayer.BORE.at(level, borePosition().add(0.0, EYE_HEIGHT, 0.0), yaw, pitch);
     }
 
     @Override

@@ -6,11 +6,11 @@ import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShielding;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionInput;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.authlib.GameProfile;
 import java.util.List;
 import java.util.UUID;
@@ -31,11 +31,11 @@ public final class RunicShieldingTests {
     }
 
     private static InfusionRunicAugmentRecipe recipe(GameTestHelper helper) {
-        return helper.getLevel().getServer().getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == TCRecipeTypes.RUNIC_AUGMENT.get()).findFirst()
+        return helper.getLevel().getServer().getRecipeManager().getRecipes().stream().filter(holder -> holder.value().getType() == TTRecipeTypes.RUNIC_AUGMENT.get()).findFirst()
                 .map(holder -> (InfusionRunicAugmentRecipe) holder.value()).orElse(null);
     }
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("runic/augment_recipe_scaling", 20, helper -> {
             InfusionRunicAugmentRecipe recipe = recipe(helper);
             if (recipe == null) {
@@ -43,7 +43,7 @@ public final class RunicShieldingTests {
                 return;
             }
             ItemStack fresh = new ItemStack(Items.IRON_CHESTPLATE);
-            InfusionInput freshInput = new InfusionInput(fresh, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get()), new ItemStack(TCItems.AMBER.get())));
+            InfusionInput freshInput = new InfusionInput(fresh, List.of(new ItemStack(TTItems.SALIS_MUNDUS.get()), new ItemStack(TTItems.AMBER.get())));
             if (!recipe.matches(freshInput, helper.getLevel())) {
                 helper.fail("Fresh chestplate + salis + amber did not match");
                 return;
@@ -62,7 +62,7 @@ public final class RunicShieldingTests {
                 helper.fail("Charged item matched without the extra amber");
                 return;
             }
-            InfusionInput scaledInput = new InfusionInput(once, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get()), new ItemStack(TCItems.AMBER.get()), new ItemStack(TCItems.AMBER.get())));
+            InfusionInput scaledInput = new InfusionInput(once, List.of(new ItemStack(TTItems.SALIS_MUNDUS.get()), new ItemStack(TTItems.AMBER.get()), new ItemStack(TTItems.AMBER.get())));
             if (!recipe.matches(scaledInput, helper.getLevel())) {
                 helper.fail("Charged item did not match with the extra amber");
                 return;
@@ -88,11 +88,11 @@ public final class RunicShieldingTests {
             player.snapTo(helper.absolutePos(new BlockPos(2, 1, 2)).getX() + 0.5, helper.absolutePos(new BlockPos(2, 1, 2)).getY(), helper.absolutePos(new BlockPos(2, 1, 2)).getZ() + 0.5, 0.0F, 0.0F);
             player.setAbsorptionAmount(0.0F);
             ItemStack armor = new ItemStack(Items.IRON_CHESTPLATE);
-            armor.set(TCDataComponents.RUNIC_CHARGE.get(), 3);
+            armor.set(TTDataComponents.RUNIC_CHARGE.get(), 3);
             player.setItemSlot(EquipmentSlot.CHEST, armor);
             AuraHelper.addVis(helper.getLevel(), player.blockPosition(), 20.0F);
             float visBefore = AuraHelper.getVis(helper.getLevel(), player.blockPosition());
-            RunicShieldState state = player.getData(TCAttachments.RUNIC_SHIELD.get());
+            RunicShieldState state = player.getData(TTAttachments.RUNIC_SHIELD.get());
             state.maxCharge = 0;
             state.lastCharge = 0;
             state.nextCycle = 0;

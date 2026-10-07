@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -20,7 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusMediumSpellBat implements FocusMedium {
-    private static final Identifier KEY = TCIds.rl("spellbat");
+    private static final Identifier KEY = TTIds.rl("spellbat");
 
     private static final int COMPLEXITY = 8;
     private static final float POWER_MULTIPLIER = 0.33F;
@@ -32,12 +32,12 @@ public final class FocusMediumSpellBat implements FocusMedium {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_spellbat"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_spellbat"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.BESTIA;
+        return TTAspects.BESTIA;
     }
 
     @Override

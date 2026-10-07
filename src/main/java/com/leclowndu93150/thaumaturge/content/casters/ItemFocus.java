@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.content.focus.medium.FocusMediumRoot;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -44,22 +44,22 @@ public class ItemFocus extends Item {
     }
 
     public static void setPackage(ItemStack focusStack, FocusPackage core) {
-        focusStack.set(TCDataComponents.FOCUS_PACKAGE.get(), core);
+        focusStack.set(TTDataComponents.FOCUS_PACKAGE.get(), core);
     }
 
     public static @Nullable FocusPackage getPackage(ItemStack focusStack) {
         if (focusStack.isEmpty()) {
             return null;
         }
-        return focusStack.get(TCDataComponents.FOCUS_PACKAGE.get());
+        return focusStack.get(TTDataComponents.FOCUS_PACKAGE.get());
     }
 
     public static int getFocusColor(ItemStack focusStack) {
         FocusPackage core = getPackage(focusStack);
         if (core == null) {
-            ItemStackTemplate socketed = focusStack.get(TCDataComponents.SOCKETED_FOCUS.get());
+            ItemStackTemplate socketed = focusStack.get(TTDataComponents.SOCKETED_FOCUS.get());
             if (socketed != null) {
-                core = socketed.get(TCDataComponents.FOCUS_PACKAGE.get());
+                core = socketed.get(TTDataComponents.FOCUS_PACKAGE.get());
             }
         }
         return getFocusColor(core);

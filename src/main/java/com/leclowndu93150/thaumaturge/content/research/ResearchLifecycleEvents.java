@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import net.minecraft.resources.Identifier;
@@ -9,7 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ResearchLifecycleEvents {
     private ResearchLifecycleEvents() {}
 
@@ -38,5 +38,5 @@ public final class ResearchLifecycleEvents {
         }
     }
 
-    private static final Identifier ENTER_OUTER_LANDS = TCIds.rl("enter_outer_lands");
+    private static final Identifier ENTER_OUTER_LANDS = TTIds.rl("enter_outer_lands");
 }

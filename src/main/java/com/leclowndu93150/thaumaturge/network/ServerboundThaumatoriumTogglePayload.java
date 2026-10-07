@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundThaumatoriumTogglePayload(BlockPos pos, Identifier recipeId) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundThaumatoriumTogglePayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("thaumatorium_toggle"));
+    public static final CustomPacketPayload.Type<ServerboundThaumatoriumTogglePayload> TYPE = new CustomPacketPayload.Type<>(TTIds.rl("thaumatorium_toggle"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundThaumatoriumTogglePayload> STREAM_CODEC = StreamCodec.composite(BlockPos.STREAM_CODEC,
             ServerboundThaumatoriumTogglePayload::pos, Identifier.STREAM_CODEC, ServerboundThaumatoriumTogglePayload::recipeId, ServerboundThaumatoriumTogglePayload::new);

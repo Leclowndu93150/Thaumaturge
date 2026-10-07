@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeFilter;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.client.color.block.BlockTintSources;
@@ -17,7 +17,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TubeFilterBlockColors {
     private static final int UNFILTERED = 0xFFFFFFFF;
 
@@ -25,7 +25,7 @@ public final class TubeFilterBlockColors {
 
     @SubscribeEvent
     public static void onRegisterBlockColors(RegisterColorHandlersEvent.BlockTintSources event) {
-        event.register(List.of(BlockTintSources.constant(UNFILTERED), new FilterTint()), TCBlocks.TUBE_FILTER.get());
+        event.register(List.of(BlockTintSources.constant(UNFILTERED), new FilterTint()), TTBlocks.TUBE_FILTER.get());
     }
 
     private static final class FilterTint implements BlockTintSource {

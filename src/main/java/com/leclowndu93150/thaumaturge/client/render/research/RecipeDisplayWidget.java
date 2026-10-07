@@ -7,15 +7,15 @@ import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintSource;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.client.screen.pip.BlockPreviews;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipeDisplay;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeDisplay;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.MultiblockRecipeDisplay;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipeDisplay;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -214,8 +214,8 @@ public final class RecipeDisplayWidget {
         graphics.pose().pushMatrix();
         graphics.pose().translate(cx, cy);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, WORKBENCH_PANEL_OFFSET_X, WORKBENCH_PANEL_OFFSET_Y, (float) WORKBENCH_PANEL_U, (float) WORKBENCH_PANEL_V,
-                WORKBENCH_PANEL_W, WORKBENCH_PANEL_H, WORKBENCH_PANEL_W, WORKBENCH_PANEL_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, WORKBENCH_PANEL_OFFSET_X, WORKBENCH_PANEL_OFFSET_Y, (float) WORKBENCH_PANEL_U, (float) WORKBENCH_PANEL_V,
+                WORKBENCH_PANEL_W, WORKBENCH_PANEL_H, WORKBENCH_PANEL_W, WORKBENCH_PANEL_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -223,8 +223,8 @@ public final class RecipeDisplayWidget {
         graphics.pose().pushMatrix();
         graphics.pose().translate(cx, cy);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, ARCANE_PANEL_OFFSET_X, ARCANE_PANEL_OFFSET_Y, (float) ARCANE_PANEL_U, (float) ARCANE_PANEL_V,
-                ARCANE_PANEL_W, ARCANE_PANEL_H, ARCANE_PANEL_W, ARCANE_PANEL_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, ARCANE_PANEL_OFFSET_X, ARCANE_PANEL_OFFSET_Y, (float) ARCANE_PANEL_U, (float) ARCANE_PANEL_V,
+                ARCANE_PANEL_W, ARCANE_PANEL_H, ARCANE_PANEL_W, ARCANE_PANEL_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -232,8 +232,8 @@ public final class RecipeDisplayWidget {
         graphics.pose().pushMatrix();
         graphics.pose().translate(cx, cy);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, SLOT_FRAME_OFFSET_X, SLOT_FRAME_OFFSET_Y, (float) SLOT_FRAME_U, (float) SLOT_FRAME_V, SLOT_FRAME_W,
-                SLOT_FRAME_H, SLOT_FRAME_W, SLOT_FRAME_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, SLOT_FRAME_OFFSET_X, SLOT_FRAME_OFFSET_Y, (float) SLOT_FRAME_U, (float) SLOT_FRAME_V, SLOT_FRAME_W,
+                SLOT_FRAME_H, SLOT_FRAME_W, SLOT_FRAME_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -241,8 +241,8 @@ public final class RecipeDisplayWidget {
         graphics.pose().pushMatrix();
         graphics.pose().translate(cx, cy);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, VIS_COST_OFFSET_X, VIS_COST_OFFSET_Y, (float) VIS_COST_U, (float) VIS_COST_V, VIS_COST_W, VIS_COST_H,
-                VIS_COST_W, VIS_COST_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, VIS_OVERLAY_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, VIS_COST_OFFSET_X, VIS_COST_OFFSET_Y, (float) VIS_COST_U, (float) VIS_COST_V, VIS_COST_W, VIS_COST_H,
+                VIS_COST_W, VIS_COST_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, VIS_OVERLAY_TINT);
         graphics.pose().popMatrix();
     }
 
@@ -449,7 +449,7 @@ public final class RecipeDisplayWidget {
     }
 
     private static boolean isBareCrystal(ItemStack stack) {
-        return stack.is(TCItems.ESSENTIA_CRYSTAL.get()) && stack.get(TCDataComponents.CRYSTAL_ASPECT.get()) == null;
+        return stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && stack.get(TTDataComponents.CRYSTAL_ASPECT.get()) == null;
     }
 
     private static final int CRUCIBLE_HEADER_Y = -29;
@@ -597,7 +597,7 @@ public final class RecipeDisplayWidget {
     }
 
     private static void blitOverlay(GuiGraphicsExtractor graphics, int ox, int oy, int u, int v, int w, int h) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, ox, oy, (float) u, (float) v, w, h, w, h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, ox, oy, (float) u, (float) v, w, h, w, h, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
     }
 
     private static List<AspectInstance> sortedAspects(AspectList aspects) {

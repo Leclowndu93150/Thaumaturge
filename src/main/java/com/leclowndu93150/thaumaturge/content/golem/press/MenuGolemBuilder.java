@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +41,7 @@ public final class MenuGolemBuilder extends AbstractContainerMenu {
     }
 
     private MenuGolemBuilder(int containerId, Inventory playerInventory, ItemStacksResourceHandler items, ContainerLevelAccess access) {
-        super(TCMenus.GOLEM_BUILDER.get(), containerId);
+        super(TTMenus.GOLEM_BUILDER.get(), containerId);
         this.access = access;
 
         addSlot(new ResourceHandlerSlot(items, items::set, 0, OUTPUT_X, OUTPUT_Y) {
@@ -88,7 +88,7 @@ public final class MenuGolemBuilder extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.GOLEM_BUILDER.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.GOLEM_BUILDER.get());
     }
 
     @Override

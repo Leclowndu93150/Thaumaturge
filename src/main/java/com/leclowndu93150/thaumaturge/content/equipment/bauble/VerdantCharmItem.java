@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -33,11 +33,11 @@ public final class VerdantCharmItem extends Item {
     private static final float FOOD_SATURATION = 0.3F;
 
     public VerdantCharmItem(Properties properties) {
-        super(properties.component(TCDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
+        super(properties.component(TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
     }
 
     public static int type(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
+        return stack.getOrDefault(TTDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
@@ -52,8 +52,8 @@ public final class VerdantCharmItem extends Item {
             player.removeEffect(MobEffects.POISON);
             return;
         }
-        if (player.getEffect(TCMobEffects.FLUX_TAINT) != null && RechargeAccess.consumeCharge(stack, player, FLUX_TAINT_COST)) {
-            player.removeEffect(TCMobEffects.FLUX_TAINT);
+        if (player.getEffect(TTMobEffects.FLUX_TAINT) != null && RechargeAccess.consumeCharge(stack, player, FLUX_TAINT_COST)) {
+            player.removeEffect(TTMobEffects.FLUX_TAINT);
             return;
         }
         int type = type(stack);

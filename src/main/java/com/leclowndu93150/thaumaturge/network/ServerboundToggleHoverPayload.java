@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ServerboundToggleHoverPayload() implements CustomPacketPayload {
     public static final ServerboundToggleHoverPayload INSTANCE = new ServerboundToggleHoverPayload();
 
-    public static final Type<ServerboundToggleHoverPayload> TYPE = new Type<>(TCIds.rl("toggle_hover"));
+    public static final Type<ServerboundToggleHoverPayload> TYPE = new Type<>(TTIds.rl("toggle_hover"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundToggleHoverPayload> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -34,7 +34,7 @@ public final class CrownFoliagePlacer extends FoliagePlacer {
 
     @Override
     protected FoliagePlacerType<?> type() {
-        return TCTreePlacers.CROWN_FOLIAGE.get();
+        return TTTreePlacers.CROWN_FOLIAGE.get();
     }
 
     @Override

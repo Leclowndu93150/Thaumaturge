@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -97,7 +97,7 @@ public class EntityCultistPortalLesser extends Monster {
         if (!this.isActive()) {
             if (this.tickCount % 10 == 0 && this.level().getNearestPlayer(this, ACTIVATION_RANGE) != null) {
                 this.setActive(true);
-                this.playSound(TCSounds.CRAFTSTART.get(), 1.0F, 1.0F);
+                this.playSound(TTSounds.CRAFTSTART.get(), 1.0F, 1.0F);
             }
         } else if (this.stageCounter-- <= 0) {
             Player player = this.level().getNearestPlayer(this, ACTIVATION_RANGE);
@@ -120,8 +120,8 @@ public class EntityCultistPortalLesser extends Monster {
     private void spawnMinion() {
         ServerLevel server = (ServerLevel) this.level();
         EntityCultist cultist = this.random.nextFloat() < KNIGHT_CHANCE
-                ? TCEntities.CULTIST_KNIGHT.get().create(server, EntitySpawnReason.MOB_SUMMONED)
-                : TCEntities.CULTIST_CLERIC.get().create(server, EntitySpawnReason.MOB_SUMMONED);
+                ? TTEntities.CULTIST_KNIGHT.get().create(server, EntitySpawnReason.MOB_SUMMONED)
+                : TTEntities.CULTIST_CLERIC.get().create(server, EntitySpawnReason.MOB_SUMMONED);
         if (cultist == null) {
             return;
         }
@@ -129,14 +129,14 @@ public class EntityCultistPortalLesser extends Monster {
         cultist.finalizeSpawn(server, server.getCurrentDifficultyAt(cultist.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
         server.addFreshEntity(cultist);
         cultist.spawnCultistArrivalParticles();
-        cultist.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);
+        cultist.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
         this.hurtServer(server, this.damageSources().fellOutOfWorld(), 5 + this.random.nextInt(5));
     }
 
     @Override
     public void playerTouch(Player player) {
         if (this.level() instanceof ServerLevel server && this.distanceToSqr(player) < TOUCH_RANGE_SQ && player.hurtServer(server, this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
-            this.playSound(TCSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
+            this.playSound(TTSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
         }
     }
 
@@ -182,17 +182,17 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.MONOLITH.get();
+        return TTSounds.MONOLITH.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.ZAP.get();
+        return TTSounds.ZAP.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.SHOCK.get();
+        return TTSounds.SHOCK.get();
     }
 
     @Override

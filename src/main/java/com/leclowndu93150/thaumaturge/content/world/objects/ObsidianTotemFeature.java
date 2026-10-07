@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -52,8 +52,8 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
         if (clearance < MIN_CLEARANCE) {
             return false;
         }
-        BlockState shaft = TCBlocks.OBSIDIAN_TOTEM.get().defaultBlockState();
-        level.setBlock(ground, TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), PLACE_FLAGS);
+        BlockState shaft = TTBlocks.OBSIDIAN_TOTEM.get().defaultBlockState();
+        level.setBlock(ground, TTBlocks.OBSIDIAN_TILE.get().defaultBlockState(), PLACE_FLAGS);
         int count = 1;
         boolean capped = false;
         while (!capped && count < MAX_HEIGHT && isClear(level, ground.above(count))) {
@@ -88,7 +88,7 @@ public final class ObsidianTotemFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static void placeCapNode(WorldGenLevel level, BlockPos pos, RandomSource random) {
-        level.setBlock(pos, TCBlocks.OBSIDIAN_TOTEM_CHARGED.get().defaultBlockState(), PLACE_FLAGS);
+        level.setBlock(pos, TTBlocks.OBSIDIAN_TOTEM_CHARGED.get().defaultBlockState(), PLACE_FLAGS);
         NodeGenerator.createRandomNodeAt(level, pos, random, false, true, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
     }
 }

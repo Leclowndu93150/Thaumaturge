@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class ShieldSparkParticle extends TCParticle {
+public final class ShieldSparkParticle extends TTParticle {
     private static final int FRAME_COUNT = 9;
 
     private final float startAlpha;
@@ -33,11 +33,11 @@ public final class ShieldSparkParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return this.additive ? TCParticleLayers.additive(this.sheet) : TCParticleLayers.translucent(this.sheet);
+        return this.additive ? TTParticleLayers.additive(this.sheet) : TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<ShieldSparkParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("shield_spark");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("shield_spark");
 
         @Override
         public Particle createParticle(ShieldSparkParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

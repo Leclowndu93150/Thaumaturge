@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -43,7 +43,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     private int status = STATUS_IDLE;
 
     public BlockEntityNodeTransducer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.NODE_TRANSDUCER.get(), pos, state);
+        super(TTBlockEntities.NODE_TRANSDUCER.get(), pos, state);
     }
 
     public int getCount() {

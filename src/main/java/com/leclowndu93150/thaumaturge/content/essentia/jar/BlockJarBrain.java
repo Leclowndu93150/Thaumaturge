@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +26,6 @@ import org.jspecify.annotations.Nullable;
 public final class BlockJarBrain extends BaseEntityBlock {
     public static final MapCodec<BlockJarBrain> CODEC = simpleCodec(BlockJarBrain::new);
 
-    private static final VoxelShape SHAPE = box(3.0, 0.0, 3.0, 13.0, 12.0, 13.0);
     private static final int RELEASE_EAT_DELAY = 40;
     private static final int MAX_RELEASE = 64;
 
@@ -41,12 +40,12 @@ public final class BlockJarBrain extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return BlockJar.SHAPE;
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return BlockJar.SHAPE;
     }
 
     @Override
@@ -69,13 +68,13 @@ public final class BlockJarBrain extends BaseEntityBlock {
                 jar.syncToClient();
             }
         } else {
-            level.playSound(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.2F, 1.0F);
+            level.playSound(player, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TTSounds.JAR.get(), SoundSource.BLOCKS, 0.2F, 1.0F);
         }
         return InteractionResult.SUCCESS;
     }
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.JAR_BRAIN.get(), level.isClientSide() ? BlockEntityJarBrain::clientTick : BlockEntityJarBrain::serverTick);
+        return createTickerHelper(type, TTBlockEntities.JAR_BRAIN.get(), level.isClientSide() ? BlockEntityJarBrain::clientTick : BlockEntityJarBrain::serverTick);
     }
 }

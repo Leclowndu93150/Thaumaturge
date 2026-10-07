@@ -5,9 +5,9 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -59,7 +59,7 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
     }
 
     public EntityFocusCloud(FocusPackage pack, LivingEntity caster, Trajectory trajectory, float radius, int durationSeconds) {
-        super(TCEntities.FOCUS_CLOUD.get(), caster.level());
+        super(TTEntities.FOCUS_CLOUD.get(), caster.level());
         this.focusPackage = pack;
         this.setPos(trajectory.source().x, trajectory.source().y, trajectory.source().z);
         this.setOwner(caster);
@@ -180,7 +180,7 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
         }
         for (int a = 0; a < radius; a++) {
             Identifier effectId = this.effects.get(this.random.nextInt(this.effects.size()));
-            this.level().addParticle(TCParticles.colorOf(TCParticles.FOCUS_CLOUD, FocusEngine.color(effectId)), this.getX() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
+            this.level().addParticle(TTParticles.colorOf(TTParticles.FOCUS_CLOUD, FocusEngine.color(effectId)), this.getX() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
                     this.getY() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR, this.getZ() + this.random.nextGaussian() * radius / 2.0 * PARTICLE_SPREAD_FACTOR,
                     this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION, this.random.nextGaussian() * PARTICLE_MOTION);
             if (FocusEngine.element(effectId) instanceof FocusEffect effect) {
@@ -194,7 +194,7 @@ public final class EntityFocusCloud extends Entity implements TraceableEntity, I
 
     private void applyToSurroundings(float radius) {
         long now = this.level().getGameTime();
-        FocusCloudCooldowns cooldowns = this.level().getData(TCAttachments.FOCUS_CLOUD_COOLDOWNS);
+        FocusCloudCooldowns cooldowns = this.level().getData(TTAttachments.FOCUS_CLOUD_COOLDOWNS);
         List<Trajectory> trajectories = new ArrayList<>();
         List<HitResult> targets = new ArrayList<>();
         for (Entity entity : this.level().getEntitiesOfClass(Entity.class, new AABB(this.getX(), this.getY(), this.getZ(), this.getX(), this.getY(), this.getZ()).inflate(radius),

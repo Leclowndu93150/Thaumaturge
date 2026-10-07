@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -22,11 +22,11 @@ public final class PhysicalFlux {
     private PhysicalFlux() {}
 
     public static boolean isPhysicalFlux(BlockState state) {
-        return state.is(TCBlockTags.PHYSICAL_FLUX);
+        return state.is(TTBlockTags.PHYSICAL_FLUX);
     }
 
     public static boolean isScrubbable(BlockState state) {
-        return state.is(TCBlockTags.FLUX_SCRUBBABLE);
+        return state.is(TTBlockTags.FLUX_SCRUBBABLE);
     }
 
     public static int amount(BlockGetter level, BlockPos pos) {
@@ -55,11 +55,11 @@ public final class PhysicalFlux {
     }
 
     public static boolean placeGoo(ServerLevel level, BlockPos pos, int amount) {
-        return place(level, pos, TCBlocks.FLUX_GOO.get(), amount);
+        return place(level, pos, TTBlocks.FLUX_GOO.get(), amount);
     }
 
     public static boolean placeGas(ServerLevel level, BlockPos pos, int amount) {
-        return place(level, pos, TCBlocks.FLUX_GAS.get(), amount);
+        return place(level, pos, TTBlocks.FLUX_GAS.get(), amount);
     }
 
     public static boolean spill(ServerLevel level, BlockPos origin, RandomSource random) {

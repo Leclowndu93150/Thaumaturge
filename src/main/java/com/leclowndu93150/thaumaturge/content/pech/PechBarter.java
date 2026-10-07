@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -25,7 +25,7 @@ public final class PechBarter {
         int budget = pech.getValue(offering);
         if (random.nextInt(GRUMPINESS_ROLL) <= budget / 2) {
             pech.setTamed(false);
-            pech.playSound(TCSounds.PECH_TRADE.get(), GRUMBLE_VOLUME, 1.0F);
+            pech.playSound(TTSounds.PECH_TRADE.get(), GRUMBLE_VOLUME, 1.0F);
         }
         budget += moodSwing(random);
         List<PechTrades.Entry> table = PechTrades.tradesFor(pech.getPechType(), registries);

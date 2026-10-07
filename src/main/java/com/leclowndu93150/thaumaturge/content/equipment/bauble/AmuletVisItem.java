@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
@@ -42,7 +42,7 @@ public final class AmuletVisItem extends Item {
         if (topUpWand(player)) {
             return;
         }
-        if (ModList.get().isLoaded(TCIds.CURIOS) && ThaumaturgeCuriosCompat.rechargeFirstCurio(player)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS) && ThaumaturgeCuriosCompat.rechargeFirstCurio(player)) {
             return;
         }
         for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -61,7 +61,7 @@ public final class AmuletVisItem extends Item {
             int max = WandVisHelper.getMaxVis(candidate);
             ResourceKey<IAspect> lowest = null;
             int lowestAmount = Integer.MAX_VALUE;
-            for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+            for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
                 int amount = WandVisHelper.getVis(candidate, primal);
                 if (amount < max && amount < lowestAmount) {
                     lowestAmount = amount;

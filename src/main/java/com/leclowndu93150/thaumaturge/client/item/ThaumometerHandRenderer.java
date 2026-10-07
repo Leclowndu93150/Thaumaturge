@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -24,7 +24,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ThaumometerHandRenderer {
     private static final float UNIT_SCALE = 0.9F;
     private static final float SWING_SCALE = 0.15F;
@@ -45,7 +45,7 @@ public final class ThaumometerHandRenderer {
     public static void onRenderHand(RenderHandEvent event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || !event.getItemStack().is(TCItems.THAUMOMETER.get())) {
+        if (player == null || !event.getItemStack().is(TTItems.THAUMOMETER.get())) {
             return;
         }
         if (event.getHand() != InteractionHand.MAIN_HAND || !player.getOffhandItem().isEmpty()) {
@@ -64,7 +64,7 @@ public final class ThaumometerHandRenderer {
         int light = event.getPackedLight();
         float partial = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
         float equip = event.getEquipProgress();
-        boolean scanning = player.isUsingItem() && player.getUseItem().is(TCItems.THAUMOMETER.get());
+        boolean scanning = player.isUsingItem() && player.getUseItem().is(TTItems.THAUMOMETER.get());
         float swing = scanning ? 0.0F : event.getSwingProgress();
         float sqrtSwing = Mth.sqrt(swing);
         float ySwing = -0.2F * Mth.sin(swing * (float) Math.PI) * SWING_SCALE;

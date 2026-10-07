@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.recipe.workbench;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -90,6 +90,6 @@ public class ArcaneShapelessCraftingRecipe extends ArcaneCraftingRecipe {
 
     public List<RecipeDisplay> display() {
         return List.of(new ArcaneCraftingRecipeDisplay(0, 0, true, this.ingredients.stream().map(Ingredient::display).map(d -> (SlotDisplay) d).toList(),
-                new SlotDisplay.ItemStackSlotDisplay(this.result), new SlotDisplay.ItemSlotDisplay(TCBlocks.ARCANE_WORKBENCH.get().asItem()), this.vis, crystalDisplays()));
+                new SlotDisplay.ItemStackSlotDisplay(this.result), new SlotDisplay.ItemSlotDisplay(TTBlocks.ARCANE_WORKBENCH.get().asItem()), this.vis, crystalDisplays()));
     }
 }

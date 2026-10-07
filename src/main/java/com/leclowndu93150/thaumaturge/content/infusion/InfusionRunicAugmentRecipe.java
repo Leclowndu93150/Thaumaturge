@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItemTags;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -61,11 +61,11 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
     }
 
     public static int charge(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.RUNIC_CHARGE.get(), 0);
+        return stack.getOrDefault(TTDataComponents.RUNIC_CHARGE.get(), 0);
     }
 
     public static boolean isShieldable(ItemStack stack) {
-        if (stack.is(TCItemTags.RUNIC_SHIELDABLE)) {
+        if (stack.is(TTItemTags.RUNIC_SHIELDABLE)) {
             return true;
         }
         Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
@@ -137,7 +137,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
 
     public ItemStack augmentedResult(ItemStack catalyst) {
         ItemStack out = catalyst.copyWithCount(1);
-        out.set(TCDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
+        out.set(TTDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
         return out;
     }
 
@@ -173,7 +173,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
     public ItemStack resultItem() {
         ItemStack base = displayCatalyst.items().findFirst().map(holder -> new ItemStack(holder.value())).orElse(ItemStack.EMPTY);
         if (!base.isEmpty()) {
-            base.set(TCDataComponents.RUNIC_CHARGE.get(), 1);
+            base.set(TTDataComponents.RUNIC_CHARGE.get(), 1);
         }
         return base;
     }
@@ -192,7 +192,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
         }
         List<RecipeDisplay> displays = new ArrayList<>(DISPLAY_LEVELS);
         for (int charge = 0; charge < DISPLAY_LEVELS; charge++) {
-            catalyst.set(TCDataComponents.RUNIC_CHARGE.get(), charge);
+            catalyst.set(TTDataComponents.RUNIC_CHARGE.get(), charge);
             SlotDisplay catalystDisplay = new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(catalyst));
             SlotDisplay resultDisplay = new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(augmentedResult(catalyst)));
             displays.add(new InfusionRecipeDisplay(catalystDisplay, scaledComponents(catalyst).stream().map(Ingredient::display).map(d -> (SlotDisplay) d).toList(), scaledAspects(catalyst),
@@ -213,7 +213,7 @@ public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
 
     @Override
     public RecipeType<InfusionRunicAugmentRecipe> getType() {
-        return TCRecipeTypes.RUNIC_AUGMENT.get();
+        return TTRecipeTypes.RUNIC_AUGMENT.get();
     }
 
     @Override

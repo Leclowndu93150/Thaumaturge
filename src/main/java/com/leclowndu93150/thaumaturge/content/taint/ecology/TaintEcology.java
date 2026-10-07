@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +23,7 @@ public final class TaintEcology {
 
     public static float getSaturation(ServerLevel level, BlockPos pos) {
         LevelChunk chunk = loadedChunk(level, pos);
-        TaintPressure pressure = chunk == null ? null : chunk.getExistingDataOrNull(TCAttachments.TAINT_PRESSURE.get());
+        TaintPressure pressure = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get());
         if (pressure == null) {
             return 0.0F;
         }
@@ -32,7 +32,7 @@ public final class TaintEcology {
     }
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.getBiome(pos).is(TCBiomeTags.IS_TAINTED) || getSaturation(level, pos) >= TAINTED_THRESHOLD;
+        return level.getBiome(pos).is(TTBiomeTags.IS_TAINTED) || getSaturation(level, pos) >= TAINTED_THRESHOLD;
     }
 
     public static float addPressure(ServerLevel level, BlockPos pos, float amount) {
@@ -68,20 +68,20 @@ public final class TaintEcology {
             return 0.0F;
         }
         long now = level.getGameTime();
-        TaintPressure existing = chunk.getExistingDataOrNull(TCAttachments.TAINT_PRESSURE.get());
+        TaintPressure existing = chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get());
         float current = existing == null ? 0.0F : existing.saturationAt(now, DECAY_PER_TICK);
         return store(chunk, now, Mth.clamp(current + delta, 0.0F, 1.0F), activeSeed);
     }
 
     private static float store(LevelChunk chunk, long gameTime, float saturation, boolean activeSeed) {
         if (saturation < MINIMUM_SATURATION) {
-            if (chunk.getExistingDataOrNull(TCAttachments.TAINT_PRESSURE.get()) != null) {
-                chunk.removeData(TCAttachments.TAINT_PRESSURE.get());
+            if (chunk.getExistingDataOrNull(TTAttachments.TAINT_PRESSURE.get()) != null) {
+                chunk.removeData(TTAttachments.TAINT_PRESSURE.get());
                 chunk.markUnsaved();
             }
             return 0.0F;
         }
-        TaintPressure pressure = chunk.getData(TCAttachments.TAINT_PRESSURE.get());
+        TaintPressure pressure = chunk.getData(TTAttachments.TAINT_PRESSURE.get());
         pressure.set(saturation, gameTime);
         if (activeSeed) {
             pressure.markActiveSeed(gameTime);

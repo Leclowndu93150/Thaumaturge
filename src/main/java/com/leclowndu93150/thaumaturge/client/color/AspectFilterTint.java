@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.color.item.ItemTintSource;
@@ -18,7 +18,7 @@ public record AspectFilterTint(int defaultColor) implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
-        ResourceKey<IAspect> aspect = stack.get(TCDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> aspect = stack.get(TTDataComponents.ASPECT_FILTER.get());
         if (aspect != null && level != null) {
             return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(aspect).map(holder -> 0xFF000000 | holder.value().color()).orElse(0xFF000000 | defaultColor);
         }

@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.api.recipe;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
-import com.leclowndu93150.thaumaturge.registry.TCIngredientTypes;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -35,7 +35,7 @@ public record FocusElementIngredient(Set<Identifier> elements) implements ICusto
             .validate(list -> list.isEmpty() ? DataResult.error(() -> "Focus ingredient needs at least one element") : DataResult.success(list)).fieldOf("elements")
             .forGetter(ingredient -> List.copyOf(ingredient.elements()))).apply(instance, list -> new FocusElementIngredient(Set.copyOf(list))));
 
-    private static final List<Holder<Item>> FOCUS_ITEMS = List.of(TCItems.FOCUS_1, TCItems.FOCUS_2, TCItems.FOCUS_3);
+    private static final List<Holder<Item>> FOCUS_ITEMS = List.of(TTItems.FOCUS_1, TTItems.FOCUS_2, TTItems.FOCUS_3);
 
     public FocusElementIngredient {
         elements = Set.copyOf(elements);
@@ -84,11 +84,11 @@ public record FocusElementIngredient(Set<Identifier> elements) implements ICusto
 
     @Override
     public IngredientType<?> getType() {
-        return TCIngredientTypes.FOCUS_ELEMENT.get();
+        return TTIngredientTypes.FOCUS_ELEMENT.get();
     }
 
     public List<ItemStack> displayStacks() {
-        FocusPackage.Builder builder = FocusPackage.builder().add(TCFocusElements.ROOT.getId());
+        FocusPackage.Builder builder = FocusPackage.builder().add(TTFocusElements.ROOT.getId());
         elements.stream().sorted().forEach(builder::add);
         FocusPackage sample = builder.build();
         return FOCUS_ITEMS.stream().map(item -> {

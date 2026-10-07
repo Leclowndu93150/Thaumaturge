@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.ExperienceOrbAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class BaubleEvents {
     private static final byte TOTEM_EVENT = 35;
     private static final int UNDYING_REGEN_TICKS = 900;
@@ -38,23 +38,23 @@ public final class BaubleEvents {
 
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TCIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TTIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TTItems.CLOUD_RING.get())) {
             return;
         }
-        long lastJump = player.getData(TCAttachments.CLOUD_JUMP_TIME);
+        long lastJump = player.getData(TTAttachments.CLOUD_JUMP_TIME);
         if (lastJump == 0L || player.level().getGameTime() - lastJump > CLOUD_JUMP_GRACE_WINDOW_TICKS) {
             return;
         }
-        player.setData(TCAttachments.CLOUD_JUMP_TIME, 0L);
+        player.setData(TTAttachments.CLOUD_JUMP_TIME, 0L);
         event.setDistance(Math.max(0.0, event.getDistance() - CLOUD_JUMP_GRACE_DISTANCE));
     }
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !ModList.get().isLoaded(TTIds.CURIOS)) {
             return;
         }
-        ItemStack charm = ThaumaturgeCuriosCompat.extractCurio(player, TCItems.CHARM_UNDYING.get());
+        ItemStack charm = ThaumaturgeCuriosCompat.extractCurio(player, TTItems.CHARM_UNDYING.get());
         if (charm.isEmpty()) {
             return;
         }
@@ -71,8 +71,8 @@ public final class BaubleEvents {
     @SubscribeEvent
     public static void onPickupXp(PlayerXpEvent.PickupXp event) {
         Player player = event.getEntity();
-        if (!(player instanceof ServerPlayer serverPlayer) || event.getOrb().getValue() <= 1 || !ModList.get().isLoaded(TCIds.CURIOS)
-                || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CURIOSITY_BAND.get())) {
+        if (!(player instanceof ServerPlayer serverPlayer) || event.getOrb().getValue() <= 1 || !ModList.get().isLoaded(TTIds.CURIOS)
+                || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TTItems.CURIOSITY_BAND.get())) {
             return;
         }
         int drained = event.getOrb().getValue() / 2;

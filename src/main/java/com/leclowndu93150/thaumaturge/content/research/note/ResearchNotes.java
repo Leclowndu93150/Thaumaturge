@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.research.note;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
@@ -11,10 +11,10 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItemTags;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -58,7 +58,7 @@ public final class ResearchNotes {
         }
         HolderLookup.RegistryLookup<IAspect> lookup = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
         AspectList fallback = AspectList.EMPTY;
-        for (ResourceKey<IAspect> primal : List.of(TCAspects.AER, TCAspects.IGNIS, TCAspects.AQUA)) {
+        for (ResourceKey<IAspect> primal : List.of(TTAspects.AER, TTAspects.IGNIS, TTAspects.AQUA)) {
             fallback = fallback.add(lookup.getOrThrow(primal), 1);
         }
         return fallback;
@@ -88,7 +88,7 @@ public final class ResearchNotes {
     }
 
     public static @Nullable ResearchNoteData dataOf(ItemStack stack) {
-        return stack.get(TCDataComponents.RESEARCH_NOTE.get());
+        return stack.get(TTDataComponents.RESEARCH_NOTE.get());
     }
 
     public static boolean hasNoteFor(Player player, Identifier learnKey) {
@@ -121,12 +121,12 @@ public final class ResearchNotes {
         consumeItem(player, Items.PAPER);
         AspectList anchors = anchors(player.registryAccess(), entry);
         ResearchNoteData data = NoteGenerator.generate(entryId, ordinal, anchors, entry.complexity(), player.getRandom());
-        ItemStack note = new ItemStack(TCItems.RESEARCH_NOTE.get());
-        note.set(TCDataComponents.RESEARCH_NOTE.get(), data);
+        ItemStack note = new ItemStack(TTItems.RESEARCH_NOTE.get());
+        note.set(TTDataComponents.RESEARCH_NOTE.get(), data);
         if (!player.getInventory().add(note)) {
             player.drop(note, false);
         }
-        player.level().playSound(null, player, TCSounds.WRITE.get(), SoundSource.UI, 0.5F, 1.0F);
+        player.level().playSound(null, player, TTSounds.WRITE.get(), SoundSource.UI, 0.5F, 1.0F);
         return true;
     }
 
@@ -134,7 +134,7 @@ public final class ResearchNotes {
         Inventory inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.is(TCItemTags.SCRIBING_TOOLS) && stack.getDamageValue() < stack.getMaxDamage()) {
+            if (stack.is(TTItemTags.SCRIBING_TOOLS) && stack.getDamageValue() < stack.getMaxDamage()) {
                 if (!simulate) {
                     stack.setDamageValue(stack.getDamageValue() + 1);
                 }

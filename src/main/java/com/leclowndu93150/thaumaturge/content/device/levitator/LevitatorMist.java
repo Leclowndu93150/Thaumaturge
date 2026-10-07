@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.levitator;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -26,7 +26,7 @@ public final class LevitatorMist {
         Vec3 push = facing.getUnitVec3();
         Vec3 origin = pos.getCenter().add(push.scale(FACE_INSET)).add(planeJitter(random, facing));
         Vec3 velocity = push.scale(STREAM_SPEED).add(random.triangle(0.0, STREAM_JITTER), random.triangle(0.0, STREAM_JITTER), random.triangle(0.0, STREAM_JITTER));
-        level.addParticle(TCParticles.LEVITATOR_MIST.get(), origin.x, origin.y, origin.z, velocity.x, velocity.y, velocity.z);
+        level.addParticle(TTParticles.LEVITATOR_MIST.get(), origin.x, origin.y, origin.z, velocity.x, velocity.y, velocity.z);
     }
 
     public static void cling(Level level, Entity rider) {
@@ -35,7 +35,7 @@ public final class LevitatorMist {
             return;
         }
         double halfWidth = rider.getBbWidth() * 0.5;
-        level.addParticle(TCParticles.LEVITATOR_MIST.get(), rider.getX() + random.triangle(0.0, halfWidth), rider.getY() + random.nextDouble() * rider.getBbHeight(),
+        level.addParticle(TTParticles.LEVITATOR_MIST.get(), rider.getX() + random.triangle(0.0, halfWidth), rider.getY() + random.nextDouble() * rider.getBbHeight(),
                 rider.getZ() + random.triangle(0.0, halfWidth), random.triangle(0.0, CLING_DRIFT), random.triangle(0.0, CLING_DRIFT), random.triangle(0.0, CLING_DRIFT));
     }
 

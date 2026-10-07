@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectEarth implements FocusEffect {
-    private static final Identifier KEY = TCIds.rl("earth");
+    private static final Identifier KEY = TTIds.rl("earth");
 
     private static final int DAMAGE_FACTOR = 2;
     private static final int POWER_COMPLEXITY_FACTOR = 3;
@@ -45,12 +45,12 @@ public final class FocusEffectEarth implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_elemental"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_elemental"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.TERRA;
+        return TTAspects.TERRA;
     }
 
     @Override

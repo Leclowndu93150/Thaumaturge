@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCPlacementModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTPlacementModifiers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -40,7 +40,7 @@ public final class ConfigNodeSpawnFilter extends PlacementFilter {
 
     @Override
     public PlacementModifierType<?> type() {
-        return TCPlacementModifiers.NODE_SPAWN_CHANCE.get();
+        return TTPlacementModifiers.NODE_SPAWN_CHANCE.get();
     }
 
     public enum Kind implements StringRepresentable {

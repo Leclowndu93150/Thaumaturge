@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
@@ -20,7 +20,7 @@ import snownee.jade.api.config.IPluginConfig;
 public enum NodeComponentProvider implements IBlockComponentProvider {
     INSTANCE;
 
-    private static final Identifier UID = TCIds.rl("node");
+    private static final Identifier UID = TTIds.rl("node");
 
     @Override
     public Identifier getUid() {

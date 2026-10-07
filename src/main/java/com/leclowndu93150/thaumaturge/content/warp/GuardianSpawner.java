@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.warp;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,7 +32,7 @@ public final class GuardianSpawner {
             if (!level.getBlockState(pos.below()).isCollisionShapeFullBlock(level, pos.below())) {
                 continue;
             }
-            EntityEldritchGuardian guardian = TCEntities.ELDRITCH_GUARDIAN.get().create(level, EntitySpawnReason.EVENT);
+            EntityEldritchGuardian guardian = TTEntities.ELDRITCH_GUARDIAN.get().create(level, EntitySpawnReason.EVENT);
             if (guardian == null) {
                 return;
             }
@@ -55,7 +55,7 @@ public final class GuardianSpawner {
             if (!level.getBlockState(pos.below()).isSolidRender()) {
                 continue;
             }
-            EntityCultistPortalLesser portal = TCEntities.CULTIST_PORTAL_LESSER.get().create(level, EntitySpawnReason.EVENT);
+            EntityCultistPortalLesser portal = TTEntities.CULTIST_PORTAL_LESSER.get().create(level, EntitySpawnReason.EVENT);
             if (portal == null) {
                 return;
             }

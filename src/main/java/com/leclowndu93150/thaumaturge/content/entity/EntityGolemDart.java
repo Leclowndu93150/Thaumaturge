@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
@@ -14,7 +14,7 @@ public final class EntityGolemDart extends AbstractArrow {
     }
 
     private EntityGolemDart(LivingEntity shooter) {
-        super(TCEntities.GOLEM_DART.get(), shooter, shooter.level(), new ItemStack(Items.ARROW), null);
+        super(TTEntities.GOLEM_DART.get(), shooter, shooter.level(), new ItemStack(Items.ARROW), null);
         pickup = Pickup.DISALLOWED;
     }
 

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -19,8 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FluxScrubberRenderer implements BlockEntityRenderer<BlockEntityFluxScrubber, FluxScrubberRenderState> {
-    private static final Identifier MODEL = TCIds.rl("models/mesh/flux_scrubber.tcmesh");
-    private static final RenderType TIP = RenderTypes.entityCutout(TCIds.rl("textures/block/flux_scrubber.png"));
+    private static final Identifier MODEL = TTIds.rl("models/mesh/flux_scrubber.ttmesh");
+    private static final RenderType TIP = RenderTypes.entityCutout(TTIds.rl("textures/block/flux_scrubber.png"));
     private static final String PART_TIP = "Tip";
     private static final float BOB_RATE = 8.0F;
     private static final float BOB_AMPLITUDE = 0.075F;
@@ -48,7 +48,7 @@ public final class FluxScrubberRenderer implements BlockEntityRenderer<BlockEnti
         poseStack.pushPose();
         LegacyFacingPose.apply(poseStack, state.facing);
         poseStack.translate(0.0F, 0.0F, -state.bob);
-        for (TCMeshPart part : GolemMeshes.get(MODEL).parts()) {
+        for (TTMeshPart part : GolemMeshes.get(MODEL).parts()) {
             if (PART_TIP.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, TIP, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
             }

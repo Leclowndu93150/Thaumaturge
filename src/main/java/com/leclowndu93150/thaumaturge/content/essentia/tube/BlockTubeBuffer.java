@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +22,7 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
     public static final MapCodec<BlockTubeBuffer> CODEC = simpleCodec(BlockTubeBuffer::new);
 
     public BlockTubeBuffer(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties, TubeGeometry.BUFFER);
     }
 
     @Override
@@ -60,7 +60,7 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide())
             return null;
-        return createTickerHelper(type, TCBlockEntities.TUBE_BUFFER.get(), (lvl, pos, st, buffer) -> buffer.tickServer(lvl, pos, st));
+        return createTickerHelper(type, TTBlockEntities.TUBE_BUFFER.get(), (lvl, pos, st, buffer) -> buffer.tickServer(lvl, pos, st));
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class BlockTubeBuffer extends BlockEssentiaTransport {
             return InteractionResult.SUCCESS;
         if (!(level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer buffer))
             return InteractionResult.PASS;
-        int subHit = BlockTube.resolveSubHit(hit, pos);
+        int subHit = resolveSubHit(state, hit, pos);
         if (buffer.handleCasterClick(subHit, player.isShiftKeyDown())) {
             player.swing(player.getUsedItemHand());
             return InteractionResult.SUCCESS;

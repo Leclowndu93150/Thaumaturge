@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusMod;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSplit;
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCImageButton;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.FocusElementNode;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
@@ -19,8 +19,8 @@ import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.network.ServerboundFocusDataPayload;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,14 +48,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class FocalManipulatorScreen extends AbstractTCContainerScreen<MenuFocalManipulator> {
-    private static final Identifier TEX = TCIds.rl("textures/gui/gui_wandtable.png");
-    private static final Identifier TEX2 = TCIds.rl("textures/gui/gui_wandtable2.png");
-    private static final Identifier TEX3 = TCIds.rl("textures/gui/gui_wandtable3.png");
-    private static final Identifier TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
-    private static final Identifier ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
-    private static final Identifier ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
-    private static final Identifier ROOT_KEY = Identifier.fromNamespaceAndPath(TCIds.MODID, "root");
+public final class FocalManipulatorScreen extends AbstractTTContainerScreen<MenuFocalManipulator> {
+    private static final Identifier TEX = TTIds.rl("textures/gui/gui_wandtable.png");
+    private static final Identifier TEX2 = TTIds.rl("textures/gui/gui_wandtable2.png");
+    private static final Identifier TEX3 = TTIds.rl("textures/gui/gui_wandtable3.png");
+    private static final Identifier TEX_BASE = TTIds.rl("textures/gui/gui_base.png");
+    private static final Identifier ICON_MEDIUM = TTIds.rl("textures/foci/_medium.png");
+    private static final Identifier ICON_EFFECT = TTIds.rl("textures/foci/_effect.png");
+    private static final Identifier ROOT_KEY = Identifier.fromNamespaceAndPath(TTIds.MODID, "root");
 
     private static final int GUI_SIZE = 231;
     private static final int ATLAS = 256;
@@ -86,10 +86,10 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
     private static final int LEVEL_ORB_W = 9;
     private static final int LEVEL_ORB_H = 9;
     private static final int STAT_ICON_UNTINTED = 0xFFFFFFFF;
-    private static final StatIcon ICON_COMPLEXITY = StatIcon.whole(TCIds.rl("textures/gui/complex.png"), STAT_ICON_UNTINTED);
+    private static final StatIcon ICON_COMPLEXITY = StatIcon.whole(TTIds.rl("textures/gui/complex.png"), STAT_ICON_UNTINTED);
     private static final StatIcon ICON_COST_XP = new StatIcon(Identifier.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png"), LEVEL_ORB_U, LEVEL_ORB_V, LEVEL_ORB_W,
             LEVEL_ORB_H, true, STAT_ICON_UNTINTED);
-    private static final StatIcon ICON_COST_VIS = StatIcon.whole(TCIds.rl("textures/item/essentia_crystal.png"), ARGB.opaque(ChatFormatting.AQUA.getColor()));
+    private static final StatIcon ICON_COST_VIS = StatIcon.whole(TTIds.rl("textures/item/essentia_crystal.png"), ARGB.opaque(ChatFormatting.AQUA.getColor()));
     private static final int STAT_TEXT_X = 252;
     private static final int STAT_TEXT_Y_NUDGE = 4;
     private static final int STAT_COMPLEXITY_Y = 36;
@@ -171,7 +171,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private @Nullable BlockEntityFocalManipulator table;
     private @Nullable EditBox nameField;
-    private TCImageButton buttonConfirm;
+    private TTImageButton buttonConfirm;
     private final List<Identifier> shownParts = new ArrayList<>();
     private final List<FocusSettingSpinner> spinners = new ArrayList<>();
     private @Nullable FocusSlider sliderParts;
@@ -215,7 +215,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             table = be;
             lastDataStamp = be.clientDataStamp;
         }
-        buttonConfirm = new TCImageButton(leftPos + CONFIRM_X, topPos + CONFIRM_Y, CONFIRM_W, CONFIRM_H, TEX_BASE, CONFIRM_U, CONFIRM_V, CONFIRM_W, CONFIRM_H, ATLAS, ATLAS,
+        buttonConfirm = new TTImageButton(leftPos + CONFIRM_X, topPos + CONFIRM_Y, CONFIRM_W, CONFIRM_H, TEX_BASE, CONFIRM_U, CONFIRM_V, CONFIRM_W, CONFIRM_H, ATLAS, ATLAS,
                 Component.translatable("gui.thaumaturge.wandtable.craft"), this::confirmCraft);
         nameField = new EditBox(font, leftPos + NAME_X, topPos + NAME_Y, NAME_W, NAME_H, Component.empty());
         nameField.setTextColor(-1);
@@ -658,13 +658,13 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private void playButtonClick() {
         if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 1.0F, 0.4F));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.CLACK.get(), 1.0F, 0.4F));
         }
     }
 
     private void playRollover() {
         if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 2.0F, 0.4F));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.CLACK.get(), 2.0F, 0.4F));
         }
     }
 
@@ -896,7 +896,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             return;
         }
         FocusElement parentElement = parent.resolve();
-        for (Identifier key : TCFocusElements.registry().keySet()) {
+        for (Identifier key : TTFocusElements.registry().keySet()) {
             if (key.equals(ROOT_KEY)) {
                 continue;
             }

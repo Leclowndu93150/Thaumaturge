@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCFXPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectWard;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
@@ -32,7 +32,7 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WardOverlayRenderer {
     private static final double RENDER_RANGE = 48.0;
     private static final double SECTION_RANGE = RENDER_RANGE + 16.0;
@@ -59,7 +59,7 @@ public final class WardOverlayRenderer {
     private static final float[] CORNER_U = {0.0F, HALF, 0.0F, HALF};
     private static final float[] CORNER_V = {0.0F, 0.0F, HALF, HALF};
 
-    private static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(TCIds.rl("pipeline/ward_runes"), TCIds.rl("core/ward_add"));
+    private static final RenderPipeline PIPELINE = TTFXPipelines.additiveTextured(TTIds.rl("pipeline/ward_runes"), TTIds.rl("core/ward_add"));
     private static final RenderType RUNES = RenderType.create("thaumaturge_ward_runes", RenderSetup.builder(PIPELINE).withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS).createRenderSetup());
 
     private WardOverlayRenderer() {}

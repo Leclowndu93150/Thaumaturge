@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
@@ -56,6 +56,6 @@ public final class SalisMundusCraftingExtension implements ICraftingCategoryExte
                 return variants;
             }
         }
-        return List.of(new SlotDisplay.ItemSlotDisplay(TCItems.ESSENTIA_CRYSTAL.get()));
+        return List.of(new SlotDisplay.ItemSlotDisplay(TTItems.ESSENTIA_CRYSTAL.get()));
     }
 }

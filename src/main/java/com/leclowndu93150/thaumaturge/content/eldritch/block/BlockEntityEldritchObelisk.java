@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -20,7 +20,7 @@ public final class BlockEntityEldritchObelisk extends BlockEntity {
     private int counter;
 
     public BlockEntityEldritchObelisk(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_OBELISK.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_OBELISK.get(), pos, state);
     }
 
     public void serverTick(Level level, BlockPos pos) {

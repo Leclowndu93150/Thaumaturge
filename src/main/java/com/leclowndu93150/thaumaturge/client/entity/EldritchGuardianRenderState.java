@@ -6,4 +6,7 @@ public class EldritchGuardianRenderState extends LivingEntityRenderState {
     public float armLiftL;
     public float armLiftR;
     public float alpha;
+    public float meleeSwing;
+    public boolean leftHanded;
+    public float hurtTime;
 }

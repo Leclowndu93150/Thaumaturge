@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -31,7 +31,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
     private static final float LANDING_DAMP_HORIZONTAL = 0.7F;
     private static final float LANDING_DAMP_VERTICAL = -0.5F;
 
-    private BlockState fallTile = TCBlocks.TAINT_CRUST.get().defaultBlockState();
+    private BlockState fallTile = TTBlocks.TAINT_CRUST.get().defaultBlockState();
     private BlockPos originPos = BlockPos.ZERO;
     private int fallTime;
 
@@ -40,7 +40,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
     }
 
     public EntityFallingTaint(Level level, double x, double y, double z, BlockState state, BlockPos origin) {
-        this(TCEntities.FALLING_TAINT.get(), level);
+        this(TTEntities.FALLING_TAINT.get(), level);
         this.fallTile = state;
         this.originPos = origin.immutable();
         this.setPos(x, y, z);
@@ -93,7 +93,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         fallTime++;
 
         BlockState below = server.getBlockState(here.below());
-        boolean overGoo = below.is(TCBlocks.FLUX_GOO.get());
+        boolean overGoo = below.is(TTBlocks.FLUX_GOO.get());
 
         if (!this.onGround() && !overGoo) {
             if (fallTime > MAX_HANG_TIME && (here.getY() < 1 || here.getY() > 256)) {
@@ -106,10 +106,10 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
             }
         } else {
             this.setDeltaMovement(this.getDeltaMovement().multiply(LANDING_DAMP_HORIZONTAL, LANDING_DAMP_VERTICAL, LANDING_DAMP_HORIZONTAL));
-            server.playSound(null, here, TCSounds.GORE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            server.playSound(null, here, TTSounds.GORE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             this.discard();
             BlockState landingState = server.getBlockState(here);
-            if (landingState.canBeReplaced() || landingState.isAir() || landingState.is(TCBlocks.FLUX_GOO.get())) {
+            if (landingState.canBeReplaced() || landingState.isAir() || landingState.is(TTBlocks.FLUX_GOO.get())) {
                 server.setBlock(here, fallTile, Block.UPDATE_ALL);
             }
             return;

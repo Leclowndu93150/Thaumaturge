@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.api.golems.parts.GolemHead;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
-import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -35,12 +35,12 @@ public final class GolemProperties implements IGolemProperties {
     private static final int BASE_SHARE = 2;
 
     public static final Codec<GolemProperties> CODEC = RecordCodecBuilder.create(instance -> instance
-            .group(TCGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::material), TCGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::head),
-                    TCGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::arms), TCGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::legs),
-                    TCGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::addon), Codec.intRange(0, MAX_RANK).optionalFieldOf("rank", 0).forGetter(GolemProperties::rank))
+            .group(TTGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::material), TTGolemParts.heads().byNameCodec().fieldOf("head").forGetter(GolemProperties::head),
+                    TTGolemParts.arms().byNameCodec().fieldOf("arms").forGetter(GolemProperties::arms), TTGolemParts.legs().byNameCodec().fieldOf("legs").forGetter(GolemProperties::legs),
+                    TTGolemParts.addons().byNameCodec().fieldOf("addon").forGetter(GolemProperties::addon), Codec.intRange(0, MAX_RANK).optionalFieldOf("rank", 0).forGetter(GolemProperties::rank))
             .apply(instance, GolemProperties::new));
-    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(byId(TCGolemParts::materials), GolemProperties::material, byId(TCGolemParts::heads),
-            GolemProperties::head, byId(TCGolemParts::arms), GolemProperties::arms, byId(TCGolemParts::legs), GolemProperties::legs, byId(TCGolemParts::addons), GolemProperties::addon,
+    public static final StreamCodec<ByteBuf, GolemProperties> STREAM_CODEC = StreamCodec.composite(byId(TTGolemParts::materials), GolemProperties::material, byId(TTGolemParts::heads),
+            GolemProperties::head, byId(TTGolemParts::arms), GolemProperties::arms, byId(TTGolemParts::legs), GolemProperties::legs, byId(TTGolemParts::addons), GolemProperties::addon,
             ByteBufCodecs.VAR_INT, GolemProperties::rank, GolemProperties::new);
 
     private final GolemMaterial material;
@@ -61,7 +61,7 @@ public final class GolemProperties implements IGolemProperties {
     }
 
     public static GolemProperties createDefault() {
-        return new GolemProperties(TCGolemParts.WOOD.get(), TCGolemParts.HEAD_BASIC.get(), TCGolemParts.ARMS_BASIC.get(), TCGolemParts.LEGS_WALKER.get(), TCGolemParts.ADDON_NONE.get(), 0);
+        return new GolemProperties(TTGolemParts.WOOD.get(), TTGolemParts.HEAD_BASIC.get(), TTGolemParts.ARMS_BASIC.get(), TTGolemParts.LEGS_WALKER.get(), TTGolemParts.ADDON_NONE.get(), 0);
     }
 
     public static GolemProperties of(IGolemProperties build) {
@@ -83,7 +83,7 @@ public final class GolemProperties implements IGolemProperties {
     private Set<GolemTrait> resolveTraits() {
         Set<GolemTrait> resolved = new LinkedHashSet<>();
         Stream.of(material.traits(), head.traits(), arms.traits(), legs.traits(), addon.traits()).flatMap(List::stream).map(Holder::value).forEach(trait -> {
-            GolemTrait opposite = trait.opposite() == null ? null : TCGolemTraits.registry().getValue(trait.opposite());
+            GolemTrait opposite = trait.opposite() == null ? null : TTGolemTraits.registry().getValue(trait.opposite());
             if (opposite != null && resolved.remove(opposite)) {
                 return;
             }

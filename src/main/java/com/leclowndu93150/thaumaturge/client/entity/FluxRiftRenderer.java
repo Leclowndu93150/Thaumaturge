@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,13 +19,13 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 
 public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift, FluxRiftRenderState> {
-    private static final RenderType RIFT_GLOW_TYPE = RenderType.create("tc_rift_glow", RenderSetup.builder(TCRenderPipelines.RIFT_GLOW)
+    private static final RenderType RIFT_GLOW_TYPE = RenderType.create("tc_rift_glow", RenderSetup.builder(TTRenderPipelines.RIFT_GLOW)
             .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
-    private static final RenderType RIFT_GLOW_NO_DEPTH_TYPE = RenderType.create("tc_rift_glow_no_depth", RenderSetup.builder(TCRenderPipelines.RIFT_GLOW_NO_DEPTH)
+    private static final RenderType RIFT_GLOW_NO_DEPTH_TYPE = RenderType.create("tc_rift_glow_no_depth", RenderSetup.builder(TTRenderPipelines.RIFT_GLOW_NO_DEPTH)
             .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
-    private static final RenderType RIFT_SOLID_TYPE = RenderType.create("tc_rift_solid", RenderSetup.builder(TCRenderPipelines.RIFT_SOLID)
+    private static final RenderType RIFT_SOLID_TYPE = RenderType.create("tc_rift_solid", RenderSetup.builder(TTRenderPipelines.RIFT_SOLID)
             .withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).withTexture("Sampler1", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
     private static final int TUBE_SIDES = 6;

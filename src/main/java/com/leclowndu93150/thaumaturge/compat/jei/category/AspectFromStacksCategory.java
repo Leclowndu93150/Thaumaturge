@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -24,7 +24,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 
 public final class AspectFromStacksCategory implements IRecipeCategory<AspectFromStacksCategory.Wrapper> {
-    public static final Identifier UID = Identifier.fromNamespaceAndPath(TCIds.MODID, "aspect_from_stacks");
+    public static final Identifier UID = Identifier.fromNamespaceAndPath(TTIds.MODID, "aspect_from_stacks");
     public static final IRecipeType<Wrapper> RECIPE_TYPE = IRecipeType.create(UID, Wrapper.class);
 
     private static final int WIDTH = 100;
@@ -40,10 +40,10 @@ public final class AspectFromStacksCategory implements IRecipeCategory<AspectFro
 
     private final IDrawable icon;
 
-    private final IDrawable resultSlot = new AlphaDrawable(Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 40, 6, 32, 32, 0, 18 * 4 + 5, 72, 72);
+    private final IDrawable resultSlot = new AlphaDrawable(Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"), 40, 6, 32, 32, 0, 18 * 4 + 5, 72, 72);
 
     public AspectFromStacksCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.THAUMONOMICON.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.THAUMONOMICON.get()));
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class AspectFromStacksCategory implements IRecipeCategory<AspectFro
     @Override
     public void draw(Wrapper recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
         resultSlot.draw(guiGraphics);
-        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_inner.png"), 5, 30, 0, 0, 163, 74, 256, 256, ARGB.white(INNER_ALPHA));
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_inner.png"), 5, 30, 0, 0, 163, 74, 256, 256, ARGB.white(INNER_ALPHA));
     }
 
     public record Wrapper(Holder<IAspect> aspect, List<ItemStack> stacks) {

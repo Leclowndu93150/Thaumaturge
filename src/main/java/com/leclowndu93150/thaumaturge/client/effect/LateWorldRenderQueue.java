@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class LateWorldRenderQueue {
     public interface LateDraw {
         void draw(PoseStack poseStack, MultiBufferSource buffers);

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -34,6 +34,6 @@ public final class BlockEldritchObelisk extends BlockEldritchStructure implement
         if (level.isClientSide()) {
             return null;
         }
-        return type == TCBlockEntities.ELDRITCH_OBELISK.get() ? (tickLevel, pos, tickState, obelisk) -> ((BlockEntityEldritchObelisk) obelisk).serverTick(tickLevel, pos) : null;
+        return type == TTBlockEntities.ELDRITCH_OBELISK.get() ? (tickLevel, pos, tickState, obelisk) -> ((BlockEntityEldritchObelisk) obelisk).serverTick(tickLevel, pos) : null;
     }
 }

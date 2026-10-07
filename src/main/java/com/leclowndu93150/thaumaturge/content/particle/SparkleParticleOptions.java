@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,6 +24,6 @@ public record SparkleParticleOptions(int color, float scale, int delay, float de
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.SPARKLE.get();
+        return TTParticles.SPARKLE.get();
     }
 }

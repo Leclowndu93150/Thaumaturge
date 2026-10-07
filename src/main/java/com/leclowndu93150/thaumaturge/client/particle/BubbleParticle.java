@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class BubbleParticle extends TCParticle {
+public final class BubbleParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BUBBLE_FRAME = 0;
     private static final int POP_FRAME_1 = 1;
@@ -48,11 +48,11 @@ public final class BubbleParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<BubbleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("bubble");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("bubble");
 
         @Override
         public Particle createParticle(BubbleParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

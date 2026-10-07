@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.toast;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 
 public final class ResearchToast implements Toast {
     private static final long DURATION_MS = 5000L;
-    private static final Identifier HUD = TCIds.rl("textures/gui/hud.png");
+    private static final Identifier HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
     private static final int BACKGROUND_U = 0;
     private static final int BACKGROUND_V = 224;

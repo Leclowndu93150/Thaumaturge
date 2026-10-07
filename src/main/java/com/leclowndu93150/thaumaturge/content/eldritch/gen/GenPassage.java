@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.eldritch.gen;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -211,8 +211,8 @@ public final class GenPassage extends GenCommonPieces {
                 for (int h = -4; h < 5; h++) {
                     for (int j = -4; j <= 4; j++) {
                         BlockPos target = new BlockPos(x + 8 + w, y + 4 + h, z + 8 + j);
-                        if ((ctx.level.isEmptyBlock(target) || ctx.level.getBlockState(target).is(TCBlocks.ELDRITCH_STONE.get())
-                                || ctx.level.getBlockState(target).is(TCBlocks.ELDRITCH_STONE_INERT.get()) || ctx.level.getBlockState(target).is(TCBlocks.STAIRS_ELDRITCH.get()))
+                        if ((ctx.level.isEmptyBlock(target) || ctx.level.getBlockState(target).is(TTBlocks.ELDRITCH_STONE.get())
+                                || ctx.level.getBlockState(target).is(TTBlocks.ELDRITCH_STONE_INERT.get()) || ctx.level.getBlockState(target).is(TTBlocks.STAIRS_ELDRITCH.get()))
                                 && ctx.random.nextBoolean()) {
                             ctx.placeBlock(x + 8 + w, y + 4 + h, z + 8 + j, GenContext.CRUST, cell);
                         }
@@ -230,7 +230,7 @@ public final class GenPassage extends GenCommonPieces {
                     for (int h = -3; h <= 3; h++) {
                         BlockPos target = new BlockPos(x + 8 + w, y + 4 + h, z + 8 + j);
                         if (ctx.level.isEmptyBlock(target) && isAdjacentToSolid(ctx, target) && ctx.random.nextInt(3) != 0) {
-                            ctx.level.setBlock(target, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
+                            ctx.level.setBlock(target, TTBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
                         }
                     }
                 }
@@ -250,7 +250,7 @@ public final class GenPassage extends GenCommonPieces {
             BlockPos spawnerPos = new BlockPos(x + 8, y + 4, z + 8);
             ctx.level.setBlock(spawnerPos, Blocks.SPAWNER.defaultBlockState(), 3);
             if (ctx.level.getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawnerEntity) {
-                spawnerEntity.setEntityId(TCEntities.MIND_SPIDER.get(), ctx.random);
+                spawnerEntity.setEntityId(TTEntities.MIND_SPIDER.get(), ctx.random);
             }
         }
     }

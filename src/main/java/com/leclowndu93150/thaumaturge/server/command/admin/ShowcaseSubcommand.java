@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
@@ -29,8 +29,8 @@ final class ShowcaseSubcommand implements AdminSubcommand {
     }
 
     private static int build(CommandSourceStack source, BlockPos origin) throws CommandSyntaxException {
-        List<Block> blocks = TCBlocks.BLOCKS.getEntries().stream().<Block>map(DeferredHolder::value).toList();
-        List<Item> items = TCItems.ITEMS.getEntries().stream().<Item>map(DeferredHolder::value).toList();
+        List<Block> blocks = TTBlocks.BLOCKS.getEntries().stream().<Block>map(DeferredHolder::value).toList();
+        List<Item> items = TTItems.ITEMS.getEntries().stream().<Item>map(DeferredHolder::value).toList();
         ShowcaseBuilder builder = new ShowcaseBuilder(source.getLevel(), origin, Direction.fromYRot(source.getRotation().y), blocks, items);
         if (!builder.fitsHeight()) {
             throw TOO_TALL.create();

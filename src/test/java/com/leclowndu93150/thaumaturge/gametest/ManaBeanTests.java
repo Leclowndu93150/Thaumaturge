@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.gametest;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectCombinations;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -24,7 +24,7 @@ public final class ManaBeanTests {
 
     private static BlockEntityManaPod placePod(GameTestHelper helper, BlockPos pos, int age, ResourceKey<IAspect> aspect) {
         helper.setBlock(pos.above(), Blocks.OAK_LOG);
-        helper.getLevel().setBlock(helper.absolutePos(pos), TCBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age), 3);
+        helper.getLevel().setBlock(helper.absolutePos(pos), TTBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age), 3);
         BlockEntityManaPod pod = (BlockEntityManaPod) helper.getLevel().getBlockEntity(helper.absolutePos(pos));
         if (pod != null && aspect != null) {
             pod.setAspect(aspect);
@@ -32,12 +32,12 @@ public final class ManaBeanTests {
         return pod;
     }
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("manabean/combination_lookup", 20, helper -> {
             var registries = helper.getLevel().registryAccess();
             var aspects = registries.lookupOrThrow(IAspect.REGISTRY_KEY);
-            Holder<IAspect> combo = AspectCombinations.result(registries, aspects.getOrThrow(TCAspects.AER), aspects.getOrThrow(TCAspects.ORDO));
-            if (combo == null || !combo.is(TCAspects.MOTUS)) {
+            Holder<IAspect> combo = AspectCombinations.result(registries, aspects.getOrThrow(TTAspects.AER), aspects.getOrThrow(TTAspects.ORDO));
+            if (combo == null || !combo.is(TTAspects.MOTUS)) {
                 helper.fail("aer + ordo should combine into motus, got " + combo);
                 return;
             }
@@ -66,8 +66,8 @@ public final class ManaBeanTests {
         });
 
         r.add("manabean/cross_breeding", 60, helper -> {
-            placePod(helper, new BlockPos(1, 2, 2), 7, TCAspects.AER);
-            placePod(helper, new BlockPos(3, 2, 2), 7, TCAspects.ORDO);
+            placePod(helper, new BlockPos(1, 2, 2), 7, TTAspects.AER);
+            placePod(helper, new BlockPos(3, 2, 2), 7, TTAspects.ORDO);
             BlockEntityManaPod center = placePod(helper, new BlockPos(2, 2, 2), 2, null);
             if (center == null) {
                 helper.fail("Center pod missing");
@@ -75,7 +75,7 @@ public final class ManaBeanTests {
             }
             center.checkGrowth();
             ResourceKey<IAspect> result = center.aspectKey();
-            Set<ResourceKey<IAspect>> allowed = Set.of(TCAspects.AER, TCAspects.ORDO, TCAspects.MOTUS);
+            Set<ResourceKey<IAspect>> allowed = Set.of(TTAspects.AER, TTAspects.ORDO, TTAspects.MOTUS);
             if (result == null || !allowed.contains(result)) {
                 helper.fail("Cross-breed produced unexpected aspect " + result);
                 return;
@@ -85,15 +85,15 @@ public final class ManaBeanTests {
 
         r.add("manabean/harvest_copies_aspect", 60, helper -> {
             BlockPos pos = new BlockPos(2, 2, 2);
-            placePod(helper, pos, 7, TCAspects.IGNIS);
+            placePod(helper, pos, 7, TTAspects.IGNIS);
             helper.getLevel().destroyBlock(helper.absolutePos(pos), true);
             AABB box = new AABB(helper.absolutePos(pos)).inflate(2.0);
             boolean found = false;
             for (ItemEntity drop : helper.getLevel().getEntitiesOfClass(ItemEntity.class, box)) {
                 ItemStack stack = drop.getItem();
-                if (stack.is(TCItems.MANA_BEAN.get())) {
-                    var instance = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
-                    if (instance != null && instance.aspect().is(TCAspects.IGNIS)) {
+                if (stack.is(TTItems.MANA_BEAN.get())) {
+                    var instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+                    if (instance != null && instance.aspect().is(TTAspects.IGNIS)) {
                         found = true;
                     }
                 }

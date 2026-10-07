@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ public final class DetachedLeafPruner extends TreeDecorator {
 
     @Override
     protected TreeDecoratorType<?> type() {
-        return TCTreePlacers.DETACHED_LEAF_PRUNER.get();
+        return TTTreePlacers.DETACHED_LEAF_PRUNER.get();
     }
 
     @Override

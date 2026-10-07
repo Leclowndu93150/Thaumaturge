@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.model;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.JarRenderer;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import java.util.function.Consumer;
@@ -44,7 +44,7 @@ public class JarItemSpecialRenderer implements SpecialModelRenderer<JarItemSpeci
 
     @Override
     public @Nullable JarFill extractArgument(ItemStack itemStack) {
-        var essentiaList = itemStack.get(TCDataComponents.ESSENTIA_CONTENTS.get());
+        var essentiaList = itemStack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
         if (essentiaList == null || essentiaList.isEmpty())
             return null;
         int capacity = itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IEssentiaJar jar ? jar.jarCapacity() : IEssentiaJar.DEFAULT_CAPACITY;

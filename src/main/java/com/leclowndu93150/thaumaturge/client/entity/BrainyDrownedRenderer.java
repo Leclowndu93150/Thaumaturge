@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyDrowned;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public final class BrainyDrownedRenderer extends AbstractZombieRenderer<EntityBrainyDrowned, ZombieRenderState, DrownedModel> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/brainy_drowned.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/brainy_drowned.png");
     private static final float SWIM_TILT_DEGREES = -10.0F;
 
     public BrainyDrownedRenderer(EntityRendererProvider.Context context) {

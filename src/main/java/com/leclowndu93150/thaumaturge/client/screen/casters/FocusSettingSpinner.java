@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -38,8 +38,8 @@ public final class FocusSettingSpinner extends AbstractWidget {
     @Override
     protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         int bodyWidth = this.width - ARROW_SIZE;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.GUI_BASE, getX(), getY(), U_MINUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.GUI_BASE, getX() + bodyWidth, getY(), U_PLUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.GUI_BASE, getX(), getY(), U_MINUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.GUI_BASE, getX() + bodyWidth, getY(), U_PLUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
         Component value = definition.values().labelAt(index);
         var font = Minecraft.getInstance().font;
         graphics.text(font, value, getX() + (bodyWidth + ARROW_SIZE) / 2 - font.width(value) / 2, getY() + 1, TEXT_COLOR, true);

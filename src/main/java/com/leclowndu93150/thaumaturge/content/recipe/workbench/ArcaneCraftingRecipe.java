@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.wands.assembly.WandAssemblyHook;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
 
     @Override
     public RecipeType<ArcaneCraftingRecipe> getType() {
-        return TCRecipeTypes.ARCANE.get();
+        return TTRecipeTypes.ARCANE.get();
     }
 
     @Override

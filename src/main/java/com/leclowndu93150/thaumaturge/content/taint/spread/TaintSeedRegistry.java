@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.spread;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public final class TaintSeedRegistry extends SavedData {
     public static final Codec<TaintSeedRegistry> CODEC = RecordCodecBuilder.create(builder -> builder
             .group(BlockPos.CODEC.listOf().fieldOf("seeds").forGetter(reg -> Collections.unmodifiableList(reg.seeds))).apply(builder, list -> new TaintSeedRegistry(new ArrayList<>(list))));
 
-    public static final SavedDataType<TaintSeedRegistry> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "taint_seeds"), TaintSeedRegistry::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<TaintSeedRegistry> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "taint_seeds"), TaintSeedRegistry::new, CODEC, DataFixTypes.LEVEL);
 
     private final List<BlockPos> seeds;
 

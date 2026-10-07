@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.equipment.EnchantMining;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -26,7 +26,7 @@ public final class FellBehavior extends CellWorkBehavior {
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         if (stillMine(level, seal, task)) {
             golem.swingArm();
-            if (EnchantMining.breakFurthest(level, task.pos(), level.getBlockState(task.pos()), TCFakePlayer.GOLEM.at(level, golem.asEntity()))) {
+            if (EnchantMining.breakFurthest(level, task.pos(), level.getBlockState(task.pos()), TTFakePlayer.GOLEM.at(level, golem.asEntity()))) {
                 keepAlive(task);
                 golem.addRankXp(1);
                 return false;

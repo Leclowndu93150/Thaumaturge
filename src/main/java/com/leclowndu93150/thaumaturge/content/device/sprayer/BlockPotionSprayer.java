@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,12 +77,12 @@ public final class BlockPotionSprayer extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return type == TCBlockEntities.POTION_SPRAYER.get() ? (tickLevel, pos, tickState, sprayer) -> ((BlockEntityPotionSprayer) sprayer).tick(tickLevel, pos, tickState) : null;
+        return type == TTBlockEntities.POTION_SPRAYER.get() ? (tickLevel, pos, tickState, sprayer) -> ((BlockEntityPotionSprayer) sprayer).tick(tickLevel, pos, tickState) : null;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("potion_sprayer"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("potion_sprayer"))) {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (!(level.getBlockEntity(pos) instanceof BlockEntityPotionSprayer sprayer)) {

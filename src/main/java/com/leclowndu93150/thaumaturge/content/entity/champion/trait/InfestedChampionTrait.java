@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion.trait;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -17,11 +17,11 @@ public final class InfestedChampionTrait extends AbstractChampionTrait {
     @Override
     public float onHurt(LivingEntity mob, @Nullable LivingEntity attacker, DamageSource source, float amount) {
         if (attacker != null && mob.getRandom().nextFloat() < PROC_CHANCE && mob.level() instanceof ServerLevel server) {
-            EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(server, EntitySpawnReason.REINFORCEMENT);
+            EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(server, EntitySpawnReason.REINFORCEMENT);
             if (crawler != null) {
                 crawler.snapTo(mob.getX(), mob.getY() + mob.getBbHeight() / 2.0F, mob.getZ(), mob.getRandom().nextFloat() * FULL_TURN, 0.0F);
                 server.addFreshEntity(crawler);
-                mob.playSound(TCSounds.GORE.get(), GORE_VOLUME, 1.0F);
+                mob.playSound(TTSounds.GORE.get(), GORE_VOLUME, 1.0F);
             }
         }
         return amount;

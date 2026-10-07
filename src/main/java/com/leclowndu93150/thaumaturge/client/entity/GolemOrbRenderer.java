@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
@@ -23,9 +23,9 @@ public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb, Golem
     }
 
     private static final RenderType BLUE_ORB_TYPE = RenderType.create("tc_golem_orb",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_BLUE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_BLUE).useLightmap().createRenderSetup());
     private static final RenderType RED_ORB_TYPE = RenderType.create("tc_golem_orb_red",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_RED).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_RED).useLightmap().createRenderSetup());
 
     private static final float ALPHA = 0.8F;
     private static final float HALF = 0.5F;

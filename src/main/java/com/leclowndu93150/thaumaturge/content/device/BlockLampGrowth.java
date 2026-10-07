@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -33,6 +33,6 @@ public final class BlockLampGrowth extends BlockLamp {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.LAMP_GROWTH.get(), BlockEntityLampGrowth::serverTick);
+        return createTickerHelper(type, TTBlockEntities.LAMP_GROWTH.get(), BlockEntityLampGrowth::serverTick);
     }
 }

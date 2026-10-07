@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -32,7 +32,7 @@ public final class MenuThaumostaticHarness extends AbstractContainerMenu {
     }
 
     public MenuThaumostaticHarness(int containerId, Inventory inventory, InteractionHand hand) {
-        super(TCMenus.THAUMOSTATIC_HARNESS.get(), containerId);
+        super(TTMenus.THAUMOSTATIC_HARNESS.get(), containerId);
         this.hand = hand;
         this.player = inventory.player;
         this.blockedHotbarSlot = hand == InteractionHand.MAIN_HAND ? inventory.getSelectedSlot() : -1;

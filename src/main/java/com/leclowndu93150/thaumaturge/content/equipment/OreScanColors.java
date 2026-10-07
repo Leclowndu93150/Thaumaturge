@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.List;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +27,7 @@ public final class OreScanColors {
 
     private static final List<Entry> ENTRIES = List.of(new Entry(Tags.Blocks.ORES_IRON, C_IRON), new Entry(Tags.Blocks.ORES_COAL, C_COAL), new Entry(Tags.Blocks.ORES_REDSTONE, C_REDSTONE),
             new Entry(Tags.Blocks.ORES_GOLD, C_GOLD), new Entry(Tags.Blocks.ORES_LAPIS, C_LAPIS), new Entry(Tags.Blocks.ORES_DIAMOND, C_DIAMOND), new Entry(Tags.Blocks.ORES_EMERALD, C_EMERALD),
-            new Entry(Tags.Blocks.ORES_QUARTZ, C_QUARTZ), new Entry(Tags.Blocks.ORES_COPPER, C_COPPER), new Entry(TCBlockTags.ORES_AMBER, C_AMBER), new Entry(TCBlockTags.ORES_CINNABAR, C_CINNABAR));
+            new Entry(Tags.Blocks.ORES_QUARTZ, C_QUARTZ), new Entry(Tags.Blocks.ORES_COPPER, C_COPPER), new Entry(TTBlockTags.ORES_AMBER, C_AMBER), new Entry(TTBlockTags.ORES_CINNABAR, C_CINNABAR));
 
     private OreScanColors() {}
 

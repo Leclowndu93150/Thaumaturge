@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +22,7 @@ public final class BlockEntityBarrierStone extends BlockEntity {
     private static final double SHOVE_SINK = 0.1;
 
     public BlockEntityBarrierStone(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.BARRIER_STONE.get(), pos, state);
+        super(TTBlockEntities.BARRIER_STONE.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityBarrierStone stone) {
@@ -47,7 +47,7 @@ public final class BlockEntityBarrierStone extends BlockEntity {
     }
 
     private static void raiseWall(Level level, BlockPos pos) {
-        BlockState wall = TCBlocks.BARRIER.get().defaultBlockState();
+        BlockState wall = TTBlocks.BARRIER.get().defaultBlockState();
         for (int height = 1; height <= WALL_HEIGHT; height++) {
             BlockPos target = pos.above(height);
             if (level.isEmptyBlock(target)) {

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,7 +28,7 @@ public final class CultistClericRenderer extends HumanoidMobRenderer<EntityCulti
         public float lineFade;
     }
 
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/cultist.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/cultist.png");
     private static final float SHADOW = 0.5F;
     private static final int BOB_PHASE_RANGE = 1000;
     private static final float BOB_PERIOD = 9.0F;
@@ -42,7 +42,7 @@ public final class CultistClericRenderer extends HumanoidMobRenderer<EntityCulti
     private static final float LINE_FADE_IN_TICKS = 10.0F;
 
     public CultistClericRenderer(EntityRendererProvider.Context context) {
-        super(context, new HumanoidModel<>(context.bakeLayer(TCModelLayers.CULTIST)), SHADOW);
+        super(context, new HumanoidModel<>(context.bakeLayer(TTModelLayers.CULTIST)), SHADOW);
         this.addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new), context.getEquipmentRenderer()));
     }
 

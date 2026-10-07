@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
     };
 
     public BlockEntityArcaneWorkbench(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.ARCANE_WORKBENCH.get(), worldPosition, blockState);
+        super(TTBlockEntities.ARCANE_WORKBENCH.get(), worldPosition, blockState);
     }
 
     @Override

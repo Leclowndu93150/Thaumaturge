@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.network.ServerboundCloudJumpPayload;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.CommonHooks;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CloudRingClientHandler {
     private static final double JUMP_VELOCITY = 0.75;
     private static final float JUMP_BOOST_BONUS = 0.1F;
@@ -39,7 +39,7 @@ public final class CloudRingClientHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null || !ModList.get().isLoaded(TCIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TCItems.CLOUD_RING.get())) {
+        if (player == null || !ModList.get().isLoaded(TTIds.CURIOS) || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TTItems.CLOUD_RING.get())) {
             airJumpUsed = false;
             jumpWasDown = false;
             airborneTicks = 0;

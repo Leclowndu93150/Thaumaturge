@@ -2,10 +2,10 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -39,8 +39,9 @@ public final class BlockCondenserLattice extends Block {
     public static final MapCodec<BlockCondenserLattice> CODEC = RecordCodecBuilder
             .mapCodec(instance -> instance.group(Codec.BOOL.fieldOf("dirty").forGetter(block -> block.dirty), propertiesCodec()).apply(instance, BlockCondenserLattice::new));
 
-    private static final VoxelShape CORE = box(5.0, 5.0, 5.0, 11.0, 11.0, 11.0);
-    private static final Map<Direction, VoxelShape> ARMS = DeviceShapes.facingShapesFromDown(box(6.0, 0.0, 6.0, 10.0, 5.0, 10.0));
+    private static final VoxelShape CORE = Shapes.or(box(5.0, 6.0, 6.0, 11.0, 10.0, 10.0), box(6.0, 5.0, 6.0, 10.0, 6.0, 10.0), box(6.0, 6.0, 5.0, 10.0, 10.0, 6.0),
+            box(6.0, 6.0, 10.0, 10.0, 10.0, 11.0), box(6.0, 10.0, 6.0, 10.0, 11.0, 10.0));
+    private static final Map<Direction, VoxelShape> ARMS = DeviceShapes.facingShapesFromDown(Shapes.or(box(6.0, 0.0, 6.0, 10.0, 1.0, 10.0), box(7.0, 1.0, 7.0, 9.0, 5.0, 9.0)));
 
     private final boolean dirty;
     private final VoxelShape[] shapeCache = new VoxelShape[64];
@@ -89,7 +90,7 @@ public final class BlockCondenserLattice extends Block {
     }
 
     private static boolean connectsTo(BlockState neighbour, Direction direction) {
-        return neighbour.getBlock() instanceof BlockCondenserLattice || direction == Direction.DOWN && neighbour.is(TCBlocks.CONDENSER.get());
+        return neighbour.getBlock() instanceof BlockCondenserLattice || direction == Direction.DOWN && neighbour.is(TTBlocks.CONDENSER.get());
     }
 
     @Override
@@ -115,7 +116,7 @@ public final class BlockCondenserLattice extends Block {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!dirty || !stack.is(TCItems.FILTER.get())) {
+        if (!dirty || !stack.is(TTItems.FILTER.get())) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {
@@ -123,13 +124,13 @@ public final class BlockCondenserLattice extends Block {
         }
         stack.consume(1, player);
         if (level.getRandom().nextBoolean()) {
-            ItemStack crystal = new ItemStack(TCItems.ESSENTIA_CRYSTAL.get());
-            crystal.set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM), 1));
+            ItemStack crystal = new ItemStack(TTItems.ESSENTIA_CRYSTAL.get());
+            crystal.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM), 1));
             Direction face = hit.getDirection();
             level.addFreshEntity(new ItemEntity(level, pos.getX() + 0.5 + face.getStepX() / 3.0, pos.getY() + 0.5, pos.getZ() + 0.5 + face.getStepZ() / 3.0, crystal));
         }
         level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 1.0F);
-        level.setBlock(pos, connected(level, pos, TCBlocks.CONDENSER_LATTICE.get().defaultBlockState()), Block.UPDATE_ALL);
+        level.setBlock(pos, connected(level, pos, TTBlocks.CONDENSER_LATTICE.get().defaultBlockState()), Block.UPDATE_ALL);
         return InteractionResult.SUCCESS;
     }
 }

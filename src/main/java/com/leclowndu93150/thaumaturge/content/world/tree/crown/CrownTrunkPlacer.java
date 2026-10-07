@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public final class CrownTrunkPlacer extends TrunkPlacer {
 
     @Override
     protected TrunkPlacerType<?> type() {
-        return TCTreePlacers.CROWN_TRUNK.get();
+        return TTTreePlacers.CROWN_TRUNK.get();
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,13 +28,13 @@ public final class TravellerBootsItem extends Item {
     private static final float JUMP_BOOST = 0.275F;
     private static final float WATER_AIR_BOOST = 0.025F;
     private static final float STEP_HEIGHT_BONUS = 0.4F;
-    private static final AttributeModifier STEP_MODIFIER = new AttributeModifier(Identifier.fromNamespaceAndPath(TCIds.MODID, "traveller_step"), STEP_HEIGHT_BONUS,
+    private static final AttributeModifier STEP_MODIFIER = new AttributeModifier(Identifier.fromNamespaceAndPath(TTIds.MODID, "traveller_step"), STEP_HEIGHT_BONUS,
             AttributeModifier.Operation.ADD_VALUE);
 
-    private static final AttributeModifier JUMP_MODIFIER = new AttributeModifier(Identifier.fromNamespaceAndPath(TCIds.MODID, "traveller_jump"), JUMP_BOOST, AttributeModifier.Operation.ADD_VALUE);
+    private static final AttributeModifier JUMP_MODIFIER = new AttributeModifier(Identifier.fromNamespaceAndPath(TTIds.MODID, "traveller_jump"), JUMP_BOOST, AttributeModifier.Operation.ADD_VALUE);
 
     public TravellerBootsItem(Properties properties) {
-        super(properties.component(TCDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ON_CHANGE)));
+        super(properties.component(TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ON_CHANGE)));
     }
 
     @Override
@@ -49,13 +49,13 @@ public final class TravellerBootsItem extends Item {
             return;
         }
         if (player.tickCount % ENERGY_INTERVAL_TICKS == 0) {
-            int energy = stack.getOrDefault(TCDataComponents.ENERGY.get(), 0);
+            int energy = stack.getOrDefault(TTDataComponents.ENERGY.get(), 0);
             if (energy > 0) {
                 energy--;
             } else if (RechargeAccess.consumeCharge(stack, player, 1)) {
                 energy = ENERGY_PER_CHARGE;
             }
-            stack.set(TCDataComponents.ENERGY.get(), energy);
+            stack.set(TTDataComponents.ENERGY.get(), energy);
         }
         boolean active = RechargeAccess.getCharge(stack) > 0 && !player.getAbilities().flying && !player.isShiftKeyDown();
         AttributeInstance stepHeight = player.getAttribute(Attributes.STEP_HEIGHT);

@@ -1,7 +1,7 @@
 {
     "loader": "thaumaturge:mesh",
     "parent": "block/block",
-    "model": "thaumaturge:models/mesh/pillar.tcmesh",
+    "model": "thaumaturge:models/mesh/pillar.ttmesh",
     "corner_space": true,
     "textures": {
         "texture": "thaumaturge:block/pillar_normal",

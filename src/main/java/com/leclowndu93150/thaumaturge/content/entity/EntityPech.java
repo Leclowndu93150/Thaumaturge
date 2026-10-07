@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
@@ -12,9 +12,9 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.HoldStillGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
 import com.leclowndu93150.thaumaturge.content.entity.ai.ItemCollector;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,7 +124,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     public static boolean checkPechSpawnRules(EntityType<EntityPech> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {
         int count = level.getEntitiesOfClass(EntityPech.class, new AABB(pos).inflate(16.0, 16.0, 16.0)).size();
-        return !level.getBiome(pos).is(TCBiomeTags.IS_TAINTED) && count < MAX_NEARBY_PECHS && Monster.checkMonsterSpawnRules(type, level, reason, pos, random);
+        return !level.getBiome(pos).is(TTBiomeTags.IS_TAINTED) && count < MAX_NEARBY_PECHS && Monster.checkMonsterSpawnRules(type, level, reason, pos, random);
     }
 
     @Override
@@ -193,7 +193,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
         ItemStack held = this.getMainHandItem();
         if (held.is(Items.BOW)) {
             this.goalSelector.addGoal(2, this.arrowAttackGoal);
-        } else if (held.is(TCItems.PECH_WAND.get())) {
+        } else if (held.is(TTItems.PECH_WAND.get())) {
             this.goalSelector.addGoal(2, this.blastAttackGoal);
         } else {
             this.goalSelector.addGoal(2, this.meleeAttackGoal);
@@ -224,7 +224,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             this.level().addFreshEntity(arrow);
         } else if (this.getPechType() == TYPE_MAGE) {
             double offset = this.distanceTo(target) / MAGE_BLAST_OFFSET_DIVISOR;
-            FocusPackage pack = FocusPackage.builder().caster(this).add(TCIds.rl("projectile"), Map.of("speed", 2)).add(randomMageEffect()).build();
+            FocusPackage pack = FocusPackage.builder().caster(this).add(TTIds.rl("projectile"), Map.of("speed", 2)).add(randomMageEffect()).build();
             FocusEngine.cast(this, pack, CastStreams.fromCasterToTarget(this, target, offset));
             this.swing(this.getUsedItemHand());
         }
@@ -232,15 +232,15 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     private Identifier randomMageEffect() {
         if (this.random.nextBoolean()) {
-            return TCIds.rl("curse");
+            return TTIds.rl("curse");
         }
         if (this.random.nextBoolean()) {
-            return TCIds.rl("flux");
+            return TTIds.rl("flux");
         }
         if (this.random.nextBoolean()) {
-            return TCIds.rl("earth");
+            return TTIds.rl("earth");
         }
-        return this.random.nextBoolean() ? TCIds.rl("air") : TCIds.rl("fire");
+        return this.random.nextBoolean() ? TTIds.rl("air") : TTIds.rl("fire");
     }
 
     @Override
@@ -253,7 +253,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     private void rollHeldItem() {
         switch (this.random.nextInt(20)) {
-            case 0, 12 -> this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TCItems.PECH_WAND.get()));
+            case 0, 12 -> this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(TTItems.PECH_WAND.get()));
             case 1 -> this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE_SWORD));
             case 2, 4, 10, 11, 13 -> this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
             case 3 -> this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE_AXE));
@@ -273,7 +273,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
         this.setDropChance(EquipmentSlot.OFFHAND, 0.2F);
         this.rollHeldItem();
         ItemStack held = this.getMainHandItem();
-        if (held.is(TCItems.PECH_WAND.get())) {
+        if (held.is(TTItems.PECH_WAND.get())) {
             this.setPechType(TYPE_MAGE);
             this.setDropChance(EquipmentSlot.MAINHAND, 0.1F);
         } else if (!held.isEmpty()) {
@@ -300,17 +300,17 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     @Override
     protected @Nullable SoundEvent getAmbientSound() {
-        return TCSounds.PECH_IDLE.get();
+        return TTSounds.PECH_IDLE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.PECH_HIT.get();
+        return TTSounds.PECH_HIT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.PECH_DEATH.get();
+        return TTSounds.PECH_DEATH.get();
     }
 
     @Override
@@ -320,7 +320,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
                 for (Entity entity : this.level().getEntities(this, this.getBoundingBox().inflate(4.0, 2.0, 4.0))) {
                     if (entity instanceof EntityPech) {
                         this.level().broadcastEntityEvent(this, TRADE_MUMBLE_EVENT);
-                        this.playSound(TCSounds.PECH_TRADE.get(), this.getSoundVolume(), this.getVoicePitch());
+                        this.playSound(TTSounds.PECH_TRADE.get(), this.getSoundVolume(), this.getVoicePitch());
                         return;
                     }
                 }
@@ -339,7 +339,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
         }
         if (this.getAnger() <= 0) {
             this.level().broadcastEntityEvent(this, ANGER_EVENT);
-            this.playSound(TCSounds.PECH_CHARGE.get(), this.getSoundVolume(), this.getVoicePitch());
+            this.playSound(TTSounds.PECH_CHARGE.get(), this.getSoundVolume(), this.getVoicePitch());
         }
         this.setTarget(living);
         this.setAnger(ANGER_BASE_TICKS + this.random.nextInt(ANGER_BASE_TICKS));
@@ -378,7 +378,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             }
             if (this.chargeCount == 0) {
                 this.chargeCount = CHARGE_SOUND_INTERVAL;
-                this.playSound(TCSounds.PECH_CHARGE.get(), this.getSoundVolume(), this.getVoicePitch());
+                this.playSound(TTSounds.PECH_CHARGE.get(), this.getSoundVolume(), this.getVoicePitch());
             }
             this.level().broadcastEntityEvent(this, TRADE_MUMBLE_EVENT);
         }
@@ -537,7 +537,7 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
     }
 
     private Holder<IAspect> desiderium() {
-        return this.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.DESIDERIUM);
+        return this.level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.DESIDERIUM);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.manager;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
 import net.minecraft.client.Camera;
@@ -12,7 +12,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class FXManagerRegistry {
     private static final List<AbstractFXManager<?>> MANAGERS = List.of(BeamManager.INSTANCE, EssentiaStreamManager.INSTANCE, BoreVoidStreamManager.INSTANCE, BoreDigEffectManager.INSTANCE);
 

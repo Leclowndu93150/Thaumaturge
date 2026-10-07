@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.screen.golem;
 
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCLabelButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCPlusMinusButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCScrollButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCSlider;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTLabelButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTPlusMinusButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTScrollButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTSlider;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import com.leclowndu93150.thaumaturge.network.ServerboundLogisticsRequestPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundLogisticsSearchPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.KeyEvent;
@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class GolemLogisticsScreen extends AbstractTCContainerScreen<MenuGolemLogistics> {
+public final class GolemLogisticsScreen extends AbstractTTContainerScreen<MenuGolemLogistics> {
     private static final int IMAGE_SIZE = 215;
     private static final int ATLAS = 256;
 
@@ -71,11 +71,11 @@ public final class GolemLogisticsScreen extends AbstractTCContainerScreen<MenuGo
     private static final int MIN_REQUEST = 1;
     private static final float CLACK_VOLUME = 0.66F;
 
-    private @Nullable TCSlider scrollbar;
-    private @Nullable TCSlider countbar;
-    private @Nullable TCPlusMinusButton countDown;
-    private @Nullable TCPlusMinusButton countUp;
-    private @Nullable TCLabelButton requestButton;
+    private @Nullable TTSlider scrollbar;
+    private @Nullable TTSlider countbar;
+    private @Nullable TTPlusMinusButton countDown;
+    private @Nullable TTPlusMinusButton countUp;
+    private @Nullable TTLabelButton requestButton;
     private @Nullable EditBox searchField;
 
     private int selectedSlot = -1;
@@ -85,25 +85,25 @@ public final class GolemLogisticsScreen extends AbstractTCContainerScreen<MenuGo
     private long nextRefresh;
 
     public GolemLogisticsScreen(MenuGolemLogistics menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, TCScreenTextures.GUI_LOGISTICS, IMAGE_SIZE, IMAGE_SIZE);
+        super(menu, inventory, title, TTScreenTextures.GUI_LOGISTICS, IMAGE_SIZE, IMAGE_SIZE);
     }
 
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(TCScrollButton.of(leftPos + SCROLL_UP_X, topPos + SCROLL_UP_Y, TCScrollButton.Direction.UP, Component.translatable("gui.thaumaturge.logistics.scroll_up"),
+        addRenderableWidget(TTScrollButton.of(leftPos + SCROLL_UP_X, topPos + SCROLL_UP_Y, TTScrollButton.Direction.UP, Component.translatable("gui.thaumaturge.logistics.scroll_up"),
                 () -> clickButton(MenuGolemLogistics.BUTTON_PAGE_UP)));
-        addRenderableWidget(TCScrollButton.of(leftPos + SCROLL_DOWN_X, topPos + SCROLL_DOWN_Y, TCScrollButton.Direction.DOWN, Component.translatable("gui.thaumaturge.logistics.scroll_down"),
+        addRenderableWidget(TTScrollButton.of(leftPos + SCROLL_DOWN_X, topPos + SCROLL_DOWN_Y, TTScrollButton.Direction.DOWN, Component.translatable("gui.thaumaturge.logistics.scroll_down"),
                 () -> clickButton(MenuGolemLogistics.BUTTON_PAGE_DOWN)));
-        countDown = TCPlusMinusButton.minus(leftPos + COUNT_MINUS_X, topPos + COUNT_BUTTON_Y, Component.translatable("gui.thaumaturge.logistics.count_down"), () -> adjustCount(-1));
-        countUp = TCPlusMinusButton.plus(leftPos + COUNT_PLUS_X, topPos + COUNT_BUTTON_Y, Component.translatable("gui.thaumaturge.logistics.count_up"), () -> adjustCount(1));
+        countDown = TTPlusMinusButton.minus(leftPos + COUNT_MINUS_X, topPos + COUNT_BUTTON_Y, Component.translatable("gui.thaumaturge.logistics.count_down"), () -> adjustCount(-1));
+        countUp = TTPlusMinusButton.plus(leftPos + COUNT_PLUS_X, topPos + COUNT_BUTTON_Y, Component.translatable("gui.thaumaturge.logistics.count_up"), () -> adjustCount(1));
         addRenderableWidget(countDown);
         addRenderableWidget(countUp);
-        scrollbar = new TCSlider(leftPos + SCROLLBAR_X, topPos + SCROLLBAR_Y, SCROLLBAR_W, SCROLLBAR_H, true, 0.0F, menu.end(), menu.start(), this::onScroll);
-        countbar = new TCSlider(leftPos + COUNTBAR_X, topPos + COUNTBAR_Y, COUNTBAR_W, COUNTBAR_H, false, MIN_REQUEST, selectedCount(), requestCount, this::onCountChanged);
+        scrollbar = new TTSlider(leftPos + SCROLLBAR_X, topPos + SCROLLBAR_Y, SCROLLBAR_W, SCROLLBAR_H, true, 0.0F, menu.end(), menu.start(), this::onScroll);
+        countbar = new TTSlider(leftPos + COUNTBAR_X, topPos + COUNTBAR_Y, COUNTBAR_W, COUNTBAR_H, false, MIN_REQUEST, selectedCount(), requestCount, this::onCountChanged);
         addRenderableWidget(scrollbar);
         addRenderableWidget(countbar);
-        requestButton = TCLabelButton.centered(leftPos + REQUEST_X, topPos + REQUEST_Y, REQUEST_W, REQUEST_H, TCScreenTextures.GUI_BASE, REQUEST_U, REQUEST_V, REQUEST_W, REQUEST_H, ATLAS, ATLAS,
+        requestButton = TTLabelButton.centered(leftPos + REQUEST_X, topPos + REQUEST_Y, REQUEST_W, REQUEST_H, TTScreenTextures.GUI_BASE, REQUEST_U, REQUEST_V, REQUEST_W, REQUEST_H, ATLAS, ATLAS,
                 Component.translatable("gui.thaumaturge.logistics.request"), this::sendRequest);
         addRenderableWidget(requestButton);
         searchField = new EditBox(font, leftPos + SEARCH_X, topPos + SEARCH_Y, SEARCH_W, font.lineHeight, Component.empty());
@@ -245,7 +245,7 @@ public final class GolemLogisticsScreen extends AbstractTCContainerScreen<MenuGo
     protected void slotClicked(Slot slot, int slotId, int button, ContainerInput containerInput) {
         if (slot != null && slot.hasItem()) {
             if (minecraft != null && minecraft.player != null) {
-                minecraft.player.playSound(TCSounds.CLACK.get(), CLACK_VOLUME, 1.0F);
+                minecraft.player.playSound(TTSounds.CLACK.get(), CLACK_VOLUME, 1.0F);
             }
             selectedSlot = slotId;
             selectedStack = slot.getItem().copy();

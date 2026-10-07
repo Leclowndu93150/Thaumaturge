@@ -3,13 +3,13 @@ package com.leclowndu93150.thaumaturge.gametest;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -28,7 +28,7 @@ public final class TransducerTests {
 
     private TransducerTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("transducer/charges_and_drains_node", 200, helper -> {
             BlockEntityNode node = buildStack(helper);
             if (node == null) {
@@ -100,7 +100,7 @@ public final class TransducerTests {
     }
 
     private static Holder<IAspect> vitium(GameTestHelper helper) {
-        Holder<IAspect> holder = Aspects.resolve(helper.getLevel().registryAccess(), TCAspects.VITIUM);
+        Holder<IAspect> holder = Aspects.resolve(helper.getLevel().registryAccess(), TTAspects.VITIUM);
         if (holder == null) {
             throw new IllegalStateException("Vitium missing from the aspect registry");
         }
@@ -108,14 +108,14 @@ public final class TransducerTests {
     }
 
     private static BlockEntityNode buildStack(GameTestHelper helper) {
-        helper.setBlock(STABILIZER_POS, TCBlocks.NODE_STABILIZER.get().defaultBlockState());
+        helper.setBlock(STABILIZER_POS, TTBlocks.NODE_STABILIZER.get().defaultBlockState());
         AspectList aspects = AspectList.EMPTY.add(vitium(helper), VITIUM_AMOUNT);
         BlockPos nodePos = helper.absolutePos(NODE_POS);
         if (!NodeGenerator.createNodeAt(helper.getLevel(), nodePos, NodeType.NORMAL, null, aspects)) {
             helper.fail("NodeGenerator.createNodeAt failed");
             return null;
         }
-        helper.setBlock(TRANSDUCER_POS, TCBlocks.NODE_TRANSDUCER.get().defaultBlockState());
+        helper.setBlock(TRANSDUCER_POS, TTBlocks.NODE_TRANSDUCER.get().defaultBlockState());
         helper.setBlock(REDSTONE_POS, Blocks.REDSTONE_BLOCK.defaultBlockState());
         if (!(helper.getLevel().getBlockEntity(nodePos) instanceof BlockEntityNode node)) {
             helper.fail("No node block entity after createNodeAt");

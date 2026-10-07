@@ -4,12 +4,12 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -24,7 +24,7 @@ public final class NodeTests {
 
     private NodeTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("node/breakable_by_hand", 20, helper -> {
             BlockEntityNode node = placeVitiumNode(helper);
             if (node == null) {
@@ -132,7 +132,7 @@ public final class NodeTests {
     }
 
     private static Holder<IAspect> vitium(GameTestHelper helper) {
-        return resolve(helper, TCAspects.VITIUM);
+        return resolve(helper, TTAspects.VITIUM);
     }
 
     private static Holder<IAspect> resolve(GameTestHelper helper, ResourceKey<IAspect> key) {

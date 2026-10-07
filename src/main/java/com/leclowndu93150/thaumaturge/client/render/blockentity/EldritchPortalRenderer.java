@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchPortal;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,12 +20,12 @@ import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEntityEldritchPortal, EldritchPortalRenderState> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/misc/eldritch_portal.png");
-    private static final Identifier OVERWORLD_TEXTURE = TCIds.rl("textures/misc/eldritch_portal_overworld.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/misc/eldritch_portal.png");
+    private static final Identifier OVERWORLD_TEXTURE = TTIds.rl("textures/misc/eldritch_portal_overworld.png");
     private static final RenderType PORTAL_TYPE = RenderType.create("tc_eldritch_portal",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", TEXTURE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", TEXTURE).useLightmap().createRenderSetup());
     private static final RenderType OVERWORLD_PORTAL_TYPE = RenderType.create("tc_eldritch_portal_overworld",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", OVERWORLD_TEXTURE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", OVERWORLD_TEXTURE).useLightmap().createRenderSetup());
 
     private static final int FRAMES = 32;
     private static final float FRAME_WIDTH = 1.0F / FRAMES;

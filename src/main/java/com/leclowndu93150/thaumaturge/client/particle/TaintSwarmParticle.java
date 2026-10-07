@@ -9,7 +9,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.entity.Entity;
 
-public final class TaintSwarmParticle extends TCParticle {
+public final class TaintSwarmParticle extends TTParticle {
     private static final int GLOW_FRAMES = 16;
     private static final int SWARM_FRAMES = 8;
     private static final int SWARM_FRAME_STEP = 2;
@@ -72,7 +72,7 @@ public final class TaintSwarmParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return TCParticleLayers.ORB_GLOW_TRANSLUCENT;
+        return TTParticleLayers.ORB_GLOW_TRANSLUCENT;
     }
 
     public static final class Provider implements ParticleProvider<TaintSwarmParticleOptions> {

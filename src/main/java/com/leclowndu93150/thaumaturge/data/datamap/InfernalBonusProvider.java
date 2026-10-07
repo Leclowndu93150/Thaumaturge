@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
-import com.leclowndu93150.thaumaturge.registry.TCItemTags;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -32,32 +32,32 @@ public final class InfernalBonusProvider extends DataMapProvider {
         add(b, Tags.Items.ORES_IRON, InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON).count(2).chance(0.33F).build());
         add(b, Tags.Items.ORES_COPPER, InfernalBonus.builder(items, Tags.Items.NUGGETS_COPPER).count(2).chance(0.33F).build());
         add(b, Tags.Items.ORES_GOLD, InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD).count(2).chance(0.33F).build());
-        add(b, Tags.Items.ORES_QUARTZ, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUARTZ).count(2).chance(0.33F).build());
-        add(b, TCItemTags.ORES_CINNABAR, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER).count(2).chance(0.33F).build());
-        add(b, TCItemTags.RAW_MATERIALS_CINNABAR, InfernalBonus.builder(items, TCItemTags.NUGGETS_QUICKSILVER).chance(0.33F).build());
-        addConditional(b, TCItemTags.ORES_LEAD, new NotCondition(new TagEmptyCondition<>(TCItemTags.NUGGETS_LEAD)),
-                InfernalBonus.builder(items, TCItemTags.NUGGETS_LEAD).count(2).chance(0.33F).build());
-        addConditional(b, TCItemTags.ORES_SILVER, new NotCondition(new TagEmptyCondition<>(TCItemTags.NUGGETS_SILVER)),
-                InfernalBonus.builder(items, TCItemTags.NUGGETS_SILVER).count(2).chance(0.33F).build());
-        addConditional(b, TCItemTags.ORES_TIN, new NotCondition(new TagEmptyCondition<>(TCItemTags.NUGGETS_TIN)), InfernalBonus.builder(items, TCItemTags.NUGGETS_TIN).count(2).chance(0.33F).build());
+        add(b, Tags.Items.ORES_QUARTZ, InfernalBonus.builder(items, TTItemTags.NUGGETS_QUARTZ).count(2).chance(0.33F).build());
+        add(b, TTItemTags.ORES_CINNABAR, InfernalBonus.builder(items, TTItemTags.NUGGETS_QUICKSILVER).count(2).chance(0.33F).build());
+        add(b, TTItemTags.RAW_MATERIALS_CINNABAR, InfernalBonus.builder(items, TTItemTags.NUGGETS_QUICKSILVER).chance(0.33F).build());
+        addConditional(b, TTItemTags.ORES_LEAD, new NotCondition(new TagEmptyCondition<>(TTItemTags.NUGGETS_LEAD)),
+                InfernalBonus.builder(items, TTItemTags.NUGGETS_LEAD).count(2).chance(0.33F).build());
+        addConditional(b, TTItemTags.ORES_SILVER, new NotCondition(new TagEmptyCondition<>(TTItemTags.NUGGETS_SILVER)),
+                InfernalBonus.builder(items, TTItemTags.NUGGETS_SILVER).count(2).chance(0.33F).build());
+        addConditional(b, TTItemTags.ORES_TIN, new NotCondition(new TagEmptyCondition<>(TTItemTags.NUGGETS_TIN)), InfernalBonus.builder(items, TTItemTags.NUGGETS_TIN).count(2).chance(0.33F).build());
 
         add(b, Tags.Items.RAW_MATERIALS_IRON, InfernalBonus.builder(items, Tags.Items.NUGGETS_IRON).chance(0.33F).build());
         add(b, Tags.Items.RAW_MATERIALS_COPPER, InfernalBonus.builder(items, Tags.Items.NUGGETS_COPPER).chance(0.33F).build());
         add(b, Tags.Items.RAW_MATERIALS_GOLD, InfernalBonus.builder(items, Tags.Items.NUGGETS_GOLD).chance(0.33F).build());
 
-        add(b, Items.BEEF, InfernalBonus.builder(TCItems.CHUNK_BEEF).chance(0.33F).build());
-        add(b, Items.CHICKEN, InfernalBonus.builder(TCItems.CHUNK_CHICKEN).chance(0.33F).build());
-        add(b, Items.PORKCHOP, InfernalBonus.builder(TCItems.CHUNK_PORK).chance(0.33F).build());
-        add(b, Items.COD, InfernalBonus.builder(TCItems.CHUNK_FISH).chance(0.33F).build());
-        add(b, Items.SALMON, InfernalBonus.builder(TCItems.CHUNK_FISH).chance(0.33F).build());
-        add(b, Items.TROPICAL_FISH, InfernalBonus.builder(TCItems.CHUNK_FISH).chance(0.33F).build());
-        add(b, Items.PUFFERFISH, InfernalBonus.builder(TCItems.CHUNK_FISH).chance(0.33F).build());
-        add(b, Items.RABBIT, InfernalBonus.builder(TCItems.CHUNK_RABBIT).chance(0.33F).build());
-        add(b, Items.MUTTON, InfernalBonus.builder(TCItems.CHUNK_MUTTON).chance(0.33F).build());
+        add(b, Items.BEEF, InfernalBonus.builder(TTItems.CHUNK_BEEF).chance(0.33F).build());
+        add(b, Items.CHICKEN, InfernalBonus.builder(TTItems.CHUNK_CHICKEN).chance(0.33F).build());
+        add(b, Items.PORKCHOP, InfernalBonus.builder(TTItems.CHUNK_PORK).chance(0.33F).build());
+        add(b, Items.COD, InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+        add(b, Items.SALMON, InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+        add(b, Items.TROPICAL_FISH, InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+        add(b, Items.PUFFERFISH, InfernalBonus.builder(TTItems.CHUNK_FISH).chance(0.33F).build());
+        add(b, Items.RABBIT, InfernalBonus.builder(TTItems.CHUNK_RABBIT).chance(0.33F).build());
+        add(b, Items.MUTTON, InfernalBonus.builder(TTItems.CHUNK_MUTTON).chance(0.33F).build());
 
-        add(b, TCItemTags.RARE_EARTH_CHANCE_HIGH, InfernalBonus.builder(TCItems.RARE_EARTH).chance(0.025F).build());
-        add(b, TCItemTags.RARE_EARTH_CHANCE_NORMAL, InfernalBonus.builder(TCItems.RARE_EARTH).chance(0.02F).build());
-        add(b, TCItemTags.RARE_EARTH_CHANCE_LOW, InfernalBonus.builder(TCItems.RARE_EARTH).chance(0.01F).build());
+        add(b, TTItemTags.RARE_EARTH_CHANCE_HIGH, InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.025F).build());
+        add(b, TTItemTags.RARE_EARTH_CHANCE_NORMAL, InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.02F).build());
+        add(b, TTItemTags.RARE_EARTH_CHANCE_LOW, InfernalBonus.builder(TTItems.RARE_EARTH).chance(0.01F).build());
     }
 
     @Override

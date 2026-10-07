@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.ai;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -38,7 +38,7 @@ public final class AltarFocusGoal extends Goal {
             return;
         }
         BlockPos home = cleric.getHomePosition();
-        if (home.distSqr(cleric.blockPosition()) > MAX_DISTANCE_SQ || !cleric.level().getBlockState(home).is(TCBlocks.ELDRITCH_ALTAR.get())) {
+        if (home.distSqr(cleric.blockPosition()) > MAX_DISTANCE_SQ || !cleric.level().getBlockState(home).is(TTBlocks.ELDRITCH_ALTAR.get())) {
             cleric.setRitualist(false);
         }
     }

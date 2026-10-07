@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockTubeOneway;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.ConditionBuilder;
@@ -28,16 +28,16 @@ public final class TubeModels {
     private static final Identifier TUBE_ONEWAY_MARKER = id("block/tube_oneway_marker");
 
     public static void register(BlockModelGenerators blockModels) {
-        registerTube(blockModels, TCBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
-        registerTube(blockModels, TCBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
-        registerTube(blockModels, TCBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
-        registerTube(blockModels, TCBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
+        registerTube(blockModels, TTBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
+        registerTube(blockModels, TTBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
+        registerTube(blockModels, TTBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
+        registerTube(blockModels, TTBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
         registerOnewayTube(blockModels);
-        registerTube(blockModels, TCBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
+        registerTube(blockModels, TTBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
     }
 
     private static void registerOnewayTube(BlockModelGenerators blockModels) {
-        Block block = TCBlocks.TUBE_ONEWAY.get();
+        Block block = TTBlocks.TUBE_ONEWAY.get();
         MultiPartGenerator generator = tubeParts(block, TUBE_CORE, TUBE_SIDE);
         for (Direction facing : Direction.values()) {
             Direction input = facing.getOpposite();
@@ -49,7 +49,7 @@ public final class TubeModels {
     }
 
     private static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath(TCIds.MODID, path);
+        return Identifier.fromNamespaceAndPath(TTIds.MODID, path);
     }
 
     private static void registerTube(BlockModelGenerators blockModels, Block block, Identifier coreModel, Identifier sideModel) {

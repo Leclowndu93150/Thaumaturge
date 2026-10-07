@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.focus;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectRift;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -44,7 +44,7 @@ public final class BlockEntityHole extends BlockEntity {
     Direction direction = null;
 
     public BlockEntityHole(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.HOLE.get(), pos, state);
+        super(TTBlockEntities.HOLE.get(), pos, state);
     }
 
     public void configure(BlockState oldblock, int countdownmax, int count, @Nullable Direction direction) {

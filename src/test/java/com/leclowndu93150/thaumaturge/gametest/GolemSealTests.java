@@ -3,13 +3,13 @@ package com.leclowndu93150.thaumaturge.gametest;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectIndexHolder;
 import com.leclowndu93150.thaumaturge.content.golem.ItemSealPlacer;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -48,15 +48,15 @@ public final class GolemSealTests {
         }
     }
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("aspects/equipment_bonuses", 20, helper -> {
-            requireAspect(helper, Items.IRON_SWORD, TCAspects.AVERSIO, 12);
-            requireAspect(helper, Items.DIAMOND_SWORD, TCAspects.AVERSIO, 16);
-            requireAspect(helper, Items.IRON_PICKAXE, TCAspects.INSTRUMENTUM, 12);
-            requireAspect(helper, Items.STONE_SHOVEL, TCAspects.INSTRUMENTUM, 8);
-            requireAspect(helper, Items.IRON_CHESTPLATE, TCAspects.PRAEMUNIO, 24);
-            requireAspect(helper, Items.BOW, TCAspects.AVERSIO, 10);
-            requireAspect(helper, Items.BOW, TCAspects.VOLATUS, 5);
+            requireAspect(helper, Items.IRON_SWORD, TTAspects.AVERSIO, 12);
+            requireAspect(helper, Items.DIAMOND_SWORD, TTAspects.AVERSIO, 16);
+            requireAspect(helper, Items.IRON_PICKAXE, TTAspects.INSTRUMENTUM, 12);
+            requireAspect(helper, Items.STONE_SHOVEL, TTAspects.INSTRUMENTUM, 8);
+            requireAspect(helper, Items.IRON_CHESTPLATE, TTAspects.PRAEMUNIO, 24);
+            requireAspect(helper, Items.BOW, TTAspects.AVERSIO, 10);
+            requireAspect(helper, Items.BOW, TTAspects.VOLATUS, 5);
             helper.succeed();
         });
 
@@ -64,7 +64,7 @@ public final class GolemSealTests {
             BlockPos chestPos = new BlockPos(2, 1, 2);
             helper.setBlock(chestPos, Blocks.CHEST);
             ServerPlayer player = testPlayer(helper, "tc_seal_chest_test");
-            ItemStack stack = new ItemStack(TCItems.SEAL_STOCK.get());
+            ItemStack stack = new ItemStack(TTItems.SEAL_STOCK.get());
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             BlockPos absolute = helper.absolutePos(chestPos);
             BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(absolute).add(0.0, 0.5, 0.0), Direction.UP, absolute, false);
@@ -85,7 +85,7 @@ public final class GolemSealTests {
         r.add("golem/seal_rejected_on_air", 40, helper -> {
             BlockPos airPos = new BlockPos(2, 2, 2);
             ServerPlayer player = testPlayer(helper, "tc_seal_air_test");
-            ItemStack stack = new ItemStack(TCItems.SEAL_BREAKER.get());
+            ItemStack stack = new ItemStack(TTItems.SEAL_BREAKER.get());
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
             BlockPos absolute = helper.absolutePos(airPos);
             BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false);

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.screen.construct;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvanced;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -12,7 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public final class TurretAdvancedScreen extends TurretBasicScreen<MenuTurretAdvanced> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_turret_advanced.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/gui/gui_turret_advanced.png");
     private static final int HEALTH_BAR_X = 30;
     private static final int BUTTON_X = 90;
     private static final int BUTTON_FIRST_Y = 13;
@@ -62,7 +62,7 @@ public final class TurretAdvancedScreen extends TurretBasicScreen<MenuTurretAdva
             if (index < 4 && my - index * BUTTON_SPACING < BUTTON_SIZE) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuTurretAdvanced.BUTTON_ANIMAL + index);
                 if (minecraft.player != null) {
-                    minecraft.player.playSound(TCSounds.CLACK.get(), CLICK_VOLUME, 1.0F);
+                    minecraft.player.playSound(TTSounds.CLACK.get(), CLICK_VOLUME, 1.0F);
                 }
                 return true;
             }

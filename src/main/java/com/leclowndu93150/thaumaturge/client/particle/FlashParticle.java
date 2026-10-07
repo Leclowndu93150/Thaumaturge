@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class FlashParticle extends TCParticle {
+public final class FlashParticle extends TTParticle {
     private static final int BASE_LIFETIME = 10;
     private static final float BASE_SIZE = 1.0F;
 
@@ -29,7 +29,7 @@ public final class FlashParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("flash");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("flash");
 
         @Override
         public Particle createParticle(ColorParticleOption options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -67,7 +67,7 @@ public final class EntityFocusProjectile extends ThrowableProjectile implements 
     }
 
     public EntityFocusProjectile(FocusPackage pack, LivingEntity caster, float speed, Trajectory trajectory, int special) {
-        super(TCEntities.FOCUS_PROJECTILE.get(), caster.level());
+        super(TTEntities.FOCUS_PROJECTILE.get(), caster.level());
         this.focusPackage = pack;
         this.setOwner(caster);
         double width = caster.getBbWidth();

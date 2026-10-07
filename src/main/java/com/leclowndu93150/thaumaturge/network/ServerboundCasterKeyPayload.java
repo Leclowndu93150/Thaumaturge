@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.equipment.ElementalShovelItem;
@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundCasterKeyPayload(int mod) implements CustomPacketPayload {
-    public static final Type<ServerboundCasterKeyPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "caster_key"));
+    public static final Type<ServerboundCasterKeyPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "caster_key"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundCasterKeyPayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ServerboundCasterKeyPayload::mod,
             ServerboundCasterKeyPayload::new);

@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.warp;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -69,10 +69,10 @@ public class ItemSanitySoap extends Item {
         if (!level.isClientSide() && entity instanceof ServerPlayer player) {
             IPlayerWarp warp = WarpHelper.getWarp(player);
             int amount = 1;
-            if (player.hasEffect(TCMobEffects.WARP_WARD)) {
+            if (player.hasEffect(TTMobEffects.WARP_WARD)) {
                 amount++;
             }
-            if (level.getBlockState(player.blockPosition()).is(TCBlocks.PURIFYING_FLUID.get())) {
+            if (level.getBlockState(player.blockPosition()).is(TTBlocks.PURIFYING_FLUID.get())) {
                 amount++;
             }
             if (warp.get(WarpType.NORMAL) > 0) {
@@ -82,7 +82,7 @@ public class ItemSanitySoap extends Item {
                 WarpHelper.addWarp(player, -warp.get(WarpType.TEMPORARY), WarpType.TEMPORARY);
             }
         } else if (level.isClientSide()) {
-            level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), TCSounds.CRAFTSTART.get(), SoundSource.PLAYERS, 0.25F, 1.0F, false);
+            level.playLocalSound(entity.getX(), entity.getY(), entity.getZ(), TTSounds.CRAFTSTART.get(), SoundSource.PLAYERS, 0.25F, 1.0F, false);
             spawnBubbles(level, entity, FINISH_BUBBLES, 1.5F);
         }
         return true;

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.Identifier;
 
 public final class JEITextures {
@@ -16,6 +16,6 @@ public final class JEITextures {
     private JEITextures() {}
 
     private static Identifier jei(String name) {
-        return Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/jei/" + name);
+        return Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/jei/" + name);
     }
 }

@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.content.entity.ai.AltarFocusGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -102,12 +102,12 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
 
     @Override
     protected void setLoot(DifficultyInstance difficulty) {
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TCItems.CRIMSON_ROBE_HELM.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TCItems.CRIMSON_ROBE_CHEST.get()));
-        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TCItems.CRIMSON_ROBE_LEGS.get()));
+        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_ROBE_HELM.get()));
+        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_ROBE_CHEST.get()));
+        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_ROBE_LEGS.get()));
         float bootsChance = this.level().getDifficulty() == Difficulty.HARD ? BOOTS_CHANCE_HARD : BOOTS_CHANCE;
         if (this.random.nextFloat() < bootsChance) {
-            this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TCItems.CRIMSON_BOOTS.get()));
+            this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TTItems.CRIMSON_BOOTS.get()));
         }
     }
 
@@ -122,7 +122,7 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
             Vec3 v = target.position().add(target.getDeltaMovement().scale(10.0)).subtract(this.position()).normalize();
             blast.setPos(blast.getX() + v.x, blast.getY() + v.y, blast.getZ() + v.z);
             blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
-            this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);
         } else {
             float spread = Mth.sqrt(velocity) * 0.5F;
@@ -192,7 +192,7 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CHANT.get();
+        return TTSounds.CHANT.get();
     }
 
     @Override

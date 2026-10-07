@@ -1,8 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -28,8 +29,6 @@ import org.jspecify.annotations.Nullable;
 public final class BlockJarNode extends Block implements EntityBlock {
     public static final MapCodec<BlockJarNode> CODEC = simpleCodec(BlockJarNode::new);
 
-    private static final VoxelShape SHAPE = box(3.0, 0.0, 3.0, 13.0, 12.0, 13.0);
-
     public BlockJarNode(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -41,7 +40,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return BlockJar.SHAPE;
     }
 
     @Override
@@ -53,7 +52,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
             if (serverLevel.getBlockEntity(pos) instanceof BlockEntityJarNode jar) {
                 NodeData data = new NodeData(jar.getNodeType(), Optional.ofNullable(jar.getNodeModifier()), jar.getAspects(), jar.getAspectsBase());
                 serverLevel.removeBlockEntity(pos);
-                serverLevel.setBlock(pos, TCBlocks.NODE.get().defaultBlockState(), Block.UPDATE_ALL);
+                serverLevel.setBlock(pos, TTBlocks.NODE.get().defaultBlockState(), Block.UPDATE_ALL);
                 if (serverLevel.getBlockEntity(pos) instanceof BlockEntityNode node) {
                     node.applyNodeData(data);
                     node.setChanged();
@@ -73,7 +72,7 @@ public final class BlockJarNode extends Block implements EntityBlock {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide() || type != TCBlockEntities.JAR_NODE.get()) {
+        if (level.isClientSide() || type != TTBlockEntities.JAR_NODE.get()) {
             return null;
         }
         return (tickLevel, pos, tickState, node) -> ((BlockEntityJarNode) node).serverTick(tickLevel, pos);

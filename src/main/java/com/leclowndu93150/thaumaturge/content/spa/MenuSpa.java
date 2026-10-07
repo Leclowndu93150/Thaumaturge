@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -40,14 +40,14 @@ public final class MenuSpa extends AbstractContainerMenu {
     }
 
     private MenuSpa(int containerId, Inventory playerInventory, ItemStacksResourceHandler items, ContainerLevelAccess access) {
-        super(TCMenus.SPA.get(), containerId);
+        super(TTMenus.SPA.get(), containerId);
         this.items = items;
         this.access = access;
 
         addSlot(new ResourceHandlerSlot(items, items::set, 0, SALTS_X, SALTS_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(TCItems.BATH_SALTS.get());
+                return stack.is(TTItems.BATH_SALTS.get());
             }
         });
 
@@ -78,7 +78,7 @@ public final class MenuSpa extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.SPA.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.SPA.get());
     }
 
     @Override
@@ -92,7 +92,7 @@ public final class MenuSpa extends AbstractContainerMenu {
                 if (!moveItemStackTo(stackInSlot, SLOT_COUNT, TOTAL_INVENTORY_SLOTS, true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!stackInSlot.is(TCItems.BATH_SALTS.get()) || !moveItemStackTo(stackInSlot, 0, SLOT_COUNT, false)) {
+            } else if (!stackInSlot.is(TTItems.BATH_SALTS.get()) || !moveItemStackTo(stackInSlot, 0, SLOT_COUNT, false)) {
                 return ItemStack.EMPTY;
             }
             if (stackInSlot.isEmpty()) {

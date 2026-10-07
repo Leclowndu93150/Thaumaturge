@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,6 +25,6 @@ public record InfusionCrumbsParticleOptions(ItemStackTemplate stack, double tx, 
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.INFUSION_CRUMBS.get();
+        return TTParticles.INFUSION_CRUMBS.get();
     }
 }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.aura.AuraManager;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundRequestAuraChunkPayload(int chunkX, int chunkZ) implements CustomPacketPayload {
-    public static final Type<ServerboundRequestAuraChunkPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "request_aura_chunk"));
+    public static final Type<ServerboundRequestAuraChunkPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "request_aura_chunk"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundRequestAuraChunkPayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ServerboundRequestAuraChunkPayload::chunkX,
             ByteBufCodecs.VAR_INT, ServerboundRequestAuraChunkPayload::chunkZ, ServerboundRequestAuraChunkPayload::new);

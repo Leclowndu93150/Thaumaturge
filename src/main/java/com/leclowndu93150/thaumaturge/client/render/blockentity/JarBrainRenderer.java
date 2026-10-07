@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.BrainModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.JarBrineModel;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarBrain;
@@ -21,19 +21,20 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJarBrain, JarBrainRenderState> {
-    private static final Identifier TEX_BRAIN = TCIds.rl("textures/entity/brain2.png");
-    private static final Identifier TEX_BRINE = TCIds.rl("textures/entity/jarbrine.png");
+    private static final Identifier TEX_BRAIN = TTIds.rl("textures/entity/brain2.png");
+    private static final Identifier TEX_BRINE = TTIds.rl("textures/entity/jarbrine.png");
     private static final float BRAIN_SCALE = 0.4F;
     private static final float BRAIN_LIFT = -0.8F;
     private static final float BOB_PERIOD = 14.0F;
     private static final float BOB_AMPLITUDE = 0.03F;
+    private static final float XP_PULSE_PERIOD = 5.0F;
 
     private final BrainModel brain;
     private final JarBrineModel brine;
 
     public JarBrainRenderer(BlockEntityRendererProvider.Context context) {
-        this.brain = new BrainModel(context.bakeLayer(TCModelLayers.BRAIN));
-        this.brine = new JarBrineModel(context.bakeLayer(TCModelLayers.JAR_BRINE));
+        this.brain = new BrainModel(context.bakeLayer(TTModelLayers.BRAIN));
+        this.brine = new JarBrineModel(context.bakeLayer(TTModelLayers.JAR_BRINE));
     }
 
     @Override
@@ -54,6 +55,8 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
         state.yawRadians = jar.rotb + delta * partialTicks;
         float time = (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount) + partialTicks;
         state.bobOffset = Mth.sin(time / BOB_PERIOD) * BOB_AMPLITUDE + BOB_AMPLITUDE;
+        state.ageInTicks = time;
+        state.xpResponse = Mth.sin(time / XP_PULSE_PERIOD) * jar.xp() / BlockEntityJarBrain.XP_MAX;
     }
 
     @Override
@@ -67,7 +70,7 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
         poseStack.mulPose(Axis.YP.rotationDegrees(state.yawRadians * Mth.RAD_TO_DEG));
         poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
         poseStack.scale(BRAIN_SCALE, BRAIN_SCALE, BRAIN_SCALE);
-        collector.submitModelPart(brain.root, poseStack, RenderTypes.entityCutout(TEX_BRAIN), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);
+        collector.submitModel(brain, state, poseStack, RenderTypes.entityCutout(TEX_BRAIN), state.lightCoords, OverlayTexture.NO_OVERLAY, 0, null);
         poseStack.popPose();
 
         collector.submitModelPart(brine.root, poseStack, RenderTypes.entityTranslucent(TEX_BRINE), state.lightCoords, OverlayTexture.NO_OVERLAY, null, -1, null);

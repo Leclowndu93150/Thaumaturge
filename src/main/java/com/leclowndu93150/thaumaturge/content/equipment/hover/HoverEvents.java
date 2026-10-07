@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -11,7 +11,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class HoverEvents {
     private static final int DISRUPTION_CHECK_TICKS = 20;
     private static final float AIRBORNE_MINING_PENALTY = 5.0F;

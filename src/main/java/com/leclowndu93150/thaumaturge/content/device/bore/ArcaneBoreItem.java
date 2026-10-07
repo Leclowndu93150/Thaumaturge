@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.content.entity.construct.ConstructDeployment;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 
 public final class ArcaneBoreItem extends BlockItem {
-    private static final ConstructDeployment<EntityArcaneBore> ON_RAILS = new ConstructDeployment<>(TCEntities.ARCANE_BORE, ArcaneBoreItem::faceAwayFromPlacer);
+    private static final ConstructDeployment<EntityArcaneBore> ON_RAILS = new ConstructDeployment<>(TTEntities.ARCANE_BORE, ArcaneBoreItem::faceAwayFromPlacer);
 
     public ArcaneBoreItem(Block block, Properties properties) {
         super(block, properties);

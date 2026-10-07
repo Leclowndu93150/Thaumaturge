@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockGolemBuilder extends BaseEntityBlock {
-    private static final Identifier MIND_CLOCKWORK_RESEARCH = TCIds.rl("mind_clockwork");
+    private static final Identifier MIND_CLOCKWORK_RESEARCH = TTIds.rl("mind_clockwork");
 
     public static final MapCodec<BlockGolemBuilder> CODEC = simpleCodec(BlockGolemBuilder::new);
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -67,8 +67,8 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide()
-                ? createTickerHelper(type, TCBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::clientTick)
-                : createTickerHelper(type, TCBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::serverTick);
+                ? createTickerHelper(type, TTBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::clientTick)
+                : createTickerHelper(type, TTBlockEntities.GOLEM_BUILDER.get(), BlockEntityGolemBuilder::serverTick);
     }
 
     @Override
@@ -108,14 +108,14 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
                         continue;
                     }
                     BlockState neighbor = level.getBlockState(offset);
-                    if (neighbor.is(TCBlocks.PLACEHOLDER_IRON_BARS.get())) {
+                    if (neighbor.is(TTBlocks.PLACEHOLDER_IRON_BARS.get())) {
                         level.setBlock(offset, Blocks.IRON_BARS.defaultBlockState(), 3);
-                    } else if (neighbor.is(TCBlocks.PLACEHOLDER_ANVIL.get())) {
+                    } else if (neighbor.is(TTBlocks.PLACEHOLDER_ANVIL.get())) {
                         level.setBlock(offset, Blocks.ANVIL.defaultBlockState(), 3);
-                    } else if (neighbor.is(TCBlocks.PLACEHOLDER_CAULDRON.get())) {
+                    } else if (neighbor.is(TTBlocks.PLACEHOLDER_CAULDRON.get())) {
                         level.setBlock(offset, Blocks.CAULDRON.defaultBlockState(), 3);
-                    } else if (neighbor.is(TCBlocks.PLACEHOLDER_TABLE.get())) {
-                        level.setBlock(offset, TCBlocks.TABLE_STONE.get().defaultBlockState(), 3);
+                    } else if (neighbor.is(TTBlocks.PLACEHOLDER_TABLE.get())) {
+                        level.setBlock(offset, TTBlocks.TABLE_STONE.get().defaultBlockState(), 3);
                     }
                 }
             }

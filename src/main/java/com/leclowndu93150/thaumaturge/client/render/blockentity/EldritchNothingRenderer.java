@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchNothing;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -38,7 +38,7 @@ public final class EldritchNothingRenderer implements BlockEntityRenderer<BlockE
         for (Direction dir : Direction.values()) {
             cursor.setWithOffset(nothing.getBlockPos(), dir);
             BlockState neighbor = level.getBlockState(cursor);
-            boolean exposed = !neighbor.isSolidRender() && !neighbor.is(TCBlocks.ELDRITCH_NOTHING.get());
+            boolean exposed = !neighbor.isSolidRender() && !neighbor.is(TTBlocks.ELDRITCH_NOTHING.get());
             state.exposed[dir.ordinal()] = exposed;
             state.anyExposed |= exposed;
         }

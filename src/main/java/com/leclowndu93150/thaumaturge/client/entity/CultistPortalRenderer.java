@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -27,9 +27,9 @@ public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPor
         public float halfHeight;
     }
 
-    private static final Identifier TEXTURE = TCIds.rl("textures/misc/cultist_portal.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/misc/cultist_portal.png");
     private static final RenderType PORTAL_TYPE = RenderType.create("tc_cultist_portal",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", TEXTURE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", TEXTURE).useLightmap().createRenderSetup());
 
     private static final int FRAMES = 32;
     private static final float FRAME_WIDTH = 1.0F / FRAMES;

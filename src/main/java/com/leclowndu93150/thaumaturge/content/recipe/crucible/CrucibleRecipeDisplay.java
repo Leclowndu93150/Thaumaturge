@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.recipe.crucible;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -20,11 +20,11 @@ public record CrucibleRecipeDisplay(SlotDisplay catalyst, AspectList aspects, Sl
 
     @Override
     public SlotDisplay craftingStation() {
-        return new SlotDisplay.ItemSlotDisplay(TCItems.CRUCIBLE.get());
+        return new SlotDisplay.ItemSlotDisplay(TTItems.CRUCIBLE.get());
     }
 
     @Override
     public Type<CrucibleRecipeDisplay> type() {
-        return TCRecipeTypes.CRUCIBLE_DISPLAY.get();
+        return TTRecipeTypes.CRUCIBLE_DISPLAY.get();
     }
 }

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import java.util.Arrays;
+import java.util.function.Function;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,9 +27,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
@@ -43,37 +44,19 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     public static final BooleanProperty UP = BlockStateProperties.UP;
     public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
 
-    private static final double CORE_MIN = 5.0 / 16.0;
-    private static final double CORE_MAX = 11.0 / 16.0;
-    private static final VoxelShape CORE = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_DOWN = Block.box(CORE_MIN * 16.0, 0.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_UP = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_NORTH = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, 0.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_SOUTH = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, 16.0);
-    private static final VoxelShape STUB_WEST = Block.box(0.0, CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
-    private static final VoxelShape STUB_EAST = Block.box(CORE_MIN * 16.0, CORE_MIN * 16.0, CORE_MIN * 16.0, 16.0, CORE_MAX * 16.0, CORE_MAX * 16.0);
+    private final TubeGeometry geometry;
+    private final Function<BlockState, VoxelShape> shapes;
 
-    protected BlockEssentiaTransport(BlockBehaviour.Properties properties) {
+    protected BlockEssentiaTransport(BlockBehaviour.Properties properties, TubeGeometry geometry) {
         super(properties);
+        this.geometry = geometry;
+        this.shapes = getShapeForEachState(geometry::shape);
         registerDefaultState(stateDefinition.any().setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false).setValue(DOWN, false));
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        VoxelShape shape = CORE;
-        if (state.getValue(DOWN))
-            shape = Shapes.or(shape, STUB_DOWN);
-        if (state.getValue(UP))
-            shape = Shapes.or(shape, STUB_UP);
-        if (state.getValue(NORTH))
-            shape = Shapes.or(shape, STUB_NORTH);
-        if (state.getValue(SOUTH))
-            shape = Shapes.or(shape, STUB_SOUTH);
-        if (state.getValue(WEST))
-            shape = Shapes.or(shape, STUB_WEST);
-        if (state.getValue(EAST))
-            shape = Shapes.or(shape, STUB_EAST);
-        return shape;
+        return shapes.apply(state);
     }
 
     @Override
@@ -84,6 +67,11 @@ public abstract class BlockEssentiaTransport extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+    }
+
+    public static int resolveSubHit(BlockState state, BlockHitResult hit, BlockPos pos) {
+        TubeGeometry tube = state.getBlock() instanceof BlockEssentiaTransport transport ? transport.geometry : TubeGeometry.PIPE;
+        return tube.subHit(hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()));
     }
 
     public static BooleanProperty propertyFor(Direction direction) {

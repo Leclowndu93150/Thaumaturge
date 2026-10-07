@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.Codec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     private int bellows = -1;
 
     public BlockEntityTubeBuffer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.TUBE_BUFFER.get(), pos, state);
+        super(TTBlockEntities.TUBE_BUFFER.get(), pos, state);
     }
 
     public AspectList contents() {
@@ -129,7 +129,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         if (!(player.pick(player.blockInteractionRange(), 0.0F, false) instanceof BlockHitResult hit) || !hit.getBlockPos().equals(pos)) {
             return false;
         }
-        if (!handleCasterClick(BlockTube.resolveSubHit(hit, pos), player.isShiftKeyDown())) {
+        if (!handleCasterClick(BlockEssentiaTransport.resolveSubHit(getBlockState(), hit, pos), player.isShiftKeyDown())) {
             return false;
         }
         player.swing(hand);
@@ -142,13 +142,13 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         Direction dir = Direction.values()[subHit];
         if (sneaking) {
             cycleChokedSide(dir);
-            level.playSound(null, getBlockPos(), TCSounds.SQUEEK.get(), SoundSource.BLOCKS, 0.6F, 2.0F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, getBlockPos(), TTSounds.SQUEEK.get(), SoundSource.BLOCKS, 0.6F, 2.0F + level.getRandom().nextFloat() * 0.2F);
             return true;
         }
         toggleOpenSide(dir);
         BlockEssentiaTransport.refreshConnections(level, getBlockPos());
         BlockEssentiaTransport.refreshConnections(level, getBlockPos().relative(dir));
-        level.playSound(null, getBlockPos(), TCSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+        level.playSound(null, getBlockPos(), TTSounds.TOOL.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         return true;
     }
 

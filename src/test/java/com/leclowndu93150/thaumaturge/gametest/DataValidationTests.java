@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.gametest;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectIndexHolder;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.core.Holder;
@@ -19,14 +19,14 @@ public final class DataValidationTests {
 
     private DataValidationTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("data/recipes_present", 20, helper -> {
             RecipeManager recipes = helper.getLevel().getServer().getRecipeManager();
-            requireRecipes(helper, recipes, TCRecipeTypes.ARCANE.get(), "arcane");
-            requireRecipes(helper, recipes, TCRecipeTypes.CRUCIBLE.get(), "crucible");
-            requireRecipes(helper, recipes, TCRecipeTypes.INFUSION.get(), "infusion");
-            requireRecipes(helper, recipes, TCRecipeTypes.INFUSION_ENCHANTMENT.get(), "infusion enchantment");
-            requireRecipes(helper, recipes, TCRecipeTypes.DUST_TRIGGER.get(), "dust trigger");
+            requireRecipes(helper, recipes, TTRecipeTypes.ARCANE.get(), "arcane");
+            requireRecipes(helper, recipes, TTRecipeTypes.CRUCIBLE.get(), "crucible");
+            requireRecipes(helper, recipes, TTRecipeTypes.INFUSION.get(), "infusion");
+            requireRecipes(helper, recipes, TTRecipeTypes.INFUSION_ENCHANTMENT.get(), "infusion enchantment");
+            requireRecipes(helper, recipes, TTRecipeTypes.DUST_TRIGGER.get(), "dust trigger");
             helper.succeed();
         });
 

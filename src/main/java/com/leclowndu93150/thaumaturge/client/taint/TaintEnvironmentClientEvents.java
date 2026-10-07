@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.FogPlanes;
 import com.leclowndu93150.thaumaturge.network.ClientboundTaintEnvironmentPayload;
 import net.minecraft.util.Mth;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TaintEnvironmentClientEvents {
     private static final float FOG_FULL_PRESSURE = 0.4F;
     private static final float MAX_FOG_INTENSITY = 0.95F;

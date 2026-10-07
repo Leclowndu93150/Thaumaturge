@@ -1,0 +1,69 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "metal": "thaumaturge:block/base_metal",
+  "ports": "thaumaturge:block/thaumatorium",
+  "particle": "#metal"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    0,
+    5
+   ],
+   "to": [
+    11,
+    2,
+    11
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      5,
+      14,
+      11,
+      16
+     ],
+     "texture": "#metal"
+    },
+    "south": {
+     "uv": [
+      5,
+      14,
+      11,
+      16
+     ],
+     "texture": "#metal"
+    },
+    "east": {
+     "uv": [
+      5,
+      14,
+      11,
+      16
+     ],
+     "texture": "#metal"
+    },
+    "west": {
+     "uv": [
+      5,
+      14,
+      11,
+      16
+     ],
+     "texture": "#metal"
+    },
+    "down": {
+     "uv": [
+      6,
+      12,
+      7.5,
+      13.5
+     ],
+     "texture": "#ports"
+    }
+   }
+  }
+ ]
+}

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -9,7 +9,7 @@ import java.util.Set;
 import net.minecraft.resources.Identifier;
 
 public final class FocusMediumRoot implements FocusMedium {
-    public static final Identifier KEY = TCIds.rl("root");
+    public static final Identifier KEY = TTIds.rl("root");
 
     @Override
     public Identifier id() {

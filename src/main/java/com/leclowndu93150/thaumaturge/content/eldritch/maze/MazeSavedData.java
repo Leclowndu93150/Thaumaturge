@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.maze;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,7 +28,7 @@ public final class MazeSavedData extends SavedData {
                     RETURNS_CODEC.optionalFieldOf("returns", Map.of()).forGetter(data -> data.returns), Codec.INT.optionalFieldOf("alloc_cursor", 0).forGetter(data -> data.allocCursor))
             .apply(builder, MazeSavedData::new));
 
-    public static final SavedDataType<MazeSavedData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TCIds.MODID, "labyrinth"), MazeSavedData::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<MazeSavedData> TYPE = new SavedDataType<>(Identifier.fromNamespaceAndPath(TTIds.MODID, "labyrinth"), MazeSavedData::new, CODEC, DataFixTypes.LEVEL);
 
     private final Map<Long, Short> cells;
     private final Map<Long, BlockPos> returns;

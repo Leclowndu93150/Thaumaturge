@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@ public final class InfusionRecipeMatcher {
 
     public static @Nullable Match find(ServerLevel level, Player player, InfusionInput input) {
         Match locked = null;
-        for (RecipeType<? extends InfusionJobRecipe> type : List.of(TCRecipeTypes.INFUSION.get(), TCRecipeTypes.INFUSION_ENCHANTMENT.get(), TCRecipeTypes.RUNIC_AUGMENT.get())) {
+        for (RecipeType<? extends InfusionJobRecipe> type : List.of(TTRecipeTypes.INFUSION.get(), TTRecipeTypes.INFUSION_ENCHANTMENT.get(), TTRecipeTypes.RUNIC_AUGMENT.get())) {
             Match match = scan(level, player, input, type);
             if (match != null && !match.locked()) {
                 return match;

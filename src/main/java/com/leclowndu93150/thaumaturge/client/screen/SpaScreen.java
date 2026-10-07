@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
 import com.leclowndu93150.thaumaturge.content.spa.MenuSpa;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
-public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
-    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_spa.png");
+public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
+    private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_spa.png");
 
     private static final int MIX_X = 89;
     private static final int MIX_Y = 35;
@@ -116,7 +116,7 @@ public class SpaScreen extends AbstractTCContainerScreen<MenuSpa> {
         if (mx >= 0 && my >= 0 && mx < MIX_SIZE && my < MIX_SIZE) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, MenuSpa.MIX_BUTTON_ID);
             if (minecraft.player != null) {
-                minecraft.player.playSound(TCSounds.CLACK.get(), CLICK_VOLUME, 1.0F);
+                minecraft.player.playSound(TTSounds.CLACK.get(), CLICK_VOLUME, 1.0F);
             }
             return true;
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -13,7 +13,7 @@ public final class ShieldChargeSound {
 
     public static void playIfShielded(LivingEntity entity) {
         if (entity.getAbsorptionAmount() > 0.0F) {
-            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), TCSounds.RUNICSHIELDCHARGE.get(), SoundSource.HOSTILE, VOLUME,
+            entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), TTSounds.RUNICSHIELDCHARGE.get(), SoundSource.HOSTILE, VOLUME,
                     BASE_PITCH + entity.getRandom().nextFloat() * PITCH_SPREAD);
         }
     }

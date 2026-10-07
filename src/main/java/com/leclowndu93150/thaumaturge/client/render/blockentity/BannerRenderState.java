@@ -9,5 +9,5 @@ public final class BannerRenderState extends BlockEntityRenderState {
     public boolean onWall;
     public int color = -1;
     public @Nullable Identifier aspectTexture;
-    public float sway;
+    public float phase;
 }

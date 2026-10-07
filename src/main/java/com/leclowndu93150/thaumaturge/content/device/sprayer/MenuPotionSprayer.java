@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.sprayer;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -36,7 +36,7 @@ public final class MenuPotionSprayer extends AbstractContainerMenu {
     }
 
     private MenuPotionSprayer(int containerId, Inventory playerInventory, Container container, ContainerLevelAccess access, BlockPos pos) {
-        super(TCMenus.POTION_SPRAYER.get(), containerId);
+        super(TTMenus.POTION_SPRAYER.get(), containerId);
         this.container = container;
         this.access = access;
         this.pos = pos;
@@ -67,7 +67,7 @@ public final class MenuPotionSprayer extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.POTION_SPRAYER.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.POTION_SPRAYER.get());
     }
 
     @Override

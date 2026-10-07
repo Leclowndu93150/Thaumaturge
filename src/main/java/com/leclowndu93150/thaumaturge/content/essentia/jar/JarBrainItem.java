@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -18,7 +18,7 @@ public final class JarBrainItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
-        Integer xp = stack.get(TCDataComponents.STORED_XP.get());
+        Integer xp = stack.get(TTDataComponents.STORED_XP.get());
         if (xp != null && xp > 0) {
             tooltip.accept(Component.literal(xp + " xp").withStyle(ChatFormatting.GREEN));
         }

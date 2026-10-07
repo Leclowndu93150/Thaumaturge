@@ -25,7 +25,7 @@ import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilde
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -60,12 +60,12 @@ final class JadeBlockProviderHolder {
             new JadeBlockHandler<>(BlockEntityEverfullUrn.class, JadeConfig.EVERFULL_URNS, (urn, data) -> data.hideFluid()),
             new JadeBlockHandler<>(BlockEntityInfernalFurnace.class, JadeConfig.INFERNAL_FURNACES, JadeMachineDetails::furnace),
             new JadeBlockHandler<>(BlockEntityFocalManipulator.class, JadeConfig.FOCAL_MANIPULATORS, JadeMachineDetails::focal));
-    private static final Map<Block, Class<? extends BlockEntity>> CONTROLLERS = Map.of(TCBlocks.PLACEHOLDER_IRON_BARS.get(), BlockEntityGolemBuilder.class, TCBlocks.PLACEHOLDER_ANVIL.get(),
-            BlockEntityGolemBuilder.class, TCBlocks.PLACEHOLDER_CAULDRON.get(), BlockEntityGolemBuilder.class, TCBlocks.PLACEHOLDER_TABLE.get(), BlockEntityGolemBuilder.class,
-            TCBlocks.NETHER_BRICKS_PLACEHOLDER.get(), BlockEntityInfernalFurnace.class, TCBlocks.OBSIDIAN_PLACEHOLDER.get(), BlockEntityInfernalFurnace.class,
-            TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), BlockEntityAdvancedAlchemicalFurnace.class, TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(),
-            BlockEntityAdvancedAlchemicalFurnace.class, TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get(), BlockEntityAdvancedAlchemicalFurnace.class,
-            TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get(), BlockEntityAdvancedAlchemicalFurnace.class);
+    private static final Map<Block, Class<? extends BlockEntity>> CONTROLLERS = Map.of(TTBlocks.PLACEHOLDER_IRON_BARS.get(), BlockEntityGolemBuilder.class, TTBlocks.PLACEHOLDER_ANVIL.get(),
+            BlockEntityGolemBuilder.class, TTBlocks.PLACEHOLDER_CAULDRON.get(), BlockEntityGolemBuilder.class, TTBlocks.PLACEHOLDER_TABLE.get(), BlockEntityGolemBuilder.class,
+            TTBlocks.NETHER_BRICKS_PLACEHOLDER.get(), BlockEntityInfernalFurnace.class, TTBlocks.OBSIDIAN_PLACEHOLDER.get(), BlockEntityInfernalFurnace.class,
+            TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get(), BlockEntityAdvancedAlchemicalFurnace.class, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get(),
+            BlockEntityAdvancedAlchemicalFurnace.class, TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get(), BlockEntityAdvancedAlchemicalFurnace.class,
+            TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get(), BlockEntityAdvancedAlchemicalFurnace.class);
 
     private JadeBlockProviderHolder() {}
 

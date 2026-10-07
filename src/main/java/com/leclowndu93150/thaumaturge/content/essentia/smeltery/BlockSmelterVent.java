@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -15,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -23,6 +26,9 @@ import org.jspecify.annotations.Nullable;
 public class BlockSmelterVent extends Block {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(box(4.0, 4.0, 0.0, 12.0, 12.0, 1.0), box(6.0, 6.0, 1.0, 10.0, 10.0, 4.0),
+            box(6.0, 6.0, 4.0, 10.0, 15.0, 8.0), Shapes.join(box(5.0, 15.0, 3.0, 11.0, 16.0, 9.0), box(6.0, 15.0, 4.0, 10.0, 16.0, 8.0), BooleanOp.ONLY_FIRST)));
 
     public BlockSmelterVent(Properties properties) {
         super(properties);
@@ -65,12 +71,6 @@ public class BlockSmelterVent extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        Direction facing = state.getValue(FACING);
-        return switch (facing) {
-            case SOUTH -> Shapes.box(0.125, 0.125, 0.5, 0.875, 0.875, 1.0);
-            case WEST -> Shapes.box(0.0, 0.125, 0.125, 0.5, 0.875, 0.875);
-            case EAST -> Shapes.box(0.5, 0.125, 0.125, 1.0, 0.875, 0.875);
-            default -> Shapes.box(0.125, 0.125, 0.0, 0.875, 0.875, 0.5);
-        };
+        return SHAPES.get(state.getValue(FACING));
     }
 }

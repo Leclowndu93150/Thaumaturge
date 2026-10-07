@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,7 +43,7 @@ public final class MenuSmelter extends AbstractContainerMenu {
     }
 
     private MenuSmelter(int containerId, Inventory playerInventory, ItemStacksResourceHandler items, ContainerLevelAccess access, BlockPos pos) {
-        super(TCMenus.SMELTER.get(), containerId);
+        super(TTMenus.SMELTER.get(), containerId);
         this.items = items;
         this.access = access;
         this.pos = pos;
@@ -76,8 +76,8 @@ public final class MenuSmelter extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.SMELTER_BASIC.get()) || AbstractContainerMenu.stillValid(access, player, TCBlocks.SMELTER_THAUMIUM.get())
-                || AbstractContainerMenu.stillValid(access, player, TCBlocks.SMELTER_VOID.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.SMELTER_BASIC.get()) || AbstractContainerMenu.stillValid(access, player, TTBlocks.SMELTER_THAUMIUM.get())
+                || AbstractContainerMenu.stillValid(access, player, TTBlocks.SMELTER_VOID.get());
     }
 
     @Override

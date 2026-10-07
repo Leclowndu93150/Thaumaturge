@@ -2,10 +2,10 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IChanneledItem;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -57,15 +57,15 @@ public final class ElementalSwordItem extends Item implements IChanneledItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isSecondaryUseActive()) {
-            boolean disabled = !stack.getOrDefault(TCDataComponents.WHIRLWIND_DISABLED.get(), false);
-            stack.set(TCDataComponents.WHIRLWIND_DISABLED.get(), disabled);
+            boolean disabled = !stack.getOrDefault(TTDataComponents.WHIRLWIND_DISABLED.get(), false);
+            stack.set(TTDataComponents.WHIRLWIND_DISABLED.get(), disabled);
             if (!level.isClientSide()) {
-                TCActionBar.sendPurple(player, disabled ? "tc.elemental_sword.whirlwind_off" : "tc.elemental_sword.whirlwind_on");
-                level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.KEY.get(), SoundSource.PLAYERS, 0.5F, disabled ? 0.8F : 1.2F);
+                TTActionBar.sendPurple(player, disabled ? "tc.elemental_sword.whirlwind_off" : "tc.elemental_sword.whirlwind_on");
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.KEY.get(), SoundSource.PLAYERS, 0.5F, disabled ? 0.8F : 1.2F);
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.getOrDefault(TCDataComponents.WHIRLWIND_DISABLED.get(), false)) {
+        if (stack.getOrDefault(TTDataComponents.WHIRLWIND_DISABLED.get(), false)) {
             return InteractionResult.PASS;
         }
         player.startUsingItem(hand);
@@ -118,7 +118,7 @@ public final class ElementalSwordItem extends Item implements IChanneledItem {
                 level.addParticle(ParticleTypes.SMOKE, player.getX(), player.getBoundingBox().minY + 0.1F, player.getZ(), mx, 0.0, mz);
             }
         } else if (ticks == 0 || ticks % PULSE_INTERVAL_TICKS == 0) {
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.WIND.get(), SoundSource.PLAYERS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.WIND.get(), SoundSource.PLAYERS, 0.5F, 0.9F + level.getRandom().nextFloat() * 0.2F);
         }
 
         if (ticks % PULSE_INTERVAL_TICKS == 0) {

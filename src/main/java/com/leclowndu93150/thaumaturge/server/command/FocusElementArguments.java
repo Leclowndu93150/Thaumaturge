@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.server.command;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -14,7 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 public final class FocusElementArguments {
-    public static final SuggestionProvider<CommandSourceStack> SUGGESTIONS = (ctx, builder) -> SharedSuggestionProvider.suggest(TCFocusElements.registry().keySet().stream().map(Identifier::toString),
+    public static final SuggestionProvider<CommandSourceStack> SUGGESTIONS = (ctx, builder) -> SharedSuggestionProvider.suggest(TTFocusElements.registry().keySet().stream().map(Identifier::toString),
             builder);
 
     private static final DynamicCommandExceptionType ERROR_UNKNOWN_ELEMENT = new DynamicCommandExceptionType(value -> Component.literal("Unknown focus element: " + value));
@@ -24,7 +24,7 @@ public final class FocusElementArguments {
     public static List<Identifier> parse(String raw) throws CommandSyntaxException {
         List<Identifier> elements = new ArrayList<>();
         for (String token : raw.trim().split("\\s+")) {
-            Identifier id = token.contains(":") ? Identifier.parse(token) : Identifier.fromNamespaceAndPath(TCIds.MODID, token);
+            Identifier id = token.contains(":") ? Identifier.parse(token) : Identifier.fromNamespaceAndPath(TTIds.MODID, token);
             if (FocusEngine.element(id) == null) {
                 throw ERROR_UNKNOWN_ELEMENT.create(id);
             }

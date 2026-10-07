@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectContainer;
@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class GogglesWorldOverlay {
     private static final float TAG_SCALE_CAP = 0.3F;
     private static final float TAG_SCALE_GROWTH = 0.031F;
@@ -86,7 +86,7 @@ public final class GogglesWorldOverlay {
     }
 
     private static boolean holdsThaumometer(Player player) {
-        return player.getMainHandItem().is(TCItems.THAUMOMETER.get()) || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
+        return player.getMainHandItem().is(TTItems.THAUMOMETER.get()) || player.getOffhandItem().is(TTItems.THAUMOMETER.get());
     }
 
     private static void resetAnimation() {

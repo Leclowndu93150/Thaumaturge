@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -25,7 +25,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     private List<ItemStack> outputStacks = new ArrayList<>();
 
     public BlockEntityMirror(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.MIRROR.get(), pos, state);
+        super(TTBlockEntities.MIRROR.get(), pos, state);
     }
 
     BlockEntityMirror(BlockEntityType<?> type, BlockPos pos, BlockState state) {

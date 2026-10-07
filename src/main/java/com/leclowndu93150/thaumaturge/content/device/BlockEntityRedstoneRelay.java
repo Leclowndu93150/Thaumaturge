@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +22,7 @@ public final class BlockEntityRedstoneRelay extends BlockEntity {
     private int out = 15;
 
     public BlockEntityRedstoneRelay(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.REDSTONE_RELAY.get(), pos, state);
+        super(TTBlockEntities.REDSTONE_RELAY.get(), pos, state);
     }
 
     public int getIn() {

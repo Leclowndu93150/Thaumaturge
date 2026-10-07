@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectIndex;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +48,7 @@ public final class WandAspectVariants {
     }
 
     private static AspectIndex.Variant variant(WandCap cap, WandRod rod, boolean sceptre, AspectList aspects) {
-        return new AspectIndex.Variant(new DataComponentMatchers(DataComponentExactPredicate.expect(TCDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre)), Map.of()), aspects);
+        return new AspectIndex.Variant(new DataComponentMatchers(DataComponentExactPredicate.expect(TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre)), Map.of()), aspects);
     }
 
     private static AspectList addAll(AspectList into, AspectList from) {

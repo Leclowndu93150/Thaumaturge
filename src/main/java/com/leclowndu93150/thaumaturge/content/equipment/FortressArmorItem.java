@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -17,11 +17,11 @@ public final class FortressArmorItem extends Item {
     }
 
     public static boolean hasGoggles(ItemStack stack) {
-        return stack.has(TCDataComponents.GOGGLES_UPGRADE.get());
+        return stack.has(TTDataComponents.GOGGLES_UPGRADE.get());
     }
 
     public static int mask(ItemStack stack) {
-        Integer mask = stack.get(TCDataComponents.FORTRESS_MASK.get());
+        Integer mask = stack.get(TTDataComponents.FORTRESS_MASK.get());
         return mask == null ? NO_MASK : mask;
     }
 

@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import java.util.function.Function;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaItemStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.ItemEssentiaTransferResult;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
@@ -81,11 +81,11 @@ public final class SingleAspectItemStorage implements IEssentiaItemStorage {
 
     @Override
     public void playTransferFeedback(Player player, TransferDirection direction) {
-        player.level().playSound(null, player.blockPosition(), TCSounds.JAR.get(), SoundSource.PLAYERS, FEEDBACK_VOLUME, 1.0F);
+        player.level().playSound(null, player.blockPosition(), TTSounds.JAR.get(), SoundSource.PLAYERS, FEEDBACK_VOLUME, 1.0F);
     }
 
     private boolean passesFilter(Holder<IAspect> aspect) {
-        ResourceKey<IAspect> filter = stack.get(TCDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> filter = stack.get(TTDataComponents.ASPECT_FILTER.get());
         return filter == null || aspect.is(filter);
     }
 

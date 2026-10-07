@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -64,12 +64,12 @@ public class EntityInhabitedZombie extends Zombie {
     @Override
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason, @Nullable SpawnGroupData groupData) {
         float gearChance = level.getDifficulty() == Difficulty.HARD ? GEAR_CHANCE_HARD : GEAR_CHANCE;
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TCItems.CRIMSON_PLATE_HELM.get()));
+        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_PLATE_HELM.get()));
         if (this.random.nextFloat() <= gearChance) {
-            this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TCItems.CRIMSON_PLATE_CHEST.get()));
+            this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_PLATE_CHEST.get()));
         }
         if (this.random.nextFloat() <= gearChance) {
-            this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TCItems.CRIMSON_PLATE_LEGS.get()));
+            this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_PLATE_LEGS.get()));
         }
         return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
@@ -77,7 +77,7 @@ public class EntityInhabitedZombie extends Zombie {
     @Override
     protected void tickDeath() {
         if (this.level() instanceof ServerLevel server) {
-            EntityEldritchCrab crab = TCEntities.ELDRITCH_CRAB.get().create(server, EntitySpawnReason.CONVERSION);
+            EntityEldritchCrab crab = TTEntities.ELDRITCH_CRAB.get().create(server, EntitySpawnReason.CONVERSION);
             if (crab != null) {
                 crab.snapTo(this.getX(), this.getY() + this.getEyeHeight(), this.getZ(), this.getYRot(), this.getXRot());
                 crab.setHelm(true);
@@ -94,7 +94,7 @@ public class EntityInhabitedZombie extends Zombie {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CRABTALK.get();
+        return TTSounds.CRABTALK.get();
     }
 
     @Override

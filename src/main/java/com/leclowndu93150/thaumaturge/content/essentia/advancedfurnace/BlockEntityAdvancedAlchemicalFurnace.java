@@ -4,10 +4,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +55,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity {
     private boolean assembled;
 
     public BlockEntityAdvancedAlchemicalFurnace(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
+        super(TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             nozzles.put(direction, new AdvancedFurnaceNozzle(this, direction));
         }
@@ -109,9 +109,9 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity {
         int perditioBefore = perditio;
         int aquaBefore = aqua;
         heat = Math.max(0, heat - HEAT_DECAY);
-        heat += draw(level, TCAspects.IGNIS, heat);
-        perditio += draw(level, TCAspects.PERDITIO, perditio);
-        aqua += draw(level, TCAspects.AQUA, aqua);
+        heat += draw(level, TTAspects.IGNIS, heat);
+        perditio += draw(level, TTAspects.PERDITIO, perditio);
+        aqua += draw(level, TTAspects.AQUA, aqua);
         return heat != heatBefore || perditio != perditioBefore || aqua != aquaBefore;
     }
 

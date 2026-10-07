@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
@@ -23,11 +23,11 @@ import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.pip.BlockPreviews;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCPlusMinusButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTPlusMinusButton;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -36,8 +36,8 @@ import com.leclowndu93150.thaumaturge.network.ServerboundAdvanceStagePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundClearResearchFlagsPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundObtainNotePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestItemRecipePayload;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -79,7 +79,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public final class EntryDetailScreen extends AbstractTCScreen {
+public final class EntryDetailScreen extends AbstractTTScreen {
     private static final int PANE_W = 256;
     private static final int PANE_H = 181;
     private static final float PANE_SCALE = 1.3F;
@@ -202,14 +202,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private static final int LABEL_TINT = 0x40FFFFFF;
 
-    private static final Identifier FIRSTSTEPS_RESEARCH = Identifier.fromNamespaceAndPath(TCIds.MODID, "first_steps");
-    private static final Identifier KNOWLEDGETYPES_RESEARCH = Identifier.fromNamespaceAndPath(TCIds.MODID, "knowledge_types");
+    private static final Identifier FIRSTSTEPS_RESEARCH = Identifier.fromNamespaceAndPath(TTIds.MODID, "first_steps");
+    private static final Identifier KNOWLEDGETYPES_RESEARCH = Identifier.fromNamespaceAndPath(TTIds.MODID, "knowledge_types");
 
     private static final int ASPECTS_INSERT_OFFSET_X = 60;
     private static final int ASPECTS_INSERT_OFFSET_Y = 24;
     private static final int ASPECT_PAGE_ROWS = 5;
     private static final float ASPECT_COMBINE_YIELD = 1.0F;
-    private static final Identifier UNKNOWN_ASPECT_TEXTURE = TCIds.rl("textures/aspects/_unknown.png");
+    private static final Identifier UNKNOWN_ASPECT_TEXTURE = TTIds.rl("textures/aspects/_unknown.png");
     private static final int UNKNOWN_ASPECT_TINT = 0x80808080;
     private static final int ASPECT_ROW_STRIDE = 40;
     private static final int ASPECT_BACK_OFFSET_X = -2;
@@ -307,8 +307,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private float constructRotation = Float.NaN;
     private float constructRotationOffset;
     private boolean rotatingConstruct;
-    private TCPlusMinusButton previousLayer;
-    private TCPlusMinusButton nextLayer;
+    private TTPlusMinusButton previousLayer;
+    private TTPlusMinusButton nextLayer;
     private int previewLayers;
     private int previewCenterX;
     private int previewCenterY;
@@ -351,8 +351,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 RecipeDisplayCache.ensureRequested(recipeId);
             }
         }
-        previousLayer = addRenderableWidget(TCPlusMinusButton.minus(0, 0, Component.translatable("thaumonomicon.preview.previous_layer"), () -> changePreviewLayer(-1)));
-        nextLayer = addRenderableWidget(TCPlusMinusButton.plus(0, 0, Component.translatable("thaumonomicon.preview.next_layer"), () -> changePreviewLayer(1)));
+        previousLayer = addRenderableWidget(TTPlusMinusButton.minus(0, 0, Component.translatable("thaumonomicon.preview.previous_layer"), () -> changePreviewLayer(-1)));
+        nextLayer = addRenderableWidget(TTPlusMinusButton.plus(0, 0, Component.translatable("thaumonomicon.preview.next_layer"), () -> changePreviewLayer(1)));
         previousLayer.visible = nextLayer.visible = false;
         rebuildPages();
         if (!flagsCleared) {
@@ -523,7 +523,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         selectedStageIndex = clamped == progressStage ? -1 : clamped;
         currentPage = 0;
         rebuildPages();
-        playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
     }
 
     @Override
@@ -563,7 +563,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         graphics.pose().pushMatrix();
         graphics.pose().translate(ox, oy);
         graphics.pose().scale(PANE_SCALE, PANE_SCALE);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, 0, 0, 0.0F, 0.0F, PANE_W, PANE_H, PANE_W, PANE_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, 0, 0, 0.0F, 0.0F, PANE_W, PANE_H, PANE_W, PANE_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -603,7 +603,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 graphics.pose().pushMatrix();
                 graphics.pose().translate(textX + pad, currentY - 5);
                 graphics.pose().scale(pi.scale, pi.scale);
-                graphics.blit(RenderPipelines.GUI_TEXTURED, pi.texture, 0, 0, (float) pi.u, (float) pi.v, pi.w, pi.h, pi.w, pi.h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, pi.texture, 0, 0, (float) pi.u, (float) pi.v, pi.w, pi.h, pi.w, pi.h, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
                 graphics.pose().popMatrix();
                 currentY += pi.renderedHeight() + 2;
             }
@@ -627,8 +627,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void drawDivider(GuiGraphicsExtractor graphics, int x, int y) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x, y, (float) DIVIDER_U, (float) DIVIDER_V, DIVIDER_WIDTH, DIVIDER_THICK, DIVIDER_WIDTH, DIVIDER_THICK,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x, y, (float) DIVIDER_U, (float) DIVIDER_V, DIVIDER_WIDTH, DIVIDER_THICK, DIVIDER_WIDTH, DIVIDER_THICK,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
     }
 
     private void renderRequirements(GuiGraphicsExtractor graphics, IResearchStage stage, int x, int mouseX, int mouseY) {
@@ -674,8 +674,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
         if (hasAny) {
             reqY -= 12;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + 4, reqY - 2, (float) COMPLETE_DIVIDER_U, (float) COMPLETE_DIVIDER_V, COMPLETE_DIVIDER_W, COMPLETE_DIVIDER_H,
-                    COMPLETE_DIVIDER_W, COMPLETE_DIVIDER_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + 4, reqY - 2, (float) COMPLETE_DIVIDER_U, (float) COMPLETE_DIVIDER_V, COMPLETE_DIVIDER_W, COMPLETE_DIVIDER_H,
+                    COMPLETE_DIVIDER_W, COMPLETE_DIVIDER_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             boolean allMet = allTrue(researchSatisfied) && allTrue(obtainSatisfied) && allTrue(craftSatisfied) && allTrue(knowSatisfied);
             if (allMet) {
                 int hrx = x + COMPLETE_BUTTON_OFFSET_X;
@@ -691,8 +691,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 } else {
                     boolean hover = mouseInside(hrx, hry, COMPLETE_BUTTON_W, COMPLETE_BUTTON_H, mouseX, mouseY);
                     int tint = hover ? COMPLETE_BUTTON_TINT_NORMAL : COMPLETE_BUTTON_TINT_HOVER;
-                    graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, hrx, hry, (float) COMPLETE_BUTTON_U, (float) COMPLETE_BUTTON_V, COMPLETE_BUTTON_W, COMPLETE_BUTTON_H,
-                            COMPLETE_BUTTON_W, COMPLETE_BUTTON_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, tint);
+                    graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, hrx, hry, (float) COMPLETE_BUTTON_U, (float) COMPLETE_BUTTON_V, COMPLETE_BUTTON_W, COMPLETE_BUTTON_H,
+                            COMPLETE_BUTTON_W, COMPLETE_BUTTON_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, tint);
                     Component label = Component.translatable("tc.stage.complete");
                     int lblWidth = font.width(label);
                     graphics.text(font, label, x + 52 - lblWidth / 2, reqY - 4, COMPLETE_LABEL_COLOR, true);
@@ -744,7 +744,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             return;
         int ticksExisted = minecraft.player.tickCount;
         int frame = ticksExisted % FORBIDDEN_NODE_FRAME_COUNT;
-        Identifier nodeTex = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+        Identifier nodeTex = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/misc/auranodes.png");
         int u = frame * FORBIDDEN_NODE_CELL_PX;
         int v = FORBIDDEN_NODE_ROW * FORBIDDEN_NODE_CELL_PX;
         int half = FORBIDDEN_NODE_DRAW_SIZE / 2;
@@ -753,8 +753,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     }
 
     private void renderRowLabel(GuiGraphicsExtractor graphics, int x, int y, int v, int mouseX, int mouseY) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + LABEL_OFFSET_X, y - 1, (float) REQUIREMENT_LABEL_U, (float) v, LABEL_WIDTH, LABEL_HEIGHT, LABEL_WIDTH,
-                LABEL_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, LABEL_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + LABEL_OFFSET_X, y - 1, (float) REQUIREMENT_LABEL_U, (float) v, LABEL_WIDTH, LABEL_HEIGHT, LABEL_WIDTH,
+                LABEL_HEIGHT, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, LABEL_TINT);
         if (mouseInside(x + LABEL_OFFSET_X, y, LABEL_WIDTH / 4, LABEL_HEIGHT, mouseX, mouseY)) {
             switch (v) {
                 case LABEL_KNOW_V -> graphics.setTooltipForNextFrame(Component.translatable("tc.need.know"), mouseX, mouseY);
@@ -781,14 +781,14 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean met = completedStage || (obtain ? countMatching(player, req) >= req.amount() : ResearchManager.isCraftSatisfied(player, KnowledgeAccess.of(player), req));
             satisfied[i] = met;
             if (met) {
-                graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
-                        CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
+                        CHECKMARK_SIZE, CHECKMARK_SIZE, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             }
             if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                 if (!stack.isEmpty()) {
                     graphics.setTooltipForNextFrame(font, stack, mouseX, mouseY);
                 } else {
-                    graphics.setTooltipForNextFrame(font, TCTooltips.need(obtain ? "obtain" : "craft"), mouseX, mouseY);
+                    graphics.setTooltipForNextFrame(font, TTTooltips.need(obtain ? "obtain" : "craft"), mouseX, mouseY);
                 }
             }
             shift += spacing;
@@ -806,11 +806,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean met = completedStage || knowledge.isResearchComplete(prereq);
             satisfied[i] = met;
             if (met) {
-                graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
-                        CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
+                        CHECKMARK_SIZE, CHECKMARK_SIZE, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             }
             if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
-                graphics.setTooltipForNextFrame(font, TCTooltips.prereqEntryName(prereq), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(font, TTTooltips.prereqEntryName(prereq), mouseX, mouseY);
             }
             shift += spacing;
         }
@@ -840,11 +840,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private static @Nullable Identifier prereqFlagIcon(String path) {
         if (path.startsWith(PREREQ_MAP_PREFIX))
-            return TCScreenTextures.RESEARCH_PREREQ_MAP;
+            return TTScreenTextures.RESEARCH_PREREQ_MAP;
         if (path.startsWith(PREREQ_CHEST_PREFIX))
-            return TCScreenTextures.RESEARCH_PREREQ_CHEST;
+            return TTScreenTextures.RESEARCH_PREREQ_CHEST;
         if (path.startsWith(PREREQ_FLASK_PREFIX))
-            return TCScreenTextures.RESEARCH_PREREQ_FLASK;
+            return TTScreenTextures.RESEARCH_PREREQ_FLASK;
         return null;
     }
 
@@ -889,7 +889,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 Identifier learnKey = ResearchNoteData.learnKey(entryId, theoryOrdinal);
                 theoryOrdinal++;
                 met = completedStage || knowledge.isResearchKnown(learnKey);
-                graphics.item(new ItemStack(TCItems.RESEARCH_NOTE.get()), slotX, y);
+                graphics.item(new ItemStack(TTItems.RESEARCH_NOTE.get()), slotX, y);
                 if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
                     List<Component> lines = new ArrayList<>();
                     lines.add(Component.translatable("tc.researchtheory", Component.translatable(entry.value().nameKey())));
@@ -899,8 +899,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     graphics.setTooltipForNextFrame(font, lines, Optional.empty(), mouseX, mouseY);
                 }
                 if (met) {
-                    graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
-                            CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                    graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, slotX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
+                            CHECKMARK_SIZE, CHECKMARK_SIZE, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
                 }
             } else {
                 met = observationAfford;
@@ -939,15 +939,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         }
                     }
                     if (completedStage || aspectDiscovered && AspectPools.amount(minecraft.player, instance.aspect()) >= instance.amount()) {
-                        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, chipX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE,
-                                CHECKMARK_SIZE, CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, chipX + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE,
+                                CHECKMARK_SIZE, CHECKMARK_SIZE, CHECKMARK_SIZE, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
                     }
                 }
             }
             satisfied[i] = met;
 
             if (reward.type() == KnowledgeType.THEORY && mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
-                reward.category().unwrapKey().ifPresent(k -> graphics.setTooltipForNextFrame(font, TCTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
+                reward.category().unwrapKey().ifPresent(k -> graphics.setTooltipForNextFrame(font, TTTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
             }
         }
     }
@@ -959,10 +959,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean aspectHover = mouseInside(aspectX, aspectY, BOOKMARK_W, BOOKMARK_H, mouseX, mouseY);
             int aspectLeft = aspectHover ? 0 : 3;
             int aspectBodyWidth = 24 - aspectLeft;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, aspectX + aspectLeft, aspectY, (float) BOOKMARK_ASPECT_U, (float) BOOKMARK_V, aspectBodyWidth, BOOKMARK_H,
-                    aspectBodyWidth, BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, aspectX + 20, aspectY, (float) BOOKMARK_TIP_U, (float) BOOKMARK_V, BOOKMARK_TIP_W, BOOKMARK_H, BOOKMARK_TIP_W,
-                    BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, aspectX + aspectLeft, aspectY, (float) BOOKMARK_ASPECT_U, (float) BOOKMARK_V, aspectBodyWidth, BOOKMARK_H,
+                    aspectBodyWidth, BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, aspectX + 20, aspectY, (float) BOOKMARK_TIP_U, (float) BOOKMARK_V, BOOKMARK_TIP_W, BOOKMARK_H, BOOKMARK_TIP_W,
+                    BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             if (aspectHover) {
                 graphics.setTooltipForNextFrame(font, Component.translatable("tc.aspect.name"), mouseX, mouseY);
             }
@@ -974,10 +974,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean knowHover = mouseInside(knowX, knowY, BOOKMARK_W, BOOKMARK_H, mouseX, mouseY);
             int knowLeft = knowHover ? 0 : 3;
             int knowBodyWidth = 24 - knowLeft;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, knowX - 1 + knowLeft, knowY, (float) BOOKMARK_KNOWLEDGE_U, (float) BOOKMARK_V, knowBodyWidth, BOOKMARK_H,
-                    knowBodyWidth, BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, knowX + 19, knowY, (float) BOOKMARK_TIP_U, (float) BOOKMARK_V, BOOKMARK_TIP_W, BOOKMARK_H, BOOKMARK_TIP_W,
-                    BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, knowX - 1 + knowLeft, knowY, (float) BOOKMARK_KNOWLEDGE_U, (float) BOOKMARK_V, knowBodyWidth, BOOKMARK_H,
+                    knowBodyWidth, BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, knowX + 19, knowY, (float) BOOKMARK_TIP_U, (float) BOOKMARK_V, BOOKMARK_TIP_W, BOOKMARK_H, BOOKMARK_TIP_W,
+                    BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             if (knowHover) {
                 graphics.setTooltipForNextFrame(font, Component.translatable("tc.knowledge.name"), mouseX, mouseY);
             }
@@ -1011,10 +1011,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
             int le = rng.nextInt(3) + (hoverState ? 0 : 3);
             int tint = rid.equals(shownRecipe) ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) (RECIPE_BOOKMARK_U_BASE + le), (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_W,
-                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_W, RECIPE_BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, tint);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) RECIPE_BOOKMARK_TIP_U, (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_TIP_W,
-                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_TIP_W, RECIPE_BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) (RECIPE_BOOKMARK_U_BASE + le), (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_W,
+                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_W, RECIPE_BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) RECIPE_BOOKMARK_TIP_U, (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_TIP_W,
+                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_TIP_W, RECIPE_BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             RecipeDisplayWidget.renderBookmarkIcon(graphics, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le, slotY - 1, shown);
             if (hoverState && !result.isEmpty()) {
                 graphics.setTooltipForNextFrame(font, result, mouseX, mouseY);
@@ -1027,10 +1027,10 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             boolean hoverState = mouseInside(x, slotY - 1, RECIPE_BOOKMARK_HOVER_W, RECIPE_BOOKMARK_H, mouseX, mouseY);
             int le = rng.nextInt(3) + (hoverState ? 0 : 3);
             int tint = showingConstruct ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) (RECIPE_BOOKMARK_U_BASE + le), (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_W,
-                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_W, RECIPE_BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, tint);
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) RECIPE_BOOKMARK_TIP_U, (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_TIP_W,
-                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_TIP_W, RECIPE_BOOKMARK_H, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) (RECIPE_BOOKMARK_U_BASE + le), (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_W,
+                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_W, RECIPE_BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, tint);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + shJitter, slotY - 1, (float) RECIPE_BOOKMARK_TIP_U, (float) RECIPE_BOOKMARK_V, RECIPE_BOOKMARK_TIP_W,
+                    RECIPE_BOOKMARK_H, RECIPE_BOOKMARK_TIP_W, RECIPE_BOOKMARK_H, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
             BlockPreviews.render(graphics, x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le + 8, slotY + 7, constructBlocks(stage.construct().orElseThrow(), minecraft.player.level().getGameTime()), 16,
                     16, 16, -35, -1);
             if (hoverState) {
@@ -1044,8 +1044,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             return;
         int paperX = (width - 256) / 2;
         int paperY = (height - 256) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         List<RecipeDisplay> displays = RecipeDisplayCache.get(shownRecipe);
         if (displays == null || displays.isEmpty())
             return;
@@ -1088,8 +1088,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         }
         int paperX = (width - 256) / 2;
         int paperY = (height - 256) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         long gameTime = minecraft.player.level().getGameTime();
         int centerX = paperX + INSERT_PAPER_SIZE / 2;
         int pageY = paperY + CONSTRUCT_PAGE_Y;
@@ -1102,7 +1102,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             List<AspectInstance> entries = cost.entries();
             int rowWidth = CONSTRUCT_COST_STRIDE * (entries.size() - 1) + 16;
             int rowX = centerX - rowWidth / 2;
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK_OVERLAY, rowX - CONSTRUCT_WAND_SIZE - CONSTRUCT_WAND_GAP, pageY + CONSTRUCT_WAND_Y, CONSTRUCT_WAND_U,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK_OVERLAY, rowX - CONSTRUCT_WAND_SIZE - CONSTRUCT_WAND_GAP, pageY + CONSTRUCT_WAND_Y, CONSTRUCT_WAND_U,
                     CONSTRUCT_WAND_V, CONSTRUCT_WAND_SIZE, CONSTRUCT_WAND_SIZE, CONSTRUCT_WAND_SIZE, CONSTRUCT_WAND_SIZE, OVERLAY_TEX_SIZE, OVERLAY_TEX_SIZE, alphaTint(CONSTRUCT_WAND_ALPHA));
             int tagIndex = 0;
             for (AspectInstance costEntry : entries) {
@@ -1211,8 +1211,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void renderAspectsInsert(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int paperX = (width - 256) / 2;
         int paperY = (height - 256) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         drawAspectPage(graphics, paperX + ASPECTS_INSERT_OFFSET_X, paperY + ASPECTS_INSERT_OFFSET_Y, mouseX, mouseY);
     }
 
@@ -1222,8 +1222,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             return;
         int count = -1;
         int start = aspectsPage * ASPECT_PAGE_ROWS;
-        Identifier backTile = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/aspects/_back.png");
-        Identifier unknownTile = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/aspects/_unknown.png");
+        Identifier backTile = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/aspects/_back.png");
+        Identifier unknownTile = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/aspects/_unknown.png");
         List<AspectInstance> sorted = known.sortedByTag();
         for (AspectInstance entry : sorted) {
             count++;
@@ -1356,8 +1356,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void renderKnowledgeInsert(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int paperX = (width - 256) / 2;
         int paperY = (height - 256) / 2;
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.PAPER, paperX, paperY, 0.0F, 0.0F, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE, INSERT_PAPER_SIZE,
+                TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         drawKnowledges(graphics, paperX + ASPECTS_INSERT_OFFSET_X, sh + KNOW_INPAGE_INSERT_Y_OFFSET, mouseX, mouseY, false);
         if (!hasAnyKnowledge()) {
             Component hint = Component.translatable("tc.knowledge.none");
@@ -1421,13 +1421,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     graphics.text(font, Component.literal(amtStr), cx + KNOW_GRID_AMT_X_OFFSET - amtWidth, cy + KNOW_GRID_AMT_Y_OFFSET, KNOW_GRID_AMT_COLOR, true);
                     if (par > 0 && type.progression() > 0) {
                         int l = (int) ((float) par / type.progression() * KNOW_GRID_BAR_BAR_WIDTH);
-                        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, cx, cy + KNOW_GRID_BAR_Y_OFFSET, 0.0F, (float) KNOW_GRID_BAR_FILLED_V, l, KNOW_GRID_BAR_BAR_HEIGHT,
-                                l, KNOW_GRID_BAR_BAR_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
-                        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, cx + l, cy + KNOW_GRID_BAR_Y_OFFSET, (float) l, (float) KNOW_GRID_BAR_EMPTY_V,
-                                KNOW_GRID_BAR_BAR_WIDTH - l, KNOW_GRID_BAR_BAR_HEIGHT, KNOW_GRID_BAR_BAR_WIDTH - l, KNOW_GRID_BAR_BAR_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, cx, cy + KNOW_GRID_BAR_Y_OFFSET, 0.0F, (float) KNOW_GRID_BAR_FILLED_V, l, KNOW_GRID_BAR_BAR_HEIGHT,
+                                l, KNOW_GRID_BAR_BAR_HEIGHT, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, cx + l, cy + KNOW_GRID_BAR_Y_OFFSET, (float) l, (float) KNOW_GRID_BAR_EMPTY_V,
+                                KNOW_GRID_BAR_BAR_WIDTH - l, KNOW_GRID_BAR_BAR_HEIGHT, KNOW_GRID_BAR_BAR_WIDTH - l, KNOW_GRID_BAR_BAR_HEIGHT, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
                     }
                     if (mouseInside(cx, cy, 16, 16, mouseX, mouseY)) {
-                        graphics.setTooltipForNextFrame(font, TCTooltips.knowledgeLabel(type, categoryKey), mouseX, mouseY);
+                        graphics.setTooltipForNextFrame(font, TTTooltips.knowledgeLabel(type, categoryKey), mouseX, mouseY);
                     }
                     fc++;
                     rowDrawn = true;
@@ -1437,13 +1437,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 tc++;
         }
         if (inpage && drewSomething) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + 4, yCursor - tc * KNOW_GRID_INPAGE_ROW_STRIDE + 12, (float) DIVIDER_U, (float) DIVIDER_V, DIVIDER_WIDTH, 8,
-                    DIVIDER_WIDTH, 8, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + 4, yCursor - tc * KNOW_GRID_INPAGE_ROW_STRIDE + 12, (float) DIVIDER_U, (float) DIVIDER_V, DIVIDER_WIDTH, 8,
+                    DIVIDER_WIDTH, 8, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         }
     }
 
     private void drawKnowledgeIcon(GuiGraphicsExtractor graphics, int x, int y, KnowledgeType type, Holder.Reference<IResearchCategory> category) {
-        Identifier typeIcon = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/research/knowledge_" + type.getSerializedName() + ".png");
+        Identifier typeIcon = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/research/knowledge_" + type.getSerializedName() + ".png");
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(KNOW_ICON_SCALE_INPAGE, KNOW_ICON_SCALE_INPAGE);
@@ -1513,7 +1513,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         graphics.pose().translate(cx, cy);
         graphics.pose().scale(1.0F + scale, 1.0F + scale);
         graphics.pose().translate(-w / 2.0F, -h / 2.0F);
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, 0, 0, (float) u, (float) v, w, h, w, h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, 0, 0, (float) u, (float) v, w, h, w, h, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         graphics.pose().popMatrix();
     }
 
@@ -1596,7 +1596,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 history.clear();
                 if (aspectsPage > maxAspectPages())
                     aspectsPage = 0;
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             int knowHitX = sw - 48;
@@ -1607,7 +1607,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingConstruct = false;
                 showingKnowledge = !showingKnowledge;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (showingAspects) {
@@ -1616,12 +1616,12 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 int aspectNavY = sh + 192;
                 if (aspectsPage > 0 && mx >= aspectNavLeftX && mx < aspectNavLeftX + 14 && my >= aspectNavY && my < aspectNavY + 14) {
                     aspectsPage--;
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
                 if (aspectsPage < maxAspectPages() - 1 && mx >= aspectNavRightX && mx < aspectNavRightX + 14 && my >= aspectNavY && my < aspectNavY + 14) {
                     aspectsPage++;
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
             }
@@ -1645,13 +1645,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 if (recipePage > 0 && mx >= recipeNavLeftX && mx < recipeNavLeftX + 14 && my >= recipeNavY && my < recipeNavY + 14) {
                     recipePage--;
                     resetConstructPreview();
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
                 if (recipePage < max && mx >= recipeNavRightX && mx < recipeNavRightX + 14 && my >= recipeNavY && my < recipeNavY + 14) {
                     recipePage++;
                     resetConstructPreview();
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
             }
@@ -1669,7 +1669,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingKnowledge = false;
                 showingConstruct = false;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (hitConstructBookmark(mx, my, stage)) {
@@ -1679,7 +1679,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingAspects = false;
                 showingKnowledge = false;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (currentPage == 0 && !completedStageView() && !insertOpen() && handleTheoryNoteClick(mx, my, stage)) {
@@ -1688,7 +1688,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (currentPage == 0 && !completedStageView() && !hold && !insertOpen()) {
                 if (hitStageComplete(mx, my, stage)) {
                     ClientPacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
-                    playSound(TCSounds.WRITE.get(), 0.66F, 1.0F);
+                    playSound(TTSounds.WRITE.get(), 0.66F, 1.0F);
                     lastStage = KnowledgeAccess.of(minecraft.player).researchStage(entryId);
                     holdSince = minecraft.player.level().getGameTime();
                     hold = true;
@@ -1732,20 +1732,20 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         recipePage = 0;
         showingAspects = false;
         showingKnowledge = false;
-        playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
     }
 
     private void nextPage() {
         if (currentPage < parsedPages.size() - 2) {
             currentPage += 2;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
         }
     }
 
     private void prevPage() {
         if (currentPage >= 2) {
             currentPage -= 2;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
         }
     }
 
@@ -1760,11 +1760,11 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void goBack() {
         if (showingConstruct) {
             showingConstruct = false;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
             return;
         }
         if (!history.isEmpty()) {
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
             resetConstructPreview();
             shownRecipe = history.pop();
         } else {
@@ -1932,7 +1932,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         showingKnowledge = false;
         showingConstruct = false;
         history.clear();
-        playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        playSound(TTSounds.PAGE.get(), 0.4F, 1.1F);
         return true;
     }
 

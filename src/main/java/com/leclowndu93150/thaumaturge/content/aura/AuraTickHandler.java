@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraFloor;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxOutbreaks;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class AuraTickHandler {
     private static final int TICK_INTERVAL = 20;
 
@@ -78,7 +78,7 @@ public final class AuraTickHandler {
                 continue;
             }
             PhysicalFluxOutbreaks.tryOutbreak(level, chunk, rand);
-            AuraData data = chunk.getData(TCAttachments.AURA.get());
+            AuraData data = chunk.getData(TTAttachments.AURA.get());
             if (data.getBase() == 0) {
                 continue;
             }
@@ -172,7 +172,7 @@ public final class AuraTickHandler {
             if (neighbourChunk == null) {
                 continue;
             }
-            AuraData neighbour = neighbourChunk.getData(TCAttachments.AURA.get());
+            AuraData neighbour = neighbourChunk.getData(TTAttachments.AURA.get());
             if (neighbour.getBase() == 0) {
                 continue;
             }

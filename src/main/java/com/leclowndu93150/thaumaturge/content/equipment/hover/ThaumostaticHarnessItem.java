@@ -2,13 +2,13 @@ package com.leclowndu93150.thaumaturge.content.equipment.hover;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -36,15 +36,15 @@ public final class ThaumostaticHarnessItem extends Item implements IHoverGear, I
     }
 
     public static ItemStack getJar(ItemStack harness) {
-        ItemStackTemplate jar = harness.get(TCDataComponents.HARNESS_JAR.get());
+        ItemStackTemplate jar = harness.get(TTDataComponents.HARNESS_JAR.get());
         return jar == null ? ItemStack.EMPTY : jar.create();
     }
 
     public static void setJar(ItemStack harness, ItemStack jar) {
         if (jar.isEmpty()) {
-            harness.remove(TCDataComponents.HARNESS_JAR.get());
+            harness.remove(TTDataComponents.HARNESS_JAR.get());
         } else {
-            harness.set(TCDataComponents.HARNESS_JAR.get(), ItemStackTemplate.fromNonEmptyStack(jar));
+            harness.set(TTDataComponents.HARNESS_JAR.get(), ItemStackTemplate.fromNonEmptyStack(jar));
         }
     }
 
@@ -57,7 +57,7 @@ public final class ThaumostaticHarnessItem extends Item implements IHoverGear, I
             return null;
         }
         for (AspectInstance entry : ComponentEssentia.jar(jar).getAspects().entries()) {
-            if (entry.aspect().is(TCAspects.POTENTIA) && entry.amount() > 0) {
+            if (entry.aspect().is(TTAspects.POTENTIA) && entry.amount() > 0) {
                 return entry;
             }
         }

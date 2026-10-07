@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect.rendertype;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCFXPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -11,11 +11,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ArcRenderType {
-    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TCIds.MODID, "textures/effect/beamh.png");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(TTIds.MODID, "textures/effect/beamh.png");
 
-    public static final RenderPipeline PIPELINE = TCFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/arc"));
+    public static final RenderPipeline PIPELINE = TTFXPipelines.additiveTextured(Identifier.fromNamespaceAndPath(TTIds.MODID, "pipeline/arc"));
 
     public static final RenderType RENDER_TYPE = RenderType.create("thaumaturge_arc", RenderSetup.builder(PIPELINE).withTexture("Sampler0", TEXTURE).createRenderSetup());
 

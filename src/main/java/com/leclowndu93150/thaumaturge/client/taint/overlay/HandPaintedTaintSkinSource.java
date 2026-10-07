@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint.overlay;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.client.model.Model;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
@@ -16,11 +16,11 @@ public final class HandPaintedTaintSkinSource implements TaintSkinSource {
             return null;
         }
         String relative = baseTexture.getNamespace() + "/" + (path.startsWith(TEXTURE_PREFIX) ? path.substring(TEXTURE_PREFIX.length()) : path);
-        Identifier skin = TCIds.rl(TaintTextures.HAND_PAINTED_ROOT + relative);
+        Identifier skin = TTIds.rl(TaintTextures.HAND_PAINTED_ROOT + relative);
         if (!resources.exists(skin)) {
             return null;
         }
-        Identifier glow = TCIds.rl(TaintTextures.HAND_PAINTED_ROOT + relative.substring(0, relative.length() - PNG.length()) + TaintTextures.GLOW_SUFFIX + PNG);
+        Identifier glow = TTIds.rl(TaintTextures.HAND_PAINTED_ROOT + relative.substring(0, relative.length() - PNG.length()) + TaintTextures.GLOW_SUFFIX + PNG);
         return new TaintSkin(skin, true, resources.exists(glow) ? glow : null);
     }
 }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistLeader;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -12,11 +12,11 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 
 public final class CultistLeaderRenderer extends HumanoidMobRenderer<EntityCultistLeader, HumanoidRenderState, HumanoidModel<HumanoidRenderState>> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/cultist.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/cultist.png");
     private static final float SHADOW = 0.5F;
 
     public CultistLeaderRenderer(EntityRendererProvider.Context context) {
-        super(context, new HumanoidModel<>(context.bakeLayer(TCModelLayers.CULTIST)), SHADOW);
+        super(context, new HumanoidModel<>(context.bakeLayer(TTModelLayers.CULTIST)), SHADOW);
         this.addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel::new), context.getEquipmentRenderer()));
     }
 

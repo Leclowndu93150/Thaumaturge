@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -54,8 +54,10 @@ public class EntityEldritchCrab extends Monster {
     private static final float HELM_BREAK_HEALTH_FRACTION = 0.5F;
     private static final float HARD_GROUP_EFFECT_CHANCE = 0.1F;
     private static final int BREAK_PARTICLES = 8;
+    private static final int SHELL_BREAK_TICKS = 8;
 
     private int attackTime;
+    private int shellBreakTicks;
 
     public EntityEldritchCrab(EntityType<? extends EntityEldritchCrab> type, Level level) {
         super(type, level);
@@ -86,6 +88,18 @@ public class EntityEldritchCrab extends Monster {
 
     public boolean hasHelm() {
         return this.entityData.get(DATA_HELM);
+    }
+
+    public int shellBreakTicks() {
+        return this.shellBreakTicks;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (DATA_HELM.equals(key) && this.level().isClientSide() && !this.hasHelm()) {
+            this.shellBreakTicks = SHELL_BREAK_TICKS;
+        }
     }
 
     public void setHelm(boolean helm) {
@@ -131,6 +145,9 @@ public class EntityEldritchCrab extends Monster {
             this.fallDistance = 0.0F;
         }
         if (this.level().isClientSide()) {
+            if (this.shellBreakTicks > 0) {
+                this.shellBreakTicks--;
+            }
             return;
         }
         var target = this.getTarget();
@@ -150,7 +167,7 @@ public class EntityEldritchCrab extends Monster {
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
         if (super.doHurtTarget(level, target)) {
-            this.playSound(TCSounds.CRABCLAW.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
+            this.playSound(TTSounds.CRABCLAW.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
             return true;
         }
         return false;
@@ -161,7 +178,7 @@ public class EntityEldritchCrab extends Monster {
         boolean result = super.hurtServer(level, source, damage);
         if (this.hasHelm() && this.getHealth() / this.getMaxHealth() <= HELM_BREAK_HEALTH_FRACTION) {
             this.setHelm(false);
-            level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, TCItems.CRIMSON_PLATE_CHEST.get()), this.getX(), this.getY() + this.getBbHeight() / 2.0, this.getZ(), BREAK_PARTICLES, 0.1,
+            level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, TTItems.CRIMSON_PLATE_CHEST.get()), this.getX(), this.getY() + this.getBbHeight() / 2.0, this.getZ(), BREAK_PARTICLES, 0.1,
                     0.1, 0.1, 0.05);
         }
         return result;
@@ -186,7 +203,7 @@ public class EntityEldritchCrab extends Monster {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CRABTALK.get();
+        return TTSounds.CRABTALK.get();
     }
 
     @Override
@@ -196,7 +213,7 @@ public class EntityEldritchCrab extends Monster {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.CRABDEATH.get();
+        return TTSounds.CRABDEATH.get();
     }
 
     @Override

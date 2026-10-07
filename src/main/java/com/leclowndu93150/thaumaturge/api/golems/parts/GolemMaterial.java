@@ -29,8 +29,12 @@ public final class GolemMaterial {
     private final Supplier<ItemStack> componentBase;
     private final Supplier<ItemStack> componentMechanism;
     private final List<Holder<GolemTrait>> traits;
+    private final boolean antenna;
 
     /**
+     * Creates a material whose golems render without the head antenna.
+     *
+
      * @param research           research entries gating this material in the golem press;
      *                           empty means always available
      * @param texture            the body texture rendered on golems of this material
@@ -43,6 +47,24 @@ public final class GolemMaterial {
      * @param traits             traits granted by the material
      */
     public GolemMaterial(List<Identifier> research, Identifier texture, int itemColor, int healthMod, int armor, int damage, Supplier<ItemStack> componentBase, Supplier<ItemStack> componentMechanism, List<Holder<GolemTrait>> traits) {
+        this(research, texture, itemColor, healthMod, armor, damage, componentBase, componentMechanism, traits, false);
+    }
+
+    /**
+     * @param research           research entries gating this material in the golem press;
+     *                           empty means always available
+     * @param texture            the body texture rendered on golems of this material
+     * @param itemColor          the {@code 0xRRGGBB} tint applied to golem placer items
+     * @param healthMod          health added to the golem's base of 10
+     * @param armor              the golem's armor rating
+     * @param damage             the golem's base melee damage when it can fight
+     * @param componentBase      supplies the material's base crafting item
+     * @param componentMechanism supplies the material's mechanism crafting item
+     * @param traits             traits granted by the material
+     * @param antenna            whether golems of this material render the copper golem's head antenna
+     * @since 1.0.0
+     */
+    public GolemMaterial(List<Identifier> research, Identifier texture, int itemColor, int healthMod, int armor, int damage, Supplier<ItemStack> componentBase, Supplier<ItemStack> componentMechanism, List<Holder<GolemTrait>> traits, boolean antenna) {
         this.research = List.copyOf(research);
         this.texture = texture;
         this.itemColor = itemColor;
@@ -52,6 +74,7 @@ public final class GolemMaterial {
         this.componentBase = componentBase;
         this.componentMechanism = componentMechanism;
         this.traits = List.copyOf(traits);
+        this.antenna = antenna;
     }
 
     /**
@@ -115,6 +138,17 @@ public final class GolemMaterial {
      */
     public List<Holder<GolemTrait>> traits() {
         return traits;
+    }
+
+    /**
+     * Whether golems of this material render the head antenna of the copper golem model they are
+     * drawn with. A golem wearing a hat accessory hides the antenna regardless.
+     *
+     * @return true when the antenna is drawn
+     * @since 1.0.0
+     */
+    public boolean antenna() {
+        return antenna;
     }
 
     /**

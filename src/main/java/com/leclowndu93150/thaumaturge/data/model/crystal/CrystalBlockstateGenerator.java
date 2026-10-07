@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.model.crystal;
 
 import com.leclowndu93150.thaumaturge.client.render.crystal.CrystalUnbakedModel;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -14,13 +14,13 @@ public final class CrystalBlockstateGenerator {
     private CrystalBlockstateGenerator() {}
 
     public static void register(BlockModelGenerators blockModels) {
-        emit(blockModels, TCBlocks.CRYSTAL_AER.get());
-        emit(blockModels, TCBlocks.CRYSTAL_IGNIS.get());
-        emit(blockModels, TCBlocks.CRYSTAL_AQUA.get());
-        emit(blockModels, TCBlocks.CRYSTAL_TERRA.get());
-        emit(blockModels, TCBlocks.CRYSTAL_ORDO.get());
-        emit(blockModels, TCBlocks.CRYSTAL_PERDITIO.get());
-        emit(blockModels, TCBlocks.CRYSTAL_VITIUM.get());
+        emit(blockModels, TTBlocks.CRYSTAL_AER.get());
+        emit(blockModels, TTBlocks.CRYSTAL_IGNIS.get());
+        emit(blockModels, TTBlocks.CRYSTAL_AQUA.get());
+        emit(blockModels, TTBlocks.CRYSTAL_TERRA.get());
+        emit(blockModels, TTBlocks.CRYSTAL_ORDO.get());
+        emit(blockModels, TTBlocks.CRYSTAL_PERDITIO.get());
+        emit(blockModels, TTBlocks.CRYSTAL_VITIUM.get());
     }
 
     private static void emit(BlockModelGenerators blockModels, Block block) {

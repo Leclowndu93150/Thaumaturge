@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -193,7 +193,7 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
 
     @Override
     public RecipeType<DustTrigger> getType() {
-        return TCRecipeTypes.DUST_TRIGGER.get();
+        return TTRecipeTypes.DUST_TRIGGER.get();
     }
 
     @Override

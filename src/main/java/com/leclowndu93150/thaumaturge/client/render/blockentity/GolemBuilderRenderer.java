@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,8 +28,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEntityGolemBuilder, GolemBuilderRenderState> {
-    public static final Identifier MODEL = TCIds.rl("models/mesh/golembuilder.tcmesh");
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/golembuilder.png");
+    public static final Identifier MODEL = TTIds.rl("models/mesh/golembuilder.ttmesh");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/golembuilder.png");
     private static final SpriteId LAVA_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, Identifier.withDefaultNamespace("block/lava_still"));
     private static final String PRESS_PART = "press";
     private static final float PRESS_DROP = 0.625F;
@@ -70,16 +70,16 @@ public final class GolemBuilderRenderer implements BlockEntityRenderer<BlockEnti
     }
 
     public static void submitParts(int press, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
+        TTMesh mesh = GolemMeshes.get(MODEL);
         RenderType type = RenderTypes.entityCutout(TEXTURE);
-        for (TCMeshPart part : mesh.parts()) {
+        for (TTMeshPart part : mesh.parts()) {
             if (!PRESS_PART.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
             }
         }
         poseStack.pushPose();
         poseStack.translate(0.0F, (float) (-Math.sin(Math.toRadians(press)) * PRESS_DROP), 0.0F);
-        for (TCMeshPart part : mesh.parts()) {
+        for (TTMeshPart part : mesh.parts()) {
             if (PRESS_PART.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
             }

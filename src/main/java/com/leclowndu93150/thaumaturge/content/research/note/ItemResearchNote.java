@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public final class ItemResearchNote extends Item {
             AspectPools.data(serverPlayer).incrementCompletedNotes();
             AspectPools.sync(serverPlayer);
             stack.shrink(1);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.LEARN.get(), SoundSource.PLAYERS, 0.66F, 1.0F);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.LEARN.get(), SoundSource.PLAYERS, 0.66F, 1.0F);
             serverPlayer
                     .sendSystemMessage(Component.translatable("tc.researchnote.learned", ResearchNotes.entryName(serverPlayer.registryAccess(), data.entry())).withStyle(ChatFormatting.DARK_PURPLE));
             ResearchManager.advanceStage(serverPlayer, data.entry());

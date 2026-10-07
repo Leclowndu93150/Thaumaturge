@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import io.netty.buffer.ByteBuf;
@@ -17,6 +17,6 @@ public record EarthPebbleParticleOptions(float scale) implements ParticleOptions
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.EARTH_PEBBLE.get();
+        return TTParticles.EARTH_PEBBLE.get();
     }
 }

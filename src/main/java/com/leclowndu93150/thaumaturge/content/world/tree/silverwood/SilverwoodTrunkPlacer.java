@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -62,7 +62,7 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
 
     @Override
     protected TrunkPlacerType<?> type() {
-        return TCTreePlacers.SILVERWOOD_TRUNK.get();
+        return TTTreePlacers.SILVERWOOD_TRUNK.get();
     }
 
     @Override
@@ -190,7 +190,7 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
             }
             boolean nodeHere = growNodes && rise > 0 && !previousWasNode && random.nextInt(nodeOdds) == 0;
             if (nodeHere) {
-                trunkSetter.accept(core, TCBlocks.SILVERWOOD_NODE_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y));
+                trunkSetter.accept(core, TTBlocks.SILVERWOOD_NODE_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y));
                 NodeGenerator.createRandomNodeAt(level, core, random, true, false, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
                 nodeOdds += height;
             } else {

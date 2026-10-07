@@ -2,17 +2,17 @@ package com.leclowndu93150.thaumaturge.content.workbench;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingStore;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -62,7 +62,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     private static final int HOTBAR_Y = 209;
     private static final int SLOT_SPACING = 18;
 
-    public static final List<ResourceKey<IAspect>> PRIMAL_ORDER = List.of(TCAspects.AER, TCAspects.IGNIS, TCAspects.AQUA, TCAspects.TERRA, TCAspects.ORDO, TCAspects.PERDITIO);
+    public static final List<ResourceKey<IAspect>> PRIMAL_ORDER = List.of(TTAspects.AER, TTAspects.IGNIS, TTAspects.AQUA, TTAspects.TERRA, TTAspects.ORDO, TTAspects.PERDITIO);
 
     private static final int AURA_DATA_INDEX = 0;
     private static final int AURA_REFRESH_INTERVAL = 10;
@@ -88,7 +88,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     }
 
     private MenuArcaneWorkbench(int containerId, Inventory playerInventory, InventoryArcaneWorkbench craftingInventory, ContainerLevelAccess access, @Nullable BlockEntityArcaneWorkbench tile) {
-        super(TCMenus.ARCANE_WORKBENCH.get(), containerId);
+        super(TTMenus.ARCANE_WORKBENCH.get(), containerId);
         this.craftingInventory = craftingInventory;
         this.access = access;
         this.player = playerInventory.player;
@@ -254,7 +254,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return access.evaluate((level, pos) -> level.getBlockState(pos).is(TCBlocks.ARCANE_WORKBENCH.get()) && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0,
+        return access.evaluate((level, pos) -> level.getBlockState(pos).is(TTBlocks.ARCANE_WORKBENCH.get()) && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0,
                 true);
     }
 
@@ -272,7 +272,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
     @Override
     public void clicked(int slotId, int button, ContainerInput containerInput, Player player) {
         if (slotId == WAND_SLOT && getCarried().getItem() instanceof ItemWand wand && wand.isStaff(getCarried())) {
-            TCActionBar.sendPurple(player, "tc.workbench.staff");
+            TTActionBar.sendPurple(player, "tc.workbench.staff");
         }
         if (slotId == RESULT_SLOT && containerInput == ContainerInput.SWAP && craftsOnServer()) {
             swapCraft(button);

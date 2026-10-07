@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -22,7 +22,7 @@ public class MenuTurretBasic extends AbstractContainerMenu {
     protected final @Nullable EntityTurretCrossbow turret;
 
     public MenuTurretBasic(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
-        this(TCMenus.TURRET_BASIC.get(), containerId, playerInventory, playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityTurretCrossbow t ? t : null, AMMO_X, AMMO_Y);
+        this(TTMenus.TURRET_BASIC.get(), containerId, playerInventory, playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityTurretCrossbow t ? t : null, AMMO_X, AMMO_Y);
     }
 
     protected MenuTurretBasic(MenuType<?> type, int containerId, Inventory playerInventory, @Nullable EntityTurretCrossbow turret, int slotX, int slotY) {
@@ -46,7 +46,7 @@ public class MenuTurretBasic extends AbstractContainerMenu {
 
     public static void open(Player player, EntityTurretCrossbow turret) {
         if (player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(new SimpleMenuProvider((id, inv, p) -> new MenuTurretBasic(TCMenus.TURRET_BASIC.get(), id, inv, turret, AMMO_X, AMMO_Y), turret.getDisplayName()),
+            serverPlayer.openMenu(new SimpleMenuProvider((id, inv, p) -> new MenuTurretBasic(TTMenus.TURRET_BASIC.get(), id, inv, turret, AMMO_X, AMMO_Y), turret.getDisplayName()),
                     buf -> buf.writeVarInt(turret.getId()));
         }
     }

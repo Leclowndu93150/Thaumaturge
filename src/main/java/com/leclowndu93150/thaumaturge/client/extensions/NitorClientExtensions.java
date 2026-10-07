@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.extensions;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class NitorClientExtensions implements IClientBlockExtensions {
     private static final NitorClientExtensions INSTANCE = new NitorClientExtensions();
 
@@ -27,7 +27,7 @@ public final class NitorClientExtensions implements IClientBlockExtensions {
 
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        Block[] nitors = TCBlocks.NITORS.values().stream().map(b -> (Block) b.get()).toArray(Block[]::new);
+        Block[] nitors = TTBlocks.NITORS.values().stream().map(b -> (Block) b.get()).toArray(Block[]::new);
         event.registerBlock(INSTANCE, nitors);
     }
 

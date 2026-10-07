@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -35,8 +35,8 @@ final class BuildSubcommand implements AdminSubcommand {
                 return 0;
             }
         }
-        level.setBlockAndUpdate(center, TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
-        level.setBlockAndUpdate(center.above(2), TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
+        level.setBlockAndUpdate(center, TTBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
+        level.setBlockAndUpdate(center.above(2), TTBlocks.INFUSION_MATRIX.get().defaultBlockState());
         placePillar(level, center.offset(-1, 0, -1), Direction.NORTH);
         placePillar(level, center.offset(-1, 0, 1), Direction.WEST);
         placePillar(level, center.offset(1, 0, -1), Direction.EAST);
@@ -44,7 +44,7 @@ final class BuildSubcommand implements AdminSubcommand {
         for (int dx = -3; dx <= 3; dx += 3) {
             for (int dz = -3; dz <= 3; dz += 3) {
                 if (dx != 0 || dz != 0) {
-                    level.setBlockAndUpdate(center.offset(dx, 0, dz), TCBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
+                    level.setBlockAndUpdate(center.offset(dx, 0, dz), TTBlocks.PEDESTAL_ARCANE.get().defaultBlockState());
                 }
             }
         }
@@ -53,7 +53,7 @@ final class BuildSubcommand implements AdminSubcommand {
     }
 
     private static void placePillar(ServerLevel level, BlockPos pos, Direction facing) {
-        level.setBlockAndUpdate(pos, TCBlocks.PILLAR_ARCANE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, facing));
+        level.setBlockAndUpdate(pos, TTBlocks.PILLAR_ARCANE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, facing));
         level.removeBlock(pos.above(), false);
     }
 }

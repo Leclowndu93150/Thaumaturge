@@ -12,8 +12,8 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectEssentiaHost;
 import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectStorage;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.serialization.Codec;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -55,7 +55,7 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     private final SingleAspectStorage storage = new SingleAspectStorage(this);
 
     public BlockEntityJar(BlockPos pos, BlockState state) {
-        this(TCBlockEntities.JAR.get(), pos, state);
+        this(TTBlockEntities.JAR.get(), pos, state);
     }
 
     protected BlockEntityJar(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -373,18 +373,18 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
         if (level != null && aspect != null && amount > 0) {
             EssentiaList contents = getEssentiaContents(level.registryAccess());
             if (!contents.isEmpty()) {
-                builder.set(TCDataComponents.ESSENTIA_CONTENTS.get(), contents);
+                builder.set(TTDataComponents.ESSENTIA_CONTENTS.get(), contents);
             }
         }
         if (aspectFilter != null) {
-            builder.set(TCDataComponents.ASPECT_FILTER.get(), aspectFilter);
+            builder.set(TTDataComponents.ASPECT_FILTER.get(), aspectFilter);
         }
     }
 
     @Override
     protected void applyImplicitComponents(DataComponentGetter input) {
         super.applyImplicitComponents(input);
-        EssentiaList contents = input.get(TCDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = input.get(TTDataComponents.ESSENTIA_CONTENTS.get());
         if (contents != null && !contents.isEmpty()) {
             AspectInstance first = contents.contents().entries().get(0);
             ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
@@ -393,7 +393,7 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
                 amount = Math.min(first.amount(), capacity());
             }
         }
-        ResourceKey<IAspect> filter = input.get(TCDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> filter = input.get(TTDataComponents.ASPECT_FILTER.get());
         if (filter != null) {
             aspectFilter = filter;
             if (aspect == null)

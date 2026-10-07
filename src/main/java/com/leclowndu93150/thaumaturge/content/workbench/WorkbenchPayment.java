@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCWorkbenchSources;
+import com.leclowndu93150.thaumaturge.registry.TTWorkbenchSources;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.Holder;
@@ -118,7 +118,7 @@ public final class WorkbenchPayment {
             return tile.spendAura(plan.auraVis(), transaction);
         }
         int remaining = plan.auraVis();
-        for (IWorkbenchAuraSource source : TCWorkbenchSources.auraSources()) {
+        for (IWorkbenchAuraSource source : TTWorkbenchSources.auraSources()) {
             if (remaining <= 0) {
                 break;
             }
@@ -142,7 +142,7 @@ public final class WorkbenchPayment {
 
     private static int supplyFromSources(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneWorkbench inventory, Holder<IAspect> aspect, int need, TransactionContext transaction) {
         int supplied = 0;
-        for (IWorkbenchVisSource source : TCWorkbenchSources.visSources()) {
+        for (IWorkbenchVisSource source : TTWorkbenchSources.visSources()) {
             if (supplied >= need) {
                 break;
             }
@@ -161,7 +161,7 @@ public final class WorkbenchPayment {
 
     private static float averageCraftModifier(ItemStack wand, Player player) {
         float total = 0.0F;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             total += WandVisHelper.getConsumptionModifier(wand, player, primal, true);
         }
         return total / WandEconomy.PRIMAL_COUNT;

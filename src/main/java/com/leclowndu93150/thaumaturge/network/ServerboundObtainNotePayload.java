@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundObtainNotePayload(Identifier entry, int ordinal) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ServerboundObtainNotePayload> TYPE = new CustomPacketPayload.Type<>(TCIds.rl("obtain_note"));
+    public static final CustomPacketPayload.Type<ServerboundObtainNotePayload> TYPE = new CustomPacketPayload.Type<>(TTIds.rl("obtain_note"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundObtainNotePayload> STREAM_CODEC = StreamCodec.composite(Identifier.STREAM_CODEC, ServerboundObtainNotePayload::entry,
             ByteBufCodecs.VAR_INT, ServerboundObtainNotePayload::ordinal, ServerboundObtainNotePayload::new);

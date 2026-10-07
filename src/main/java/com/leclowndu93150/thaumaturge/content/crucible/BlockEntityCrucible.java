@@ -14,9 +14,9 @@ import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.item.ItemEntityAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.awt.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,7 +77,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
     private int delay = 0;
 
     public BlockEntityCrucible(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
+        super(TTBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
     }
 
     private void tick() {
@@ -88,7 +88,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         if (!level.isClientSide()) {
             if (tank.getAmountAsInt(0) > 0) {
                 BlockState below = level.getBlockState(getBlockPos().below());
-                boolean hasHeatBelow = below.is(TCBlockTags.CRUCIBLE_HEAT_SOURCES);
+                boolean hasHeatBelow = below.is(TTBlockTags.CRUCIBLE_HEAT_SOURCES);
                 if (!hasHeatBelow) {
                     if (heat > 0) {
                         heat--;
@@ -287,7 +287,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         if (level == null)
             return false;
         if (event == 99) {
-            level.playLocalSound(getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, TCSounds.SPILL.get(), SoundSource.BLOCKS, 0.2f, 1.0F, false);
+            level.playLocalSound(getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, TTSounds.SPILL.get(), SoundSource.BLOCKS, 0.2f, 1.0F, false);
             if (!level.isClientSide()) {
                 Effects.bamf((ServerLevel) level, Vec3.atCenterOf(getBlockPos()).add(0F, 0.75F, 0F)).withSound().fancy().side(Direction.UP).send();
             }
@@ -295,7 +295,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         } else if (event != 2) {
             return super.triggerEvent(event, data);
         } else {
-            level.playLocalSound(getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, TCSounds.SPILL.get(), SoundSource.BLOCKS, 0.2f, 1.0F, false);
+            level.playLocalSound(getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, TTSounds.SPILL.get(), SoundSource.BLOCKS, 0.2f, 1.0F, false);
             if (!level.isClientSide()) {
                 for (int q = 0; q < 10; q++) {
                     Color color;
@@ -376,7 +376,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         }
 
         if (bubble) {
-            level.playSound(null, getBlockPos(), TCSounds.BUBBLE.get(), SoundSource.BLOCKS, 0.2F, 1.0F + level.getRandom().nextFloat() * 0.4F);
+            level.playSound(null, getBlockPos(), TTSounds.BUBBLE.get(), SoundSource.BLOCKS, 0.2F, 1.0F + level.getRandom().nextFloat() * 0.4F);
             syncToClient();
             level.blockEvent(getBlockPos(), getBlockState().getBlock(), 2, 1);
         }

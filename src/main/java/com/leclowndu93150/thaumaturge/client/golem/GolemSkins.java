@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 
 /** Material variants are made from the active resource pack's copper golem at runtime. */
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class GolemSkins {
     public static final Identifier COPPER = Identifier.withDefaultNamespace("textures/entity/copper_golem/copper_golem.png");
     public static final Identifier EYES = Identifier.withDefaultNamespace("textures/entity/copper_golem/copper_golem_eyes.png");
@@ -72,7 +72,7 @@ public final class GolemSkins {
                     skin.setPixel(x, y, ARGB.color(ARGB.alpha(pixel), Math.round(ARGB.red(mapped) * detail), Math.round(ARGB.green(mapped) * detail), Math.round(ARGB.blue(mapped) * detail)));
                 }
             }
-            Identifier id = TCIds.rl("dynamic/golem/" + material.getNamespace() + "/" + material.getPath());
+            Identifier id = TTIds.rl("dynamic/golem/" + material.getNamespace() + "/" + material.getPath());
             client.getTextureManager().register(id, new DynamicTexture(id::toString, skin));
             GENERATED.add(id);
             return id;
@@ -101,7 +101,7 @@ public final class GolemSkins {
 
     @SubscribeEvent
     public static void onReload(AddClientReloadListenersEvent event) {
-        event.addListener(TCIds.rl("golem_skins"), (ResourceManagerReloadListener) resources -> {
+        event.addListener(TTIds.rl("golem_skins"), (ResourceManagerReloadListener) resources -> {
             GENERATED.forEach(Minecraft.getInstance().getTextureManager()::release);
             GENERATED.clear();
             CACHE.clear();

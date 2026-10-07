@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -30,14 +30,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEntityNodeStabilizer, NodeStabilizerRenderState> {
-    private static final Identifier MODEL = TCIds.rl("models/mesh/node_stabilizer.tcmesh");
-    private static final Identifier TEXTURE = TCIds.rl("textures/block/node_stabilizer.png");
-    private static final Identifier OVERLAY_TEXTURE = TCIds.rl("textures/block/node_stabilizer_over.png");
+    private static final Identifier MODEL = TTIds.rl("models/mesh/node_stabilizer.ttmesh");
+    private static final Identifier TEXTURE = TTIds.rl("textures/block/node_stabilizer.png");
+    private static final Identifier OVERLAY_TEXTURE = TTIds.rl("textures/block/node_stabilizer_over.png");
 
     private static final RenderType BASE = RenderTypes.entityCutout(TEXTURE);
     private static final RenderType OVERLAY = RenderTypes.entityTranslucent(OVERLAY_TEXTURE);
-    private static final Identifier TRANSDUCER_TEXTURE = TCIds.rl("textures/block/node_converter.png");
-    private static final Identifier TRANSDUCER_OVERLAY_TEXTURE = TCIds.rl("textures/block/node_converter_over.png");
+    private static final Identifier TRANSDUCER_TEXTURE = TTIds.rl("textures/block/node_converter.png");
+    private static final Identifier TRANSDUCER_OVERLAY_TEXTURE = TTIds.rl("textures/block/node_converter_over.png");
     private static final RenderType TRANSDUCER_BASE = RenderTypes.entityCutout(TRANSDUCER_TEXTURE);
     private static final RenderType TRANSDUCER_OVERLAY = RenderTypes.entityTranslucent(TRANSDUCER_OVERLAY_TEXTURE);
     private static final int TRANSDUCER_EXTEND_CAP = 50;
@@ -48,9 +48,9 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final int TRANSDUCER_STATUS_NODE = 1;
     private static final int TRANSDUCER_STATUS_ENERGIZED = 2;
     private static final float TRANSDUCER_GLOW_GAIN = 2.5F;
-    private static final Identifier BUBBLE_TEXTURE = TCIds.rl("textures/misc/node_bubble.png");
+    private static final Identifier BUBBLE_TEXTURE = TTIds.rl("textures/misc/node_bubble.png");
     private static final RenderType BUBBLE = RenderType.create("tc_node_bubble",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", BUBBLE_TEXTURE).useLightmap().sortOnUpload().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", BUBBLE_TEXTURE).useLightmap().sortOnUpload().createRenderSetup());
 
     private static final String PART_LOCK = "lock";
     private static final String PART_PISTON = "piston";
@@ -118,9 +118,9 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     }
 
     public static void submitParts(int count, boolean advanced, float ticks, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
-        TCMeshPart lock = findPart(mesh, PART_LOCK);
-        TCMeshPart piston = findPart(mesh, PART_PISTON);
+        TTMesh mesh = GolemMeshes.get(MODEL);
+        TTMeshPart lock = findPart(mesh, PART_LOCK);
+        TTMeshPart piston = findPart(mesh, PART_PISTON);
         if (lock != null) {
             PoseStack.Pose lockPose = poseStack.last().copy();
             collector.submitCustomGeometry(poseStack, BASE, (pose, buffer) -> GolemMeshes.renderPart(lock, lockPose, buffer, light, WHITE));
@@ -143,9 +143,9 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     }
 
     public static void submitTransducerParts(int count, int status, float ticks, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
-        TCMeshPart lock = findPart(mesh, PART_LOCK);
-        TCMeshPart piston = findPart(mesh, PART_PISTON);
+        TTMesh mesh = GolemMeshes.get(MODEL);
+        TTMeshPart lock = findPart(mesh, PART_LOCK);
+        TTMeshPart piston = findPart(mesh, PART_PISTON);
         float extend = Math.min(TRANSDUCER_EXTEND_CAP, count) / TRANSDUCER_EXTEND_DIVISOR;
         int tint = statusTint(status);
         if (lock != null) {
@@ -193,8 +193,8 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
         return new AABB(pos).minmax(AABB.ofSize(bubble, BUBBLE_SWEEP * 2.0, BUBBLE_SWEEP * 2.0, BUBBLE_SWEEP * 2.0));
     }
 
-    private static @Nullable TCMeshPart findPart(TCMesh mesh, String name) {
-        for (TCMeshPart part : mesh.parts()) {
+    private static @Nullable TTMeshPart findPart(TTMesh mesh, String name) {
+        for (TTMeshPart part : mesh.parts()) {
             if (name.equals(part.name())) {
                 return part;
             }

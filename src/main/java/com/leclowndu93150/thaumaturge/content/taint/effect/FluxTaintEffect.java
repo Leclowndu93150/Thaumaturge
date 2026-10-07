@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.effect;
 
-import com.leclowndu93150.thaumaturge.api.damagesource.TCDamageSources;
+import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageSources;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
@@ -31,7 +31,7 @@ public final class FluxTaintEffect extends MobEffect {
             return true;
         }
         if (!mob.is(EntityTypeTags.UNDEAD)) {
-            mob.hurt(TCDamageSources.taint(level), DAMAGE);
+            mob.hurt(TTDamageSources.taint(level), DAMAGE);
         }
         return true;
     }

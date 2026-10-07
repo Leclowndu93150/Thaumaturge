@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyHusk;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.monster.zombie.BabyZombieModel;
@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.resources.Identifier;
 
 public final class BrainyHuskRenderer extends AbstractZombieRenderer<EntityBrainyHusk, ZombieRenderState, ZombieModel<ZombieRenderState>> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/brainy_husk.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/brainy_husk.png");
 
     public BrainyHuskRenderer(EntityRendererProvider.Context context) {
         super(context, new ZombieModel<>(context.bakeLayer(ModelLayers.HUSK)), new BabyZombieModel<>(context.bakeLayer(ModelLayers.HUSK_BABY)),

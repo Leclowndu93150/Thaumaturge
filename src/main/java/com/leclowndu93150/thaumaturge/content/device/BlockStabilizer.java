@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,7 +24,8 @@ public final class BlockStabilizer extends BaseEntityBlock {
         super(properties);
     }
 
-    private static final VoxelShape SHAPE = Shapes.or(box(1.0, 0.0, 1.0, 15.0, 4.0, 15.0), box(3.0, 4.0, 3.0, 13.0, 13.0, 13.0), box(5.0, 8.0, 5.0, 11.0, 16.0, 11.0));
+    private static final VoxelShape SHAPE = Shapes.or(box(0.0, 0.0, 0.0, 16.0, 5.0, 16.0), box(2.0, 5.0, 2.0, 14.0, 8.0, 14.0), box(4.0, 8.0, 4.0, 12.0, 11.0, 12.0),
+            box(3.0, 11.0, 3.0, 13.0, 13.0, 13.0), box(4.0, 13.0, 4.0, 12.0, 16.0, 12.0));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -56,6 +57,6 @@ public final class BlockStabilizer extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.STABILIZER.get(), BlockEntityStabilizer::serverTick);
+        return createTickerHelper(type, TTBlockEntities.STABILIZER.get(), BlockEntityStabilizer::serverTick);
     }
 }

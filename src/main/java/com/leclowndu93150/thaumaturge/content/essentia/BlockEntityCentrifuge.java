@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.Codec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -47,7 +47,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
     public float rotationSpeed;
 
     public BlockEntityCentrifuge(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.CENTRIFUGE.get(), pos, state);
+        super(TTBlockEntities.CENTRIFUGE.get(), pos, state);
     }
 
     public boolean isSpinning() {
@@ -80,7 +80,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
         int previous = (int) centrifuge.rotation;
         centrifuge.rotation += centrifuge.rotationSpeed;
         if (centrifuge.rotation % 180.0F <= 20.0F && previous % 180 >= 160 && centrifuge.rotationSpeed > 0.0F) {
-            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TCSounds.PUMP.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
+            level.playLocalSound(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, TTSounds.PUMP.get(), SoundSource.BLOCKS, 1.0F, 1.0F, false);
         }
     }
 

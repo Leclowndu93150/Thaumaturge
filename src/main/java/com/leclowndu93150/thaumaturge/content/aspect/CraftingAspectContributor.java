@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectRecipeContributor;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
 
     @Override
     public void beginBuild(RecipeManager recipes, HolderLookup.Provider registries) {
-        magic = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.PRAECANTATIO);
+        magic = registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.PRAECANTATIO);
         Map<Item, List<Candidate>> map = new HashMap<>();
         int skipped = 0;
         for (RecipeHolder<?> holder : recipes.getRecipes()) {

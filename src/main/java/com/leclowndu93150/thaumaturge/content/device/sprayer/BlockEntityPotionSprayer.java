@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -63,7 +63,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
     private @Nullable Holder<IAspect> currentSuction;
 
     public BlockEntityPotionSprayer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.POTION_SPRAYER.get(), pos, state);
+        super(TTBlockEntities.POTION_SPRAYER.get(), pos, state);
     }
 
     public static boolean isValidPotion(ItemStack stack) {

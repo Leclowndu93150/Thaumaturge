@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.grate;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +19,7 @@ public final class BlockEntityItemGrate extends BlockEntity {
     private final GrateInventory inventory = new GrateInventory();
 
     public BlockEntityItemGrate(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ITEM_GRATE.get(), pos, state);
+        super(TTBlockEntities.ITEM_GRATE.get(), pos, state);
     }
 
     public ItemStacksResourceHandler inventory() {

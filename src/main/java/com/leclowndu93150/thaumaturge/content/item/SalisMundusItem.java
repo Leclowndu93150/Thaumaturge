@@ -1,17 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -35,7 +35,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class SalisMundusItem extends Item {
     private static final int SWAP_DELAY_TICKS = 50;
 
@@ -47,7 +47,7 @@ public final class SalisMundusItem extends Item {
     public static void allowUseOnCraftingTable(UseItemOnBlockEvent event) {
         if (event.getUsePhase() != UseItemOnBlockEvent.UsePhase.BLOCK)
             return;
-        if (!event.getItemStack().is(TCItems.SALIS_MUNDUS))
+        if (!event.getItemStack().is(TTItems.SALIS_MUNDUS))
             return;
         if (event.getPlayer() == null)
             return;
@@ -75,7 +75,7 @@ public final class SalisMundusItem extends Item {
         ServerLevel serverLevel = (ServerLevel) level;
         BlockState clicked = level.getBlockState(pos);
         DustTriggerInput input = new DustTriggerInput(stack, level, pos, clicked);
-        Optional<RecipeHolder<DustTrigger>> match = serverLevel.recipeAccess().getRecipeFor(TCRecipeTypes.DUST_TRIGGER.get(), input, level);
+        Optional<RecipeHolder<DustTrigger>> match = serverLevel.recipeAccess().getRecipeFor(TTRecipeTypes.DUST_TRIGGER.get(), input, level);
         if (match.isEmpty()) {
             return InteractionResult.PASS;
         }
@@ -83,7 +83,7 @@ public final class SalisMundusItem extends Item {
         DustTrigger trigger = holder.value();
         if (!trigger.doesPassGate(player)) {
             Thaumaturge.LOGGER.debug("Salis Mundus trigger {} blocked by research gate {}", holder.id(), trigger.researchGate().orElse(null));
-            TCActionBar.sendPurple(player, "tc.dust.noresearch");
+            TTActionBar.sendPurple(player, "tc.dust.noresearch");
             return InteractionResult.PASS;
         }
         ItemStack result = trigger.assemble(input);
@@ -114,7 +114,7 @@ public final class SalisMundusItem extends Item {
             ResearchProgressionEvents.recordCrafted(serverPlayer, result);
             CriteriaTriggers.RECIPE_CRAFTED.trigger(serverPlayer, holder.id(), List.of(consumed));
         }
-        level.playSound(null, pos, TCSounds.DUST.get(), SoundSource.PLAYERS, 0.33F, 1.0F + (float) level.getRandom().nextGaussian() * 0.05F);
+        level.playSound(null, pos, TTSounds.DUST.get(), SoundSource.PLAYERS, 0.33F, 1.0F + (float) level.getRandom().nextGaussian() * 0.05F);
         return InteractionResult.SUCCESS;
     }
 

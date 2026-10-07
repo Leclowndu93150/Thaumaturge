@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +20,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class DustTriggerTickHandler {
     private DustTriggerTickHandler() {}
 
@@ -29,10 +29,10 @@ public final class DustTriggerTickHandler {
         if (!(event.getLevel() instanceof ServerLevel level) || !(event.getChunk() instanceof LevelChunk chunk)) {
             return;
         }
-        if (!chunk.hasData(TCAttachments.DUST_TRIGGER_QUEUE.get())) {
+        if (!chunk.hasData(TTAttachments.DUST_TRIGGER_QUEUE.get())) {
             return;
         }
-        DustTriggerSwapQueue queue = chunk.getData(TCAttachments.DUST_TRIGGER_QUEUE.get());
+        DustTriggerSwapQueue queue = chunk.getData(TTAttachments.DUST_TRIGGER_QUEUE.get());
         if (queue.isEmpty()) {
             return;
         }
@@ -60,7 +60,7 @@ public final class DustTriggerTickHandler {
                 continue;
             }
             LevelChunk chunk = level.getChunk(cp.x(), cp.z());
-            DustTriggerSwapQueue queue = chunk.getData(TCAttachments.DUST_TRIGGER_QUEUE.get());
+            DustTriggerSwapQueue queue = chunk.getData(TTAttachments.DUST_TRIGGER_QUEUE.get());
             if (queue.isEmpty()) {
                 DustTriggerSwapQueue.markChunkClear(level, cp);
                 continue;

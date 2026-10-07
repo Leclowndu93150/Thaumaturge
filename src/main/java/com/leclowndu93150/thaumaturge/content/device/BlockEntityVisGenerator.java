@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -24,7 +24,7 @@ public final class BlockEntityVisGenerator extends BlockEntity implements Energy
     private int energy;
 
     public BlockEntityVisGenerator(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.VIS_GENERATOR.get(), pos, state);
+        super(TTBlockEntities.VIS_GENERATOR.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityVisGenerator generator) {

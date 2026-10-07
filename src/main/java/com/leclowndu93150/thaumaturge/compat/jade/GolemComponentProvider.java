@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -12,7 +12,7 @@ import snownee.jade.api.config.IPluginConfig;
 public enum GolemComponentProvider implements IEntityComponentProvider {
     INSTANCE;
 
-    private static final Identifier UID = TCIds.rl("golem");
+    private static final Identifier UID = TTIds.rl("golem");
 
     @Override
     public Identifier getUid() {

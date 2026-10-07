@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -65,7 +65,7 @@ public final class BreakBehavior extends CellWorkBehavior {
                 return false;
             }
             level.destroyBlockProgress(golem.asEntity().getId(), pos, SHATTERED);
-            BlockBreakerEngine.harvestBlock(level, TCFakePlayer.GOLEM.at(level, golem.asEntity()), pos, silky, 0);
+            BlockBreakerEngine.harvestBlock(level, TTFakePlayer.GOLEM.at(level, golem.asEntity()), pos, silky, 0);
             golem.addRankXp(1);
             release(task);
         }

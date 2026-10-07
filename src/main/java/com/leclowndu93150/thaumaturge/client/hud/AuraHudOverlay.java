@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.aura.ClientAuraCache;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.network.ServerboundRequestAuraChunkPayload;
 import java.text.DecimalFormat;
@@ -20,7 +20,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public final class AuraHudOverlay implements LeftHudStack.Gauge {
-    private static final Identifier HUD = TCIds.rl("textures/gui/hud.png");
+    private static final Identifier HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
 
     private static final float VISCON = 525.0F;
@@ -113,7 +113,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
             int fillHeight = Math.round(vis * BAR_RANGE);
             int y = Math.round(BAR_TOP + BAR_RANGE) - fillHeight;
             graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, HUD_X + BAR_X, y, FILL_U, FILL_V, FILL_W, fillHeight, FILL_W, FILL_H, TEX_SIZE, TEX_SIZE, VIS_FILL_TINT);
-            graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, HUD, HUD_X + BAR_X, y, VIS_RIPPLE_U, RIPPLE_V_BASE + count % BAR_RANGE, FILL_W, fillHeight, FILL_W, fillHeight, TEX_SIZE, TEX_SIZE,
+            graphics.blit(TTRenderPipelines.GUI_TEXTURED_ADDITIVE, HUD, HUD_X + BAR_X, y, VIS_RIPPLE_U, RIPPLE_V_BASE + count % BAR_RANGE, FILL_W, fillHeight, FILL_W, fillHeight, TEX_SIZE, TEX_SIZE,
                     VIS_RIPPLE_TINT);
             if (player.isShiftKeyDown()) {
                 drawAmount(graphics, AMOUNT_FORMAT.format(snap.vis()), start, VIS_TEXT_COLOR);
@@ -125,7 +125,7 @@ public final class AuraHudOverlay implements LeftHudStack.Gauge {
             int fillHeight = Math.round(flux * BAR_RANGE);
             int y = Math.round(start);
             graphics.blit(RenderPipelines.GUI_TEXTURED, HUD, HUD_X + BAR_X, y, FILL_U, FILL_V, FILL_W, fillHeight, FILL_W, FILL_H, TEX_SIZE, TEX_SIZE, FLUX_FILL_TINT);
-            graphics.blit(TCRenderPipelines.GUI_TEXTURED_ADDITIVE, HUD, HUD_X + BAR_X, y, FLUX_RIPPLE_U, FLUX_RIPPLE_V_BASE - count2 % BAR_RANGE, FILL_W, fillHeight, FILL_W, fillHeight, TEX_SIZE,
+            graphics.blit(TTRenderPipelines.GUI_TEXTURED_ADDITIVE, HUD, HUD_X + BAR_X, y, FLUX_RIPPLE_U, FLUX_RIPPLE_V_BASE - count2 % BAR_RANGE, FILL_W, fillHeight, FILL_W, fillHeight, TEX_SIZE,
                     TEX_SIZE, FLUX_RIPPLE_TINT);
             if (player.isShiftKeyDown()) {
                 drawAmount(graphics, AMOUNT_FORMAT.format(snap.flux()), start - 4.0F, FLUX_TEXT_COLOR);

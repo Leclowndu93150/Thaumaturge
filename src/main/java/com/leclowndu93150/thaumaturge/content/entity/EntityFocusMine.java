@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -50,7 +50,7 @@ public final class EntityFocusMine extends ThrowableProjectile implements IEntit
     }
 
     public EntityFocusMine(FocusPackage pack, LivingEntity caster, Trajectory trajectory, boolean friendly) {
-        super(TCEntities.FOCUS_MINE.get(), caster.level());
+        super(TTEntities.FOCUS_MINE.get(), caster.level());
         this.focusPackage = pack;
         this.friendly = friendly;
         this.setOwner(caster);

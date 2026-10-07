@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -46,7 +46,7 @@ public final class BlockEntityLevitator extends BlockEntity {
     private int charge;
 
     public BlockEntityLevitator(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LEVITATOR.get(), pos, state);
+        super(TTBlockEntities.LEVITATOR.get(), pos, state);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, BlockEntityLevitator levitator) {

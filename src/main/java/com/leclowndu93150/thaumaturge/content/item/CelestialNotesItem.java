@@ -2,10 +2,10 @@ package com.leclowndu93150.thaumaturge.content.item;
 
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -30,13 +30,13 @@ public final class CelestialNotesItem extends Item {
     }
 
     public static ItemStack stackOf(CelestialBody body) {
-        ItemStack stack = new ItemStack(TCItems.CELESTIAL_NOTES.get());
-        stack.set(TCDataComponents.CELESTIAL_BODY.get(), body);
+        ItemStack stack = new ItemStack(TTItems.CELESTIAL_NOTES.get());
+        stack.set(TTDataComponents.CELESTIAL_BODY.get(), body);
         return stack;
     }
 
     public static CelestialBody bodyOf(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN);
+        return stack.getOrDefault(TTDataComponents.CELESTIAL_BODY.get(), CelestialBody.SUN);
     }
 
     @Override
@@ -60,12 +60,12 @@ public final class CelestialNotesItem extends Item {
     private static List<ResourceKey<IAspect>> aspectsFor(CelestialBody body) {
         String name = body.getSerializedName();
         if (name.startsWith("moon")) {
-            return List.of(TCAspects.LUX, TCAspects.TENEBRAE);
+            return List.of(TTAspects.LUX, TTAspects.TENEBRAE);
         }
         if (name.startsWith("stars")) {
-            return List.of(TCAspects.LUX, TCAspects.VACUOS, TCAspects.ALIENIS);
+            return List.of(TTAspects.LUX, TTAspects.VACUOS, TTAspects.ALIENIS);
         }
-        return List.of(TCAspects.LUX, TCAspects.IGNIS);
+        return List.of(TTAspects.LUX, TTAspects.IGNIS);
     }
 
     @Override

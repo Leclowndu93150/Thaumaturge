@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 
 public final class RechargeHudOverlay implements GuiLayer {
-    private static final Identifier HUD = TCIds.rl("textures/gui/hud.png");
+    private static final Identifier HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
 
     private static final int PERIODIC_SHOW_TICKS = 60;
@@ -108,6 +108,6 @@ public final class RechargeHudOverlay implements GuiLayer {
         if (mc.level == null) {
             return DEFAULT_ENERGY_COLOR;
         }
-        return mc.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(TCAspects.POTENTIA).map(holder -> holder.value().color()).orElse(DEFAULT_ENERGY_COLOR);
+        return mc.level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(TTAspects.POTENTIA).map(holder -> holder.value().color()).orElse(DEFAULT_ENERGY_COLOR);
     }
 }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
 import com.leclowndu93150.thaumaturge.network.ClientboundWardChunkPayload;
@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WardClientHandler {
     private static final float CENTER = 0.5F;
 

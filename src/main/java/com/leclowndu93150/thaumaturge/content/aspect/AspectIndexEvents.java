@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aspect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectIndexPayload;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class AspectIndexEvents {
     private static volatile boolean datamapsReady = false;
     private static volatile MinecraftServer pendingServer = null;

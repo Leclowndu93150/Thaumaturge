@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -52,7 +52,7 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
     private int breakTime;
 
     public BlockEntityDeconstructionTable(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.DECONSTRUCTION_TABLE.get(), pos, state);
+        super(TTBlockEntities.DECONSTRUCTION_TABLE.get(), pos, state);
     }
 
     public ItemStacksResourceHandler items() {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -28,7 +28,7 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
     private boolean sleeping;
 
     public BlockEntityEtherealBloom(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ETHEREAL_BLOOM.get(), pos, state);
+        super(TTBlockEntities.ETHEREAL_BLOOM.get(), pos, state);
     }
 
     public void serverTick(Level level, BlockPos pos) {

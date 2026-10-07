@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.entity.trait;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitGoals;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.MobAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ public final class MobTraitEngine {
     private MobTraitEngine() {}
 
     public static List<Holder<MobTrait>> traits(LivingEntity mob) {
-        MobTraitState state = mob.getExistingDataOrNull(TCAttachments.MOB_TRAITS);
+        MobTraitState state = mob.getExistingDataOrNull(TTAttachments.MOB_TRAITS);
         return state == null ? List.of() : state.traits();
     }
 
@@ -38,11 +38,11 @@ public final class MobTraitEngine {
         if (mob.level().isClientSide()) {
             return false;
         }
-        MobTraitState state = mob.getData(TCAttachments.MOB_TRAITS);
+        MobTraitState state = mob.getData(TTAttachments.MOB_TRAITS);
         if (state.contains(trait)) {
             return false;
         }
-        mob.setData(TCAttachments.MOB_TRAITS, state.with(trait));
+        mob.setData(TTAttachments.MOB_TRAITS, state.with(trait));
         refresh(mob);
         trait.value().onAdded(mob);
         return true;
@@ -52,11 +52,11 @@ public final class MobTraitEngine {
         if (mob.level().isClientSide()) {
             return false;
         }
-        MobTraitState state = mob.getExistingDataOrNull(TCAttachments.MOB_TRAITS);
+        MobTraitState state = mob.getExistingDataOrNull(TTAttachments.MOB_TRAITS);
         if (state == null || !state.contains(trait)) {
             return false;
         }
-        mob.setData(TCAttachments.MOB_TRAITS, state.without(trait));
+        mob.setData(TTAttachments.MOB_TRAITS, state.without(trait));
         refresh(mob);
         trait.value().onRemoved(mob);
         return true;
@@ -70,7 +70,7 @@ public final class MobTraitEngine {
     }
 
     public static boolean suppressesNativeAi(LivingEntity mob) {
-        MobTraitRuntime runtime = mob.getExistingDataOrNull(TCAttachments.MOB_TRAIT_RUNTIME);
+        MobTraitRuntime runtime = mob.getExistingDataOrNull(TTAttachments.MOB_TRAIT_RUNTIME);
         return runtime != null && runtime.nativeAiSuppressed();
     }
 
@@ -99,14 +99,14 @@ public final class MobTraitEngine {
     }
 
     private static boolean isTraitModifier(Identifier id) {
-        return id.getNamespace().equals(TCIds.MODID) && id.getPath().startsWith(MODIFIER_ROOT);
+        return id.getNamespace().equals(TTIds.MODID) && id.getPath().startsWith(MODIFIER_ROOT);
     }
 
     private static void refreshGoals(PathfinderMob mob) {
         MobAccessor accessor = (MobAccessor) mob;
         GoalSelector goals = accessor.thaumaturge$getGoalSelector();
         GoalSelector targets = accessor.thaumaturge$getTargetSelector();
-        MobTraitRuntime runtime = mob.getData(TCAttachments.MOB_TRAIT_RUNTIME);
+        MobTraitRuntime runtime = mob.getData(TTAttachments.MOB_TRAIT_RUNTIME);
         for (TraitGoal injected : runtime.injected()) {
             (injected.target() ? targets : goals).removeGoal(injected.goal());
         }
@@ -165,7 +165,7 @@ public final class MobTraitEngine {
 
         @Override
         public void add(Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation) {
-            Identifier id = TCIds.rl(MODIFIER_ROOT + trait.getNamespace() + SEPARATOR + trait.getPath() + SEPARATOR + index++);
+            Identifier id = TTIds.rl(MODIFIER_ROOT + trait.getNamespace() + SEPARATOR + trait.getPath() + SEPARATOR + index++);
             expected.put(id, new Expected(attribute, new AttributeModifier(id, amount, operation)));
         }
 

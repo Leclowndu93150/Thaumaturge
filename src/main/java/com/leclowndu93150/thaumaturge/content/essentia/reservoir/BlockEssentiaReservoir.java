@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -71,7 +71,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide() ? null : createTickerHelper(type, TCBlockEntities.ESSENTIA_RESERVOIR.get(), BlockEntityEssentiaReservoir::serverTick);
+        return level.isClientSide() ? null : createTickerHelper(type, TTBlockEntities.ESSENTIA_RESERVOIR.get(), BlockEntityEssentiaReservoir::serverTick);
     }
 
     @Override

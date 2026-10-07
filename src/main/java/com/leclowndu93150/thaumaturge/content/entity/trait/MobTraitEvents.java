@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.trait;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class MobTraitEvents {
     private MobTraitEvents() {}
 

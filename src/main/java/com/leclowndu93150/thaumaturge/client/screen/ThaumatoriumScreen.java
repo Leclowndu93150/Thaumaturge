@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.BlockEntityThaumatorium;
@@ -17,8 +17,8 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
-public final class ThaumatoriumScreen extends AbstractTCContainerScreen<MenuThaumatorium> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/gui/gui_thaumatorium.png");
+public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThaumatorium> {
+    private static final Identifier TEXTURE = TTIds.rl("textures/gui/gui_thaumatorium.png");
     private static final int GRID_X = 48;
     private static final int GRID_Y = 56;
     private static final int CELL = 16;

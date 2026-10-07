@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -60,8 +60,8 @@ public final class ServerboundRecipeDisplayHandler {
                 Identifier resultId = result.getItem().builtInRegistryHolder().unwrapKey().map(ResourceKey::identifier).orElse(null);
                 if (!payload.itemId().equals(resultId))
                     continue;
-                boolean thaumaturge = holder.id().identifier().getNamespace().equals(TCIds.MODID);
-                if (best == null || (thaumaturge && !best.id().identifier().getNamespace().equals(TCIds.MODID))) {
+                boolean thaumaturge = holder.id().identifier().getNamespace().equals(TTIds.MODID);
+                if (best == null || (thaumaturge && !best.id().identifier().getNamespace().equals(TTIds.MODID))) {
                     best = holder;
                 }
                 if (thaumaturge)

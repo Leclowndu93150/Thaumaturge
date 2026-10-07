@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCPlacementModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTPlacementModifiers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -23,6 +23,6 @@ public final class ConfigRarityFilter extends PlacementFilter {
 
     @Override
     public PlacementModifierType<?> type() {
-        return TCPlacementModifiers.CRIMSON_PORTAL_RARITY.get();
+        return TTPlacementModifiers.CRIMSON_PORTAL_RARITY.get();
     }
 }

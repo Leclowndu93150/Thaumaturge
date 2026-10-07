@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -23,7 +23,7 @@ public final class SpecialItemRenderer extends ItemEntityRenderer {
 
     private static final float CONE_LIFT = 0.25F;
 
-    private static final RenderType SPARKLE_TYPE = RenderType.create("tc_sparkle", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
+    private static final RenderType SPARKLE_TYPE = RenderType.create("tc_sparkle", RenderSetup.builder(TTRenderPipelines.SPARKLE_CULLED).createRenderSetup());
 
     private final RandomSource sparkleRandom = RandomSource.create();
 

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -27,6 +27,6 @@ public record FireMoteParticleOptions(double vx, double vy, double vz, float r, 
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.FIRE_MOTE.get();
+        return TTParticles.FIRE_MOTE.get();
     }
 }

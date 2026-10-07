@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityFallingTaint;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,7 +41,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
 
     @Override
     public void decay(Level level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
             return;
         }
         if (isEnclosed(level, pos)) {
-            level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -86,7 +86,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
 
     private static void uprootIntoSwarmer(ServerLevel level, BlockPos pos) {
         level.removeBlock(pos, false);
-        EntityTaintSporeSwarmer swarmer = TCEntities.TAINT_SPORE_SWARMER.get().create(level, EntitySpawnReason.NATURAL);
+        EntityTaintSporeSwarmer swarmer = TTEntities.TAINT_SPORE_SWARMER.get().create(level, EntitySpawnReason.NATURAL);
         if (swarmer != null) {
             swarmer.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
             level.addFreshEntity(swarmer);
@@ -132,10 +132,10 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
             return true;
         }
         FluidState fluid = state.getFluidState();
-        if (state.is(TCBlocks.FLUX_GOO.get()) && fluid.getAmount() >= GOO_BLOCKING_AMOUNT) {
+        if (state.is(TTBlocks.FLUX_GOO.get()) && fluid.getAmount() >= GOO_BLOCKING_AMOUNT) {
             return false;
         }
-        if (state.getBlock() instanceof BaseFireBlock || state.is(TCBlocks.TAINT_FIBRE.get())) {
+        if (state.getBlock() instanceof BaseFireBlock || state.is(TTBlocks.TAINT_FIBRE.get())) {
             return true;
         }
         if (state.canBeReplaced()) {

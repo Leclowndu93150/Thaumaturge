@@ -9,9 +9,9 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -68,7 +68,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
     private boolean heated;
 
     public BlockEntityThaumatorium(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.THAUMATORIUM.get(), pos, state);
+        super(TTBlockEntities.THAUMATORIUM.get(), pos, state);
     }
 
     public ItemStacksResourceHandler catalyst() {
@@ -152,7 +152,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
             return;
         }
         if (machine.counter == 0 || machine.counter % CHECK_INTERVAL == 0) {
-            machine.heated = server.getBlockState(pos.below(2)).is(TCBlockTags.CRUCIBLE_HEAT_SOURCES);
+            machine.heated = server.getBlockState(pos.below(2)).is(TTBlockTags.CRUCIBLE_HEAT_SOURCES);
             machine.updateUpgrades(server);
         }
         machine.counter++;
@@ -209,7 +209,7 @@ public final class BlockEntityThaumatorium extends BlockEntity implements IEssen
                 }
                 BlockPos bp = getBlockPos().above(yy).relative(dir);
                 BlockState bs = server.getBlockState(bp);
-                if (bs.is(TCBlocks.BRAIN_BOX.get()) && bs.getValue(BlockStateProperties.FACING) == dir.getOpposite()) {
+                if (bs.is(TTBlocks.BRAIN_BOX.get()) && bs.getValue(BlockStateProperties.FACING) == dir.getOpposite()) {
                     max += BRAIN_BOX_BONUS;
                 }
             }

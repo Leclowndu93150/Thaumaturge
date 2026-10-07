@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.effect;
 
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -26,12 +26,12 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(ServerLevel level, LivingEntity mob, int amplification) {
         AABB box = mob.getBoundingBox().inflate(SPREAD_RADIUS, SPREAD_RADIUS, SPREAD_RADIUS);
-        List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class, box, target -> target != mob && !target.hasEffect(TCMobEffects.INFECTIOUS_VIS_EXHAUST));
+        List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class, box, target -> target != mob && !target.hasEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST));
         for (LivingEntity target : nearby) {
             if (amplification > 0) {
-                target.addEffect(new MobEffectInstance(TCMobEffects.INFECTIOUS_VIS_EXHAUST, EFFECT_DURATION, amplification - 1, false, true, false));
+                target.addEffect(new MobEffectInstance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, EFFECT_DURATION, amplification - 1, false, true, false));
             } else {
-                target.addEffect(new MobEffectInstance(TCMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
+                target.addEffect(new MobEffectInstance(TTMobEffects.VIS_EXHAUST, EFFECT_DURATION, 0, false, true, false));
             }
         }
         return true;

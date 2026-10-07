@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
@@ -23,7 +23,7 @@ public final class PhysicalFluxAuraFloor {
         }
         LevelChunk chunk = level.getChunkSource().getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
         if (chunk != null) {
-            chunk.getData(TCAttachments.PHYSICAL_FLUX_SAMPLES.get()).add(pos);
+            chunk.getData(TTAttachments.PHYSICAL_FLUX_SAMPLES.get()).add(pos);
         }
     }
 
@@ -31,7 +31,7 @@ public final class PhysicalFluxAuraFloor {
         if (!isEnabled()) {
             return 0.0F;
         }
-        PhysicalFluxSamples samples = chunk.getExistingDataOrNull(TCAttachments.PHYSICAL_FLUX_SAMPLES.get());
+        PhysicalFluxSamples samples = chunk.getExistingDataOrNull(TTAttachments.PHYSICAL_FLUX_SAMPLES.get());
         if (samples == null) {
             return 0.0F;
         }

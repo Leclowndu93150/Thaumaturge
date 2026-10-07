@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.content.manabean;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -65,7 +65,7 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     public static boolean canGrowAt(LevelReader level, BlockPos pos) {
-        return level.getBiome(pos).is(TCBiomeTags.IS_MAGICAL) && level.getBlockState(pos.above()).is(BlockTags.LOGS);
+        return level.getBiome(pos).is(TTBiomeTags.IS_MAGICAL) && level.getBlockState(pos.above()).is(BlockTags.LOGS);
     }
 
     @Override
@@ -106,11 +106,11 @@ public final class BlockManaPod extends BaseEntityBlock {
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        ItemStack stack = new ItemStack(TCItems.MANA_BEAN.get());
+        ItemStack stack = new ItemStack(TTItems.MANA_BEAN.get());
         if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod) {
             Holder<IAspect> aspect = pod.aspect();
             if (aspect != null) {
-                stack.set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
+                stack.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(aspect, 1));
             }
         }
         return stack;

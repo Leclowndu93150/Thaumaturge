@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.eldritch.block;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchCrab;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,7 +39,7 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     private int venting = -1;
 
     public BlockEntityEldritchCrabSpawner(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_CRAB_SPAWNER.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_CRAB_SPAWNER.get(), pos, state);
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
@@ -114,7 +114,7 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
             return;
         }
         Direction dir = state.getValue(BlockEldritchCrabSpawner.FACING);
-        EntityEldritchCrab crab = new EntityEldritchCrab(TCEntities.ELDRITCH_CRAB.get(), level);
+        EntityEldritchCrab crab = new EntityEldritchCrab(TTEntities.ELDRITCH_CRAB.get(), level);
         double offsetX = dir.getAxis() == Direction.Axis.X ? crab.getBbWidth() / 2.0 : 0.5;
         double offsetY = dir.getAxis() == Direction.Axis.Y ? (dir.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? 0.75 - crab.getBbHeight() : 0.25) : 0.5 - crab.getBbHeight() / 2.0;
         double offsetZ = dir.getAxis() == Direction.Axis.Z ? crab.getBbWidth() / 2.0 : 0.5;
@@ -127,7 +127,7 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
             ChampionHelper.makeChampion(crab, false);
         }
         if (level.addFreshEntity(crab)) {
-            level.playSound(null, pos, TCSounds.GORE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, pos, TTSounds.GORE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         }
     }
 }

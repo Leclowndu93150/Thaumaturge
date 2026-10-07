@@ -3,15 +3,15 @@ package com.leclowndu93150.thaumaturge.content.aura.node;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,7 +66,7 @@ public final class NodeGenerator {
     }
 
     private static boolean createGuaranteedTaintedLandsNodeAt(ServerLevelAccessor level, BlockPos pos, RandomSource random, NodeType requiredType) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.getBiome(pos).is(TCBiomeTags.IS_TAINTED)) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.getBiome(pos).is(TTBiomeTags.IS_TAINTED)) {
             return false;
         }
         NodeType rolledType = requiredType == NodeType.HUNGRY ? NodeType.NORMAL : requiredType;
@@ -114,9 +114,9 @@ public final class NodeGenerator {
         }
 
         Holder<Biome> biome = level.getBiome(pos);
-        BiomeAuraModifier auraModifier = biome.getData(TCDataMaps.BIOME_AURA_MODIFIER);
+        BiomeAuraModifier auraModifier = biome.getData(TTDataMaps.BIOME_AURA_MODIFIER);
         int biomeAura = (int) (baseAura * (auraModifier == null ? 1.0F : auraModifier.value()));
-        if (type != NodeType.PURE && biome.is(TCBiomeTags.IS_TAINTED)) {
+        if (type != NodeType.PURE && biome.is(TTBiomeTags.IS_TAINTED)) {
             biomeAura = Math.round(biomeAura * TAINTED_LANDS_AURA_BOOST);
             if (!ThaumaturgeCommonConfig.WUSS_MODE.get() && random.nextBoolean()) {
                 type = NodeType.TAINTED;
@@ -224,7 +224,7 @@ public final class NodeGenerator {
         if (!current.isAir() && !current.canBeReplaced() && !current.is(BlockTags.LEAVES)) {
             return false;
         }
-        level.setBlock(pos, TCBlocks.NODE.get().defaultBlockState(), PLACE_FLAGS);
+        level.setBlock(pos, TTBlocks.NODE.get().defaultBlockState(), PLACE_FLAGS);
         if (level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             return configureNode(node, type, modifier, aspects);
         }
@@ -240,7 +240,7 @@ public final class NodeGenerator {
     }
 
     private static @Nullable Holder<IAspect> randomBiomeAspect(HolderLookup.RegistryLookup<IAspect> registry, Holder<Biome> biome, RandomSource random) {
-        BiomeAspects aspects = biome.getData(TCDataMaps.BIOME_ASPECTS);
+        BiomeAspects aspects = biome.getData(TTDataMaps.BIOME_ASPECTS);
         if (aspects == null || aspects.aspects().isEmpty()) {
             return null;
         }
@@ -251,24 +251,24 @@ public final class NodeGenerator {
     private static AspectList addTypeFlavor(HolderLookup.RegistryLookup<IAspect> registry, AspectList list, NodeType type, RandomSource random) {
         switch (type) {
             case HUNGRY -> {
-                list = list.add(registry.getOrThrow(TCAspects.DESIDERIUM), 2);
+                list = list.add(registry.getOrThrow(TTAspects.DESIDERIUM), 2);
                 if (random.nextBoolean()) {
-                    list = list.add(registry.getOrThrow(TCAspects.VACUOS), 1);
+                    list = list.add(registry.getOrThrow(TTAspects.VACUOS), 1);
                 }
             }
-            case PURE -> list = list.add(registry.getOrThrow(random.nextBoolean() ? TCAspects.VICTUS : TCAspects.ORDO), 2);
+            case PURE -> list = list.add(registry.getOrThrow(random.nextBoolean() ? TTAspects.VICTUS : TTAspects.ORDO), 2);
             case DARK -> {
                 if (random.nextBoolean()) {
-                    list = list.add(registry.getOrThrow(TCAspects.MORTUUS), 1);
+                    list = list.add(registry.getOrThrow(TTAspects.MORTUUS), 1);
                 }
                 if (random.nextBoolean()) {
-                    list = list.add(registry.getOrThrow(TCAspects.EXANIMIS), 1);
+                    list = list.add(registry.getOrThrow(TTAspects.EXANIMIS), 1);
                 }
                 if (random.nextBoolean()) {
-                    list = list.add(registry.getOrThrow(TCAspects.PERDITIO), 1);
+                    list = list.add(registry.getOrThrow(TTAspects.PERDITIO), 1);
                 }
                 if (random.nextBoolean()) {
-                    list = list.add(registry.getOrThrow(TCAspects.TENEBRAE), 1);
+                    list = list.add(registry.getOrThrow(TTAspects.TENEBRAE), 1);
                 }
             }
             default -> {
@@ -302,17 +302,17 @@ public final class NodeGenerator {
             }
         }
         if (water > ENV_WATER_THRESHOLD) {
-            list = list.add(registry.getOrThrow(TCAspects.AQUA), 1);
+            list = list.add(registry.getOrThrow(TTAspects.AQUA), 1);
         }
         if (lava > ENV_LAVA_THRESHOLD) {
-            list = list.add(registry.getOrThrow(TCAspects.IGNIS), 1);
-            list = list.add(registry.getOrThrow(TCAspects.TERRA), 1);
+            list = list.add(registry.getOrThrow(TTAspects.IGNIS), 1);
+            list = list.add(registry.getOrThrow(TTAspects.TERRA), 1);
         }
         if (stone > ENV_STONE_THRESHOLD) {
-            list = list.add(registry.getOrThrow(TCAspects.TERRA), 1);
+            list = list.add(registry.getOrThrow(TTAspects.TERRA), 1);
         }
         if (foliage > ENV_FOLIAGE_THRESHOLD) {
-            list = list.add(registry.getOrThrow(TCAspects.HERBA), 1);
+            list = list.add(registry.getOrThrow(TTAspects.HERBA), 1);
         }
         return list;
     }

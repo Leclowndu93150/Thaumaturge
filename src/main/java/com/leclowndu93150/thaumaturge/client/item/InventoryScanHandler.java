@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -11,10 +11,10 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
+import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.network.ServerboundScanSlotPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -35,7 +35,7 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class InventoryScanHandler {
     private static final int SCAN_TICKS = 25;
     private static final int SOUND_INTERVAL = 2;
@@ -80,7 +80,7 @@ public final class InventoryScanHandler {
         }
         int top = event.getMouseY() + CURSOR_TOP_OFFSET;
         if (ticks > 0) {
-            Component progress = TCTooltips.scanning(ticks / (float) SCAN_TICKS);
+            Component progress = TTTooltips.scanning(ticks / (float) SCAN_TICKS);
             graphics.text(minecraft.font, progress, event.getMouseX() - minecraft.font.width(progress) / 2, top, PROGRESS_COLOR, true);
             return;
         }
@@ -133,7 +133,7 @@ public final class InventoryScanHandler {
         }
         ticks++;
         if (ticks % SOUND_INTERVAL == 0) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CAMERA_TICKS.get(), SOUND_PITCH + player.getRandom().nextFloat() * SOUND_PITCH_SPREAD, SOUND_VOLUME));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.CAMERA_TICKS.get(), SOUND_PITCH + player.getRandom().nextFloat() * SOUND_PITCH_SPREAD, SOUND_VOLUME));
         }
         if (ticks >= SCAN_TICKS) {
             ClientPacketDistributor.sendToServer(new ServerboundScanSlotPayload(target));
@@ -144,7 +144,7 @@ public final class InventoryScanHandler {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         if (event.getItemStack().getItem() instanceof ThaumometerItem) {
-            event.getToolTip().add(TCTooltips.inventoryScanHint());
+            event.getToolTip().add(TTTooltips.inventoryScanHint());
         }
     }
 

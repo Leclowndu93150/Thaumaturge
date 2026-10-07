@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.research.scan;
 
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.Scans;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import java.util.HashSet;
@@ -17,7 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ScanBootstrap {
     private static final Set<Identifier> DYNAMIC_ASPECTS = new HashSet<>();
     private static final Set<Identifier> DYNAMIC_ENCHANTMENTS = new HashSet<>();

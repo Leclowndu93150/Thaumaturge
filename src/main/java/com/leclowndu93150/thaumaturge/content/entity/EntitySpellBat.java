@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -83,7 +83,7 @@ public final class EntitySpellBat extends Monster implements TraceableEntity, IE
     }
 
     public EntitySpellBat(FocusPackage pack, LivingEntity caster, boolean friendly) {
-        super(TCEntities.SPELL_BAT.get(), caster.level());
+        super(TTEntities.SPELL_BAT.get(), caster.level());
         this.focusPackage = pack;
         this.setOwner(caster);
         this.setFriendly(friendly);

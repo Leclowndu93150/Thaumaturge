@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -72,7 +72,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
     private float crystalBlue = 1.0F;
 
     public BlockEntityEssentiaCrystalizer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), pos, state);
+        super(TTBlockEntities.ESSENTIA_CRYSTALIZER.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEssentiaCrystalizer crystalizer) {

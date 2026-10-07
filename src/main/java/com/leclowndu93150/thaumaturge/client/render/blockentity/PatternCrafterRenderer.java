@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,8 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class PatternCrafterRenderer implements BlockEntityRenderer<BlockEntityPatternCrafter, PatternCrafterRenderState> {
-    private static final Identifier MODES_TEXTURE = TCIds.rl("textures/block/pattern_crafter_modes.png");
-    private static final Identifier GEAR_TEXTURE = TCIds.rl("textures/misc/gear_brass.png");
+    private static final Identifier MODES_TEXTURE = TTIds.rl("textures/block/pattern_crafter_modes.png");
+    private static final Identifier GEAR_TEXTURE = TTIds.rl("textures/misc/gear_brass.png");
 
     private static final int MODE_FRAMES = 10;
     private static final float MODE_SIZE = 0.5F;

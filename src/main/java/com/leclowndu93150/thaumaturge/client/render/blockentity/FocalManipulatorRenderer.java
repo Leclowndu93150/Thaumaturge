@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
@@ -46,9 +46,9 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final long RAY_SEED = 187L;
     private static final float RAY_ALPHA = 0.66F;
 
-    private static final RenderType RAY_TYPE = RenderType.create("tc_manipulator_ray", RenderSetup.builder(TCRenderPipelines.SPARKLE_CULLED).createRenderSetup());
+    private static final RenderType RAY_TYPE = RenderType.create("tc_manipulator_ray", RenderSetup.builder(TTRenderPipelines.SPARKLE_CULLED).createRenderSetup());
     private static final RenderType GLOW_TYPE = RenderType.create("tc_manipulator_glow",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.STAR_GLINT).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.STAR_GLINT).useLightmap().createRenderSetup());
 
     private final ItemModelResolver itemModelResolver;
     private final RandomSource rayRandom = RandomSource.create();

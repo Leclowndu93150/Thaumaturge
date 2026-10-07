@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -30,8 +30,8 @@ public class BlockArcaneWorkbench extends BaseEntityBlock {
 
     public static final MapCodec<BlockArcaneWorkbench> CODEC = simpleCodec(BlockArcaneWorkbench::new);
 
-    public static final VoxelShape SHAPE = Shapes.or(Shapes.box(0, 0.5, 0, 1, 1, 1), Shapes.box(0, 0, 0, 1, 0.25, 1), Shapes.box(0.6875, 0.25, 0.0625, 0.9375, 0.5, 0.3125),
-            Shapes.box(0.6875, 0.25, 0.6875, 0.9375, 0.5, 0.9375), Shapes.box(0.0625, 0.25, 0.6875, 0.3125, 0.5, 0.9375), Shapes.box(0.0625, 0.25, 0.0625, 0.3125, 0.5, 0.3125));
+    public static final VoxelShape SHAPE = Shapes.or(box(0.0, 8.0, 0.0, 16.0, 16.0, 16.0), box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0), box(1.0, 4.0, 6.0, 15.0, 8.0, 10.0), box(6.0, 4.0, 1.0, 10.0, 8.0, 6.0),
+            box(6.0, 4.0, 10.0, 10.0, 8.0, 15.0));
 
     public BlockArcaneWorkbench(Properties properties) {
         super(properties);
@@ -59,7 +59,7 @@ public class BlockArcaneWorkbench extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("gotdream"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("gotdream"))) {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (level.isClientSide()) {

@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.LeadingAim;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -230,7 +230,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements Ranged
         orb.setPos(orb.getX() + look.x, orb.getY(), orb.getZ() + look.z);
         Vec3 aim = LeadingAim.at(this, target);
         orb.shoot(aim.x, aim.y, aim.z, BEAM_SPEED, BEAM_SPREAD);
-        playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + random.nextFloat() * 0.1F);
+        playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + random.nextFloat() * 0.1F);
         level().addFreshEntity(orb);
     }
 

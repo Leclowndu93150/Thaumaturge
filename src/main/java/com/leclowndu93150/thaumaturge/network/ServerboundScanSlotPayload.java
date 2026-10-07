@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ServerboundScanSlotPayload(int slot) implements CustomPacketPayload {
     public static final int SELF = -1;
 
-    public static final Type<ServerboundScanSlotPayload> TYPE = new Type<>(TCIds.rl("scan_slot"));
+    public static final Type<ServerboundScanSlotPayload> TYPE = new Type<>(TTIds.rl("scan_slot"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundScanSlotPayload> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT, ServerboundScanSlotPayload::slot,
             ServerboundScanSlotPayload::new);

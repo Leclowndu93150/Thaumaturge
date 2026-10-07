@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.misc;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -44,7 +44,7 @@ public final class ItemCreativeFluxSponge extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         if (level instanceof ServerLevel server) {
-            server.playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.CRAFTSTART.get(), SoundSource.PLAYERS, SQUELCH_VOLUME, 1.0F);
+            server.playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.CRAFTSTART.get(), SoundSource.PLAYERS, SQUELCH_VOLUME, 1.0F);
             int absorbed = (int) soakFlux(server, player);
             player.sendSystemMessage(Component.translatable("tc.flux_sponge.drained", absorbed).withStyle(ChatFormatting.GREEN));
             if (player.isShiftKeyDown()) {

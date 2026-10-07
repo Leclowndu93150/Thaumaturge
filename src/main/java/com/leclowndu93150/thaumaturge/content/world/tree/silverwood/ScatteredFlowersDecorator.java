@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public final class ScatteredFlowersDecorator extends TreeDecorator {
 
     @Override
     protected TreeDecoratorType<?> type() {
-        return TCTreePlacers.SCATTERED_FLOWERS.get();
+        return TTTreePlacers.SCATTERED_FLOWERS.get();
     }
 
     @Override

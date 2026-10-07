@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public final class BlockEntityJarVoid extends BlockEntityJar {
     public BlockEntityJarVoid(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.JAR_VOID.get(), pos, state);
+        super(TTBlockEntities.JAR_VOID.get(), pos, state);
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingStore;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
@@ -93,7 +93,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
 
     private static Match match(ServerLevel level, ServerPlayer player, IArcaneCraftingInput input) {
         RecipeHolder<ArcaneCraftingRecipe> locked = null;
-        for (RecipeHolder<ArcaneCraftingRecipe> holder : level.recipeAccess().recipeMap().byType(TCRecipeTypes.ARCANE.get())) {
+        for (RecipeHolder<ArcaneCraftingRecipe> holder : level.recipeAccess().recipeMap().byType(TTRecipeTypes.ARCANE.get())) {
             if (holder.value().matches(input, level)) {
                 if (holder.value().doesPassGate(player)) {
                     return new Match(holder, Failure.NONE);

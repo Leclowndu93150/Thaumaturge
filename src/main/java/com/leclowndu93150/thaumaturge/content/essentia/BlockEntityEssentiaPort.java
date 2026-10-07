@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.infusion.EssentiaSources;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -30,7 +30,7 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
     }
 
     public BlockEntityEssentiaPort(BlockPos pos, BlockState state, boolean input) {
-        super(TCBlockEntities.ESSENTIA_PORT.get(), pos, state);
+        super(TTBlockEntities.ESSENTIA_PORT.get(), pos, state);
         this.input = input;
         this.sources = new EssentiaSources(pos, SEARCH_RANGE).facing(state.getValue(BlockStateProperties.FACING)).drainEffectTarget(Vec3.atCenterOf(pos));
     }

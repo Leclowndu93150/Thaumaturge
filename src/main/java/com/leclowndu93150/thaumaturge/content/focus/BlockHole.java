@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -77,7 +77,7 @@ public final class BlockHole extends BaseEntityBlock implements LiquidBlockConta
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide()
-                ? createTickerHelper(type, TCBlockEntities.HOLE.get(), BlockEntityHole::clientTick)
-                : createTickerHelper(type, TCBlockEntities.HOLE.get(), BlockEntityHole::serverTick);
+                ? createTickerHelper(type, TTBlockEntities.HOLE.get(), BlockEntityHole::clientTick)
+                : createTickerHelper(type, TTBlockEntities.HOLE.get(), BlockEntityHole::serverTick);
     }
 }

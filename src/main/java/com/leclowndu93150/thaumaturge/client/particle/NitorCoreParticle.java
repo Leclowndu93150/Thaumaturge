@@ -60,7 +60,7 @@ public final class NitorCoreParticle extends SingleQuadParticle {
 
     @Override
     public SingleQuadParticle.Layer getLayer() {
-        return TCParticleLayers.additive(this.sheet);
+        return TTParticleLayers.additive(this.sheet);
     }
 
     @Override
@@ -89,7 +89,7 @@ public final class NitorCoreParticle extends SingleQuadParticle {
     }
 
     public static final class Provider implements ParticleProvider<NitorCoreParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("nitor_core");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("nitor_core");
 
         @Override
         public Particle createParticle(NitorCoreParticleOptions options, ClientLevel level, double x, double y, double z, double xAux, double yAux, double zAux, RandomSource random) {

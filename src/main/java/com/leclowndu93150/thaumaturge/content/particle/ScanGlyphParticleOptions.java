@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,6 +21,6 @@ public record ScanGlyphParticleOptions(int color, int delay, boolean additive) i
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.SCAN_GLYPH.get();
+        return TTParticles.SCAN_GLYPH.get();
     }
 }

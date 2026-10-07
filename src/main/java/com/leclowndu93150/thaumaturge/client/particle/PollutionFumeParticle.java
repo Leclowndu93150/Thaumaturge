@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class PollutionFumeParticle extends TCParticle {
+public final class PollutionFumeParticle extends TTParticle {
     private static final int BASE_LIFETIME = 100;
     private static final float START_ALPHA = 0.5F;
     private static final double RISE_SPEED = 0.02;
@@ -32,11 +32,11 @@ public final class PollutionFumeParticle extends TCParticle {
 
     @Override
     public Layer getLayer() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("pollution_fume");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("pollution_fume");
 
         @Override
         public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

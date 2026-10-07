@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.crucible.CrucibleEvent;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -36,7 +36,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ResearchProgressionEvents {
     private static final int MILESTONE_CHECK_INTERVAL = 200;
     private static final int WALK_MILESTONE_CM = 160000;
@@ -46,16 +46,16 @@ public final class ResearchProgressionEvents {
     private static final int DEEP_DOWN_DEPTH = 10;
     private static final double UP_HIGH_FRACTION = 0.4;
 
-    private static final Identifier GOT_CRYSTALS = TCIds.rl("gotcrystals");
-    private static final Identifier GOT_DREAM = TCIds.rl("gotdream");
-    private static final Identifier GOT_THAUMONOMICON = TCIds.rl("gotthaumonomicon");
-    private static final Identifier UNLOCK_AUROMANCY = TCIds.rl("unlock_auromancy");
-    private static final Identifier BASE_AUROMANCY = TCIds.rl("base_auromancy");
-    private static final Identifier F_ONFIRE = TCIds.rl("f_onfire");
-    private static final Identifier FOCUS_PROJECTILE = TCIds.rl("focus_projectile");
-    private static final Identifier F_ARROW = TCIds.rl("f_arrow");
-    private static final Identifier F_FIREBALL = TCIds.rl("f_fireball");
-    private static final Identifier F_SPIT = TCIds.rl("f_spit");
+    private static final Identifier GOT_CRYSTALS = TTIds.rl("gotcrystals");
+    private static final Identifier GOT_DREAM = TTIds.rl("gotdream");
+    private static final Identifier GOT_THAUMONOMICON = TTIds.rl("gotthaumonomicon");
+    private static final Identifier UNLOCK_AUROMANCY = TTIds.rl("unlock_auromancy");
+    private static final Identifier BASE_AUROMANCY = TTIds.rl("base_auromancy");
+    private static final Identifier F_ONFIRE = TTIds.rl("f_onfire");
+    private static final Identifier FOCUS_PROJECTILE = TTIds.rl("focus_projectile");
+    private static final Identifier F_ARROW = TTIds.rl("f_arrow");
+    private static final Identifier F_FIREBALL = TTIds.rl("f_fireball");
+    private static final Identifier F_SPIT = TTIds.rl("f_spit");
 
     private ResearchProgressionEvents() {}
 
@@ -100,7 +100,7 @@ public final class ResearchProgressionEvents {
         ItemStack stack = event.getOriginalStack();
         recordCrafted(player, stack);
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
-        if (stack.is(TCItems.ESSENTIA_CRYSTAL.get()) && !knowledge.isResearchKnown(GOT_CRYSTALS)) {
+        if (stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && !knowledge.isResearchKnown(GOT_CRYSTALS)) {
             knowledge.addResearch(GOT_CRYSTALS);
             knowledge.markComplete(GOT_CRYSTALS);
             knowledge.sync(player);
@@ -109,7 +109,7 @@ public final class ResearchProgressionEvents {
                 giveDreamJournal(player, knowledge);
             }
         }
-        if (stack.is(TCItems.THAUMONOMICON.get()) && !knowledge.isResearchKnown(GOT_THAUMONOMICON)) {
+        if (stack.is(TTItems.THAUMONOMICON.get()) && !knowledge.isResearchKnown(GOT_THAUMONOMICON)) {
             knowledge.addResearch(GOT_THAUMONOMICON);
             knowledge.markComplete(GOT_THAUMONOMICON);
             knowledge.sync(player);
@@ -198,20 +198,20 @@ public final class ResearchProgressionEvents {
         PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
         boolean auromancyInProgress = knowledge.isResearchKnown(UNLOCK_AUROMANCY) && !knowledge.isResearchKnown(UNLOCK_AUROMANCY, 1) && !knowledge.isResearchComplete(UNLOCK_AUROMANCY);
         if (auromancyInProgress) {
-            milestone(player, knowledge, TCIds.rl("m_deepdown"), "got.deepdown", player.getY() < player.level().getMinY() + DEEP_DOWN_DEPTH);
-            milestone(player, knowledge, TCIds.rl("m_uphigh"), "got.uphigh", player.getY() > player.level().getMaxY() * UP_HIGH_FRACTION);
+            milestone(player, knowledge, TTIds.rl("m_deepdown"), "got.deepdown", player.getY() < player.level().getMinY() + DEEP_DOWN_DEPTH);
+            milestone(player, knowledge, TTIds.rl("m_uphigh"), "got.uphigh", player.getY() > player.level().getMaxY() * UP_HIGH_FRACTION);
         }
         if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0)
             return;
         if (player.level().hasChunkAt(player.blockPosition())) {
             Holder<Biome> biome = player.level().getBiome(player.blockPosition());
-            milestone(player, knowledge, TCIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
-            milestone(player, knowledge, TCIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
+            milestone(player, knowledge, TTIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
+            milestone(player, knowledge, TTIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
         }
-        milestone(player, knowledge, TCIds.rl("m_walker"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > WALK_MILESTONE_CM);
-        milestone(player, knowledge, TCIds.rl("m_runner"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SPRINT_ONE_CM)) > SPRINT_MILESTONE_CM);
-        milestone(player, knowledge, TCIds.rl("m_jumper"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.JUMP)) > JUMP_MILESTONE);
-        milestone(player, knowledge, TCIds.rl("m_swimmer"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > SWIM_MILESTONE_CM);
+        milestone(player, knowledge, TTIds.rl("m_walker"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.WALK_ONE_CM)) > WALK_MILESTONE_CM);
+        milestone(player, knowledge, TTIds.rl("m_runner"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SPRINT_ONE_CM)) > SPRINT_MILESTONE_CM);
+        milestone(player, knowledge, TTIds.rl("m_jumper"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.JUMP)) > JUMP_MILESTONE);
+        milestone(player, knowledge, TTIds.rl("m_swimmer"), null, player.getStats().getValue(Stats.CUSTOM.get(Stats.SWIM_ONE_CM)) > SWIM_MILESTONE_CM);
     }
 
     private static void milestone(ServerPlayer player, PlayerKnowledge knowledge, Identifier id, String messageKey, boolean condition) {

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.item.ItemExpireEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class BathSaltsEvents {
     private static final double FLOAT_RESPONSE = 0.35;
     private static final double MAX_VERTICAL_SPEED = 0.08;
@@ -27,14 +27,14 @@ public final class BathSaltsEvents {
 
     @SubscribeEvent
     public static void onEntityJoin(EntityJoinLevelEvent event) {
-        if (event.getEntity() instanceof ItemEntity itemEntity && itemEntity.getItem().is(TCItems.BATH_SALTS.get())) {
+        if (event.getEntity() instanceof ItemEntity itemEntity && itemEntity.getItem().is(TTItems.BATH_SALTS.get())) {
             itemEntity.lifespan = DISSOLVE_TICKS;
         }
     }
 
     @SubscribeEvent
     public static void onEntityTick(EntityTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ItemEntity itemEntity) || !(itemEntity.level() instanceof ServerLevel level) || !itemEntity.getItem().is(TCItems.BATH_SALTS.get())
+        if (!(event.getEntity() instanceof ItemEntity itemEntity) || !(itemEntity.level() instanceof ServerLevel level) || !itemEntity.getItem().is(TTItems.BATH_SALTS.get())
                 || !itemEntity.isInWater()) {
             return;
         }
@@ -63,14 +63,14 @@ public final class BathSaltsEvents {
     @SubscribeEvent
     public static void onItemExpire(ItemExpireEvent event) {
         var itemEntity = event.getEntity();
-        if (itemEntity.level().isClientSide() || !itemEntity.getItem().is(TCItems.BATH_SALTS.get())) {
+        if (itemEntity.level().isClientSide() || !itemEntity.getItem().is(TTItems.BATH_SALTS.get())) {
             return;
         }
 
         BlockPos pos = itemEntity.blockPosition();
         var state = itemEntity.level().getBlockState(pos);
         if (state.is(Blocks.WATER) && state.getFluidState().isSource()) {
-            itemEntity.level().setBlockAndUpdate(pos, TCBlocks.PURIFYING_FLUID.get().defaultBlockState());
+            itemEntity.level().setBlockAndUpdate(pos, TTBlocks.PURIFYING_FLUID.get().defaultBlockState());
         }
     }
 }

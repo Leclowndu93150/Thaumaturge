@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +63,7 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
     public int facingZ = -5;
 
     public BlockEntityInfernalFurnace(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
+        super(TTBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
     }
 
     public static void staticTick(Level level, BlockPos pos, BlockState state, BlockEntityInfernalFurnace furnace) {

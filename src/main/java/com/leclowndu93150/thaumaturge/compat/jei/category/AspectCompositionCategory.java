@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public final class AspectCompositionCategory implements IRecipeCategory<AspectCompositionCategory.Composition> {
-    public static final Identifier UID = Identifier.fromNamespaceAndPath(TCIds.MODID, "aspect_composition");
+    public static final Identifier UID = Identifier.fromNamespaceAndPath(TTIds.MODID, "aspect_composition");
     public static final IRecipeType<Composition> RECIPE_TYPE = IRecipeType.create(UID, Composition.class);
 
     private static final int WIDTH = 100;
@@ -47,7 +47,7 @@ public final class AspectCompositionCategory implements IRecipeCategory<AspectCo
         if (iconAspect != null) {
             this.icon = guiHelper.createDrawableIngredient(AspectIngredientType.INSTANCE, new AspectInstance(iconAspect, 1));
         } else {
-            this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.SALIS_MUNDUS.get()));
+            this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()));
         }
     }
 

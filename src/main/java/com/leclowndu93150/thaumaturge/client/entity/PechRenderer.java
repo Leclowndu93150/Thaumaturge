@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.PechModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,7 +19,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.Items;
 
 public final class PechRenderer extends MobRenderer<EntityPech, PechRenderState, PechModel> {
-    private static final Identifier[] TEXTURES = {TCIds.rl("textures/entity/pech_forage.png"), TCIds.rl("textures/entity/pech_thaum.png"), TCIds.rl("textures/entity/pech_stalker.png")};
+    private static final Identifier[] TEXTURES = {TTIds.rl("textures/entity/pech_forage.png"), TTIds.rl("textures/entity/pech_thaum.png"), TTIds.rl("textures/entity/pech_stalker.png")};
     private static final float SHADOW = 0.5F;
     private static final float ITEM_LIFT = -0.1F;
     private static final float ITEM_FORWARD = 0.0625F;
@@ -32,7 +32,7 @@ public final class PechRenderer extends MobRenderer<EntityPech, PechRenderState,
     private final ItemModelResolver itemModelResolver;
 
     public PechRenderer(EntityRendererProvider.Context context) {
-        super(context, new PechModel(context.bakeLayer(TCModelLayers.PECH)), SHADOW);
+        super(context, new PechModel(context.bakeLayer(TTModelLayers.PECH)), SHADOW);
         this.itemModelResolver = context.getItemModelResolver();
     }
 

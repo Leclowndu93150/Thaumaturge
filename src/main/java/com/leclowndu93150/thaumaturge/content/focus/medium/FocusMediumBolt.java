@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FocusMediumBolt extends FocusMediumTouch {
-    private static final Identifier KEY = TCIds.rl("bolt");
+    private static final Identifier KEY = TTIds.rl("bolt");
 
     static final double BOLT_RANGE = 16.0;
 
@@ -34,7 +34,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_bolt"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_bolt"), Optional.empty(), false);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class FocusMediumBolt extends FocusMediumTouch {
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.POTENTIA;
+        return TTAspects.POTENTIA;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
@@ -38,12 +38,12 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple, Grapple
         public final List<Vec3> points = new ArrayList<>();
     }
 
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/grappler.png");
-    private static final Identifier ROPE = TCIds.rl("textures/misc/rope.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/grappler.png");
+    private static final Identifier ROPE = TTIds.rl("textures/misc/rope.png");
     private static final RenderType ROPE_TYPE = RenderType.create("tc_grapple_rope",
-            RenderSetup.builder(TCRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", ROPE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_TRANSLUCENT).withTexture("Sampler0", ROPE).useLightmap().createRenderSetup());
     private static final RenderType GLOW_TYPE = RenderType.create("tc_grapple_glow",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_BLUE).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE).withTexture("Sampler0", ParticleTextures.GOLEM_ORB_BLUE).useLightmap().createRenderSetup());
 
     private static final double ROPE_RADIUS = 0.025;
     private static final int ROPE_SIDES = 4;
@@ -56,7 +56,7 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple, Grapple
     public GrappleRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;
-        this.model = new GrapplerModel(context.bakeLayer(TCModelLayers.GRAPPLER));
+        this.model = new GrapplerModel(context.bakeLayer(TTModelLayers.GRAPPLER));
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEntityHole;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -23,7 +23,7 @@ import org.jspecify.annotations.Nullable;
 public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole, HoleRenderState> {
     private static final float SURFACE_INSET = 0.001F;
     private static final RenderType SURFACE = RenderType.create("tc_hole_surface",
-            RenderSetup.builder(TCRenderPipelines.HOLE_SURFACE).withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.HOLE_SURFACE).withTexture("Sampler0", AbstractEndPortalRenderer.END_PORTAL_LOCATION).createRenderSetup());
 
     public HoleRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -43,7 +43,7 @@ public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole, 
             if (level != null) {
                 neighborPos.setWithOffset(hole.getBlockPos(), direction);
                 BlockState neighbor = level.getBlockState(neighborPos);
-                wall = !neighbor.is(TCBlocks.HOLE.get()) && neighbor.isSolidRender();
+                wall = !neighbor.is(TTBlocks.HOLE.get()) && neighbor.isSolidRender();
             }
             state.walls[direction.ordinal()] = wall;
             state.anyWall |= wall;

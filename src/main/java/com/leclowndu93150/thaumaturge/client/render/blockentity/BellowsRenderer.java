@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,15 +37,7 @@ public class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows, 
         if (state.models != null) {
             poseStack.pushPose();
             poseStack.translate(0.5, 0.5, 0.5);
-            switch (state.facing) {
-                case DOWN -> {
-                }
-                case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(180));
-                case NORTH -> poseStack.mulPose(Axis.XP.rotationDegrees(90));
-                case EAST -> poseStack.mulPose(Axis.ZP.rotationDegrees(90));
-                case SOUTH -> poseStack.mulPose(Axis.XP.rotationDegrees(270));
-                case WEST -> poseStack.mulPose(Axis.ZP.rotationDegrees(270));
-            }
+            BlockFacingPose.northBased(poseStack, state.facing);
             poseStack.translate(-0.5, -0.5, -0.5);
 
             {

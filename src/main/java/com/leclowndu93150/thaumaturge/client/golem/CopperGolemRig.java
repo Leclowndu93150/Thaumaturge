@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.golem;
 import com.leclowndu93150.thaumaturge.api.client.golems.GolemAccessoryAnchor;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPartModel;
-import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
+import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.CopperGolemRenderState;
 import net.minecraft.util.Mth;
 
-/** Uses the game's baked cubes and animation clips, without shipping a duplicate model. */
 public final class CopperGolemRig extends CopperGolemModel {
     public static final float SCALE = 0.6F;
     private final ModelPart body;
@@ -73,10 +72,10 @@ public final class CopperGolemRig extends CopperGolemModel {
         if (!(renderState instanceof GolemRenderState state) || state.props == null) {
             return;
         }
-        boolean walking = state.props.legs() != TCGolemParts.LEGS_ROLLER.get() && state.props.legs() != TCGolemParts.LEGS_FLYER.get();
+        boolean walking = state.props.legs() != TTGolemParts.LEGS_ROLLER.get() && state.props.legs() != TTGolemParts.LEGS_FLYER.get();
         rightLeg.visible = walking;
         leftLeg.visible = walking;
-        antenna.visible = state.accessories.stream().noneMatch(accessory -> accessory.group() == GolemAccessory.Group.HAT);
+        antenna.visible = state.props.material().antenna() && state.accessories.stream().noneMatch(accessory -> accessory.group() == GolemAccessory.Group.HAT);
         if (!walking) {
             body.xRot *= 0.2F;
             body.zRot *= 0.2F;
@@ -84,7 +83,7 @@ public final class CopperGolemRig extends CopperGolemModel {
         if (state.attackTime > 0.0F) {
             rightArm.xRot -= Mth.sin(state.attackTime * Mth.PI) * 1.8F;
         }
-        if (state.combat && state.props.arms() == TCGolemParts.ARMS_DARTS.get()) {
+        if (state.combat && state.props.arms() == TTGolemParts.ARMS_DARTS.get()) {
             rightArm.xRot = leftArm.xRot = -Mth.HALF_PI + state.xRot * Mth.DEG_TO_RAD;
             rightArm.yRot = leftArm.yRot = 0.0F;
             rightArm.zRot = leftArm.zRot = 0.0F;
@@ -97,7 +96,6 @@ public final class CopperGolemRig extends CopperGolemModel {
         if (anchor == GolemAccessoryAnchor.HEAD) {
             head.translateAndRotate(pose);
         }
-        // Accessory and mesh APIs use +Y up; ModelPart uses +Y down.
         pose.scale(-1.0F, -1.0F, 1.0F);
     }
 

@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.research.table;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchTableAid;
@@ -16,12 +16,12 @@ import com.leclowndu93150.thaumaturge.content.research.note.NoteRules;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItemTags;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -67,9 +67,9 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
     public static final int SLOT_NOTE = 1;
     public static final int SLOT_COUNT = 2;
 
-    public static final Identifier RESEARCH_EXPERTISE = TCIds.rl("research_expertise");
-    public static final Identifier RESEARCH_MASTERY = TCIds.rl("research_mastery");
-    public static final Identifier RESEARCH_DUPLICATION = TCIds.rl("research_duplication");
+    public static final Identifier RESEARCH_EXPERTISE = TTIds.rl("research_expertise");
+    public static final Identifier RESEARCH_MASTERY = TTIds.rl("research_mastery");
+    public static final Identifier RESEARCH_DUPLICATION = TTIds.rl("research_duplication");
 
     private static final int RECALC_INTERVAL_TICKS = 600;
     private static final int BONUS_SCAN_RADIUS = 8;
@@ -87,7 +87,7 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
     private int recalcCounter;
 
     public BlockEntityResearchTable(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.RESEARCH_TABLE.get(), pos, state);
+        super(TTBlockEntities.RESEARCH_TABLE.get(), pos, state);
     }
 
     public ItemStacksResourceHandler items() {
@@ -120,12 +120,12 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         boolean changed = false;
         if (level.getRawBrightness(pos.above(), 0) < 4 && !level.canSeeSky(pos.above()) && random.nextInt(20) == 0) {
-            changed |= addBonus(aspects, TCAspects.PERDITIO);
+            changed |= addBonus(aspects, TTAspects.PERDITIO);
         }
         int height = level.getHeight();
         for (float factor : new float[]{0.5F, 0.66F, 0.75F}) {
             if (pos.getY() > height * factor && random.nextInt(20) == 0) {
-                changed |= addBonus(aspects, TCAspects.AER);
+                changed |= addBonus(aspects, TTAspects.AER);
             }
         }
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -151,31 +151,31 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
     }
 
     private @Nullable ResourceKey<IAspect> bonusFor(BlockState state, RandomSource random, HolderLookup.RegistryLookup<IAspect> aspects) {
-        if ((state.is(Blocks.BOOKSHELF) && random.nextInt(BOOKSHELF_BONUS_CHANCE) == 0) || (state.is(TCBlocks.JAR_BRAIN.get()) && random.nextInt(BRAIN_JAR_BONUS_CHANCE) == 0)) {
+        if ((state.is(Blocks.BOOKSHELF) && random.nextInt(BOOKSHELF_BONUS_CHANCE) == 0) || (state.is(TTBlocks.JAR_BRAIN.get()) && random.nextInt(BRAIN_JAR_BONUS_CHANCE) == 0)) {
             List<Holder.Reference<IAspect>> candidates = aspects.listElements().toList();
             return candidates.isEmpty() ? null : candidates.get(random.nextInt(candidates.size())).key();
         }
-        if (state.is(TCBlocks.CRYSTAL_AER.get()) && random.nextInt(10) == 0)
-            return TCAspects.AER;
-        if (state.is(TCBlocks.CRYSTAL_IGNIS.get()) && random.nextInt(10) == 0)
-            return TCAspects.IGNIS;
-        if (state.is(TCBlocks.CRYSTAL_AQUA.get()) && random.nextInt(10) == 0)
-            return TCAspects.AQUA;
-        if (state.is(TCBlocks.CRYSTAL_TERRA.get()) && random.nextInt(10) == 0)
-            return TCAspects.TERRA;
-        if (state.is(TCBlocks.CRYSTAL_ORDO.get()) && random.nextInt(10) == 0)
-            return TCAspects.ORDO;
-        if (state.is(TCBlocks.CRYSTAL_PERDITIO.get()) && random.nextInt(10) == 0)
-            return TCAspects.PERDITIO;
+        if (state.is(TTBlocks.CRYSTAL_AER.get()) && random.nextInt(10) == 0)
+            return TTAspects.AER;
+        if (state.is(TTBlocks.CRYSTAL_IGNIS.get()) && random.nextInt(10) == 0)
+            return TTAspects.IGNIS;
+        if (state.is(TTBlocks.CRYSTAL_AQUA.get()) && random.nextInt(10) == 0)
+            return TTAspects.AQUA;
+        if (state.is(TTBlocks.CRYSTAL_TERRA.get()) && random.nextInt(10) == 0)
+            return TTAspects.TERRA;
+        if (state.is(TTBlocks.CRYSTAL_ORDO.get()) && random.nextInt(10) == 0)
+            return TTAspects.ORDO;
+        if (state.is(TTBlocks.CRYSTAL_PERDITIO.get()) && random.nextInt(10) == 0)
+            return TTAspects.PERDITIO;
         if (state.is(BlockTags.SUBSTRATE_OVERWORLD) && random.nextInt(20) == 0)
-            return TCAspects.TERRA;
+            return TTAspects.TERRA;
         if (state.getFluidState().is(FluidTags.WATER) && random.nextInt(15) == 0)
-            return TCAspects.AQUA;
+            return TTAspects.AQUA;
         if ((state.getFluidState().is(FluidTags.LAVA) || state.is(Blocks.FIRE)) && random.nextInt(20) == 0) {
-            return TCAspects.IGNIS;
+            return TTAspects.IGNIS;
         }
-        if (state.is(TCBlockTags.RESEARCH_BONUS_ORDO) && random.nextInt(20) == 0) {
-            return TCAspects.ORDO;
+        if (state.is(TTBlockTags.RESEARCH_BONUS_ORDO) && random.nextInt(20) == 0) {
+            return TTAspects.ORDO;
         }
         return null;
     }
@@ -215,9 +215,9 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         ItemResource resource = inventory.getResource(SLOT_NOTE);
         int amount = Math.max(1, inventory.getAmountAsInt(SLOT_NOTE));
         ItemStack note = resource.toStack(amount);
-        note.set(TCDataComponents.RESEARCH_NOTE.get(), data);
+        note.set(TTDataComponents.RESEARCH_NOTE.get(), data);
         if (data.complete()) {
-            note.set(TCDataComponents.NOTE_COMPLETE.get(), true);
+            note.set(TTDataComponents.NOTE_COMPLETE.get(), true);
         }
         inventory.set(SLOT_NOTE, ItemResource.of(note), amount);
         setChanged();
@@ -254,7 +254,7 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
             }
             consumeInk();
             data = data.withCell(hex, ResearchNoteData.TYPE_PLACED, aspect);
-            level.playSound(null, worldPosition, TCSounds.WRITE.get(), SoundSource.BLOCKS, 0.2F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.WRITE.get(), SoundSource.BLOCKS, 0.2F, 1.0F);
         } else {
             if (cell.type() != ResearchNoteData.TYPE_PLACED) {
                 return;
@@ -268,12 +268,12 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
             }
             consumeInk();
             data = data.withCell(hex, ResearchNoteData.TYPE_BLANK, null);
-            level.playSound(null, worldPosition, TCSounds.ERASE.get(), SoundSource.BLOCKS, 0.2F, 1.0F + random.nextFloat() * 0.1F);
+            level.playSound(null, worldPosition, TTSounds.ERASE.get(), SoundSource.BLOCKS, 0.2F, 1.0F + random.nextFloat() * 0.1F);
         }
         NoteRules.Completion completion = NoteRules.checkCompletion(data, a -> AspectPools.isDiscovered(player, a));
         if (completion.complete()) {
             data = data.withCells(completion.prunedCells()).asComplete();
-            level.playSound(null, worldPosition, TCSounds.LEARN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.LEARN.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         writeNoteData(data);
     }
@@ -348,12 +348,12 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         ResearchNotes.consumeInk(player, false);
         consumePlayerItem(player, Items.PAPER);
         ItemStack copy = inventory.getResource(SLOT_NOTE).toStack(1);
-        copy.set(TCDataComponents.RESEARCH_NOTE.get(), data.withCopies(data.copies() + 1));
+        copy.set(TTDataComponents.RESEARCH_NOTE.get(), data.withCopies(data.copies() + 1));
         writeNoteData(data.withCopies(data.copies() + 1));
         if (!player.getInventory().add(copy)) {
             player.drop(copy, false);
         }
-        getLevel().playSound(null, worldPosition, TCSounds.WRITE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        getLevel().playSound(null, worldPosition, TTSounds.WRITE.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
     }
 
     public @Nullable AspectList duplicationCost(Player player, ResearchNoteData data) {
@@ -485,8 +485,8 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         @Override
         public boolean isValid(int index, ItemResource resource) {
             return switch (index) {
-                case SLOT_SCRIBE_TOOLS -> resource.is(TCItemTags.SCRIBING_TOOLS);
-                case SLOT_NOTE -> resource.toStack(1).has(TCDataComponents.RESEARCH_NOTE.get());
+                case SLOT_SCRIBE_TOOLS -> resource.is(TTItemTags.SCRIBING_TOOLS);
+                case SLOT_NOTE -> resource.toStack(1).has(TTDataComponents.RESEARCH_NOTE.get());
                 default -> false;
             };
         }

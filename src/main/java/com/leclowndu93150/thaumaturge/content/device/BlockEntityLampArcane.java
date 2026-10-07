@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
@@ -25,7 +25,7 @@ public final class BlockEntityLampArcane extends BlockEntity {
     private static final int CLEANUP_RADIUS = 15;
 
     public BlockEntityLampArcane(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LAMP_ARCANE.get(), pos, state);
+        super(TTBlockEntities.LAMP_ARCANE.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampArcane lamp) {
@@ -50,9 +50,9 @@ public final class BlockEntityLampArcane extends BlockEntity {
         if (target.getY() < level.getMinY() + SURFACE_CLEARANCE + 1) {
             target = new BlockPos(target.getX(), level.getMinY() + SURFACE_CLEARANCE + 1, target.getZ());
         }
-        if (level.getBlockState(target).isAir() && !level.getBlockState(target).is(TCBlocks.EFFECT_GLIMMER.get()) && level.getBrightness(LightLayer.BLOCK, target) < MAX_BLOCK_LIGHT
+        if (level.getBlockState(target).isAir() && !level.getBlockState(target).is(TTBlocks.EFFECT_GLIMMER.get()) && level.getBrightness(LightLayer.BLOCK, target) < MAX_BLOCK_LIGHT
                 && hasLineOfSight(level, pos, target)) {
-            level.setBlock(target, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(target, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -78,7 +78,7 @@ public final class BlockEntityLampArcane extends BlockEntity {
             for (int y = -CLEANUP_RADIUS; y <= CLEANUP_RADIUS; y++) {
                 for (int z = -CLEANUP_RADIUS; z <= CLEANUP_RADIUS; z++) {
                     cursor.set(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
-                    if (level.getBlockState(cursor).is(TCBlocks.EFFECT_GLIMMER.get())) {
+                    if (level.getBlockState(cursor).is(TTBlocks.EFFECT_GLIMMER.get())) {
                         level.setBlock(cursor, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                     }
                 }

@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintacle;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -75,7 +75,7 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
 
     private static boolean placeCrustBlob(WorldGenLevel level, RandomSource random, TaintBiomeConfig config, int x, int z) {
         BlockPos center = ground(level, x, z, config.groundSearchDepth());
-        if (center == null || !level.getBiome(center).is(TCBiomeTags.IS_TAINTED)) {
+        if (center == null || !level.getBiome(center).is(TTBiomeTags.IS_TAINTED)) {
             return false;
         }
         int radius = config.crustRadius().sample(random);
@@ -111,7 +111,7 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
         if (pos == null) {
             return false;
         }
-        EntityTaintacle taintacle = TCEntities.TAINTACLE.get().create(level.getLevel(), EntitySpawnReason.CHUNK_GENERATION);
+        EntityTaintacle taintacle = TTEntities.TAINTACLE.get().create(level.getLevel(), EntitySpawnReason.CHUNK_GENERATION);
         if (taintacle == null) {
             return false;
         }
@@ -135,7 +135,7 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
 
     private static boolean canHostFibre(WorldGenLevel level, BlockPos pos) {
         BlockState here = level.getBlockState(pos);
-        return level.getBiome(pos).is(TCBiomeTags.IS_TAINTED) && (here.isAir() || here.canBeReplaced()) && here.getFluidState().isEmpty() && BlockTaintFibre.hasSolidAttachment(level, pos);
+        return level.getBiome(pos).is(TTBiomeTags.IS_TAINTED) && (here.isAir() || here.canBeReplaced()) && here.getFluidState().isEmpty() && BlockTaintFibre.hasSolidAttachment(level, pos);
     }
 
     private static @Nullable BlockPos ground(WorldGenLevel level, int x, int z, int depth) {
@@ -174,7 +174,7 @@ public final class TaintBiomeFeature extends Feature<TaintBiomeConfig> {
     }
 
     private static boolean isNaturallyTainted(BiomeSource source, Climate.Sampler sampler, int chunkX, int chunkZ, int quartY) {
-        return source.getNoiseBiome(QuartPos.fromSection(chunkX) + CHUNK_CENTER_QUART, quartY, QuartPos.fromSection(chunkZ) + CHUNK_CENTER_QUART, sampler).is(TCBiomeTags.IS_TAINTED);
+        return source.getNoiseBiome(QuartPos.fromSection(chunkX) + CHUNK_CENTER_QUART, quartY, QuartPos.fromSection(chunkZ) + CHUNK_CENTER_QUART, sampler).is(TTBiomeTags.IS_TAINTED);
     }
 
     private static long mix(long seed, int x, int z) {

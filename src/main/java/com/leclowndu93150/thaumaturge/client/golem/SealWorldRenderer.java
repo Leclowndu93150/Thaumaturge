@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCFXPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTFXPipelines;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -33,19 +33,19 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class SealWorldRenderer {
     private static final String SEAL_ICON_PREFIX = "textures/item/seal_";
     private static final String SEAL_ICON_SUFFIX = ".png";
-    private static final Identifier AREA_RING = TCIds.rl("textures/misc/seal_area.png");
-    private static final Identifier CORNER_FRAME = TCIds.rl("textures/misc/frame_corner.png");
+    private static final Identifier AREA_RING = TTIds.rl("textures/misc/seal_area.png");
+    private static final Identifier CORNER_FRAME = TTIds.rl("textures/misc/frame_corner.png");
     private static final double MAX_DIST_SQR = 256.0;
     private static final float RING_SCALE = 0.9F;
     private static final float ICON_SCALE = 0.5F;
     private static final float RING_ALPHA = 0.8F;
     private static final float CORNER_ALPHA = 0.7F;
 
-    private static final RenderPipeline PIPELINE = TCFXPipelines.translucentTextured(TCIds.rl("pipeline/seal_overlay"));
+    private static final RenderPipeline PIPELINE = TTFXPipelines.translucentTextured(TTIds.rl("pipeline/seal_overlay"));
     private static final Map<Identifier, RenderType> TYPES = new ConcurrentHashMap<>();
     private static final RenderType ICON_TYPE = RenderType.create("tc_seal_icon", RenderSetup.builder(PIPELINE).withTexture("Sampler0", TextureAtlas.LOCATION_ITEMS).createRenderSetup());
 

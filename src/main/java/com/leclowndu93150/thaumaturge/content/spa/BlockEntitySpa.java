@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -54,7 +54,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
     private final ItemStacksResourceHandler items = new ItemStacksResourceHandler(1) {
         @Override
         public boolean isValid(int index, ItemResource resource) {
-            return resource.is(TCItems.BATH_SALTS.get());
+            return resource.is(TTItems.BATH_SALTS.get());
         }
 
         @Override
@@ -68,7 +68,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
     private int counter;
 
     public BlockEntitySpa(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.SPA.get(), pos, state);
+        super(TTBlockEntities.SPA.get(), pos, state);
     }
 
     public FluidStacksResourceHandler getTank() {
@@ -118,7 +118,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
 
     private @Nullable Block targetBlock() {
         if (mix) {
-            return TCBlocks.PURIFYING_FLUID.get();
+            return TTBlocks.PURIFYING_FLUID.get();
         }
         Fluid fluid = tank.getResource(0).getFluid();
         if (!(fluid instanceof FlowingFluid)) {
@@ -130,7 +130,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
 
     private boolean hasIngredients() {
         if (mix) {
-            return tank.getResource(0).is(Fluids.WATER) && tank.getAmountAsInt(0) >= FLUID_COST && items.getResource(0).is(TCItems.BATH_SALTS.get());
+            return tank.getResource(0).is(Fluids.WATER) && tank.getAmountAsInt(0) >= FLUID_COST && items.getResource(0).is(TTItems.BATH_SALTS.get());
         }
         return tank.getAmountAsInt(0) >= FLUID_COST && targetBlock() != null;
     }

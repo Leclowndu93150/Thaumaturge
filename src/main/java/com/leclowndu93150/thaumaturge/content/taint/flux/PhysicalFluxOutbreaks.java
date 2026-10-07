@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +33,7 @@ public final class PhysicalFluxOutbreaks {
         if (!isEnabled()) {
             return false;
         }
-        PhysicalFluxSamples samples = chunk.getExistingDataOrNull(TCAttachments.PHYSICAL_FLUX_SAMPLES.get());
+        PhysicalFluxSamples samples = chunk.getExistingDataOrNull(TTAttachments.PHYSICAL_FLUX_SAMPLES.get());
         if (samples == null) {
             return false;
         }

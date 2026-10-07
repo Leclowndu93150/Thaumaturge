@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.rendertype;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
@@ -19,20 +19,20 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class VoidStreamRenderType {
     public static final Identifier TEXTURE = Identifier.withDefaultNamespace("textures/entity/end_portal.png");
-    private static final Identifier SHADER = Identifier.fromNamespaceAndPath(TCIds.MODID, "core/void_stream");
+    private static final Identifier SHADER = Identifier.fromNamespaceAndPath(TTIds.MODID, "core/void_stream");
 
     private static final RenderPipeline.Snippet BASE = RenderPipeline.builder().withUniform("DynamicTransforms", UniformType.UNIFORM_BUFFER).withUniform("Projection", UniformType.UNIFORM_BUFFER)
             .withUniform("Globals", UniformType.UNIFORM_BUFFER).withVertexShader(SHADER).withFragmentShader(SHADER).withSampler("Sampler0")
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS).buildSnippet();
 
-    public static final RenderPipeline ADDITIVE_PIPELINE = RenderPipeline.builder(BASE).withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/void_stream_add"))
+    public static final RenderPipeline ADDITIVE_PIPELINE = RenderPipeline.builder(BASE).withLocation(Identifier.fromNamespaceAndPath(TTIds.MODID, "pipeline/void_stream_add"))
             .withColorTargetState(new ColorTargetState(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE))).withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
             .withCull(false).build();
 
-    public static final RenderPipeline TRANSLUCENT_PIPELINE = RenderPipeline.builder(BASE).withLocation(Identifier.fromNamespaceAndPath(TCIds.MODID, "pipeline/void_stream_tr"))
+    public static final RenderPipeline TRANSLUCENT_PIPELINE = RenderPipeline.builder(BASE).withLocation(Identifier.fromNamespaceAndPath(TTIds.MODID, "pipeline/void_stream_tr"))
             .withColorTargetState(new ColorTargetState(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA)))
             .withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, true)).withCull(false).build();
 

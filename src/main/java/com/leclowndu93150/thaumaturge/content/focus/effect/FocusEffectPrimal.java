@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
@@ -14,7 +14,7 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSplosion;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectPrimal implements FocusEffect {
-    private static final Identifier KEY = TCIds.rl("primal");
+    private static final Identifier KEY = TTIds.rl("primal");
 
     private static final int BASE_COMPLEXITY = 20;
     private static final int POWER_COMPLEXITY_FACTOR = 3;
@@ -46,12 +46,12 @@ public final class FocusEffectPrimal implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_primal"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_primal"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.PRAECANTATIO;
+        return TTAspects.PRAECANTATIO;
     }
 
     @Override
@@ -98,6 +98,6 @@ public final class FocusEffectPrimal implements FocusEffect {
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
-        level.addParticle(TCParticles.PRIMAL_FLARE.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
+        level.addParticle(TTParticles.PRIMAL_FLARE.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 }

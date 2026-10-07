@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -20,7 +20,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class HungryChestRenderer implements BlockEntityRenderer<BlockEntityHungryChest, HungryChestRenderState> {
-    private static final SpriteId SPRITE = Sheets.CHEST_MAPPER.apply(TCIds.rl("hungry"));
+    private static final SpriteId SPRITE = Sheets.CHEST_MAPPER.apply(TTIds.rl("hungry"));
 
     private final SpriteGetter sprites;
     private final ChestModel model;

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.mound;
 
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -43,7 +43,7 @@ public final class LootBagItem extends Item {
             for (ItemStack loot : table.getRandomItems(params)) {
                 server.addFreshEntity(new ItemEntity(server, player.getX(), player.getY(), player.getZ(), loot.copy()));
             }
-            player.playSound(TCSounds.COINS.get(), OPEN_VOLUME, 1.0F);
+            player.playSound(TTSounds.COINS.get(), OPEN_VOLUME, 1.0F);
         }
         player.getItemInHand(hand).shrink(1);
         return InteractionResult.SUCCESS;

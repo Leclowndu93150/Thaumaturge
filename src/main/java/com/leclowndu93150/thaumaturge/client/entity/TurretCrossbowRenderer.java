@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.CrossbowModel;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -10,11 +10,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 
 public final class TurretCrossbowRenderer extends MobRenderer<EntityTurretCrossbow, TurretCrossbowRenderState, CrossbowModel> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/crossbow.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/crossbow.png");
     private static final float SHADOW = 0.5F;
 
     public TurretCrossbowRenderer(EntityRendererProvider.Context context) {
-        super(context, new CrossbowModel(context.bakeLayer(TCModelLayers.TURRET_CROSSBOW)), SHADOW);
+        super(context, new CrossbowModel(context.bakeLayer(TTModelLayers.TURRET_CROSSBOW)), SHADOW);
     }
 
     @Override

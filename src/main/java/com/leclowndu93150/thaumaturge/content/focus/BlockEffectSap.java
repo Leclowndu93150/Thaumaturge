@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.focus;
 
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -84,7 +84,7 @@ public final class BlockEffectSap extends Block {
         spawnSpark(level, pos.getX() + random.nextFloat(), pos.getY() + SPARK_HEIGHT + h / 2.0F, pos.getZ() + random.nextFloat(), SPARK_BASE_SCALE + h * SPARK_SCALE_SPREAD,
                 0.3F - random.nextFloat() * 0.1F, 0.0F, 0.5F + random.nextFloat() * 0.2F, 1.0F);
         if (random.nextInt(SOUND_ONE_IN) == 0) {
-            level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), TCSounds.JACOBS.get(), SoundSource.AMBIENT, SOUND_VOLUME, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F, false);
+            level.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), TTSounds.JACOBS.get(), SoundSource.AMBIENT, SOUND_VOLUME, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F, false);
         }
     }
 

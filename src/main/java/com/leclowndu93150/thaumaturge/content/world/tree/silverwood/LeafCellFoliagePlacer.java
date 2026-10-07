@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
-import com.leclowndu93150.thaumaturge.registry.TCTreePlacers;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -21,7 +21,7 @@ public final class LeafCellFoliagePlacer extends FoliagePlacer {
 
     @Override
     protected FoliagePlacerType<?> type() {
-        return TCTreePlacers.LEAF_CELL_FOLIAGE.get();
+        return TTTreePlacers.LEAF_CELL_FOLIAGE.get();
     }
 
     @Override

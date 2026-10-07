@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.content.research.KnowledgeGrant;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -23,8 +23,8 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 public final class PechWandItem extends Item {
-    private static final Identifier PREREQUISITE = TCIds.rl("base_auromancy");
-    private static final Identifier REVEALED_RESEARCH = TCIds.rl("scanned/pechwand");
+    private static final Identifier PREREQUISITE = TTIds.rl("base_auromancy");
+    private static final Identifier REVEALED_RESEARCH = TTIds.rl("scanned/pechwand");
     private static final List<KnowledgeGrant> INSIGHTS = List.of(new KnowledgeGrant(KnowledgeType.OBSERVATION, 3, 2), new KnowledgeGrant(KnowledgeType.THEORY, 5, 4));
     private static final float STUDY_VOLUME = 0.5F;
     private static final float STUDY_PITCH = 0.42F;
@@ -56,7 +56,7 @@ public final class PechWandItem extends Item {
     }
 
     private static void study(ServerPlayer scholar) {
-        scholar.level().playSound(null, scholar.getX(), scholar.getY(), scholar.getZ(), TCSounds.LEARN.get(), SoundSource.NEUTRAL, STUDY_VOLUME,
+        scholar.level().playSound(null, scholar.getX(), scholar.getY(), scholar.getZ(), TTSounds.LEARN.get(), SoundSource.NEUTRAL, STUDY_VOLUME,
                 STUDY_PITCH + scholar.getRandom().triangle(0.0F, STUDY_PITCH_SPREAD));
         scholar.sendSystemMessage(Component.translatable("got.pechwand").withStyle(ChatFormatting.DARK_PURPLE));
         if (!KnowledgeAccess.of(scholar).isResearchKnown(REVEALED_RESEARCH)) {

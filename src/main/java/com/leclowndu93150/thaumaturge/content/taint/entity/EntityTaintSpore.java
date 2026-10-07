@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -51,7 +51,7 @@ public final class EntityTaintSpore extends AbstractTaintSpore {
             Spider spider = EntityType.SPIDER.create(level, EntitySpawnReason.MOB_SUMMONED);
             if (spider != null) {
                 spider.snapTo(getX() + random.nextDouble() - 0.5, getY(), getZ() + random.nextDouble() - 0.5, random.nextFloat() * FULL_TURN, 0.0F);
-                MobTraits.add(spider, TCMobTraits.TAINT_BROOD);
+                MobTraits.add(spider, TTMobTraits.TAINT_BROOD);
                 level.addFreshEntity(spider);
             }
         }

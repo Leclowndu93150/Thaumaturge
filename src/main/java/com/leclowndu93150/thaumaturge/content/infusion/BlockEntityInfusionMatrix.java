@@ -11,8 +11,8 @@ import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.InfusionCrumbsParticleOptions;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +83,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     private final Map<BlockPos, Integer> clientSourceFX = new HashMap<>();
 
     public BlockEntityInfusionMatrix(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.INFUSION_MATRIX.get(), pos, state);
+        super(TTBlockEntities.INFUSION_MATRIX.get(), pos, state);
     }
 
     public boolean isActive() {
@@ -158,7 +158,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
                 return;
             }
             if (count % 65 == 0) {
-                level.playSound(null, worldPosition, TCSounds.INFUSER.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+                level.playSound(null, worldPosition, TTSounds.INFUSER.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             }
             RandomSource rand = level.getRandom();
             Effects.blockRunes(level, Vec3.atLowerCornerOf(centralPedestal())).color(0.5F + rand.nextFloat() * 0.2F, 0.1F, 0.7F + rand.nextFloat() * 0.3F).duration(25).gravity(-0.03F).send();
@@ -177,7 +177,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
         if (active && !isCrafting()) {
             tryStartCraft(level, player);
         } else if (!active && MatrixEnvironment.validLocation(level, worldPosition)) {
-            level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             active = true;
             setChanged();
             syncToClient();
@@ -204,7 +204,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
         InfusionJobRecipe recipe = match.recipe();
         job = new InfusionCraftJob(recipe.jobComponents(input), scaledCost(env, recipe.jobEssentia(input)), recipe.jobResult(input, level.getRandom()), input.catalyst().copyWithCount(1),
                 recipe.jobInstability(input), Optional.of(player.getUUID()));
-        level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
         return true;
@@ -394,7 +394,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
 
     private void failCraft(ServerLevel level) {
         job = null;
-        level.playSound(null, worldPosition, TCSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 1.0F, 0.6F);
+        level.playSound(null, worldPosition, TTSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 1.0F, 0.6F);
         setChanged();
         syncToClient();
     }
@@ -415,7 +415,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
             awardCraft(crafter, result);
         }
         InfusionFx.pedestalBamf(level, centralPedestal());
-        level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
     }
@@ -440,7 +440,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity implements IGog
     private void tickClient() {
         if (isCrafting()) {
             if (clientCraftTicks == 0 && level != null) {
-                level.playLocalSound(worldPosition, TCSounds.INFUSERSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F, false);
+                level.playLocalSound(worldPosition, TTSounds.INFUSERSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F, false);
             }
             clientCraftTicks++;
         } else if (clientCraftTicks > 0) {

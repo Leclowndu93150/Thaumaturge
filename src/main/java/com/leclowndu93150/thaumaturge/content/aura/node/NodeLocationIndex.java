@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,7 +19,7 @@ public final class NodeLocationIndex extends SavedData {
     private static final double REACHED_DISTANCE_SQ = 100.0;
     public static final Codec<NodeLocationIndex> CODEC = Entry.CODEC.listOf().fieldOf("nodes").codec().xmap(NodeLocationIndex::new,
             index -> index.nodes.entrySet().stream().sorted(Map.Entry.comparingByKey()).map(entry -> new Entry(BlockPos.of(entry.getKey()), entry.getValue())).toList());
-    public static final SavedDataType<NodeLocationIndex> TYPE = new SavedDataType<>(TCIds.rl("node_locations"), NodeLocationIndex::new, CODEC, DataFixTypes.LEVEL);
+    public static final SavedDataType<NodeLocationIndex> TYPE = new SavedDataType<>(TTIds.rl("node_locations"), NodeLocationIndex::new, CODEC, DataFixTypes.LEVEL);
 
     private final Map<Long, NodeType> nodes = new HashMap<>();
 

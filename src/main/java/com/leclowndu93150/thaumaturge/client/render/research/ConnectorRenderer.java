@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -158,7 +158,7 @@ public final class ConnectorRenderer {
             return;
         queue.sort(Comparator.<PendingBlit>comparingDouble(b -> b.zMod).thenComparingInt(b -> b.order));
         for (PendingBlit b : queue) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BROWSER, b.x, b.y, (float) b.u, (float) b.v, b.w, b.h, b.w, b.h, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BROWSER, b.x, b.y, (float) b.u, (float) b.v, b.w, b.h, b.w, b.h, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE,
                     b.color);
         }
         queue.clear();

@@ -5,10 +5,10 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistKnight;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -147,10 +147,10 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
                 case EAST -> 4;
                 default -> 0;
             };
-            BlockState banner = TCBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BlockStateProperties.ROTATION_16, rotation);
+            BlockState banner = TTBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BlockStateProperties.ROTATION_16, rotation);
             server.setBlock(pos, banner, Block.UPDATE_ALL);
             Effects.arcBolt(server, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0)).to(Vec3.atCenterOf(pos)).color(ARC_COLOR).send();
-            this.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);
+            this.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
         }
     }
 
@@ -163,15 +163,15 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         }
         this.level().broadcastEntityEvent(this, PULSE_EVENT);
         float roll = this.random.nextFloat();
-        Block crate = TCBlocks.LOOT_CRATE_COMMON.get();
+        Block crate = TTBlocks.LOOT_CRATE_COMMON.get();
         if (roll < CRATE_RARE_CHANCE) {
-            crate = TCBlocks.LOOT_CRATE_RARE.get();
+            crate = TTBlocks.LOOT_CRATE_RARE.get();
         } else if (roll < CRATE_UNCOMMON_CHANCE) {
-            crate = TCBlocks.LOOT_CRATE_UNCOMMON.get();
+            crate = TTBlocks.LOOT_CRATE_UNCOMMON.get();
         }
         server.setBlock(pos, crate.defaultBlockState(), Block.UPDATE_ALL);
         Effects.arcBolt(server, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0)).to(Vec3.atCenterOf(pos)).color(ARC_COLOR).send();
-        this.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);
+        this.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
     }
 
     private int getTiming() {
@@ -180,8 +180,8 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
 
     private void spawnMinions(ServerLevel server) {
         EntityCultist cultist = this.random.nextFloat() < KNIGHT_CHANCE
-                ? new EntityCultistKnight(TCEntities.CULTIST_KNIGHT.get(), server)
-                : new EntityCultistCleric(TCEntities.CULTIST_CLERIC.get(), server);
+                ? new EntityCultistKnight(TTEntities.CULTIST_KNIGHT.get(), server)
+                : new EntityCultistCleric(TTEntities.CULTIST_CLERIC.get(), server);
         this.spawnCultist(server, cultist);
         if (this.stage > BOSS_STAGE) {
             this.hurtServer(server, this.damageSources().fellOutOfWorld(), OVERSPAWN_DAMAGE_BASE + this.random.nextInt(5));
@@ -189,7 +189,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
     }
 
     private void spawnBoss(ServerLevel server) {
-        EntityCultistLeader leader = new EntityCultistLeader(TCEntities.CULTIST_LEADER.get(), server);
+        EntityCultistLeader leader = new EntityCultistLeader(TTEntities.CULTIST_LEADER.get(), server);
         this.spawnCultist(server, leader);
     }
 
@@ -201,7 +201,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         if (cultist instanceof EntityCultist minion) {
             minion.spawnCultistArrivalParticles();
         }
-        cultist.playSound(TCSounds.WANDFAIL.get(), 1.0F, 1.0F);
+        cultist.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
     }
 
     @Override
@@ -210,7 +210,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
             return;
         }
         if (player.hurtServer((ServerLevel) this.level(), this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
-            this.playSound(TCSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
+            this.playSound(TTSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
         }
     }
 
@@ -226,22 +226,22 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.MONOLITH.get();
+        return TTSounds.MONOLITH.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.ZAP.get();
+        return TTSounds.ZAP.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.SHOCK.get();
+        return TTSounds.SHOCK.get();
     }
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
+        level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
     }
 
     @Override

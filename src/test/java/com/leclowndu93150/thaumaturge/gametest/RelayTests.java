@@ -3,14 +3,14 @@ package com.leclowndu93150.thaumaturge.gametest;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
-import com.leclowndu93150.thaumaturge.gametest.base.TCTestRegistrar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -25,7 +25,7 @@ public final class RelayTests {
 
     private RelayTests() {}
 
-    public static void register(TCTestRegistrar r) {
+    public static void register(TTTestRegistrar r) {
         r.add("relay/links_and_drains", 300, helper -> {
             BlockEntityNode node = placeEnergizedNode(helper);
             BlockEntityVisRelay relay = placeRelay(helper, RELAY_POS);
@@ -43,7 +43,7 @@ public final class RelayTests {
             }
             helper.runAfterDelay(ACCRUE_WAIT_TICKS, () -> {
                 int before = node.getAspects().totalAmount();
-                int drained = VisRelayHelper.drainCentivis(helper.getLevel(), helper.absolutePos(CONSUMER_POS), TCAspects.IGNIS, 100, false);
+                int drained = VisRelayHelper.drainCentivis(helper.getLevel(), helper.absolutePos(CONSUMER_POS), TTAspects.IGNIS, 100, false);
                 if (drained <= 0) {
                     helper.fail("Nothing drained through the relay after " + ACCRUE_WAIT_TICKS + " ticks of accrual");
                     return;
@@ -99,7 +99,7 @@ public final class RelayTests {
     }
 
     private static Holder<IAspect> ignis(GameTestHelper helper) {
-        Holder<IAspect> holder = Aspects.resolve(helper.getLevel().registryAccess(), TCAspects.IGNIS);
+        Holder<IAspect> holder = Aspects.resolve(helper.getLevel().registryAccess(), TTAspects.IGNIS);
         if (holder == null) {
             throw new IllegalStateException("Ignis missing from the aspect registry");
         }
@@ -122,7 +122,7 @@ public final class RelayTests {
     }
 
     private static BlockEntityVisRelay placeRelay(GameTestHelper helper, BlockPos pos) {
-        helper.setBlock(pos, TCBlocks.VIS_RELAY.get().defaultBlockState());
+        helper.setBlock(pos, TTBlocks.VIS_RELAY.get().defaultBlockState());
         BlockEntityVisRelay relay = helper.getBlockEntity(pos, BlockEntityVisRelay.class);
         if (relay == null) {
             helper.fail("Vis relay block entity missing after placement");

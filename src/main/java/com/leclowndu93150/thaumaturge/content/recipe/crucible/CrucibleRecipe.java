@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGated;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -90,7 +90,7 @@ public class CrucibleRecipe implements Recipe<CrucibleRecipeInput>, ResearchGate
 
     @Override
     public RecipeType<? extends Recipe<CrucibleRecipeInput>> getType() {
-        return TCRecipeTypes.CRUCIBLE.get();
+        return TTRecipeTypes.CRUCIBLE.get();
     }
 
     @Override

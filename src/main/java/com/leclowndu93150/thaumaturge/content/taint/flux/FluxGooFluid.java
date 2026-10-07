@@ -6,10 +6,10 @@ import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -95,7 +95,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
                     }
                     level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
                 } else {
-                    level.setBlock(pos, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
+                    level.setBlock(pos, TTBlocks.TAINT_FIBRE.get().defaultBlockState(), Block.UPDATE_ALL);
                 }
             } else {
                 setGoo(level, pos, meta, Block.UPDATE_CLIENTS);
@@ -277,7 +277,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             }
             return isDisplaceableVanillaFluid(fluidState) || GOO_DENSITY > fluidState.getFluidType().getDensity();
         }
-        if (state.is(TCBlocks.TAINT_FIBRE.get())) {
+        if (state.is(TTBlocks.TAINT_FIBRE.get())) {
             return true;
         }
         if (state.blocksMotion()) {
@@ -307,7 +307,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
 
     public static BlockState gooBlockState(int quanta) {
         int clamped = Math.max(1, Math.min(quanta, QUANTA_PER_BLOCK));
-        return TCBlocks.FLUX_GOO.get().defaultBlockState().setValue(LiquidBlock.LEVEL, clamped >= QUANTA_PER_BLOCK ? 0 : QUANTA_PER_BLOCK - clamped);
+        return TTBlocks.FLUX_GOO.get().defaultBlockState().setValue(LiquidBlock.LEVEL, clamped >= QUANTA_PER_BLOCK ? 0 : QUANTA_PER_BLOCK - clamped);
     }
 
     private void scheduleGooTick(ServerLevel level, BlockPos pos) {
@@ -336,20 +336,20 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
         if (entity instanceof LivingEntity living) {
             int amp = meta / 3;
-            living.addEffect(new MobEffectInstance(TCMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
+            living.addEffect(new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, amp, true, true, false));
         }
     }
 
     private static void spawnSlime(ServerLevel level, BlockPos pos, int size) {
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-        ThaumicSlime slime = TCEntities.THAUMIC_SLIME.get().create(level, EntitySpawnReason.NATURAL);
+        ThaumicSlime slime = TTEntities.THAUMIC_SLIME.get().create(level, EntitySpawnReason.NATURAL);
         if (slime == null) {
             return;
         }
         slime.setSize(size, true);
         slime.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         level.addFreshEntity(slime);
-        level.playSound(null, pos, TCSounds.GORE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, TTSounds.GORE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     public static final class Source extends FluxGooFluid {

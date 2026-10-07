@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.entity.AbstractTaintSpore;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -96,7 +96,7 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
         }
         boolean swarmer = TaintEcology.getSaturation(level, pos) >= SWARMER_MIN_PRESSURE && random.nextInt(SWARMER_CHANCE) == 0
                 && level.getEntitiesOfClass(EntityTaintSporeSwarmer.class, new AABB(pos).inflate(SWARMER_SPACING)).isEmpty();
-        AbstractTaintSpore spore = swarmer ? TCEntities.TAINT_SPORE_SWARMER.get().create(level, EntitySpawnReason.NATURAL) : TCEntities.TAINT_SPORE.get().create(level, EntitySpawnReason.NATURAL);
+        AbstractTaintSpore spore = swarmer ? TTEntities.TAINT_SPORE_SWARMER.get().create(level, EntitySpawnReason.NATURAL) : TTEntities.TAINT_SPORE.get().create(level, EntitySpawnReason.NATURAL);
         if (spore == null) {
             return;
         }

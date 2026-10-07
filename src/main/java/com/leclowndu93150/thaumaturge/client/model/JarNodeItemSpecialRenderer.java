@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.NodeRenderState;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.NodeRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
@@ -27,7 +27,7 @@ public final class JarNodeItemSpecialRenderer implements SpecialModelRenderer<No
 
     @Override
     public @Nullable NodeData extractArgument(ItemStack stack) {
-        return stack.get(TCDataComponents.NODE_DATA.get());
+        return stack.get(TTDataComponents.NODE_DATA.get());
     }
 
     @Override

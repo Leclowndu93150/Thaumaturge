@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,7 +51,7 @@ final class ShowcaseBuilder {
         this.blocks = blocks;
         this.items = items;
         this.supports = List.of(Blocks.SMOOTH_STONE.defaultBlockState(), Blocks.DIRT.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(), Blocks.SAND.defaultBlockState(),
-                TCBlocks.LOG_GREATWOOD.get().defaultBlockState());
+                TTBlocks.LOG_GREATWOOD.get().defaultBlockState());
         int blockRows = Mth.positiveCeilDiv(blocks.size(), BLOCK_COLUMNS);
         this.width = SIDE_MARGIN * 2 + (BLOCK_COLUMNS - 1) * BLOCK_SPACING + 1;
         this.wallRow = FRONT_MARGIN + Math.max(0, blockRows - 1) * BLOCK_SPACING + WALL_GAP + 1;

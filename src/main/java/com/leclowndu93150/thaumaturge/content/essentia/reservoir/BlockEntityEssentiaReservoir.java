@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -47,7 +47,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     private AspectList contents = AspectList.EMPTY;
 
     public BlockEntityEssentiaReservoir(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
+        super(TTBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
     }
 
     public AspectList contents() {
@@ -61,7 +61,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEssentiaReservoir reservoir) {
         int stored = reservoir.getStoredAmount();
         if (stored > 0 && level.getRandom().nextInt(CREAK_RANGE - stored) == 0) {
-            level.playSound(null, pos, TCSounds.CREAK.get(), SoundSource.BLOCKS, 1.0F, CREAK_PITCH + level.getRandom().nextFloat() * CREAK_PITCH_SPREAD);
+            level.playSound(null, pos, TTSounds.CREAK.get(), SoundSource.BLOCKS, 1.0F, CREAK_PITCH + level.getRandom().nextFloat() * CREAK_PITCH_SPREAD);
         }
         if (level.getGameTime() % DRAW_INTERVAL == 0 && stored < CAPACITY) {
             reservoir.pullOne(level, pos, reservoir.facing());

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,11 +25,11 @@ public record InfusionRecipeDisplay(SlotDisplay catalyst, List<SlotDisplay> comp
 
     @Override
     public SlotDisplay craftingStation() {
-        return new SlotDisplay.ItemSlotDisplay(TCItems.INFUSION_MATRIX.get());
+        return new SlotDisplay.ItemSlotDisplay(TTItems.INFUSION_MATRIX.get());
     }
 
     @Override
     public Type<InfusionRecipeDisplay> type() {
-        return TCRecipeTypes.INFUSION_DISPLAY.get();
+        return TTRecipeTypes.INFUSION_DISPLAY.get();
     }
 }

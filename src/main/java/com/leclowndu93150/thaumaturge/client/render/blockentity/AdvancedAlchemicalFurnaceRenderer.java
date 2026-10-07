@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -29,16 +29,18 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class AdvancedAlchemicalFurnaceRenderer implements BlockEntityRenderer<BlockEntityAdvancedAlchemicalFurnace, AdvancedAlchemicalFurnaceRenderState> {
-    private static final Identifier MODEL = TCIds.rl("models/mesh/advanced_alchemical_furnace.tcmesh");
-    private static final RenderType BASE = RenderTypes.entityCutout(TCIds.rl("textures/block/advanced_alchemical_furnace.png"));
-    private static final RenderType BASE_HOT = RenderTypes.entityCutout(TCIds.rl("textures/block/advanced_alchemical_furnace_on.png"));
-    private static final RenderType TANK = RenderTypes.entityCutout(TCIds.rl("textures/block/advanced_alchemical_furnace_tank.png"));
-    private static final RenderType TANK_FILLED = RenderTypes.entityCutout(TCIds.rl("textures/block/advanced_alchemical_furnace_tank_on.png"));
+    private static final Identifier MODEL = TTIds.rl("models/mesh/advanced_alchemical_furnace.ttmesh");
+    private static final RenderType BASE = RenderTypes.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace.png"));
+    private static final RenderType BASE_HOT = RenderTypes.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_on.png"));
+    private static final RenderType TANK = RenderTypes.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_tank.png"));
+    private static final RenderType TANK_FILLED = RenderTypes.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_tank_on.png"));
+    private static final RenderType TANK_TRIM = RenderTypes.entityCutout(TTIds.rl("textures/block/metal_thaumium.png"));
     private static final SpriteId FIRE_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, Identifier.withDefaultNamespace("block/fire_0"));
-    private static final SpriteId GOO_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, TCIds.rl("block/flux_goo"));
-    private static final SpriteId BACKING_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, TCIds.rl("block/base_metal"));
+    private static final SpriteId GOO_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, TTIds.rl("block/flux_goo"));
+    private static final SpriteId BACKING_SPRITE = new SpriteId(TextureAtlas.LOCATION_BLOCKS, TTIds.rl("block/base_metal"));
     private static final String PART_BASE = "Base";
     private static final String PART_TANK = "Tank";
+    private static final String PART_TANK_TRIM = "TankTrim";
     private static final int WHITE = 0xFFFFFFFF;
     private static final int SIDES = 4;
     private static final float SIDE_ANGLE = 90.0F;
@@ -101,19 +103,24 @@ public final class AdvancedAlchemicalFurnaceRenderer implements BlockEntityRende
     }
 
     public static void submitMesh(boolean hot, boolean filled, PoseStack poseStack, SubmitNodeCollector collector, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
-        for (TCMeshPart part : mesh.parts()) {
+        TTMesh mesh = GolemMeshes.get(MODEL);
+        for (TTMeshPart part : mesh.parts()) {
             if (PART_BASE.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, hot ? BASE_HOT : BASE, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, WHITE));
             } else if (PART_TANK.equals(part.name())) {
-                RenderType tank = filled ? TANK_FILLED : TANK;
-                for (int side = 0; side < SIDES; side++) {
-                    poseStack.pushPose();
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(SIDE_ANGLE * side));
-                    collector.submitCustomGeometry(poseStack, tank, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, WHITE));
-                    poseStack.popPose();
-                }
+                submitTankPart(part, filled ? TANK_FILLED : TANK, poseStack, collector, light);
+            } else if (PART_TANK_TRIM.equals(part.name())) {
+                submitTankPart(part, TANK_TRIM, poseStack, collector, light);
             }
+        }
+    }
+
+    private static void submitTankPart(TTMeshPart part, RenderType type, PoseStack poseStack, SubmitNodeCollector collector, int light) {
+        for (int side = 0; side < SIDES; side++) {
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.ZP.rotationDegrees(SIDE_ANGLE * side));
+            collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, WHITE));
+            poseStack.popPose();
         }
     }
 

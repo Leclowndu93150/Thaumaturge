@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements Essentia
     private static final int SUCTION = 128;
     private static final int DRAW_INTERVAL = 5;
 
-    private final EssentiaIntake intake = new EssentiaIntake(this, TCAspects.HERBA, SUCTION, DRAW_INTERVAL);
+    private final EssentiaIntake intake = new EssentiaIntake(this, TTAspects.HERBA, SUCTION, DRAW_INTERVAL);
     private boolean reserve;
     private int charges = -1;
     private BlockPos lastTarget = BlockPos.ZERO;
@@ -49,7 +49,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements Essentia
     private final List<BlockPos> checklist = new ArrayList<>();
 
     public BlockEntityLampGrowth(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LAMP_GROWTH.get(), pos, state);
+        super(TTBlockEntities.LAMP_GROWTH.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampGrowth lamp) {
@@ -99,7 +99,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements Essentia
         while (cursor.getY() >= getBlockPos().getY() - SCAN_DISTANCE) {
             BlockState state = server.getBlockState(cursor);
             if (!state.isAir() && isPlant(state) && cursor.distToCenterSqr(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5) < SCAN_DISTANCE * SCAN_DISTANCE
-                    && !isGrownCrop(server, cursor, state) && !state.is(TCBlockTags.LAMP_GROWTH_BLACKLIST)) {
+                    && !isGrownCrop(server, cursor, state) && !state.is(TTBlockTags.LAMP_GROWTH_BLACKLIST)) {
                 charges--;
                 BlockPos target = cursor.immutable();
                 lastTarget = target;

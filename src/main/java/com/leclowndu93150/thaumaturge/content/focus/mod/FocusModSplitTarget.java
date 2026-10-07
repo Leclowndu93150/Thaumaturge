@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus.mod;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -11,7 +11,7 @@ import java.util.Set;
 import net.minecraft.resources.Identifier;
 
 public final class FocusModSplitTarget implements FocusSplit {
-    private static final Identifier KEY = TCIds.rl("split_target");
+    private static final Identifier KEY = TTIds.rl("split_target");
 
     private static final int COMPLEXITY = 4;
 
@@ -22,7 +22,7 @@ public final class FocusModSplitTarget implements FocusSplit {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_split"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_split"), Optional.empty(), false);
     }
 
     @Override

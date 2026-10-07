@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceKey;
  *
  * <p>Aspects are loaded from datapack JSON under {@code data/<namespace>/thaumaturge/aspect/}
  * and exposed through the {@link #REGISTRY_KEY} datapack registry. Code typically references
- * aspects by {@link ResourceKey} (see the constants in {@code TCAspects}) and resolves them
+ * aspects by {@link ResourceKey} (see the constants in {@code TTAspects}) and resolves them
  * through a {@link net.minecraft.core.HolderLookup.Provider HolderLookup.Provider} or a
  * {@link Holder}.
  *

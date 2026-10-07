@@ -9,7 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-public final class WispyMoteParticle extends TCParticle {
+public final class WispyMoteParticle extends TTParticle {
     private static final int EMISSIVE_LIGHT = 0x00F000F0;
     private static final int FRAME_COUNT = 16;
     private static final float PEAK_ALPHA = 0.6F;
@@ -84,7 +84,7 @@ public final class WispyMoteParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<WispyMoteParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("wispy_mote");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("wispy_mote");
 
         @Override
         public Particle createParticle(WispyMoteParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

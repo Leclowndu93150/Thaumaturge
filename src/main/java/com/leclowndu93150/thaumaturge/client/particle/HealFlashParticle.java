@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class HealFlashParticle extends TCParticle {
+public final class HealFlashParticle extends TTParticle {
     private static final int BASE_LIFETIME = 10;
     private static final float FRICTION = 0.8F;
     private static final float PEAK_ALPHA = 0.7F;
@@ -37,7 +37,7 @@ public final class HealFlashParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("heal_flash");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("heal_flash");
 
         @Override
         public Particle createParticle(SimpleParticleType options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

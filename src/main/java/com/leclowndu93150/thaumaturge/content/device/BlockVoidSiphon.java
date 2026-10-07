@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -38,8 +38,8 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.ENABLED, true));
     }
 
-    private static final VoxelShape SHAPE = Shapes.or(box(3.0, 0.0, 3.0, 13.0, 2.0, 13.0), box(4.0, 2.0, 4.0, 12.0, 11.0, 12.0), box(3.0, 8.0, 3.0, 13.0, 10.0, 13.0),
-            box(6.0, 11.0, 6.0, 10.0, 16.0, 10.0));
+    private static final VoxelShape SHAPE = Shapes.or(box(2.0, 0.0, 2.0, 14.0, 3.0, 14.0), box(3.0, 3.0, 3.0, 7.0, 8.0, 7.0), box(9.0, 3.0, 3.0, 13.0, 8.0, 7.0), box(3.0, 3.0, 9.0, 7.0, 8.0, 13.0),
+            box(9.0, 3.0, 9.0, 13.0, 8.0, 13.0), box(3.0, 8.0, 3.0, 13.0, 11.0, 13.0), box(6.0, 12.0, 6.0, 10.0, 16.0, 10.0));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -77,7 +77,7 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("void_siphon"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("void_siphon"))) {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (level.isClientSide()) {
@@ -104,6 +104,6 @@ public final class BlockVoidSiphon extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.VOID_SIPHON.get(), BlockEntityVoidSiphon::serverTick);
+        return createTickerHelper(type, TTBlockEntities.VOID_SIPHON.get(), BlockEntityVoidSiphon::serverTick);
     }
 }

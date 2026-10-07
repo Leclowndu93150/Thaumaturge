@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
-import com.leclowndu93150.thaumaturge.registry.TCPlacementModifiers;
+import com.leclowndu93150.thaumaturge.registry.TTPlacementModifiers;
 import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -44,6 +44,6 @@ public final class SurfaceBiomeSearch extends PlacementModifier {
 
     @Override
     public PlacementModifierType<?> type() {
-        return TCPlacementModifiers.SURFACE_BIOME_SEARCH.get();
+        return TTPlacementModifiers.SURFACE_BIOME_SEARCH.get();
     }
 }

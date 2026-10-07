@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,6 +43,6 @@ public final class ElementalSpearItem extends Item {
             Effects.vent(level, center).motion((level.getRandom().nextDouble() - 0.5) * GUST_SPREAD, launch * GUST_SPREAD, (level.getRandom().nextDouble() - 0.5) * GUST_SPREAD).color(GUST_COLOR)
                     .scale(GUST_SCALE).send();
         }
-        level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), TCSounds.WIND.get(), SoundSource.PLAYERS, GUST_VOLUME, GUST_PITCH + level.getRandom().nextFloat() * GUST_PITCH_SPREAD);
+        level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), TTSounds.WIND.get(), SoundSource.PLAYERS, GUST_VOLUME, GUST_PITCH + level.getRandom().nextFloat() * GUST_PITCH_SPREAD);
     }
 }

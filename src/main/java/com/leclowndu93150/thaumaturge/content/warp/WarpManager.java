@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
@@ -10,10 +10,10 @@ import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -30,7 +30,7 @@ public final class WarpManager {
     private WarpManager() {}
 
     public static WarpData data(Player player) {
-        return player.getData(TCAttachments.WARP);
+        return player.getData(TTAttachments.WARP);
     }
 
     public static void addWarp(ServerPlayer player, int amount, WarpType type) {
@@ -49,11 +49,11 @@ public final class WarpManager {
         } else {
             notifyLoss(player, type);
         }
-        player.syncData(TCAttachments.WARP);
+        player.syncData(TTAttachments.WARP);
     }
 
-    private static final Identifier WARP_RESEARCH = TCIds.rl("warp");
-    private static final Identifier FIRST_STEPS_RESEARCH = TCIds.rl("first_steps");
+    private static final Identifier WARP_RESEARCH = TTIds.rl("warp");
+    private static final Identifier FIRST_STEPS_RESEARCH = TTIds.rl("first_steps");
 
     private static void grantWarpResearch(ServerPlayer player, WarpType type) {
         if (type == WarpType.TEMPORARY) {
@@ -79,11 +79,11 @@ public final class WarpManager {
         if (stack.getItem() instanceof IWarpingGear gear) {
             warp += gear.warp(stack, wearer);
         }
-        ItemWarp mapped = stack.getItem().builtInRegistryHolder().getData(TCDataMaps.ITEM_WARP);
+        ItemWarp mapped = stack.getItem().builtInRegistryHolder().getData(TTDataMaps.ITEM_WARP);
         if (mapped != null) {
             warp += mapped.amount();
         }
-        warp += stack.getOrDefault(TCDataComponents.STACK_WARP.get(), 0);
+        warp += stack.getOrDefault(TTDataComponents.STACK_WARP.get(), 0);
         return warp;
     }
 
@@ -94,7 +94,7 @@ public final class WarpManager {
                 warp += getFinalWarp(player.getItemBySlot(slot), player);
             }
         }
-        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS)) {
             for (ItemStack stack : ThaumaturgeCuriosCompat.equippedCurios(player)) {
                 warp += getFinalWarp(stack, player);
             }
@@ -103,7 +103,7 @@ public final class WarpManager {
     }
 
     private static void notifyGain(ServerPlayer player, WarpType type) {
-        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TCSounds.WHISPERS.get(), SoundSource.AMBIENT, 0.5F, 1.0F);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.WHISPERS.get(), SoundSource.AMBIENT, 0.5F, 1.0F);
         String key = switch (type) {
             case PERMANENT -> "warp.thaumaturge.gain.permanent";
             case NORMAL -> "warp.thaumaturge.gain.normal";

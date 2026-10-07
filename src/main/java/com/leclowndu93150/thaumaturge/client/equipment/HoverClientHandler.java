@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
-import com.leclowndu93150.thaumaturge.client.input.TCKeybinds;
+import com.leclowndu93150.thaumaturge.client.input.TTKeybinds;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.HoverManager;
 import com.leclowndu93150.thaumaturge.content.particle.BoltParticleOptions;
 import com.leclowndu93150.thaumaturge.network.ServerboundToggleHoverPayload;
@@ -25,7 +25,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class HoverClientHandler {
     private static final double HOVER_DRAG = 0.7;
     private static final double BOLT_ORIGIN_HEIGHT = 1.17;
@@ -53,7 +53,7 @@ public final class HoverClientHandler {
         if (player == null || level == null) {
             return;
         }
-        while (TCKeybinds.TOGGLE_HOVER.consumeClick()) {
+        while (TTKeybinds.TOGGLE_HOVER.consumeClick()) {
             if (minecraft.screen == null && HoverManager.isWearingHoverGear(player)) {
                 ClientPacketDistributor.sendToServer(ServerboundToggleHoverPayload.INSTANCE);
             }

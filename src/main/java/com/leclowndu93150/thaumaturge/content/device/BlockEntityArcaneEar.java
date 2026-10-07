@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,7 +26,7 @@ public final class BlockEntityArcaneEar extends BlockEntity {
     private int redstoneSignal;
 
     public BlockEntityArcaneEar(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ARCANE_EAR.get(), pos, state);
+        super(TTBlockEntities.ARCANE_EAR.get(), pos, state);
     }
 
     public int note() {
@@ -41,14 +41,14 @@ public final class BlockEntityArcaneEar extends BlockEntity {
     public void onLoad() {
         super.onLoad();
         if (level != null && !level.isClientSide()) {
-            level.getData(TCAttachments.EAR_INDEX.get()).add(getBlockPos().immutable());
+            level.getData(TTAttachments.EAR_INDEX.get()).add(getBlockPos().immutable());
         }
     }
 
     @Override
     public void setRemoved() {
         if (level != null && !level.isClientSide()) {
-            level.getData(TCAttachments.EAR_INDEX.get()).remove(getBlockPos());
+            level.getData(TTAttachments.EAR_INDEX.get()).remove(getBlockPos());
         }
         super.setRemoved();
     }

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
 import com.leclowndu93150.thaumaturge.network.ClientboundThaumatoriumRecipesPayload;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -41,7 +41,7 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
     }
 
     public MenuThaumatorium(int containerId, Inventory playerInventory, @Nullable BlockEntityThaumatorium blockEntity) {
-        super(TCMenus.THAUMATORIUM.get(), containerId);
+        super(TTMenus.THAUMATORIUM.get(), containerId);
         this.blockEntity = blockEntity;
         this.player = playerInventory.player;
         ItemStacksResourceHandler items = blockEntity != null ? blockEntity.catalyst() : new ItemStacksResourceHandler(1);

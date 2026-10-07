@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -20,11 +20,11 @@ public record MultiblockRecipeDisplay(Identifier blueprint, SlotDisplay result) 
 
     @Override
     public SlotDisplay craftingStation() {
-        return new SlotDisplay.ItemSlotDisplay(TCItems.SALIS_MUNDUS.get());
+        return new SlotDisplay.ItemSlotDisplay(TTItems.SALIS_MUNDUS.get());
     }
 
     @Override
     public Type<MultiblockRecipeDisplay> type() {
-        return TCRecipeTypes.MULTIBLOCK_DISPLAY.get();
+        return TTRecipeTypes.MULTIBLOCK_DISPLAY.get();
     }
 }

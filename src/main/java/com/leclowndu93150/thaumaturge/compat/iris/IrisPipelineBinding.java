@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.iris;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -17,7 +17,7 @@ public final class IrisPipelineBinding {
     public static void bindModPipelines() {
         IrisApi iris = IrisApi.getInstance();
         for (RenderPipeline pipeline : RenderPipelines.getStaticPipelines()) {
-            if (!TCIds.MODID.equals(pipeline.getLocation().getNamespace())) {
+            if (!TTIds.MODID.equals(pipeline.getLocation().getNamespace())) {
                 continue;
             }
             IrisProgram program = programFor(pipeline);

@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.world.tree;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeHostBlock;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -38,7 +38,7 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
 
     @Override
     public BlockState depletedState(BlockState state) {
-        return TCBlocks.LOG_SILVERWOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
+        return TTBlocks.LOG_SILVERWOOD.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
     }
 
     @Override
@@ -48,7 +48,7 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (type != TCBlockEntities.NODE.get()) {
+        if (type != TTBlockEntities.NODE.get()) {
             return null;
         }
         if (level.isClientSide()) {
@@ -59,7 +59,7 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
 
     @Override
     protected ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData) {
-        return new ItemStack(TCItems.LOG_SILVERWOOD.get());
+        return new ItemStack(TTItems.LOG_SILVERWOOD.get());
     }
 
     @Override

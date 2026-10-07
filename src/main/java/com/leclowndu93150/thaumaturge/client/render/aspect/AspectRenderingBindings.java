@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.aspect;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.client.AspectRendering;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.Font;
@@ -29,7 +29,7 @@ public final class AspectRenderingBindings implements AspectRendering.Bindings {
     @Override
     public RenderType renderType(@Nullable Holder<IAspect> aspect, AspectKnowledge knowledge, AspectRendering.BlendMode blend) {
         Identifier texture = aspect != null && knowledge.isKnown() ? aspect.value().texture() : AspectTagWorldRenderer.UNKNOWN_TEXTURE;
-        return blend == AspectRendering.BlendMode.ADDITIVE ? TCFlatRenderTypes.entityAdditiveFlat(texture) : TCFlatRenderTypes.entityTranslucentFlat(texture);
+        return blend == AspectRendering.BlendMode.ADDITIVE ? TTFlatRenderTypes.entityAdditiveFlat(texture) : TTFlatRenderTypes.entityTranslucentFlat(texture);
     }
 
     @Override

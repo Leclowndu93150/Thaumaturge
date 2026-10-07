@@ -2,11 +2,11 @@ package com.leclowndu93150.thaumaturge.content.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.wands.IWandVisStorage;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.resources.ResourceKey;
@@ -19,7 +19,7 @@ public final class WandVisHelper {
     private WandVisHelper() {}
 
     public static WandParts getParts(ItemStack stack) {
-        WandParts parts = stack.get(TCDataComponents.WAND_PARTS.get());
+        WandParts parts = stack.get(TTDataComponents.WAND_PARTS.get());
         return parts != null ? parts : WandParts.starter();
     }
 
@@ -28,7 +28,7 @@ public final class WandVisHelper {
         if (storage != null) {
             return storage.getVis(stack);
         }
-        WandVis vis = stack.get(TCDataComponents.WAND_VIS.get());
+        WandVis vis = stack.get(TTDataComponents.WAND_VIS.get());
         return vis != null ? vis : WandVis.EMPTY;
     }
 
@@ -37,7 +37,7 @@ public final class WandVisHelper {
         if (storage != null) {
             storage.setVis(stack, vis);
         } else {
-            stack.set(TCDataComponents.WAND_VIS.get(), vis);
+            stack.set(TTDataComponents.WAND_VIS.get(), vis);
         }
     }
 
@@ -58,7 +58,7 @@ public final class WandVisHelper {
     }
 
     public static int addRealVis(ItemStack stack, ResourceKey<IAspect> aspect, int centivis, boolean doit) {
-        if (!TCAspects.PRIMALS.contains(aspect)) {
+        if (!TTAspects.PRIMALS.contains(aspect)) {
             return 0;
         }
         int stored = getVis(stack, aspect) + centivis;
@@ -136,10 +136,10 @@ public final class WandVisHelper {
         Map<ResourceKey<IAspect>, Integer> split = new LinkedHashMap<>();
         int base = centivis / WandEconomy.PRIMAL_COUNT;
         int remainder = centivis % WandEconomy.PRIMAL_COUNT;
-        for (int i = 0; i < TCAspects.PRIMALS.size(); i++) {
+        for (int i = 0; i < TTAspects.PRIMALS.size(); i++) {
             int share = base + (i < remainder ? 1 : 0);
             if (share > 0) {
-                split.put(TCAspects.PRIMALS.get(i), share);
+                split.put(TTAspects.PRIMALS.get(i), share);
             }
         }
         return split;
@@ -158,7 +158,7 @@ public final class WandVisHelper {
     public static Map<ResourceKey<IAspect>, Integer> primalSplit(int centivis, AspectList aspects) {
         Map<ResourceKey<IAspect>, Integer> weights = WandChargingEvents.reduceToPrimals(aspects);
         int totalWeight = 0;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             totalWeight += weights.getOrDefault(primal, 0);
         }
         if (totalWeight <= 0) {
@@ -166,7 +166,7 @@ public final class WandVisHelper {
         }
         Map<ResourceKey<IAspect>, Integer> split = new LinkedHashMap<>();
         int remainder = centivis;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             int weight = weights.getOrDefault(primal, 0);
             if (weight > 0) {
                 int share = centivis * weight / totalWeight;
@@ -215,7 +215,7 @@ public final class WandVisHelper {
     public static void fill(ItemStack stack) {
         int max = getMaxVis(stack);
         WandVis vis = WandVis.EMPTY;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             vis = vis.with(primal, max);
         }
         setAllVis(stack, vis);

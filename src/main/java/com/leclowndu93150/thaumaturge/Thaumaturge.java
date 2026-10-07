@@ -43,9 +43,9 @@ import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeModifierSerializers;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeModifierSerializers;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import java.lang.reflect.Method;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -57,57 +57,57 @@ import net.neoforged.neoforge.event.RegisterGameTestsEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(TCIds.MODID)
+@Mod(TTIds.MODID)
 public final class Thaumaturge {
-    public static final Logger LOGGER = LoggerFactory.getLogger(TCIds.MODID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(TTIds.MODID);
 
     public Thaumaturge(IEventBus modBus, ModContainer container) {
-        TCFluidTypes.register(modBus);
-        TCFluids.register(modBus);
-        TCBlocks.register(modBus);
-        TCItems.register(modBus);
-        TCFeatures.register(modBus);
-        TCTreePlacers.register(modBus);
-        TCBiomeModifierSerializers.register(modBus);
-        TCStructures.register(modBus);
-        TCBlockEntities.register(modBus);
-        TCEntities.register(modBus);
-        TCMenus.register(modBus);
-        TCRecipeTypes.register(modBus);
-        TCRecipeSerializers.register(modBus);
-        TCDataComponents.register(modBus);
-        TCCreativeTabs.register(modBus);
-        TCParticles.register(modBus);
-        TCSounds.register(modBus);
-        TCAttachments.register(modBus);
-        TCDamageTypes.register(modBus);
-        TCMobEffects.register(modBus);
-        TCAttributes.register(modBus);
-        TCChunkGenerators.register(modBus);
-        TCPlacementModifiers.register(modBus);
-        TCFocusElements.register(modBus);
-        TCGolemTraits.register(modBus);
-        TCMobTraits.register(modBus);
-        TCGolemParts.register(modBus);
-        TCWandParts.register(modBus);
-        TCSeals.register(modBus);
-        TCEntityDataSerializers.register(modBus);
-        TCIngredientTypes.register(modBus);
-        TCGolemAccessories.register();
+        TTFluidTypes.register(modBus);
+        TTFluids.register(modBus);
+        TTBlocks.register(modBus);
+        TTItems.register(modBus);
+        TTFeatures.register(modBus);
+        TTTreePlacers.register(modBus);
+        TTBiomeModifierSerializers.register(modBus);
+        TTStructures.register(modBus);
+        TTBlockEntities.register(modBus);
+        TTEntities.register(modBus);
+        TTMenus.register(modBus);
+        TTRecipeTypes.register(modBus);
+        TTRecipeSerializers.register(modBus);
+        TTDataComponents.register(modBus);
+        TTCreativeTabs.register(modBus);
+        TTParticles.register(modBus);
+        TTSounds.register(modBus);
+        TTAttachments.register(modBus);
+        TTDamageTypes.register(modBus);
+        TTMobEffects.register(modBus);
+        TTAttributes.register(modBus);
+        TTChunkGenerators.register(modBus);
+        TTPlacementModifiers.register(modBus);
+        TTFocusElements.register(modBus);
+        TTGolemTraits.register(modBus);
+        TTMobTraits.register(modBus);
+        TTGolemParts.register(modBus);
+        TTWandParts.register(modBus);
+        TTSeals.register(modBus);
+        TTEntityDataSerializers.register(modBus);
+        TTIngredientTypes.register(modBus);
+        TTGolemAccessories.register();
 
         LegacyRegistryAliases.register(modBus);
 
-        NeoForge.EVENT_BUS.addListener(TCRecipeTypes::registerSynchronizedRecipes);
+        NeoForge.EVENT_BUS.addListener(TTRecipeTypes::registerSynchronizedRecipes);
 
         container.registerConfig(ModConfig.Type.COMMON, ThaumaturgeCommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
         container.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
 
-        KnowledgeAccess.bind(player -> player.getData(TCAttachments.KNOWLEDGE));
+        KnowledgeAccess.bind(player -> player.getData(TTAttachments.KNOWLEDGE));
         AspectIndexAccess.bind(AspectIndexHolder::get);
         WandAccess.bind(new WandAccessBindings());
-        EssentiaCrystalAccess.bind(TCItems.ESSENTIA_CRYSTAL, TCDataComponents.CRYSTAL_ASPECT);
-        EssentiaAccess.bind(TCDataComponents.ASPECT_FILTER);
+        EssentiaCrystalAccess.bind(TTItems.ESSENTIA_CRYSTAL, TTDataComponents.CRYSTAL_ASPECT);
+        EssentiaAccess.bind(TTDataComponents.ASPECT_FILTER);
         ArcaneCraftCost.bind(WorkbenchPayment::cost);
         ArcaneCraftingTransaction.bind(new ArcaneCraftingTransactions());
         InfusionCraftingTransaction.bind(new InfusionCraftingTransactions());
@@ -122,11 +122,11 @@ public final class Thaumaturge {
         ResearchGate.bind(ResearchManager::doesPassGate);
         RechargeAccess.bind(new RechargeBindings());
         GogglesAccess.bind(new GogglesBindings());
-        FocusEngine.bindRegistry(TCFocusElements.registry());
+        FocusEngine.bindRegistry(TTFocusElements.registry());
 
-        if (ModList.get().isLoaded(TCIds.CURIOS))
+        if (ModList.get().isLoaded(TTIds.CURIOS))
             ThaumaturgeCuriosCompat.init(modBus);
-        if (ModList.get().isLoaded(TCIds.DYNAMIC_TREES))
+        if (ModList.get().isLoaded(TTIds.DYNAMIC_TREES))
             DynamicTreesCompat.init(modBus);
 
         wireGameTests(modBus);
@@ -137,13 +137,13 @@ public final class Thaumaturge {
             return;
         }
         try {
-            Class<?> registration = Class.forName("com.leclowndu93150.thaumaturge.gametest.TCGameTestRegistration");
+            Class<?> registration = Class.forName("com.leclowndu93150.thaumaturge.gametest.TTGameTestRegistration");
             Method handler = registration.getMethod("registerTests", RegisterGameTestsEvent.class);
             modBus.addListener(RegisterGameTestsEvent.class, event -> {
                 try {
                     handler.invoke(null, event);
                 } catch (ReflectiveOperationException e) {
-                    LOGGER.error("Failed to invoke TCGameTestRegistration.registerTests", e);
+                    LOGGER.error("Failed to invoke TTGameTestRegistration.registerTests", e);
                 }
             });
         } catch (ClassNotFoundException expected) {

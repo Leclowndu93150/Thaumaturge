@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityStabilizer;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -41,7 +41,7 @@ public final class InstabilityEvents {
 
     private InstabilityEvents() {}
 
-    private static final Identifier INSTABILITY_RESEARCH = TCIds.rl("instability");
+    private static final Identifier INSTABILITY_RESEARCH = TTIds.rl("instability");
 
     private static void grantInstabilityResearch(ServerLevel level, BlockPos matrixPos) {
         List<ServerPlayer> targets = level.getEntitiesOfClass(ServerPlayer.class, new AABB(matrixPos).inflate(EVENT_RANGE));
@@ -137,16 +137,16 @@ public final class InstabilityEvents {
     }
 
     private static void playZapSound(ServerLevel level, BlockPos pos) {
-        level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, 1.0F + level.getRandom().nextFloat() * ZAP_PITCH_VARIATION);
+        level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, 1.0F + level.getRandom().nextFloat() * ZAP_PITCH_VARIATION);
     }
 
     private static void harm(ServerLevel level, BlockPos matrixPos, boolean all) {
         RandomSource rand = level.getRandom();
         for (LivingEntity target : nearbyLiving(level, matrixPos)) {
             if (rand.nextBoolean()) {
-                target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, 120, 0, false, true));
+                target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, 120, 0, false, true));
             } else {
-                target.addEffect(new MobEffectInstance(TCMobEffects.VIS_EXHAUST, 2400, 0, true, true));
+                target.addEffect(new MobEffectInstance(TTMobEffects.VIS_EXHAUST, 2400, 0, true, true));
             }
             if (!all) {
                 return;

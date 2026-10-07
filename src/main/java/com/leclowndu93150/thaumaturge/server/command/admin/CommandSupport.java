@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -53,7 +53,7 @@ final class CommandSupport {
 
     static <T> SuggestionProvider<CommandSourceStack> ownKeys(ResourceKey<? extends Registry<T>> registry) {
         return (ctx, builder) -> SharedSuggestionProvider
-                .suggestResource(ctx.getSource().registryAccess().lookupOrThrow(registry).listElementIds().map(ResourceKey::identifier).filter(id -> id.getNamespace().equals(TCIds.MODID)), builder);
+                .suggestResource(ctx.getSource().registryAccess().lookupOrThrow(registry).listElementIds().map(ResourceKey::identifier).filter(id -> id.getNamespace().equals(TTIds.MODID)), builder);
     }
 
     static List<Holder.Reference<IResearchCategory>> categories(RegistryAccess access) {

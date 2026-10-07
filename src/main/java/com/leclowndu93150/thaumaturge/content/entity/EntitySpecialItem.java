@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +17,7 @@ public final class EntitySpecialItem extends ItemEntity {
     }
 
     public EntitySpecialItem(Level level, double x, double y, double z, ItemStack stack) {
-        this(TCEntities.SPECIAL_ITEM.get(), level);
+        this(TTEntities.SPECIAL_ITEM.get(), level);
         setPos(x, y, z);
         setItem(stack);
         lifespan = stack.getEntityLifespan(level);

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +25,7 @@ public final class BlockObsidianTotemCharged extends BlockObsidianTotem implemen
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (type != TCBlockEntities.NODE.get()) {
+        if (type != TTBlockEntities.NODE.get()) {
             return null;
         }
         if (level.isClientSide()) {

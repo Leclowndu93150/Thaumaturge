@@ -22,8 +22,8 @@ import com.leclowndu93150.thaumaturge.content.particle.WispyMoteParticleOptions;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -327,7 +327,7 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             if (sound) {
-                level.playSound(null, pos.x, pos.y, pos.z, TCSounds.POOF.get(), SoundSource.BLOCKS, 0.4F, 1.0F + (float) rand.nextGaussian() * 0.05F);
+                level.playSound(null, pos.x, pos.y, pos.z, TTSounds.POOF.get(), SoundSource.BLOCKS, 0.4F, 1.0F + (float) rand.nextGaussian() * 0.05F);
             }
             int puffs = 6 + rand.nextInt(3) + 2;
             for (int a = 0; a < puffs; a++) {
@@ -342,7 +342,7 @@ public final class Effects {
                 float pr = Mth.clamp(r * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
                 float pg = Mth.clamp(g * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
                 float pb = Mth.clamp(b * (1.0F + (float) rand.nextGaussian() * 0.1F), 0.0F, 1.0F);
-                spawn(level, TCParticles.colorOf(TCParticles.PUFF, pr, pg, pb), pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0, vx / 2.0, vy / 2.0, vz / 2.0);
+                spawn(level, TTParticles.colorOf(TTParticles.PUFF, pr, pg, pb), pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0, vx / 2.0, vy / 2.0, vz / 2.0);
             }
             if (fancy) {
                 int motes = 2 + rand.nextInt(3);
@@ -352,7 +352,7 @@ public final class Effects {
                     double vz = (0.025F + rand.nextFloat() * 0.025F) * (rand.nextBoolean() ? -1 : 1);
                     wispyMotes(level, new Vec3(pos.x + vx * 2.0, pos.y + vy * 2.0, pos.z + vz * 2.0)).motion(vx, vy, vz).age(15 + rand.nextInt(10)).randomColor().gravity(-0.01F).send();
                 }
-                spawn(level, TCParticles.colorOf(TCParticles.FLASH, 1.0F, 0.9F, 1.0F), pos.x, pos.y, pos.z);
+                spawn(level, TTParticles.colorOf(TTParticles.FLASH, 1.0F, 0.9F, 1.0F), pos.x, pos.y, pos.z);
             }
             int wisps = (fancy ? 2 : 0) + rand.nextInt(3);
             for (int a = 0; a < wisps; a++) {
@@ -1050,7 +1050,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(level, TCParticles.LEVITATOR_MIST.get(), pos.x, pos.y, pos.z, vx, vy, vz);
+            spawn(level, TTParticles.LEVITATOR_MIST.get(), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 
@@ -1100,7 +1100,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(level, TCParticles.GOLEM_TRAIL.get(), pos.x, pos.y, pos.z, vx, vy, vz);
+            spawn(level, TTParticles.GOLEM_TRAIL.get(), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 
@@ -1115,7 +1115,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            spawn(level, TCParticles.POLLUTION_FUME.get(), pos.getX() + 0.2F + rand.nextFloat() * 0.6F, pos.getY() + 0.2F + rand.nextFloat() * 0.6F, pos.getZ() + 0.2F + rand.nextFloat() * 0.6F);
+            spawn(level, TTParticles.POLLUTION_FUME.get(), pos.getX() + 0.2F + rand.nextFloat() * 0.6F, pos.getY() + 0.2F + rand.nextFloat() * 0.6F, pos.getZ() + 0.2F + rand.nextFloat() * 0.6F);
         }
     }
 
@@ -1143,7 +1143,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(level, TCParticles.colorOf(TCParticles.FOCUS_CLOUD, color), pos.x, pos.y, pos.z, vx, vy, vz);
+            spawn(level, TTParticles.colorOf(TTParticles.FOCUS_CLOUD, color), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 
@@ -1170,7 +1170,7 @@ public final class Effects {
                 double x = pos.getX() + bs.minX + rand.nextFloat() * (bs.maxX - bs.minX);
                 double y = pos.getY() + bs.minY + rand.nextFloat() * (bs.maxY - bs.minY);
                 double z = pos.getZ() + bs.minZ + rand.nextFloat() * (bs.maxZ - bs.minZ);
-                spawn(level, TCParticles.colorOf(TCParticles.BLOCK_MIST, color), x, y, z, rand.nextGaussian() * 0.01, rand.nextFloat() * 0.075, rand.nextGaussian() * 0.01);
+                spawn(level, TTParticles.colorOf(TTParticles.BLOCK_MIST, color), x, y, z, rand.nextGaussian() * 0.01, rand.nextFloat() * 0.075, rand.nextGaussian() * 0.01);
             }
         }
     }
@@ -1193,7 +1193,7 @@ public final class Effects {
         public void send() {
             RandomSource rand = level.getRandom();
             for (int a = 0; a < 6; a++) {
-                spawn(level, TCParticles.colorOf(TCParticles.MIST_FLAT, color), pos.getX() + rand.nextFloat(), pos.getY() + rand.nextFloat() * 0.125F, pos.getZ() + rand.nextFloat(),
+                spawn(level, TTParticles.colorOf(TTParticles.MIST_FLAT, color), pos.getX() + rand.nextFloat(), pos.getY() + rand.nextFloat() * 0.125F, pos.getZ() + rand.nextFloat(),
                         (rand.nextFloat() - rand.nextFloat()) * 0.005, 0.005, (rand.nextFloat() - rand.nextFloat()) * 0.005);
             }
         }
@@ -1587,7 +1587,7 @@ public final class Effects {
 
         public void send() {
             RandomSource rand = level.getRandom();
-            spawn(level, TCParticles.PECH_CURSE.get(), pos.x, pos.y, pos.z);
+            spawn(level, TTParticles.PECH_CURSE.get(), pos.x, pos.y, pos.z);
             wispyMotes(level, pos).age(10 + rand.nextInt(10)).randomColor().gravity(-0.01F).send();
         }
     }
@@ -1610,7 +1610,7 @@ public final class Effects {
         }
 
         public void send() {
-            spawn(level, TCParticles.CRIMSON_SMOKE.get(), pos.x, pos.y, pos.z, vx, vy, vz);
+            spawn(level, TTParticles.CRIMSON_SMOKE.get(), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 

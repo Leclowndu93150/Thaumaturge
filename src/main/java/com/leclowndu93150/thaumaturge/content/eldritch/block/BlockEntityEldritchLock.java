@@ -12,10 +12,10 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchWarden;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityTaintacleGiant;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -57,7 +57,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
     private int count = -1;
 
     public BlockEntityEldritchLock(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_LOCK.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_LOCK.get(), pos, state);
     }
 
     public boolean isIdle() {
@@ -88,7 +88,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         }
         count++;
         if (count % PUMP_INTERVAL == 0) {
-            level.playSound(null, pos, TCSounds.PUMP.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, TTSounds.PUMP.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         if (count > OPEN_TICKS) {
             doBossSpawn(level, pos);
@@ -96,7 +96,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
     }
 
     private void doBossSpawn(Level level, BlockPos pos) {
-        level.playSound(null, pos, TCSounds.ICE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, TTSounds.ICE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -151,7 +151,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         for (int a = 0; a < 3; a++) {
             for (int b = 0; b < 3; b++) {
                 if (PEDESTAL[a][b] < 0) {
-                    level.setBlock(new BlockPos(x - 1 + b, y, z - 1 + a), TCBlocks.STONE_ELDRITCH_TILE.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(x - 1 + b, y, z - 1 + a), TTBlocks.STONE_ELDRITCH_TILE.get().defaultBlockState(), 3);
                 } else {
                     level.setBlock(new BlockPos(x - 1 + b, y, z - 1 + a), stairState(PEDESTAL[a][b]), 3);
                 }
@@ -160,11 +160,11 @@ public final class BlockEntityEldritchLock extends BlockEntity {
     }
 
     private static BlockState stairState(int legacyMeta) {
-        return EldritchArenaShapes.stairFromLegacyMeta(TCBlocks.STAIRS_ELDRITCH.get(), legacyMeta);
+        return EldritchArenaShapes.stairFromLegacyMeta(TTBlocks.STAIRS_ELDRITCH.get(), legacyMeta);
     }
 
     private static void placeCrystal(Level level, BlockPos pos) {
-        BlockState crystal = TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState();
+        BlockState crystal = TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState();
         level.setBlock(pos, Block.updateFromNeighbourShapes(crystal, level, pos), 3);
     }
 
@@ -195,8 +195,8 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         }
         EldritchArenaShapes.genObelisk(level, x2, y + 4, z);
         EldritchArenaShapes.genObelisk(level, x, y + 4, z2);
-        level.setBlock(new BlockPos(x2, y + 2, z), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x, y + 2, z2), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x2, y + 2, z), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x, y + 2, z2), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
         RandomSource rand = level.getRandom();
         for (int a = -1; a <= 1; a++) {
             for (int b = -1; b <= 1; b++) {
@@ -208,16 +208,16 @@ public final class BlockEntityEldritchLock extends BlockEntity {
                 }
             }
         }
-        level.setBlock(new BlockPos(x - 2, y + 3, z - 2), TCBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x - 2, y + 3, z + 2), TCBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x + 2, y + 3, z + 2), TCBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x + 2, y + 3, z - 2), TCBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x - 2, y + 2, z - 2), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x - 2, y + 2, z + 2), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x + 2, y + 2, z + 2), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x + 2, y + 2, z - 2), TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x - 2, y + 3, z - 2), TTBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x - 2, y + 3, z + 2), TTBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + 2, y + 3, z + 2), TTBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + 2, y + 3, z - 2), TTBlocks.ELDRITCH_TRAP.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x - 2, y + 2, z - 2), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x - 2, y + 2, z + 2), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + 2, y + 2, z + 2), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + 2, y + 2, z - 2), TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
         placePedestal(level, x2, y + 2, z2);
-        EntityEldritchWarden boss = new EntityEldritchWarden(TCEntities.ELDRITCH_WARDEN.get(), level);
+        EntityEldritchWarden boss = new EntityEldritchWarden(TTEntities.ELDRITCH_WARDEN.get(), level);
         faceBoss(boss, lockPos, x2 + 0.5, y + 3, z2 + 0.5);
         boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x2, y + 3, z2)), EntitySpawnReason.EVENT, null);
         boss.setHomeTo(new BlockPos(x, y + 2, z), 32);
@@ -252,9 +252,9 @@ public final class BlockEntityEldritchLock extends BlockEntity {
         EldritchArenaShapes.genObelisk(level, x + x2, y + 4, z + z2);
         EldritchArenaShapes.genObelisk(level, x - x2, y + 4, z + z2);
         EldritchArenaShapes.genObelisk(level, x + x2, y + 4, z - z2);
-        level.setBlock(new BlockPos(x + x2, y + 2, z + z2), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x - x2, y + 2, z + z2), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-        level.setBlock(new BlockPos(x + x2, y + 2, z - z2), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + x2, y + 2, z + z2), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x - x2, y + 2, z + z2), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x + x2, y + 2, z - z2), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
         placePedestal(level, x, y + 2, z);
         RandomSource rand = level.getRandom();
         for (int a = -10; a <= 10; a++) {
@@ -265,7 +265,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
                 }
             }
         }
-        EntityEldritchGolem boss = new EntityEldritchGolem(TCEntities.ELDRITCH_GOLEM.get(), level);
+        EntityEldritchGolem boss = new EntityEldritchGolem(TTEntities.ELDRITCH_GOLEM.get(), level);
         faceBoss(boss, lockPos, x + 0.5, y + 3, z + 0.5);
         boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x, y + 3, z)), EntitySpawnReason.EVENT, null);
         level.addFreshEntity(boss);
@@ -281,7 +281,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
             for (int b = -4; b <= 4; b++) {
                 if ((Math.abs(a) != 2 && Math.abs(b) != 2 || !rand.nextBoolean()) && (Math.abs(a) != 3 && Math.abs(b) != 3 || !(rand.nextFloat() > 0.33F))
                         && (Math.abs(a) != 4 && Math.abs(b) != 4 || !(rand.nextFloat() > 0.25F))) {
-                    level.setBlock(new BlockPos(x + b, y + 1, z + a), TCBlocks.ELDRITCH_DOOR.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(x + b, y + 1, z + a), TTBlocks.ELDRITCH_DOOR.get().defaultBlockState(), 3);
                 }
             }
         }
@@ -290,16 +290,16 @@ public final class BlockEntityEldritchLock extends BlockEntity {
                 if (a == 0 || a == 4 || b == 0 || b == 4) {
                     int px = x - 8 + b * 4;
                     int pz = z - 8 + a * 4;
-                    level.setBlock(new BlockPos(px, y + 2, pz), TCBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(px, y + 2, pz), TTBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
                     placeCrystal(level, new BlockPos(px, y + 3, pz));
-                    level.setBlock(new BlockPos(px, y + 4, pz), TCBlocks.SLAB_ARCANE_STONE.get().defaultBlockState(), 3);
-                    level.setBlock(new BlockPos(px, y + 10, pz), TCBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(px, y + 4, pz), TTBlocks.SLAB_ARCANE_STONE.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(px, y + 10, pz), TTBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
                     placeCrystal(level, new BlockPos(px, y + 9, pz));
-                    level.setBlock(new BlockPos(px, y + 8, pz), TCBlocks.SLAB_ARCANE_STONE.get().defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
+                    level.setBlock(new BlockPos(px, y + 8, pz), TTBlocks.SLAB_ARCANE_STONE.get().defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP), 3);
                 }
             }
         }
-        EntityCultistPortalGreater boss = new EntityCultistPortalGreater(TCEntities.CULTIST_PORTAL_GREATER.get(), level);
+        EntityCultistPortalGreater boss = new EntityCultistPortalGreater(TTEntities.CULTIST_PORTAL_GREATER.get(), level);
         boss.snapTo(x + 0.5, y + 2, z + 0.5, 0.0F, 0.0F);
         boss.finalizeSpawn(level, level.getCurrentDifficultyAt(new BlockPos(x, y + 2, z)), EntitySpawnReason.EVENT, null);
         level.addFreshEntity(boss);
@@ -319,18 +319,18 @@ public final class BlockEntityEldritchLock extends BlockEntity {
                 for (int c = 0; c < 9; c++) {
                     BlockPos target = new BlockPos(x + b, y + 2 + c, z + a);
                     if (level.isEmptyBlock(target) && isAdjacentToSolid(level, target) && rand.nextInt(3) != 0) {
-                        level.setBlock(target, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
+                        level.setBlock(target, TTBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
                     }
                 }
                 if (rand.nextFloat() < 0.15F) {
-                    level.setBlock(new BlockPos(x + b, y + 2, z + a), TCBlocks.TAINT_CRUST.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(x + b, y + 2, z + a), TTBlocks.TAINT_CRUST.get().defaultBlockState(), 3);
                     if (rand.nextFloat() < 0.2F) {
-                        level.setBlock(new BlockPos(x + b, y + 3, z + a), TCBlocks.TAINT_CRUST.get().defaultBlockState(), 3);
+                        level.setBlock(new BlockPos(x + b, y + 3, z + a), TTBlocks.TAINT_CRUST.get().defaultBlockState(), 3);
                     }
                 }
                 if ((Math.abs(a) != 4 && Math.abs(b) != 4 || !rand.nextBoolean()) && (Math.abs(a) < 5 && Math.abs(b) < 5 || !(rand.nextFloat() > 0.33F))
                         && (Math.abs(a) < 7 && Math.abs(b) < 7 || !(rand.nextFloat() > 0.25F))) {
-                    level.setBlock(new BlockPos(x + b, y + 1, z + a), TCBlocks.TAINT_SOIL.get().defaultBlockState(), 3);
+                    level.setBlock(new BlockPos(x + b, y + 1, z + a), TTBlocks.TAINT_SOIL.get().defaultBlockState(), 3);
                 }
             }
         }
@@ -345,7 +345,7 @@ public final class BlockEntityEldritchLock extends BlockEntity {
     }
 
     private static void spawnTaintacle(ServerLevel level, boolean giant, double x, double y, double z) {
-        Monster boss = giant ? new EntityTaintacleGiant(TCEntities.TAINTACLE_GIANT.get(), level) : new EntityTaintacle(TCEntities.TAINTACLE.get(), level);
+        Monster boss = giant ? new EntityTaintacleGiant(TTEntities.TAINTACLE_GIANT.get(), level) : new EntityTaintacle(TTEntities.TAINTACLE.get(), level);
         boss.snapTo(x, y, z, 0.0F, 0.0F);
         ChampionHelper.makeChampion(boss, true);
         boss.finalizeSpawn(level, level.getCurrentDifficultyAt(boss.blockPosition()), EntitySpawnReason.EVENT, null);
@@ -374,17 +374,17 @@ public final class BlockEntityEldritchLock extends BlockEntity {
     private static BlockState urnState(RandomSource rand, float rareChance, float uncommonChance) {
         float roll = rand.nextFloat();
         if (roll < rareChance) {
-            return TCBlocks.LOOT_URN_RARE.get().defaultBlockState();
+            return TTBlocks.LOOT_URN_RARE.get().defaultBlockState();
         }
-        return roll < uncommonChance ? TCBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_COMMON.get().defaultBlockState();
+        return roll < uncommonChance ? TTBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState() : TTBlocks.LOOT_URN_COMMON.get().defaultBlockState();
     }
 
     private static BlockState crateState(RandomSource rand, float rareChance, float uncommonChance) {
         float roll = rand.nextFloat();
         if (roll < rareChance) {
-            return TCBlocks.LOOT_CRATE_RARE.get().defaultBlockState();
+            return TTBlocks.LOOT_CRATE_RARE.get().defaultBlockState();
         }
-        return roll < uncommonChance ? TCBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState() : TCBlocks.LOOT_CRATE_COMMON.get().defaultBlockState();
+        return roll < uncommonChance ? TTBlocks.LOOT_CRATE_UNCOMMON.get().defaultBlockState() : TTBlocks.LOOT_CRATE_COMMON.get().defaultBlockState();
     }
 
     @Override

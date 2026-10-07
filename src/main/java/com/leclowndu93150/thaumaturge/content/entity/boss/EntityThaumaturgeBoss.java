@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -252,8 +252,8 @@ public class EntityThaumaturgeBoss extends Monster {
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
-        this.spawnAtLocation(level, new ItemStack(TCItems.LOOT_BAG_RARE.get()), PEARL_DROP_LIFT);
+        level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
+        this.spawnAtLocation(level, new ItemStack(TTItems.LOOT_BAG_RARE.get()), PEARL_DROP_LIFT);
     }
 
     protected boolean usesLegacyEnrage() {

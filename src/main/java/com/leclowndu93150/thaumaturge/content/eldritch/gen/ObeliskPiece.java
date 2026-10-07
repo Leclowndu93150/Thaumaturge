@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.eldritch.gen;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchAltar;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCStructures;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTStructures;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,11 +29,11 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
     private static final float OBSIDIAN_CHANCE_ONE_IN = 4;
 
     public ObeliskPiece(RandomSource random, int west, int north) {
-        super(TCStructures.ELDRITCH_OBELISK_PIECE.get(), west, 64, north, SIZE_XZ, SIZE_Y, SIZE_XZ, Direction.SOUTH);
+        super(TTStructures.ELDRITCH_OBELISK_PIECE.get(), west, 64, north, SIZE_XZ, SIZE_Y, SIZE_XZ, Direction.SOUTH);
     }
 
     public ObeliskPiece(CompoundTag tag) {
-        super(TCStructures.ELDRITCH_OBELISK_PIECE.get(), tag);
+        super(TTStructures.ELDRITCH_OBELISK_PIECE.get(), tag);
     }
 
     @Override
@@ -60,19 +60,19 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
                 }
             }
         }
-        this.placeBlock(level, TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), CENTER, GROUND, CENTER, chunkBB);
-        this.placeBlock(level, TCBlocks.ELDRITCH_ALTAR.get().defaultBlockState(), CENTER, GROUND + 1, CENTER, chunkBB);
-        this.placeBlock(level, TCBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), CENTER, GROUND + 3, CENTER, chunkBB);
+        this.placeBlock(level, TTBlocks.OBSIDIAN_TILE.get().defaultBlockState(), CENTER, GROUND, CENTER, chunkBB);
+        this.placeBlock(level, TTBlocks.ELDRITCH_ALTAR.get().defaultBlockState(), CENTER, GROUND + 1, CENTER, chunkBB);
+        this.placeBlock(level, TTBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), CENTER, GROUND + 3, CENTER, chunkBB);
         for (int q = GROUND + 4; q <= GROUND + 7; q++) {
-            this.placeBlock(level, TCBlocks.ELDRITCH_PILLAR.get().defaultBlockState(), CENTER, q, CENTER, chunkBB);
+            this.placeBlock(level, TTBlocks.ELDRITCH_PILLAR.get().defaultBlockState(), CENTER, q, CENTER, chunkBB);
         }
         for (int x = 0; x < SIZE_XZ; x++) {
             for (int z = 0; z < SIZE_XZ; z++) {
                 boolean edge = ((x == 0 || x == SIZE_XZ - 1) && Math.abs((z - CENTER) % 2) == 1 || (z == 0 || z == SIZE_XZ - 1) && Math.abs((x - CENTER) % 2) == 1)
                         && Math.abs(x - CENTER) != Math.abs(z - CENTER);
                 if (edge) {
-                    this.placeBlock(level, TCBlocks.OBSIDIAN_TILE.get().defaultBlockState(), x, GROUND, z, chunkBB);
-                    this.placeBlock(level, TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), x, GROUND + 1, z, chunkBB);
+                    this.placeBlock(level, TTBlocks.OBSIDIAN_TILE.get().defaultBlockState(), x, GROUND, z, chunkBB);
+                    this.placeBlock(level, TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), x, GROUND + 1, z, chunkBB);
                 }
             }
         }
@@ -114,11 +114,11 @@ public class ObeliskPiece extends ScatteredFeaturePiece {
     }
 
     private void placeBanner(WorldGenLevel level, BoundingBox chunkBB, int x, int z, int rotation) {
-        BlockState banner = TCBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BannerStandingBlock.ROTATION, rotation);
+        BlockState banner = TTBlocks.BANNER_CRIMSON_CULT.get().defaultBlockState().setValue(BannerStandingBlock.ROTATION, rotation);
         this.placeBlock(level, banner, x, GROUND + 1, z, chunkBB);
     }
 
     private static BlockState platformState(RandomSource random) {
-        return random.nextInt((int) OBSIDIAN_CHANCE_ONE_IN) == 0 ? Blocks.OBSIDIAN.defaultBlockState() : TCBlocks.OBSIDIAN_TILE.get().defaultBlockState();
+        return random.nextInt((int) OBSIDIAN_CHANCE_ONE_IN) == 0 ? Blocks.OBSIDIAN.defaultBlockState() : TTBlocks.OBSIDIAN_TILE.get().defaultBlockState();
     }
 }

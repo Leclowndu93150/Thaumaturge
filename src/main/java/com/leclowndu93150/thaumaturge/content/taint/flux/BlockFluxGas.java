@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,7 +73,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     public static BlockState gasBlockState(int amount) {
-        return TCBlocks.FLUX_GAS.get().defaultBlockState().setValue(AMOUNT, Math.clamp(amount, 1, PhysicalFlux.MAX_QUANTA));
+        return TTBlocks.FLUX_GAS.get().defaultBlockState().setValue(AMOUNT, Math.clamp(amount, 1, PhysicalFlux.MAX_QUANTA));
     }
 
     @Override
@@ -259,7 +259,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
         }
         int thickness = state.getValue(AMOUNT) - 1;
         if (serverLevel.getRandom().nextBoolean()) {
-            living.addEffect(new MobEffectInstance(TCMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, thickness / LEVELS_PER_AMPLIFIER, true, true, false));
+            living.addEffect(new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, thickness / LEVELS_PER_AMPLIFIER, true, true, false));
         } else {
             living.addEffect(new MobEffectInstance(MobEffects.NAUSEA, NAUSEA_BASE_DURATION + thickness * NAUSEA_DURATION_PER_LEVEL));
         }
@@ -267,7 +267,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     private static boolean resists(LivingEntity living) {
-        return MobTraits.isTainted(living) || living.is(EntityTypeTags.UNDEAD) || FluxImmunityHelper.isImmune(living) || living.hasEffect(TCMobEffects.VIS_EXHAUST)
+        return MobTraits.isTainted(living) || living.is(EntityTypeTags.UNDEAD) || FluxImmunityHelper.isImmune(living) || living.hasEffect(TTMobEffects.VIS_EXHAUST)
                 || living.hasEffect(MobEffects.NAUSEA);
     }
 

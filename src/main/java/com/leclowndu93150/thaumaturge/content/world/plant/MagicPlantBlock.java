@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class MagicPlantBlock extends AbstractTCPlant {
+public final class MagicPlantBlock extends AbstractTTPlant {
     public static final MapCodec<MagicPlantBlock> CODEC = RecordCodecBuilder
             .mapCodec(instance -> instance.group(TagKey.codec(Registries.BLOCK).fieldOf("soil").forGetter(plant -> plant.soil), PlantAura.CODEC.fieldOf("aura").forGetter(plant -> plant.aura),
                     PlantContactEffect.CODEC.optionalFieldOf("contact_effect").forGetter(plant -> plant.contactEffect), propertiesCodec()).apply(instance, MagicPlantBlock::new));

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -12,8 +12,8 @@ import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEntityHole;
 import com.leclowndu93150.thaumaturge.content.focus.FocusFX;
 import com.leclowndu93150.thaumaturge.content.particle.RiftShardParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectRift implements FocusEffect {
-    private static final Identifier KEY = TCIds.rl("rift");
+    private static final Identifier KEY = TTIds.rl("rift");
 
     private static final int BASE_COMPLEXITY = 3;
     private static final int DURATION_COMPLEXITY_DIVISOR = 2;
@@ -49,12 +49,12 @@ public final class FocusEffectRift implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_rift"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_rift"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.ALIENIS;
+        return TTAspects.ALIENIS;
     }
 
     @Override
@@ -77,7 +77,7 @@ public final class FocusEffectRift implements FocusEffect {
         BlockPos pos = blockHit.getBlockPos();
         for (distance = 0; distance < maxdis; distance++) {
             BlockState bi = level.getBlockState(pos);
-            if (bi.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST) || bi.is(Blocks.BEDROCK) || bi.is(TCBlocks.HOLE.get()) || bi.isAir() || bi.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
+            if (bi.is(TTBlockTags.PORTABLE_HOLE_BLACKLIST) || bi.is(Blocks.BEDROCK) || bi.is(TTBlocks.HOLE.get()) || bi.isAir() || bi.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
                 break;
             }
             pos = pos.relative(blockHit.getDirection().getOpposite());
@@ -88,11 +88,11 @@ public final class FocusEffectRift implements FocusEffect {
 
     public static boolean createHole(Level level, BlockPos pos, @Nullable Direction side, int count, int max) {
         BlockState bs = level.getBlockState(pos);
-        if (level.isClientSide() || level.getBlockEntity(pos) != null || bs.is(TCBlockTags.PORTABLE_HOLE_BLACKLIST) || bs.is(Blocks.BEDROCK) || bs.is(TCBlocks.HOLE.get())
+        if (level.isClientSide() || level.getBlockEntity(pos) != null || bs.is(TTBlockTags.PORTABLE_HOLE_BLACKLIST) || bs.is(Blocks.BEDROCK) || bs.is(TTBlocks.HOLE.get())
                 || (!bs.isAir() && bs.canBeReplaced()) || bs.getDestroySpeed(level, pos) == INDESTRUCTIBLE) {
             return false;
         }
-        if (level.setBlock(pos, TCBlocks.HOLE.get().defaultBlockState(), Block.UPDATE_ALL) && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
+        if (level.setBlock(pos, TTBlocks.HOLE.get().defaultBlockState(), Block.UPDATE_ALL) && level.getBlockEntity(pos) instanceof BlockEntityHole hole) {
             hole.configure(bs, max, count, side);
             hole.setChanged();
             level.sendBlockUpdated(pos, hole.getBlockState(), hole.getBlockState(), Block.UPDATE_CLIENTS);

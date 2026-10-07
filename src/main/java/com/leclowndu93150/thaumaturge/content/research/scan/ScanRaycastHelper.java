@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ScanRaycastHelper {
 
     private ScanRaycastHelper() {}

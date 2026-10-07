@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.AbstractThrownCharge;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.ChargeTrail;
 import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,12 +25,12 @@ public final class EntityCausalityCollapser extends AbstractThrownCharge {
     }
 
     public EntityCausalityCollapser(Level level, LivingEntity shooter, ItemStack stack) {
-        super(TCEntities.CAUSALITY_COLLAPSER.get(), shooter, level, stack);
+        super(TTEntities.CAUSALITY_COLLAPSER.get(), shooter, level, stack);
     }
 
     @Override
     protected Item getDefaultItem() {
-        return TCItems.CAUSALITY_COLLAPSER.get();
+        return TTItems.CAUSALITY_COLLAPSER.get();
     }
 
     @Override

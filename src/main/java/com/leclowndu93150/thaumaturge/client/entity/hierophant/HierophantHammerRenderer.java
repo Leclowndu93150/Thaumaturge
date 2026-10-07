@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity.hierophant;
 
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldritchHierophant;
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantHammer;
 import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.HierophantAction;
@@ -31,7 +31,7 @@ public final class HierophantHammerRenderer extends EntityRenderer<EntityHieroph
 
     public HierophantHammerRenderer(EntityRendererProvider.Context context) {
         super(context);
-        model = new HierophantModel(context.bakeLayer(TCModelLayers.ELDRITCH_HIEROPHANT));
+        model = new HierophantModel(context.bakeLayer(TTModelLayers.ELDRITCH_HIEROPHANT));
         model.onlyHammer();
     }
     @Override

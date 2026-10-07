@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class SlashParticle extends TCParticle {
+public final class SlashParticle extends TTParticle {
     private static final float START_SIZE = 0.05F;
     private static final float END_SIZE = 0.15F;
     private static final float DEG_TO_RAD = (float) (Math.PI / 180.0);
@@ -39,7 +39,7 @@ public final class SlashParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SlashParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("slash");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("slash");
 
         @Override
         public Particle createParticle(SlashParticleOptions options, ClientLevel level, double x, double y, double z, double vx, double vy, double vz, RandomSource random) {

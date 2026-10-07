@@ -2,9 +2,10 @@ package com.leclowndu93150.thaumaturge.client.golem;
 
 import com.leclowndu93150.thaumaturge.api.client.golems.GolemAccessoryAnchor;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
+import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPartModel;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -52,7 +53,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
 
     private static RenderType xrayType(Identifier texture) {
         return XRAY_TYPES.computeIfAbsent(texture, tex -> RenderType.create("tc_golem_xray_" + tex.getPath().hashCode(),
-                RenderSetup.builder(TCRenderPipelines.ENTITY_TRANSLUCENT_NO_DEPTH).withTexture("Sampler0", tex).createRenderSetup()));
+                RenderSetup.builder(TTRenderPipelines.ENTITY_TRANSLUCENT_NO_DEPTH).withTexture("Sampler0", tex).createRenderSetup()));
     }
 
     @Override
@@ -169,23 +170,25 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
 
     private static List<GolemPartModel> attachedParts(GolemProperties props, GolemPartModel.AttachPoint point) {
         List<GolemPartModel> out = new ArrayList<>();
-        addPart(out, props.head().model(), point);
-        addPart(out, props.arms().model(), point);
-        addPart(out, props.legs().model(), point);
-        addPart(out, props.addon().model(), point);
+        addPart(out, props.head(), point);
+        addPart(out, props.arms(), point);
+        addPart(out, props.legs(), point);
+        addPart(out, props.addon(), point);
         return out;
     }
 
-    private static void addPart(List<GolemPartModel> out, GolemPartModel model, GolemPartModel.AttachPoint point) {
-        if (model != null && model.attachPoint() == point) {
-            out.add(model);
+    private static void addPart(List<GolemPartModel> out, GolemPart part, GolemPartModel.AttachPoint point) {
+        for (GolemPartModel model : part.models()) {
+            if (model.attachPoint() == point) {
+                out.add(model);
+            }
         }
     }
 
     private static void renderPartModel(GolemRenderState state, GolemPartModel part, GolemPartModel.LimbSide side, PoseStack poseStack, SubmitNodeCollector collector, Identifier matTexture, boolean xray, int color) {
         var mesh = GolemMeshes.get(part.objModel());
         GolemPartRenderHook hook = GolemPartRenderHooks.hookFor(part);
-        for (TCMeshPart objectPart : mesh.parts()) {
+        for (TTMeshPart objectPart : mesh.parts()) {
             poseStack.pushPose();
             Identifier texture = part.useMaterialTextureForObjectPart(objectPart.name()) || part.texture() == null ? matTexture : part.texture();
             texture = GolemMeshes.texture(objectPart, texture);
@@ -198,7 +201,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem, 
         }
     }
 
-    private static void submitMeshPart(TCMeshPart part, PoseStack poseStack, SubmitNodeCollector collector, Identifier texture, boolean xray, int color, GolemRenderState state) {
+    private static void submitMeshPart(TTMeshPart part, PoseStack poseStack, SubmitNodeCollector collector, Identifier texture, boolean xray, int color, GolemRenderState state) {
         boolean translucent = ARGB.alpha(color) < 255;
         RenderType type = xray ? xrayType(texture) : translucent ? RenderTypes.entityTranslucent(texture) : RenderTypes.entityCutout(texture);
         int light = state.lightCoords;

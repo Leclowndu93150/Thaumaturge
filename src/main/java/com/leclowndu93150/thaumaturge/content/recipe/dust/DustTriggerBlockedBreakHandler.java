@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class DustTriggerBlockedBreakHandler {
     private DustTriggerBlockedBreakHandler() {}
 

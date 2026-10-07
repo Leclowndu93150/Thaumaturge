@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.HashCommon;
@@ -55,7 +55,7 @@ public final class PedestalRenderer<T extends BlockEntityPedestal> implements Bl
         itemModelResolver.updateForTopItem(itemState, stack, ItemDisplayContext.GROUND, pedestal.getLevel(), null, HashCommon.long2int(pedestal.getBlockPos().asLong()));
         state.item = itemState;
         state.groundLift = LegacyItemLift.bottomLift(itemState) + VOXEL;
-        state.height = pedestal.getBlockState().is(TCBlocks.PEDESTAL_ANCIENT.get()) || pedestal.getBlockState().is(TCBlocks.PEDESTAL_ELDRITCH.get()) ? ANCIENT_AND_ELDRITCH_HEIGHT : FULL_HEIGHT;
+        state.height = pedestal.getBlockState().is(TTBlocks.PEDESTAL_ANCIENT.get()) || pedestal.getBlockState().is(TTBlocks.PEDESTAL_ELDRITCH.get()) ? ANCIENT_AND_ELDRITCH_HEIGHT : FULL_HEIGHT;
         var viewEntity = Minecraft.getInstance().getCameraEntity();
         float ticks = viewEntity == null ? partialTicks : viewEntity.tickCount + partialTicks;
         state.spin = ticks % 360.0F * SPIN_DEGREES_PER_TICK;

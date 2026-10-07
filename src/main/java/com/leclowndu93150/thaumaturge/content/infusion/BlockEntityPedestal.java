@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -26,7 +26,7 @@ public class BlockEntityPedestal extends BlockEntity implements Clearable {
     private ItemStack item = ItemStack.EMPTY;
 
     public BlockEntityPedestal(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.PEDESTAL.get(), pos, state);
+        super(TTBlockEntities.PEDESTAL.get(), pos, state);
     }
 
     protected BlockEntityPedestal(BlockEntityType<?> type, BlockPos pos, BlockState state) {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.wands.IWandRodOnUpdate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public final class WandRodPrimalOnUpdate implements IWandRodOnUpdate {
             }
         } else if (player.tickCount % WandEconomy.PRIMAL_SELF_CHARGE_INTERVAL_TICKS == 0) {
             List<ResourceKey<IAspect>> depleted = new ArrayList<>();
-            for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+            for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
                 if (WandVisHelper.getVis(wand, primal) < chargeCap) {
                     depleted.add(primal);
                 }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import java.util.List;
 import net.minecraft.network.chat.Component;
@@ -10,7 +10,7 @@ import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.config.IPluginConfig;
 
 final class JadeConfig {
-    static final Identifier CATEGORY = TCIds.rl("display");
+    static final Identifier CATEGORY = TTIds.rl("display");
 
     static final Identifier NODES = option("nodes");
     static final Identifier GOLEMS = option("golems");
@@ -59,7 +59,7 @@ final class JadeConfig {
     }
 
     static Identifier option(String name) {
-        return TCIds.rl("display." + name);
+        return TTIds.rl("display." + name);
     }
 
     enum DisplayMode {

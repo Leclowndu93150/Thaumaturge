@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.misc.alumentum;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.AbstractThrownCharge;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.ChargeTrail;
 import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,12 +23,12 @@ public final class ThrownAlumentum extends AbstractThrownCharge {
     }
 
     public ThrownAlumentum(Level level, LivingEntity thrower, ItemStack stack) {
-        super(TCEntities.ALUMENTUM.get(), thrower, level, stack);
+        super(TTEntities.ALUMENTUM.get(), thrower, level, stack);
     }
 
     @Override
     protected Item getDefaultItem() {
-        return TCItems.ALUMENTUM.get();
+        return TTItems.ALUMENTUM.get();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.infusion.IInfusionStabiliser;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -69,7 +69,7 @@ public final class InfusionStabilitySurvey {
 
     public static boolean isStabiliser(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (state.is(TCBlockTags.INFUSION_STABILISERS)) {
+        if (state.is(TTBlockTags.INFUSION_STABILISERS)) {
             return true;
         }
         return state.getBlock() instanceof IInfusionStabiliser stabiliser && stabiliser.canStabiliseInfusion(level, pos);

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.EldritchGuardianModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
 import net.minecraft.client.Minecraft;
@@ -10,11 +10,14 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGuardian, EldritchGuardianRenderState, EldritchGuardianModel> {
-    private static final Identifier TEXTURE = TCIds.rl("textures/entity/eldritch_guardian.png");
+    private static final Identifier TEXTURE = TTIds.rl("textures/entity/eldritch_guardian.png");
     private static final float SHADOW = 0.5F;
     private static final float NEAR_ALPHA = 0.6F;
     private static final double NEAR_RANGE_SQ = 256.0;
@@ -22,7 +25,7 @@ public final class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGu
     private static final double FAR_RANGE_SQ = 1024.0;
 
     public EldritchGuardianRenderer(EntityRendererProvider.Context context) {
-        super(context, new EldritchGuardianModel(context.bakeLayer(TCModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
+        super(context, new EldritchGuardianModel(context.bakeLayer(TTModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
     }
 
     @Override
@@ -30,11 +33,19 @@ public final class EldritchGuardianRenderer extends MobRenderer<EntityEldritchGu
         return new EldritchGuardianRenderState();
     }
 
+    static void extractCombat(LivingEntity entity, EldritchGuardianRenderState state, float partialTicks) {
+        state.meleeSwing = entity.getAttackAnim(partialTicks);
+        HumanoidArm mainArm = entity.getMainArm();
+        state.leftHanded = (entity.swingingArm == InteractionHand.MAIN_HAND ? mainArm : mainArm.getOpposite()) == HumanoidArm.LEFT;
+        state.hurtTime = Math.max(0.0F, entity.hurtTime - partialTicks);
+    }
+
     @Override
     public void extractRenderState(EntityEldritchGuardian entity, EldritchGuardianRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
         state.armLiftL = entity.arms().leftLift();
         state.armLiftR = entity.arms().rightLift();
+        extractCombat(entity, state, partialTicks);
         Entity viewer = Minecraft.getInstance().getCameraEntity();
         if (viewer == null) {
             state.alpha = NEAR_ALPHA;

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -68,8 +68,8 @@ public final class ItemRequirementWidget {
     }
 
     private static void renderSectionHeader(GuiGraphicsExtractor graphics, int x, int y, int v) {
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + SECTION_HEADER_OFFSET_X, y + SECTION_HEADER_OFFSET_Y, (float) SECTION_HEADER_U, (float) v, SECTION_HEADER_WIDTH,
-                SECTION_HEADER_HEIGHT, SECTION_HEADER_WIDTH, SECTION_HEADER_HEIGHT, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE, SECTION_HEADER_TINT);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + SECTION_HEADER_OFFSET_X, y + SECTION_HEADER_OFFSET_Y, (float) SECTION_HEADER_U, (float) v, SECTION_HEADER_WIDTH,
+                SECTION_HEADER_HEIGHT, SECTION_HEADER_WIDTH, SECTION_HEADER_HEIGHT, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE, SECTION_HEADER_TINT);
     }
 
     public static void renderObtainHeaderTooltip(GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY) {
@@ -83,7 +83,7 @@ public final class ItemRequirementWidget {
     private static void renderSectionTooltip(GuiGraphicsExtractor graphics, Font font, int x, int y, int mouseX, int mouseY, String which) {
         int popupX = x + SECTION_POPUP_OFFSET_X;
         if (mouseX >= popupX && mouseY >= y && mouseX < popupX + SECTION_POPUP_WIDTH && mouseY < y + SECTION_POPUP_HEIGHT) {
-            graphics.setTooltipForNextFrame(font, TCTooltips.need(which), mouseX, mouseY);
+            graphics.setTooltipForNextFrame(font, TTTooltips.need(which), mouseX, mouseY);
         }
     }
 
@@ -93,8 +93,8 @@ public final class ItemRequirementWidget {
             graphics.item(stack, x, y);
         }
         if (hasItem) {
-            graphics.blit(RenderPipelines.GUI_TEXTURED, TCScreenTextures.RESEARCH_BOOK, x + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
-                    CHECKMARK_SIZE, CHECKMARK_SIZE, TCScreenTextures.TEX_SIZE, TCScreenTextures.TEX_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TTScreenTextures.RESEARCH_BOOK, x + CHECKMARK_OFFSET_X, y, (float) CHECKMARK_U, (float) CHECKMARK_V, CHECKMARK_SIZE, CHECKMARK_SIZE,
+                    CHECKMARK_SIZE, CHECKMARK_SIZE, TTScreenTextures.TEX_SIZE, TTScreenTextures.TEX_SIZE);
         }
         if (mouseX >= x && mouseY >= y && mouseX < x + ICON_SIZE && mouseY < y + ICON_SIZE && !stack.isEmpty()) {
             graphics.setTooltipForNextFrame(font, stack, mouseX, mouseY);

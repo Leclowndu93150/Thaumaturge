@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
@@ -17,7 +17,7 @@ import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOption
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,7 +37,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectWard implements FocusEffect {
-    public static final Identifier ID = TCIds.rl("ward");
+    public static final Identifier ID = TTIds.rl("ward");
 
     private static final int COMPLEXITY = 4;
     private static final float VIS_COST_PER_BLOCK = 0.5F;
@@ -54,7 +54,7 @@ public final class FocusEffectWard implements FocusEffect {
     private static final float SPARKLE_SCALE_JITTER = 0.4F;
     private static final float ZAP_VOLUME = 0.25F;
     private static final float ZAP_PITCH = 1.0F;
-    private static final ResourceKey<IAspect> ASPECT = TCAspects.ORDO;
+    private static final ResourceKey<IAspect> ASPECT = TTAspects.ORDO;
 
     @Override
     public Identifier id() {
@@ -90,7 +90,7 @@ public final class FocusEffectWard implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_ward"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_ward"), Optional.empty(), false);
     }
 
     @Override
@@ -125,7 +125,7 @@ public final class FocusEffectWard implements FocusEffect {
                 WardHandler.unward(level, partner, owner);
             }
             FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
-            level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
+            level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
             return true;
         }
         if (!WardHandler.canWard(level, pos) || (partner != null && !WardHandler.canWard(level, partner))) {
@@ -144,7 +144,7 @@ public final class FocusEffectWard implements FocusEffect {
         }
         WandVisHelper.consumeVisFromHotbar(player, visCost, ASPECT, true);
         FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
-        level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
+        level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
         return true;
     }
 

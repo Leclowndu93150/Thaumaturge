@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.effect.pipeline.TCRenderPipelines;
+import com.leclowndu93150.thaumaturge.client.effect.pipeline.TTRenderPipelines;
 import com.leclowndu93150.thaumaturge.content.entity.WispEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,10 +19,10 @@ import net.minecraft.util.LightCoordsUtil;
 import org.joml.Matrix4fc;
 
 public final class WispRenderer extends EntityRenderer<WispEntity, WispRenderState> {
-    private static final Identifier NODES = TCIds.rl("textures/misc/auranodes.png");
+    private static final Identifier NODES = TTIds.rl("textures/misc/auranodes.png");
 
     private static final RenderType NODES_TYPE = RenderType.create("tc_wisp_nodes",
-            RenderSetup.builder(TCRenderPipelines.FX_ADDITIVE_ALPHA_TEST).withTexture("Sampler0", NODES).useLightmap().createRenderSetup());
+            RenderSetup.builder(TTRenderPipelines.FX_ADDITIVE_ALPHA_TEST).withTexture("Sampler0", NODES).useLightmap().createRenderSetup());
 
     private static final int NODE_GRID = 32;
     private static final int NODE_FRAME_START = 800;

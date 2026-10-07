@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss.hierophant;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -25,7 +25,7 @@ public final class EntityHierophantSigil extends AbstractHierophantSpell {
     @Override
     protected void tickSpell(ServerLevel level, int age) {
         if (age == WARNING_TICKS) {
-            level.playSound(null, blockPosition(), TCSounds.ZAP.get(), SoundSource.HOSTILE, 1.0F, 0.65F);
+            level.playSound(null, blockPosition(), TTSounds.ZAP.get(), SoundSource.HOSTILE, 1.0F, 0.65F);
             Effects.arcBolt(level, position()).to(position().add(0, HEIGHT, 0)).color(0xB395CF).send();
         }
         if (age >= WARNING_TICKS) {

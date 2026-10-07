@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -89,7 +89,7 @@ public class JarItem extends BlockItem {
                                     player.drop(filled, false);
                                 }
                             }
-                            level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
+                            level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
                             return InteractionResult.SUCCESS;
                         }
                     }

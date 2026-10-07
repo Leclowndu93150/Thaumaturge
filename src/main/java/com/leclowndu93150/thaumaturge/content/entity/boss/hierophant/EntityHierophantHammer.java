@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss.hierophant;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -55,9 +55,9 @@ public final class EntityHierophantHammer extends AbstractHierophantSpell {
     }
 
     private void shatter(ServerLevel level, Vec3 point) {
-        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, TCBlocks.STONE_ELDRITCH_TILE.get().defaultBlockState()), point.x, point.y, point.z, SHARD_COUNT, 0.3, 0.3, 0.3, 0.12);
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, TTBlocks.STONE_ELDRITCH_TILE.get().defaultBlockState()), point.x, point.y, point.z, SHARD_COUNT, 0.3, 0.3, 0.3, 0.12);
         level.sendParticles(new DustParticleOptions(DUST_COLOR, 1.5F), point.x, point.y, point.z, SHARD_COUNT, 0.45, 0.45, 0.45, 0);
-        level.playSound(null, point.x, point.y, point.z, TCSounds.ICE.get(), SoundSource.HOSTILE, 1.2F, 0.65F);
+        level.playSound(null, point.x, point.y, point.z, TTSounds.ICE.get(), SoundSource.HOSTILE, 1.2F, 0.65F);
         discard();
     }
 }

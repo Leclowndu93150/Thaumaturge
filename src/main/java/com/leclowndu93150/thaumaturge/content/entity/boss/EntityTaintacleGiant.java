@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -62,6 +62,11 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
 
     public void setAnger(int anger) {
         this.entityData.set(DATA_AGGRO, anger);
+    }
+
+    @Override
+    public float enrage() {
+        return this.getAnger() > 0 ? 1.0F : 0.0F;
     }
 
     @Override
@@ -125,7 +130,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         if (level.getEntitiesOfClass(EntityTaintacleGiant.class, this.getBoundingBox().inflate(LONELY_RANGE), other -> other != this).isEmpty()) {
-            level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
+            level.addFreshEntity(new EntitySpecialItem(level, this.getX(), this.getY() + this.getBbHeight() / 2.0F, this.getZ(), new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
         }
     }
 

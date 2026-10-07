@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -9,9 +9,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ChampionDataMaps {
-    public static final DataMapType<EntityType<?>, Integer> CHAMPION_WHITELIST = DataMapType.builder(TCIds.rl("champion_whitelist"), Registries.ENTITY_TYPE, Codec.intRange(0, 100)).build();
+    public static final DataMapType<EntityType<?>, Integer> CHAMPION_WHITELIST = DataMapType.builder(TTIds.rl("champion_whitelist"), Registries.ENTITY_TYPE, Codec.intRange(0, 100)).build();
 
     private ChampionDataMaps() {}
 

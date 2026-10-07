@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.golem.CropUtils;
 import com.leclowndu93150.thaumaturge.content.golem.GolemInteractionHelper;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import com.mojang.serialization.MapCodec;
 import java.util.HashMap;
 import java.util.List;
@@ -108,7 +108,7 @@ public final class HarvestBehavior implements ISealBehavior {
 
     private void reap(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         BlockPos pos = task.pos();
-        FakePlayer hand = TCFakePlayer.GOLEM.at(level, golem.asEntity());
+        FakePlayer hand = TTFakePlayer.GOLEM.at(level, golem.asEntity());
         BlockState crop = level.getBlockState(pos);
         if (CropUtils.isClickableCrop(crop)) {
             Vec3 toward = Vec3.atCenterOf(pos).subtract(golem.asEntity().position());
@@ -154,7 +154,7 @@ public final class HarvestBehavior implements ISealBehavior {
         if (site == null || site.taskId() != task.id() || !level.getBlockState(pos).isAir() || !golem.hands().holds(site.seed())) {
             return;
         }
-        FakePlayer hand = TCFakePlayer.GOLEM.at(level, golem.asEntity());
+        FakePlayer hand = TTFakePlayer.GOLEM.at(level, golem.asEntity());
         BlockState soil = level.getBlockState(pos.below());
         if (site.tilled() && soil.is(BlockTags.SUBSTRATE_OVERWORLD) && !(soil.getBlock() instanceof FarmlandBlock)) {
             useOn(hand, new ItemStack(Items.DIAMOND_HOE), new BlockHitResult(Vec3.atCenterOf(pos.below()), Direction.UP, pos.below(), false));

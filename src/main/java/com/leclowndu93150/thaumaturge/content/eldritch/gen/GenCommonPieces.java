@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.eldritch.gen;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
@@ -80,11 +80,11 @@ public class GenCommonPieces {
     static void processDecorations(GenContext ctx) {
         for (BlockPos pos : ctx.decoUrn) {
             if (ctx.level.isEmptyBlock(pos.above())) {
-                ctx.level.setBlock(pos, TCBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
+                ctx.level.setBlock(pos, TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState(), 3);
                 float roll = ctx.random.nextFloat();
                 BlockState urn = roll < 0.025F
-                        ? TCBlocks.LOOT_URN_RARE.get().defaultBlockState()
-                        : roll < 0.1F ? TCBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState() : TCBlocks.LOOT_URN_COMMON.get().defaultBlockState();
+                        ? TTBlocks.LOOT_URN_RARE.get().defaultBlockState()
+                        : roll < 0.1F ? TTBlocks.LOOT_URN_UNCOMMON.get().defaultBlockState() : TTBlocks.LOOT_URN_COMMON.get().defaultBlockState();
                 ctx.level.setBlock(pos.above(), urn, 3);
             }
         }
@@ -92,17 +92,17 @@ public class GenCommonPieces {
             int exposed = countExposedSides(ctx, pos);
             if (exposed > 0 && (exposed == 1 || !isBedrockShowing(ctx, pos)) && !isAdjacentToEldritchDeco(ctx, pos)) {
                 BlockState state = ctx.random.nextInt(3) != 0
-                        ? TCBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState()
-                        : ctx.random.nextInt(8) != 0 ? TCBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState() : TCBlocks.ELDRITCH_TRAP.get().defaultBlockState();
+                        ? TTBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState()
+                        : ctx.random.nextInt(8) != 0 ? TTBlocks.ELDRITCH_STONE_CRYSTAL.get().defaultBlockState() : TTBlocks.ELDRITCH_TRAP.get().defaultBlockState();
                 ctx.level.setBlock(pos, state, 3);
                 if (state.getBlock() instanceof BlockEldritchInset) {
                     ctx.level.getChunk(pos).markPosForPostprocessing(pos);
                 }
-                if (state.is(TCBlocks.ELDRITCH_CRUST_GLOWING.get()) && ctx.random.nextInt(12) == 0) {
+                if (state.is(TTBlocks.ELDRITCH_CRUST_GLOWING.get()) && ctx.random.nextInt(12) == 0) {
                     for (Direction dir : Direction.values()) {
                         BlockPos side = pos.relative(dir);
                         if (ctx.level.isEmptyBlock(side)) {
-                            ctx.level.setBlock(side, TCBlocks.CRYSTAL_VITIUM.get().defaultBlockState(), 3);
+                            ctx.level.setBlock(side, TTBlocks.CRYSTAL_VITIUM.get().defaultBlockState(), 3);
                             break;
                         }
                     }
@@ -115,7 +115,7 @@ public class GenCommonPieces {
                 for (Direction dir : Direction.values()) {
                     BlockPos front = pos.relative(dir);
                     if (ctx.level.getBlockState(front).isAir()) {
-                        ctx.level.setBlock(front, TCBlocks.ELDRITCH_CRAB_SPAWNER.get().defaultBlockState().setValue(BlockEldritchCrabSpawner.FACING, dir), 3);
+                        ctx.level.setBlock(front, TTBlocks.ELDRITCH_CRAB_SPAWNER.get().defaultBlockState().setValue(BlockEldritchCrabSpawner.FACING, dir), 3);
                         break;
                     }
                 }
@@ -140,7 +140,7 @@ public class GenCommonPieces {
         for (Direction dir : Direction.values()) {
             if (!ctx.level.getBlockState(pos.relative(dir)).isSolidRender()) {
                 BlockState opposite = ctx.level.getBlockState(pos.relative(dir.getOpposite()));
-                if (opposite.is(Blocks.BEDROCK) || opposite.is(TCBlocks.ELDRITCH_NOTHING.get())) {
+                if (opposite.is(Blocks.BEDROCK) || opposite.is(TTBlocks.ELDRITCH_NOTHING.get())) {
                     return true;
                 }
             }
@@ -151,8 +151,8 @@ public class GenCommonPieces {
     private static boolean isAdjacentToEldritchDeco(GenContext ctx, BlockPos pos) {
         for (Direction dir : Direction.values()) {
             BlockState neighbor = ctx.level.getBlockState(pos.relative(dir));
-            if (neighbor.is(TCBlocks.ELDRITCH_CRUST_GLOWING.get()) || neighbor.is(TCBlocks.ELDRITCH_STONE_CRYSTAL.get()) || neighbor.is(TCBlocks.ELDRITCH_TRAP.get())
-                    || neighbor.is(TCBlocks.ELDRITCH_CRAB_SPAWNER.get())) {
+            if (neighbor.is(TTBlocks.ELDRITCH_CRUST_GLOWING.get()) || neighbor.is(TTBlocks.ELDRITCH_STONE_CRYSTAL.get()) || neighbor.is(TTBlocks.ELDRITCH_TRAP.get())
+                    || neighbor.is(TTBlocks.ELDRITCH_CRAB_SPAWNER.get())) {
                 return true;
             }
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity.taint;
 
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeModel;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,7 +14,7 @@ public final class TaintSporeRenderer extends AbstractTaintSporeRenderer<EntityT
     private static final float MIN_SCALE = 0.01F;
 
     public TaintSporeRenderer(EntityRendererProvider.Context context) {
-        super(context, new TaintSporeModel(context.bakeLayer(TCModelLayers.TAINT_SPORE)));
+        super(context, new TaintSporeModel(context.bakeLayer(TTModelLayers.TAINT_SPORE)));
     }
 
     @Override

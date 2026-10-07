@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.block;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
@@ -56,7 +56,7 @@ public abstract class AbstractTaintBlock extends Block implements ITaintBlock {
             return;
         }
         if (serverLevel.getRandom().nextInt(WALK_EFFECT_CHANCE) == 0) {
-            living.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
+            living.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
         }
     }
 }

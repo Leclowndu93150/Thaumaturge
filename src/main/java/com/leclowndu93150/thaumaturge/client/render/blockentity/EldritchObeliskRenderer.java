@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchObelisk;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -25,13 +25,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockEntityEldritchObelisk, EldritchObeliskRenderState> {
-    public static final Identifier CAP_MODEL = TCIds.rl("models/mesh/obelisk_cap.tcmesh");
+    public static final Identifier CAP_MODEL = TTIds.rl("models/mesh/obelisk_cap.ttmesh");
     public static final String CAP_PART = "Cap";
 
-    private static final Identifier SIDE_TEXTURE = TCIds.rl("textures/entity/obelisk_side.png");
-    private static final Identifier SIDE_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_side_2.png");
-    private static final Identifier CAP_TEXTURE = TCIds.rl("textures/entity/obelisk_cap.png");
-    private static final Identifier CAP_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_cap_2.png");
+    private static final Identifier SIDE_TEXTURE = TTIds.rl("textures/entity/obelisk_side.png");
+    private static final Identifier SIDE_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_side_2.png");
+    private static final Identifier CAP_TEXTURE = TTIds.rl("textures/entity/obelisk_cap.png");
+    private static final Identifier CAP_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_cap_2.png");
 
     private static final float COLUMN_BASE = 1.0F;
     private static final int COLUMN_HEIGHT = 3;
@@ -78,18 +78,18 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
         poseStack.pushPose();
         poseStack.translate(0.5F, base, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        submitCap(poseStack, collector, capType, state.lightCoords);
+        submitCap(CAP_MODEL, poseStack, collector, capType, state.lightCoords);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(0.5F, top, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        submitCap(poseStack, collector, capType, state.lightCoords);
+        submitCap(CAP_MODEL, poseStack, collector, capType, state.lightCoords);
         poseStack.popPose();
     }
 
-    static void submitCap(PoseStack poseStack, SubmitNodeCollector collector, RenderType type, int light) {
-        TCMesh mesh = GolemMeshes.get(CAP_MODEL);
-        for (TCMeshPart part : mesh.parts()) {
+    static void submitCap(Identifier model, PoseStack poseStack, SubmitNodeCollector collector, RenderType type, int light) {
+        TTMesh mesh = GolemMeshes.get(model);
+        for (TTMeshPart part : mesh.parts()) {
             if (CAP_PART.equals(part.name())) {
                 collector.submitCustomGeometry(poseStack, type, (pose, buffer) -> GolemMeshes.renderPart(part, pose, buffer, light, -1));
             }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,7 +29,7 @@ import net.neoforged.neoforge.registries.datamaps.AdvancedDataMapType;
 import net.neoforged.neoforge.registries.datamaps.DataMapValueRemover;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chance) {
 
     private static final Codec<InfernalBonus> CODEC = RecordCodecBuilder
@@ -38,7 +38,7 @@ public record InfernalBonus(HolderSet<Item> items, IntProvider count, float chan
                     Codec.floatRange(0, 1).optionalFieldOf("chance", 1.0f).forGetter(InfernalBonus::chance)).apply(instance, InfernalBonus::new));
 
     public static final AdvancedDataMapType<Item, List<InfernalBonus>, Remover> DATA_MAP = AdvancedDataMapType
-            .builder(Identifier.fromNamespaceAndPath(TCIds.MODID, "infernal_bonus"), Registries.ITEM, CODEC.listOf(1, 64)).merger((_, _, fv, _, sv) -> Stream.concat(fv.stream(), sv.stream()).toList())
+            .builder(Identifier.fromNamespaceAndPath(TTIds.MODID, "infernal_bonus"), Registries.ITEM, CODEC.listOf(1, 64)).merger((_, _, fv, _, sv) -> Stream.concat(fv.stream(), sv.stream()).toList())
             .remover(Remover.CODEC).synced(CODEC.listOf(1, 64), false).build();
 
     @SubscribeEvent

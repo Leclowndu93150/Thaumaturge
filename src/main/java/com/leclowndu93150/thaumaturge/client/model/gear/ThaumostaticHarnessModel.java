@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public final class ThaumostaticHarnessModel extends AbstractTCArmorModel {
+public final class ThaumostaticHarnessModel extends AbstractTTArmorModel {
     private static final int TEX_WIDTH = 64;
     private static final int TEX_HEIGHT = 64;
     private static final CubeDeformation SHELL_INFLATE = new CubeDeformation(0.5F);

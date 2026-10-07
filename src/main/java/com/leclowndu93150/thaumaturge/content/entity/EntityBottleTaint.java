@@ -7,10 +7,10 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,22 +54,22 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
     }
 
     public EntityBottleTaint(Level level, LivingEntity owner, ItemStack stack) {
-        super(TCEntities.BOTTLE_TAINT.get(), owner, level, stack);
+        super(TTEntities.BOTTLE_TAINT.get(), owner, level, stack);
     }
 
     @Override
     protected Item getDefaultItem() {
-        return TCItems.BOTTLE_TAINT.get();
+        return TTItems.BOTTLE_TAINT.get();
     }
 
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 3) {
             for (int a = 0; a < SPLOSION_COUNT; a++) {
-                this.level().addParticle(TCParticles.TAINT_SPLOSION.get(), this.getX(), this.getY() + this.random.nextFloat() * this.getBbHeight(), this.getZ(), this.random.nextDouble() * 2.0 - 1.0,
+                this.level().addParticle(TTParticles.TAINT_SPLOSION.get(), this.getX(), this.getY() + this.random.nextFloat() * this.getBbHeight(), this.getZ(), this.random.nextDouble() * 2.0 - 1.0,
                         this.random.nextDouble() * 2.0 - 1.0, this.random.nextDouble() * 2.0 - 1.0);
             }
-            ItemParticleOption crack = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(new ItemStack(TCItems.BOTTLE_TAINT.get())));
+            ItemParticleOption crack = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(new ItemStack(TTItems.BOTTLE_TAINT.get())));
             for (int k = 0; k < BOTTLE_CRACK_COUNT; k++) {
                 this.level().addParticle(crack, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.15, this.random.nextDouble() * 0.2, this.random.nextGaussian() * 0.15);
             }
@@ -95,7 +95,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
     private void applyAreaEffect(ServerLevel server) {
         AABB box = new AABB(this.position(), this.position()).inflate(SPLASH_RADIUS);
         for (LivingEntity target : server.getEntitiesOfClass(LivingEntity.class, box, e -> !MobTraits.isTainted(e) && !e.is(EntityTypeTags.UNDEAD))) {
-            target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
+            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true));
         }
     }
 

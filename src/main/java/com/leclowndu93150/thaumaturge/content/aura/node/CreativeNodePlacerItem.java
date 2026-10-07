@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -33,7 +33,7 @@ public final class CreativeNodePlacerItem extends Item {
         }
         TypedEntityData<BlockEntityType<?>> nodeData = context.getItemInHand().get(DataComponents.BLOCK_ENTITY_DATA);
         if (nodeData != null) {
-            if (nodeData.type() != TCBlockEntities.NODE.get() || !level.setBlock(pos, TCBlocks.NODE.get().defaultBlockState(), 3) || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)) {
+            if (nodeData.type() != TTBlockEntities.NODE.get() || !level.setBlock(pos, TTBlocks.NODE.get().defaultBlockState(), 3) || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)) {
                 return InteractionResult.FAIL;
             }
             nodeData.loadInto(node, level.registryAccess());

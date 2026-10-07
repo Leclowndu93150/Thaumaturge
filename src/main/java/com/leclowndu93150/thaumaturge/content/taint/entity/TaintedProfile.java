@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
@@ -28,6 +28,6 @@ public record TaintedProfile(Map<Holder<Attribute>, Double> attributes, boolean 
                     ResourceKey.codec(Registries.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(TaintedProfile::lootTable)).apply(instance, TaintedProfile::new));
 
     public static @Nullable TaintedProfile of(EntityType<?> type) {
-        return BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).getData(TCDataMaps.TAINTED_PROFILE);
+        return BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(type).getData(TTDataMaps.TAINTED_PROFILE);
     }
 }

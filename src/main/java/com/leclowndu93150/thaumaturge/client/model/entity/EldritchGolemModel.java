@@ -11,141 +11,139 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public final class EldritchGolemModel extends EntityModel<EldritchGolemRenderState> {
-    private static final int TEX_WIDTH = 128;
-    private static final int TEX_HEIGHT = 64;
-    private static final float CLOAK1_TILT = 0.1396263F;
-    private static final float CLOAK2_TILT = 0.3069452F;
-    private static final float CLOAK3_TILT = 0.4465716F;
-    private static final float HEAD_TILT = -0.1047198F;
-    private static final float COLLAR_TILT = 0.837758F;
-    private static final float FRONTCLOTH0_TILT = 0.1745329F;
-    private static final float FRONTCLOTH1_TILT = -0.1047198F;
-    private static final float FRONTCLOTH2_TILT = -0.3316126F;
-    private static final float ARM_TILT = 0.1047198F;
-    private static final float SHOULDER_TILT = 1.186824F;
-    private static final float WAIST_TILT = 0.1396263F;
-    private static final float SPAWN_HEAD_DIVISOR = 2.0F;
-    private static final float ATTACK_SWING_BASE = -2.0F;
-    private static final float ATTACK_SWING_SCALE = 1.5F;
-    private static final float ATTACK_SWING_PERIOD = 10.0F;
+    private static final int TEXTURE_WIDTH = 256;
+    private static final int TEXTURE_HEIGHT = 128;
+    private static final float SHOULDER_TILT = 0.31416F;
+    private static final float CORE_TILT = 0.7854F;
 
     private final ModelPart head;
-    private final ModelPart head2;
-    private final ModelPart armL;
-    private final ModelPart armR;
-    private final ModelPart legL;
-    private final ModelPart legR;
-    private final ModelPart frontcloth1;
-    private final ModelPart frontcloth2;
-    private final ModelPart cloak1;
-    private final ModelPart cloak2;
-    private final ModelPart cloak3;
+    private final ModelPart core;
+    private final ModelPart leftArm;
+    private final ModelPart rightArm;
+    private final ModelPart leftLeg;
+    private final ModelPart rightLeg;
+    private final ModelPart tabard;
+    private final ModelPart tabardTip;
+    private final ModelPart cloak;
+    private final ModelPart cloakTip;
+
+    public enum Material {
+        BODY, CORE
+    }
 
     public EldritchGolemModel(ModelPart root) {
+        this(root, Material.BODY);
+    }
+
+    public EldritchGolemModel(ModelPart root, Material material) {
         super(root);
-        this.head = root.getChild("head");
-        this.head2 = root.getChild("head2");
-        this.armL = root.getChild("arm_l");
-        this.armR = root.getChild("arm_r");
-        this.legL = root.getChild("leg_l");
-        this.legR = root.getChild("leg_r");
-        this.frontcloth1 = root.getChild("frontcloth1");
-        this.frontcloth2 = root.getChild("frontcloth2");
-        this.cloak1 = root.getChild("cloak1");
-        this.cloak2 = root.getChild("cloak2");
-        this.cloak3 = root.getChild("cloak3");
+        ModelPart body = root.getChild("body");
+        head = body.getChild("head_shell");
+        core = body.getChild("phase_two_core");
+        leftArm = body.getChild("left_arm");
+        rightArm = body.getChild("right_arm");
+        leftLeg = root.getChild("left_leg");
+        rightLeg = root.getChild("right_leg");
+        tabard = body.getChild("tabard");
+        tabardTip = tabard.getChild("tabard_tip");
+        cloak = body.getChild("cloak");
+        cloakTip = cloak.getChild("cloak_tip");
+        boolean coreOnly = material == Material.CORE;
+        if (coreOnly) {
+            for (ModelPart part : root.getAllParts()) {
+                part.skipDraw = true;
+            }
+        }
+        head.getChild("core_low_eye").skipDraw = !coreOnly;
+        core.getChild("core_exposed_beam_core").skipDraw = !coreOnly;
     }
 
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("cloak1", CubeListBuilder.create().texOffs(0, 47).addBox(-5.0F, 1.5F, 4.0F, 10, 12, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, CLOAK1_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("cloak3", CubeListBuilder.create().texOffs(0, 37).addBox(-5.0F, 17.5F, -0.8F, 10, 4, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, CLOAK3_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("cloak2", CubeListBuilder.create().texOffs(0, 59).addBox(-5.0F, 13.5F, 1.7F, 10, 4, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, CLOAK2_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("cloak_cl", CubeListBuilder.create().texOffs(0, 43).addBox(3.0F, 0.5F, 2.0F, 2, 1, 3), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, CLOAK1_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("cloak_cr", CubeListBuilder.create().texOffs(0, 43).addBox(-5.0F, 0.5F, 2.0F, 2, 1, 3), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, CLOAK1_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("head", CubeListBuilder.create().texOffs(47, 12).addBox(-3.5F, -6.0F, -2.5F, 7, 7, 5), PartPose.offsetAndRotation(0.0F, 4.5F, -3.8F, HEAD_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("head2", CubeListBuilder.create().texOffs(26, 16).addBox(-2.0F, -2.0F, -2.0F, 4, 4, 4), PartPose.offsetAndRotation(0.0F, 0.0F, -5.0F, HEAD_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("collar_l", CubeListBuilder.create().texOffs(75, 50).addBox(3.5F, -0.5F, -7.0F, 1, 4, 10), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, COLLAR_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("collar_r", CubeListBuilder.create().texOffs(67, 50).addBox(-4.5F, -0.5F, -7.0F, 1, 4, 10), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, COLLAR_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("collar_b", CubeListBuilder.create().texOffs(77, 59).addBox(-3.5F, -0.5F, 2.0F, 7, 4, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, COLLAR_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("collar_f", CubeListBuilder.create().texOffs(77, 59).addBox(-3.5F, -0.5F, -7.0F, 7, 4, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, COLLAR_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("collar_black", CubeListBuilder.create().texOffs(22, 0).addBox(-3.5F, 0.0F, -6.0F, 7, 1, 8), PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, COLLAR_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("frontcloth0", CubeListBuilder.create().texOffs(114, 52).addBox(-3.0F, 3.2F, -3.5F, 6, 10, 1),
-                PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, FRONTCLOTH0_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("frontcloth1", CubeListBuilder.create().texOffs(114, 39).addBox(-1.0F, 1.5F, -3.5F, 6, 6, 1),
-                PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, FRONTCLOTH1_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("frontcloth2", CubeListBuilder.create().texOffs(114, 47).addBox(-1.0F, 8.5F, -1.5F, 6, 3, 1),
-                PartPose.offsetAndRotation(-2.0F, 11.0F, 0.0F, FRONTCLOTH2_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild("torso", CubeListBuilder.create().texOffs(34, 45).mirror().addBox(-5.0F, 2.5F, -3.0F, 10, 10, 6),
-                PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, FRONTCLOTH0_TILT, 0.0F, 0.0F));
-        PartDefinition armR = root.addOrReplaceChild("arm_r", CubeListBuilder.create().texOffs(78, 32).addBox(-3.5F, 1.5F, -2.0F, 4, 13, 5),
-                PartPose.offsetAndRotation(-5.0F, 3.0F, -2.0F, 0.0F, 0.0F, ARM_TILT));
-        armR.addOrReplaceChild("shoulder_r", CubeListBuilder.create().texOffs(0, 0).addBox(-4.3F, -1.0F, -3.0F, 4, 5, 7), PartPose.rotation(0.0F, 0.0F, SHOULDER_TILT));
-        armR.addOrReplaceChild("shoulder_r0", CubeListBuilder.create().texOffs(56, 31).addBox(-4.5F, -1.5F, -2.5F, 5, 6, 6), PartPose.ZERO);
-        armR.addOrReplaceChild("shoulder_r1", CubeListBuilder.create().texOffs(0, 23).addBox(-3.3F, 4.0F, -2.5F, 1, 2, 6), PartPose.rotation(0.0F, 0.0F, SHOULDER_TILT));
-        armR.addOrReplaceChild("shoulder_r2", CubeListBuilder.create().texOffs(0, 12).addBox(-2.3F, 4.0F, -3.0F, 2, 3, 7), PartPose.rotation(0.0F, 0.0F, SHOULDER_TILT));
-        PartDefinition armL = root.addOrReplaceChild("arm_l", CubeListBuilder.create().texOffs(78, 32).mirror().addBox(-0.5F, 1.5F, -2.0F, 4, 13, 5),
-                PartPose.offsetAndRotation(5.0F, 3.0F, -2.0F, 0.0F, 0.0F, -ARM_TILT));
-        armL.addOrReplaceChild("shoulder_l", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.3F, -1.0F, -3.0F, 4, 5, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDER_TILT));
-        armL.addOrReplaceChild("shoulder_l0", CubeListBuilder.create().texOffs(56, 31).mirror().addBox(-0.5F, -1.5F, -2.5F, 5, 6, 6), PartPose.ZERO);
-        armL.addOrReplaceChild("shoulder_l1", CubeListBuilder.create().texOffs(0, 23).mirror().addBox(2.3F, 4.0F, -2.5F, 1, 2, 6), PartPose.rotation(0.0F, 0.0F, -SHOULDER_TILT));
-        armL.addOrReplaceChild("shoulder_l2", CubeListBuilder.create().texOffs(0, 12).mirror().addBox(0.3F, 4.0F, -3.0F, 2, 3, 7), PartPose.rotation(0.0F, 0.0F, -SHOULDER_TILT));
-        root.addOrReplaceChild("backpanel_r1", CubeListBuilder.create().texOffs(96, 7).addBox(0.0F, 2.5F, -2.5F, 2, 2, 5), PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, 0.0F, 0.0F, WAIST_TILT));
-        root.addOrReplaceChild("waist_r1", CubeListBuilder.create().texOffs(96, 14).addBox(-3.0F, -0.5F, -2.5F, 5, 3, 5), PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, 0.0F, 0.0F, WAIST_TILT));
-        root.addOrReplaceChild("waist_r2", CubeListBuilder.create().texOffs(116, 13).addBox(-3.0F, 2.5F, -2.5F, 1, 4, 5), PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, 0.0F, 0.0F, WAIST_TILT));
-        root.addOrReplaceChild("waist_r3", CubeListBuilder.create().texOffs(114, 5).mirror().addBox(-2.0F, 2.5F, -2.5F, 2, 3, 5),
-                PartPose.offsetAndRotation(-2.0F, 12.0F, 0.0F, 0.0F, 0.0F, WAIST_TILT));
-        root.addOrReplaceChild("leg_r", CubeListBuilder.create().texOffs(79, 19).addBox(-2.5F, 2.5F, -2.0F, 4, 9, 4), PartPose.offset(-2.0F, 12.5F, 0.0F));
-        root.addOrReplaceChild("waist_l1", CubeListBuilder.create().texOffs(96, 14).mirror().addBox(-2.0F, -0.5F, -2.5F, 5, 3, 5),
-                PartPose.offsetAndRotation(2.0F, 12.0F, 0.0F, 0.0F, 0.0F, -WAIST_TILT));
-        root.addOrReplaceChild("waist_l2", CubeListBuilder.create().texOffs(116, 13).mirror().addBox(2.0F, 2.5F, -2.5F, 1, 4, 5),
-                PartPose.offsetAndRotation(2.0F, 12.0F, 0.0F, 0.0F, 0.0F, -WAIST_TILT));
-        root.addOrReplaceChild("waist_l3", CubeListBuilder.create().texOffs(114, 5).mirror().addBox(0.0F, 2.5F, -2.5F, 2, 3, 5),
-                PartPose.offsetAndRotation(2.0F, 12.0F, 0.0F, 0.0F, 0.0F, -WAIST_TILT));
-        root.addOrReplaceChild("backpanel_l1", CubeListBuilder.create().texOffs(96, 7).mirror().addBox(-2.0F, 2.5F, -2.5F, 2, 2, 5),
-                PartPose.offsetAndRotation(2.0F, 12.0F, 0.0F, 0.0F, 0.0F, -WAIST_TILT));
-        root.addOrReplaceChild("leg_l", CubeListBuilder.create().texOffs(79, 19).mirror().addBox(-1.5F, 2.5F, -2.0F, 4, 9, 4), PartPose.offset(2.0F, 12.5F, 0.0F));
-        return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
+        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition headShell = body.addOrReplaceChild("head_shell", CubeListBuilder.create(), PartPose.offset(0.0F, -22.0F, 0.0F));
+        headShell.addOrReplaceChild("metal_recessed_head", CubeListBuilder.create().texOffs(52, 62).addBox(0.0F, -10.0F, 0.0F, 8.0F, 10.0F, 7.0F), PartPose.offset(-4.0F, 2.0F, -6.0F));
+        headShell.addOrReplaceChild("stone_stone_brow", CubeListBuilder.create().texOffs(112, 62).addBox(0.0F, -4.0F, 0.0F, 10.0F, 4.0F, 9.0F), PartPose.offset(-5.0F, -5.0F, -7.0F));
+        headShell.addOrReplaceChild("core_low_eye", CubeListBuilder.create().texOffs(243, 62).addBox(0.0F, -2.0F, 0.0F, 4.0F, 2.0F, 0.5F), PartPose.offset(-2.0F, -1.0F, -6.5F));
+        PartDefinition phaseTwoCore = body.addOrReplaceChild("phase_two_core", CubeListBuilder.create(), PartPose.offset(0.0F, -24.0F, 0.0F));
+        phaseTwoCore.addOrReplaceChild("core_exposed_beam_core", CubeListBuilder.create().texOffs(168, 85).addBox(-4.0F, -4.0F, -2.0F, 8.0F, 8.0F, 4.0F),
+                PartPose.offsetAndRotation(0.0F, -1.0F, -1.0F, 0.0F, 0.0F, -CORE_TILT));
+        PartDefinition leftArm = body.addOrReplaceChild("left_arm", CubeListBuilder.create(), PartPose.offset(13.0F, -17.0F, 0.0F));
+        leftArm.addOrReplaceChild("stone_hunched_shoulder", CubeListBuilder.create().texOffs(133, 1).addBox(-1.0F, -11.0F, -6.0F, 10.0F, 13.0F, 12.0F),
+                PartPose.offsetAndRotation(-1.0F, 3.0F, 2.0F, 0.0F, 0.0F, SHOULDER_TILT));
+        leftArm.addOrReplaceChild("dark_upper_arm", CubeListBuilder.create().texOffs(68, 37).addBox(0.0F, -15.0F, 0.0F, 6.0F, 15.0F, 7.0F), PartPose.offset(0.0F, 16.0F, -2.0F));
+        leftArm.addOrReplaceChild("stone_massive_fist", CubeListBuilder.create().texOffs(84, 1).addBox(0.0F, -18.0F, 0.0F, 11.0F, 18.0F, 12.0F), PartPose.offset(-2.5F, 31.0F, -8.0F));
+        leftArm.addOrReplaceChild("metal_fist_cuff", CubeListBuilder.create().texOffs(1, 62).addBox(0.0F, -4.2F, 0.0F, 11.4F, 4.2F, 12.4F), PartPose.offset(-2.7F, 17.0F, -8.2F));
+        PartDefinition rightArm = body.addOrReplaceChild("right_arm", CubeListBuilder.create(), PartPose.offset(-13.0F, -17.0F, 0.0F));
+        rightArm.addOrReplaceChild("stone_hunched_shoulder", CubeListBuilder.create().texOffs(133, 1).addBox(-9.0F, -11.0F, -6.0F, 10.0F, 13.0F, 12.0F),
+                PartPose.offsetAndRotation(1.0F, 3.0F, 2.0F, 0.0F, 0.0F, -SHOULDER_TILT));
+        rightArm.addOrReplaceChild("dark_upper_arm", CubeListBuilder.create().texOffs(68, 37).addBox(0.0F, -15.0F, 0.0F, 6.0F, 15.0F, 7.0F), PartPose.offset(-6.0F, 16.0F, -2.0F));
+        rightArm.addOrReplaceChild("stone_massive_fist", CubeListBuilder.create().texOffs(84, 1).addBox(0.0F, -18.0F, 0.0F, 11.0F, 18.0F, 12.0F), PartPose.offset(-8.5F, 31.0F, -8.0F));
+        rightArm.addOrReplaceChild("metal_fist_cuff", CubeListBuilder.create().texOffs(1, 62).addBox(0.0F, -4.2F, 0.0F, 11.4F, 4.2F, 12.4F), PartPose.offset(-8.7F, 17.0F, -8.2F));
+        body.addOrReplaceChild("dark_core_socket", CubeListBuilder.create().texOffs(207, 62).addBox(0.0F, -3.0F, 0.0F, 6.0F, 3.0F, 4.0F), PartPose.offset(-3.0F, -20.0F, -2.0F));
+        body.addOrReplaceChild("stone_barrel_torso", CubeListBuilder.create().texOffs(1, 1).addBox(0.0F, -19.0F, 0.0F, 26.0F, 19.0F, 14.0F), PartPose.offset(-13.0F, 1.0F, -5.0F));
+        body.addOrReplaceChild("stone_upper_back", CubeListBuilder.create().texOffs(1, 37).addBox(0.0F, -12.0F, 0.0F, 22.0F, 12.0F, 10.0F), PartPose.offset(-11.0F, -13.0F, 0.0F));
+        body.addOrReplaceChild("metal_waist_binding", CubeListBuilder.create().texOffs(97, 37).addBox(-2.25F, -6.0F, -0.25F, 26.5F, 6.0F, 14.5F), PartPose.offset(-11.0F, 4.0F, -5.0F));
+        body.addOrReplaceChild("dark_chest_plaque", CubeListBuilder.create().texOffs(153, 62).addBox(0.0F, -9.0F, 0.0F, 14.0F, 9.0F, 2.0F), PartPose.offset(-7.0F, -6.0F, -7.0F));
+        body.addOrReplaceChild("brass_chest_lock", CubeListBuilder.create().texOffs(230, 62).addBox(0.0F, -5.0F, 0.0F, 4.0F, 5.0F, 1.0F), PartPose.offset(-2.0F, -8.0F, -8.0F));
+        PartDefinition tabard = body.addOrReplaceChild("tabard", CubeListBuilder.create(), PartPose.offset(0.0F, -8.0F, -7.3F));
+        tabard.addOrReplaceChild("cloth_tabard_upper", CubeListBuilder.create().texOffs(1, 85).addBox(-6.0F, 0.0F, -0.5F, 12.0F, 12.0F, 1.0F), PartPose.ZERO);
+        PartDefinition tabardTip = tabard.addOrReplaceChild("tabard_tip", CubeListBuilder.create(), PartPose.offset(0.0F, 12.0F, 0.0F));
+        tabardTip.addOrReplaceChild("cloth_tabard_lower", CubeListBuilder.create().texOffs(31, 85).addBox(-6.0F, 0.0F, -0.5F, 12.0F, 12.0F, 1.0F), PartPose.ZERO);
+        PartDefinition cloak = body.addOrReplaceChild("cloak", CubeListBuilder.create(), PartPose.offset(0.0F, -24.0F, 10.6F));
+        cloak.addOrReplaceChild("cloth_cloak_upper", CubeListBuilder.create().texOffs(61, 85).addBox(-11.0F, 0.0F, 0.0F, 22.0F, 18.0F, 1.0F), PartPose.ZERO);
+        PartDefinition cloakTip = cloak.addOrReplaceChild("cloak_tip", CubeListBuilder.create(), PartPose.offset(0.0F, 18.0F, 0.0F));
+        cloakTip.addOrReplaceChild("cloth_cloak_lower", CubeListBuilder.create().texOffs(111, 85).addBox(-11.0F, 0.0F, 0.0F, 22.0F, 18.0F, 1.0F), PartPose.ZERO);
+        PartDefinition leftLeg = root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.offset(6.0F, 2.0F, 0.0F));
+        leftLeg.addOrReplaceChild("dark_hip_joint", CubeListBuilder.create().texOffs(85, 62).addBox(0.0F, -9.0F, 0.0F, 6.0F, 9.0F, 6.0F), PartPose.offset(-2.0F, 7.0F, -2.0F));
+        leftLeg.addOrReplaceChild("stone_short_shin", CubeListBuilder.create().texOffs(180, 1).addBox(0.0F, -15.0F, 0.0F, 8.0F, 15.0F, 9.0F), PartPose.offset(-3.0F, 19.0F, -4.0F));
+        leftLeg.addOrReplaceChild("metal_wide_foot", CubeListBuilder.create().texOffs(182, 37).addBox(0.0F, -6.0F, 0.0F, 10.0F, 6.0F, 13.2F), PartPose.offset(-4.0F, 22.0F, -8.0F));
+        PartDefinition rightLeg = root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.offset(-6.0F, 2.0F, 0.0F));
+        rightLeg.addOrReplaceChild("dark_hip_joint", CubeListBuilder.create().texOffs(85, 62).addBox(0.0F, -9.0F, 0.0F, 6.0F, 9.0F, 6.0F), PartPose.offset(-4.0F, 7.0F, -2.0F));
+        rightLeg.addOrReplaceChild("stone_short_shin", CubeListBuilder.create().texOffs(180, 1).addBox(0.0F, -15.0F, 0.0F, 8.0F, 15.0F, 9.0F), PartPose.offset(-5.0F, 19.0F, -4.0F));
+        rightLeg.addOrReplaceChild("metal_wide_foot", CubeListBuilder.create().texOffs(182, 37).addBox(0.0F, -6.0F, 0.0F, 10.0F, 6.0F, 13.2F), PartPose.offset(-6.0F, 22.0F, -8.0F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 
     @Override
     public void setupAnim(EldritchGolemRenderState state) {
         super.setupAnim(state);
-        this.head.visible = !state.headless;
-        this.head2.visible = state.headless;
-        if (state.spawnTimer > 0) {
-            this.head.yRot = 0.0F;
-            this.head.xRot = state.spawnTimer / SPAWN_HEAD_DIVISOR * Mth.DEG_TO_RAD;
-        } else {
-            this.head.yRot = state.yRot / 4.0F * Mth.DEG_TO_RAD;
-            this.head.xRot = HEAD_TILT + state.xRot / 2.0F * Mth.DEG_TO_RAD;
-            this.head2.yRot = state.yRot * Mth.DEG_TO_RAD;
-            this.head2.xRot = HEAD_TILT + state.xRot * Mth.DEG_TO_RAD;
-        }
-        float limbPos = state.walkAnimationPos;
-        float limbSpeed = state.walkAnimationSpeed;
-        this.legR.xRot = Mth.cos(limbPos * 0.4662F) * 1.4F * limbSpeed;
-        this.legL.xRot = Mth.cos(limbPos * 0.4662F + Mth.PI) * 1.4F * limbSpeed;
-        float a = Mth.cos(limbPos * 0.44F) * 1.4F * limbSpeed;
-        float b = Mth.cos(limbPos * 0.44F + Mth.PI) * 1.4F * limbSpeed;
-        float c = Math.min(a, b);
-        this.frontcloth1.xRot = c + FRONTCLOTH1_TILT;
-        this.frontcloth2.xRot = c + FRONTCLOTH2_TILT;
-        this.cloak1.xRot = -c / 3.0F + CLOAK1_TILT;
-        this.cloak2.xRot = -c / 3.0F + CLOAK2_TILT;
-        this.cloak3.xRot = -c / 3.0F + CLOAK3_TILT;
-        if (state.attackTime > 0.0F) {
-            float swing = ATTACK_SWING_BASE + ATTACK_SWING_SCALE * triangleWave(state.attackTime, ATTACK_SWING_PERIOD);
-            this.armR.xRot = swing;
-            this.armL.xRot = swing;
-        } else {
-            this.armR.xRot = Mth.cos(limbPos * 0.4F + Mth.PI) * 2.0F * limbSpeed * 0.5F;
-            this.armL.xRot = Mth.cos(limbPos * 0.4F) * 2.0F * limbSpeed * 0.5F;
+        head.visible = !state.headless;
+        core.visible = state.headless;
+        head.yRot = state.yRot * Mth.DEG_TO_RAD * 0.35F;
+        head.xRot = state.xRot * Mth.DEG_TO_RAD * 0.5F;
+        core.yRot = state.yRot * Mth.DEG_TO_RAD;
+        core.xRot = state.xRot * Mth.DEG_TO_RAD;
+        float stride = Mth.cos(state.walkAnimationPos * 0.4662F) * Math.min(state.walkAnimationSpeed, 1.0F);
+        rightLeg.xRot = stride * 0.65F;
+        leftLeg.xRot = -rightLeg.xRot;
+        rightArm.xRot = -stride * 0.45F;
+        leftArm.xRot = stride * 0.45F;
+        float legAngle = Math.abs(rightLeg.xRot);
+        root.y = -Math.max(0.0F, 22.0F * Mth.cos(legAngle) + 8.0F * Mth.sin(legAngle) - 22.0F);
+        float idle = Mth.sin(state.ageInTicks * 0.06F) * 0.015F;
+        float clothSwing = Math.abs(stride);
+        tabard.xRot = -0.12F - clothSwing * 0.55F + idle;
+        tabardTip.xRot = -0.06F - clothSwing * 0.12F + idle * 0.7F;
+        cloak.xRot = 0.10F + clothSwing * 0.50F + idle;
+        cloakTip.xRot = 0.06F + clothSwing * 0.10F + idle * 1.4F;
+        leftArm.zRot = -idle;
+        rightArm.zRot = idle;
+        if (state.spawnTimer > 0.0F) {
+            float awakening = Mth.clamp(state.spawnTimer / 100.0F, 0.0F, 1.0F);
+            head.xRot += awakening * 0.7F;
+            leftArm.xRot = rightArm.xRot = -awakening * 0.3F;
+        } else if (state.attackTime > 0.0F) {
+            float progress = 1.0F - Mth.clamp(state.attackTime / 10.0F, 0.0F, 1.0F);
+            float swing = progress < 0.25F
+                    ? easedSwing(progress / 0.25F, 0.0F, -2.25F)
+                    : progress < 0.6F ? easedSwing((progress - 0.25F) / 0.35F, -2.25F, -0.3F) : easedSwing((progress - 0.6F) / 0.4F, -0.3F, 0.0F);
+            leftArm.xRot = rightArm.xRot = swing;
         }
     }
 
-    private static float triangleWave(float progress, float period) {
-        return (Math.abs(progress % period - period * 0.5F) - period * 0.25F) / (period * 0.25F);
+    private static float easedSwing(float progress, float start, float end) {
+        return Mth.lerp(progress * progress * (3.0F - 2.0F * progress), start, end);
     }
 }
