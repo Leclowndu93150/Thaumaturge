@@ -34,6 +34,7 @@ import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 public abstract class FluxGooFluid extends BaseFlowingFluid {
     private static final int QUANTA_PER_BLOCK = 8;
+    private static final double MAX_DRAG = 0.5;
     private static final int GOO_DENSITY = 8;
     private static final int SLIME_SPAWN_CHANCE = 25;
     private static final int TAINT_CONVERSION_CHANCE = 50;
@@ -360,10 +361,12 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
             }
             return;
         }
-        float quanta = amount / (float) QUANTA_PER_BLOCK;
-        Vec3 motion = entity.getDeltaMovement();
-        double damp = 1.0 - quanta;
-        entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
+        if (pos.equals(entity.blockPosition())) {
+            float quanta = amount / (float) QUANTA_PER_BLOCK;
+            Vec3 motion = entity.getDeltaMovement();
+            double damp = 1.0 - quanta * MAX_DRAG;
+            entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
+        }
         if (entity instanceof LivingEntity living) {
             int amp = meta / 3;
             living.addEffect(
