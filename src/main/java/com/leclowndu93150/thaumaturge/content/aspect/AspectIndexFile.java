@@ -35,7 +35,7 @@ import net.neoforged.fml.loading.FMLPaths;
 public final class AspectIndexFile {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final int FORMAT_VERSION = 3;
+    private static final int FORMAT_VERSION = 4;
 
     private AspectIndexFile() {}
 

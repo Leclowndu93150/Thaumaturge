@@ -35,6 +35,7 @@ public final class AspectIndexBuilder {
         CONTRIBUTORS.add(new CrucibleAspectContributor());
         CONTRIBUTORS.add(new InfusionAspectContributor());
         CONTRIBUTORS.add(new CraftingAspectContributor());
+        CONTRIBUTORS.add(new CookingAspectContributor());
     }
 
     private AspectIndexBuilder() {}
