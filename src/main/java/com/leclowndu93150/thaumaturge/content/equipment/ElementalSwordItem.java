@@ -24,6 +24,7 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 
 public final class ElementalSwordItem extends SwordItem implements IChanneledItem {
@@ -153,6 +154,7 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
                     SoundSource.PLAYERS,
                     0.5F,
                     0.9F + level.getRandom().nextFloat() * 0.2F);
+            player.gameEvent(GameEvent.ELYTRA_GLIDE);
         }
 
         if (ticks % PULSE_INTERVAL_TICKS == 0) {
