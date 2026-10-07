@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -48,9 +49,11 @@ public final class BlockCrystal extends Block {
     private static final double SHAPE_SNAP = 32.0;
 
     private static final Map<Direction, List<VoxelShape>> SHARD_SHAPES = shardShapes();
+    private static final int SHAPE_CACHE_LIMIT = 4096;
 
     private final ResourceKey<IAspect> aspect;
     private final boolean flux;
+    private final Map<Long, VoxelShape> shapeCache = new ConcurrentHashMap<>();
 
     public BlockCrystal(BlockBehaviour.Properties properties, ResourceKey<IAspect> aspect, boolean flux) {
         super(properties);
@@ -91,20 +94,44 @@ public final class BlockCrystal extends Block {
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         long seed = CrystalShards.seed(state, pos);
         int count = growth(state) + 1;
-        VoxelShape shape = Shapes.empty();
-        boolean supported = false;
+        long key = 0L;
         for (Direction face : Direction.values()) {
             if (!CrystalShards.supports(level, pos, face)) {
                 continue;
             }
-            supported = true;
             List<Integer> order = CrystalShards.order(face, seed);
-            List<VoxelShape> shards = SHARD_SHAPES.get(face);
+            long faceMask = 0L;
             for (int i = 0; i < count; i++) {
-                shape = Shapes.or(shape, shards.get(order.get(i)));
+                faceMask |= 1L << order.get(i);
+            }
+            key |= faceMask << (face.ordinal() * CrystalShards.COUNT);
+        }
+        if (key == 0L) {
+            return SHARD_SHAPES.get(Direction.DOWN).get(CrystalShards.unsupported(seed));
+        }
+        VoxelShape cached = shapeCache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        VoxelShape shape = buildShape(key);
+        if (shapeCache.size() < SHAPE_CACHE_LIMIT) {
+            shapeCache.put(key, shape);
+        }
+        return shape;
+    }
+
+    private static VoxelShape buildShape(long key) {
+        List<VoxelShape> parts = new ArrayList<>();
+        for (Direction face : Direction.values()) {
+            List<VoxelShape> shards = SHARD_SHAPES.get(face);
+            long faceMask = key >>> (face.ordinal() * CrystalShards.COUNT);
+            for (int shard = 0; shard < CrystalShards.COUNT; shard++) {
+                if ((faceMask & (1L << shard)) != 0L) {
+                    parts.add(shards.get(shard));
+                }
             }
         }
-        return supported ? shape : SHARD_SHAPES.get(Direction.DOWN).get(CrystalShards.unsupported(seed));
+        return Shapes.or(Shapes.empty(), parts.toArray(new VoxelShape[0])).optimize();
     }
 
     @Override
