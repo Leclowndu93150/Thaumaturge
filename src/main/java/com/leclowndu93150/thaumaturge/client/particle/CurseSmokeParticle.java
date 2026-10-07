@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class CurseSmokeParticle extends TCParticle {
+public final class CurseSmokeParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int LIFETIME = 8;
     private static final float FRICTION = 0.9F;
@@ -48,7 +48,7 @@ public final class CurseSmokeParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("curse_smoke");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("curse_smoke");
 
         @Override
         public Particle createParticle(

@@ -1,40 +1,25 @@
 {
-    "__createdwith": "opl's Model Creator",
-    "ambientocclusion": false,
-    "textures": {
-        "side": "thaumaturge:block/tube",
-        "particle": "thaumaturge:block/tube"
-    },
-    "elements": [
-        {
-            "from": [4,4,4],
-            "to": [12,12,12],
-            "faces": {
-                "up": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                },
-                "down": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                },
-                "west": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                },
-                "east": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                },
-                "north": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                },
-                "south": {
-                    "uv": [0,8,8,16],
-                    "texture": "#side"
-                }
-            }
-        }
-    ]
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"texture_size": [32, 32],
+	"textures": {
+		"1": "thaumaturge:block/tube_2",
+		"particle": "thaumaturge:block/tube_2"
+	},
+	"elements": [
+		{
+			"from": [4, 4, 4],
+			"to": [12, 12, 12],
+			"faces": {
+				"north": {"uv": [4, 8, 8, 12], "texture": "#1"},
+				"east": {"uv": [4, 8, 8, 12], "texture": "#1"},
+				"south": {"uv": [4, 8, 8, 12], "texture": "#1"},
+				"west": {"uv": [4, 8, 8, 12], "texture": "#1"},
+				"up": {"uv": [4, 8, 8, 12], "texture": "#1"},
+				"down": {"uv": [4, 8, 8, 12], "texture": "#1"}
+			}
+		}
+	],
+	"__createdwith": "opl's Model Creator"
 }

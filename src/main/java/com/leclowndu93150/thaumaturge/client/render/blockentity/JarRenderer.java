@@ -43,8 +43,8 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
     private static final float BRACE_TOP_Y = 14.25F / 16.0F;
     private static final float BRACE_STRETCH = 1.001F;
 
-    private static final float LID_EXT_MIN_XZ = (8.0F - 2.0F * 0.9F) / 16.0F;
-    private static final float LID_EXT_MAX_XZ = (8.0F + 2.0F * 0.9F) / 16.0F;
+    private static final float LID_EXT_MIN_XZ = 6.0F / 16.0F;
+    private static final float LID_EXT_MAX_XZ = 10.0F / 16.0F;
     private static final float LID_EXT_BOTTOM_Y = 14.0F / 16.0F;
     private static final float LID_EXT_TOP_Y = 16.0F / 16.0F;
 

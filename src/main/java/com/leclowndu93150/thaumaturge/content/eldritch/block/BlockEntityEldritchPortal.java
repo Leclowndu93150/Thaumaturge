@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.gen.MazeChunkStamper;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +34,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
     private int count;
 
     public BlockEntityEldritchPortal(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_PORTAL.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_PORTAL.get(), pos, state);
     }
 
     public void tick(Level level, BlockPos pos) {
@@ -45,7 +45,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
-                        TCSounds.EVILPORTAL.get(),
+                        TTSounds.EVILPORTAL.get(),
                         SoundSource.BLOCKS,
                         1.0F,
                         1.0F,
@@ -130,7 +130,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
 
         BlockPos destinationPortal =
                 new BlockPos(anchor.getMiddleBlockX(), OuterLands.MAZE_Y + 3, anchor.getMiddleBlockZ());
-        boolean hasPortal = outer.getBlockState(destinationPortal).is(TCBlocks.ELDRITCH_PORTAL.get());
+        boolean hasPortal = outer.getBlockState(destinationPortal).is(TTBlocks.ELDRITCH_PORTAL.get());
         BlockPos safe = hasPortal ? findSafeArrival(outer, destinationPortal) : null;
         if (safe != null) {
             return safe;
@@ -146,10 +146,10 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
             MazeChunkStamper.stamp(outer, RandomSource.create(seed), anchor.x, anchor.z, cell);
         }
 
-        if (!outer.getBlockState(destinationPortal).is(TCBlocks.ELDRITCH_PORTAL.get())) {
+        if (!outer.getBlockState(destinationPortal).is(TTBlocks.ELDRITCH_PORTAL.get())) {
             outer.setBlock(
-                    destinationPortal.below(), TCBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
-            outer.setBlock(destinationPortal, TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
+                    destinationPortal.below(), TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState(), 3);
+            outer.setBlock(destinationPortal, TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
         }
 
         safe = findSafeArrival(outer, destinationPortal);
@@ -161,7 +161,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 BlockPos support = center.offset(dx, 0, dz);
-                level.setBlock(support, TCBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
+                level.setBlock(support, TTBlocks.ELDRITCH_STONE.get().defaultBlockState(), 3);
                 level.removeBlock(support.above(), false);
                 level.removeBlock(support.above(2), false);
             }
@@ -238,7 +238,7 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
             for (int z = 0; z < 16; z++) {
                 for (int y = level.getMaxBuildHeight(); y >= RETURN_SCAN_MIN_Y; y--) {
                     cursor.set(baseX + x, y, baseZ + z);
-                    if (chunk.getBlockState(cursor).is(TCBlocks.ELDRITCH_PORTAL.get())) {
+                    if (chunk.getBlockState(cursor).is(TTBlocks.ELDRITCH_PORTAL.get())) {
                         return cursor.immutable();
                     }
                 }

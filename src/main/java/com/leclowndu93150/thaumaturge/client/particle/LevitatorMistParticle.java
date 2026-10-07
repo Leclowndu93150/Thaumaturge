@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class LevitatorMistParticle extends TCParticle {
+public final class LevitatorMistParticle extends TTParticle {
     private static final int BASE_LIFETIME = 200;
     private static final float START_ALPHA = 0.3F;
     private static final float START_SIZE = 0.2F;
@@ -29,7 +29,7 @@ public final class LevitatorMistParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("levitator_mist");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("levitator_mist");
 
         @Override
         public Particle createParticle(

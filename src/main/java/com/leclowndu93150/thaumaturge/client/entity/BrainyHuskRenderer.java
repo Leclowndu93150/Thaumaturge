@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyHusk;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public final class BrainyHuskRenderer extends AbstractZombieRenderer<EntityBrainyHusk, ZombieModel<EntityBrainyHusk>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/brainy_husk.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/brainy_husk.png");
 
     public BrainyHuskRenderer(EntityRendererProvider.Context context) {
         super(

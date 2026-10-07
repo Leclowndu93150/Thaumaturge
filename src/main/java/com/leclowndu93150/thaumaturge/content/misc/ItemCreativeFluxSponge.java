@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.misc;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public final class ItemCreativeFluxSponge extends Item {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    TCSounds.CRAFTSTART.get(),
+                    TTSounds.CRAFTSTART.get(),
                     SoundSource.PLAYERS,
                     0.15F,
                     1.0F,

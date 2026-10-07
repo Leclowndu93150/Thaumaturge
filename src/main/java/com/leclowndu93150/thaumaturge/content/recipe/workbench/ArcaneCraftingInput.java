@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -186,9 +186,9 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
         List<ItemStack> crystals = items.subList(items.size() - 7, items.size() - 1);
         List<AspectInstance> aspects = new ArrayList<>();
         for (ItemStack crystal : crystals) {
-            if (crystal.is(TCItems.ESSENTIA_CRYSTAL) && crystal.has(TCDataComponents.CRYSTAL_ASPECT)) {
+            if (crystal.is(TTItems.ESSENTIA_CRYSTAL) && crystal.has(TTDataComponents.CRYSTAL_ASPECT)) {
                 Holder<IAspect> aspect =
-                        crystal.get(TCDataComponents.CRYSTAL_ASPECT.get()).aspect();
+                        crystal.get(TTDataComponents.CRYSTAL_ASPECT.get()).aspect();
                 aspects.add(new AspectInstance(aspect, crystal.getCount()));
             }
         }

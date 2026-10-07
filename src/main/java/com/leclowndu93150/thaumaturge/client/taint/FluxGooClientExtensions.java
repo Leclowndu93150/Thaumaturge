@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
@@ -11,8 +11,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import org.joml.Vector3f;
 
 public final class FluxGooClientExtensions implements IClientFluidTypeExtensions {
-    private static final ResourceLocation STILL = TCIds.rl("block/flux_goo");
-    private static final ResourceLocation FLOWING = TCIds.rl("block/flux_goo");
+    private static final ResourceLocation STILL = TTIds.rl("block/flux_goo");
+    private static final ResourceLocation FLOWING = TTIds.rl("block/flux_goo");
     private static final float FOG_R = 1.0F;
     private static final float FOG_G = 0.0F;
     private static final float FOG_B = 0.5F;

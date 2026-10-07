@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public final class SmokeSpiralParticle extends TCParticle {
+public final class SmokeSpiralParticle extends TTParticle {
     private static final int FRAME_COUNT = 5;
     private static final int BASE_LIFETIME = 20;
     private static final float BASE_ALPHA = 0.66F;
@@ -87,7 +87,7 @@ public final class SmokeSpiralParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SmokeSpiralParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("smoke_spiral");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("smoke_spiral");
 
         @Override
         public Particle createParticle(

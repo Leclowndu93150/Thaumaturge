@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -37,7 +37,7 @@ public final class SalisMundusCraftingExtension implements ICraftingCategoryExte
             inputs.add(rotated(crystals, slot));
         }
         craftingGridHelper.createAndSetInputs(builder, inputs, 0, 0);
-        craftingGridHelper.createAndSetOutputs(builder, List.of(new ItemStack(TCItems.SALIS_MUNDUS.get())));
+        craftingGridHelper.createAndSetOutputs(builder, List.of(new ItemStack(TTItems.SALIS_MUNDUS.get())));
     }
 
     private static List<ItemStack> rotated(List<ItemStack> stacks, int offset) {
@@ -59,6 +59,6 @@ public final class SalisMundusCraftingExtension implements ICraftingCategoryExte
                 return variants;
             }
         }
-        return List.of(new ItemStack(TCItems.ESSENTIA_CRYSTAL.get()));
+        return List.of(new ItemStack(TTItems.ESSENTIA_CRYSTAL.get()));
     }
 }

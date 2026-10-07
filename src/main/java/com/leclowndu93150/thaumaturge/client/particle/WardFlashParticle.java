@@ -10,7 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import org.joml.Quaternionf;
 
-public final class WardFlashParticle extends TCParticle {
+public final class WardFlashParticle extends TTParticle {
     private static final int FRAME_COUNT = 16;
     private static final int BASE_AGE = 12;
     private static final int AGE_JITTER = 5;
@@ -71,7 +71,7 @@ public final class WardFlashParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<WardFlashParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("ward_flash");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("ward_flash");
 
         @Override
         public Particle createParticle(

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.util.Mth;
@@ -28,7 +28,7 @@ public class EntityFollowingItem extends EntitySpecialItem implements IEntityWit
     }
 
     public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack) {
-        super(TCEntities.FOLLOWING_ITEM.get(), level);
+        super(TTEntities.FOLLOWING_ITEM.get(), level);
         this.setPos(x, y, z);
         this.setItem(stack);
         this.setYRot((float) (Math.random() * 360.0));

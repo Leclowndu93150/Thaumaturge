@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ServerboundInventoryScanPayload(int containerId, int slotIndex, ItemStack target)
         implements CustomPacketPayload {
     public static final Type<ServerboundInventoryScanPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "inventory_scan"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "inventory_scan"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundInventoryScanPayload> STREAM_CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.VAR_INT,
@@ -43,7 +43,7 @@ public record ServerboundInventoryScanPayload(int containerId, int slotIndex, It
             if (menu.containerId != payload.containerId()
                     || payload.slotIndex() < 0
                     || payload.slotIndex() >= menu.slots.size()
-                    || !menu.getCarried().is(TCItems.THAUMOMETER.get())) {
+                    || !menu.getCarried().is(TTItems.THAUMOMETER.get())) {
                 return;
             }
             Slot slot = menu.getSlot(payload.slotIndex());

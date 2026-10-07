@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.util.RandomSource;
 
-public final class EarthPebbleParticle extends TCParticle {
+public final class EarthPebbleParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 20;
     private static final float FRICTION = 0.9F;
@@ -44,11 +44,11 @@ public final class EarthPebbleParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<EarthPebbleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("earth_pebble");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("earth_pebble");
 
         @Override
         public Particle createParticle(

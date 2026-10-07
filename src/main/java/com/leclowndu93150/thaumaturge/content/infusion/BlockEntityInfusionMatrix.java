@@ -11,10 +11,10 @@ import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOption
 import com.leclowndu93150.thaumaturge.content.particle.InfusionCrumbsParticleOptions;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,7 +82,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
     private final Map<BlockPos, Integer> clientSourceFX = new HashMap<>();
 
     public BlockEntityInfusionMatrix(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.INFUSION_MATRIX.get(), pos, state);
+        super(TTBlockEntities.INFUSION_MATRIX.get(), pos, state);
     }
 
     public boolean isActive() {
@@ -161,7 +161,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
                 return;
             }
             if (count % 65 == 0) {
-                level.playSound(null, worldPosition, TCSounds.INFUSER.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+                level.playSound(null, worldPosition, TTSounds.INFUSER.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             }
             RandomSource rand = level.getRandom();
             Effects.blockRunes(level, Vec3.atLowerCornerOf(centralPedestal()))
@@ -186,7 +186,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             checkSurroundings = true;
             startCraft(level, player);
         } else if (!active && MatrixEnvironment.validLocation(level, worldPosition)) {
-            level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             active = true;
             setChanged();
             syncToClient();
@@ -218,7 +218,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         InfusionInput input = new InfusionInput(catalyst, components);
         float costMult = effectiveCostMultiplier(env);
         Optional<RecipeHolder<InfusionRecipe>> match = level.getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.INFUSION.get(), input, level)
+                .getRecipeFor(TTRecipeTypes.INFUSION.get(), input, level)
                 .filter(holder -> ResearchManager.doesPassGate(
                         player, holder.value().researchGate().orElse(null)));
         if (match.isPresent()) {
@@ -230,13 +230,13 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
                     catalyst.copyWithCount(1),
                     recipe.instability(),
                     Optional.of(player.getUUID()));
-            level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             setChanged();
             syncToClient();
             return;
         }
         Optional<RecipeHolder<InfusionEnchantmentRecipe>> enchantMatch = level.getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.INFUSION_ENCHANTMENT.get(), input, level)
+                .getRecipeFor(TTRecipeTypes.INFUSION_ENCHANTMENT.get(), input, level)
                 .filter(holder -> ResearchManager.doesPassGate(
                         player, holder.value().researchGate().orElse(null)));
         if (enchantMatch.isPresent()) {
@@ -248,13 +248,13 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
                     catalyst.copyWithCount(1),
                     recipe.instability(),
                     Optional.of(player.getUUID()));
-            level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             setChanged();
             syncToClient();
             return;
         }
         Optional<RecipeHolder<InfusionRunicAugmentRecipe>> runicMatch = level.getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.RUNIC_AUGMENT.get(), input, level)
+                .getRecipeFor(TTRecipeTypes.RUNIC_AUGMENT.get(), input, level)
                 .filter(holder -> ResearchManager.doesPassGate(
                         player, holder.value().researchGate().orElse(null)));
         if (runicMatch.isEmpty()) {
@@ -268,7 +268,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
                 catalyst.copyWithCount(1),
                 recipe.scaledInstability(catalyst),
                 Optional.of(player.getUUID()));
-        level.playSound(null, worldPosition, TCSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
     }
@@ -434,7 +434,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
 
     private void failCraft(ServerLevel level) {
         job = null;
-        level.playSound(null, worldPosition, TCSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 1.0F, 0.6F);
+        level.playSound(null, worldPosition, TTSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 1.0F, 0.6F);
         setChanged();
         syncToClient();
     }
@@ -458,7 +458,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
             awardCraft(crafter, result);
         }
         InfusionFx.pedestalBamf(level, centralPedestal());
-        level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
     }
@@ -495,7 +495,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
     private void tickClient() {
         if (isCrafting()) {
             if (clientCraftTicks == 0 && level != null) {
-                level.playLocalSound(worldPosition, TCSounds.INFUSERSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F, false);
+                level.playLocalSound(worldPosition, TTSounds.INFUSERSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F, false);
             }
             clientCraftTicks++;
         } else if (clientCraftTicks > 0) {
@@ -597,7 +597,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         output.putFloat("Stability", stability);
         output.putFloat("Replenish", stabilityReplenish);
         if (job != null) {
-            TCNbt.store(output, "Job", InfusionCraftJob.CODEC, registries, job);
+            TTNbt.store(output, "Job", InfusionCraftJob.CODEC, registries, job);
         }
     }
 
@@ -607,7 +607,7 @@ public final class BlockEntityInfusionMatrix extends BlockEntity
         active = input.getBoolean("Active");
         stability = input.getFloat("Stability");
         stabilityReplenish = input.getFloat("Replenish");
-        job = TCNbt.read(input, "Job", InfusionCraftJob.CODEC, registries).orElse(null);
+        job = TTNbt.read(input, "Job", InfusionCraftJob.CODEC, registries).orElse(null);
     }
 
     private void syncToClient() {

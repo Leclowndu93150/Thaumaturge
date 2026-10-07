@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -18,7 +18,7 @@ public final class HungryChestItemSpecialRenderer extends BlockEntityWithoutLeve
                 Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                 Minecraft.getInstance().getEntityModels());
         this.chest = new BlockEntityHungryChest(
-                BlockPos.ZERO, TCBlocks.HUNGRY_CHEST.get().defaultBlockState());
+                BlockPos.ZERO, TTBlocks.HUNGRY_CHEST.get().defaultBlockState());
     }
 
     @Override

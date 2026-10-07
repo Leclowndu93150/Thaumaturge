@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +41,7 @@ public class SealEmpty extends SealFiltered {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("empty");
+        return TTIds.rl("empty");
     }
 
     @Override
@@ -138,7 +138,7 @@ public class SealEmpty extends SealFiltered {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_empty.png");
+        return TTIds.rl("textures/item/seal_empty.png");
     }
 
     @Override
@@ -153,7 +153,7 @@ public class SealEmpty extends SealFiltered {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[] {TTGolemTraits.CLUMSY.get()};
     }
 
     @Override

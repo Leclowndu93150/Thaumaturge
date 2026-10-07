@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -86,7 +86,7 @@ public final class BlockPavingStone extends BaseEntityBlock {
         }
         return createTickerHelper(
                 type,
-                TCBlockEntities.BARRIER_STONE.get(),
+                TTBlockEntities.BARRIER_STONE.get(),
                 (tickLevel, pos, tickState, barrierStone) -> barrierStone.serverTick(tickLevel, pos));
     }
 
@@ -108,7 +108,7 @@ public final class BlockPavingStone extends BaseEntityBlock {
             }
             return;
         }
-        BlockState barrierState = TCBlocks.BARRIER.get().defaultBlockState();
+        BlockState barrierState = TTBlocks.BARRIER.get().defaultBlockState();
         if (level.getBlockState(pos.above(1)) == barrierState || level.getBlockState(pos.above(2)) == barrierState) {
             for (int a = 0; a < 6; a++) {
                 spawnRune(

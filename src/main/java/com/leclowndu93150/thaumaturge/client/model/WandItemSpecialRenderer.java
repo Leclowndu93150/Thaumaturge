@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -31,10 +31,10 @@ import net.minecraft.world.item.ItemStack;
 public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
     public record WandArg(WandCap cap, WandRod rod, boolean sceptre, boolean hasFocus, int focusColor) {}
 
-    private static final ResourceLocation WAND_TEXTURE = TCIds.rl("textures/models/wand.png");
-    private static final ResourceLocation SCRIPT_TEXTURE = TCIds.rl("textures/misc/script.png");
+    private static final ResourceLocation WAND_TEXTURE = TTIds.rl("textures/models/wand.png");
+    private static final ResourceLocation SCRIPT_TEXTURE = TTIds.rl("textures/misc/script.png");
 
-    private static final RenderType RUNES = TCRenderTypes.entityAdditiveEmissive(SCRIPT_TEXTURE);
+    private static final RenderType RUNES = TTRenderTypes.entityAdditiveEmissive(SCRIPT_TEXTURE);
 
     private static final float PX = 0.0625F;
     private static final int TEX_W = 32;
@@ -131,7 +131,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         int rodLight = arg.rod().glow() ? (int) (200.0F + Mth.sin((int) ticks) * 5.0F + 5.0F) : light;
         RenderType rodType = firstPersonHand
                 ? RenderType.entityCutoutNoCull(arg.rod().texture())
-                : TCFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
+                : TTFlatRenderTypes.entityCutoutFlat(arg.rod().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.translate(0.0F, -0.1F, 0.0F);
@@ -167,7 +167,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             boolean firstPersonHand) {
         RenderType capType = firstPersonHand
                 ? RenderType.entityCutoutNoCull(arg.cap().texture())
-                : TCFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
+                : TTFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
         poseStack.pushPose();
         if (staff) {
             poseStack.scale(1.3F, CAP_STAFF_SCALE_Y, 1.3F);
@@ -187,7 +187,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
 
     private static void submitFocus(
             WandArg arg, PoseStack poseStack, MultiBufferSource buffers, boolean staff, float ticks) {
-        RenderType focusType = TCFlatRenderTypes.entityTranslucentFlat(WAND_TEXTURE);
+        RenderType focusType = TTFlatRenderTypes.entityTranslucentFlat(WAND_TEXTURE);
         poseStack.pushPose();
         if (staff) {
             poseStack.translate(0.0F, FOCUS_STAFF_LIFT, 0.0F);
@@ -323,7 +323,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
     public static WandArg extract(ItemStack stack) {
         WandParts parts = WandVisHelper.getParts(stack);
         ItemStack focusStack = ItemStack.EMPTY;
-        SocketedFocus template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus template = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
         if (template != null) {
             focusStack = template.focus();
         }

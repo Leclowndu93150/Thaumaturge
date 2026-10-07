@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Optional;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.DyeColor;
@@ -41,11 +41,11 @@ public enum HeldCandle implements StringRepresentable {
     }
 
     public Optional<BlockCandle> candle() {
-        return dye().map(color -> TCBlocks.CANDLES.get(color).get());
+        return dye().map(color -> TTBlocks.CANDLES.get(color).get());
     }
 
     public ItemStack toStack() {
-        return dye().map(color -> new ItemStack(TCItems.CANDLES.get(color).get()))
+        return dye().map(color -> new ItemStack(TTItems.CANDLES.get(color).get()))
                 .orElse(ItemStack.EMPTY);
     }
 
@@ -56,7 +56,7 @@ public enum HeldCandle implements StringRepresentable {
 
     public static Optional<HeldCandle> of(ItemStack stack) {
         for (HeldCandle held : values()) {
-            if (held.isPresent() && stack.is(TCItems.CANDLES.get(held.dye).get())) {
+            if (held.isPresent() && stack.is(TTItems.CANDLES.get(held.dye).get())) {
                 return Optional.of(held);
             }
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import net.minecraft.core.BlockPos;
@@ -19,7 +19,7 @@ public record ServerboundTableCombinePayload(
         BlockPos pos, ResourceLocation first, ResourceLocation second, boolean bonusFirst, boolean bonusSecond)
         implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ServerboundTableCombinePayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("table_combine"));
+            new CustomPacketPayload.Type<>(TTIds.rl("table_combine"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTableCombinePayload> STREAM_CODEC =
             StreamCodec.composite(

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -187,7 +187,7 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
 
     @Override
     protected ItemStack placerItem() {
-        return new ItemStack(TCItems.TURRET_ADVANCED.get());
+        return new ItemStack(TTItems.TURRET_ADVANCED.get());
     }
 
     @Override
@@ -204,25 +204,25 @@ public class EntityTurretCrossbowAdvanced extends EntityTurretCrossbow {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         float bonus = 0.0F;
         if (random.nextFloat() < 0.2F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.MIND_BIOTHAUMIC.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.MIND_BIOTHAUMIC.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.MECHANISM_SIMPLE.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.MECHANISM_SIMPLE.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCBlocks.PLANK_GREATWOOD.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCBlocks.PLANK_GREATWOOD.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
         }
         if (random.nextFloat() < 0.3F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.PLATE_BRASS.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.PLATE_BRASS.get()), 0.5F);
         }
         if (random.nextFloat() < 0.4F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.PLATE_IRON.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.PLATE_IRON.get()), 0.5F);
         }
         if (random.nextFloat() < 0.4F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.PLATE_IRON.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.PLATE_IRON.get()), 0.5F);
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
@@ -11,8 +11,8 @@ import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSplit;
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCImageButton;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.FocusElementNode;
 import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
@@ -20,8 +20,8 @@ import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.network.ServerboundFocusDataPayload;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,18 +45,18 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class FocalManipulatorScreen extends AbstractTCContainerScreen<MenuFocalManipulator> {
-    private static final ResourceLocation TEX = TCIds.rl("textures/gui/gui_wandtable.png");
-    private static final ResourceLocation TEX2 = TCIds.rl("textures/gui/gui_wandtable2.png");
-    private static final ResourceLocation TEX3 = TCIds.rl("textures/gui/gui_wandtable3.png");
-    private static final ResourceLocation TEX_BASE = TCIds.rl("textures/gui/gui_base.png");
-    private static final ResourceLocation TEX_COMPLEXITY = TCIds.rl("textures/gui/complex.png");
+public final class FocalManipulatorScreen extends AbstractTTContainerScreen<MenuFocalManipulator> {
+    private static final ResourceLocation TEX = TTIds.rl("textures/gui/gui_wandtable.png");
+    private static final ResourceLocation TEX2 = TTIds.rl("textures/gui/gui_wandtable2.png");
+    private static final ResourceLocation TEX3 = TTIds.rl("textures/gui/gui_wandtable3.png");
+    private static final ResourceLocation TEX_BASE = TTIds.rl("textures/gui/gui_base.png");
+    private static final ResourceLocation TEX_COMPLEXITY = TTIds.rl("textures/gui/complex.png");
     private static final ResourceLocation TEX_COST_XP =
             ResourceLocation.withDefaultNamespace("textures/gui/sprites/container/enchanting_table/level_1.png");
-    private static final ResourceLocation TEX_COST_VIS = TCIds.rl("textures/item/essentia_crystal.png");
-    private static final ResourceLocation ICON_MEDIUM = TCIds.rl("textures/foci/_medium.png");
-    private static final ResourceLocation ICON_EFFECT = TCIds.rl("textures/foci/_effect.png");
-    private static final ResourceLocation ROOT_KEY = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "root");
+    private static final ResourceLocation TEX_COST_VIS = TTIds.rl("textures/item/essentia_crystal.png");
+    private static final ResourceLocation ICON_MEDIUM = TTIds.rl("textures/foci/_medium.png");
+    private static final ResourceLocation ICON_EFFECT = TTIds.rl("textures/foci/_effect.png");
+    private static final ResourceLocation ROOT_KEY = ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "root");
 
     private static final int GUI_SIZE = 231;
     private static final int ATLAS = 256;
@@ -169,7 +169,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private @Nullable BlockEntityFocalManipulator table;
     private @Nullable EditBox nameField;
-    private TCImageButton buttonConfirm;
+    private TTImageButton buttonConfirm;
     private final List<ResourceLocation> shownParts = new ArrayList<>();
     private final List<FocusSettingSpinner> spinners = new ArrayList<>();
     private @Nullable FocusSlider sliderParts;
@@ -216,7 +216,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             table = be;
             lastDataStamp = be.clientDataStamp;
         }
-        buttonConfirm = new TCImageButton(
+        buttonConfirm = new TTImageButton(
                 leftPos + CONFIRM_X,
                 topPos + CONFIRM_Y,
                 CONFIRM_W,
@@ -875,13 +875,13 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
 
     private void playButtonClick() {
         if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 1.0F, 0.4F));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.CLACK.get(), 1.0F, 0.4F));
         }
     }
 
     private void playRollover() {
         if (minecraft != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 2.0F, 0.4F));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.CLACK.get(), 2.0F, 0.4F));
         }
     }
 
@@ -1117,7 +1117,7 @@ public final class FocalManipulatorScreen extends AbstractTCContainerScreen<Menu
             return;
         }
         FocusElement parentElement = parent.resolve();
-        for (ResourceLocation key : TCFocusElements.registry().keySet()) {
+        for (ResourceLocation key : TTFocusElements.registry().keySet()) {
             if (key.equals(ROOT_KEY)) {
                 continue;
             }

@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.mirror.MenuHandMirror;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public final class HandMirrorScreen extends AbstractTCContainerScreen<MenuHandMirror> {
+public final class HandMirrorScreen extends AbstractTTContainerScreen<MenuHandMirror> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_handmirror.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_handmirror.png");
     private static final int WIDTH = 176;
     private static final int HEIGHT = 166;
     private static final int BLOCKED_X = 8;

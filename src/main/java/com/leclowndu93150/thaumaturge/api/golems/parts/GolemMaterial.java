@@ -43,6 +43,8 @@ public final class GolemMaterial {
      * @param componentMechanism supplies the material's mechanism crafting item
      * @param traits             traits granted by the material
      */
+    private final boolean antenna;
+
     public GolemMaterial(
             List<ResourceLocation> research,
             ResourceLocation texture,
@@ -53,6 +55,20 @@ public final class GolemMaterial {
             Supplier<ItemStack> componentBase,
             Supplier<ItemStack> componentMechanism,
             List<Holder<GolemTrait>> traits) {
+        this(research, texture, itemColor, healthMod, armor, damage, componentBase, componentMechanism, traits, false);
+    }
+
+    public GolemMaterial(
+            List<ResourceLocation> research,
+            ResourceLocation texture,
+            int itemColor,
+            int healthMod,
+            int armor,
+            int damage,
+            Supplier<ItemStack> componentBase,
+            Supplier<ItemStack> componentMechanism,
+            List<Holder<GolemTrait>> traits,
+            boolean antenna) {
         this.research = List.copyOf(research);
         this.texture = texture;
         this.itemColor = itemColor;
@@ -62,6 +78,7 @@ public final class GolemMaterial {
         this.componentBase = componentBase;
         this.componentMechanism = componentMechanism;
         this.traits = List.copyOf(traits);
+        this.antenna = antenna;
     }
 
     /**
@@ -125,6 +142,16 @@ public final class GolemMaterial {
      */
     public List<Holder<GolemTrait>> traits() {
         return traits;
+    }
+
+    /**
+     * Whether golems of this material render the head antenna. A hat accessory hides it regardless.
+     *
+     * @return true when the antenna is drawn
+     * @since 1.0.0
+     */
+    public boolean antenna() {
+        return antenna;
     }
 
     /**

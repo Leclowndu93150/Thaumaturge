@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ public final class TaintBiomeManager {
     private TaintBiomeManager() {}
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos) && level.getBiome(pos).is(TCBiomes.TAINTED_LANDS);
+        return level.hasChunkAt(pos) && level.getBiome(pos).is(TTBiomes.TAINTED_LANDS);
     }
 
     public static boolean isDynamicallyTainted(ServerLevel level, BlockPos pos) {
@@ -52,11 +52,11 @@ public final class TaintBiomeManager {
             return false;
         }
         Holder<Biome> tainted =
-                level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(TCBiomes.TAINTED_LANDS);
+                level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(TTBiomes.TAINTED_LANDS);
         int targetQuartX = QuartPos.fromBlock(pos.getX());
         int targetQuartZ = QuartPos.fromBlock(pos.getZ());
         BiomeSnapshot snapshot = snapshot(level, chunk);
-        if (snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TCBiomes.TAINTED_LANDS))) {
+        if (snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TTBiomes.TAINTED_LANDS))) {
             return false;
         }
 
@@ -81,7 +81,7 @@ public final class TaintBiomeManager {
         }
         rewriteColumn(
                 level, chunk, snapshot, targetQuartX, targetQuartZ, (quartX, quartY, quartZ, sampler) -> replacement);
-        if (!biomeKey.equals(TCBiomes.TAINTED_LANDS)) {
+        if (!biomeKey.equals(TTBiomes.TAINTED_LANDS)) {
             TaintBiomeState.get(level).clearDynamic(pos);
         }
         return true;
@@ -98,7 +98,7 @@ public final class TaintBiomeManager {
         int targetQuartX = QuartPos.fromBlock(pos.getX());
         int targetQuartZ = QuartPos.fromBlock(pos.getZ());
         BiomeSnapshot snapshot = snapshot(level, chunk);
-        if (!snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TCBiomes.TAINTED_LANDS))) {
+        if (!snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TTBiomes.TAINTED_LANDS))) {
             return false;
         }
 
@@ -114,12 +114,12 @@ public final class TaintBiomeManager {
 
         rewriteColumn(level, chunk, snapshot, targetQuartX, targetQuartZ, (quartX, quartY, quartZ, ignoredSampler) -> {
             Holder<Biome> current = snapshot.get(quartX, quartY, quartZ);
-            if (!current.is(TCBiomes.TAINTED_LANDS)) {
+            if (!current.is(TTBiomes.TAINTED_LANDS)) {
                 return current;
             }
             Holder<Biome> restored = originalSource.getNoiseBiome(
                     quartX + naturalFallback.dx(), quartY, quartZ + naturalFallback.dz(), sampler);
-            return restored.is(TCBiomes.TAINTED_LANDS) ? emergencyFallback : restored;
+            return restored.is(TTBiomes.TAINTED_LANDS) ? emergencyFallback : restored;
         });
         TaintBiomeState.get(level).clearDynamic(pos);
         return true;
@@ -127,7 +127,7 @@ public final class TaintBiomeManager {
 
     private static CleanOffset findNearestCleanGeneratorColumn(
             BiomeSource source, int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
-        if (!source.getNoiseBiome(quartX, quartY, quartZ, sampler).is(TCBiomes.TAINTED_LANDS)) {
+        if (!source.getNoiseBiome(quartX, quartY, quartZ, sampler).is(TTBiomes.TAINTED_LANDS)) {
             return CleanOffset.SAME_COLUMN;
         }
         // Natural Tainted Lands has no hidden pre-replacement biome to restore. Sample outward
@@ -154,7 +154,7 @@ public final class TaintBiomeManager {
 
     private static CleanOffset cleanOffset(
             BiomeSource source, int quartX, int quartY, int quartZ, int dx, int dz, Climate.Sampler sampler) {
-        return source.getNoiseBiome(quartX + dx, quartY, quartZ + dz, sampler).is(TCBiomes.TAINTED_LANDS)
+        return source.getNoiseBiome(quartX + dx, quartY, quartZ + dz, sampler).is(TTBiomes.TAINTED_LANDS)
                 ? null
                 : new CleanOffset(dx, dz);
     }

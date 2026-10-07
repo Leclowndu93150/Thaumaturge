@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.WardFlashParticleOptions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class WardEvents {
     private WardEvents() {}
 
@@ -109,7 +109,7 @@ public final class WardEvents {
             return;
         }
         WardHandler.unward(level, pos, owner);
-        if (!level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+        if (!level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TTBlocks.ARCANE_DOOR.get())) {
             return;
         }
         BlockPos otherHalf =
@@ -124,7 +124,7 @@ public final class WardEvents {
         if (!ArcaneAccess.isLock(level, pos)) {
             return;
         }
-        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TTBlocks.ARCANE_DOOR.get())
                 && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
             pos = pos.below();
         }

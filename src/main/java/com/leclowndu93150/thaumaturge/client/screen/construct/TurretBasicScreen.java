@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.construct;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,8 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class TurretBasicScreen<T extends MenuTurretBasic> extends AbstractTCContainerScreen<T> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_turret_basic.png");
+public class TurretBasicScreen<T extends MenuTurretBasic> extends AbstractTTContainerScreen<T> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_turret_basic.png");
     static final int IMAGE_WIDTH = 175;
     static final int IMAGE_HEIGHT = 232;
     static final int HEALTH_BAR_Y = 59;

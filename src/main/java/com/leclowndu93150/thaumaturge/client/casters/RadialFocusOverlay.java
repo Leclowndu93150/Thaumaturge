@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
@@ -30,10 +30,10 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class RadialFocusOverlay implements LayeredDraw.Layer {
-    private static final ResourceLocation RADIAL_1 = TCIds.rl("textures/misc/radial.png");
-    private static final ResourceLocation RADIAL_2 = TCIds.rl("textures/misc/radial2.png");
+    private static final ResourceLocation RADIAL_1 = TTIds.rl("textures/misc/radial.png");
+    private static final ResourceLocation RADIAL_2 = TTIds.rl("textures/misc/radial2.png");
 
     private static final int RADIAL_TEX_SIZE = 256;
     private static final float BASE_RADIUS = 16.0F;
@@ -169,7 +169,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         fociScale.clear();
         centerHover = false;
         int pouchCount = 0;
-        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS)) {
             for (ThaumaturgeCuriosCompat.CurioPouchRef ref : ThaumaturgeCuriosCompat.equippedPouches(
                     mc.player, stack -> stack.getItem() instanceof FocusPouchItem)) {
                 pouchCount++;

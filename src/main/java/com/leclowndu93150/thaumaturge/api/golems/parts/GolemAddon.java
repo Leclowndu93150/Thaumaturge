@@ -50,4 +50,25 @@ public final class GolemAddon extends GolemPart {
      * @since 1.0.0
      */
     public interface IAddonFunction extends IGolemFunction {}
+
+    private GolemAddon(
+            List<ResourceLocation> research,
+            ResourceLocation icon,
+            List<GolemPartModel> models,
+            List<GolemComponent> components,
+            @Nullable IAddonFunction function,
+            List<Holder<GolemTrait>> traits) {
+        super(research, icon, components, traits, models);
+        this.function = function;
+    }
+
+    public static GolemAddon withModels(
+            List<ResourceLocation> research,
+            ResourceLocation icon,
+            List<GolemPartModel> models,
+            List<GolemComponent> components,
+            @Nullable IAddonFunction function,
+            List<Holder<GolemTrait>> traits) {
+        return new GolemAddon(research, icon, models, components, function, traits);
+    }
 }

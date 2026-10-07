@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidShovelItem extends ShovelItem implements IWarpingGear {
     public VoidShovelItem(Properties properties) {
-        super(TCMaterials.TOOL_VOID, properties);
+        super(TTMaterials.TOOL_VOID, properties);
     }
 
     @Override

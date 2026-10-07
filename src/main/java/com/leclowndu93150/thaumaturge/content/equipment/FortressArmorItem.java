@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IGoggles;
 import com.leclowndu93150.thaumaturge.api.items.IRevealer;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -22,11 +22,11 @@ public final class FortressArmorItem extends ArmorItem implements IGoggles, IRev
     }
 
     public static boolean hasGoggles(ItemStack stack) {
-        return stack.has(TCDataComponents.GOGGLES_UPGRADE.get());
+        return stack.has(TTDataComponents.GOGGLES_UPGRADE.get());
     }
 
     public static int mask(ItemStack stack) {
-        Integer mask = stack.get(TCDataComponents.FORTRESS_MASK.get());
+        Integer mask = stack.get(TTDataComponents.FORTRESS_MASK.get());
         return mask == null ? NO_MASK : mask;
     }
 

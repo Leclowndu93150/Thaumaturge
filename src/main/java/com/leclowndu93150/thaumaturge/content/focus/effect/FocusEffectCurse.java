@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -32,7 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectCurse implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("curse");
+    private static final ResourceLocation KEY = TTIds.rl("curse");
 
     private static final int POWER_COMPLEXITY_FACTOR = 3;
     private static final int DURATION_TICKS_FACTOR = 20;
@@ -51,12 +51,12 @@ public final class FocusEffectCurse implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_curse"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_curse"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.MORTUUS;
+        return TTAspects.MORTUUS;
     }
 
     @Override
@@ -124,7 +124,7 @@ public final class FocusEffectCurse implements FocusEffect {
                         && level.getBlockState(pos.above()).isAir()
                         && level.getBlockState(pos).isCollisionShapeFullBlock(level, pos)) {
                     level.setBlockAndUpdate(
-                            pos.above(), TCBlocks.EFFECT_SAP.get().defaultBlockState());
+                            pos.above(), TTBlocks.EFFECT_SAP.get().defaultBlockState());
                 }
             }
         }
@@ -140,7 +140,7 @@ public final class FocusEffectCurse implements FocusEffect {
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
-        level.addParticle(TCParticles.CURSE_SMOKE.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
+        level.addParticle(TTParticles.CURSE_SMOKE.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 
     @Override

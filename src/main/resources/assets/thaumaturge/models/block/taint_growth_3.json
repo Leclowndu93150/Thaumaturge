@@ -1,79 +1,59 @@
 {
-  "render_type": "minecraft:cutout",
-  "ambientocclusion": false,
-  "textures": {
-    "particle": "thaumaturge:block/taint_growth_3",
-    "blob": "thaumaturge:block/taint_growth_3"
-  },
-  "elements": [
-    {
-      "from": [
-        4,
-        0,
-        4
-      ],
-      "to": [
-        12,
-        5,
-        12
-      ],
-      "faces": {
-        "down": {
-          "uv": [
-            4,
-            4,
-            12,
-            12
-          ],
-          "texture": "#blob",
-          "cullface": "down"
-        },
-        "up": {
-          "uv": [
-            4,
-            4,
-            12,
-            12
-          ],
-          "texture": "#blob"
-        },
-        "north": {
-          "uv": [
-            4,
-            11,
-            12,
-            16
-          ],
-          "texture": "#blob"
-        },
-        "south": {
-          "uv": [
-            4,
-            11,
-            12,
-            16
-          ],
-          "texture": "#blob"
-        },
-        "west": {
-          "uv": [
-            4,
-            11,
-            12,
-            16
-          ],
-          "texture": "#blob"
-        },
-        "east": {
-          "uv": [
-            4,
-            11,
-            12,
-            16
-          ],
-          "texture": "#blob"
-        }
-      }
-    }
-  ]
+	"ambientocclusion": false,
+	"textures": {
+		"particle": "thaumaturge:block/taint_growth_3",
+		"blob": "thaumaturge:block/taint_growth_3"
+	},
+	"elements": [
+		{
+			"name": "blob_x",
+			"from": [4, 1, 5],
+			"to": [12, 4, 11],
+			"faces": {
+				"north": {"uv": [0, 1, 8, 4], "texture": "#blob"},
+				"east": {"uv": [1, 1, 7, 4], "texture": "#blob"},
+				"south": {"uv": [0, 1, 8, 4], "texture": "#blob"},
+				"west": {"uv": [1, 1, 7, 4], "texture": "#blob"},
+				"up": {"uv": [8, 9, 16, 15], "texture": "#blob"},
+				"down": {"uv": [8, 9, 16, 15], "texture": "#blob"}
+			}
+		},
+		{
+			"name": "blob_y",
+			"from": [5, 0, 5],
+			"to": [11, 5, 11],
+			"faces": {
+				"north": {"uv": [1, 0, 7, 5], "texture": "#blob"},
+				"east": {"uv": [1, 0, 7, 5], "texture": "#blob"},
+				"south": {"uv": [1, 0, 7, 5], "texture": "#blob"},
+				"west": {"uv": [1, 0, 7, 5], "texture": "#blob"},
+				"up": {"uv": [9, 9, 15, 15], "texture": "#blob"}
+			}
+		},
+		{
+			"name": "blob_z",
+			"from": [5, 1, 4],
+			"to": [11, 4, 12],
+			"faces": {
+				"north": {"uv": [1, 1, 7, 4], "texture": "#blob"},
+				"east": {"uv": [0, 1, 8, 4], "texture": "#blob"},
+				"south": {"uv": [1, 1, 7, 4], "texture": "#blob"},
+				"west": {"uv": [0, 1, 8, 4], "texture": "#blob"},
+				"up": {"uv": [9, 8, 15, 16], "texture": "#blob"},
+				"down": {"uv": [9, 8, 15, 16], "texture": "#blob"}
+			}
+		},
+		{
+			"name": "pustule",
+			"from": [6, 5, 7],
+			"to": [8, 6, 9],
+			"faces": {
+				"north": {"uv": [3, 2, 5, 3], "texture": "#blob"},
+				"east": {"uv": [3, 2, 5, 3], "texture": "#blob"},
+				"south": {"uv": [3, 2, 5, 3], "texture": "#blob"},
+				"west": {"uv": [3, 2, 5, 3], "texture": "#blob"},
+				"up": {"uv": [11, 11, 13, 13], "texture": "#blob"}
+			}
+		}
+	]
 }

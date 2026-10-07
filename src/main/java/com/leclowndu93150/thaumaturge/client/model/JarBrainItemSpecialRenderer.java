@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.BrainModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.JarBrineModel;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -17,8 +17,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public final class JarBrainItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final ResourceLocation TEX_BRAIN = TCIds.rl("textures/entity/brain2.png");
-    private static final ResourceLocation TEX_BRINE = TCIds.rl("textures/entity/jarbrine.png");
+    private static final ResourceLocation TEX_BRAIN = TTIds.rl("textures/entity/brain2.png");
+    private static final ResourceLocation TEX_BRINE = TTIds.rl("textures/entity/jarbrine.png");
     private static final float BRAIN_SCALE = 0.4F;
     private static final float BRAIN_LIFT = -0.77F;
 
@@ -30,8 +30,8 @@ public final class JarBrainItemSpecialRenderer extends BlockEntityWithoutLevelRe
                 Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                 Minecraft.getInstance().getEntityModels());
         EntityModelSet models = Minecraft.getInstance().getEntityModels();
-        this.brain = new BrainModel(models.bakeLayer(TCModelLayers.BRAIN));
-        this.brine = new JarBrineModel(models.bakeLayer(TCModelLayers.JAR_BRINE));
+        this.brain = new BrainModel(models.bakeLayer(TTModelLayers.BRAIN));
+        this.brine = new JarBrineModel(models.bakeLayer(TTModelLayers.JAR_BRINE));
     }
 
     @Override
@@ -44,7 +44,7 @@ public final class JarBrainItemSpecialRenderer extends BlockEntityWithoutLevelRe
             int overlay) {
         Minecraft.getInstance()
                 .getBlockRenderer()
-                .renderSingleBlock(TCBlocks.JAR_BRAIN.get().defaultBlockState(), poseStack, buffers, light, overlay);
+                .renderSingleBlock(TTBlocks.JAR_BRAIN.get().defaultBlockState(), poseStack, buffers, light, overlay);
 
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.01F, 0.5F);
@@ -54,6 +54,7 @@ public final class JarBrainItemSpecialRenderer extends BlockEntityWithoutLevelRe
         poseStack.translate(0.0F, BRAIN_LIFT, 0.0F);
         poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
         poseStack.scale(BRAIN_SCALE, BRAIN_SCALE, BRAIN_SCALE);
+        brain.setupAnim(0.0F, 0.0F);
         brain.root.render(poseStack, buffers.getBuffer(RenderType.entityCutout(TEX_BRAIN)), light, overlay);
         poseStack.popPose();
 

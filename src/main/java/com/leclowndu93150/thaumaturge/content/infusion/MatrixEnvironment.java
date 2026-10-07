@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -51,11 +51,11 @@ public record MatrixEnvironment(List<BlockPos> pedestals, int cycleTime, float c
         Block corner3 = pillarAt(level, matrixPos, 1, 1);
         Block corner4 = pillarAt(level, matrixPos, -1, 1);
         if (corner1 != null && corner1 == corner2 && corner2 == corner3 && corner3 == corner4) {
-            if (corner1 == TCBlocks.PILLAR_ANCIENT.get()) {
+            if (corner1 == TTBlocks.PILLAR_ANCIENT.get()) {
                 cycleTime -= ANCIENT_PILLAR_CYCLE_BONUS;
                 costMult -= ANCIENT_PILLAR_COST_BONUS;
                 stabilityReplenish -= ANCIENT_PILLAR_STABILITY_PENALTY;
-            } else if (corner1 == TCBlocks.PILLAR_ELDRITCH.get()) {
+            } else if (corner1 == TTBlocks.PILLAR_ELDRITCH.get()) {
                 cycleTime -= ELDRITCH_PILLAR_CYCLE_BONUS;
                 costMult += ELDRITCH_PILLAR_COST_PENALTY;
                 stabilityReplenish += ELDRITCH_PILLAR_STABILITY_BONUS;
@@ -66,19 +66,19 @@ public record MatrixEnvironment(List<BlockPos> pedestals, int cycleTime, float c
         for (int a = 0; a < 4; a++) {
             Block corner =
                     level.getBlockState(matrixPos.offset(xm[a], -3, zm[a])).getBlock();
-            if (corner == TCBlocks.MATRIX_SPEED.get()) {
+            if (corner == TTBlocks.MATRIX_SPEED.get()) {
                 cycleTime -= MATRIX_SPEED_CYCLE_BONUS;
                 costMult += MATRIX_SPEED_COST_PENALTY;
-            } else if (corner == TCBlocks.MATRIX_COST.get()) {
+            } else if (corner == TTBlocks.MATRIX_COST.get()) {
                 cycleTime += MATRIX_COST_CYCLE_PENALTY;
                 costMult -= MATRIX_COST_COST_BONUS;
             }
         }
         for (BlockPos pedestal : pedestals) {
             Block block = level.getBlockState(pedestal).getBlock();
-            if (block == TCBlocks.PEDESTAL_ELDRITCH.get()) {
+            if (block == TTBlocks.PEDESTAL_ELDRITCH.get()) {
                 costMult += ELDRITCH_PEDESTAL_COST_PENALTY;
-            } else if (block == TCBlocks.PEDESTAL_ANCIENT.get()) {
+            } else if (block == TTBlocks.PEDESTAL_ANCIENT.get()) {
                 costMult -= ANCIENT_PEDESTAL_COST_BONUS;
             }
         }

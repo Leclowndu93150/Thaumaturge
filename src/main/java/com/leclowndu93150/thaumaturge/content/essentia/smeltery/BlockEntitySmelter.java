@@ -4,14 +4,14 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,7 +60,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     int bellows = -1;
 
     public BlockEntitySmelter(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.SMELTER.get(), worldPosition, blockState);
+        super(TTBlockEntities.SMELTER.get(), worldPosition, blockState);
     }
 
     protected BlockEntitySmelter(BlockEntityType<?> type, BlockPos worldPosition, BlockState blockState) {
@@ -78,7 +78,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
+        TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
         output.putInt("BurnTime", this.furnaceBurnTime);
         output.putBoolean("SpeedBoost", this.speedBoost);
         output.putInt("CookTime", this.furnaceCookTime);
@@ -90,7 +90,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        aspects = TCNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        aspects = TTNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         this.vis = aspects.totalAmount();
         this.furnaceBurnTime = input.getInt("BurnTime");
         this.speedBoost = input.getBoolean("SpeedBoost");
@@ -199,7 +199,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
                     ItemStack fuel = inventory.getStackInSlot(1).copy();
                     ItemStack copy = fuel.copy();
                     if (!fuel.isEmpty()) {
-                        if (fuel.is(TCItems.ALUMENTUM)) this.speedBoost = true;
+                        if (fuel.is(TTItems.ALUMENTUM)) this.speedBoost = true;
 
                         Item item = fuel.getItem();
                         inventory.extractItem(1, 1, false);
@@ -245,7 +245,7 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
 
                 for (int q = 0; q < amount; q++) {
                     if (level.getRandom().nextFloat()
-                            > (Objects.equals(instance.aspect().getKey(), TCAspects.VITIUM)
+                            > (Objects.equals(instance.aspect().getKey(), TTAspects.VITIUM)
                                     ? getEfficiency() * 0.66F
                                     : getEfficiency())) {
                         aspects = aspects.reduce(instance.aspect(), 1);
@@ -353,8 +353,8 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
     }
 
     public int getSmelterType() {
-        if (getBlockState().is(TCBlocks.SMELTER_VOID)) return 2;
-        if (getBlockState().is(TCBlocks.SMELTER_THAUMIUM)) return 1;
+        if (getBlockState().is(TTBlocks.SMELTER_VOID)) return 2;
+        if (getBlockState().is(TTBlocks.SMELTER_THAUMIUM)) return 1;
         return 0;
     }
 

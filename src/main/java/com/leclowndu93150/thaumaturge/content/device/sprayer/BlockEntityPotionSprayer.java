@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -59,7 +59,7 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
     private @Nullable Holder<IAspect> currentSuction;
 
     public BlockEntityPotionSprayer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.POTION_SPRAYER.get(), pos, state);
+        super(TTBlockEntities.POTION_SPRAYER.get(), pos, state);
     }
 
     public static boolean isValidPotion(ItemStack stack) {
@@ -286,10 +286,10 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!potion.isEmpty()) {
-            TCNbt.store(output, "Potion", ItemStack.CODEC, registries, potion);
+            TTNbt.store(output, "Potion", ItemStack.CODEC, registries, potion);
         }
-        TCNbt.store(output, "Recipe", AspectList.CODEC, registries, recipe);
-        TCNbt.store(output, "Progress", AspectList.CODEC, registries, progress);
+        TTNbt.store(output, "Recipe", AspectList.CODEC, registries, recipe);
+        TTNbt.store(output, "Progress", AspectList.CODEC, registries, progress);
         output.putInt("Charges", charges);
         output.putInt("Color", color);
     }
@@ -297,9 +297,9 @@ public final class BlockEntityPotionSprayer extends BlockEntity implements IEsse
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        potion = TCNbt.read(input, "Potion", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
-        recipe = TCNbt.read(input, "Recipe", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
-        progress = TCNbt.read(input, "Progress", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        potion = TTNbt.read(input, "Potion", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        recipe = TTNbt.read(input, "Recipe", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        progress = TTNbt.read(input, "Progress", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         charges = input.getInt("Charges");
         color = (input.contains("Color") ? input.getInt("Color") : DEFAULT_COLOR);
     }

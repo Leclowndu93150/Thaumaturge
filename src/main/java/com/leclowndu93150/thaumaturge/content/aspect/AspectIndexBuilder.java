@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectRecipeContributor;
 import com.leclowndu93150.thaumaturge.api.aspect.RegisterAspectContributorsEvent;
 import com.leclowndu93150.thaumaturge.content.wands.WandAspectVariants;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,7 +60,7 @@ public final class AspectIndexBuilder {
             index.resolve(item);
         }
         Map<Item, AspectList> resolved = index.resolved();
-        return AspectIndex.of(resolved, Map.of(TCItems.WAND.get(), WandAspectVariants.build(resolved)));
+        return AspectIndex.of(resolved, Map.of(TTItems.WAND.get(), WandAspectVariants.build(resolved)));
     }
 
     private static Map<Item, AspectList> collectBase(HolderLookup.Provider registries) {

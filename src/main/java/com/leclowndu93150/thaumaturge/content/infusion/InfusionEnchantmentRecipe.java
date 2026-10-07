@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Arrays;
@@ -117,7 +117,7 @@ public final class InfusionEnchantmentRecipe implements Recipe<InfusionInput>, I
         }
         if (random.nextInt(WARP_ROLL_BOUND)
                 < InfusionEnchantmentHelper.list(catalyst).size()) {
-            out.set(TCDataComponents.STACK_WARP.get(), out.getOrDefault(TCDataComponents.STACK_WARP.get(), 0) + 1);
+            out.set(TTDataComponents.STACK_WARP.get(), out.getOrDefault(TTDataComponents.STACK_WARP.get(), 0) + 1);
         }
         InfusionEnchantmentHelper.add(out, enchantment, existing + 1);
         return out;
@@ -184,7 +184,7 @@ public final class InfusionEnchantmentRecipe implements Recipe<InfusionInput>, I
 
     @Override
     public RecipeType<InfusionEnchantmentRecipe> getType() {
-        return TCRecipeTypes.INFUSION_ENCHANTMENT.get();
+        return TTRecipeTypes.INFUSION_ENCHANTMENT.get();
     }
 
     @Override

@@ -2,313 +2,36 @@ package com.leclowndu93150.thaumaturge.client.model.gear;
 
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
-public final class PraetorArmorModel extends AbstractTCArmorModel {
-    private final ModelPart legClothR;
-    private final ModelPart legClothL;
-    private final ModelPart cloak1;
-    private final ModelPart cloak2;
-    private final ModelPart cloak3;
+public final class PraetorArmorModel extends AbstractTTArmorModel {
+    private static final int TEXTURE_WIDTH = 128;
+    private static final int TEXTURE_HEIGHT = 128;
+    private static final float DEGREES_TO_RADIANS = (float) (Math.PI / 180.0);
+    private static final float SEATED_CLOTH_LIFT = 0.3F;
+
+    private final ModelPart rightCloth;
+    private final ModelPart rightHem;
+    private final ModelPart leftCloth;
+    private final ModelPart leftHem;
+    private final ModelPart cape;
+    private final ModelPart capeHem;
 
     public PraetorArmorModel(ModelPart root) {
         super(root);
-        this.legClothR = this.body.getChild("LegClothR");
-        this.legClothL = this.body.getChild("LegClothL");
-        this.cloak1 = this.body.getChild("Cloak1");
-        this.cloak2 = this.body.getChild("Cloak2");
-        this.cloak3 = this.body.getChild("Cloak3");
-    }
-
-    public static LayerDefinition createHead() {
-        MeshDefinition mesh = emptyMesh();
-        PartDefinition root = mesh.getRoot();
-        root.getChild("head")
-                .addOrReplaceChild(
-                        "Helmet",
-                        CubeListBuilder.create().texOffs(41, 8).addBox(-4.5F, -9.0F, -4.5F, 9, 9, 9),
-                        PartPose.ZERO);
-        return LayerDefinition.create(mesh, 128, 64);
-    }
-
-    public static LayerDefinition createChest() {
-        MeshDefinition mesh = emptyMesh();
-        PartDefinition root = mesh.getRoot();
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CollarF",
-                        CubeListBuilder.create().texOffs(17, 31).addBox(-4.5F, -1.5F, -3.0F, 9, 4, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, 0.2268928F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CollarB",
-                        CubeListBuilder.create().texOffs(17, 26).addBox(-4.5F, -1.5F, 7.0F, 9, 4, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, 0.2268928F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CollarR",
-                        CubeListBuilder.create().texOffs(17, 11).addBox(-5.5F, -1.5F, -3.0F, 1, 4, 11),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, 0.2268928F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CollarL",
-                        CubeListBuilder.create().texOffs(17, 11).addBox(4.5F, -1.5F, -3.0F, 1, 4, 11),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, -2.5F, 0.2268928F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "BeltR",
-                        CubeListBuilder.create().texOffs(76, 44).addBox(-5.0F, 4.0F, -3.0F, 1, 3, 6),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "BeltL",
-                        CubeListBuilder.create().texOffs(76, 44).addBox(4.0F, 4.0F, -3.0F, 1, 3, 6),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CloakTL",
-                        CubeListBuilder.create().texOffs(0, 43).addBox(2.5F, 1.0F, -1.0F, 2, 1, 3),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.1396263F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Cloak3",
-                        CubeListBuilder.create().texOffs(0, 59).addBox(-4.5F, 17.0F, -3.7F, 9, 4, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.4465716F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "CloakTR",
-                        CubeListBuilder.create().texOffs(0, 43).addBox(-4.5F, 1.0F, -1.0F, 2, 1, 3),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.1396263F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Cloak1",
-                        CubeListBuilder.create().texOffs(0, 47).addBox(-4.5F, 2.0F, 1.0F, 9, 12, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.1396263F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Cloak2",
-                        CubeListBuilder.create().texOffs(0, 59).addBox(-4.5F, 14.0F, -1.3F, 9, 4, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 3.0F, 0.3069452F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Chestplate",
-                        CubeListBuilder.create().texOffs(56, 45).addBox(-4.0F, 1.0F, -3.8F, 8, 7, 2),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "ChestOrnament",
-                        CubeListBuilder.create().texOffs(76, 53).addBox(-2.5F, 3.0F, -4.8F, 5, 5, 1),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "ChestClothL",
-                        CubeListBuilder.create().texOffs(20, 47).mirror().addBox(1.5F, 1.2F, -4.5F, 3, 9, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0663225F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "ChestClothR",
-                        CubeListBuilder.create().texOffs(20, 47).addBox(-4.5F, 1.2F, -4.5F, 3, 9, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0663225F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Backplate",
-                        CubeListBuilder.create().texOffs(36, 45).addBox(-4.0F, 1.0F, 2.0F, 8, 11, 2),
-                        PartPose.ZERO);
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "GauntletR",
-                        CubeListBuilder.create().texOffs(100, 26).addBox(-3.5F, 3.5F, -2.5F, 2, 6, 5),
-                        PartPose.ZERO);
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "GauntletL",
-                        CubeListBuilder.create().texOffs(114, 26).addBox(1.5F, 3.5F, -2.5F, 2, 6, 5),
-                        PartPose.ZERO);
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "GauntletstrapL1",
-                        CubeListBuilder.create().texOffs(84, 31).mirror().addBox(-1.5F, 3.5F, -2.5F, 3, 1, 5),
-                        PartPose.ZERO);
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "GauntletstrapL2",
-                        CubeListBuilder.create().texOffs(84, 31).mirror().addBox(-1.5F, 6.5F, -2.5F, 3, 1, 5),
-                        PartPose.ZERO);
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "GauntletstrapR1",
-                        CubeListBuilder.create().texOffs(84, 31).addBox(-1.5F, 3.5F, -2.5F, 3, 1, 5),
-                        PartPose.ZERO);
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "GauntletstrapR2",
-                        CubeListBuilder.create().texOffs(84, 31).addBox(-1.5F, 6.5F, -2.5F, 3, 1, 5),
-                        PartPose.ZERO);
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "GauntletR2",
-                        CubeListBuilder.create().texOffs(102, 37).addBox(-5.0F, 3.5F, -2.0F, 1, 5, 4),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1675516F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "GauntletL2",
-                        CubeListBuilder.create().texOffs(102, 37).addBox(4.0F, 3.5F, -2.0F, 1, 5, 4),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1675516F));
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR",
-                        CubeListBuilder.create().texOffs(56, 35).addBox(-3.5F, -2.5F, -2.5F, 5, 5, 5),
-                        PartPose.ZERO);
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR1",
-                        CubeListBuilder.create().texOffs(0, 0).addBox(-4.3F, -1.5F, -3.0F, 3, 5, 6),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7853982F));
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR2",
-                        CubeListBuilder.create().texOffs(0, 19).addBox(-3.3F, 3.5F, -2.5F, 1, 1, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7853982F));
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR5",
-                        CubeListBuilder.create().texOffs(18, 4).addBox(-2.3F, -1.5F, 3.0F, 1, 6, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7853982F));
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR3",
-                        CubeListBuilder.create().texOffs(0, 11).addBox(-2.3F, 3.5F, -3.0F, 1, 2, 6),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7853982F));
-        root.getChild("right_arm")
-                .addOrReplaceChild(
-                        "ShoulderR4",
-                        CubeListBuilder.create().texOffs(18, 4).addBox(-2.3F, -1.5F, -4.0F, 1, 6, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.7853982F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL",
-                        CubeListBuilder.create().texOffs(56, 35).addBox(-1.5F, -2.5F, -2.5F, 5, 5, 5),
-                        PartPose.ZERO);
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL1",
-                        CubeListBuilder.create().texOffs(0, 0).addBox(1.3F, -1.5F, -3.0F, 3, 5, 6),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7853982F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL2",
-                        CubeListBuilder.create().texOffs(0, 19).mirror().addBox(2.3F, 3.5F, -2.5F, 1, 1, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7853982F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL3",
-                        CubeListBuilder.create().texOffs(0, 11).addBox(1.3F, 3.5F, -3.0F, 1, 2, 6),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7853982F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL5",
-                        CubeListBuilder.create().texOffs(18, 4).addBox(1.3F, -1.5F, 3.0F, 1, 6, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7853982F));
-        root.getChild("left_arm")
-                .addOrReplaceChild(
-                        "ShoulderL4",
-                        CubeListBuilder.create().texOffs(18, 4).addBox(1.3F, -1.5F, -4.0F, 1, 6, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.7853982F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "LegClothR",
-                        CubeListBuilder.create().texOffs(20, 55).addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
-                        PartPose.offsetAndRotation(-4.5F, 10.4F, -3.9F, -0.0349066F, 0.0F, 0.0F));
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "LegClothL",
-                        CubeListBuilder.create().texOffs(20, 55).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 8, 1),
-                        PartPose.offsetAndRotation(1.5F, 10.4F, -3.9F, -0.0349066F, 0.0F, 0.0F));
-        return LayerDefinition.create(mesh, 128, 64);
-    }
-
-    public static LayerDefinition createLegs() {
-        MeshDefinition mesh = emptyMesh();
-        PartDefinition root = mesh.getRoot();
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "Mbelt",
-                        CubeListBuilder.create().texOffs(56, 55).addBox(-4.0F, 8.0F, -3.0F, 8, 4, 1),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "MbeltL",
-                        CubeListBuilder.create().texOffs(76, 44).addBox(4.0F, 8.0F, -3.0F, 1, 3, 6),
-                        PartPose.ZERO);
-        root.getChild("body")
-                .addOrReplaceChild(
-                        "MbeltR",
-                        CubeListBuilder.create().texOffs(76, 44).addBox(-5.0F, 8.0F, -3.0F, 1, 3, 6),
-                        PartPose.ZERO);
-        root.getChild("right_leg")
-                .addOrReplaceChild(
-                        "BackpanelR1",
-                        CubeListBuilder.create().texOffs(0, 25).addBox(-3.0F, -0.5F, 2.5F, 5, 7, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0698132F, 0.0F, 0.0F));
-        root.getChild("right_leg")
-                .addOrReplaceChild(
-                        "BackpanelR2",
-                        CubeListBuilder.create().texOffs(96, 14).addBox(-3.0F, -0.5F, -2.5F, 5, 3, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1396263F));
-        root.getChild("right_leg")
-                .addOrReplaceChild(
-                        "BackpanelR3",
-                        CubeListBuilder.create().texOffs(116, 13).addBox(-3.0F, 2.5F, -2.5F, 1, 4, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1396263F));
-        root.getChild("right_leg")
-                .addOrReplaceChild(
-                        "BackpanelR4",
-                        CubeListBuilder.create().texOffs(0, 25).mirror().addBox(-3.0F, -0.5F, -3.5F, 5, 7, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0349066F, 0.0F, 0.0F));
-        root.getChild("left_leg")
-                .addOrReplaceChild(
-                        "BackpanelL1",
-                        CubeListBuilder.create().texOffs(0, 25).addBox(-2.0F, -0.5F, 2.5F, 5, 7, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0698132F, 0.0F, 0.0F));
-        root.getChild("left_leg")
-                .addOrReplaceChild(
-                        "BackpanelL4",
-                        CubeListBuilder.create().texOffs(0, 25).addBox(-2.0F, -0.5F, -3.5F, 5, 7, 1),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.0349066F, 0.0F, 0.0F));
-        root.getChild("left_leg")
-                .addOrReplaceChild(
-                        "BackpanelL2",
-                        CubeListBuilder.create().texOffs(96, 14).addBox(-2.0F, -0.5F, -2.5F, 5, 3, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1396263F));
-        root.getChild("left_leg")
-                .addOrReplaceChild(
-                        "BackpanelL3",
-                        CubeListBuilder.create().texOffs(116, 13).addBox(2.0F, 2.5F, -2.5F, 1, 4, 5),
-                        PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.1396263F));
-        return LayerDefinition.create(mesh, 128, 64);
-    }
-
-    private static MeshDefinition emptyMesh() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.ZERO);
-        root.addOrReplaceChild("hat", CubeListBuilder.create(), PartPose.ZERO);
-        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create(), PartPose.ZERO);
-        body.addOrReplaceChild("LegClothR", CubeListBuilder.create(), PartPose.ZERO);
-        body.addOrReplaceChild("LegClothL", CubeListBuilder.create(), PartPose.ZERO);
-        body.addOrReplaceChild("Cloak1", CubeListBuilder.create(), PartPose.ZERO);
-        body.addOrReplaceChild("Cloak2", CubeListBuilder.create(), PartPose.ZERO);
-        body.addOrReplaceChild("Cloak3", CubeListBuilder.create(), PartPose.ZERO);
-        root.addOrReplaceChild("right_arm", CubeListBuilder.create(), PartPose.offset(-5.0F, 2.0F, 0.0F));
-        root.addOrReplaceChild("left_arm", CubeListBuilder.create(), PartPose.offset(5.0F, 2.0F, 0.0F));
-        root.addOrReplaceChild("right_leg", CubeListBuilder.create(), PartPose.offset(-1.9F, 12.0F, 0.0F));
-        root.addOrReplaceChild("left_leg", CubeListBuilder.create(), PartPose.offset(1.9F, 12.0F, 0.0F));
-        return mesh;
+        rightCloth = body.getChild("tabard_right_upper");
+        rightHem = rightCloth.getChild("tabard_right_lower");
+        leftCloth = body.getChild("tabard_left_upper");
+        leftHem = leftCloth.getChild("tabard_left_lower");
+        cape = body.getChild("cape_mantle_upper");
+        capeHem = cape.getChild("cape_mantle_lower");
     }
 
     @Override
@@ -320,13 +43,198 @@ public final class PraetorArmorModel extends AbstractTCArmorModel {
             float netHeadYaw,
             float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        float a = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        float b = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-        float c = Math.min(a, b);
-        this.legClothR.xRot = a - 0.1047198F;
-        this.legClothL.xRot = b - 0.1047198F;
-        this.cloak1.xRot = -c / 2.0F + 0.1396263F;
-        this.cloak2.xRot = -c / 2.0F + 0.3069452F;
-        this.cloak3.xRot = -c / 2.0F + 0.4465716F;
+        if (entity instanceof ArmorStand) {
+            return;
+        }
+        float speed = Mth.clamp(limbSwingAmount, 0.0F, 1.0F);
+        float phase = limbSwing * 0.6662F;
+        float stride = Math.abs(Mth.cos(phase)) * speed;
+        float crouch = entity.isCrouching() ? 1.0F : 0.0F;
+        float flutter = Mth.sin(ageInTicks * 0.16F) * (0.012F + speed * 0.028F);
+        float trailing = entity.isFallFlying() || entity.isVisuallySwimming() ? 0.65F : 0.0F;
+        animateCloth(rightCloth, rightHem, rightLeg, entity, stride, speed, crouch, flutter);
+        animateCloth(leftCloth, leftHem, leftLeg, entity, stride, speed, crouch, -flutter);
+        cape.xRot = 8.0F * DEGREES_TO_RADIANS + stride * 0.32F + flutter + crouch * 0.16F + trailing;
+        capeHem.xRot = 6.0F * DEGREES_TO_RADIANS + stride * 0.12F + flutter * 1.5F;
+    }
+
+    private void animateCloth(
+            ModelPart cloth,
+            ModelPart hem,
+            ModelPart leg,
+            LivingEntity entity,
+            float stride,
+            float speed,
+            float crouch,
+            float flutter) {
+        float forwardLeg = Math.min(0.0F, leg.xRot - body.xRot);
+        cloth.xRot = -8.0F * DEGREES_TO_RADIANS
+                + forwardLeg
+                - stride * 0.3F
+                - Math.abs(body.yRot)
+                - speed * 0.08F
+                - crouch
+                - (entity.isPassenger() ? SEATED_CLOTH_LIFT : 0.0F);
+        cloth.y -= crouch;
+        cloth.xScale = entity.isPassenger() ? 0.4F : 1.0F;
+        hem.xRot = -4.0F * DEGREES_TO_RADIANS - stride * 0.12F - flutter + crouch;
+    }
+
+    public static LayerDefinition createHead() {
+        MeshDefinition mesh = createMesh();
+        PartDefinition root = mesh.getRoot();
+        PartDefinition head = root.addOrReplaceChild(
+                "head",
+                CubeListBuilder.create()
+                        .texOffs(108, 1)
+                        .addBox(-4.25F, -8.75F, -4.9375F, 8.5F, 8.5F, 0.5F, new CubeDeformation(0.03125F))
+                        .texOffs(1, 17)
+                        .addBox(-4.25F, -9.375F, -4.375F, 8.5F, 1.0F, 8.5F, new CubeDeformation(0.03125F))
+                        .texOffs(36, 17)
+                        .addBox(-4.125F, -8.375F, 4.25F, 8.5F, 8.0F, 0.5F, new CubeDeformation(0.03125F))
+                        .texOffs(55, 17)
+                        .addBox(-4.75F, -8.125F, -4.1875F, 0.5F, 8.0F, 8.5F, new CubeDeformation(0.03125F))
+                        .texOffs(74, 17)
+                        .addBox(4.25F, -8.125F, -4.1875F, 0.5F, 8.0F, 8.5F, new CubeDeformation(0.03125F)),
+                PartPose.offset(0.0F, 0.0F, 0.0F));
+        head.addOrReplaceChild(
+                "swept_cheek_-1",
+                CubeListBuilder.create().texOffs(93, 17).addBox(-0.625F, -0.25F, -2.0F, 1.0F, 4.5F, 4.0F),
+                PartPose.offsetAndRotation(-4.25F, -4.5F, -2.5F, 0.0F, -0.2094395F, 0.0698132F));
+        head.addOrReplaceChild(
+                "swept_cheek_1",
+                CubeListBuilder.create().texOffs(104, 17).addBox(-0.375F, -0.25F, -2.0F, 1.0F, 4.5F, 4.0F),
+                PartPose.offsetAndRotation(4.25F, -4.5F, -2.5F, 0.0F, 0.2094395F, -0.0698132F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    public static LayerDefinition createChest() {
+        MeshDefinition mesh = createMesh();
+        PartDefinition root = mesh.getRoot();
+        PartDefinition body = root.addOrReplaceChild(
+                "body",
+                CubeListBuilder.create()
+                        .texOffs(1, 1)
+                        .addBox(-4.25F, 0.75F, -2.5F, 8.5F, 10.0F, 5.0F, new CubeDeformation(0.03125F))
+                        .texOffs(29, 1)
+                        .addBox(-4.25F, 1.0F, -3.875F, 8.5F, 7.0F, 1.0F)
+                        .texOffs(49, 1)
+                        .addBox(-2.5F, 2.625F, -4.875F, 5.0F, 5.0F, 0.5F)
+                        .texOffs(61, 1)
+                        .addBox(-4.5F, 10.375F, -2.875F, 9.0F, 1.5F, 6.0F)
+                        .texOffs(92, 1)
+                        .addBox(-4.5F, 0.875F, -4.375F, 3.0F, 9.5F, 0.5F)
+                        .texOffs(100, 1)
+                        .addBox(1.5F, 0.875F, -4.375F, 3.0F, 9.5F, 0.5F)
+                        .texOffs(1, 35)
+                        .addBox(-5.0F, -0.25F, -5.5F, 10.0F, 2.5F, 0.5F)
+                        .texOffs(23, 35)
+                        .addBox(-4.75F, -1.875F, 4.875F, 9.5F, 4.0F, 0.5F)
+                        .texOffs(101, 35)
+                        .addBox(-4.0F, 0.5F, 3.75F, 1.0F, 1.0F, 1.5F)
+                        .texOffs(122, 35)
+                        .addBox(3.0F, 0.5F, 3.75F, 1.0F, 1.0F, 1.5F),
+                PartPose.offset(0.0F, 0.0F, 0.0F));
+        body.addOrReplaceChild(
+                "gorget_side_-1",
+                CubeListBuilder.create().texOffs(44, 35).addBox(-0.25F, -1.5F, -4.875F, 0.5F, 2.5F, 9.5F),
+                PartPose.offsetAndRotation(-5.0F, 1.0F, 0.0F, 0.1396263F, 0.0F, 0.0698132F));
+        body.addOrReplaceChild(
+                "gorget_side_1",
+                CubeListBuilder.create().texOffs(65, 35).addBox(-0.25F, -1.5F, -4.875F, 0.5F, 2.5F, 9.5F),
+                PartPose.offsetAndRotation(5.0F, 1.0F, 0.0F, 0.1396263F, 0.0F, -0.0698132F));
+        PartDefinition tabardRightUpper = body.addOrReplaceChild(
+                "tabard_right_upper",
+                CubeListBuilder.create().texOffs(86, 35).addBox(-1.5F, 0.0F, -0.25F, 3.0F, 5.5F, 0.5F),
+                PartPose.offsetAndRotation(-2.875F, 10.5F, -4.375F, -0.1396263F, 0.0F, 0.0F));
+        tabardRightUpper.addOrReplaceChild(
+                "tabard_right_lower",
+                CubeListBuilder.create().texOffs(94, 35).addBox(-1.25F, -0.125F, -0.1875F, 2.5F, 4.0F, 0.5F),
+                PartPose.offsetAndRotation(0.0F, 5.5F, 0.0F, -0.0698132F, 0.0F, 0.0F));
+        PartDefinition tabardLeftUpper = body.addOrReplaceChild(
+                "tabard_left_upper",
+                CubeListBuilder.create().texOffs(107, 35).addBox(-1.5F, 0.0F, -0.25F, 3.0F, 4.0F, 0.5F),
+                PartPose.offsetAndRotation(2.875F, 10.5F, -4.375F, -0.1396263F, 0.0F, 0.0F));
+        tabardLeftUpper.addOrReplaceChild(
+                "tabard_left_lower",
+                CubeListBuilder.create().texOffs(115, 35).addBox(-1.25F, -0.125F, -0.1875F, 2.5F, 2.5F, 0.5F),
+                PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, -0.0698132F, 0.0F, 0.0F));
+        PartDefinition capeMantleUpper = body.addOrReplaceChild(
+                "cape_mantle_upper",
+                CubeListBuilder.create().texOffs(1, 48).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 12.0F, 0.5F),
+                PartPose.offsetAndRotation(-1.0F, 0.75F, 4.375F, 0.1396263F, 0.0F, 0.0F));
+        capeMantleUpper.addOrReplaceChild(
+                "cape_mantle_lower",
+                CubeListBuilder.create().texOffs(21, 48).addBox(-4.25F, -0.125F, 0.0625F, 8.5F, 3.5F, 0.5F),
+                PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.1047198F, 0.0F, 0.0F));
+        PartDefinition rightArm = root.addOrReplaceChild(
+                "right_arm",
+                CubeListBuilder.create()
+                        .texOffs(40, 48)
+                        .addBox(-3.25F, -1.875F, -2.375F, 4.5F, 3.5F, 4.5F, new CubeDeformation(0.03125F))
+                        .texOffs(82, 48)
+                        .addBox(-3.25F, 4.625F, -2.625F, 4.5F, 5.0F, 5.0F, new CubeDeformation(0.03125F))
+                        .texOffs(102, 48)
+                        .addBox(-3.375F, 8.1875F, -2.6875F, 4.5F, 0.5F, 5.5F)
+                        .texOffs(1, 62)
+                        .addBox(-3.375F, 5.6875F, -2.6875F, 4.5F, 0.5F, 5.5F),
+                PartPose.offset(-5.0F, 2.0F, 0.0F));
+        rightArm.addOrReplaceChild(
+                "legate_pauldron_right",
+                CubeListBuilder.create().texOffs(59, 48).addBox(-2.75F, -0.25F, -2.875F, 5.5F, 3.0F, 5.5F),
+                PartPose.offsetAndRotation(-1.0F, -1.75F, 0.0F, 0.0F, 0.0F, 0.0872665F));
+        PartDefinition leftArm = root.addOrReplaceChild(
+                "left_arm",
+                CubeListBuilder.create()
+                        .texOffs(60, 62)
+                        .addBox(-1.25F, -1.875F, -2.375F, 4.5F, 3.5F, 4.5F, new CubeDeformation(0.03125F))
+                        .texOffs(102, 62)
+                        .addBox(3.75F, -4.5F, -2.625F, 0.5F, 4.0F, 5.0F)
+                        .texOffs(1, 73)
+                        .addBox(-1.25F, 4.625F, -2.625F, 4.5F, 5.0F, 5.0F, new CubeDeformation(0.03125F))
+                        .texOffs(21, 73)
+                        .addBox(-1.375F, 8.1875F, -2.6875F, 4.5F, 0.5F, 5.5F)
+                        .texOffs(42, 73)
+                        .addBox(-1.375F, 5.6875F, -2.6875F, 4.5F, 0.5F, 5.5F),
+                PartPose.offset(5.0F, 2.0F, 0.0F));
+        leftArm.addOrReplaceChild(
+                "legate_pauldron_left",
+                CubeListBuilder.create().texOffs(79, 62).addBox(-2.75F, -0.75F, -2.875F, 5.5F, 4.5F, 5.5F),
+                PartPose.offsetAndRotation(1.0F, -1.75F, 0.0F, 0.0F, 0.0F, -0.2094395F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    public static LayerDefinition createLegs() {
+        MeshDefinition mesh = createMesh();
+        PartDefinition root = mesh.getRoot();
+        root.addOrReplaceChild(
+                "right_leg",
+                CubeListBuilder.create()
+                        .texOffs(22, 62)
+                        .addBox(-1.75F, 0.375F, -3.125F, 3.5F, 3.0F, 6.0F)
+                        .texOffs(42, 62)
+                        .addBox(-1.5F, 2.375F, -2.875F, 3.0F, 3.0F, 5.5F),
+                PartPose.offset(-1.9F, 12.0F, 0.0F));
+        root.addOrReplaceChild(
+                "left_leg",
+                CubeListBuilder.create()
+                        .texOffs(63, 73)
+                        .addBox(-1.75F, 0.375F, -3.125F, 3.5F, 3.0F, 6.0F)
+                        .texOffs(83, 73)
+                        .addBox(-1.5F, 2.375F, -2.875F, 3.0F, 3.0F, 5.5F),
+                PartPose.offset(1.9F, 12.0F, 0.0F));
+        return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    }
+
+    private static MeshDefinition createMesh() {
+        MeshDefinition mesh = KnightArmorModel.emptyMesh();
+        PartDefinition body = mesh.getRoot().getChild("body");
+        for (String side : new String[] {"right", "left"}) {
+            PartDefinition cloth = KnightArmorModel.emptyChild(body, "tabard_" + side + "_upper");
+            KnightArmorModel.emptyChild(cloth, "tabard_" + side + "_lower");
+        }
+        PartDefinition cape = KnightArmorModel.emptyChild(body, "cape_mantle_upper");
+        KnightArmorModel.emptyChild(cape, "cape_mantle_lower");
+        return mesh;
     }
 }

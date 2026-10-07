@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio.client;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.List;
@@ -24,7 +24,7 @@ import top.theillusivec4.curios.api.client.ICurioRenderer;
 public final class GoggleCurioRenderer implements ICurioRenderer {
 
     private static final ResourceLocation GOGGLES_TEXTURE =
-            TCIds.rl("textures/models/armor/goggles_revealing_layer_1.png");
+            TTIds.rl("textures/models/armor/goggles_revealing_layer_1.png");
 
     private HumanoidModel<LivingEntity> armorModel;
 

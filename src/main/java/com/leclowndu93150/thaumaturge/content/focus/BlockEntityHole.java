@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.focus;
 
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectRift;
 import com.leclowndu93150.thaumaturge.content.particle.SparkleParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -40,7 +40,7 @@ public final class BlockEntityHole extends BlockEntity {
     Direction direction = null;
 
     public BlockEntityHole(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.HOLE.get(), pos, state);
+        super(TTBlockEntities.HOLE.get(), pos, state);
     }
 
     public void configure(BlockState oldblock, int countdownmax, int count, @Nullable Direction direction) {
@@ -185,7 +185,7 @@ public final class BlockEntityHole extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "oldblock", BlockState.CODEC, registries, oldblock);
+        TTNbt.store(output, "oldblock", BlockState.CODEC, registries, oldblock);
         output.putInt("countdown", countdown);
         output.putInt("countdownmax", countdownmax);
         output.putInt("count", count);
@@ -195,7 +195,7 @@ public final class BlockEntityHole extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        oldblock = TCNbt.read(input, "oldblock", BlockState.CODEC, registries).orElse(Blocks.AIR.defaultBlockState());
+        oldblock = TTNbt.read(input, "oldblock", BlockState.CODEC, registries).orElse(Blocks.AIR.defaultBlockState());
         countdown = input.getInt("countdown");
         countdownmax = (input.contains("countdownmax") ? input.getInt("countdownmax") : DEFAULT_COUNTDOWN_MAX);
         count = input.getInt("count");

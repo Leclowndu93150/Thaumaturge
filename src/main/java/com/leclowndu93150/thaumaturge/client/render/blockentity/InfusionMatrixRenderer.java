@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.MatrixCubeModel;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -27,14 +27,22 @@ import net.minecraft.world.level.block.Block;
 import org.joml.Matrix4f;
 
 public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEntityInfusionMatrix> {
-    private static final ResourceLocation TEX_NORMAL = TCIds.rl("textures/block/infuser_normal.png");
-    private static final ResourceLocation TEX_ANCIENT = TCIds.rl("textures/block/infuser_ancient.png");
-    private static final ResourceLocation TEX_ELDRITCH = TCIds.rl("textures/block/infuser_eldritch.png");
+    private static final ResourceLocation TEX_NORMAL = TTIds.rl("textures/block/infuser_normal.png");
+    private static final ResourceLocation TEX_ANCIENT = TTIds.rl("textures/block/infuser_ancient.png");
+    private static final ResourceLocation TEX_ELDRITCH = TTIds.rl("textures/block/infuser_eldritch.png");
 
-    private static final float SUB_CUBE_OFFSET = 0.25F;
-    private static final float SUB_CUBE_SCALE = 0.45F;
-    private static final float TILT_X = 35.0F;
-    private static final float TILT_Z = 45.0F;
+    private static final float MATRIX_SCALE = 0.8F;
+    private static final float CUBE_OFFSET = 5.0F / 16.0F;
+    private static final float CUBE_SCALE = 0.5F;
+    private static final float CORE_SCALE = 12.0F / 16.0F;
+    private static final float ACTIVE_LIFT = 0.3F;
+    private static final int IDLE_BOB_PERIOD = 40;
+    private static final float IDLE_BOB_DIVISOR = 4.5F;
+    private static final int CRAFT_BOB_PERIOD = 25;
+    private static final float CRAFT_BOB_DIVISOR = 3.5F;
+    private static final float BOB_BLEND_TICKS = 15.0F;
+    private static final float SPIN_Z_DIVISOR = 4.0F;
+    private static final float TILT = 45.0F;
     private static final float JITTER_SCALE = 0.01F;
     private static final float GLOW_RED = 0.8F;
     private static final float GLOW_GREEN = 0.1F;
@@ -45,16 +53,16 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
     private static final float HALO_FADE_TICKS = 500.0F;
     private static final float HALO_RAMP_TICKS = 50.0F;
 
-    private static final RenderType GLOW_NORMAL = TCRenderTypes.entityAdditiveEmissive(TEX_NORMAL);
-    private static final RenderType GLOW_ANCIENT = TCRenderTypes.entityAdditiveEmissive(TEX_ANCIENT);
-    private static final RenderType GLOW_ELDRITCH = TCRenderTypes.entityAdditiveEmissive(TEX_ELDRITCH);
-    private static final RenderType HALO_TYPE = TCRenderTypes.SPARKLE_CULLED;
+    private static final RenderType GLOW_NORMAL = TTRenderTypes.entityAdditiveEmissive(TEX_NORMAL);
+    private static final RenderType GLOW_ANCIENT = TTRenderTypes.entityAdditiveEmissive(TEX_ANCIENT);
+    private static final RenderType GLOW_ELDRITCH = TTRenderTypes.entityAdditiveEmissive(TEX_ELDRITCH);
+    private static final RenderType HALO_TYPE = TTRenderTypes.SPARKLE_CULLED;
 
     private final MatrixCubeModel model;
     private final RandomSource haloRandom = RandomSource.create();
 
     public InfusionMatrixRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new MatrixCubeModel(context.bakeLayer(TCModelLayers.MATRIX_CUBE));
+        this.model = new MatrixCubeModel(context.bakeLayer(TTModelLayers.MATRIX_CUBE));
     }
 
     @Override
@@ -80,10 +88,17 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
         float instability = Math.min(
                 6.0F, 1.0F + (stability < 0.0F ? -stability * 0.66F : 1.0F) * (Math.min(craftTicks, 50) / 50.0F));
         poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
+        float craftBlend = Math.min(craftTicks, BOB_BLEND_TICKS) / BOB_BLEND_TICKS;
+        float bob = Mth.lerp(
+                craftBlend,
+                oscillate(animationTime, IDLE_BOB_PERIOD) / IDLE_BOB_DIVISOR,
+                oscillate(animationTime, CRAFT_BOB_PERIOD) / CRAFT_BOB_DIVISOR);
+        poseStack.translate(0.5F, 0.5F + (ACTIVE_LIFT + bob) * startUp, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(animationTime % 360.0F * startUp));
-        poseStack.mulPose(Axis.XP.rotationDegrees(TILT_X * startUp));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(TILT_Z * startUp));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(animationTime / SPIN_Z_DIVISOR % 360.0F * startUp));
+        poseStack.mulPose(Axis.XP.rotationDegrees(TILT * startUp));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(TILT * startUp));
+        poseStack.scale(MATRIX_SCALE, MATRIX_SCALE, MATRIX_SCALE);
         for (int a = 0; a < 2; a++) {
             for (int b = 0; b < 2; b++) {
                 for (int c = 0; c < 2; c++) {
@@ -99,8 +114,7 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
                     int bb = b == 0 ? -1 : 1;
                     int cc = c == 0 ? -1 : 1;
                     poseStack.pushPose();
-                    poseStack.translate(
-                            jx + aa * SUB_CUBE_OFFSET, jy + bb * SUB_CUBE_OFFSET, jz + cc * SUB_CUBE_OFFSET);
+                    poseStack.translate(jx + aa * CUBE_OFFSET, jy + bb * CUBE_OFFSET, jz + cc * CUBE_OFFSET);
                     if (a > 0) {
                         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
                     }
@@ -110,26 +124,55 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
                     if (c > 0) {
                         poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
                     }
-                    poseStack.scale(SUB_CUBE_SCALE, SUB_CUBE_SCALE, SUB_CUBE_SCALE);
-                    model.cube.render(poseStack, buffers.getBuffer(type), light, OverlayTexture.NO_OVERLAY, -1);
-                    if (active) {
-                        float glowAlpha =
-                                (Mth.sin((animationTime + a * 2 + b * 3 + c * 4) / 4.0F) * 0.1F + 0.2F) * startUp;
-                        model.glow.render(
-                                poseStack,
-                                buffers.getBuffer(glowType),
-                                LightTexture.FULL_BRIGHT,
-                                OverlayTexture.NO_OVERLAY,
-                                ARGB32.colorFromFloat(glowAlpha, GLOW_RED, GLOW_GREEN, GLOW_BLUE));
-                    }
+                    poseStack.scale(CUBE_SCALE, CUBE_SCALE, CUBE_SCALE);
+                    renderCube(
+                            poseStack,
+                            buffers,
+                            type,
+                            glowType,
+                            light,
+                            active,
+                            animationTime,
+                            startUp,
+                            a * 2 + b * 3 + c * 4);
                     poseStack.popPose();
                 }
             }
         }
+        poseStack.pushPose();
+        poseStack.scale(CORE_SCALE, CORE_SCALE, CORE_SCALE);
+        renderCube(poseStack, buffers, type, glowType, light, active, animationTime, startUp, 0);
+        poseStack.popPose();
         poseStack.popPose();
         if (crafting) {
             drawHalo(craftTicks, fancyGraphics, poseStack, buffers);
         }
+    }
+
+    private void renderCube(
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            RenderType type,
+            RenderType glowType,
+            int light,
+            boolean active,
+            float animationTime,
+            float startUp,
+            int phase) {
+        model.cube.render(poseStack, buffers.getBuffer(type), light, OverlayTexture.NO_OVERLAY, -1);
+        if (active) {
+            float glowAlpha = (Mth.sin((animationTime + phase) / 4.0F) * 0.1F + 0.2F) * startUp;
+            model.glow.render(
+                    poseStack,
+                    buffers.getBuffer(glowType),
+                    LightTexture.FULL_BRIGHT,
+                    OverlayTexture.NO_OVERLAY,
+                    ARGB32.colorFromFloat(glowAlpha, GLOW_RED, GLOW_GREEN, GLOW_BLUE));
+        }
+    }
+
+    private static float oscillate(float time, int period) {
+        return Mth.sin(Mth.TWO_PI * (time % period) / period);
     }
 
     private static ResourceLocation pickTexture(BlockEntityInfusionMatrix matrix) {
@@ -139,10 +182,10 @@ public final class InfusionMatrixRenderer implements BlockEntityRenderer<BlockEn
         }
         BlockPos corner = matrix.getBlockPos().offset(-1, -2, -1);
         Block block = level.getBlockState(corner).getBlock();
-        if (block == TCBlocks.PILLAR_ANCIENT.get()) {
+        if (block == TTBlocks.PILLAR_ANCIENT.get()) {
             return TEX_ANCIENT;
         }
-        if (block == TCBlocks.PILLAR_ELDRITCH.get()) {
+        if (block == TTBlocks.PILLAR_ELDRITCH.get()) {
             return TEX_ELDRITCH;
         }
         return TEX_NORMAL;

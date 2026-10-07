@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.entity.ai.ThaumicSlimeSpitGoal;
 import com.leclowndu93150.thaumaturge.content.particle.FluxGooDropletParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.monster.SlimeAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -167,7 +167,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
             for (int k = 0; k < size; k++) {
                 float xd = (k % 2 - 0.5F) * size / 4.0F;
                 float zd = (k / 2 - 0.5F) * size / 4.0F;
-                ThaumicSlime child = TCEntities.THAUMIC_SLIME.get().create(server);
+                ThaumicSlime child = TTEntities.THAUMIC_SLIME.get().create(server);
                 if (child != null) {
                     child.setSize(1, true);
                     child.moveTo(
@@ -188,7 +188,7 @@ public final class ThaumicSlime extends Slime implements ITaintedMob {
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, damageSource, recentlyHit);
         if (this.getSize() > 1) {
-            this.spawnAtLocation(EssentiaCrystalFactory.of(level.registryAccess(), TCAspects.VITIUM));
+            this.spawnAtLocation(EssentiaCrystalFactory.of(level.registryAccess(), TTAspects.VITIUM));
         }
     }
 

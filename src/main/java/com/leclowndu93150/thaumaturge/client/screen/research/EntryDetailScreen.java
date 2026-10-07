@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
@@ -26,9 +26,9 @@ import com.leclowndu93150.thaumaturge.client.render.research.PageParser;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayCache;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget;
 import com.leclowndu93150.thaumaturge.client.render.research.RecipeDisplayWidget.ItemHit;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
@@ -37,8 +37,8 @@ import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.network.ServerboundAdvanceStagePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundClearResearchFlagsPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundObtainNotePayload;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -78,7 +78,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public final class EntryDetailScreen extends AbstractTCScreen {
+public final class EntryDetailScreen extends AbstractTTScreen {
     private static final int PANE_W = 256;
     private static final int PANE_H = 181;
     private static final float PANE_SCALE = 1.3F;
@@ -203,15 +203,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private static final int LABEL_TINT = 0x40FFFFFF;
 
     private static final ResourceLocation FIRSTSTEPS_RESEARCH =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "first_steps");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "first_steps");
     private static final ResourceLocation KNOWLEDGETYPES_RESEARCH =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "knowledge_types");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "knowledge_types");
 
     private static final int ASPECTS_INSERT_OFFSET_X = 60;
     private static final int ASPECTS_INSERT_OFFSET_Y = 24;
     private static final int ASPECT_PAGE_ROWS = 5;
     private static final float ASPECT_COMBINE_YIELD = 1.0F;
-    private static final ResourceLocation UNKNOWN_ASPECT_TEXTURE = TCIds.rl("textures/aspects/_unknown.png");
+    private static final ResourceLocation UNKNOWN_ASPECT_TEXTURE = TTIds.rl("textures/aspects/_unknown.png");
     private static final int UNKNOWN_ASPECT_TINT = 0x80808080;
     private static final int ASPECT_ROW_STRIDE = 40;
     private static final int ASPECT_BACK_OFFSET_X = -2;
@@ -557,7 +557,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         selectedStageIndex = clamped == progressStage ? -1 : clamped;
         currentPage = 0;
         rebuildPages();
-        playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
     }
 
     @Override
@@ -613,15 +613,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         graphics.pose().scale(PANE_SCALE, PANE_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 0,
                 0,
                 0.0F,
                 0.0F,
                 PANE_W,
                 PANE_H,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -671,8 +671,8 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         (float) pi.v,
                         pi.w,
                         pi.h,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE,
+                        TTScreenTextures.TEX_SIZE,
+                        TTScreenTextures.TEX_SIZE,
                         0xFFFFFFFF);
                 graphics.pose().popPose();
                 currentY += pi.renderedHeight() + 2;
@@ -700,15 +700,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void drawDivider(GuiGraphics graphics, int x, int y) {
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 x,
                 y,
                 (float) DIVIDER_U,
                 (float) DIVIDER_V,
                 DIVIDER_WIDTH,
                 DIVIDER_THICK,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
     }
 
@@ -775,15 +775,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             reqY -= 12;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + 4,
                     reqY - 2,
                     (float) COMPLETE_DIVIDER_U,
                     (float) COMPLETE_DIVIDER_V,
                     COMPLETE_DIVIDER_W,
                     COMPLETE_DIVIDER_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             boolean allMet = allTrue(researchSatisfied)
                     && allTrue(obtainSatisfied)
@@ -805,15 +805,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                     int tint = hover ? COMPLETE_BUTTON_TINT_NORMAL : COMPLETE_BUTTON_TINT_HOVER;
                     GuiBlend.blitTinted(
                             graphics,
-                            TCScreenTextures.RESEARCH_BOOK,
+                            TTScreenTextures.RESEARCH_BOOK,
                             hrx,
                             hry,
                             (float) COMPLETE_BUTTON_U,
                             (float) COMPLETE_BUTTON_V,
                             COMPLETE_BUTTON_W,
                             COMPLETE_BUTTON_H,
-                            TCScreenTextures.TEX_SIZE,
-                            TCScreenTextures.TEX_SIZE,
+                            TTScreenTextures.TEX_SIZE,
+                            TTScreenTextures.TEX_SIZE,
                             tint);
                     Component label = Component.translatable("tc.stage.complete");
                     int lblWidth = font.width(label);
@@ -864,7 +864,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (minecraft == null || minecraft.player == null) return;
         int ticksExisted = minecraft.player.tickCount;
         int frame = ticksExisted % FORBIDDEN_NODE_FRAME_COUNT;
-        ResourceLocation nodeTex = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+        ResourceLocation nodeTex = ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/misc/auranodes.png");
         int u = frame * FORBIDDEN_NODE_CELL_PX;
         int v = FORBIDDEN_NODE_ROW * FORBIDDEN_NODE_CELL_PX;
         int half = FORBIDDEN_NODE_DRAW_SIZE / 2;
@@ -887,15 +887,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void renderRowLabel(GuiGraphics graphics, int x, int y, int v, int mouseX, int mouseY) {
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 x + LABEL_OFFSET_X,
                 y - 1,
                 (float) REQUIREMENT_LABEL_U,
                 (float) v,
                 LABEL_WIDTH,
                 LABEL_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 LABEL_TINT);
         if (mouseInside(x + LABEL_OFFSET_X, y, LABEL_WIDTH / 4, LABEL_HEIGHT, mouseX, mouseY)) {
             switch (v) {
@@ -945,7 +945,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 if (!stack.isEmpty()) {
                     DeferredTooltip.setItem(stack, mouseX, mouseY);
                 } else {
-                    DeferredTooltip.set(TCTooltips.need(obtain ? "obtain" : "craft"), mouseX, mouseY);
+                    DeferredTooltip.set(TTTooltips.need(obtain ? "obtain" : "craft"), mouseX, mouseY);
                 }
             }
             shift += spacing;
@@ -981,7 +981,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 renderCheckmark(graphics, slotX, y);
             }
             if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
-                DeferredTooltip.set(TCTooltips.prereqEntryName(prereq), mouseX, mouseY);
+                DeferredTooltip.set(TTTooltips.prereqEntryName(prereq), mouseX, mouseY);
             }
             shift += spacing;
         }
@@ -1021,13 +1021,13 @@ public final class EntryDetailScreen extends AbstractTCScreen {
 
     private static @Nullable ResourceLocation prereqFlagIcon(String path) {
         if (path.startsWith(PREREQ_MAP_PREFIX)) {
-            return TCScreenTextures.RESEARCH_PREREQ_MAP;
+            return TTScreenTextures.RESEARCH_PREREQ_MAP;
         }
         if (path.startsWith(PREREQ_CHEST_PREFIX)) {
-            return TCScreenTextures.RESEARCH_PREREQ_CHEST;
+            return TTScreenTextures.RESEARCH_PREREQ_CHEST;
         }
         if (path.startsWith(PREREQ_FLASK_PREFIX)) {
-            return TCScreenTextures.RESEARCH_PREREQ_FLASK;
+            return TTScreenTextures.RESEARCH_PREREQ_FLASK;
         }
         return null;
     }
@@ -1059,15 +1059,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         graphics.pose().translate(0.0F, 0.0F, CHECKMARK_DEPTH);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 slotX + CHECKMARK_OFFSET_X,
                 y,
                 (float) CHECKMARK_U,
                 (float) CHECKMARK_V,
                 CHECKMARK_SIZE,
                 CHECKMARK_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -1127,7 +1127,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 ResourceLocation learnKey = ResearchNoteData.learnKey(entryId, theoryOrdinal);
                 theoryOrdinal++;
                 met = completedStage || knowledge.isResearchKnown(learnKey);
-                ItemStack note = new ItemStack(TCItems.RESEARCH_NOTE.get());
+                ItemStack note = new ItemStack(TTItems.RESEARCH_NOTE.get());
                 renderedItemHits.add(new ItemHit(note, slotX, y));
                 graphics.renderItem(note, slotX, y);
                 if (mouseInside(slotX, y, SLOT_HIT_SIZE, SLOT_HIT_SIZE, mouseX, mouseY)) {
@@ -1215,7 +1215,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 reward.category()
                         .unwrapKey()
                         .ifPresent(
-                                k -> DeferredTooltip.set(TCTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
+                                k -> DeferredTooltip.set(TTTooltips.knowledgeLabel(reward.type(), k), mouseX, mouseY));
             }
         }
     }
@@ -1229,27 +1229,27 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int aspectBodyWidth = 24 - aspectLeft;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     aspectX + aspectLeft,
                     aspectY,
                     (float) BOOKMARK_ASPECT_U,
                     (float) BOOKMARK_V,
                     aspectBodyWidth,
                     BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     aspectX + 20,
                     aspectY,
                     (float) BOOKMARK_TIP_U,
                     (float) BOOKMARK_V,
                     BOOKMARK_TIP_W,
                     BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             if (aspectHover) {
                 DeferredTooltip.set(Component.translatable("tc.aspect.name"), mouseX, mouseY);
@@ -1264,27 +1264,27 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int knowBodyWidth = 24 - knowLeft;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     knowX - 1 + knowLeft,
                     knowY,
                     (float) BOOKMARK_KNOWLEDGE_U,
                     (float) BOOKMARK_V,
                     knowBodyWidth,
                     BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     knowX + 19,
                     knowY,
                     (float) BOOKMARK_TIP_U,
                     (float) BOOKMARK_V,
                     BOOKMARK_TIP_W,
                     BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             if (knowHover) {
                 DeferredTooltip.set(Component.translatable("tc.knowledge.name"), mouseX, mouseY);
@@ -1316,27 +1316,27 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int tint = rid.equals(shownRecipe) ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + shJitter,
                     slotY - 1,
                     (float) (RECIPE_BOOKMARK_U_BASE + le),
                     (float) RECIPE_BOOKMARK_V,
                     RECIPE_BOOKMARK_W,
                     RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     tint);
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + shJitter,
                     slotY - 1,
                     (float) RECIPE_BOOKMARK_TIP_U,
                     (float) RECIPE_BOOKMARK_V,
                     RECIPE_BOOKMARK_TIP_W,
                     RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             int itemX = x + shJitter + RECIPE_BOOKMARK_ICON_OFFSET - le;
             if (!result.isEmpty()) {
@@ -1357,27 +1357,27 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int tint = showingConstruct ? RECIPE_BOOKMARK_TINT_SELECTED : RECIPE_BOOKMARK_TINT_NORMAL;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + shJitter,
                     slotY - 1,
                     (float) (RECIPE_BOOKMARK_U_BASE + le),
                     (float) RECIPE_BOOKMARK_V,
                     RECIPE_BOOKMARK_W,
                     RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     tint);
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + shJitter,
                     slotY - 1,
                     (float) RECIPE_BOOKMARK_TIP_U,
                     (float) RECIPE_BOOKMARK_V,
                     RECIPE_BOOKMARK_TIP_W,
                     RECIPE_BOOKMARK_H,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
             renderConstructBookmark(
                     graphics,
@@ -1429,15 +1429,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int paperY = (height - 256) / 2;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.PAPER,
+                TTScreenTextures.PAPER,
                 paperX,
                 paperY,
                 0.0F,
                 0.0F,
                 INSERT_PAPER_SIZE,
                 INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         List<RecipeHolder<?>> displays = RecipeDisplayCache.get(shownRecipe);
         if (displays.isEmpty()) return;
@@ -1504,15 +1504,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int paperY = (height - 256) / 2;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.PAPER,
+                TTScreenTextures.PAPER,
                 paperX,
                 paperY,
                 0.0F,
                 0.0F,
                 INSERT_PAPER_SIZE,
                 INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         long gameTime = minecraft.player.level().getGameTime();
         int centerX = paperX + INSERT_PAPER_SIZE / 2;
@@ -1539,7 +1539,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             int rowX = centerX - rowWidth / 2;
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                    TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                     rowX - CONSTRUCT_WAND_SIZE - CONSTRUCT_WAND_GAP,
                     pageY + CONSTRUCT_WAND_Y,
                     CONSTRUCT_WAND_U,
@@ -1606,15 +1606,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int paperY = (height - 256) / 2;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.PAPER,
+                TTScreenTextures.PAPER,
                 paperX,
                 paperY,
                 0.0F,
                 0.0F,
                 INSERT_PAPER_SIZE,
                 INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         drawAspectPage(graphics, paperX + ASPECTS_INSERT_OFFSET_X, paperY + ASPECTS_INSERT_OFFSET_Y, mouseX, mouseY);
     }
@@ -1624,9 +1624,9 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (known.isEmpty()) return;
         int count = -1;
         int start = aspectsPage * ASPECT_PAGE_ROWS;
-        ResourceLocation backTile = ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/aspects/_back.png");
+        ResourceLocation backTile = ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/aspects/_back.png");
         ResourceLocation unknownTile =
-                ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/aspects/_unknown.png");
+                ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/aspects/_unknown.png");
         List<AspectInstance> sorted = known.sortedByTag();
         for (AspectInstance entry : sorted) {
             count++;
@@ -1782,15 +1782,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         int paperY = (height - 256) / 2;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.PAPER,
+                TTScreenTextures.PAPER,
                 paperX,
                 paperY,
                 0.0F,
                 0.0F,
                 INSERT_PAPER_SIZE,
                 INSERT_PAPER_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         drawKnowledges(
                 graphics, paperX + ASPECTS_INSERT_OFFSET_X, sh + KNOW_INPAGE_INSERT_Y_OFFSET, mouseX, mouseY, false);
@@ -1865,31 +1865,31 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         int l = (int) ((float) par / type.progression() * KNOW_GRID_BAR_BAR_WIDTH);
                         GuiBlend.blitTinted(
                                 graphics,
-                                TCScreenTextures.RESEARCH_BOOK,
+                                TTScreenTextures.RESEARCH_BOOK,
                                 cx,
                                 cy + KNOW_GRID_BAR_Y_OFFSET,
                                 0.0F,
                                 (float) KNOW_GRID_BAR_FILLED_V,
                                 l,
                                 KNOW_GRID_BAR_BAR_HEIGHT,
-                                TCScreenTextures.TEX_SIZE,
-                                TCScreenTextures.TEX_SIZE,
+                                TTScreenTextures.TEX_SIZE,
+                                TTScreenTextures.TEX_SIZE,
                                 0xFFFFFFFF);
                         GuiBlend.blitTinted(
                                 graphics,
-                                TCScreenTextures.RESEARCH_BOOK,
+                                TTScreenTextures.RESEARCH_BOOK,
                                 cx + l,
                                 cy + KNOW_GRID_BAR_Y_OFFSET,
                                 (float) l,
                                 (float) KNOW_GRID_BAR_EMPTY_V,
                                 KNOW_GRID_BAR_BAR_WIDTH - l,
                                 KNOW_GRID_BAR_BAR_HEIGHT,
-                                TCScreenTextures.TEX_SIZE,
-                                TCScreenTextures.TEX_SIZE,
+                                TTScreenTextures.TEX_SIZE,
+                                TTScreenTextures.TEX_SIZE,
                                 0xFFFFFFFF);
                     }
                     if (mouseInside(cx, cy, 16, 16, mouseX, mouseY)) {
-                        DeferredTooltip.set(TCTooltips.knowledgeLabel(type, categoryKey), mouseX, mouseY);
+                        DeferredTooltip.set(TTTooltips.knowledgeLabel(type, categoryKey), mouseX, mouseY);
                     }
                     fc++;
                     rowDrawn = true;
@@ -1900,15 +1900,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         if (inpage && drewSomething) {
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + 4,
                     yCursor - tc * KNOW_GRID_INPAGE_ROW_STRIDE + 12,
                     (float) DIVIDER_U,
                     (float) DIVIDER_V,
                     DIVIDER_WIDTH,
                     8,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     0xFFFFFFFF);
         }
     }
@@ -1916,7 +1916,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
     private void drawKnowledgeIcon(
             GuiGraphics graphics, int x, int y, KnowledgeType type, Holder.Reference<IResearchCategory> category) {
         ResourceLocation typeIcon = ResourceLocation.fromNamespaceAndPath(
-                TCIds.MODID, "textures/research/knowledge_" + type.getSerializedName() + ".png");
+                TTIds.MODID, "textures/research/knowledge_" + type.getSerializedName() + ".png");
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(KNOW_ICON_SCALE_INPAGE, KNOW_ICON_SCALE_INPAGE, 1F);
@@ -2047,15 +2047,15 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         graphics.pose().translate(-w / 2.0F, -h / 2.0F, 0);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 0,
                 0,
                 (float) u,
                 (float) v,
                 w,
                 h,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -2190,7 +2190,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingAspects = !showingAspects;
                 history.clear();
                 if (aspectsPage > maxAspectPages()) aspectsPage = 0;
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             int knowHitX = sw - 48;
@@ -2206,7 +2206,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingConstruct = false;
                 showingKnowledge = !showingKnowledge;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (showingAspects) {
@@ -2219,7 +2219,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= aspectNavY
                         && my < aspectNavY + 14) {
                     aspectsPage--;
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
                 if (aspectsPage < maxAspectPages() - 1
@@ -2228,7 +2228,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my >= aspectNavY
                         && my < aspectNavY + 14) {
                     aspectsPage++;
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
             }
@@ -2292,7 +2292,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my < recipeNavY + 14) {
                     recipePage--;
                     resetConstructPreview();
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
                 if (recipePage < max
@@ -2302,7 +2302,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                         && my < recipeNavY + 14) {
                     recipePage++;
                     resetConstructPreview();
-                    playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                     return true;
                 }
             }
@@ -2320,7 +2320,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingKnowledge = false;
                 showingConstruct = false;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (hitConstructBookmark(mx, my, stage)) {
@@ -2329,7 +2329,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
                 showingAspects = false;
                 showingKnowledge = false;
                 history.clear();
-                playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+                playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
                 return true;
             }
             if (currentPage == 0 && !completedStageView() && !insertOpen() && handleTheoryNoteClick(mx, my, stage)) {
@@ -2338,7 +2338,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
             if (currentPage == 0 && !completedStageView() && !hold && !insertOpen()) {
                 if (hitStageComplete(mx, my, stage)) {
                     PacketDistributor.sendToServer(new ServerboundAdvanceStagePayload(entryId));
-                    playSound(TCSounds.WRITE.get(), 0.66F, 1.0F);
+                    playSound(TTSounds.WRITE.get(), 0.66F, 1.0F);
                     lastStage = KnowledgeAccess.of(minecraft.player).researchStage(entryId);
                     holdSince = minecraft.player.level().getGameTime();
                     hold = true;
@@ -2412,7 +2412,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         for (RecipeHolder<?> holder : minecraft.level.getRecipeManager().getRecipes()) {
             ItemStack result = RecipeDisplayWidget.resultOf(holder.value(), reg);
             if (result.isEmpty() || result.getItem() != item) continue;
-            if (holder.id().getNamespace().equals(TCIds.MODID)) {
+            if (holder.id().getNamespace().equals(TTIds.MODID)) {
                 return holder.id();
             }
             if (fallback == null) {
@@ -2431,31 +2431,31 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         recipePage = 0;
         showingAspects = false;
         showingKnowledge = false;
-        playSound(TCSounds.PAGE.get(), 0.7F, 0.9F);
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
     }
 
     private void nextPage() {
         if (currentPage < parsedPages.size() - 2) {
             currentPage += 2;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
         }
     }
 
     private void prevPage() {
         if (currentPage >= 2) {
             currentPage -= 2;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
         }
     }
 
     private void goBack() {
         if (showingConstruct) {
             showingConstruct = false;
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
             return;
         }
         if (!history.isEmpty()) {
-            playSound(TCSounds.PAGE.get(), 0.66F, 1.0F);
+            playSound(TTSounds.PAGE.get(), 0.66F, 1.0F);
             shownRecipe = history.pop();
         } else {
             shownRecipe = null;
@@ -2624,7 +2624,7 @@ public final class EntryDetailScreen extends AbstractTCScreen {
         showingKnowledge = false;
         showingConstruct = false;
         history.clear();
-        playSound(TCSounds.PAGE.get(), 0.4F, 1.1F);
+        playSound(TTSounds.PAGE.get(), 0.4F, 1.1F);
         return true;
     }
 

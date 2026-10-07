@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealProvide;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     }
 
     public MenuGolemLogistics(int containerId, Inventory playerInventory, @Nullable LogisticsTarget target) {
-        super(TCMenus.GOLEM_LOGISTICS.get(), containerId);
+        super(TTMenus.GOLEM_LOGISTICS.get(), containerId);
         this.player = playerInventory.player;
         this.target = target;
         for (int index = 0; index < SIZE; index++) {

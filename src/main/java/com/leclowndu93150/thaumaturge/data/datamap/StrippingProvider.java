@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -18,10 +18,10 @@ public final class StrippingProvider extends DataMapProvider {
     protected void gather(HolderLookup.Provider provider) {
         Builder<Strippable, Block> b = builder(NeoForgeDataMaps.STRIPPABLES);
 
-        b.add(TCBlocks.LOG_GREATWOOD, new Strippable(TCBlocks.STRIPPED_LOG_GREATWOOD.get()), false);
-        b.add(TCBlocks.WOOD_GREATWOOD, new Strippable(TCBlocks.STRIPPED_WOOD_GREATWOOD.get()), false);
-        b.add(TCBlocks.LOG_SILVERWOOD, new Strippable(TCBlocks.STRIPPED_LOG_SILVERWOOD.get()), false);
-        b.add(TCBlocks.WOOD_SILVERWOOD, new Strippable(TCBlocks.STRIPPED_WOOD_SILVERWOOD.get()), false);
+        b.add(TTBlocks.LOG_GREATWOOD, new Strippable(TTBlocks.STRIPPED_LOG_GREATWOOD.get()), false);
+        b.add(TTBlocks.WOOD_GREATWOOD, new Strippable(TTBlocks.STRIPPED_WOOD_GREATWOOD.get()), false);
+        b.add(TTBlocks.LOG_SILVERWOOD, new Strippable(TTBlocks.STRIPPED_LOG_SILVERWOOD.get()), false);
+        b.add(TTBlocks.WOOD_SILVERWOOD, new Strippable(TTBlocks.STRIPPED_WOOD_SILVERWOOD.get()), false);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -22,7 +22,7 @@ public class BlockEntityPedestal extends BlockEntity implements Clearable {
     private ItemStack item = ItemStack.EMPTY;
 
     public BlockEntityPedestal(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.PEDESTAL.get(), pos, state);
+        super(TTBlockEntities.PEDESTAL.get(), pos, state);
     }
 
     protected BlockEntityPedestal(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -48,14 +48,14 @@ public class BlockEntityPedestal extends BlockEntity implements Clearable {
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!item.isEmpty()) {
-            TCNbt.store(output, "Item", ItemStack.CODEC, registries, item);
+            TTNbt.store(output, "Item", ItemStack.CODEC, registries, item);
         }
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        item = TCNbt.read(input, "Item", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        item = TTNbt.read(input, "Item", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
     }
 
     protected final void syncToClient() {

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.items.IRechargable;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
@@ -20,7 +20,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 public final class RechargeHudOverlay implements LayeredDraw.Layer {
-    private static final ResourceLocation HUD = TCIds.rl("textures/gui/hud.png");
+    private static final ResourceLocation HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
 
     private static final int PERIODIC_SHOW_TICKS = 60;
@@ -134,7 +134,7 @@ public final class RechargeHudOverlay implements LayeredDraw.Layer {
         return mc.level
                 .registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(TCAspects.POTENTIA)
+                .get(TTAspects.POTENTIA)
                 .map(holder -> holder.value().color())
                 .orElse(DEFAULT_ENERGY_COLOR);
     }

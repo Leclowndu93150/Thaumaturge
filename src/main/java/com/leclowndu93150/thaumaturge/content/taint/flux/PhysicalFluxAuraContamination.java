@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -169,7 +169,7 @@ public final class PhysicalFluxAuraContamination {
                 samples.remove(entry.getKey(), observation);
                 continue;
             }
-            boolean gas = state.is(TCBlocks.FLUX_GAS.get());
+            boolean gas = state.is(TTBlocks.FLUX_GAS.get());
             float weight = amount * (gas ? GAS_TAINT_WEIGHT_PER_QUANTUM : GOO_TAINT_WEIGHT_PER_QUANTUM);
             if (weight <= 0.0F) {
                 continue;

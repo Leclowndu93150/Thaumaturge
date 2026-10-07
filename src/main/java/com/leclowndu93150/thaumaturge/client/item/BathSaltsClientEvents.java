@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.api.distmarker.Dist;
@@ -10,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class BathSaltsClientEvents {
     private static final int BUBBLE_INTERVAL = 2;
 
@@ -19,7 +19,7 @@ public final class BathSaltsClientEvents {
     @SubscribeEvent
     public static void onItemTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof ItemEntity itemEntity)
-                || !itemEntity.getItem().is(TCItems.BATH_SALTS.get())
+                || !itemEntity.getItem().is(TTItems.BATH_SALTS.get())
                 || !itemEntity.isInWater()
                 || itemEntity.tickCount % BUBBLE_INTERVAL != 0) {
             return;

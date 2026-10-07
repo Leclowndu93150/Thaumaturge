@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ClientboundAuraSnapshotPayload(int chunkX, int chunkZ, short base, float vis, float flux)
         implements CustomPacketPayload {
     public static final Type<ClientboundAuraSnapshotPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "aura_snapshot"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "aura_snapshot"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundAuraSnapshotPayload> STREAM_CODEC =
             StreamCodec.composite(

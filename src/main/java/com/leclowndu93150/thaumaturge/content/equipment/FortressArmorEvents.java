@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,10 +18,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class FortressArmorEvents {
-    private static final ResourceLocation SET_ARMOR_ID = TCIds.rl("fortress_set_armor");
-    private static final ResourceLocation SET_TOUGHNESS_ID = TCIds.rl("fortress_set_toughness");
+    private static final ResourceLocation SET_ARMOR_ID = TTIds.rl("fortress_set_armor");
+    private static final ResourceLocation SET_TOUGHNESS_ID = TTIds.rl("fortress_set_toughness");
     private static final EquipmentSlot[] SET_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS};
     private static final float MAGIC_ABSORB_DIVISOR = 35.0F;
     private static final float FIRE_ABSORB_DIVISOR = 20.0F;
@@ -86,9 +86,9 @@ public final class FortressArmorEvents {
             }
             ItemStack piece = victim.getItemBySlot(slot);
             if (piece.getItem() instanceof FortressArmorItem) {
-                fortressDefense += TCMaterials.ARMOR_FORTRESS.value().defense().get(armorType(slot));
+                fortressDefense += TTMaterials.ARMOR_FORTRESS.value().defense().get(armorType(slot));
             } else if (piece.getItem() instanceof VoidRobeArmorItem) {
-                robeDefense += TCMaterials.ARMOR_VOID_ROBE.value().defense().get(armorType(slot));
+                robeDefense += TTMaterials.ARMOR_VOID_ROBE.value().defense().get(armorType(slot));
             }
         }
         float ratio = 0.0F;

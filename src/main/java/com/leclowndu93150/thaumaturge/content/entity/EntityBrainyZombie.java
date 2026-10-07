@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -28,10 +28,10 @@ public class EntityBrainyZombie extends Zombie {
     @Override
     protected void doUnderWaterConversion() {
         if (!net.neoforged.neoforge.event.EventHooks.canLivingConvert(
-                this, TCEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
+                this, TTEntities.BRAINY_DROWNED.get(), timer -> this.conversionTime = timer)) {
             return;
         }
-        this.convertToZombieType(TCEntities.BRAINY_DROWNED.get());
+        this.convertToZombieType(TTEntities.BRAINY_DROWNED.get());
         if (!this.isSilent()) {
             this.level().levelEvent(null, 1040, this.blockPosition(), 0);
         }

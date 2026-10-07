@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -26,14 +26,14 @@ import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,9 +121,9 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final int TAINTED_NODE_CONVERSION_INTERVAL = 100;
     private static final int TAINTED_NODE_CONVERSION_CHANCE = 500;
     private static final int FADING_CURE_MAGIC = 69;
-    private static final ResourceLocation RESEARCH_NODE_TAPPER_1 = TCIds.rl("node_tapper_1");
-    private static final ResourceLocation RESEARCH_NODE_TAPPER_2 = TCIds.rl("node_tapper_2");
-    private static final ResourceLocation RESEARCH_NODE_PRESERVE = TCIds.rl("node_preserve");
+    private static final ResourceLocation RESEARCH_NODE_TAPPER_1 = TTIds.rl("node_tapper_1");
+    private static final ResourceLocation RESEARCH_NODE_TAPPER_2 = TTIds.rl("node_tapper_2");
+    private static final ResourceLocation RESEARCH_NODE_PRESERVE = TTIds.rl("node_preserve");
     private static final int MAX_DECOMPOSE_DEPTH = 8;
 
     private NodeType nodeType = NodeType.NORMAL;
@@ -158,7 +158,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     public BlockEntityNode(BlockPos pos, BlockState state) {
-        this(TCBlockEntities.NODE.get(), pos, state);
+        this(TTBlockEntities.NODE.get(), pos, state);
     }
 
     protected BlockEntityNode(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -207,7 +207,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     }
 
     private boolean isNodeBlock() {
-        return getBlockState().is(TCBlocks.NODE.get()) || getBlockState().is(TCBlocks.SILVERWOOD_NODE_LOG.get());
+        return getBlockState().is(TTBlocks.NODE.get()) || getBlockState().is(TTBlocks.SILVERWOOD_NODE_LOG.get());
     }
 
     public @Nullable NodeModifier getNodeModifier() {
@@ -576,7 +576,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         boolean healthy = flux < base * BRIGHTEN_FLUX_LIMIT
                 && AuraHelper.getVis(serverLevel, pos) >= base * BRIGHTEN_FILL_FRACTION
-                && serverLevel.getBiome(pos).is(TCBiomes.MAGICAL_FOREST);
+                && serverLevel.getBiome(pos).is(TTBiomes.MAGICAL_FOREST);
         if (healthy && random.nextInt(BRIGHTEN_CHANCE) == 0) {
             if (nodeModifier == NodeModifier.FADING) {
                 nodeModifier = NodeModifier.PALE;
@@ -736,7 +736,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             other.setChanged();
             serverLevel.sendBlockUpdated(otherPos, other.getBlockState(), other.getBlockState(), 3);
             serverLevel.playSound(
-                    null, otherPos, TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.1F, 1.0F + random.nextFloat() * 0.2F);
+                    null, otherPos, TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.1F, 1.0F + random.nextFloat() * 0.2F);
             Effects.arcBolt(serverLevel, Vec3.atCenterOf(otherPos))
                     .to(Vec3.atCenterOf(pos))
                     .width(ZAP_WIDTH)
@@ -808,14 +808,14 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         if (nodeType == NodeType.TAINTED) {
             spreadTaintedBiomeColumn(serverLevel, pos, TAINTED_BIOME_SPREAD_RANGE);
         } else if (nodeType == NodeType.DARK) {
-            spreadBiomeColumn(serverLevel, pos, DARK_BIOME_SPREAD_RANGE, TCBiomes.EERIE);
+            spreadBiomeColumn(serverLevel, pos, DARK_BIOME_SPREAD_RANGE, TTBiomes.EERIE);
         } else if (nodeType == NodeType.PURE) {
             BlockPos target = randomBiomeTarget(serverLevel, pos, PURE_BIOME_SPREAD_RANGE);
             if (target != null && TaintBiomeManager.isTainted(serverLevel, target)) {
                 // Pure Nodes reclaim Tainted Lands specifically into Magical Forest.
-                TaintBiomeManager.replaceColumn(serverLevel, target, TCBiomes.MAGICAL_FOREST);
+                TaintBiomeManager.replaceColumn(serverLevel, target, TTBiomes.MAGICAL_FOREST);
             } else if (nearSilverwood(serverLevel, pos)) {
-                spreadBiomeColumn(serverLevel, pos, PURE_BIOME_SPREAD_RANGE, TCBiomes.MAGICAL_FOREST);
+                spreadBiomeColumn(serverLevel, pos, PURE_BIOME_SPREAD_RANGE, TTBiomes.MAGICAL_FOREST);
             }
         }
     }
@@ -833,7 +833,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -1; dz <= 1; dz++) {
                     cursor.setWithOffset(pos, dx, dy, dz);
-                    if (serverLevel.getBlockState(cursor).is(TCBlockTags.SILVERWOOD_LOGS)) {
+                    if (serverLevel.getBlockState(cursor).is(TTBlockTags.SILVERWOOD_LOGS)) {
                         return true;
                     }
                 }
@@ -1008,7 +1008,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         double x = pos.getX() + (random.nextDouble() - random.nextDouble()) * 5.0;
         double y = pos.getY() + random.nextInt(3) - 1;
         double z = pos.getZ() + (random.nextDouble() - random.nextDouble()) * 5.0;
-        EntityBrainyZombie zombie = TCEntities.BRAINY_ZOMBIE.get().create(serverLevel);
+        EntityBrainyZombie zombie = TTEntities.BRAINY_ZOMBIE.get().create(serverLevel);
         if (zombie == null) {
             return;
         }
@@ -1187,7 +1187,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             tap++;
         }
         WandParts parts = WandVisHelper.getParts(wandStack);
-        boolean starterWand = parts.rod() == TCWandParts.ROD_WOOD.get() && parts.cap() == TCWandParts.CAP_IRON.get();
+        boolean starterWand = parts.rod() == TTWandParts.ROD_WOOD.get() && parts.cap() == TTWandParts.CAP_IRON.get();
         boolean preserve = !player.isShiftKeyDown()
                 && !starterWand
                 && KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_PRESERVE);
@@ -1274,7 +1274,7 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
             BlockState targetState = level.getBlockState(target);
             if ((targetState.isAir() || targetState.canBeReplaced())
                     && TaintHelper.isAdjacentToSolidBlock(level, target)) {
-                level.setBlock(target, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
+                level.setBlock(target, TTBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
             }
         }
     }
@@ -1282,20 +1282,20 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Type", NodeType.CODEC, registries, nodeType);
+        TTNbt.store(output, "Type", NodeType.CODEC, registries, nodeType);
         if (nodeModifier != null) {
-            TCNbt.store(output, "Modifier", NodeModifier.CODEC, registries, nodeModifier);
+            TTNbt.store(output, "Modifier", NodeModifier.CODEC, registries, nodeModifier);
         }
-        TCNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
-        TCNbt.store(output, "AspectsBase", AspectList.CODEC, registries, aspectsBase);
+        TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
+        TTNbt.store(output, "AspectsBase", AspectList.CODEC, registries, aspectsBase);
         if (energized) {
             output.putBoolean("Energized", true);
         }
         if (aspectsBaseOriginal != null) {
-            TCNbt.store(output, "AspectsBaseOriginal", AspectList.CODEC, registries, aspectsBaseOriginal);
+            TTNbt.store(output, "AspectsBaseOriginal", AspectList.CODEC, registries, aspectsBaseOriginal);
         }
         if (drainPlayer != null) {
-            TCNbt.store(output, "DrainPlayer", UUIDUtil.CODEC, registries, drainPlayer);
+            TTNbt.store(output, "DrainPlayer", UUIDUtil.CODEC, registries, drainPlayer);
             output.putInt("DrainColor", drainColor);
         }
         if (jarringTicks > 0) {
@@ -1309,17 +1309,17 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        nodeType = TCNbt.read(input, "Type", NodeType.CODEC, registries).orElse(NodeType.NORMAL);
+        nodeType = TTNbt.read(input, "Type", NodeType.CODEC, registries).orElse(NodeType.NORMAL);
         energized = input.getBoolean("Energized");
         nodeModifier =
-                TCNbt.read(input, "Modifier", NodeModifier.CODEC, registries).orElse(null);
-        aspects = TCNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+                TTNbt.read(input, "Modifier", NodeModifier.CODEC, registries).orElse(null);
+        aspects = TTNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         aspectsBase =
-                TCNbt.read(input, "AspectsBase", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
-        aspectsBaseOriginal = TCNbt.read(input, "AspectsBaseOriginal", AspectList.CODEC, registries)
+                TTNbt.read(input, "AspectsBase", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        aspectsBaseOriginal = TTNbt.read(input, "AspectsBaseOriginal", AspectList.CODEC, registries)
                 .orElse(null);
         drainPlayer =
-                TCNbt.read(input, "DrainPlayer", UUIDUtil.CODEC, registries).orElse(null);
+                TTNbt.read(input, "DrainPlayer", UUIDUtil.CODEC, registries).orElse(null);
         drainColor = input.contains("DrainColor") ? input.getInt("DrainColor") : 0xFFFFFF;
         jarringTicks = input.getInt("Jarring");
         naturalTaintBootstrapPending = input.getBoolean("NaturalTaintBootstrap");

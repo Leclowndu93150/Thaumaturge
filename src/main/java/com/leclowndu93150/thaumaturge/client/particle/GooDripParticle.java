@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class GooDripParticle extends TCParticle {
+public final class GooDripParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 4;
     private static final float ALPHA = 0.8F;
@@ -37,11 +37,11 @@ public final class GooDripParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("goo_drip");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("goo_drip");
 
         @Override
         public Particle createParticle(

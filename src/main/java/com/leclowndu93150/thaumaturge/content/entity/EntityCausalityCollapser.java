@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,13 +32,13 @@ public final class EntityCausalityCollapser extends ThrowableItemProjectile {
     }
 
     public EntityCausalityCollapser(Level level, LivingEntity shooter, ItemStack stack) {
-        super(TCEntities.CAUSALITY_COLLAPSER.get(), shooter, level);
+        super(TTEntities.CAUSALITY_COLLAPSER.get(), shooter, level);
         this.setItem(stack);
     }
 
     @Override
     protected Item getDefaultItem() {
-        return TCItems.CAUSALITY_COLLAPSER.get();
+        return TTItems.CAUSALITY_COLLAPSER.get();
     }
 
     @Override

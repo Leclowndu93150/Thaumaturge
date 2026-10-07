@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.util.RandomSource;
 
-public final class TaintFumeParticle extends TCParticle {
+public final class TaintFumeParticle extends TTParticle {
     private static final int FRAME_COUNT = 3;
     private static final int BASE_LIFETIME = 80;
     private static final float START_ALPHA = 0.75F;
@@ -56,11 +56,11 @@ public final class TaintFumeParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<TaintFumeParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("taint_fume");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("taint_fume");
 
         @Override
         public Particle createParticle(

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeValve;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -15,11 +15,12 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class TubeValveRenderer implements BlockEntityRenderer<BlockEntityTubeValve> {
     public static final ModelResourceLocation MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/tube_valve_head"));
+            ModelResourceLocation.standalone(TTIds.rl("block/tube_valve_head"));
 
     private final RandomSource random = RandomSource.create();
 
@@ -62,7 +63,7 @@ public final class TubeValveRenderer implements BlockEntityRenderer<BlockEntityT
         for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
             modelRenderer.renderModel(
                     poseStack.last(),
-                    buffers.getBuffer(renderType),
+                    buffers.getBuffer(RenderTypeHelper.getEntityRenderType(renderType, false)),
                     state,
                     model,
                     1.0F,

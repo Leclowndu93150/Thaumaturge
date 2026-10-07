@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.api.research.scan;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.api.research.TCResearchCategories;
+import com.leclowndu93150.thaumaturge.api.research.TTResearchCategories;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -59,17 +59,17 @@ public class ScanAspect implements IScanThing {
         ScanningManager.addKnowledge(
                 player,
                 KnowledgeType.OBSERVATION,
-                TCResearchCategories.AUROMANCY.location(),
+                TTResearchCategories.AUROMANCY.location(),
                 DISCOVERY_OBSERVATION_POINTS);
         ScanningManager.addKnowledge(
                 player,
                 KnowledgeType.OBSERVATION,
-                TCResearchCategories.BASICS.location(),
+                TTResearchCategories.BASICS.location(),
                 DISCOVERY_OBSERVATION_POINTS);
         ScanningManager.addKnowledge(
                 player,
                 KnowledgeType.OBSERVATION,
-                TCResearchCategories.ALCHEMY.location(),
+                TTResearchCategories.ALCHEMY.location(),
                 DISCOVERY_OBSERVATION_POINTS);
     }
 

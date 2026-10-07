@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.gen;
 
-import com.leclowndu93150.thaumaturge.registry.TCStructures;
+import com.leclowndu93150.thaumaturge.registry.TTStructures;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.structure.SinglePieceStructure;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -15,6 +15,6 @@ public class ObeliskStructure extends SinglePieceStructure {
 
     @Override
     public StructureType<?> type() {
-        return TCStructures.ELDRITCH_OBELISK.get();
+        return TTStructures.ELDRITCH_OBELISK.get();
     }
 }

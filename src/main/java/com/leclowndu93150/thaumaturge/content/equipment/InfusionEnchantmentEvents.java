@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
@@ -8,10 +8,10 @@ import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFollowingItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +54,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickB
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class InfusionEnchantmentEvents {
     private static final int FOLLOW_TYPE = 10;
     private static final float REFINING_CHANCE_PER_LEVEL = 0.125F;
@@ -62,7 +62,7 @@ public final class InfusionEnchantmentEvents {
     private static final float ARCING_DAMAGE_FRACTION = 0.5F;
     private static final int SLASH_LIFE = 8;
     private static final int GLIMMER_LIGHT_THRESHOLD = 10;
-    private static final float TC_QUARTZ_NUGGET_CHANCE = 0.05F;
+    private static final float TT_QUARTZ_NUGGET_CHANCE = 0.05F;
 
     private static final ThreadLocal<Boolean> DESTRUCTIVE_RECURSION = ThreadLocal.withInitial(() -> false);
     private static final Map<UUID, DestructiveTarget> DESTRUCTIVE_TARGETS = new HashMap<>();
@@ -125,7 +125,7 @@ public final class InfusionEnchantmentEvents {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    TCSounds.WIND.get(),
+                    TTSounds.WIND.get(),
                     SoundSource.PLAYERS,
                     1.0F,
                     0.9F + level.getRandom().nextFloat() * 0.2F);
@@ -167,7 +167,7 @@ public final class InfusionEnchantmentEvents {
                     event.getPos().getX() + 0.5,
                     event.getPos().getY() + 0.5,
                     event.getPos().getZ() + 0.5,
-                    TCSounds.WANDFAIL.get(),
+                    TTSounds.WANDFAIL.get(),
                     SoundSource.BLOCKS,
                     0.2F,
                     0.2F + level.getRandom().nextFloat() * 0.2F);
@@ -324,7 +324,7 @@ public final class InfusionEnchantmentEvents {
 
         if (InfusionEnchantmentHelper.has(held, InfusionEnchantment.LAMPLIGHT) && !player.isShiftKeyDown()) {
             if (level.isEmptyBlock(pos) && settledLight(level, pos) < GLIMMER_LIGHT_THRESHOLD) {
-                level.setBlock(pos, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+                level.setBlock(pos, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
             }
         }
     }
@@ -425,9 +425,9 @@ public final class InfusionEnchantmentEvents {
                 || state.is(BlockTags.LAPIS_ORES) && roll < 0.01F
                 || state.is(BlockTags.COAL_ORES) && roll < 0.001F
                 || state.is(BlockTags.REDSTONE_ORES) && roll < 0.01F
-                || state.is(TCBlocks.ORE_QUARTZ.get()) && roll < TC_QUARTZ_NUGGET_CHANCE
+                || state.is(TTBlocks.ORE_QUARTZ.get()) && roll < TT_QUARTZ_NUGGET_CHANCE
                 || state.is(Tags.Blocks.ORES_QUARTZ) && roll < 0.01F
-                || state.is(TCBlockTags.ORES_AMBER) && roll < 0.05F;
+                || state.is(TTBlockTags.ORES_AMBER) && roll < 0.05F;
         if (rare) {
             BlockPos pos = event.getPos();
             event.getDrops()
@@ -436,7 +436,7 @@ public final class InfusionEnchantmentEvents {
                             pos.getX() + 0.5,
                             pos.getY() + 0.5,
                             pos.getZ() + 0.5,
-                            new ItemStack(TCItems.NUGGET_QUARTZ.get())));
+                            new ItemStack(TTItems.NUGGET_QUARTZ.get())));
         }
     }
 }

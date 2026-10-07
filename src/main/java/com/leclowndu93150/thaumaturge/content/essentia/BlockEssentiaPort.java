@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia;
 
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStreamPort;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,8 +34,28 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
             instance -> instance.group(Codec.BOOL.fieldOf("input").forGetter(block -> block.input), propertiesCodec())
                     .apply(instance, BlockEssentiaPort::new));
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(
-            Shapes.or(box(4.0, 0.0, 4.0, 12.0, 6.0, 12.0), box(6.0, 6.0, 6.0, 10.0, 8.0, 10.0)));
+    private static final VoxelShape MOUNT = box(5.0, 0.0, 5.0, 11.0, 1.0, 11.0);
+
+    private static final Map<Direction, VoxelShape> FILLING_SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(
+            MOUNT,
+            box(7.0, 1.0, 7.0, 9.0, 5.0, 9.0),
+            Shapes.join(
+                    Shapes.or(
+                            box(6.0, 5.0, 6.0, 10.0, 6.0, 10.0),
+                            box(5.0, 6.0, 5.0, 11.0, 7.0, 11.0),
+                            box(4.0, 7.0, 4.0, 12.0, 8.0, 12.0)),
+                    Shapes.or(
+                            box(7.0, 5.0, 7.0, 9.0, 6.0, 9.0),
+                            box(6.0, 6.0, 6.0, 10.0, 7.0, 10.0),
+                            box(5.0, 7.0, 5.0, 11.0, 8.0, 11.0)),
+                    BooleanOp.ONLY_FIRST)));
+
+    private static final Map<Direction, VoxelShape> EMPTYING_SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(
+            MOUNT,
+            box(6.0, 1.0, 6.0, 10.0, 4.0, 10.0),
+            box(5.0, 4.0, 5.0, 11.0, 5.0, 11.0),
+            box(6.0, 5.0, 6.0, 10.0, 7.0, 10.0),
+            box(7.0, 7.0, 7.0, 9.0, 9.0, 9.0)));
 
     private static final double NOZZLE_TIP = 0.05;
     private static final double NOZZLE_CLEARANCE = 0.65;
@@ -63,7 +84,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES.get(state.getValue(BlockStateProperties.FACING));
+        return (input ? FILLING_SHAPES : EMPTYING_SHAPES).get(state.getValue(BlockStateProperties.FACING));
     }
 
     @Override
@@ -91,7 +112,7 @@ public final class BlockEssentiaPort extends BaseEntityBlock implements IEssenti
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.ESSENTIA_PORT.get(), BlockEntityEssentiaPort::serverTick);
+        return createTickerHelper(type, TTBlockEntities.ESSENTIA_PORT.get(), BlockEntityEssentiaPort::serverTick);
     }
 
     @Override

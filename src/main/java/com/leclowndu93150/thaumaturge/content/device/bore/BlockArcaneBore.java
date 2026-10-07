@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -86,7 +86,7 @@ public final class BlockArcaneBore extends BaseEntityBlock {
         }
         if (player.isSecondaryUseActive()) {
             if (!level.isClientSide()) {
-                level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.destroyBlock(pos, true, player);
             }
             return InteractionResult.SUCCESS;
@@ -123,8 +123,8 @@ public final class BlockArcaneBore extends BaseEntityBlock {
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-            return createTickerHelper(type, TCBlockEntities.ARCANE_BORE.get(), BlockEntityArcaneBore::clientTick);
+            return createTickerHelper(type, TTBlockEntities.ARCANE_BORE.get(), BlockEntityArcaneBore::clientTick);
         }
-        return createTickerHelper(type, TCBlockEntities.ARCANE_BORE.get(), BlockEntityArcaneBore::serverTick);
+        return createTickerHelper(type, TTBlockEntities.ARCANE_BORE.get(), BlockEntityArcaneBore::serverTick);
     }
 }

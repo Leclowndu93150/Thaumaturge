@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.iris;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.lang.reflect.Method;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -102,7 +102,7 @@ public final class IrisCompat {
     }
 
     private static @Nullable Class<?> implementation() {
-        if (unavailable || !ModList.get().isLoaded(TCIds.IRIS)) {
+        if (unavailable || !ModList.get().isLoaded(TTIds.IRIS)) {
             return null;
         }
         if (implementation != null) {

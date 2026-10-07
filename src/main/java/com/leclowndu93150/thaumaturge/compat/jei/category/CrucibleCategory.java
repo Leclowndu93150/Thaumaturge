@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.Optional;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -32,13 +32,13 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<CrucibleRecipe>> {
     public static final RecipeType<RecipeHolder<CrucibleRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TCRecipeTypes.CRUCIBLE.get());
+            RecipeType.createFromVanilla(TTRecipeTypes.CRUCIBLE.get());
 
     public static final int ASPECT_Y = 66;
     public static final int ASPECT_X = 66;
     public static final int SPACE = 22;
     private static final IDrawable background = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             2,
             5,
             109,
@@ -49,7 +49,7 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
             10);
     ;
     private static final IDrawable arrow = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             199,
             168,
             26,
@@ -58,7 +58,7 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
     private final IDrawable icon;
 
     public CrucibleCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.CRUCIBLE.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.CRUCIBLE.get()));
     }
 
     @Override

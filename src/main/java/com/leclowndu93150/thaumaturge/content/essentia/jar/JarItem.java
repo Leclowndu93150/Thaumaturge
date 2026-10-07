@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -30,17 +30,17 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
 
     @Override
     public AspectList getAspects(ItemStack stack) {
-        EssentiaList essentia = stack.get(TCDataComponents.ESSENTIA_CONTENTS);
+        EssentiaList essentia = stack.get(TTDataComponents.ESSENTIA_CONTENTS);
         return essentia == null ? AspectList.EMPTY : essentia.contents();
     }
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
         if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TCDataComponents.ESSENTIA_CONTENTS);
+            stack.remove(TTDataComponents.ESSENTIA_CONTENTS);
             return;
         }
-        stack.set(TCDataComponents.ESSENTIA_CONTENTS, new EssentiaList(aspects));
+        stack.set(TTDataComponents.ESSENTIA_CONTENTS, new EssentiaList(aspects));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class JarItem extends BlockItem implements IEssentiaContainerItem {
         } else if (!player.addItem(filled)) {
             player.drop(filled, false);
         }
-        level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
+        level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
         return InteractionResult.SUCCESS;
     }
 }

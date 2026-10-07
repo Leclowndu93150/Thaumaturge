@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.alchemy;
 
-import com.leclowndu93150.thaumaturge.api.damagesource.TCDamageSources;
+import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +28,7 @@ public abstract class LiquidDeathFluid extends BaseFlowingFluid {
         double damp = 1.0 - amount / MAX_AMOUNT / 2.0;
         entity.setDeltaMovement(motion.x * damp, motion.y, motion.z * damp);
         if (!level.isClientSide() && entity instanceof LivingEntity) {
-            entity.hurt(TCDamageSources.dissolve(level), damageFor(amount));
+            entity.hurt(TTDamageSources.dissolve(level), damageFor(amount));
         }
     }
 

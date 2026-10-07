@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +29,7 @@ public final class MenuVoidSiphon extends AbstractContainerMenu {
     }
 
     public MenuVoidSiphon(int containerId, Inventory playerInventory, @Nullable BlockEntityVoidSiphon blockEntity) {
-        super(TCMenus.VOID_SIPHON.get(), containerId);
+        super(TTMenus.VOID_SIPHON.get(), containerId);
         this.blockEntity = blockEntity;
         ItemStackHandler items = blockEntity != null ? blockEntity.output() : new ItemStackHandler(1);
 

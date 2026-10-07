@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +46,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
     private final List<BlockPos> checklist = new ArrayList<>();
 
     public BlockEntityLampGrowth(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LAMP_GROWTH.get(), pos, state);
+        super(TTBlockEntities.LAMP_GROWTH.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampGrowth lamp) {
@@ -118,7 +118,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
                                     getBlockPos().getZ() + 0.5)
                             < SCAN_DISTANCE * SCAN_DISTANCE
                     && !isGrownCrop(server, cursor, state)
-                    && !state.is(TCBlockTags.LAMP_GROWTH_BLACKLIST)) {
+                    && !state.is(TTBlockTags.LAMP_GROWTH_BLACKLIST)) {
                 charges--;
                 BlockPos target = cursor.immutable();
                 lastTarget = target;
@@ -178,7 +178,7 @@ public final class BlockEntityLampGrowth extends BlockEntity implements IEssenti
     }
 
     private Holder<IAspect> herba() {
-        return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.HERBA);
+        return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.HERBA);
     }
 
     @Override

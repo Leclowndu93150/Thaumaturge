@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.SilverfishModel;
@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public final class TaintCrawlerRenderer extends MobRenderer<EntityTaintCrawler, SilverfishModel<EntityTaintCrawler>> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/entity/taint_crawler.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/entity/taint_crawler.png");
     private static final float CRAWLER_SCALE = 0.7F;
 
     public TaintCrawlerRenderer(EntityRendererProvider.Context context) {

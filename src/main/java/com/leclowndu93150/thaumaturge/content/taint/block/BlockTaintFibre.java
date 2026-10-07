@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
@@ -58,7 +58,13 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     private static final VoxelShape SHAPE_GROWTH1 = Shapes.box(0.1, 0.0, 0.1, 0.9, 0.4, 0.9);
     private static final VoxelShape SHAPE_GROWTH2 = Shapes.box(0.2, 0.0, 0.2, 0.8, 1.0, 0.8);
-    private static final VoxelShape SHAPE_GROWTH3 = Shapes.box(0.25, 0.0, 0.25, 0.75, 0.3125, 0.75);
+    private static final VoxelShape SHAPE_GROWTH3 = Shapes.or(
+            Block.box(4.0, 1.0, 5.0, 12.0, 4.0, 11.0),
+            Block.box(5.0, 0.0, 5.0, 11.0, 1.0, 11.0),
+            Block.box(5.0, 1.0, 4.0, 11.0, 4.0, 5.0),
+            Block.box(5.0, 1.0, 11.0, 11.0, 4.0, 12.0),
+            Block.box(5.0, 4.0, 5.0, 11.0, 5.0, 11.0),
+            Block.box(6.0, 5.0, 7.0, 8.0, 6.0, 9.0));
     private static final VoxelShape SHAPE_GROWTH4 = Shapes.box(0.1, 0.3, 0.1, 0.9, 1.0, 0.9);
 
     private static final int GROWTH_RNG_RANGE = 50;
@@ -150,7 +156,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     public static BlockState stateForWorld(LevelReader level, BlockPos pos) {
-        return computeState(TCBlocks.TAINT_FIBRE.get().defaultBlockState(), level, pos);
+        return computeState(TTBlocks.TAINT_FIBRE.get().defaultBlockState(), level, pos);
     }
 
     public static boolean hasSolidAttachment(LevelReader level, BlockPos pos) {
@@ -229,7 +235,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 && TaintEcology.isTainted(level, pos)) {
             // A growth-3 fibre is the stalk candidate and promotes on its next random tick;
             // BlockTaintSporeStalk uses a 1/10 maturation roll.
-            BlockState stalk = TCBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
+            BlockState stalk = TTBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
             if (stalk.canSurvive(level, pos)) {
                 level.setBlock(pos, stalk, Block.UPDATE_ALL);
                 TaintEcology.addPressure(level, pos, 0.02F);
@@ -268,7 +274,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         }
         if (serverLevel.getRandom().nextInt(WALK_EFFECT_CHANCE) == 0) {
             living.addEffect(
-                    new MobEffectInstance(TCMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
+                    new MobEffectInstance(TTMobEffects.FLUX_TAINT, WALK_EFFECT_DURATION, 0, true, false, false));
         }
     }
 

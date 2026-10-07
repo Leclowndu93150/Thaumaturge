@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.api.recipe.IArcaneCraftingInput;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.wands.assembly.WandAssemblyHook;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import java.util.Optional;
@@ -53,10 +53,10 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
 
     protected static ItemStack assembleResult(ItemStack result, IArcaneCraftingInput input) {
         ItemStack assembled = result.copy();
-        if (assembled.is(TCItems.JAR_VOID)) {
+        if (assembled.is(TTItems.JAR_VOID)) {
             for (int slot = 0; slot < input.size(); slot++) {
                 ItemStack ingredient = input.getItem(slot);
-                if (ingredient.is(TCItems.JAR_NORMAL)) {
+                if (ingredient.is(TTItems.JAR_NORMAL)) {
                     assembled.applyComponents(ingredient.getComponentsPatch());
                     break;
                 }
@@ -77,7 +77,7 @@ public abstract class ArcaneCraftingRecipe implements IArcaneRecipe {
 
     @Override
     public RecipeType<ArcaneCraftingRecipe> getType() {
-        return TCRecipeTypes.ARCANE.get();
+        return TTRecipeTypes.ARCANE.get();
     }
 
     @Override

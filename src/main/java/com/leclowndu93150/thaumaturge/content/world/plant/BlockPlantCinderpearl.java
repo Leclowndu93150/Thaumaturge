@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockPlantCinderpearl extends AbstractTCPlant {
+public final class BlockPlantCinderpearl extends AbstractTTPlant {
     public static final MapCodec<BlockPlantCinderpearl> CODEC = simpleCodec(BlockPlantCinderpearl::new);
 
     public BlockPlantCinderpearl(BlockBehaviour.Properties properties) {

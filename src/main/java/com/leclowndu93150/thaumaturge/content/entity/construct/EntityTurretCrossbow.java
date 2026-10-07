@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -173,7 +173,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
                 heal(1.0F);
             }
             BlockState rail = railStateBelow();
-            if (rail != null && rail.is(TCBlocks.ACTIVATOR_RAIL.get())) {
+            if (rail != null && rail.is(TTBlocks.ACTIVATOR_RAIL.get())) {
                 setNoAi(rail.getValue(BlockStateProperties.POWERED));
             }
         } else {
@@ -187,11 +187,11 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         int z = Mth.floor(getZ());
         BlockPos pos = new BlockPos(x, y, z);
         BlockState state = level().getBlockState(pos);
-        if (state.is(TCBlocks.ACTIVATOR_RAIL.get())) {
+        if (state.is(TTBlocks.ACTIVATOR_RAIL.get())) {
             return state;
         }
         BlockState below = level().getBlockState(pos.below());
-        if (below.is(TCBlocks.ACTIVATOR_RAIL.get())) {
+        if (below.is(TTBlocks.ACTIVATOR_RAIL.get())) {
             return below;
         }
         return null;
@@ -209,7 +209,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
             ItemStack stack = dispenser.getItem(slot);
             if (!stack.isEmpty() && isValidAmmo(stack)) {
                 setItemSlot(EquipmentSlot.MAINHAND, dispenser.removeItem(slot, stack.getCount()));
-                playSound(TCSounds.TICKS.get(), 1.0F, 1.0F);
+                playSound(TTSounds.TICKS.get(), 1.0F, 1.0F);
                 level().broadcastEntityEvent(this, EVENT_LOAD);
                 break;
             }
@@ -255,7 +255,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide() && isOwner(player) && isAlive()) {
             if (player.isShiftKeyDown()) {
-                playSound(TCSounds.ZAP.get(), 1.0F, 1.0F);
+                playSound(TTSounds.ZAP.get(), 1.0F, 1.0F);
                 dropAmmo();
                 spawnAtLocation(placerItem(), 0.5F);
                 discard();
@@ -269,7 +269,7 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
     }
 
     protected ItemStack placerItem() {
-        return new ItemStack(TCItems.TURRET_BASIC.get());
+        return new ItemStack(TTItems.TURRET_BASIC.get());
     }
 
     protected void openTurretMenu(Player player) {
@@ -305,16 +305,16 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         super.dropCustomDeathLoot(level, source, recentlyHit);
         float bonus = 0.0F;
         if (random.nextFloat() < 0.2F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.MIND_CLOCKWORK.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.MIND_CLOCKWORK.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCItems.MECHANISM_SIMPLE.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTItems.MECHANISM_SIMPLE.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCBlocks.PLANK_GREATWOOD.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
         }
         if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TCBlocks.PLANK_GREATWOOD.get()), 0.5F);
+            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
         }
     }
 

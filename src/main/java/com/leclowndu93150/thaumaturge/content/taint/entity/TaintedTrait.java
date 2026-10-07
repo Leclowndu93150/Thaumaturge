@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.entity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitGoals;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
@@ -97,7 +97,7 @@ public final class TaintedTrait implements MobTrait {
     @Override
     public AspectList aspects(LivingEntity mob) {
         Holder<IAspect> vitium =
-                mob.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.VITIUM);
+                mob.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
         return AspectList.EMPTY.add(vitium, VITIUM);
     }
 

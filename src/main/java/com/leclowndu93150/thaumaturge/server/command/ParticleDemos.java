@@ -207,12 +207,12 @@ public final class ParticleDemos {
                         .send());
         register(
                 "jarSplash",
-                "Jar splash droplet (TC dec-color 2650102 = #286176)",
+                "Jar splash droplet (color #286176)",
                 (p, v) -> Effects.jarSplash(p.serverLevel(), v).send());
 
         register(
                 "vent",
-                "FXVent puff (faithful TC vent)",
+                "Vent puff",
                 (p, v) -> Effects.vent(p.serverLevel(), v)
                         .motion(0, 0.1, 0)
                         .color(0x808080)

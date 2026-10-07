@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -244,7 +244,7 @@ public final class PlayerKnowledge implements IPlayerKnowledge {
 
     @Override
     public void sync(ServerPlayer player) {
-        player.syncData(TCAttachments.KNOWLEDGE);
+        player.syncData(TTAttachments.KNOWLEDGE);
     }
 
     public void copyFrom(PlayerKnowledge other) {

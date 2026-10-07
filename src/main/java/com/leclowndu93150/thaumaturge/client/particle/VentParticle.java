@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
-public final class VentParticle extends TCParticle {
+public final class VentParticle extends TTParticle {
     private static final int FRAME_COUNT = 6;
     private static final float BASE_ALPHA = 0.4F;
     private static final float FRICTION = 0.85F;
@@ -98,11 +98,11 @@ public final class VentParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<VentParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("vent");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("vent");
 
         @Override
         public Particle createParticle(

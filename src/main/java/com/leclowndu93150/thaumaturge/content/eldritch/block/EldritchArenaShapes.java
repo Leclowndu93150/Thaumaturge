@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelWriter;
@@ -13,10 +13,10 @@ public final class EldritchArenaShapes {
     private EldritchArenaShapes() {}
 
     public static void genObelisk(LevelWriter level, int x, int y, int z) {
-        level.setBlock(new BlockPos(x, y, z), TCBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), 3);
+        level.setBlock(new BlockPos(x, y, z), TTBlocks.ELDRITCH_OBELISK.get().defaultBlockState(), 3);
         for (int i = 1; i <= 4; i++) {
             level.setBlock(
-                    new BlockPos(x, y + i, z), TCBlocks.ELDRITCH_PILLAR.get().defaultBlockState(), 3);
+                    new BlockPos(x, y + i, z), TTBlocks.ELDRITCH_PILLAR.get().defaultBlockState(), 3);
         }
     }
 

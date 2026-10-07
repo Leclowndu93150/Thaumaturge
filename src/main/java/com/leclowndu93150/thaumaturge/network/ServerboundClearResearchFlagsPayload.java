@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 public record ServerboundClearResearchFlagsPayload(ResourceLocation research, List<ResearchFlag> flags)
         implements CustomPacketPayload {
     public static final Type<ServerboundClearResearchFlagsPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "clear_research_flags"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "clear_research_flags"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundClearResearchFlagsPayload> STREAM_CODEC =
             StreamCodec.composite(

@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class CrimsonSmokeParticle extends TCParticle {
+public final class CrimsonSmokeParticle extends TTParticle {
     private static final int BASE_LIFETIME = 10;
     private static final float ALPHA = 0.8F;
     private static final float END_R = 0.6F;
@@ -30,11 +30,11 @@ public final class CrimsonSmokeParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("crimson_smoke");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("crimson_smoke");
 
         @Override
         public Particle createParticle(

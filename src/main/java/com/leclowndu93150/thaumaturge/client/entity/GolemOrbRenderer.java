@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
@@ -18,8 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class GolemOrbRenderer extends EntityRenderer<EntityGolemOrb> {
-    private static final RenderType BLUE_ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
-    private static final RenderType RED_ORB_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_RED);
+    private static final RenderType BLUE_ORB_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
+    private static final RenderType RED_ORB_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_RED);
 
     private static final float ALPHA = 0.8F;
     private static final float HALF = 0.5F;

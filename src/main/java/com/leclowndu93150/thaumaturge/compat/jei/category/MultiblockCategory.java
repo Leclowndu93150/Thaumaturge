@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.*;
 import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -44,19 +44,19 @@ import org.jspecify.annotations.Nullable;
 
 public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<DustTrigger>> {
     public static final RecipeType<RecipeHolder<DustTrigger>> RECIPE_TYPE = RecipeType.createRecipeHolderType(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "multiblock_dust_trigger"));
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "multiblock_dust_trigger"));
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 108;
 
     private static final IDrawable resultIcon = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             41,
             7,
             30,
             30);
     private static final IDrawable arrow = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             199,
             168,
             26,
@@ -69,11 +69,11 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
     private static final int RESULT_SLOT_Y = HEIGHT / 2 - 9;
 
     private final BlockEntityInfusionMatrix matrixPreview = new BlockEntityInfusionMatrix(
-            BlockPos.ZERO, TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
+            BlockPos.ZERO, TTBlocks.INFUSION_MATRIX.get().defaultBlockState());
     private int rotation = 0;
 
     public MultiblockCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.SALIS_MUNDUS.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()));
     }
 
     @Override
@@ -110,7 +110,7 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
 
         Component usage = Component.translatable("jei.thaumaturge.dust_trigger.target.multiblock");
         builder.addSlot(RecipeIngredientRole.INPUT, DUST_SLOT_X + 1, DUST_SLOT_Y + 1)
-                .addItemStack(new ItemStack(TCItems.SALIS_MUNDUS.get()))
+                .addItemStack(new ItemStack(TTItems.SALIS_MUNDUS.get()))
                 .addRichTooltipCallback((view, tooltip) -> tooltip.add(usage));
 
         DustTrigger recipe = holder.value();
@@ -223,7 +223,7 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
             pose.pushPose();
             pose.translate(blockPos.getX(), blockPos.getY(), blockPos.getZ());
             BlockState state = entry.getValue();
-            if (state.is(TCBlocks.INFUSION_MATRIX.get())) {
+            if (state.is(TTBlocks.INFUSION_MATRIX.get())) {
                 Minecraft.getInstance()
                         .getBlockEntityRenderDispatcher()
                         .renderItem(matrixPreview, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);

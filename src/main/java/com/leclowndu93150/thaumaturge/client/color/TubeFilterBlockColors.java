@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeFilter;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.color.block.BlockColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TubeFilterBlockColors {
     private static final int UNFILTERED = 0xFFFFFFFF;
 
@@ -33,6 +33,6 @@ public final class TubeFilterBlockColors {
 
             return 0xFF000000 | (advertised.entries().get(0).aspect().value().color() & 0xFFFFFF);
         };
-        event.register(color, TCBlocks.TUBE_FILTER.get());
+        event.register(color, TTBlocks.TUBE_FILTER.get());
     }
 }

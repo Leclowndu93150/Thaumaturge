@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FireBatModel;
 import com.leclowndu93150.thaumaturge.client.render.entity.TintBufferSource;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpellBat;
@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 
 public final class SpellBatRenderer extends MobRenderer<EntitySpellBat, FireBatModel<EntitySpellBat>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/spellbat.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/spellbat.png");
     private static final float SHADOW = 0.25F;
     private static final float SCALE = 1.0F;
     private static final float Y_OFFSET = -0.1F;
@@ -24,7 +24,7 @@ public final class SpellBatRenderer extends MobRenderer<EntitySpellBat, FireBatM
     public SpellBatRenderer(EntityRendererProvider.Context context) {
         super(
                 context,
-                new FireBatModel<>(context.bakeLayer(TCModelLayers.FIRE_BAT), RenderType::entityTranslucent),
+                new FireBatModel<>(context.bakeLayer(TTModelLayers.FIRE_BAT), RenderType::entityTranslucent),
                 SHADOW);
     }
 

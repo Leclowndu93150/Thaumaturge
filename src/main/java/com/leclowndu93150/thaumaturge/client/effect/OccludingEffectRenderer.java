@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,11 +19,11 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
 public final class OccludingEffectRenderer {
-    private static final ResourceLocation WISPY_TEXTURE = TCIds.rl("textures/misc/wispy.png");
-    private static final ResourceLocation PORTAL_TEXTURE = TCIds.rl("textures/misc/cultist_portal.png");
+    private static final ResourceLocation WISPY_TEXTURE = TTIds.rl("textures/misc/wispy.png");
+    private static final ResourceLocation PORTAL_TEXTURE = TTIds.rl("textures/misc/cultist_portal.png");
 
-    private static final RenderType WISPY = TCRenderTypes.occludingEffect(WISPY_TEXTURE);
-    private static final RenderType PORTAL = TCRenderTypes.occludingEffect(PORTAL_TEXTURE);
+    private static final RenderType WISPY = TTRenderTypes.occludingEffect(WISPY_TEXTURE);
+    private static final RenderType PORTAL = TTRenderTypes.occludingEffect(PORTAL_TEXTURE);
     private static final float PORTAL_YAW_OFFSET = 180.0F;
 
     private static final List<Beam> BEAMS = new ArrayList<>();

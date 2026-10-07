@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class SparkParticle extends TCParticle {
+public final class SparkParticle extends TTParticle {
     private static final int ROW_COUNT = 3;
     private static final int FRAMES_PER_ROW = 8;
     private static final int TOTAL_FRAMES = ROW_COUNT * FRAMES_PER_ROW;
@@ -43,7 +43,7 @@ public final class SparkParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SparkParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("spark");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("spark");
 
         @Override
         public Particle createParticle(

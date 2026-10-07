@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundInfusionSourcePayload(BlockPos matrixPos, BlockPos sourcePos) implements CustomPacketPayload {
     public static final Type<ClientboundInfusionSourcePayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "fx_infusion_source"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "fx_infusion_source"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundInfusionSourcePayload> STREAM_CODEC =
             StreamCodec.of(

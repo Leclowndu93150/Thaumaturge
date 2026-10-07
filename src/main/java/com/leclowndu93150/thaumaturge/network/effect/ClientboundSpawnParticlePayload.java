@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,7 +12,7 @@ public record ClientboundSpawnParticlePayload(
         ParticleOptions options, double x, double y, double z, double vx, double vy, double vz)
         implements CustomPacketPayload {
     public static final Type<ClientboundSpawnParticlePayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "spawn_particle"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "spawn_particle"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSpawnParticlePayload> STREAM_CODEC =
             StreamCodec.of(

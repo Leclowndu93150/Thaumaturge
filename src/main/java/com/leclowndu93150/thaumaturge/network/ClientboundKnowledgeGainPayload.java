@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceKey;
 public record ClientboundKnowledgeGainPayload(
         KnowledgeType knowledgeType, Optional<ResourceKey<IResearchCategory>> category, int count)
         implements CustomPacketPayload {
-    public static final Type<ClientboundKnowledgeGainPayload> TYPE = new Type<>(TCIds.rl("knowledge_gain"));
+    public static final Type<ClientboundKnowledgeGainPayload> TYPE = new Type<>(TTIds.rl("knowledge_gain"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundKnowledgeGainPayload> STREAM_CODEC =
             StreamCodec.composite(

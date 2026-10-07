@@ -1,0 +1,81 @@
+{
+ "parent": "block/block",
+ "textures": {
+  "fittings": "thaumaturge:block/tube_fittings",
+  "particle": "#fittings"
+ },
+ "elements": [
+  {
+   "from": [
+    5,
+    3,
+    5
+   ],
+   "to": [
+    11,
+    5,
+    11
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "south": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "east": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "west": {
+     "uv": [
+      4.0,
+      3.0,
+      7.0,
+      4.0
+     ],
+     "texture": "#fittings"
+    },
+    "up": {
+     "uv": [
+      4.0,
+      0.0,
+      7.0,
+      3.0
+     ],
+     "texture": "#fittings"
+    },
+    "down": {
+     "uv": [
+      4.0,
+      0.0,
+      7.0,
+      3.0
+     ],
+     "texture": "#fittings"
+    }
+   }
+  }
+ ],
+ "texture_size": [
+  32,
+  32
+ ]
+}

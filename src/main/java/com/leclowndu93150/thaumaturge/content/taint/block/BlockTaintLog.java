@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +44,7 @@ public final class BlockTaintLog extends RotatedPillarBlock implements ITaintBlo
 
     @Override
     public void die(Level level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override

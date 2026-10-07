@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
  * A short-lived member of a taint swarm. The visible body is a persistent cloud of particles
  * which steer back toward the entity.
  */
-public final class TaintSwarmParticle extends TCParticle {
+public final class TaintSwarmParticle extends TTParticle {
     private static final float SPEED = 0.22F;
     private static final float TURN_STRENGTH = 0.08F;
 
@@ -72,7 +72,7 @@ public final class TaintSwarmParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<TaintSwarmParticleOptions> {
@@ -91,6 +91,6 @@ public final class TaintSwarmParticle extends TCParticle {
     }
 
     private static final class ParticleSheetHolder {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("taint_fume");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("taint_fume");
     }
 }

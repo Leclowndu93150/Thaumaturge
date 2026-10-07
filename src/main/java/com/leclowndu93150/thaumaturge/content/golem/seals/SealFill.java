@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +35,7 @@ public class SealFill extends SealFiltered {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("fill");
+        return TTIds.rl("fill");
     }
 
     @Override
@@ -160,7 +160,7 @@ public class SealFill extends SealFiltered {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_fill.png");
+        return TTIds.rl("textures/item/seal_fill.png");
     }
 
     @Override
@@ -175,7 +175,7 @@ public class SealFill extends SealFiltered {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[] {TTGolemTraits.CLUMSY.get()};
     }
 
     @Override

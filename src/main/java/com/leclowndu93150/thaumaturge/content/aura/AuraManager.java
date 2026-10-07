@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class AuraManager {
     public static final int AURA_CEILING = 500;
-    public static final ResourceLocation AURA_PRESERVE_RESEARCH = TCIds.rl("aura_preserve");
+    public static final ResourceLocation AURA_PRESERVE_RESEARCH = TTIds.rl("aura_preserve");
 
     private static final Map<ResourceKey<Level>, Set<ChunkPos>> LOADED_CHUNKS = new ConcurrentHashMap<>();
     private static final Map<ResourceKey<Level>, BlockPos> RIFT_TRIGGER = new ConcurrentHashMap<>();
@@ -33,7 +33,7 @@ public final class AuraManager {
         if (chunk == null) {
             return null;
         }
-        return chunk.getData(TCAttachments.AURA.get());
+        return chunk.getData(TTAttachments.AURA.get());
     }
 
     public static @Nullable AuraData getAuraChunk(Level level, BlockPos pos) {

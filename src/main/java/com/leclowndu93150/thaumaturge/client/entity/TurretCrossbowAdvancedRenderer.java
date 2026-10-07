@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -19,8 +19,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 
 public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityTurretCrossbowAdvanced> {
-    private static final ResourceLocation MODEL = TCIds.rl("models/mesh/crossbow_advanced.tcmesh");
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/crossbow_advanced.png");
+    private static final ResourceLocation MODEL = TTIds.rl("models/mesh/crossbow_advanced.ttmesh");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/crossbow_advanced.png");
     private static final float BASE_LIFT = 0.75F;
     private static final float SHADOW = 0.5F;
     private static final float HURT_JIGGLE_DIVISOR = 500.0F;
@@ -42,7 +42,7 @@ public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityT
             MultiBufferSource buffers,
             int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
-        TCMesh mesh = GolemMeshes.get(MODEL);
+        TTMesh mesh = GolemMeshes.get(MODEL);
         VertexConsumer buffer = buffers.getBuffer(RenderType.entityCutout(TEXTURE));
         boolean ridingMinecart = entity.getVehicle() instanceof AbstractMinecart;
         int hurtTime = entity.hurtTime;
@@ -98,8 +98,8 @@ public final class TurretCrossbowAdvancedRenderer extends EntityRenderer<EntityT
     }
 
     private static void renderPart(
-            TCMesh mesh, String name, PoseStack poseStack, VertexConsumer buffer, int light, int color) {
-        for (TCMeshPart part : mesh.parts()) {
+            TTMesh mesh, String name, PoseStack poseStack, VertexConsumer buffer, int light, int color) {
+        for (TTMeshPart part : mesh.parts()) {
             if (name.equals(part.name())) {
                 GolemMeshes.renderPart(part, poseStack.last(), buffer, light, color);
             }

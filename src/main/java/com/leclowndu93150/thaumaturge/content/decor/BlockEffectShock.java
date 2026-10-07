@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
 import com.leclowndu93150.thaumaturge.content.particle.SparkParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -96,7 +96,7 @@ public final class BlockEffectShock extends Block {
                     pos.getX(),
                     pos.getY(),
                     pos.getZ(),
-                    TCSounds.JACOBS.get(),
+                    TTSounds.JACOBS.get(),
                     SoundSource.AMBIENT,
                     SOUND_VOLUME,
                     1.0F + (random.nextFloat() - random.nextFloat()) * 0.2F,

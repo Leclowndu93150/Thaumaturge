@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.server.command.admin;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeLocationIndex;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -53,8 +53,8 @@ final class LocateSubcommand implements AdminSubcommand {
             if (!level.hasChunkAt(candidate)) {
                 break;
             }
-            if ((level.getBlockState(candidate).is(TCBlocks.NODE.get())
-                            || level.getBlockState(candidate).is(TCBlocks.SILVERWOOD_NODE_LOG.get()))
+            if ((level.getBlockState(candidate).is(TTBlocks.NODE.get())
+                            || level.getBlockState(candidate).is(TTBlocks.SILVERWOOD_NODE_LOG.get()))
                     && level.getBlockEntity(candidate) instanceof BlockEntityNode node) {
                 if (node.getNodeType() == type) {
                     break;

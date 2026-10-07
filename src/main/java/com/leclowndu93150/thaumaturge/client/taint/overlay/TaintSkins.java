@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint.overlay;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.taint.overlay.pattern.VeinTaintOverlayPattern;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -17,7 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TaintSkins {
     private static final List<TaintSkinSource> SOURCES =
             List.of(new HandPaintedTaintSkinSource(), new GeneratedTaintSkinSource(new VeinTaintOverlayPattern()));

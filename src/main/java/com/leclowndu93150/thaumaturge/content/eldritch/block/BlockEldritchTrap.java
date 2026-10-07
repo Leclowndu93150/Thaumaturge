@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.content.particle.BlockRunesParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -47,7 +47,7 @@ public final class BlockEldritchTrap extends BaseEntityBlock {
         }
         return createTickerHelper(
                 type,
-                TCBlockEntities.ELDRITCH_TRAP.get(),
+                TTBlockEntities.ELDRITCH_TRAP.get(),
                 (tickLevel, pos, tickState, trap) -> trap.serverTick(tickLevel, pos));
     }
 

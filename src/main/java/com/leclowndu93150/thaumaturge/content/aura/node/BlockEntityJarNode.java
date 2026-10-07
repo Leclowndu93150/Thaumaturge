@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentMap;
@@ -12,7 +12,7 @@ public class BlockEntityJarNode extends BlockEntityNode {
     private static final int JARRED_FEED_FACTOR = 2;
 
     public BlockEntityJarNode(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.JAR_NODE.get(), pos, state);
+        super(TTBlockEntities.JAR_NODE.get(), pos, state);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BlockEntityJarNode extends BlockEntityNode {
     @Override
     public void applyImplicitComponents(DataComponentInput components) {
         super.applyImplicitComponents(components);
-        NodeData data = components.get(TCDataComponents.NODE_DATA.get());
+        NodeData data = components.get(TTDataComponents.NODE_DATA.get());
         if (data != null) {
             applyNodeData(data);
         }
@@ -43,7 +43,7 @@ public class BlockEntityJarNode extends BlockEntityNode {
     public void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
         components.set(
-                TCDataComponents.NODE_DATA.get(),
+                TTDataComponents.NODE_DATA.get(),
                 new NodeData(getNodeType(), Optional.ofNullable(getNodeModifier()), getAspects(), getAspectsBase()));
     }
 

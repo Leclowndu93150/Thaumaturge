@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -79,7 +79,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
         if (here.liquid()) {
             return;
         }
-        if (here.is(TCBlocks.TAINT_FIBRE.get())) {
+        if (here.is(TTBlocks.TAINT_FIBRE.get())) {
             return;
         }
         if (!TaintHelper.isAdjacentToSolidBlock(server, pos)) {
@@ -88,7 +88,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
         if (BlockTaintFibre.isOnlyAdjacentToTaint(server, pos)) {
             return;
         }
-        server.setBlockAndUpdate(pos, TCBlocks.TAINT_FIBRE.get().defaultBlockState());
+        server.setBlockAndUpdate(pos, TTBlocks.TAINT_FIBRE.get().defaultBlockState());
     }
 
     @Override
@@ -98,7 +98,7 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
         if (attacked && target instanceof LivingEntity living) {
             if (level.getRandom().nextFloat() < 0.3F) {
                 living.addEffect(
-                        new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, 0, true, false, false));
+                        new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, 0, true, false, false));
             }
         }
         return attacked;
@@ -106,17 +106,17 @@ public final class EntityTaintCrawler extends Monster implements ITaintedMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.GORE.get();
+        return TTSounds.GORE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.GORE.get();
+        return TTSounds.GORE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.GORE.get();
+        return TTSounds.GORE.get();
     }
 
     @Override

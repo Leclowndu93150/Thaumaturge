@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import net.neoforged.api.distmarker.Dist;
@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class SealClientHandler {
     private SealClientHandler() {}
 

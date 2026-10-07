@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 public final class WardRenderType {
     private static final int BUFFER_SIZE = 1536;
     private static final RenderStateShard.ShaderStateShard SHADER =
-            new RenderStateShard.ShaderStateShard(TCShaders::wardAdd);
+            new RenderStateShard.ShaderStateShard(TTShaders::wardAdd);
     private static final RenderStateShard.TextureStateShard BLOCK_ATLAS =
             new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false);
 

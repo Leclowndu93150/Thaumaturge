@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -24,10 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEntityResearchTable> {
-    private static final ResourceLocation TABLE_TEXTURE = TCIds.rl("textures/entity/restable.png");
-    private static final ResourceLocation SCROLL_TEXTURE = TCIds.rl("textures/entity/restable2.png");
-    private static final ResourceLocation QUILL_TEXTURE = TCIds.rl("textures/entity/tablequill.png");
-    private static final ResourceLocation PARCHMENT_TEXTURE = TCIds.rl("textures/misc/parchment.png");
+    private static final ResourceLocation TABLE_TEXTURE = TTIds.rl("textures/entity/restable.png");
+    private static final ResourceLocation SCROLL_TEXTURE = TTIds.rl("textures/entity/restable2.png");
+    private static final ResourceLocation QUILL_TEXTURE = TTIds.rl("textures/entity/tablequill.png");
+    private static final ResourceLocation PARCHMENT_TEXTURE = TTIds.rl("textures/misc/parchment.png");
 
     private static final int DEFAULT_SCROLL_COLOR = 0x999999;
     private static final float QUILL_THICKNESS = 0.025F;
@@ -38,7 +38,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private final ResearchTableModel model;
 
     public ResearchTableRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new ResearchTableModel(context.bakeLayer(TCModelLayers.RESEARCH_TABLE));
+        this.model = new ResearchTableModel(context.bakeLayer(TTModelLayers.RESEARCH_TABLE));
     }
 
     @Override
@@ -87,9 +87,6 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
                     default -> 0.0F;
                 };
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-
-        model.table.render(
-                poseStack, buffers.getBuffer(RenderType.entityCutout(TABLE_TEXTURE)), light, OverlayTexture.NO_OVERLAY);
 
         if (hasTools) {
             model.inkwell.render(

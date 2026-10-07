@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -15,8 +15,8 @@ import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +47,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
  * <p>These events turn numerical Flux into visible world pollution and creature hazards. Costs are
  * drained only after an event finds a valid target and succeeds.
  */
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class FluxPressureEvents {
     private static final int RAIN_RADIUS = 16;
     private static final int RAIN_POOL_INTERVAL = 20;
@@ -154,13 +154,13 @@ public final class FluxPressureEvents {
         if (spawn.getY() >= level.getMaxBuildHeight() - 1 || !level.hasChunkAt(spawn)) {
             return false;
         }
-        WispEntity wisp = TCEntities.WISP.get().create(level);
+        WispEntity wisp = TTEntities.WISP.get().create(level);
         if (wisp == null) {
             return false;
         }
         wisp.moveTo(spawn.getX() + 0.5, spawn.getY() + 0.5, spawn.getZ() + 0.5, 0.0F, 0.0F);
         if (level.getRandom().nextInt(3) == 0) {
-            wisp.setAspect(TCAspects.VITIUM.location());
+            wisp.setAspect(TTAspects.VITIUM.location());
         }
         if (!level.noCollision(wisp)) {
             wisp.discard();
@@ -172,7 +172,7 @@ public final class FluxPressureEvents {
     private static boolean spawnCrawler(ServerLevel level, BlockPos origin) {
         BlockPos surface =
                 level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, origin).above();
-        EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(level);
+        EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level);
         if (crawler == null) {
             return false;
         }
@@ -216,7 +216,7 @@ public final class FluxPressureEvents {
             if (target instanceof ServerPlayer player) {
                 WarpManager.sendActionBar(player, "warp.thaumaturge.fluxevent.2");
             }
-            target.addEffect(new MobEffectInstance(TCMobEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2, false, true, false));
+            target.addEffect(new MobEffectInstance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2, false, true, false));
         }
         return true;
     }
@@ -312,7 +312,7 @@ public final class FluxPressureEvents {
         }
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, new AABB(strike).inflate(3.0))) {
             target.hurt(level.damageSources().magic(), 3.0F);
-            target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, 1200, 0, false, true, false));
+            target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, 1200, 0, false, true, false));
         }
     }
 

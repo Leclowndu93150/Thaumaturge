@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
@@ -12,8 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public final class PotionSprayerScreen extends AbstractTCContainerScreen<MenuPotionSprayer> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_potion_sprayer.png");
+public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPotionSprayer> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_potion_sprayer.png");
     private static final int IMAGE_WIDTH = 192;
     private static final int IMAGE_HEIGHT = 233;
 

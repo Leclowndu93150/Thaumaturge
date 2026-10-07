@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -21,7 +21,7 @@ public final class BlockEntityBarrierStone extends BlockEntity {
     private int count;
 
     public BlockEntityBarrierStone(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.BARRIER_STONE.get(), pos, state);
+        super(TTBlockEntities.BARRIER_STONE.get(), pos, state);
     }
 
     public boolean gettingPower() {
@@ -47,7 +47,7 @@ public final class BlockEntityBarrierStone extends BlockEntity {
             }
         }
         if (++count % BARRIER_INTERVAL == 0) {
-            BlockState barrier = TCBlocks.BARRIER.get().defaultBlockState();
+            BlockState barrier = TTBlocks.BARRIER.get().defaultBlockState();
             if (level.getBlockState(pos.above(1)) != barrier && level.isEmptyBlock(pos.above(1))) {
                 level.setBlock(pos.above(1), barrier, 3);
             }

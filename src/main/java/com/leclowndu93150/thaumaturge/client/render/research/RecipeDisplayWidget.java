@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
@@ -18,9 +18,9 @@ import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockR
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapedCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneShapelessCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -146,7 +146,7 @@ public final class RecipeDisplayWidget {
     private static final int CONSTRUCT_LAYER_CONTROL_PADDING = 10;
     private static final int CONSTRUCT_LAYER_CONTROL_TEXT_COLOR = 0xFF000000;
     private static final BlockEntityInfusionMatrix MATRIX_PREVIEW = new BlockEntityInfusionMatrix(
-            BlockPos.ZERO, TCBlocks.INFUSION_MATRIX.get().defaultBlockState());
+            BlockPos.ZERO, TTBlocks.INFUSION_MATRIX.get().defaultBlockState());
 
     private RecipeDisplayWidget() {}
 
@@ -276,15 +276,15 @@ public final class RecipeDisplayWidget {
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                 WORKBENCH_PANEL_OFFSET_X,
                 WORKBENCH_PANEL_OFFSET_Y,
                 (float) WORKBENCH_PANEL_U,
                 (float) WORKBENCH_PANEL_V,
                 WORKBENCH_PANEL_W,
                 WORKBENCH_PANEL_H,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -295,15 +295,15 @@ public final class RecipeDisplayWidget {
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                 ARCANE_PANEL_OFFSET_X,
                 ARCANE_PANEL_OFFSET_Y,
                 (float) ARCANE_PANEL_U,
                 (float) ARCANE_PANEL_V,
                 ARCANE_PANEL_W,
                 ARCANE_PANEL_H,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -314,15 +314,15 @@ public final class RecipeDisplayWidget {
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                 SLOT_FRAME_OFFSET_X,
                 SLOT_FRAME_OFFSET_Y,
                 (float) SLOT_FRAME_U,
                 (float) SLOT_FRAME_V,
                 SLOT_FRAME_W,
                 SLOT_FRAME_H,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
         graphics.pose().popPose();
     }
@@ -333,15 +333,15 @@ public final class RecipeDisplayWidget {
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                 VIS_COST_OFFSET_X,
                 VIS_COST_OFFSET_Y,
                 (float) VIS_COST_U,
                 (float) VIS_COST_V,
                 VIS_COST_W,
                 VIS_COST_H,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 VIS_OVERLAY_TINT);
         graphics.pose().popPose();
     }
@@ -504,7 +504,7 @@ public final class RecipeDisplayWidget {
     }
 
     private static boolean isBareCrystal(ItemStack stack) {
-        return stack.is(TCItems.ESSENTIA_CRYSTAL.get()) && stack.get(TCDataComponents.CRYSTAL_ASPECT.get()) == null;
+        return stack.is(TTItems.ESSENTIA_CRYSTAL.get()) && stack.get(TTDataComponents.CRYSTAL_ASPECT.get()) == null;
     }
 
     private static List<ItemStack> crystals(IArcaneRecipe arcane) {
@@ -686,7 +686,7 @@ public final class RecipeDisplayWidget {
     public static void renderBookmarkIcon(
             GuiGraphics graphics, int x, int y, Recipe<?> recipe, HolderLookup.Provider registries) {
         if (recipe instanceof DustTriggerMultiblockRecipe multiblock) {
-            if (multiblock.result().is(TCBlocks.THAUMATORIUM.get().asItem())) {
+            if (multiblock.result().is(TTBlocks.THAUMATORIUM.get().asItem())) {
                 renderDisplayItem(graphics, multiblock.result(), x, y);
                 return;
             }
@@ -737,14 +737,14 @@ public final class RecipeDisplayWidget {
     }
 
     public static void renderDisplayItem(GuiGraphics graphics, ItemStack stack, int x, int y) {
-        if (stack.is(TCBlocks.THAUMATORIUM.get().asItem())) {
+        if (stack.is(TTBlocks.THAUMATORIUM.get().asItem())) {
             renderBlockPreview(
                     graphics,
                     x + 8,
                     y + 8,
                     Map.of(
                             BlockPos.ZERO,
-                            TCBlocks.THAUMATORIUM
+                            TTBlocks.THAUMATORIUM
                                     .get()
                                     .defaultBlockState()
                                     .setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.WEST)),
@@ -911,7 +911,7 @@ public final class RecipeDisplayWidget {
             pose.pushPose();
             pose.translate(pos.getX(), pos.getY(), pos.getZ());
             BlockState state = entry.getValue();
-            if (state.is(TCBlocks.INFUSION_MATRIX.get())) {
+            if (state.is(TTBlocks.INFUSION_MATRIX.get())) {
                 Minecraft.getInstance()
                         .getBlockEntityRenderDispatcher()
                         .renderItem(MATRIX_PREVIEW, pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
@@ -1006,15 +1006,15 @@ public final class RecipeDisplayWidget {
     private static void blitOverlay(GuiGraphics graphics, int ox, int oy, int u, int v, int w, int h) {
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK_OVERLAY,
+                TTScreenTextures.RESEARCH_BOOK_OVERLAY,
                 ox,
                 oy,
                 (float) u,
                 (float) v,
                 w,
                 h,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 0xFFFFFFFF);
     }
 

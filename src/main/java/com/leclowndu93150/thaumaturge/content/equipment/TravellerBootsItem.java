@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IRechargable;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class TravellerBootsItem extends ArmorItem implements IRechargable {
     private static final int MAX_CHARGE = 240;
     private static final int ENERGY_PER_CHARGE = 60;
@@ -31,16 +31,16 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
     private static final float WATER_AIR_BOOST = 0.025F;
     private static final float STEP_HEIGHT_BONUS = 0.4F;
     private static final AttributeModifier STEP_MODIFIER = new AttributeModifier(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "traveller_step"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "traveller_step"),
             STEP_HEIGHT_BONUS,
             AttributeModifier.Operation.ADD_VALUE);
     private static final AttributeModifier JUMP_MODIFIER = new AttributeModifier(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "traveller_jump"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "traveller_jump"),
             JUMP_BOOST,
             AttributeModifier.Operation.ADD_VALUE);
 
     public TravellerBootsItem(Properties properties) {
-        super(TCMaterials.ARMOR_TRAVELLER, ArmorItem.Type.BOOTS, properties);
+        super(TTMaterials.ARMOR_TRAVELLER, ArmorItem.Type.BOOTS, properties);
     }
 
     @Override
@@ -71,13 +71,13 @@ public final class TravellerBootsItem extends ArmorItem implements IRechargable 
             return;
         }
         if (player.tickCount % ENERGY_INTERVAL_TICKS == 0) {
-            int energy = stack.getOrDefault(TCDataComponents.ENERGY.get(), 0);
+            int energy = stack.getOrDefault(TTDataComponents.ENERGY.get(), 0);
             if (energy > 0) {
                 energy--;
             } else if (RechargeAccess.consumeCharge(stack, player, 1)) {
                 energy = ENERGY_PER_CHARGE;
             }
-            stack.set(TCDataComponents.ENERGY.get(), energy);
+            stack.set(TTDataComponents.ENERGY.get(), energy);
         }
         boolean active =
                 RechargeAccess.getCharge(stack) > 0 && !player.getAbilities().flying && !player.isShiftKeyDown();

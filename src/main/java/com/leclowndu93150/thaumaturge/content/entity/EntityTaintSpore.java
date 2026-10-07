@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -42,6 +42,10 @@ public class EntityTaintSpore extends Monster
     private static final int MAX_SIZE = 10;
     private static final float DISPLAY_GROWTH_PER_TICK = 0.02F;
 
+    private static final byte EVENT_RELEASE = 16;
+    private static final int RELEASE_TICKS = 30;
+    private int releaseTicks;
+
     private boolean burst;
     private float displaySize = -1.0F;
     private float oldDisplaySize = -1.0F;
@@ -70,6 +74,9 @@ public class EntityTaintSpore extends Monster
             return;
         }
 
+        if (releaseTicks > 0) {
+            releaseTicks--;
+        }
         float target = getSporeSize();
         if (displaySize < 0.0F) {
             // Send the current size as spawn data so a newly observed spore does not grow from zero.
@@ -110,7 +117,7 @@ public class EntityTaintSpore extends Monster
             }
         }
         BlockState support = server.getBlockState(blockPosition().below());
-        if (requiresStalkSupport() && !support.is(TCBlocks.TAINT_SPORE_STALK.get())) {
+        if (requiresStalkSupport() && !support.is(TTBlocks.TAINT_SPORE_STALK.get())) {
             burst(server);
         }
     }
@@ -132,6 +139,23 @@ public class EntityTaintSpore extends Monster
             return getSporeSize();
         }
         return Mth.lerp(partialTick, oldDisplaySize, displaySize);
+    }
+
+    public int releaseTicks() {
+        return releaseTicks;
+    }
+
+    protected final void signalRelease(ServerLevel level) {
+        level.broadcastEntityEvent(this, EVENT_RELEASE);
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == EVENT_RELEASE) {
+            releaseTicks = RELEASE_TICKS;
+        } else {
+            super.handleEntityEvent(id);
+        }
     }
 
     @Override
@@ -163,7 +187,7 @@ public class EntityTaintSpore extends Monster
         for (int i = 0; i < count; i++) {
             Spider spider = EntityType.SPIDER.create(level);
             if (spider != null) {
-                MobTraits.add(spider, TCMobTraits.TAINT_BROOD);
+                MobTraits.add(spider, TTMobTraits.TAINT_BROOD);
                 spider.moveTo(
                         getX() + random.nextDouble() - 0.5,
                         getY(),
@@ -180,14 +204,14 @@ public class EntityTaintSpore extends Monster
     protected void demoteSupport(ServerLevel level) {
         BlockState support = level.getBlockState(blockPosition().below());
         BooleanProperty mature = BlockTaintSporeStalk.MATURE;
-        if (support.is(TCBlocks.TAINT_SPORE_STALK.get()) && support.getValue(mature)) {
+        if (support.is(TTBlocks.TAINT_SPORE_STALK.get()) && support.getValue(mature)) {
             level.setBlock(blockPosition().below(), support.setValue(mature, false), Block.UPDATE_CLIENTS);
         }
     }
 
     @Override
     public ItemStack getItem() {
-        return new ItemStack(TCBlocks.TAINT_FEATURE.get());
+        return new ItemStack(TTBlocks.TAINT_FEATURE.get());
     }
 
     @Override

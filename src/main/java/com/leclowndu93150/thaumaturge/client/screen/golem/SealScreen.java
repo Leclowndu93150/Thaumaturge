@@ -6,15 +6,15 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealGui;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCButtonIcon;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCHoverButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCImageButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCPlusMinusButton;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTButtonIcon;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTHoverButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTImageButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTPlusMinusButton;
 import com.leclowndu93150.thaumaturge.content.golem.seals.MenuSealBase;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor.ARGB32;
@@ -23,7 +23,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.DyeColor;
 
-public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
+public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
     private static final int IMAGE_WIDTH = 176;
     private static final int IMAGE_HEIGHT = 232;
     private static final int CIRCLE_U = 96;
@@ -61,7 +61,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
     private final int middleY;
 
     public SealScreen(MenuSealBase menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, TCScreenTextures.GUI_BASE, IMAGE_WIDTH, IMAGE_HEIGHT);
+        super(menu, inventory, title, TTScreenTextures.GUI_BASE, IMAGE_WIDTH, IMAGE_HEIGHT);
         this.middleX = IMAGE_WIDTH / 2;
         this.middleY = (IMAGE_HEIGHT - 72) / 2 - 8;
     }
@@ -114,22 +114,22 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                 }));
         switch (menu.category()) {
             case ISealGui.CAT_PRIORITY -> {
-                addRenderableWidget(TCPlusMinusButton.minus(
+                addRenderableWidget(TTPlusMinusButton.minus(
                         leftPos + middleX - 5 - 14,
                         topPos + middleY - 17,
                         Component.translatable("gui.thaumaturge.seal.priority_down"),
                         () -> sendButton(MenuSealBase.BUTTON_PRIORITY_DOWN)));
-                addRenderableWidget(TCPlusMinusButton.plus(
+                addRenderableWidget(TTPlusMinusButton.plus(
                         leftPos + middleX - 5 + 14,
                         topPos + middleY - 17,
                         Component.translatable("gui.thaumaturge.seal.priority_up"),
                         () -> sendButton(MenuSealBase.BUTTON_PRIORITY_UP)));
-                addRenderableWidget(TCPlusMinusButton.minus(
+                addRenderableWidget(TTPlusMinusButton.minus(
                         leftPos + middleX + 18 - 12,
                         topPos + middleY + 4,
                         Component.translatable("gui.thaumaturge.seal.color_previous"),
                         () -> sendButton(MenuSealBase.BUTTON_COLOR_DOWN)));
-                addRenderableWidget(TCPlusMinusButton.plus(
+                addRenderableWidget(TTPlusMinusButton.plus(
                         leftPos + middleX + 18 + 11,
                         topPos + middleY + 4,
                         Component.translatable("gui.thaumaturge.seal.color_next"),
@@ -173,12 +173,12 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                     int down = MenuSealBase.BUTTON_AREA_BASE + axis * 2;
                     int up = down + 1;
                     String axisName = AXIS_NAMES[axis];
-                    addRenderableWidget(TCPlusMinusButton.minus(
+                    addRenderableWidget(TTPlusMinusButton.minus(
                             leftPos + middleX - 5 - 14,
                             y,
                             Component.translatable("gui.thaumaturge.seal.area_shrink", axisName),
                             () -> sendButton(down)));
-                    addRenderableWidget(TCPlusMinusButton.plus(
+                    addRenderableWidget(TTPlusMinusButton.plus(
                             leftPos + middleX - 5 + 14,
                             y,
                             Component.translatable("gui.thaumaturge.seal.area_grow", axisName),
@@ -226,17 +226,17 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         }
         for (int p = 0; p < tags.length; p++) {
             GolemTrait tag = tags[p];
-            TCHoverButton button = new TCHoverButton(
+            TTHoverButton button = new TTHoverButton(
                     leftPos + middleX + p * 18 - (tags.length - 1) * 9,
                     topPos + middleY + yOffset,
                     16,
                     16,
-                    new TCButtonIcon.TextureIcon(tag.icon()),
+                    new TTButtonIcon.TextureIcon(tag.icon()),
                     Component.translatable(
-                            GolemTrait.nameKey(TCGolemTraits.registry().getKey(tag))),
+                            GolemTrait.nameKey(TTGolemTraits.registry().getKey(tag))),
                     () -> {});
             button.setDescription(Component.translatable(
-                    GolemTrait.descriptionKey(TCGolemTraits.registry().getKey(tag))));
+                    GolemTrait.descriptionKey(TTGolemTraits.registry().getKey(tag))));
             addRenderableWidget(button);
         }
     }
@@ -263,7 +263,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
     @Override
     protected void renderBackgroundTexture(GuiGraphics graphics) {
         graphics.blit(
-                TCScreenTextures.GUI_BASE,
+                TTScreenTextures.GUI_BASE,
                 leftPos + middleX - 80,
                 topPos + middleY - 80,
                 CIRCLE_U,
@@ -273,7 +273,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                 ATLAS,
                 ATLAS);
         graphics.blit(
-                TCScreenTextures.GUI_BASE,
+                TTScreenTextures.GUI_BASE,
                 leftPos,
                 topPos + PANEL_Y,
                 0,
@@ -299,7 +299,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         switch (menu.category()) {
             case ISealGui.CAT_PRIORITY -> {
                 graphics.blit(
-                        TCScreenTextures.GUI_BASE,
+                        TTScreenTextures.GUI_BASE,
                         leftPos + middleX + 17,
                         topPos + middleY + 3,
                         COLOR_DIAL_U,
@@ -312,7 +312,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                     int dye = DyeColor.byId(menu.color() - 1).getTextureDiffuseColor();
                     GuiBlend.blitTinted(
                             graphics,
-                            TCScreenTextures.GUI_BASE,
+                            TTScreenTextures.GUI_BASE,
                             leftPos + middleX + 20,
                             topPos + middleY + 6,
                             COLOR_SWATCH_U,
@@ -364,7 +364,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                         int x = a % 3;
                         int y = a / 3;
                         graphics.blit(
-                                TCScreenTextures.GUI_BASE,
+                                TTScreenTextures.GUI_BASE,
                                 leftPos + middleX + x * 24 - offsetX,
                                 topPos + middleY + y * 24 - offsetY,
                                 FILTER_FRAME_U,
@@ -450,7 +450,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         Component get();
     }
 
-    static final class CategoryButton extends TCImageButton {
+    static final class CategoryButton extends TTImageButton {
         private final boolean active;
 
         CategoryButton(int x, int y, int categoryIcon, boolean active, Component message, Runnable onPress) {
@@ -459,7 +459,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
                     y,
                     16,
                     16,
-                    TCScreenTextures.GUI_BASE,
+                    TTScreenTextures.GUI_BASE,
                     categoryIcon * 16,
                     CATEGORY_ICON_V,
                     16,
@@ -476,7 +476,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         }
     }
 
-    static final class StateButton extends TCButton {
+    static final class StateButton extends TTButton {
         private final UvSupplier uv;
         private final MessageSupplier messageSupplier;
 
@@ -491,7 +491,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
             setMessage(messageSupplier.get());
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.GUI_BASE,
+                    TTScreenTextures.GUI_BASE,
                     getX(),
                     getY(),
                     uv.get(),
@@ -504,7 +504,7 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         }
     }
 
-    final class PropButton extends TCButton {
+    final class PropButton extends TTButton {
         private final ISealConfigToggles.SealToggle prop;
 
         PropButton(int x, int y, ISealConfigToggles.SealToggle prop, Runnable onPress) {
@@ -515,10 +515,10 @@ public final class SealScreen extends AbstractTCContainerScreen<MenuSealBase> {
         @Override
         protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             graphics.blit(
-                    TCScreenTextures.GUI_BASE, getX() - 2, getY() - 2, PROP_BG_U, PROP_BG_V, 12, 12, ATLAS, ATLAS);
+                    TTScreenTextures.GUI_BASE, getX() - 2, getY() - 2, PROP_BG_U, PROP_BG_V, 12, 12, ATLAS, ATLAS);
             if (prop.getValue()) {
                 graphics.blit(
-                        TCScreenTextures.GUI_BASE,
+                        TTScreenTextures.GUI_BASE,
                         getX() - 2,
                         getY() - 2,
                         PROP_CHECK_U,

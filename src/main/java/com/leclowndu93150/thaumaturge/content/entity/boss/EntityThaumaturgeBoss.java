@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity.boss;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -294,8 +294,8 @@ public class EntityThaumaturgeBoss extends Monster implements ISidedHurt {
                 this.getX(),
                 this.getY() + this.getBbHeight() / 2.0F,
                 this.getZ(),
-                new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
-        this.spawnAtLocation(new ItemStack(TCItems.LOOT_BAG_RARE.get()), PEARL_DROP_LIFT);
+                new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
+        this.spawnAtLocation(new ItemStack(TTItems.LOOT_BAG_RARE.get()), PEARL_DROP_LIFT);
     }
 
     public void generateName() {}

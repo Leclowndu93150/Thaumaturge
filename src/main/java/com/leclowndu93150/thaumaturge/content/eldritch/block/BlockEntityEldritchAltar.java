@@ -5,10 +5,10 @@ import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistKnight;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -49,7 +49,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
     private long mazeChunk = UNLINKED_MAZE;
 
     public BlockEntityEldritchAltar(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ELDRITCH_ALTAR.get(), pos, state);
+        super(TTBlockEntities.ELDRITCH_ALTAR.get(), pos, state);
     }
 
     public void serverTick(Level level, BlockPos pos) {
@@ -90,7 +90,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         if (cultists.size() >= MAX_KNIGHTS) {
             return;
         }
-        EntityCultistKnight knight = new EntityCultistKnight(TCEntities.CULTIST_KNIGHT.get(), level);
+        EntityCultistKnight knight = new EntityCultistKnight(TTEntities.CULTIST_KNIGHT.get(), level);
         int x = pos.getX()
                 + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
                         * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
@@ -113,7 +113,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
     }
 
     private void spawnGuardian(ServerLevel level, BlockPos pos) {
-        EntityEldritchGuardian guardian = new EntityEldritchGuardian(TCEntities.ELDRITCH_GUARDIAN.get(), level);
+        EntityEldritchGuardian guardian = new EntityEldritchGuardian(TTEntities.ELDRITCH_GUARDIAN.get(), level);
         int x = pos.getX()
                 + Mth.randomBetweenInclusive(level.getRandom(), 4, 10)
                         * Mth.randomBetweenInclusive(level.getRandom(), -1, 1);
@@ -147,7 +147,7 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
             if (!level.getBlockState(pos.offset(xx, -1, zz)).isSolidRender(level, pos.offset(xx, -1, zz))) {
                 continue;
             }
-            EntityCultistCleric cleric = new EntityCultistCleric(TCEntities.CULTIST_CLERIC.get(), level);
+            EntityCultistCleric cleric = new EntityCultistCleric(TTEntities.CULTIST_CLERIC.get(), level);
             cleric.moveTo(pos.getX() + 0.5 + xx, pos.getY(), pos.getZ() + 0.5 + zz, 0.0F, 0.0F);
             if (level.noCollision(cleric) && !level.containsAnyLiquid(cleric.getBoundingBox())) {
                 cleric.restrictTo(pos, 8);
@@ -192,8 +192,8 @@ public final class BlockEntityEldritchAltar extends BlockEntity {
         eyes = 0;
         BlockPos above = worldPosition.above();
         level.removeBlock(above, false);
-        level.setBlock(above, TCBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
-        level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.setBlock(above, TTBlocks.ELDRITCH_PORTAL.get().defaultBlockState(), 3);
+        level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }

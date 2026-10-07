@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.objects;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ public final class CrimsonPortalFeature extends Feature<NoneFeatureConfiguration
         }
         BlockPos spawn = ground.above();
         EntityCultistPortalLesser portal =
-                TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel());
+                TTEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel());
         if (portal == null) {
             return false;
         }

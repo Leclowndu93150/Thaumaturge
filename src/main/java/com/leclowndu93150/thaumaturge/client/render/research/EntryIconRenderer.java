@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,7 @@ public final class EntryIconRenderer {
     public static final int HIT_PADDING = 2;
 
     public static final ResourceLocation NODE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/misc/auranodes.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/misc/auranodes.png");
     private static final int NODE_TEXTURE_SIZE = 2048;
     private static final int NODE_GRID = 32;
     private static final int NODE_FRAME_SIZE = NODE_TEXTURE_SIZE / NODE_GRID;
@@ -63,9 +63,9 @@ public final class EntryIconRenderer {
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
     private static final ResourceLocation FOCUS_EFFECT_BACK =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_effect.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_effect.png");
     private static final ResourceLocation FOCUS_MEDIUM_BACK =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/foci/_medium.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
     private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;
@@ -249,15 +249,15 @@ public final class EntryIconRenderer {
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(FLAG_BADGE_SCALE, FLAG_BADGE_SCALE, 1F);
         graphics.blit(
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 0,
                 0,
                 (float) u,
                 (float) FLAG_BADGE_V,
                 FLAG_BADGE_SIZE,
                 FLAG_BADGE_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE);
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE);
         graphics.pose().popPose();
     }
 
@@ -293,15 +293,15 @@ public final class EntryIconRenderer {
     private static void blitFrame(GuiGraphics graphics, int x, int y, int u, int v, int color) {
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 x,
                 y,
                 (float) u,
                 (float) v,
                 FRAME_SIZE,
                 FRAME_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 color);
     }
 }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.sounds.SoundSource;
@@ -58,7 +58,7 @@ public final class MenuFocalManipulator extends AbstractContainerMenu {
             ContainerLevelAccess access,
             BlockPos pos,
             @Nullable BlockEntityFocalManipulator table) {
-        super(TCMenus.FOCAL_MANIPULATOR.get(), containerId);
+        super(TTMenus.FOCAL_MANIPULATOR.get(), containerId);
         this.items = items;
         this.access = access;
         this.pos = pos;
@@ -86,14 +86,14 @@ public final class MenuFocalManipulator extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         if (id == BUTTON_START_CRAFT && table != null && !table.startCraft(player)) {
             access.execute((level, blockPos) ->
-                    level.playSound(null, blockPos, TCSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 0.33F, 1.0F));
+                    level.playSound(null, blockPos, TTSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, 0.33F, 1.0F));
         }
         return false;
     }
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.FOCAL_MANIPULATOR.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.FOCAL_MANIPULATOR.get());
     }
 
     @Override

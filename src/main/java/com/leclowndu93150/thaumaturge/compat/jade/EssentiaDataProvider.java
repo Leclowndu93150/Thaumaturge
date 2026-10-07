@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -34,7 +34,7 @@ import snownee.jade.api.IServerDataProvider;
 public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
     INSTANCE;
 
-    private static final ResourceLocation UID = TCIds.rl("essentia");
+    private static final ResourceLocation UID = TTIds.rl("essentia");
 
     static final String PRESENT = "ThaumaturgeEssentia";
     static final String AREA = "EssentiaArea";

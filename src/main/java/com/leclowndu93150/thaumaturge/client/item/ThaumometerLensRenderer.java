@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -163,7 +163,7 @@ public final class ThaumometerLensRenderer {
             poseStack.pushPose();
             poseStack.scale(TAG_SIZE, -TAG_SIZE, TAG_SIZE);
             PoseStack.Pose tagPose = poseStack.last().copy();
-            VertexConsumer tagBuffer = buffers.getBuffer(TCFlatRenderTypes.entityTranslucentFlat(
+            VertexConsumer tagBuffer = buffers.getBuffer(TTFlatRenderTypes.entityTranslucentFlat(
                     known ? entry.aspect().value().texture() : AspectTagWorldRenderer.UNKNOWN_TEXTURE));
             AspectTagWorldRenderer.renderQuad(
                     tagPose, tagBuffer, entry.aspect(), TAG_ALPHA, !known, LightTexture.FULL_BRIGHT);

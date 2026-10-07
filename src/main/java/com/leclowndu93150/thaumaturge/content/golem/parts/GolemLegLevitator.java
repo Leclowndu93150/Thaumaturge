@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.golem.parts;
 
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemLeg;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -21,7 +21,7 @@ public final class GolemLegLevitator implements GolemLeg.ILegFunction {
         }
         RandomSource rand = level.getRandom();
         level.addParticle(
-                TCParticles.GOLEM_TRAIL.get(),
+                TTParticles.GOLEM_TRAIL.get(),
                 entity.getX(),
                 entity.getY() + 0.1,
                 entity.getZ(),

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.book;
 
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.network.ClientboundOpenThaumonomiconPayload;
 import java.util.List;
@@ -26,7 +26,7 @@ public final class CheatThaumonomiconItem extends ThaumonomiconItem {
         if (player instanceof ServerPlayer serverPlayer) {
             int granted = ResearchGrants.grantAll(serverPlayer);
             if (granted > 0) {
-                TCActionBar.sendPurple(player, "tc.thaumonomicon.cheat.granted", granted);
+                TTActionBar.sendPurple(player, "tc.thaumonomicon.cheat.granted", granted);
             }
             PacketDistributor.sendToPlayer(serverPlayer, ClientboundOpenThaumonomiconPayload.INSTANCE);
         }

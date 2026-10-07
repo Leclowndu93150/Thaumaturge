@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -12,7 +12,7 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +44,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("pickup");
+        return TTIds.rl("pickup");
     }
 
     @Override
@@ -151,7 +151,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_pickup.png");
+        return TTIds.rl("textures/item/seal_pickup.png");
     }
 
     @Override
@@ -166,7 +166,7 @@ public class SealPickup extends SealFiltered implements ISealConfigArea {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[] {TTGolemTraits.CLUMSY.get()};
     }
 
     @Override

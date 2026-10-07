@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.essentia.jar;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -47,6 +47,6 @@ public final class BlockJarVoid extends BlockJar {
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.JAR_VOID.get(), BlockEntityJarVoid::serverTick);
+        return createTickerHelper(type, TTBlockEntities.JAR_VOID.get(), BlockEntityJarVoid::serverTick);
     }
 }

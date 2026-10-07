@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -47,7 +47,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
     private final ItemStackHandler items = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int index, ItemStack resource) {
-            return resource.is(TCItems.BATH_SALTS.get());
+            return resource.is(TTItems.BATH_SALTS.get());
         }
 
         @Override
@@ -60,7 +60,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
     private int counter;
 
     public BlockEntitySpa(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.SPA.get(), pos, state);
+        super(TTBlockEntities.SPA.get(), pos, state);
     }
 
     public FluidTank getTank() {
@@ -110,7 +110,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
 
     private @Nullable Block targetBlock() {
         if (mix) {
-            return TCBlocks.PURIFYING_FLUID.get();
+            return TTBlocks.PURIFYING_FLUID.get();
         }
         Fluid fluid = tank.getFluid().getFluid();
         if (!(fluid instanceof FlowingFluid)) {
@@ -124,7 +124,7 @@ public class BlockEntitySpa extends BlockEntity implements MenuProvider {
         if (mix) {
             return tank.getFluid().is(Fluids.WATER)
                     && tank.getFluidAmount() >= FLUID_COST
-                    && items.getStackInSlot(0).is(TCItems.BATH_SALTS.get());
+                    && items.getStackInSlot(0).is(TTItems.BATH_SALTS.get());
         }
         return tank.getFluidAmount() >= FLUID_COST && targetBlock() != null;
     }

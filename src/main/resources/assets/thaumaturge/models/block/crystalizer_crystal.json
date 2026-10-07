@@ -1,19 +1,245 @@
 {
-  "loader": "neoforge:obj",
-  "model": "thaumaturge:models/block/crystalizer_crystal.obj",
-  "textures": {
-    "texture0": "thaumaturge:block/crystalizer_crystal",
-    "particle": "thaumaturge:block/tube"
+ "parent": "block/block",
+ "textures": {
+  "crystal": "thaumaturge:block/crystalizer_crystal",
+  "particle": "#crystal"
+ },
+ "elements": [
+  {
+   "from": [
+    7,
+    0,
+    7
+   ],
+   "to": [
+    9,
+    5,
+    9
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7,
+      5,
+      9,
+      10
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      7,
+      5,
+      9,
+      10
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      7,
+      5,
+      9,
+      10
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      7,
+      5,
+      9,
+      10
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "down": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    }
+   }
   },
-  "automatic_culling": false,
-  "shade_quads": false,
-  "flip_v": true,
-  "emissive_ambient": true,
-  "render_type": "minecraft:cutout",
-  "visibility": {
-    "Crystal": true,
-    "RingFloat": false,
-    "RingBase": false,
-    "Support": false
+  {
+   "from": [
+    7,
+    5,
+    7
+   ],
+   "to": [
+    9,
+    6,
+    9
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      7,
+      4,
+      9,
+      5
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      7,
+      4,
+      9,
+      5
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      7,
+      4,
+      9,
+      5
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      7,
+      4,
+      9,
+      5
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "up": {
+     "uv": [
+      7,
+      7,
+      9,
+      9
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    }
+   }
+  },
+  {
+   "from": [
+    6,
+    0,
+    8
+   ],
+   "to": [
+    7,
+    3,
+    9
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      6,
+      8,
+      7,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      6,
+      8,
+      7,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "west": {
+     "uv": [
+      6,
+      8,
+      7,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "up": {
+     "uv": [
+      6,
+      8,
+      7,
+      9
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    }
+   }
+  },
+  {
+   "from": [
+    9,
+    0,
+    7
+   ],
+   "to": [
+    10,
+    2,
+    8
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      9,
+      9,
+      10,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "south": {
+     "uv": [
+      9,
+      9,
+      10,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "east": {
+     "uv": [
+      9,
+      9,
+      10,
+      11
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    },
+    "up": {
+     "uv": [
+      9,
+      9,
+      10,
+      10
+     ],
+     "texture": "#crystal",
+     "tintindex": 0
+    }
+   }
   }
+ ]
 }

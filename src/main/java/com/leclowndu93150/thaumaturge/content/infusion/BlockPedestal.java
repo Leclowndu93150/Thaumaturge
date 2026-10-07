@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -70,7 +70,7 @@ public final class BlockPedestal extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.is(TCBlocks.PEDESTAL_ANCIENT.get()) || state.is(TCBlocks.PEDESTAL_ELDRITCH.get())
+        return state.is(TTBlocks.PEDESTAL_ANCIENT.get()) || state.is(TTBlocks.PEDESTAL_ELDRITCH.get())
                 ? ANCIENT_AND_ELDRITCH_SHAPE
                 : SHAPE;
     }

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.casters.CasterTriggerRegistry;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
@@ -22,10 +22,10 @@ import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.content.focus.effect.FocusEffectWard;
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +70,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
 
     public static ItemStack create(Item wandItem, WandCap cap, WandRod rod, boolean sceptre) {
         ItemStack stack = new ItemStack(wandItem);
-        stack.set(TCDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre));
+        stack.set(TTDataComponents.WAND_PARTS.get(), new WandParts(cap, rod, sceptre));
         return stack;
     }
 
@@ -93,8 +93,8 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
     @Override
     public Component getName(ItemStack stack) {
         WandParts parts = getParts(stack);
-        String capName = TCWandParts.caps().getKey(parts.cap()).getPath();
-        String rodName = TCWandParts.rods().getKey(parts.rod()).getPath();
+        String capName = TTWandParts.caps().getKey(parts.cap()).getPath();
+        String rodName = TTWandParts.rods().getKey(parts.rod()).getPath();
         if (rodName.endsWith(STAFF_ROD_SUFFIX)) {
             rodName = rodName.substring(0, rodName.length() - STAFF_ROD_SUFFIX.length());
         }
@@ -155,16 +155,16 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
 
     @Override
     public ItemStack getFocusStack(ItemStack stack) {
-        SocketedFocus template = stack.get(TCDataComponents.SOCKETED_FOCUS.get());
+        SocketedFocus template = stack.get(TTDataComponents.SOCKETED_FOCUS.get());
         return template == null ? ItemStack.EMPTY : template.focus().copy();
     }
 
     @Override
     public void setFocus(ItemStack stack, ItemStack focus) {
         if (focus == null || focus.isEmpty()) {
-            stack.remove(TCDataComponents.SOCKETED_FOCUS.get());
+            stack.remove(TTDataComponents.SOCKETED_FOCUS.get());
         } else {
-            stack.set(TCDataComponents.SOCKETED_FOCUS.get(), new SocketedFocus(focus.copy()));
+            stack.set(TTDataComponents.SOCKETED_FOCUS.get(), new SocketedFocus(focus.copy()));
         }
     }
 
@@ -206,7 +206,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
     public @Nullable BlockState getPickedBlock(ItemStack stack) {
         FocusPackage core = ItemFocus.getPackage(getFocusStack(stack));
         if (core != null && containsElement(core, IFocusBlockPicker.class)) {
-            return stack.get(TCDataComponents.PICKED_BLOCK.get());
+            return stack.get(TTDataComponents.PICKED_BLOCK.get());
         }
         return null;
     }
@@ -251,7 +251,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
             if (core != null && containsElement(core, IFocusBlockPicker.class)) {
                 if (!level.isClientSide()) {
                     if (!state.isAir()) {
-                        stack.set(TCDataComponents.PICKED_BLOCK.get(), state);
+                        stack.set(TTDataComponents.PICKED_BLOCK.get(), state);
                     }
                     return InteractionResult.SUCCESS;
                 }
@@ -361,7 +361,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
     }
 
     private static void sendWandActionBar(ServerPlayer player, String key) {
-        TCActionBar.sendPurple(player, key);
+        TTActionBar.sendPurple(player, key);
     }
 
     private static @Nullable BlockEntityNode targetedNode(Player player) {
@@ -396,14 +396,14 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
                 && player.level().getBlockState(blockHit.getBlockPos()).getBlock() instanceof BlockCrystal crystal
                 && !crystal.isFlux()
                 && crystal.aspect() != null
-                && TCAspects.PRIMALS.contains(crystal.aspect())) {
+                && TTAspects.PRIMALS.contains(crystal.aspect())) {
             return crystal.aspect();
         }
         WandVis vis = WandVisHelper.getAllVis(stack);
         int max = WandVisHelper.getMaxVis(stack);
         ResourceKey<IAspect> lowest = null;
         int lowestAmount = Integer.MAX_VALUE;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             int amount = vis.amount(primal);
             if (amount < max && amount < lowestAmount) {
                 lowestAmount = amount;
@@ -434,7 +434,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
         HolderLookup.Provider registries = context.registries();
         MutableComponent amounts = null;
         Map<ResourceKey<IAspect>, Integer> pctByPrimal = new LinkedHashMap<>();
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             pctByPrimal.put(
                     primal, Math.round(WandVisHelper.getConsumptionModifier(stack, null, primal, false) * 100.0F));
             int amount = vis.amount(primal);

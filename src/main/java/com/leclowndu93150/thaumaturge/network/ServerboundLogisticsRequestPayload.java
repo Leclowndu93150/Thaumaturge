@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundLogisticsRequestPayload(ItemStack stack, int amount) implements CustomPacketPayload {
-    public static final Type<ServerboundLogisticsRequestPayload> TYPE = new Type<>(TCIds.rl("logistics_request"));
+    public static final Type<ServerboundLogisticsRequestPayload> TYPE = new Type<>(TTIds.rl("logistics_request"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsRequestPayload> STREAM_CODEC =
             StreamCodec.composite(

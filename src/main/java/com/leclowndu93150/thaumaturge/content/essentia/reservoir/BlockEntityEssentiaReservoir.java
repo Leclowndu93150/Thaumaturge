@@ -5,9 +5,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,7 +46,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     private float tbi;
 
     public BlockEntityEssentiaReservoir(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
+        super(TTBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
     }
 
     public AspectList contents() {
@@ -86,7 +86,7 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
                     pos.getX() + 0.5D,
                     pos.getY() + 0.5D,
                     pos.getZ() + 0.5D,
-                    TCSounds.CREAK.get(),
+                    TTSounds.CREAK.get(),
                     SoundSource.BLOCKS,
                     1.0F,
                     1.4F + level.getRandom().nextFloat() * 0.2F,
@@ -210,14 +210,14 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        contents = TCNbt.read(input, "Essentia", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        contents = TTNbt.read(input, "Essentia", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         if (contents.totalAmount() > CAPACITY) contents = AspectList.EMPTY;
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Essentia", AspectList.CODEC, registries, contents);
+        TTNbt.store(output, "Essentia", AspectList.CODEC, registries, contents);
     }
 
     @Override

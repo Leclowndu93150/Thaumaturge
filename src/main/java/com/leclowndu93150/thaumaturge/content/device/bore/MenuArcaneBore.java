@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -26,7 +26,7 @@ public final class MenuArcaneBore extends AbstractContainerMenu {
     }
 
     private MenuArcaneBore(int containerId, Inventory playerInventory, @Nullable ArcaneBoreHost host) {
-        super(TCMenus.ARCANE_BORE.get(), containerId);
+        super(TTMenus.ARCANE_BORE.get(), containerId);
         this.host = host;
         addSlot(new Slot(new BoreToolContainer(host), 0, PICK_X, PICK_Y) {
             @Override

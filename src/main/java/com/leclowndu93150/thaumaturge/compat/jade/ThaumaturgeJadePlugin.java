@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import net.minecraft.world.level.block.Block;
+import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -19,6 +20,21 @@ public final class ThaumaturgeJadePlugin implements IWailaPlugin {
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         JadeConfig.register(registration);
+        registration.addRayTraceCallback((hit, accessor, original) -> {
+            if (accessor instanceof BlockAccessor blockAccessor) {
+                var furnace = AdvancedFurnaceJadeAccess.resolve(blockAccessor);
+                if (furnace != null && furnace.assembled()) {
+                    return registration
+                            .blockAccessor()
+                            .from(blockAccessor)
+                            .hit(blockAccessor.getHitResult().withPosition(furnace.getBlockPos()))
+                            .blockState(furnace.getBlockState())
+                            .blockEntity(furnace)
+                            .build();
+                }
+            }
+            return accessor;
+        });
         registration.registerBlockComponent(NodeComponentProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(EssentiaComponentProvider.INSTANCE, Block.class);
         registration.registerBlockComponent(MachineComponentProvider.INSTANCE, Block.class);

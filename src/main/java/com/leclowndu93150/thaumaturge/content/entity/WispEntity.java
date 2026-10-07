@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IEntityAspectSource;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.effect.WispEffects;
 import com.leclowndu93150.thaumaturge.content.entity.ai.FlyingWanderGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.GhastLikeFlight;
@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.GhastLikeLookGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.GhastLikeMoveControl;
 import com.leclowndu93150.thaumaturge.content.entity.ai.WispZapGoal;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -115,8 +115,8 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
         Holder<IAspect> self = aspect();
         var registry = this.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
         AspectList aspects = AspectList.EMPTY
-                .add(registry.getOrThrow(TCAspects.AURAM), SELF_ASPECT_AMOUNT)
-                .add(registry.getOrThrow(TCAspects.VOLATUS), SELF_ASPECT_AMOUNT);
+                .add(registry.getOrThrow(TTAspects.AURAM), SELF_ASPECT_AMOUNT)
+                .add(registry.getOrThrow(TTAspects.VOLATUS), SELF_ASPECT_AMOUNT);
         if (self != null) {
             aspects = aspects.add(self, SELF_ASPECT_AMOUNT);
         }
@@ -198,7 +198,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.WISPLIVE.get();
+        return TTSounds.WISPLIVE.get();
     }
 
     @Override
@@ -208,7 +208,7 @@ public final class WispEntity extends Monster implements IEntityAspectSource {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.WISPDEAD.get();
+        return TTSounds.WISPDEAD.get();
     }
 
     @Override

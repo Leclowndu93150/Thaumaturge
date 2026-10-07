@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FireBatModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFireBat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,13 +10,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 
 public final class FireBatRenderer extends MobRenderer<EntityFireBat, FireBatModel<EntityFireBat>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/firebat.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/firebat.png");
     private static final float SHADOW = 0.25F;
     private static final float SCALE = 1.0F;
     private static final int FULLBRIGHT_BLOCK_LIGHT = 15;
 
     public FireBatRenderer(EntityRendererProvider.Context context) {
-        super(context, new FireBatModel<>(context.bakeLayer(TCModelLayers.FIRE_BAT)), SHADOW);
+        super(context, new FireBatModel<>(context.bakeLayer(TTModelLayers.FIRE_BAT)), SHADOW);
     }
 
     @Override

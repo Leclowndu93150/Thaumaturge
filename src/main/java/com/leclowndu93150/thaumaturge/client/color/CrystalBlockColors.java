@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.level.block.Block;
@@ -10,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CrystalBlockColors {
     private static final int AER = 0xFFFF7E;
     private static final int IGNIS = 0xFF5A01;
@@ -24,13 +24,13 @@ public final class CrystalBlockColors {
 
     @SubscribeEvent
     public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event) {
-        register(event, TCBlocks.CRYSTAL_AER.get(), AER);
-        register(event, TCBlocks.CRYSTAL_IGNIS.get(), IGNIS);
-        register(event, TCBlocks.CRYSTAL_AQUA.get(), AQUA);
-        register(event, TCBlocks.CRYSTAL_TERRA.get(), TERRA);
-        register(event, TCBlocks.CRYSTAL_ORDO.get(), ORDO);
-        register(event, TCBlocks.CRYSTAL_PERDITIO.get(), PERDITIO);
-        register(event, TCBlocks.CRYSTAL_VITIUM.get(), VITIUM);
+        register(event, TTBlocks.CRYSTAL_AER.get(), AER);
+        register(event, TTBlocks.CRYSTAL_IGNIS.get(), IGNIS);
+        register(event, TTBlocks.CRYSTAL_AQUA.get(), AQUA);
+        register(event, TTBlocks.CRYSTAL_TERRA.get(), TERRA);
+        register(event, TTBlocks.CRYSTAL_ORDO.get(), ORDO);
+        register(event, TTBlocks.CRYSTAL_PERDITIO.get(), PERDITIO);
+        register(event, TTBlocks.CRYSTAL_VITIUM.get(), VITIUM);
     }
 
     private static void register(RegisterColorHandlersEvent.Block event, Block block, int rgb) {

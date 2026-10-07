@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -17,7 +17,7 @@ public final class BlockHungryChest extends ChestBlock {
     public static final MapCodec<BlockHungryChest> CODEC = simpleCodec(BlockHungryChest::new);
 
     public BlockHungryChest(BlockBehaviour.Properties properties) {
-        super(properties, () -> TCBlockEntities.HUNGRY_CHEST.get());
+        super(properties, () -> TTBlockEntities.HUNGRY_CHEST.get());
     }
 
     @Override
@@ -34,8 +34,8 @@ public final class BlockHungryChest extends ChestBlock {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
-            return createTickerHelper(type, TCBlockEntities.HUNGRY_CHEST.get(), ChestBlockEntity::lidAnimateTick);
+            return createTickerHelper(type, TTBlockEntities.HUNGRY_CHEST.get(), ChestBlockEntity::lidAnimateTick);
         }
-        return createTickerHelper(type, TCBlockEntities.HUNGRY_CHEST.get(), BlockEntityHungryChest::serverTick);
+        return createTickerHelper(type, TTBlockEntities.HUNGRY_CHEST.get(), BlockEntityHungryChest::serverTick);
     }
 }

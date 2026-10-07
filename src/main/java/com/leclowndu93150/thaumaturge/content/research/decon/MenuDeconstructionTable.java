@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.research.decon;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,7 +41,7 @@ public final class MenuDeconstructionTable extends AbstractContainerMenu {
 
     public MenuDeconstructionTable(
             int containerId, Inventory playerInventory, @Nullable BlockEntityDeconstructionTable blockEntity) {
-        super(TCMenus.DECONSTRUCTION_TABLE.get(), containerId);
+        super(TTMenus.DECONSTRUCTION_TABLE.get(), containerId);
         this.blockEntity = blockEntity;
         this.access = blockEntity != null
                 ? ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos())
@@ -75,7 +75,7 @@ public final class MenuDeconstructionTable extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return AbstractContainerMenu.stillValid(access, player, TCBlocks.DECONSTRUCTION_TABLE.get());
+        return AbstractContainerMenu.stillValid(access, player, TTBlocks.DECONSTRUCTION_TABLE.get());
     }
 
     @Override

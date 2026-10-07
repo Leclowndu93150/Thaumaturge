@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ public final class RecipeDisplayCache {
         return recipes.byKey(id)
                 .<List<RecipeHolder<?>>>map(holder -> {
                     if (!(holder.value() instanceof InfusionRunicAugmentRecipe runic)) {
-                        if (id.getNamespace().equals(TCIds.MODID)
+                        if (id.getNamespace().equals(TTIds.MODID)
                                 && id.getPath().startsWith("nitors/")) {
                             return nitorPages(recipes, holder);
                         }
@@ -52,7 +52,7 @@ public final class RecipeDisplayCache {
 
         List<RecipeHolder<?>> pages = new ArrayList<>(DyeColor.values().length);
         for (DyeColor color : DyeColor.values()) {
-            ResourceLocation id = TCIds.rl("nitors/" + color.getName());
+            ResourceLocation id = TTIds.rl("nitors/" + color.getName());
             recipes.byKey(id).ifPresent(pages::add);
         }
         List<RecipeHolder<?>> result = pages.isEmpty() ? List.of(anchor) : List.copyOf(pages);
@@ -68,7 +68,7 @@ public final class RecipeDisplayCache {
         List<RecipeHolder<?>> pages = new ArrayList<>(5);
         for (int charge = 0; charge < 5; charge++) {
             ItemStack catalyst = catalysts[0].copy();
-            catalyst.set(TCDataComponents.RUNIC_CHARGE.get(), charge);
+            catalyst.set(TTDataComponents.RUNIC_CHARGE.get(), charge);
             InfusionRecipe display = new InfusionRecipe(
                     Ingredient.of(catalyst),
                     runic.scaledComponents(catalyst),

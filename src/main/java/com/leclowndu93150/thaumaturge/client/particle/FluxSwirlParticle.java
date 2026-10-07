@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class FluxSwirlParticle extends TCParticle {
+public final class FluxSwirlParticle extends TTParticle {
     private static final int FRAME_COUNT = 14;
     private static final int BASE_LIFETIME = 15;
     private static final float FRICTION = 0.9F;
@@ -48,7 +48,7 @@ public final class FluxSwirlParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<FluxSwirlParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("flux_swirl");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("flux_swirl");
 
         @Override
         public Particle createParticle(

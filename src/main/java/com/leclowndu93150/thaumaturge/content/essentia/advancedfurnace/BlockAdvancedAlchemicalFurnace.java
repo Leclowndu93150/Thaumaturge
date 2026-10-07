@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -97,7 +97,7 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (!level.isClientSide()
-                && !DeviceGate.passes(player, com.leclowndu93150.thaumaturge.TCIds.rl("essentia_smelter_void"))) {
+                && !DeviceGate.passes(player, com.leclowndu93150.thaumaturge.TTIds.rl("essentia_smelter_void"))) {
             return ItemInteractionResult.CONSUME;
         }
         if (!(level.getBlockEntity(pos) instanceof BlockEntityAdvancedAlchemicalFurnace furnace)) {
@@ -147,6 +147,6 @@ public final class BlockAdvancedAlchemicalFurnace extends BaseEntityBlock {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
-                type, TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), BlockEntityAdvancedAlchemicalFurnace::tick);
+                type, TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), BlockEntityAdvancedAlchemicalFurnace::tick);
     }
 }

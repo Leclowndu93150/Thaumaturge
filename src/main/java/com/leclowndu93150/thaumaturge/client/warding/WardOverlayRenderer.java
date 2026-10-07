@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.casters.FocusUnit;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
@@ -27,7 +27,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WardOverlayRenderer {
     private static final double RENDER_RANGE = 48.0;
     private static final double SECTION_RANGE = RENDER_RANGE + 16.0;

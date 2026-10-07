@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.OccludingEffectRenderer;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 public final class CultistPortalRenderer extends EntityRenderer<EntityCultistPortalLesser> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/misc/cultist_portal.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/misc/cultist_portal.png");
 
     private static final int FRAMES = 32;
     private static final float FRAME_WIDTH = 1.0F / FRAMES;

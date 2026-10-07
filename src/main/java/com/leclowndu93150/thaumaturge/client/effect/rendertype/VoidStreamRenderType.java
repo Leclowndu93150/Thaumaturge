@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.effect.rendertype;
 
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -13,7 +13,7 @@ public final class VoidStreamRenderType {
 
     private static final int BUFFER = 1536;
     private static final RenderStateShard.ShaderStateShard SHADER =
-            new RenderStateShard.ShaderStateShard(TCShaders::voidStream);
+            new RenderStateShard.ShaderStateShard(TTShaders::voidStream);
     private static final RenderStateShard.TextureStateShard TEXTURE_STATE =
             new RenderStateShard.TextureStateShard(TEXTURE, false, false);
 

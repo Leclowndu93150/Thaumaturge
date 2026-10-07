@@ -9,7 +9,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Base description shared by every golem part kind: the research gating it, the icon shown
  * in the golem press, the crafting components it consumes, the traits it grants and the
- * model it renders with.
+ * models it renders with.
  *
  * @since 1.0.0
  */
@@ -18,7 +18,7 @@ public abstract class GolemPart {
     private final ResourceLocation icon;
     private final List<GolemComponent> components;
     private final List<Holder<GolemTrait>> traits;
-    private final GolemPartModel model;
+    private final List<GolemPartModel> models;
 
     protected GolemPart(
             List<ResourceLocation> research,
@@ -26,11 +26,28 @@ public abstract class GolemPart {
             List<GolemComponent> components,
             List<Holder<GolemTrait>> traits,
             @Nullable GolemPartModel model) {
+        this(research, icon, components, traits, model == null ? List.of() : List.of(model));
+    }
+
+    /**
+     * @param research   research entries gating this part; empty means ungated
+     * @param icon       the icon drawn for this part in the golem press
+     * @param components the crafting components consumed by this part
+     * @param traits     traits granted by this part
+     * @param models     the models rendered for this part, each at its own attach point; empty when it has no visual
+     * @since 1.0.0
+     */
+    protected GolemPart(
+            List<ResourceLocation> research,
+            ResourceLocation icon,
+            List<GolemComponent> components,
+            List<Holder<GolemTrait>> traits,
+            List<GolemPartModel> models) {
         this.research = List.copyOf(research);
         this.icon = icon;
         this.components = List.copyOf(components);
         this.traits = List.copyOf(traits);
-        this.model = model;
+        this.models = List.copyOf(models);
     }
 
     /**
@@ -62,10 +79,21 @@ public abstract class GolemPart {
     }
 
     /**
-     * @return the model rendered for this part, or null when it has no visual
+     * @return the first model rendered for this part, or null when it has no visual
      */
     public @Nullable GolemPartModel model() {
-        return model;
+        return models.isEmpty() ? null : models.getFirst();
+    }
+
+    /**
+     * Every model rendered for this part. A part can place models at several attach points,
+     * for example a body plate together with fittings on both arms.
+     *
+     * @return the models in render order, never null; empty when the part has no visual
+     * @since 1.0.0
+     */
+    public List<GolemPartModel> models() {
+        return models;
     }
 
     /**

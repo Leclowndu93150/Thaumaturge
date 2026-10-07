@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.DeconTableModel;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public final class DeconTableItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/decontable.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/decontable.png");
     private static final float BOOK_Y = 1.02F;
     private static final float BOOK_SCALE = 0.8F;
     private static final float IN_FRAME_SCALE = 0.5128205F;
@@ -29,8 +29,8 @@ public final class DeconTableItemSpecialRenderer extends BlockEntityWithoutLevel
                 Minecraft.getInstance().getBlockEntityRenderDispatcher(),
                 Minecraft.getInstance().getEntityModels());
         this.model = new DeconTableModel(
-                Minecraft.getInstance().getEntityModels().bakeLayer(TCModelLayers.DECONSTRUCTION_TABLE));
-        this.thaumometer = new ItemStack(TCItems.THAUMOMETER.get());
+                Minecraft.getInstance().getEntityModels().bakeLayer(TTModelLayers.DECONSTRUCTION_TABLE));
+        this.thaumometer = new ItemStack(TTItems.THAUMOMETER.get());
     }
 
     @Override

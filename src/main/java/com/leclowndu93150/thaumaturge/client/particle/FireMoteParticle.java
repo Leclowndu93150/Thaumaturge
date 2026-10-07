@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.util.RandomSource;
 
-public final class FireMoteParticle extends TCParticle {
+public final class FireMoteParticle extends TTParticle {
     private static final int LIFETIME = 16;
     private static final int EMISSIVE_LIGHT = 0x00F000F0;
     private static final float SKIP_CHANCE = 1.0F / 6.0F;
@@ -56,11 +56,11 @@ public final class FireMoteParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return this.translucent ? TCParticleLayers.translucent(this.sheet) : TCParticleLayers.additive(this.sheet);
+        return this.translucent ? TTParticleLayers.translucent(this.sheet) : TTParticleLayers.additive(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<FireMoteParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("fire_mote");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("fire_mote");
 
         @Override
         public Particle createParticle(

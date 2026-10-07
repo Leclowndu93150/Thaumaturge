@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.entity.champion;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -16,7 +16,7 @@ public final class ChampionHelper {
 
     public static List<Holder<MobTrait>> championTraits() {
         List<Holder<MobTrait>> traits = new ArrayList<>();
-        TCMobTraits.registry()
+        TTMobTraits.registry()
                 .holders()
                 .filter(trait -> trait.value().isChampion())
                 .forEach(traits::add);
@@ -24,11 +24,11 @@ public final class ChampionHelper {
     }
 
     public static boolean rolled(LivingEntity mob) {
-        return Boolean.TRUE.equals(mob.getExistingDataOrNull(TCAttachments.CHAMPION_ROLLED));
+        return Boolean.TRUE.equals(mob.getExistingDataOrNull(TTAttachments.CHAMPION_ROLLED));
     }
 
     public static void markRolled(LivingEntity mob) {
-        mob.setData(TCAttachments.CHAMPION_ROLLED, true);
+        mob.setData(TTAttachments.CHAMPION_ROLLED, true);
     }
 
     public static void makeChampion(Mob mob, boolean persist) {
@@ -38,7 +38,7 @@ public final class ChampionHelper {
                     mob,
                     persist,
                     mob instanceof Creeper
-                            ? TCMobTraits.BOLD
+                            ? TTMobTraits.BOLD
                             : traits.get(mob.getRandom().nextInt(traits.size())));
         }
     }

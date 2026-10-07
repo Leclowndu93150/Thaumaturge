@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockPlantShimmerleaf extends AbstractTCPlant {
+public final class BlockPlantShimmerleaf extends AbstractTTPlant {
     public static final MapCodec<BlockPlantShimmerleaf> CODEC = simpleCodec(BlockPlantShimmerleaf::new);
 
     public BlockPlantShimmerleaf(BlockBehaviour.Properties properties) {

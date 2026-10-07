@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -37,6 +37,6 @@ public record VisSparkleParticleOptions(double tx, double ty, double tz, int col
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.VIS_SPARKLE.get();
+        return TTParticles.VIS_SPARKLE.get();
     }
 }

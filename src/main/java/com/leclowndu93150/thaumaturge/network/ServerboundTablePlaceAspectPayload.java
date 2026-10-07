@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.note.HexGrid;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
@@ -19,7 +19,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Optional<ResourceLocation> aspect)
         implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ServerboundTablePlaceAspectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("table_place_aspect"));
+            new CustomPacketPayload.Type<>(TTIds.rl("table_place_aspect"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundTablePlaceAspectPayload> STREAM_CODEC =
             StreamCodec.composite(

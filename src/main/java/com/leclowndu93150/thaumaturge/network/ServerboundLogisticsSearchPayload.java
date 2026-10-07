@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundLogisticsSearchPayload(String text) implements CustomPacketPayload {
-    public static final Type<ServerboundLogisticsSearchPayload> TYPE = new Type<>(TCIds.rl("logistics_search"));
+    public static final Type<ServerboundLogisticsSearchPayload> TYPE = new Type<>(TTIds.rl("logistics_search"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundLogisticsSearchPayload> STREAM_CODEC =
             StreamCodec.composite(

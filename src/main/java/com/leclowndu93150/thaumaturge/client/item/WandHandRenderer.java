@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
 import com.leclowndu93150.thaumaturge.client.model.WandItemSpecialRenderer;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
@@ -18,7 +18,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class WandHandRenderer {
     private static final float BASE_SCALE = 0.8F;
     private static final float ITEM_SCALE = 0.4F;

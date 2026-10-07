@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
-import com.leclowndu93150.thaumaturge.client.model.entity.TCBannerModel;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
+import com.leclowndu93150.thaumaturge.client.model.entity.TTBannerModel;
 import com.leclowndu93150.thaumaturge.content.decor.banner.AbstractBannerBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerWallBlock;
@@ -23,26 +23,28 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Matrix4f;
 
 public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBanner> {
-    private static final ResourceLocation TEX_BLANK = TCIds.rl("textures/entity/banner_blank.png");
-    private static final ResourceLocation TEX_CULTIST = TCIds.rl("textures/entity/banner_cultist.png");
-    private static final float SWAY_BASE = 0.02F;
+    private static final ResourceLocation TEX_BLANK = TTIds.rl("textures/entity/banner_blank.png");
+    private static final ResourceLocation TEX_CULTIST = TTIds.rl("textures/entity/banner_cultist.png");
     private static final float SWAY_PERIOD = 11.0F;
-    private static final float WALL_FORWARD = -0.4125F;
+    private static final float MODEL_FLIP = 180.0F;
+    private static final int UPPER_CLOTH_SEGMENT = 0;
+    private static final float WALL_FORWARD = -0.21875F;
     private static final float ASPECT_HALF_WIDTH = 0.3F;
     private static final float ASPECT_TOP = 0.35F;
     private static final float ASPECT_BOTTOM = 0.95F;
     private static final float ASPECT_Z = -0.052F;
 
-    private final TCBannerModel model;
+    private final TTBannerModel frame;
+    private final TTBannerModel cloth;
 
     public BannerRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new TCBannerModel(context.bakeLayer(TCModelLayers.TC_BANNER));
+        this.frame = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), false);
+        this.cloth = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), true);
     }
 
     @Override
@@ -84,7 +86,8 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         float time = (pos.getX() * 7 + pos.getY() * 9 + pos.getZ() * 13)
                 + (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount)
                 + partialTick;
-        float sway = SWAY_BASE - Mth.sin(time / SWAY_PERIOD) * SWAY_BASE;
+        float phase = time / SWAY_PERIOD;
+        float sway = -TTBannerModel.clothBend(phase, UPPER_CLOTH_SEGMENT);
 
         ResourceLocation texture = color == -1 ? TEX_CULTIST : TEX_BLANK;
         poseStack.pushPose();
@@ -94,14 +97,14 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         VertexConsumer cutout = buffers.getBuffer(RenderType.entityCutout(texture));
         if (onWall) {
             poseStack.translate(0.0F, 1.0F, WALL_FORWARD);
-        } else {
-            model.pole.render(poseStack, cutout, light, overlay, -1);
         }
-        model.beam.render(poseStack, cutout, light, overlay, -1);
-        model.tabLeft.render(poseStack, cutout, light, overlay, color);
-        model.tabRight.render(poseStack, cutout, light, overlay, color);
-        model.cloth.xRot = sway;
-        model.cloth.render(poseStack, cutout, light, overlay, color);
+        poseStack.pushPose();
+        poseStack.mulPose(Axis.YP.rotationDegrees(MODEL_FLIP));
+        frame.setupAnim(onWall, phase);
+        cloth.setupAnim(onWall, phase);
+        frame.root.render(poseStack, cutout, light, overlay, -1);
+        cloth.root.render(poseStack, cutout, light, overlay, color);
+        poseStack.popPose();
         if (aspectTexture != null) {
             submitAspect(poseStack, buffers, sway, aspectTexture, light);
         }

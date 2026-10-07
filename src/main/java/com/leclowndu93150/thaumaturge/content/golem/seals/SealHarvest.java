@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -14,8 +14,8 @@ import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.golem.CropUtils;
 import com.leclowndu93150.thaumaturge.content.golem.GolemInteractionHelper;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,7 +60,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("harvest");
+        return TTIds.rl("harvest");
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
     }
 
     private void harvestCrop(ServerLevel level, IGolemAPI golem, Task task) {
-        FakePlayer player = TCFakePlayer.GOLEM.at(level, golem.getGolemEntity());
+        FakePlayer player = TTFakePlayer.GOLEM.at(level, golem.getGolemEntity());
         BlockState state = level.getBlockState(task.getPos());
         if (CropUtils.isClickableCrop(state)) {
             Direction face = Direction.getNearest(
@@ -177,7 +177,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
                 || !golem.isCarrying(info.stack)) {
             return;
         }
-        FakePlayer player = TCFakePlayer.GOLEM.at(level, golem.getGolemEntity());
+        FakePlayer player = TTFakePlayer.GOLEM.at(level, golem.getGolemEntity());
         BlockState below = level.getBlockState(task.getPos().below());
         if (info.farmland && below.is(BlockTags.DIRT) && !(below.getBlock() instanceof FarmBlock)) {
             ItemStack hoe = new ItemStack(Items.DIAMOND_HOE);
@@ -283,7 +283,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_harvest.png");
+        return TTIds.rl("textures/item/seal_harvest.png");
     }
 
     @Override
@@ -306,7 +306,7 @@ public class SealHarvest implements ISeal, ISealGui, ISealConfigArea, ISealConfi
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.DEFT.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[] {TTGolemTraits.DEFT.get(), TTGolemTraits.SMART.get()};
     }
 
     @Override

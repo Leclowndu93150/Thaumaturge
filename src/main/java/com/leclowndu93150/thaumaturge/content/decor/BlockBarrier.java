@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,7 +59,7 @@ public final class BlockBarrier extends Block {
             return Shapes.block();
         }
         int down = 1;
-        if (!realLevel.getBlockState(pos.below(down)).is(TCBlocks.PAVING_STONE_BARRIER.get())) {
+        if (!realLevel.getBlockState(pos.below(down)).is(TTBlocks.PAVING_STONE_BARRIER.get())) {
             down++;
         }
         return realLevel.hasNeighborSignal(pos.below(down)) ? Shapes.empty() : Shapes.block();
@@ -69,7 +69,7 @@ public final class BlockBarrier extends Block {
     protected void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
         BlockState below = level.getBlockState(pos.below());
-        if (!below.is(TCBlocks.PAVING_STONE_BARRIER.get()) && !below.is(this)) {
+        if (!below.is(TTBlocks.PAVING_STONE_BARRIER.get()) && !below.is(this)) {
             level.removeBlock(pos, false);
         }
     }

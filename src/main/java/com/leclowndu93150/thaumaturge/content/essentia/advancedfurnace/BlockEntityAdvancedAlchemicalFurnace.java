@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
@@ -11,9 +11,9 @@ import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
 import com.leclowndu93150.thaumaturge.content.aura.relay.LinkedRelaySource;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -60,7 +60,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     private boolean assembled;
 
     public BlockEntityAdvancedAlchemicalFurnace(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
+        super(TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, BlockEntityAdvancedAlchemicalFurnace furnace) {
@@ -104,7 +104,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     private boolean validateStructure(ServerLevel level) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             if (!level.getBlockState(worldPosition.relative(direction))
-                    .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+                    .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
                 return false;
             }
         }
@@ -117,13 +117,13 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
                 boolean corner = x != 0 && z != 0;
                 if (!(corner
                                 ? level.getBlockState(lower)
-                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
-                                : level.getBlockState(lower).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE))
+                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
+                                : level.getBlockState(lower).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE))
                         || !(corner
                                 ? level.getBlockState(upper)
-                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
+                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
                                 : level.getBlockState(upper)
-                                        .is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER))) {
+                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER))) {
                     return false;
                 }
             }
@@ -145,13 +145,13 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     private static void restorePart(LevelAccessor level, BlockPos target, BlockPos excludedPos) {
         if (target.equals(excludedPos)) return;
         BlockState state = level.getBlockState(target);
-        if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
-            level.setBlock(target, TCBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
-        } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
-            level.setBlock(target, TCBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
-        } else if (state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())) {
-            level.setBlock(target, TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
+            level.setBlock(target, TTBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
+        } else if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
+            level.setBlock(target, TTBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        } else if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())) {
+            level.setBlock(target, TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -159,9 +159,9 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         boolean changed = heat > 0;
         heat = Math.max(0, heat - 1);
         HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        changed |= refill(level, Power.HEAT, aspects.get(TCAspects.IGNIS).orElse(null));
-        changed |= refill(level, Power.PERDITIO, aspects.get(TCAspects.PERDITIO).orElse(null));
-        changed |= refill(level, Power.AQUA, aspects.get(TCAspects.AQUA).orElse(null));
+        changed |= refill(level, Power.HEAT, aspects.get(TTAspects.IGNIS).orElse(null));
+        changed |= refill(level, Power.PERDITIO, aspects.get(TTAspects.PERDITIO).orElse(null));
+        changed |= refill(level, Power.AQUA, aspects.get(TTAspects.AQUA).orElse(null));
         return changed;
     }
 
@@ -377,7 +377,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
+        TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
         if (!input.isEmpty()) {
             output.put("Input", input.save(registries));
         }
@@ -392,7 +392,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     @Override
     protected void loadAdditional(CompoundTag inputTag, HolderLookup.Provider registries) {
         super.loadAdditional(inputTag, registries);
-        aspects = TCNbt.read(inputTag, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        aspects = TTNbt.read(inputTag, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         input = inputTag.contains("Input")
                 ? ItemStack.parse(registries, inputTag.getCompound("Input")).orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;

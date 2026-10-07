@@ -1,13 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbench;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -16,6 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockFocalManipulator extends BaseEntityBlock {
@@ -31,6 +35,11 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     }
 
     @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return BlockArcaneWorkbench.SHAPE;
+    }
+
+    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityFocalManipulator(pos, state);
     }
@@ -38,14 +47,14 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        if (type != TCBlockEntities.FOCAL_MANIPULATOR.get()) {
+        if (type != TTBlockEntities.FOCAL_MANIPULATOR.get()) {
             return null;
         }
         return level.isClientSide()
                 ? createTickerHelper(
-                        type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::clientTick)
+                        type, TTBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::clientTick)
                 : createTickerHelper(
-                        type, TCBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::serverTick);
+                        type, TTBlockEntities.FOCAL_MANIPULATOR.get(), BlockEntityFocalManipulator::serverTick);
     }
 
     @Override
@@ -63,7 +72,7 @@ public final class BlockFocalManipulator extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("unlock_auromancy"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("unlock_auromancy"))) {
             return InteractionResult.CONSUME;
         }
         if (level.isClientSide()) {

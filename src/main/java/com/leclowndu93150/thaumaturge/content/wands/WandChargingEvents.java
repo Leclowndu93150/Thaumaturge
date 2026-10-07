@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -24,7 +24,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class WandChargingEvents {
     private static final int PLANT_ORB_MAX_BONUS = 2;
 
@@ -61,7 +61,7 @@ public final class WandChargingEvents {
             return;
         }
         ServerLevel level = event.getLevel();
-        if (!event.getState().is(TCBlockTags.MAGICAL_PLANTS)) {
+        if (!event.getState().is(TTBlockTags.MAGICAL_PLANTS)) {
             return;
         }
         ResourceKey<IAspect> aspect = plantAspect(event.getState().getBlock());
@@ -81,14 +81,14 @@ public final class WandChargingEvents {
 
     private static ResourceKey<IAspect> plantAspect(Block block) {
         ResourceLocation id = block.builtInRegistryHolder().key().location();
-        if (id.equals(TCBlocks.PLANT_CINDERPEARL.getId())) {
-            return TCAspects.IGNIS;
+        if (id.equals(TTBlocks.PLANT_CINDERPEARL.getId())) {
+            return TTAspects.IGNIS;
         }
-        if (id.equals(TCBlocks.PLANT_SHIMMERLEAF.getId())) {
-            return TCAspects.ORDO;
+        if (id.equals(TTBlocks.PLANT_SHIMMERLEAF.getId())) {
+            return TTAspects.ORDO;
         }
-        if (id.equals(TCBlocks.PLANT_VISHROOM.getId())) {
-            return TCAspects.PERDITIO;
+        if (id.equals(TTBlocks.PLANT_VISHROOM.getId())) {
+            return TTAspects.PERDITIO;
         }
         return null;
     }

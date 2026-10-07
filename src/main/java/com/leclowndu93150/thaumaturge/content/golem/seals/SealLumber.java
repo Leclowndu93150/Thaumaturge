@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -11,8 +11,8 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealGui;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.equipment.EnchantMining;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("lumber");
+        return TTIds.rl("lumber");
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
                     serverLevel,
                     task.getPos(),
                     level.getBlockState(task.getPos()),
-                    TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()))) {
+                    TTFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()))) {
                 task.setLifespan((short) Math.max(task.getLifespan(), 10L));
                 golem.addRankXp(1);
                 return false;
@@ -104,7 +104,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_lumber.png");
+        return TTIds.rl("textures/item/seal_lumber.png");
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SealLumber implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.BREAKER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[] {TTGolemTraits.BREAKER.get(), TTGolemTraits.SMART.get()};
     }
 
     @Override

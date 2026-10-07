@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealGui;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -63,7 +63,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
     }
 
     public MenuSealBase(int containerId, Inventory playerInventory, @Nullable ISealEntity seal) {
-        super(TCMenus.SEAL.get(), containerId);
+        super(TTMenus.SEAL.get(), containerId);
         this.seal = seal;
         this.categories = seal != null && seal.getSeal() instanceof ISealGui gui
                 ? gui.getGuiCategories()

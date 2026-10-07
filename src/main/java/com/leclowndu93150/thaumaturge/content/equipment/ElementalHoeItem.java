@@ -21,7 +21,7 @@ public final class ElementalHoeItem extends HoeItem {
     private static final int BONEMEAL_EVENT_DATA = 15;
 
     public ElementalHoeItem(Properties properties) {
-        super(TCMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, properties);
     }
 
     @Override

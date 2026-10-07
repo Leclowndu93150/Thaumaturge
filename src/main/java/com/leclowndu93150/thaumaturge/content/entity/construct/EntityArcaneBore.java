@@ -5,10 +5,10 @@ import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreHost;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreTool;
 import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -98,11 +98,11 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     private void updateActiveFromRedstone() {
         BlockPos pos = new BlockPos(Mth.floor(getX()), Mth.floor(getY()), Mth.floor(getZ()));
         BlockState state = level().getBlockState(pos);
-        if (!state.is(TCBlocks.ACTIVATOR_RAIL.get())) {
+        if (!state.is(TTBlocks.ACTIVATOR_RAIL.get())) {
             pos = pos.below();
             state = level().getBlockState(pos);
         }
-        if (state.is(TCBlocks.ACTIVATOR_RAIL.get())) {
+        if (state.is(TTBlocks.ACTIVATOR_RAIL.get())) {
             setActive(!state.getValue(BlockStateProperties.POWERED));
         } else if (!isPassenger()) {
             setActive(level().hasNeighborSignal(blockPosition().below()));
@@ -185,7 +185,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public FakePlayer boreDigger(ServerLevel level) {
-        return TCFakePlayer.BORE.at(level, this);
+        return TTFakePlayer.BORE.at(level, this);
     }
 
     @Override
@@ -272,9 +272,9 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
         if (!level().isClientSide() && isOwner(player) && isAlive()) {
             if (player.isShiftKeyDown()) {
-                playSound(TCSounds.ZAP.get(), 1.0F, 1.0F);
+                playSound(TTSounds.ZAP.get(), 1.0F, 1.0F);
                 dropHeld();
-                spawnAtLocation(new ItemStack(TCItems.ARCANE_BORE.get()), DISMANTLE_DROP_HEIGHT);
+                spawnAtLocation(new ItemStack(TTItems.ARCANE_BORE.get()), DISMANTLE_DROP_HEIGHT);
                 discard();
                 player.swing(hand);
             } else {
@@ -335,25 +335,25 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
         if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCItems.MIND_CLOCKWORK.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTItems.MIND_CLOCKWORK.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCItems.MORPHIC_RESONATOR.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTItems.MORPHIC_RESONATOR.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCBlocks.CRYSTAL_AER.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTBlocks.CRYSTAL_AER.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCBlocks.CRYSTAL_TERRA.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTBlocks.CRYSTAL_TERRA.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCItems.MECHANISM_SIMPLE.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTItems.MECHANISM_SIMPLE.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCItems.PLATE_BRASS.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTItems.PLATE_BRASS.get()), DISMANTLE_DROP_HEIGHT);
         }
         if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TCBlocks.PLANK_GREATWOOD.get()), DISMANTLE_DROP_HEIGHT);
+            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), DISMANTLE_DROP_HEIGHT);
         }
     }
 

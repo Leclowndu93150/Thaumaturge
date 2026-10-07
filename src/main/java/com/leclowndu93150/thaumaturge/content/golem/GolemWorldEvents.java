@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class GolemWorldEvents {
     private static final int TASK_CLEAR_INTERVAL_TICKS = 20;
 

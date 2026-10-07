@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
@@ -104,7 +104,7 @@ public final class ItemInfernalFurnace extends BlockItem {
         if (registry == null) {
             return null;
         }
-        return registry.getHolder(ResourceKey.create(Blueprint.REGISTRY_KEY, TCIds.rl("infernal_furnace")))
+        return registry.getHolder(ResourceKey.create(Blueprint.REGISTRY_KEY, TTIds.rl("infernal_furnace")))
                 .map(Holder::value)
                 .orElse(null);
     }

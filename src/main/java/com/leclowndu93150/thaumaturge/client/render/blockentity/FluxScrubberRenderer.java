@@ -1,27 +1,21 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
-/** Animates the separate Tip group of the obelisk-cap scrubber model. */
 public final class FluxScrubberRenderer implements BlockEntityRenderer<BlockEntityFluxScrubber> {
-    public static final ModelResourceLocation TIP_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/flux_scrubber_tip"));
-
-    private final RandomSource random = RandomSource.create();
+    private static final ResourceLocation MODEL = TTIds.rl("models/mesh/flux_scrubber.ttmesh");
+    private static final RenderType TIP = RenderType.entityCutout(TTIds.rl("textures/block/flux_scrubber.png"));
 
     public FluxScrubberRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -29,38 +23,20 @@ public final class FluxScrubberRenderer implements BlockEntityRenderer<BlockEnti
     public void render(
             BlockEntityFluxScrubber scrubber,
             float partialTick,
-            PoseStack poseStack,
+            PoseStack pose,
             MultiBufferSource buffers,
             int light,
             int overlay) {
-        BlockState state = scrubber.getBlockState();
-        poseStack.pushPose();
-        EssentiaCrystalizerRenderer.orientLegacy(poseStack, state.getValue(BlockStateProperties.FACING));
-        float q = (Minecraft.getInstance().player == null
-                ? partialTick + scrubber.animationOffset()
-                : Minecraft.getInstance().player.tickCount + partialTick + scrubber.animationOffset());
-        float bob = (float) Math.sin(q / 8.0F) * 0.075F + 0.075F;
-        poseStack.translate(0.0F, 0.0F, -bob);
-        renderTip(state, poseStack, buffers, light, overlay);
-        poseStack.popPose();
-    }
-
-    private void renderTip(BlockState state, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
-        BakedModel model = Minecraft.getInstance().getModelManager().getModel(TIP_MODEL_ID);
-        ModelBlockRenderer renderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-        for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
-            renderer.renderModel(
-                    poseStack.last(),
-                    buffers.getBuffer(renderType),
-                    state,
-                    model,
-                    1.0F,
-                    1.0F,
-                    1.0F,
-                    light,
-                    overlay,
-                    ModelData.EMPTY,
-                    renderType);
-        }
+        long gameTime = scrubber.getLevel() == null ? 0 : scrubber.getLevel().getGameTime();
+        float time =
+                gameTime + partialTick + Math.floorMod(scrubber.getBlockPos().asLong(), 1000);
+        float bob = Mth.sin(time / 8.0F) * 0.075F + 0.075F;
+        pose.pushPose();
+        pose.translate(0.5F, 0.5F, 0.5F);
+        BlockFacingPose.northBased(pose, scrubber.getBlockState().getValue(BlockStateProperties.FACING));
+        pose.translate(0, 0, -0.5F - bob);
+        for (TTMeshPart part : GolemMeshes.get(MODEL).parts())
+            if (part.name().equals("Tip")) GolemMeshes.renderPart(part, pose.last(), buffers.getBuffer(TIP), light, -1);
+        pose.popPose();
     }
 }

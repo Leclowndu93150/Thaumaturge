@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.wands;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -44,7 +44,7 @@ public class EntityAspectOrb extends Entity {
     }
 
     public EntityAspectOrb(Level level, double x, double y, double z, ResourceKey<IAspect> aspect, int value) {
-        this(TCEntities.ASPECT_ORB.get(), level);
+        this(TTEntities.ASPECT_ORB.get(), level);
         setPos(x, y, z);
         setYRot(random.nextFloat() * 360.0F);
         setDeltaMovement(
@@ -57,15 +57,15 @@ public class EntityAspectOrb extends Entity {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
-        entityData.define(DATA_ASPECT, TCAspects.AER.location().toString());
+        entityData.define(DATA_ASPECT, TTAspects.AER.location().toString());
     }
 
     public ResourceKey<IAspect> getAspect() {
         String stored = entityData.get(DATA_ASPECT);
         ResourceLocation id = stored.indexOf(':') >= 0
                 ? ResourceLocation.tryParse(stored)
-                : ResourceLocation.tryBuild(TCIds.MODID, stored);
-        return id == null ? TCAspects.AER : ResourceKey.create(IAspect.REGISTRY_KEY, id);
+                : ResourceLocation.tryBuild(TTIds.MODID, stored);
+        return id == null ? TTAspects.AER : ResourceKey.create(IAspect.REGISTRY_KEY, id);
     }
 
     public void setAspect(ResourceKey<IAspect> aspect) {
@@ -169,7 +169,7 @@ public class EntityAspectOrb extends Entity {
     public void playerTouch(Player player) {
         if (player instanceof ServerPlayer && player.takeXpDelay == 0) {
             ItemStack wand = WandVisHelper.findWandInHotbarWithRoom(player, getAspect(), aspectValue);
-            if (!wand.isEmpty() && TCAspects.PRIMALS.contains(getAspect())) {
+            if (!wand.isEmpty() && TTAspects.PRIMALS.contains(getAspect())) {
                 WandVisHelper.addVis(wand, getAspect(), aspectValue, true);
                 player.takeXpDelay = 2;
                 player.take(this, 1);
@@ -215,7 +215,7 @@ public class EntityAspectOrb extends Entity {
                 DATA_ASPECT,
                 input.contains("Aspect")
                         ? input.getString("Aspect")
-                        : TCAspects.AER.location().toString());
+                        : TTAspects.AER.location().toString());
     }
 
     @Override

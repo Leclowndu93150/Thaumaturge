@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.construct;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreHost;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreTool;
 import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
@@ -12,8 +12,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 
-public final class ArcaneBoreScreen extends AbstractTCContainerScreen<MenuArcaneBore> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_arcanebore.png");
+public final class ArcaneBoreScreen extends AbstractTTContainerScreen<MenuArcaneBore> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_arcanebore.png");
     private static final int IMAGE_WIDTH = 175;
     private static final int IMAGE_HEIGHT = 232;
     private static final int HEALTH_BAR_X = 68;

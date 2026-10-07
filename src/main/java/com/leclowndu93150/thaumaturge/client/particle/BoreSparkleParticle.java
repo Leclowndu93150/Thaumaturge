@@ -48,7 +48,7 @@ public final class BoreSparkleParticle extends SeekerParticle {
     }
 
     public static final class Provider implements ParticleProvider<BoreSparkleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("bore_sparkle");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("bore_sparkle");
 
         @Override
         public Particle createParticle(

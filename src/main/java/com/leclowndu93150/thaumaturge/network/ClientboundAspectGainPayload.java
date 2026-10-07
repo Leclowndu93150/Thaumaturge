@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundAspectGainPayload(ResourceLocation aspect, int amount) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ClientboundAspectGainPayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("aspect_gain"));
+            new CustomPacketPayload.Type<>(TTIds.rl("aspect_gain"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundAspectGainPayload> STREAM_CODEC =
             StreamCodec.composite(

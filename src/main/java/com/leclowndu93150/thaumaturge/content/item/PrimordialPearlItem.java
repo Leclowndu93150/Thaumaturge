@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -27,7 +27,7 @@ public final class PrimordialPearlItem extends Item {
         if (nextDamage >= MAX_DAMAGE) {
             return ItemStack.EMPTY;
         }
-        ItemStack remainder = new ItemStack(TCItems.PRIMORDIAL_PEARL.get());
+        ItemStack remainder = new ItemStack(TTItems.PRIMORDIAL_PEARL.get());
         remainder.set(DataComponents.DAMAGE, nextDamage);
         return remainder;
     }

@@ -59,7 +59,7 @@ public final class EssentiaDropParticle extends SingleQuadParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     @Override
@@ -83,7 +83,7 @@ public final class EssentiaDropParticle extends SingleQuadParticle {
     }
 
     public static final class Provider implements ParticleProvider<EssentiaDropParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("essentia_drop");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("essentia_drop");
 
         @Override
         public Particle createParticle(

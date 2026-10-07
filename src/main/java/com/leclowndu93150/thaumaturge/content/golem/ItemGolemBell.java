@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsGuiOpener;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -45,7 +45,7 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         if (seal != null) {
             if (player.isShiftKeyDown()) {
                 SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-                level.playSound(null, seal.getSealPos().pos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+                level.playSound(null, seal.getSealPos().pos(), TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             } else {
                 SealGuiOpener.open(player, seal);
             }
@@ -84,7 +84,7 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         }
         if (player.isShiftKeyDown()) {
             SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-            level.playSound(null, context.getClickedPos(), TCSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+            level.playSound(null, context.getClickedPos(), TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         } else {
             SealGuiOpener.open(player, seal);
         }

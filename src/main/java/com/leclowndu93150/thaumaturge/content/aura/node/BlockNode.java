@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -63,7 +63,7 @@ public final class BlockNode extends Block implements EntityBlock {
 
     @Override
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        ItemStack stack = new ItemStack(TCItems.CREATIVE_NODE_PLACER.get());
+        ItemStack stack = new ItemStack(TTItems.CREATIVE_NODE_PLACER.get());
         if (level instanceof Level world && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
             node.saveToItem(stack, world.registryAccess());
         }
@@ -85,7 +85,7 @@ public final class BlockNode extends Block implements EntityBlock {
 
     public static @Nullable ItemInteractionResult tryPrimordialPearl(
             ItemStack stack, Level level, BlockPos pos, Player player) {
-        if (!stack.is(TCItems.PRIMORDIAL_PEARL.get())
+        if (!stack.is(TTItems.PRIMORDIAL_PEARL.get())
                 || stack.getDamageValue() > 2
                 || !(level.getBlockEntity(pos) instanceof BlockEntityNode node)
                 || node.isEnergized()) {
@@ -95,7 +95,7 @@ public final class BlockNode extends Block implements EntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
 
-        boolean researched = KnowledgeAccess.of(player).isResearchComplete(TCIds.rl("primordial_nodes"));
+        boolean researched = KnowledgeAccess.of(player).isResearchComplete(TTIds.rl("primordial_nodes"));
         node.applyPrimordialPearl(serverLevel.random, researched);
         if (!player.getAbilities().instabuild) {
             stack.shrink(1);
@@ -137,7 +137,7 @@ public final class BlockNode extends Block implements EntityBlock {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        if (type != TCBlockEntities.NODE.get()) {
+        if (type != TTBlockEntities.NODE.get()) {
             return null;
         }
         if (level.isClientSide()) {

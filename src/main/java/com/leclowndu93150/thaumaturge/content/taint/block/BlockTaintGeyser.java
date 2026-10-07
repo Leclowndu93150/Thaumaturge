@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSwarm;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -33,7 +33,7 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
 
     @Override
     public void die(Level level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
@@ -51,7 +51,7 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
                                         SWARM_EXCLUSION_RANGE * 2,
                                         SWARM_EXCLUSION_RANGE * 2))
                         .isEmpty()) {
-            EntityTaintSwarm swarm = TCEntities.TAINT_SWARM.get().create(level);
+            EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
             if (swarm != null) {
                 swarm.moveTo(x, pos.getY() + 1.25, z, random.nextInt(360), 0.0F);
                 level.addFreshEntity(swarm);

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchPortal;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,10 +16,10 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
 
 public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEntityEldritchPortal> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/misc/eldritch_portal.png");
-    private static final ResourceLocation OVERWORLD_TEXTURE = TCIds.rl("textures/misc/eldritch_portal_overworld.png");
-    private static final RenderType PORTAL_TYPE = TCRenderTypes.fxTranslucent(TEXTURE);
-    private static final RenderType OVERWORLD_PORTAL_TYPE = TCRenderTypes.fxTranslucent(OVERWORLD_TEXTURE);
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/misc/eldritch_portal.png");
+    private static final ResourceLocation OVERWORLD_TEXTURE = TTIds.rl("textures/misc/eldritch_portal_overworld.png");
+    private static final RenderType PORTAL_TYPE = TTRenderTypes.fxTranslucent(TEXTURE);
+    private static final RenderType OVERWORLD_PORTAL_TYPE = TTRenderTypes.fxTranslucent(OVERWORLD_TEXTURE);
 
     private static final int FRAMES = 32;
     private static final float FRAME_WIDTH = 1.0F / FRAMES;

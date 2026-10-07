@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidHoeItem extends HoeItem implements IWarpingGear {
     public VoidHoeItem(Properties properties) {
-        super(TCMaterials.TOOL_VOID, properties);
+        super(TTMaterials.TOOL_VOID, properties);
     }
 
     @Override

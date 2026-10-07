@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -36,11 +36,11 @@ public final class FocusPackages {
     }
 
     public static void save(CompoundTag output, HolderLookup.Provider registries, @Nullable FocusPackage focusPackage) {
-        TCNbt.storeNullable(output, PACK_KEY, FocusPackage.CODEC, registries, focusPackage);
+        TTNbt.storeNullable(output, PACK_KEY, FocusPackage.CODEC, registries, focusPackage);
     }
 
     public static @Nullable FocusPackage load(CompoundTag input, HolderLookup.Provider registries) {
-        return TCNbt.read(input, PACK_KEY, FocusPackage.CODEC, registries).orElse(null);
+        return TTNbt.read(input, PACK_KEY, FocusPackage.CODEC, registries).orElse(null);
     }
 
     public static List<ResourceLocation> effects(@Nullable FocusPackage focusPackage) {

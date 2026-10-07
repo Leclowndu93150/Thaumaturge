@@ -22,7 +22,7 @@ public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     private static final double MAGNET_SPEED_CAP = 0.25;
 
     public ElementalAxeItem(Properties properties) {
-        super(TCMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, properties);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.aura;
 
 import com.leclowndu93150.thaumaturge.api.items.IRechargable;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -32,9 +32,15 @@ public final class BlockRechargePedestal extends BaseEntityBlock {
     public static final MapCodec<BlockRechargePedestal> CODEC = simpleCodec(BlockRechargePedestal::new);
 
     private static final VoxelShape SHAPE = Shapes.or(
-            Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),
-            Block.box(2.0, 4.0, 2.0, 14.0, 8.0, 14.0),
-            Block.box(4.0, 8.0, 4.0, 12.0, 16.0, 12.0));
+            Block.box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0),
+            Block.box(2.0, 2.0, 2.0, 14.0, 4.0, 14.0),
+            Block.box(4.0, 12.0, 4.0, 12.0, 14.0, 12.0),
+            Block.box(4.0, 14.0, 4.0, 6.0, 16.0, 6.0),
+            Block.box(4.0, 14.0, 10.0, 6.0, 16.0, 12.0),
+            Block.box(5.0, 4.0, 5.0, 11.0, 12.0, 11.0),
+            Block.box(6.0, 14.0, 6.0, 10.0, 15.0, 10.0),
+            Block.box(10.0, 14.0, 4.0, 12.0, 16.0, 6.0),
+            Block.box(10.0, 14.0, 10.0, 12.0, 16.0, 12.0));
 
     public BlockRechargePedestal(Properties properties) {
         super(properties);
@@ -54,7 +60,7 @@ public final class BlockRechargePedestal extends BaseEntityBlock {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
-                type, TCBlockEntities.RECHARGE_PEDESTAL.get(), BlockEntityRechargePedestal::serverTick);
+                type, TTBlockEntities.RECHARGE_PEDESTAL.get(), BlockEntityRechargePedestal::serverTick);
     }
 
     @Override

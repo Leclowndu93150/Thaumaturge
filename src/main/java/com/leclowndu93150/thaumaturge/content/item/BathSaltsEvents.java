@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -20,7 +20,7 @@ public final class BathSaltsEvents {
 
     public static void onEntityTick(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof ItemEntity itemEntity)
-                || !itemEntity.getItem().is(TCItems.BATH_SALTS.get())
+                || !itemEntity.getItem().is(TTItems.BATH_SALTS.get())
                 || !itemEntity.isInWater()) {
             return;
         }
@@ -46,7 +46,7 @@ public final class BathSaltsEvents {
     @SubscribeEvent
     public static void onItemExpire(ItemExpireEvent event) {
         var itemEntity = event.getEntity();
-        if (itemEntity.level().isClientSide() || !itemEntity.getItem().is(TCItems.BATH_SALTS.get())) {
+        if (itemEntity.level().isClientSide() || !itemEntity.getItem().is(TTItems.BATH_SALTS.get())) {
             return;
         }
 
@@ -55,7 +55,7 @@ public final class BathSaltsEvents {
         if (state.is(Blocks.WATER) && state.getFluidState().isSource()) {
             itemEntity
                     .level()
-                    .setBlockAndUpdate(pos, TCBlocks.PURIFYING_FLUID.get().defaultBlockState());
+                    .setBlockAndUpdate(pos, TTBlocks.PURIFYING_FLUID.get().defaultBlockState());
         }
     }
 }

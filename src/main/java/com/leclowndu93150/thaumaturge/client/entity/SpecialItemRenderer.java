@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -23,7 +23,7 @@ public final class SpecialItemRenderer extends ItemEntityRenderer {
     private static final float SCALE_UP_TICKS = 10.0F;
     private static final float CONE_LIFT = 0.25F;
 
-    private static final RenderType SPARKLE_TYPE = TCRenderTypes.SPARKLE_CULLED;
+    private static final RenderType SPARKLE_TYPE = TTRenderTypes.SPARKLE_CULLED;
 
     private final RandomSource sparkleRandom = RandomSource.create();
 

@@ -1,9 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedFurnaceShapes;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.press.GolemPressShapes;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -35,26 +36,35 @@ public class BlockPlaceholder extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)
-                || state.is(TCBlocks.PLACEHOLDER_ANVIL)
-                || state.is(TCBlocks.PLACEHOLDER_CAULDRON)
-                || state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER)
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+            VoxelShape furnace = AdvancedFurnaceShapes.find(level, pos);
+            if (furnace != null) {
+                return furnace;
+            }
+        }
+        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
+                || state.is(TTBlocks.PLACEHOLDER_ANVIL)
+                || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
+                || state.is(TTBlocks.PLACEHOLDER_TABLE)) {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 0; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos corePos = pos.offset(x, y, z);
                         BlockState core = level.getBlockState(corePos);
-                        if (core.is(TCBlocks.GOLEM_BUILDER)) {
+                        if (core.is(TTBlocks.GOLEM_BUILDER)) {
                             Direction facing = core.getValue(BlockGolemBuilder.FACING);
                             BlockPos offset = pos.subtract(corePos);
                             Direction right = facing.getClockWise();
                             Direction back = facing.getOpposite();
                             BlockPos expected;
-                            if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)) {
+                            if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)) {
                                 expected = BlockPos.ZERO.above();
-                            } else if (state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+                            } else if (state.is(TTBlocks.PLACEHOLDER_TABLE)) {
                                 expected = BlockPos.ZERO.relative(right);
-                            } else if (state.is(TCBlocks.PLACEHOLDER_CAULDRON)) {
+                            } else if (state.is(TTBlocks.PLACEHOLDER_CAULDRON)) {
                                 expected = BlockPos.ZERO.relative(back);
                             } else {
                                 expected = BlockPos.ZERO.relative(right).relative(back);
@@ -89,7 +99,7 @@ public class BlockPlaceholder extends Block {
 
     @Override
     public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
-        if ((state.is(TCBlocks.NETHER_BRICKS_PLACEHOLDER) || state.is(TCBlocks.OBSIDIAN_PLACEHOLDER))
+        if ((state.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER) || state.is(TTBlocks.OBSIDIAN_PLACEHOLDER))
                 && !level.isClientSide()) {
             destroyFor:
             for (int x = -1; x <= 1; x++) {
@@ -97,7 +107,7 @@ public class BlockPlaceholder extends Block {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
                         BlockState offsetState = level.getBlockState(offsetPos);
-                        if (offsetState.is(TCBlocks.INFERNAL_FURNACE)) {
+                        if (offsetState.is(TTBlocks.INFERNAL_FURNACE)) {
                             BlockInfernalFurnace.destroyFurnace(level, offsetPos, offsetState, pos);
                             break destroyFor;
                         }
@@ -106,16 +116,16 @@ public class BlockPlaceholder extends Block {
             }
         }
         if (!level.isClientSide()
-                && (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)
-                        || state.is(TCBlocks.PLACEHOLDER_ANVIL)
-                        || state.is(TCBlocks.PLACEHOLDER_CAULDRON)
-                        || state.is(TCBlocks.PLACEHOLDER_TABLE))) {
+                && (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
+                        || state.is(TTBlocks.PLACEHOLDER_ANVIL)
+                        || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
+                        || state.is(TTBlocks.PLACEHOLDER_TABLE))) {
             restoreGolemPress:
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
-                        if (level.getBlockState(offsetPos).is(TCBlocks.GOLEM_BUILDER)) {
+                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER)) {
                             BlockGolemBuilder.restoreStructure(level, offsetPos, pos);
                             break restoreGolemPress;
                         }
@@ -129,10 +139,10 @@ public class BlockPlaceholder extends Block {
                 for (int y = -1; y <= 0; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos controllerPos = pos.offset(x, y, z);
-                        if (level.getBlockState(controllerPos).is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
+                        if (level.getBlockState(controllerPos).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
                             BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, controllerPos, pos);
                             level.setBlock(
-                                    controllerPos, TCBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
+                                    controllerPos, TTBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
                             break restoreAdvancedFurnace;
                         }
                     }
@@ -143,23 +153,23 @@ public class BlockPlaceholder extends Block {
     }
 
     private static boolean isAdvancedFurnacePart(BlockState state) {
-        return state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
+        return state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
     }
 
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)
-                || state.is(TCBlocks.PLACEHOLDER_ANVIL)
-                || state.is(TCBlocks.PLACEHOLDER_CAULDRON)
-                || state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
+                || state.is(TTBlocks.PLACEHOLDER_ANVIL)
+                || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
+                || state.is(TTBlocks.PLACEHOLDER_TABLE)) {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     for (int z = -1; z <= 1; z++) {
                         BlockPos offsetPos = pos.offset(x, y, z);
-                        if (level.getBlockState(offsetPos).is(TCBlocks.GOLEM_BUILDER)) {
+                        if (level.getBlockState(offsetPos).is(TTBlocks.GOLEM_BUILDER)) {
                             return BlockGolemBuilder.openBuilderGui(level, offsetPos, player);
                         }
                     }

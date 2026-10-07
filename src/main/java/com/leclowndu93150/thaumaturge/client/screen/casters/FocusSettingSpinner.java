@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -38,9 +38,9 @@ public final class FocusSettingSpinner extends AbstractWidget {
     protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         int bodyWidth = this.width - ARROW_SIZE;
         graphics.blit(
-                TCScreenTextures.GUI_BASE, getX(), getY(), U_MINUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
+                TTScreenTextures.GUI_BASE, getX(), getY(), U_MINUS, V_ARROWS, ARROW_SIZE, ARROW_SIZE, ATLAS, ATLAS);
         graphics.blit(
-                TCScreenTextures.GUI_BASE,
+                TTScreenTextures.GUI_BASE,
                 getX() + bodyWidth,
                 getY(),
                 U_PLUS,

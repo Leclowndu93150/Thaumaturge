@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
@@ -13,8 +13,8 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -41,10 +41,10 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHolder<ArcaneCraftingRecipe>> {
     public static final RecipeType<RecipeHolder<ArcaneCraftingRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TCRecipeTypes.ARCANE.get());
+            RecipeType.createFromVanilla(TTRecipeTypes.ARCANE.get());
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png");
 
     private static final int WIDTH = 162;
     private static final int HEIGHT = 138;
@@ -83,7 +83,7 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     private final IDrawable icon;
 
     public ArcaneWorkbenchCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.ARCANE_WORKBENCH.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.ARCANE_WORKBENCH.get()));
     }
 
     @Override

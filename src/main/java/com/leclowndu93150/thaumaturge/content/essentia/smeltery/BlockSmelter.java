@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -92,7 +92,7 @@ public class BlockSmelter extends BaseEntityBlock {
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TCBlockEntities.SMELTER.get(), BlockEntitySmelter::staticTick);
+        return createTickerHelper(type, TTBlockEntities.SMELTER.get(), BlockEntitySmelter::staticTick);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class BlockSmelter extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("essentia_smelter"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("essentia_smelter"))) {
             return InteractionResult.CONSUME;
         }
         if (level.isClientSide()) {

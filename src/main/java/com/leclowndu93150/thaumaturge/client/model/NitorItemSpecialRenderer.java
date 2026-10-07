@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
 import com.leclowndu93150.thaumaturge.client.particle.ParticleSheet;
-import com.leclowndu93150.thaumaturge.client.particle.TCParticleSheets;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.particle.TTParticleSheets;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockNitor;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,8 +20,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public final class NitorItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final ParticleSheet CORE = TCParticleSheets.sheet("nitor_core");
-    private static final ParticleSheet FLAME = TCParticleSheets.sheet("wisp_flame");
+    private static final ParticleSheet CORE = TTParticleSheets.sheet("nitor_core");
+    private static final ParticleSheet FLAME = TTParticleSheets.sheet("wisp_flame");
     private static final int FLAME_COUNT = 6;
     private static final float FLAME_LIFETIME = 12.0F;
 
@@ -74,7 +74,7 @@ public final class NitorItemSpecialRenderer extends BlockEntityWithoutLevelRende
             int alpha) {
         float u0 = sheet.u0(frame);
         float u1 = sheet.u1(frame);
-        VertexConsumer buffer = buffers.getBuffer(TCFlatRenderTypes.entityAdditiveFlat(sheet.texture()));
+        VertexConsumer buffer = buffers.getBuffer(TTFlatRenderTypes.entityAdditiveFlat(sheet.texture()));
         int tint = (alpha << 24) | (color & 0xFFFFFF);
         poseStack.pushPose();
         drawQuad(poseStack.last(), buffer, radius, tint, u0, u1);

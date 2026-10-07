@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -103,7 +103,7 @@ public final class BlockArcaneDoor extends DoorBlock {
             for (Direction direction : Direction.Plane.HORIZONTAL) {
                 BlockPos platePos = origin.above(height).relative(direction);
                 BlockState plate = level.getBlockState(platePos);
-                if (plate.is(TCBlocks.ARCANE_PRESSURE_PLATE)
+                if (plate.is(TTBlocks.ARCANE_PRESSURE_PLATE)
                         && plate.getValue(POWERED)
                         && ArcaneAccess.sharesAccess(level, platePos, origin)) {
                     return true;

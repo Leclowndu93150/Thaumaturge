@@ -7,8 +7,8 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -132,14 +132,14 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     }
 
     private void equipPraetorGear() {
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TCItems.CRIMSON_PRAETOR_HELM.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TCItems.CRIMSON_PRAETOR_CHEST.get()));
-        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TCItems.CRIMSON_PRAETOR_LEGS.get()));
-        this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TCItems.CRIMSON_BOOTS.get()));
+        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_PRAETOR_HELM.get()));
+        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_PRAETOR_CHEST.get()));
+        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_PRAETOR_LEGS.get()));
+        this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TTItems.CRIMSON_BOOTS.get()));
         if (this.level().getDifficulty() == Difficulty.EASY) {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(TCItems.VOID_SWORD.get()));
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(TTItems.VOID_SWORD.get()));
         } else {
-            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(TCItems.CRIMSON_BLADE.get()));
+            this.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(TTItems.CRIMSON_BLADE.get()));
         }
     }
 
@@ -179,7 +179,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        this.spawnAtLocation(new ItemStack(TCItems.LOOT_BAG_RARE.get()), 1.5F);
+        this.spawnAtLocation(new ItemStack(TTItems.LOOT_BAG_RARE.get()), 1.5F);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
                 target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
         double dz = target.getZ() - this.getZ();
         blast.shoot(dx, dy + 2.0, dz, ORB_SPEED, ORB_SPREAD);
-        this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
+        this.playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
         this.level().addFreshEntity(blast);
     }
 }

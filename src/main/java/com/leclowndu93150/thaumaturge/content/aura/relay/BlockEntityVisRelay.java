@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.aura.relay;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -36,7 +36,7 @@ public final class BlockEntityVisRelay extends BlockEntity {
     private int pulseColor = WHITE;
 
     public BlockEntityVisRelay(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.VIS_RELAY.get(), pos, state);
+        super(TTBlockEntities.VIS_RELAY.get(), pos, state);
     }
 
     public @Nullable BlockPos parentPos() {
@@ -209,7 +209,7 @@ public final class BlockEntityVisRelay extends BlockEntity {
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (parentPos != null) {
-            TCNbt.store(output, "Parent", BlockPos.CODEC, registries, parentPos);
+            TTNbt.store(output, "Parent", BlockPos.CODEC, registries, parentPos);
             output.putInt("Depth", depth);
         }
     }
@@ -217,7 +217,7 @@ public final class BlockEntityVisRelay extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        parentPos = TCNbt.read(input, "Parent", BlockPos.CODEC, registries).orElse(null);
+        parentPos = TTNbt.read(input, "Parent", BlockPos.CODEC, registries).orElse(null);
         depth = input.getInt("Depth");
     }
 

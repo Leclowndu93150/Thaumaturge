@@ -8,9 +8,9 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -46,7 +46,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     private int bellows = -1;
 
     public BlockEntityTubeBuffer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.TUBE_BUFFER.get(), pos, state);
+        super(TTBlockEntities.TUBE_BUFFER.get(), pos, state);
     }
 
     public AspectList contents() {
@@ -126,7 +126,8 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
                 || !hit.getBlockPos().equals(pos)) {
             return false;
         }
-        if (!handleCasterClick(BlockTube.resolveSubHit(hit, pos), player.isShiftKeyDown())) {
+        if (!handleCasterClick(
+                BlockEssentiaTransport.resolveSubHit(getBlockState(), hit, pos), player.isShiftKeyDown())) {
             return false;
         }
         player.swing(hand);
@@ -141,7 +142,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
             level.playSound(
                     null,
                     getBlockPos(),
-                    TCSounds.SQUEEK.get(),
+                    TTSounds.SQUEEK.get(),
                     SoundSource.BLOCKS,
                     0.6F,
                     2.0F + level.getRandom().nextFloat() * 0.2F);
@@ -153,7 +154,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         level.playSound(
                 null,
                 getBlockPos(),
-                TCSounds.TOOL.get(),
+                TTSounds.TOOL.get(),
                 SoundSource.BLOCKS,
                 0.5F,
                 0.9F + level.getRandom().nextFloat() * 0.2F);
@@ -322,13 +323,13 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        contents = TCNbt.read(input, "Contents", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        contents = TTNbt.read(input, "Contents", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         List<Integer> choked =
-                TCNbt.read(input, "Choked", CHOKED_CODEC, registries).orElse(List.of());
+                TTNbt.read(input, "Choked", CHOKED_CODEC, registries).orElse(List.of());
         for (int i = 0; i < 6 && i < choked.size(); i++) {
             chokedSides[i] = choked.get(i);
         }
-        List<Boolean> open = TCNbt.read(input, "Open", OPEN_CODEC, registries).orElse(List.of());
+        List<Boolean> open = TTNbt.read(input, "Open", OPEN_CODEC, registries).orElse(List.of());
         for (int i = 0; i < 6; i++) {
             openSides[i] = i < open.size() ? open.get(i) : true;
         }
@@ -343,13 +344,13 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Contents", AspectList.CODEC, registries, contents);
+        TTNbt.store(output, "Contents", AspectList.CODEC, registries, contents);
         List<Integer> choked =
                 List.of(chokedSides[0], chokedSides[1], chokedSides[2], chokedSides[3], chokedSides[4], chokedSides[5]);
-        TCNbt.store(output, "Choked", CHOKED_CODEC, registries, choked);
+        TTNbt.store(output, "Choked", CHOKED_CODEC, registries, choked);
         List<Boolean> open =
                 List.of(openSides[0], openSides[1], openSides[2], openSides[3], openSides[4], openSides[5]);
-        TCNbt.store(output, "Open", OPEN_CODEC, registries, open);
+        TTNbt.store(output, "Open", OPEN_CODEC, registries, open);
         output.putInt("Facing", facing.ordinal());
     }
 

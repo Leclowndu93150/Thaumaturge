@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.blueprint;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintSource;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.Direction;
@@ -33,9 +33,9 @@ public final class BlueprintBootstrap {
                                 'B',
                                         part(
                                                 block(Blocks.NETHER_BRICKS),
-                                                toBlock(TCBlocks.NETHER_BRICKS_PLACEHOLDER.get())),
-                                'O', part(block(Blocks.OBSIDIAN), toBlock(TCBlocks.OBSIDIAN_PLACEHOLDER.get())),
-                                'L', part(block(Blocks.LAVA), toBlockOpposite(TCBlocks.INFERNAL_FURNACE.get())),
+                                                toBlock(TTBlocks.NETHER_BRICKS_PLACEHOLDER.get())),
+                                'O', part(block(Blocks.OBSIDIAN), toBlock(TTBlocks.OBSIDIAN_PLACEHOLDER.get())),
+                                'L', part(block(Blocks.LAVA), toBlockOpposite(TTBlocks.INFERNAL_FURNACE.get())),
                                 'I', part(block(Blocks.IRON_BARS), BlueprintTarget.Air.INSTANCE)),
                         List.of(
                                 List.of("BOB", "O O", "BOB"),
@@ -50,20 +50,20 @@ public final class BlueprintBootstrap {
                         2,
                         2,
                         Map.of(
-                                'I', part(block(Blocks.IRON_BARS), toBlock(TCBlocks.PLACEHOLDER_IRON_BARS.get())),
-                                'C', part(block(Blocks.CAULDRON), toBlock(TCBlocks.PLACEHOLDER_CAULDRON.get())),
-                                'A', part(block(Blocks.ANVIL), toBlock(TCBlocks.PLACEHOLDER_ANVIL.get())),
+                                'I', part(block(Blocks.IRON_BARS), toBlock(TTBlocks.PLACEHOLDER_IRON_BARS.get())),
+                                'C', part(block(Blocks.CAULDRON), toBlock(TTBlocks.PLACEHOLDER_CAULDRON.get())),
+                                'A', part(block(Blocks.ANVIL), toBlock(TTBlocks.PLACEHOLDER_ANVIL.get())),
                                 'P',
                                         part(
                                                 state(Blocks.PISTON
                                                         .defaultBlockState()
                                                         .setValue(BlockStateProperties.EXTENDED, false)
                                                         .setValue(BlockStateProperties.FACING, Direction.UP)),
-                                                toBlock(TCBlocks.GOLEM_BUILDER.get())),
+                                                toBlock(TTBlocks.GOLEM_BUILDER.get())),
                                 'T',
                                         part(
-                                                block(TCBlocks.TABLE_STONE.get()),
-                                                toBlock(TCBlocks.PLACEHOLDER_TABLE.get()))),
+                                                block(TTBlocks.TABLE_STONE.get()),
+                                                toBlock(TTBlocks.PLACEHOLDER_TABLE.get()))),
                         List.of(List.of("  ", "I "), List.of("CA", "PT"))));
 
         register(
@@ -76,31 +76,31 @@ public final class BlueprintBootstrap {
                         Map.of(
                                 'A',
                                         part(
-                                                block(TCBlocks.ALEMBIC.get()),
+                                                block(TTBlocks.ALEMBIC.get()),
                                                 toBlock(
-                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER
+                                                        TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER
                                                                 .get())),
                                 'C',
                                         part(
-                                                block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
+                                                block(TTBlocks.ALCHEMICAL_CONSTRUCT.get()),
                                                 toBlock(
-                                                        TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER
+                                                        TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER
                                                                 .get())),
                                 'V',
                                         part(
-                                                block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
+                                                block(TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
                                                 toBlock(
-                                                        TCBlocks
+                                                        TTBlocks
                                                                 .ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER
                                                                 .get())),
                                 'N',
                                         part(
-                                                block(TCBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
-                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())),
+                                                block(TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())),
                                 'F',
                                         part(
-                                                block(TCBlocks.SMELTER_BASIC.get()),
-                                                toBlock(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()))),
+                                                block(TTBlocks.SMELTER_BASIC.get()),
+                                                toBlock(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get()))),
                         List.of(List.of("ACA", "C C", "ACA"), List.of("VNV", "NFN", "VNV"))));
 
         register(
@@ -113,34 +113,34 @@ public final class BlueprintBootstrap {
                         Map.of(
                                 'T',
                                         part(
-                                                block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
-                                                toBlock(TCBlocks.THAUMATORIUM_TOP.get())),
+                                                block(TTBlocks.ALCHEMICAL_CONSTRUCT.get()),
+                                                toBlock(TTBlocks.THAUMATORIUM_TOP.get())),
                                 'M',
                                         part(
-                                                block(TCBlocks.ALCHEMICAL_CONSTRUCT.get()),
+                                                block(TTBlocks.ALCHEMICAL_CONSTRUCT.get()),
                                                 new BlueprintTarget.BlockTarget(
-                                                        TCBlocks.THAUMATORIUM.get(), true, false)),
-                                'B', part(block(TCBlocks.CRUCIBLE.get()), BlueprintTarget.Keep.INSTANCE)),
+                                                        TTBlocks.THAUMATORIUM.get(), true, false)),
+                                'B', part(block(TTBlocks.CRUCIBLE.get()), BlueprintTarget.Keep.INSTANCE)),
                         List.of(List.of("T"), List.of("M"), List.of("B"))));
 
         register(
                 ctx,
                 "infusion_altar",
-                altar(TCBlocks.STONE_ARCANE.get(), TCBlocks.PILLAR_ARCANE.get(), TCBlocks.PEDESTAL_ARCANE.get()));
+                altar(TTBlocks.STONE_ARCANE.get(), TTBlocks.PILLAR_ARCANE.get(), TTBlocks.PEDESTAL_ARCANE.get()));
         register(
                 ctx,
                 "infusion_altar_ancient",
                 altar(
-                        TCBlocks.STONE_ANCIENT_TILE.get(),
-                        TCBlocks.PILLAR_ANCIENT.get(),
-                        TCBlocks.PEDESTAL_ANCIENT.get()));
+                        TTBlocks.STONE_ANCIENT_TILE.get(),
+                        TTBlocks.PILLAR_ANCIENT.get(),
+                        TTBlocks.PEDESTAL_ANCIENT.get()));
         register(
                 ctx,
                 "infusion_altar_eldritch",
                 altar(
-                        TCBlocks.STONE_ELDRITCH_TILE.get(),
-                        TCBlocks.PILLAR_ELDRITCH.get(),
-                        TCBlocks.PEDESTAL_ELDRITCH.get()));
+                        TTBlocks.STONE_ELDRITCH_TILE.get(),
+                        TTBlocks.PILLAR_ELDRITCH.get(),
+                        TTBlocks.PEDESTAL_ELDRITCH.get()));
     }
 
     private static Blueprint altar(Block stone, Block pillar, Block pedestal) {
@@ -149,7 +149,7 @@ public final class BlueprintBootstrap {
                 3,
                 3,
                 Map.of(
-                        'I', part(block(TCBlocks.INFUSION_MATRIX.get()), BlueprintTarget.Keep.INSTANCE),
+                        'I', part(block(TTBlocks.INFUSION_MATRIX.get()), BlueprintTarget.Keep.INSTANCE),
                         'A', part(block(stone), BlueprintTarget.Air.INSTANCE),
                         'P', part(block(pedestal), BlueprintTarget.Keep.INSTANCE),
                         'E', part(block(stone), toPillar(pillar, Direction.EAST)),
@@ -160,7 +160,7 @@ public final class BlueprintBootstrap {
     }
 
     private static void register(BootstrapContext<Blueprint> ctx, String name, Blueprint blueprint) {
-        ctx.register(ResourceKey.create(Blueprint.REGISTRY_KEY, TCIds.rl(name)), blueprint);
+        ctx.register(ResourceKey.create(Blueprint.REGISTRY_KEY, TTIds.rl(name)), blueprint);
     }
 
     private static BlueprintPart part(BlueprintSource source, BlueprintTarget target) {

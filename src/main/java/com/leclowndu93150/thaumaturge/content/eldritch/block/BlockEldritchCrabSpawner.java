@@ -1,7 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -33,12 +35,37 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
     public static final MapCodec<BlockEldritchCrabSpawner> CODEC = simpleCodec(BlockEldritchCrabSpawner::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
-    private static final VoxelShape SHAPE_UP = Block.box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0);
-    private static final VoxelShape SHAPE_DOWN = Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0);
-    private static final VoxelShape SHAPE_NORTH = Block.box(0.0, 0.0, 12.0, 16.0, 16.0, 16.0);
-    private static final VoxelShape SHAPE_SOUTH = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 4.0);
-    private static final VoxelShape SHAPE_EAST = Block.box(0.0, 0.0, 0.0, 4.0, 16.0, 16.0);
-    private static final VoxelShape SHAPE_WEST = Block.box(12.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(
+            box(0.0, 0.0, 0.0, 7.0, 1.0, 16.0),
+            box(1.0, 1.0, 5.0, 5.0, 2.0, 11.0),
+            box(2.0, 1.0, 3.0, 14.0, 2.0, 5.0),
+            box(2.0, 1.0, 11.0, 14.0, 2.0, 14.0),
+            box(2.0, 2.0, 5.0, 4.0, 3.0, 11.0),
+            box(3.0, 1.0, 2.0, 14.0, 2.0, 3.0),
+            box(3.0, 2.0, 3.0, 7.0, 3.0, 5.0),
+            box(3.0, 2.0, 11.0, 7.0, 3.0, 13.0),
+            box(4.0, 1.0, 14.0, 11.0, 2.0, 15.0),
+            box(4.0, 2.0, 5.0, 5.0, 3.0, 6.0),
+            box(4.0, 2.0, 10.0, 5.0, 3.0, 11.0),
+            box(5.0, 1.0, 1.0, 11.0, 2.0, 2.0),
+            box(5.0, 1.0, 5.0, 6.0, 2.0, 6.0),
+            box(5.0, 1.0, 10.0, 6.0, 2.0, 11.0),
+            box(5.0, 2.0, 2.0, 10.0, 3.0, 3.0),
+            box(5.0, 2.0, 13.0, 10.0, 3.0, 14.0),
+            box(7.0, 0.0, 0.0, 16.0, 1.0, 7.0),
+            box(7.0, 0.0, 9.0, 16.0, 1.0, 16.0),
+            box(7.0, 2.0, 3.0, 13.0, 3.0, 4.0),
+            box(7.0, 2.0, 12.0, 13.0, 3.0, 13.0),
+            box(9.0, 0.0, 7.0, 16.0, 1.0, 9.0),
+            box(9.0, 2.0, 11.0, 13.0, 3.0, 12.0),
+            box(10.0, 1.0, 5.0, 15.0, 2.0, 6.0),
+            box(10.0, 1.0, 10.0, 15.0, 2.0, 11.0),
+            box(10.0, 2.0, 4.0, 13.0, 3.0, 5.0),
+            box(11.0, 1.0, 6.0, 15.0, 2.0, 10.0),
+            box(11.0, 2.0, 5.0, 14.0, 3.0, 6.0),
+            box(11.0, 2.0, 10.0, 13.0, 3.0, 11.0),
+            box(12.0, 2.0, 6.0, 13.0, 3.0, 10.0),
+            box(13.0, 2.0, 6.0, 14.0, 3.0, 9.0)));
 
     private static final int XP_BASE = 15;
     private static final int XP_ROLL = 15;
@@ -65,14 +92,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return switch (state.getValue(FACING)) {
-            case DOWN -> SHAPE_DOWN;
-            case NORTH -> SHAPE_NORTH;
-            case SOUTH -> SHAPE_SOUTH;
-            case EAST -> SHAPE_EAST;
-            case WEST -> SHAPE_WEST;
-            default -> SHAPE_UP;
-        };
+        return SHAPES.get(state.getValue(FACING));
     }
 
     @Override
@@ -130,7 +150,7 @@ public final class BlockEldritchCrabSpawner extends BaseEntityBlock {
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
                 type,
-                TCBlockEntities.ELDRITCH_CRAB_SPAWNER.get(),
+                TTBlockEntities.ELDRITCH_CRAB_SPAWNER.get(),
                 (tickLevel, pos, tickState, spawner) -> spawner.tick(tickLevel, pos, tickState));
     }
 }

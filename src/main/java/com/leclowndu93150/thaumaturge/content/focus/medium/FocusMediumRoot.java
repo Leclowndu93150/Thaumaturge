@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -9,7 +9,7 @@ import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 
 public final class FocusMediumRoot implements FocusMedium {
-    public static final ResourceLocation KEY = TCIds.rl("root");
+    public static final ResourceLocation KEY = TTIds.rl("root");
 
     @Override
     public ResourceLocation id() {

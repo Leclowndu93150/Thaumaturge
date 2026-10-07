@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.warding;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +37,7 @@ public final class WardConnectedTexture {
         for (int corner = 0; corner < CORNERS; corner++) {
             for (int state = 0; state < STATES; state++) {
                 SPRITES[corner][state] =
-                        TCIds.rl("block/ward/" + CORNER_NAMES[corner] + "_" + STATE_NAMES[corner][state]);
+                        TTIds.rl("block/ward/" + CORNER_NAMES[corner] + "_" + STATE_NAMES[corner][state]);
             }
         }
     }

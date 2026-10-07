@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class AspectOrbRenderer extends EntityRenderer<EntityAspectOrb> {
-    private static final RenderType ORB_TYPE = TCRenderTypes.fxAlphaAdditiveBlurred(ParticleTextures.ORB_GLOW);
+    private static final RenderType ORB_TYPE = TTRenderTypes.fxAlphaAdditiveBlurred(ParticleTextures.ORB_GLOW);
 
     private static final int FRAMES_PER_TICK = 2;
     private static final float BASE_SCALE = 0.1F;

@@ -1,10 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -37,7 +39,28 @@ import org.jspecify.annotations.Nullable;
 
 public final class BlockThaumatorium extends BaseEntityBlock {
     public static final MapCodec<BlockThaumatorium> CODEC = simpleCodec(BlockThaumatorium::new);
-    private static final VoxelShape SHAPE = Shapes.box(0.0, 0.0, 0.0, 1.0, 2.0, 1.0);
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(
+            box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),
+            box(2.0, 2.0, 2.0, 14.0, 13.0, 14.0),
+            box(1.0, 2.0, 1.0, 4.0, 13.0, 4.0),
+            box(12.0, 2.0, 1.0, 15.0, 13.0, 4.0),
+            box(1.0, 2.0, 12.0, 4.0, 13.0, 15.0),
+            box(12.0, 2.0, 12.0, 15.0, 13.0, 15.0),
+            box(0.0, 5.0, 5.0, 16.0, 11.0, 11.0),
+            box(0.0, 21.0, 5.0, 16.0, 27.0, 11.0),
+            box(5.0, 5.0, 14.0, 11.0, 11.0, 16.0),
+            box(5.0, 21.0, 13.0, 11.0, 27.0, 16.0),
+            box(5.0, 2.0, 0.0, 11.0, 6.0, 2.0),
+            box(5.0, 7.0, 1.0, 11.0, 12.0, 2.0),
+            box(2.0, 13.0, 2.0, 14.0, 15.0, 14.0),
+            box(3.0, 15.0, 3.0, 13.0, 26.0, 13.0),
+            box(2.0, 15.0, 2.0, 4.0, 26.0, 4.0),
+            box(12.0, 15.0, 2.0, 14.0, 26.0, 4.0),
+            box(2.0, 15.0, 12.0, 4.0, 26.0, 14.0),
+            box(12.0, 15.0, 12.0, 14.0, 26.0, 14.0),
+            box(2.0, 26.0, 2.0, 14.0, 28.0, 14.0),
+            box(6.0, 28.0, 6.0, 10.0, 30.0, 10.0),
+            box(5.0, 30.0, 5.0, 11.0, 31.0, 11.0)));
 
     public BlockThaumatorium(BlockBehaviour.Properties properties) {
         super(properties);
@@ -69,18 +92,22 @@ public final class BlockThaumatorium extends BaseEntityBlock {
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        level.setBlock(pos.above(), TCBlocks.THAUMATORIUM_TOP.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos.above(), TTBlocks.THAUMATORIUM_TOP.get().defaultBlockState(), Block.UPDATE_ALL);
+    }
+
+    public static VoxelShape shapeFacing(Direction facing) {
+        return SHAPES.get(facing);
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return shapeFacing(state.getValue(HorizontalDirectionalBlock.FACING));
     }
 
     @Override
     protected VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return getShape(state, level, pos, context);
     }
 
     @Override
@@ -91,7 +118,7 @@ public final class BlockThaumatorium extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("thaumatorium"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("thaumatorium"))) {
             return InteractionResult.CONSUME;
         }
         if (level.isClientSide()) {
@@ -120,7 +147,7 @@ public final class BlockThaumatorium extends BaseEntityBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
 
-            if (level.getBlockState(pos.above()).is(TCBlocks.THAUMATORIUM_TOP.get())) {
+            if (level.getBlockState(pos.above()).is(TTBlocks.THAUMATORIUM_TOP.get())) {
                 level.destroyBlock(pos.above(), true);
             }
         }
@@ -133,7 +160,7 @@ public final class BlockThaumatorium extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.THAUMATORIUM.get(), BlockEntityThaumatorium::serverTick);
+        return createTickerHelper(type, TTBlockEntities.THAUMATORIUM.get(), BlockEntityThaumatorium::serverTick);
     }
 
     @Override

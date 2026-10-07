@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -41,7 +41,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
     public float rotationSpeed;
 
     public BlockEntityCentrifuge(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.CENTRIFUGE.get(), pos, state);
+        super(TTBlockEntities.CENTRIFUGE.get(), pos, state);
     }
 
     public boolean isSpinning() {
@@ -78,7 +78,7 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
                     pos.getX() + 0.5,
                     pos.getY() + 0.5,
                     pos.getZ() + 0.5,
-                    TCSounds.PUMP.get(),
+                    TTSounds.PUMP.get(),
                     SoundSource.BLOCKS,
                     1.0F,
                     1.0F,
@@ -213,18 +213,18 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        aspectIn = TCNbt.read(input, "AspectIn", ASPECT_KEY_CODEC, registries).orElse(null);
-        aspectOut = TCNbt.read(input, "AspectOut", ASPECT_KEY_CODEC, registries).orElse(null);
+        aspectIn = TTNbt.read(input, "AspectIn", ASPECT_KEY_CODEC, registries).orElse(null);
+        aspectOut = TTNbt.read(input, "AspectOut", ASPECT_KEY_CODEC, registries).orElse(null);
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (aspectIn != null) {
-            TCNbt.store(output, "AspectIn", ASPECT_KEY_CODEC, registries, aspectIn);
+            TTNbt.store(output, "AspectIn", ASPECT_KEY_CODEC, registries, aspectIn);
         }
         if (aspectOut != null) {
-            TCNbt.store(output, "AspectOut", ASPECT_KEY_CODEC, registries, aspectOut);
+            TTNbt.store(output, "AspectOut", ASPECT_KEY_CODEC, registries, aspectOut);
         }
     }
 

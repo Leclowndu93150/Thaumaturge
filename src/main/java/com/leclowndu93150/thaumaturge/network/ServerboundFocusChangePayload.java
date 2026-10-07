@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -14,7 +14,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundFocusChangePayload(String focusKey) implements CustomPacketPayload {
     public static final Type<ServerboundFocusChangePayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "focus_change"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "focus_change"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundFocusChangePayload> STREAM_CODEC =
             StreamCodec.composite(

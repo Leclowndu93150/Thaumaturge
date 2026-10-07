@@ -1,11 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -25,12 +28,52 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class BlockTaintFeature extends DirectionalBlock implements ITaintBlock {
     public static final MapCodec<BlockTaintFeature> CODEC = simpleCodec(BlockTaintFeature::new);
 
-    private static final VoxelShape SHAPE_DOWN = Shapes.box(0.125, 0.625, 0.125, 0.875, 1.0, 0.875);
-    private static final VoxelShape SHAPE_UP = Shapes.box(0.125, 0.0, 0.125, 0.875, 0.375, 0.875);
-    private static final VoxelShape SHAPE_NORTH = Shapes.box(0.125, 0.125, 0.625, 0.875, 0.875, 1.0);
-    private static final VoxelShape SHAPE_SOUTH = Shapes.box(0.125, 0.125, 0.0, 0.875, 0.875, 0.375);
-    private static final VoxelShape SHAPE_WEST = Shapes.box(0.625, 0.125, 0.125, 1.0, 0.875, 0.875);
-    private static final VoxelShape SHAPE_EAST = Shapes.box(0.0, 0.125, 0.125, 0.375, 0.875, 0.875);
+    private static final VoxelShape ORB_0 = Shapes.or(
+            Block.box(3.0, 0.0, 3.0, 11.0, 1.0, 11.0),
+            Block.box(2.0, 1.0, 3.0, 12.0, 9.0, 11.0),
+            Block.box(3.0, 1.0, 2.0, 11.0, 9.0, 3.0),
+            Block.box(3.0, 1.0, 11.0, 11.0, 9.0, 12.0),
+            Block.box(3.0, 9.0, 3.0, 11.0, 10.0, 11.0),
+            Block.box(5.0, 10.0, 6.0, 8.0, 11.0, 9.0));
+
+    private static final VoxelShape ORB_1 = Shapes.or(
+            Block.box(3.0, 0.0, 4.0, 9.0, 1.0, 10.0),
+            Block.box(2.0, 1.0, 4.0, 10.0, 7.0, 10.0),
+            Block.box(3.0, 1.0, 3.0, 9.0, 7.0, 4.0),
+            Block.box(3.0, 1.0, 10.0, 9.0, 7.0, 11.0),
+            Block.box(3.0, 7.0, 4.0, 9.0, 8.0, 10.0),
+            Block.box(5.0, 8.0, 6.0, 7.0, 9.0, 8.0),
+            Block.box(9.0, 0.0, 8.0, 13.0, 1.0, 12.0),
+            Block.box(10.0, 1.0, 7.0, 13.0, 5.0, 10.0),
+            Block.box(13.0, 1.0, 8.0, 14.0, 5.0, 11.0),
+            Block.box(9.0, 1.0, 10.0, 13.0, 6.0, 11.0),
+            Block.box(8.0, 1.0, 11.0, 14.0, 5.0, 12.0),
+            Block.box(9.0, 1.0, 12.0, 13.0, 5.0, 13.0),
+            Block.box(10.0, 5.0, 8.0, 13.0, 6.0, 10.0),
+            Block.box(9.0, 5.0, 11.0, 13.0, 6.0, 12.0));
+
+    private static final VoxelShape ORB_2 = Shapes.or(
+            Block.box(2.0, 0.0, 8.0, 6.0, 1.0, 12.0),
+            Block.box(1.0, 1.0, 8.0, 7.0, 5.0, 12.0),
+            Block.box(2.0, 1.0, 7.0, 6.0, 5.0, 8.0),
+            Block.box(2.0, 1.0, 12.0, 6.0, 5.0, 13.0),
+            Block.box(2.0, 5.0, 8.0, 6.0, 6.0, 12.0),
+            Block.box(9.0, 0.0, 2.0, 13.0, 1.0, 6.0),
+            Block.box(8.0, 1.0, 2.0, 14.0, 4.0, 6.0),
+            Block.box(9.0, 1.0, 1.0, 13.0, 4.0, 2.0),
+            Block.box(9.0, 1.0, 6.0, 13.0, 4.0, 7.0),
+            Block.box(9.0, 4.0, 2.0, 13.0, 5.0, 6.0),
+            Block.box(10.0, 0.0, 10.0, 14.0, 1.0, 14.0),
+            Block.box(9.0, 1.0, 10.0, 15.0, 5.0, 14.0),
+            Block.box(10.0, 1.0, 9.0, 14.0, 5.0, 10.0),
+            Block.box(10.0, 1.0, 14.0, 14.0, 5.0, 15.0),
+            Block.box(10.0, 5.0, 10.0, 14.0, 6.0, 14.0),
+            Block.box(11.0, 6.0, 11.0, 13.0, 7.0, 13.0));
+
+    private static final List<Map<Direction, VoxelShape>> ORB_SHAPES = List.of(
+            DeviceShapes.facingShapesFromUp(ORB_0),
+            DeviceShapes.facingShapesFromUp(ORB_1),
+            DeviceShapes.facingShapesFromUp(ORB_2));
 
     private static final int DIE_CHANCE = 10;
     private static final int GEYSER_CHANCE = 100;
@@ -62,14 +105,9 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return switch (state.getValue(FACING)) {
-            case DOWN -> SHAPE_DOWN;
-            case UP -> SHAPE_UP;
-            case NORTH -> SHAPE_NORTH;
-            case SOUTH -> SHAPE_SOUTH;
-            case WEST -> SHAPE_WEST;
-            case EAST -> SHAPE_EAST;
-        };
+        return ORB_SHAPES
+                .get(RandomSource.create(state.getSeed(pos)).nextInt(ORB_SHAPES.size()))
+                .get(state.getValue(FACING));
     }
 
     @Override
@@ -94,10 +132,10 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
         }
         TaintHelper.spreadFibres(level, pos, false);
         BlockState below = level.getBlockState(pos.below());
-        if (below.is(TCBlocks.TAINT_LOG.get())) {
+        if (below.is(TTBlocks.TAINT_LOG.get())) {
             Direction.Axis axis = below.getValue(RotatedPillarBlock.AXIS);
             if (axis == Direction.Axis.Y && random.nextInt(GEYSER_CHANCE) == 0) {
-                level.setBlock(pos, TCBlocks.TAINT_GEYSER.get().defaultBlockState(), Block.UPDATE_ALL);
+                level.setBlock(pos, TTBlocks.TAINT_GEYSER.get().defaultBlockState(), Block.UPDATE_ALL);
             }
         }
     }
@@ -107,7 +145,7 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
         if (!state.is(newState.getBlock())) {
 
             if (level.getRandom().nextFloat() < CRAWLER_ON_BREAK_CHANCE) {
-                EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(level);
+                EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level);
                 if (crawler != null) {
                     crawler.moveTo(
                             pos.getX() + 0.5,
@@ -126,6 +164,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
 
     @Override
     public void die(Level level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, TCBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
     }
 }

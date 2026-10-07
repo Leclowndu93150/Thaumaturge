@@ -8,7 +8,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.RandomSource;
 
-public final class ScanGlyphParticle extends TCParticle {
+public final class ScanGlyphParticle extends TTParticle {
     private static final int FRAME_COUNT = 15;
     private static final int LIFETIME = 44;
     private static final float SIZE = 0.9F;
@@ -35,8 +35,8 @@ public final class ScanGlyphParticle extends TCParticle {
     @Override
     public ParticleRenderType getRenderType() {
         return this.additive
-                ? TCParticleLayers.additiveNoDepth(this.sheet)
-                : TCParticleLayers.translucentNoDepth(this.sheet);
+                ? TTParticleLayers.additiveNoDepth(this.sheet)
+                : TTParticleLayers.translucentNoDepth(this.sheet);
     }
 
     @Override
@@ -45,7 +45,7 @@ public final class ScanGlyphParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<ScanGlyphParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("scan_glyph");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("scan_glyph");
 
         @Override
         public Particle createParticle(

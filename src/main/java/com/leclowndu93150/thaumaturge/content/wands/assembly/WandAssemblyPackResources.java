@@ -2,15 +2,15 @@ package com.leclowndu93150.thaumaturge.content.wands.assembly;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandCap;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandRod;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,27 +50,27 @@ public final class WandAssemblyPackResources implements PackResources {
         Map<ResourceLocation, ResourceLocation> rodItems = new LinkedHashMap<>();
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ItemWandCap capItem && capItem.cap() != null) {
-                ResourceLocation partId = TCWandParts.caps().getKey(capItem.cap());
+                ResourceLocation partId = TTWandParts.caps().getKey(capItem.cap());
                 if (partId != null) {
                     capItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
                 }
             } else if (item instanceof ItemWandRod rodItem && rodItem.rod() != null) {
-                ResourceLocation partId = TCWandParts.rods().getKey(rodItem.rod());
+                ResourceLocation partId = TTWandParts.rods().getKey(rodItem.rod());
                 if (partId != null) {
                     rodItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
                 }
             }
         }
-        ResourceLocation woodRod = TCIds.rl("wood");
-        if (TCWandParts.rods().containsKey(woodRod)) {
+        ResourceLocation woodRod = TTIds.rl("wood");
+        if (TTWandParts.rods().containsKey(woodRod)) {
             rodItems.putIfAbsent(woodRod, BuiltInRegistries.ITEM.getKey(Items.STICK));
         }
 
-        ResourceLocation ironCap = TCIds.rl("iron");
+        ResourceLocation ironCap = TTIds.rl("iron");
         for (Map.Entry<ResourceLocation, ResourceLocation> capEntry : capItems.entrySet()) {
-            WandCap cap = TCWandParts.caps().get(capEntry.getKey());
+            WandCap cap = TTWandParts.caps().get(capEntry.getKey());
             for (Map.Entry<ResourceLocation, ResourceLocation> rodEntry : rodItems.entrySet()) {
-                WandRod rod = TCWandParts.rods().get(rodEntry.getKey());
+                WandRod rod = TTWandParts.rods().get(rodEntry.getKey());
                 boolean starterCombo =
                         capEntry.getKey().equals(ironCap) && rodEntry.getKey().equals(woodRod);
                 if (!starterCombo) {
@@ -89,7 +89,7 @@ public final class WandAssemblyPackResources implements PackResources {
                                     rodEntry,
                                     true,
                                     vis,
-                                    TCIds.rl("sceptre").toString()));
+                                    TTIds.rl("sceptre").toString()));
                 }
             }
         }
@@ -103,16 +103,16 @@ public final class WandAssemblyPackResources implements PackResources {
 
     private static String assemblyGate(WandRod rod) {
         ResourceLocation gate = rod.assemblyResearch();
-        return gate != null ? gate.toString() : TCIds.rl("unlock_auromancy").toString();
+        return gate != null ? gate.toString() : TTIds.rl("unlock_auromancy").toString();
     }
 
     private static ResourceLocation recipeFile(String kind, ResourceLocation capId, ResourceLocation rodId) {
         boolean modPair =
-                capId.getNamespace().equals(TCIds.MODID) && rodId.getNamespace().equals(TCIds.MODID);
+                capId.getNamespace().equals(TTIds.MODID) && rodId.getNamespace().equals(TTIds.MODID);
         String name = modPair
                 ? capId.getPath() + "_" + rodId.getPath()
                 : capId.getNamespace() + "_" + capId.getPath() + "_" + rodId.getNamespace() + "_" + rodId.getPath();
-        return TCIds.rl("recipe/wand/" + kind + "/" + name + ".json");
+        return TTIds.rl("recipe/wand/" + kind + "/" + name + ".json");
     }
 
     private static byte[] recipe(
@@ -126,7 +126,7 @@ public final class WandAssemblyPackResources implements PackResources {
         key.add("R", ingredient(rod.getValue()));
         JsonArray pattern = new JsonArray();
         if (sceptre) {
-            key.add("P", ingredient(BuiltInRegistries.ITEM.getKey(TCItems.PRIMAL_CHARM.get())));
+            key.add("P", ingredient(BuiltInRegistries.ITEM.getKey(TTItems.PRIMAL_CHARM.get())));
             pattern.add(" CP");
             pattern.add(" RC");
             pattern.add("C  ");
@@ -144,12 +144,12 @@ public final class WandAssemblyPackResources implements PackResources {
             parts.addProperty("sceptre", true);
         }
         JsonObject components = new JsonObject();
-        components.add(TCIds.rl("wand_parts").toString(), parts);
+        components.add(TTIds.rl("wand_parts").toString(), parts);
         JsonObject result = new JsonObject();
         result.add("components", components);
-        result.addProperty("id", TCIds.rl("wand").toString());
+        result.addProperty("id", TTIds.rl("wand").toString());
         JsonObject json = new JsonObject();
-        json.addProperty("type", TCIds.rl("arcane_workbench_shaped").toString());
+        json.addProperty("type", TTIds.rl("arcane_workbench_shaped").toString());
         json.add("crystals", new JsonArray());
         json.add("key", key);
         json.add("pattern", pattern);
@@ -181,7 +181,7 @@ public final class WandAssemblyPackResources implements PackResources {
 
     @Override
     public void listResources(PackType type, String namespace, String directory, ResourceOutput output) {
-        if (type != PackType.SERVER_DATA || !namespace.equals(TCIds.MODID)) {
+        if (type != PackType.SERVER_DATA || !namespace.equals(TTIds.MODID)) {
             return;
         }
         for (Map.Entry<ResourceLocation, byte[]> entry : entries().entrySet()) {
@@ -194,7 +194,7 @@ public final class WandAssemblyPackResources implements PackResources {
 
     @Override
     public Set<String> getNamespaces(PackType type) {
-        return type == PackType.SERVER_DATA ? Set.of(TCIds.MODID) : Set.of();
+        return type == PackType.SERVER_DATA ? Set.of(TTIds.MODID) : Set.of();
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -10,8 +10,8 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("breaker");
+        return TTIds.rl("breaker");
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
             }
             level.destroyBlockProgress(golem.getGolemEntity().getId(), task.getPos(), 10);
             BlockBreakerEngine.harvestBlock(
-                    serverLevel, TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()), task.getPos(), silky, 0);
+                    serverLevel, TTFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity()), task.getPos(), silky, 0);
             golem.addRankXp(1);
             cache.remove(task.getId());
         }
@@ -141,7 +141,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_breaker.png");
+        return TTIds.rl("textures/item/seal_breaker.png");
     }
 
     @Override
@@ -154,7 +154,7 @@ public class SealBreaker extends SealFiltered implements ISealConfigArea, ISealC
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.BREAKER.get()};
+        return new GolemTrait[] {TTGolemTraits.BREAKER.get()};
     }
 
     @Override

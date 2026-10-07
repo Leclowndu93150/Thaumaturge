@@ -8,8 +8,8 @@ Paths are relative to `src/main/resources/assets/thaumaturge/`. Everything not l
 
 These replacements were drawn by community contributors on the Thaumaturge asset audit.
 
-- **woxayz** (68): `textures/aspects/_back.png`, `textures/aspects/_unknown.png`, `textures/aspects/aer.png`, `textures/aspects/alkimia.png`, `textures/aspects/aqua.png`, `textures/aspects/auram.png`, `textures/aspects/aversio.png`, `textures/aspects/bestia.png`, `textures/aspects/cognitio.png`, `textures/aspects/desiderium.png`, `textures/aspects/exanimis.png`, `textures/aspects/fabrico.png`, `textures/aspects/gelum.png`, `textures/aspects/herba.png`, `textures/aspects/humanus.png`, `textures/aspects/ignis.png`, `textures/aspects/instrumentum.png`, `textures/aspects/lux.png`, `textures/aspects/machina.png`, `textures/aspects/metallum.png`, `textures/aspects/mortuus.png`, `textures/aspects/motus.png`, `textures/aspects/ordo.png`, `textures/aspects/perditio.png`, `textures/aspects/permutatio.png`, `textures/aspects/potentia.png`, `textures/aspects/praecantatio.png`, `textures/aspects/praemunio.png`, `textures/aspects/sensus.png`, `textures/aspects/spiritus.png`, `textures/aspects/tenebrae.png`, `textures/aspects/terra.png`, `textures/aspects/vacuos.png`, `textures/aspects/victus.png`, `textures/aspects/vinculum.png`, `textures/aspects/vitium.png`, `textures/aspects/vitreus.png`, `textures/aspects/volatus.png`, `textures/block/alembic.png`, `textures/block/brain_box.png`, `textures/block/condenser_lattice.png`, `textures/block/crystal.png`, `textures/block/essentia_input.png`, `textures/entity/arcanebore.png`, `textures/entity/centrifuge.png`, `textures/entity/crossbow.png`, `textures/entity/cultist.png`, `textures/entity/eldritch_golem.png`, `textures/entity/golems/golem_hauler.png`, `textures/entity/golems/golem_head_other.png`, `textures/entity/golems/golem_legs_floater.png`, `textures/entity/golems/golem_legs_wheel.png`, `textures/entity/grappler.png`, `textures/gui/gui_research_back_1.png`, `textures/gui/gui_research_back_2.png`, `textures/gui/gui_research_back_3.png`, `textures/gui/gui_research_back_4.png`, `textures/gui/gui_research_back_5.png`, `textures/gui/gui_research_back_6.png`, `textures/gui/gui_research_back_7.png`, `textures/gui/gui_research_back_over.png`, `textures/gui/hud_wand.png`, `textures/item/creative_node_placer.png`, `textures/item/filter.png`, `textures/item/grapple_gun.png`, `textures/misc/golem/addon_armored.png`, `textures/misc/golem/addon_hauler.png`, `textures/models/golem_decoration.png`
-- **ordeaux** (16): `textures/block/arcane_workbench_charger.png`, `textures/block/inlay_connect_under2.png`, `textures/block/node_stabilizer_over.png`, `textures/entity/brain2.png`, `textures/entity/eldritch_guardian.png`, `textures/foci/air.png`, `textures/foci/bolt.png`, `textures/foci/break.png`, `textures/foci/curse.png`, `textures/misc/architect_arrows.png`, `textures/research/cat_alchemy.png`, `textures/research/cat_artifice.png`, `textures/research/cat_auromancy.png`, `textures/research/cat_eldritch.png`, `textures/research/cat_golemancy.png`, `textures/research/cat_infusion.png`
+- **woxayz** (58): `textures/aspects/_back.png`, `textures/aspects/_unknown.png`, `textures/aspects/aer.png`, `textures/aspects/alkimia.png`, `textures/aspects/aqua.png`, `textures/aspects/auram.png`, `textures/aspects/aversio.png`, `textures/aspects/bestia.png`, `textures/aspects/cognitio.png`, `textures/aspects/desiderium.png`, `textures/aspects/exanimis.png`, `textures/aspects/fabrico.png`, `textures/aspects/gelum.png`, `textures/aspects/herba.png`, `textures/aspects/humanus.png`, `textures/aspects/ignis.png`, `textures/aspects/instrumentum.png`, `textures/aspects/lux.png`, `textures/aspects/machina.png`, `textures/aspects/metallum.png`, `textures/aspects/mortuus.png`, `textures/aspects/motus.png`, `textures/aspects/ordo.png`, `textures/aspects/perditio.png`, `textures/aspects/permutatio.png`, `textures/aspects/potentia.png`, `textures/aspects/praecantatio.png`, `textures/aspects/praemunio.png`, `textures/aspects/sensus.png`, `textures/aspects/spiritus.png`, `textures/aspects/tenebrae.png`, `textures/aspects/terra.png`, `textures/aspects/vacuos.png`, `textures/aspects/victus.png`, `textures/aspects/vinculum.png`, `textures/aspects/vitium.png`, `textures/aspects/vitreus.png`, `textures/aspects/volatus.png`, `textures/block/condenser_lattice.png`, `textures/entity/cultist.png`, `textures/entity/golems/golem_hauler.png`, `textures/entity/golems/golem_head_other.png`, `textures/entity/golems/golem_legs_floater.png`, `textures/entity/golems/golem_legs_wheel.png`, `textures/gui/gui_research_back_1.png`, `textures/gui/gui_research_back_2.png`, `textures/gui/gui_research_back_3.png`, `textures/gui/gui_research_back_4.png`, `textures/gui/gui_research_back_5.png`, `textures/gui/gui_research_back_6.png`, `textures/gui/gui_research_back_7.png`, `textures/gui/gui_research_back_over.png`, `textures/gui/hud_wand.png`, `textures/item/creative_node_placer.png`, `textures/item/filter.png`, `textures/misc/golem/addon_armored.png`, `textures/misc/golem/addon_hauler.png`, `textures/models/golem_decoration.png`
+- **ordeaux** (12): `textures/block/inlay_connect_under2.png`, `textures/foci/air.png`, `textures/foci/bolt.png`, `textures/foci/break.png`, `textures/foci/curse.png`, `textures/misc/architect_arrows.png`, `textures/research/cat_alchemy.png`, `textures/research/cat_artifice.png`, `textures/research/cat_auromancy.png`, `textures/research/cat_eldritch.png`, `textures/research/cat_golemancy.png`, `textures/research/cat_infusion.png`
 - **anquietas_sys** (5): `textures/block/flux_goo.png`, `textures/foci/earth.png`, `textures/research/r_flux.png`, `textures/research/r_fluxrift.png`, `textures/research/r_warp.png`
 - **bocha9031** (4): `textures/block/vcrystal.png`, `textures/foci/hellbat.png`, `textures/item/tube_filter.png`, `textures/misc/seal_area.png`
 - **wenbell** (2): `models/block/vis_relay.json`, `textures/block/recharge_pedestal_gem.png`
@@ -21,7 +21,7 @@ These replacements were drawn by community contributors on the Thaumaturge asset
 | Material | License | Source | Used in |
 | --- | --- | --- | --- |
 | ambientCG Paper003, Paper001 | CC0 1.0 | https://ambientcg.com/a/Paper003, https://ambientcg.com/a/Paper001 | `textures/gui/gui_researchbook.png`, `textures/gui/paper.png`, `textures/gui/papergilded.png`, `textures/misc/parchment.png`, `textures/misc/parchment3.png` |
-| Poly Haven brown_leather | CC0 1.0 | https://polyhaven.com/a/brown_leather | `textures/gui/gui_researchbook.png`, `textures/entity/equipment/humanoid/void_robe.png` |
+| Poly Haven brown_leather | CC0 1.0 | https://polyhaven.com/a/brown_leather | `textures/gui/gui_researchbook.png` |
 | ambientCG PaintedMetal006, Metal021 | CC0 1.0 | https://ambientcg.com/a/PaintedMetal006, https://ambientcg.com/a/Metal021 | `textures/gui/gui_wandtable.png`, `textures/gui/gui_wandtable2.png`, `textures/gui/gui_wandtable3.png` |
 | ambientCG Rock030 | CC0 1.0 | https://ambientcg.com/a/Rock030 | `textures/gui/gui_golembuilder.png` |
 | ambientCG Ice001 | CC0 1.0 | https://ambientcg.com/a/Ice001 | `textures/gui/gui_logistics.png` |
@@ -34,6 +34,20 @@ These replacements were drawn by community contributors on the Thaumaturge asset
 | Temphis Brick font, S. John Ross (Cumberland Games & Diversions) | freeware for personal, non-commercial use; public use needs a licence from the author | https://www.cumberlandgames.com | `textures/gui/gui_researchbook_overlay.png` |
 | Lorc, 700 RPG Icons (used by anquietas_sys) | CC BY 3.0 | https://opengameart.org/content/700-rpg-icons | `textures/foci/earth.png` |
 | Minecraft `full_moon.png`, Mojang Studios | Minecraft EULA | https://www.minecraft.net/eula | `textures/research/r_celestial.png` |
+| Minecraft `obsidian.png`, Mojang Studios | Minecraft EULA | https://www.minecraft.net/eula | `textures/entity/obelisk_cap_altar.png` |
+| Temphis Sweatermonkey font (runes) | used under a licence purchased by the contributor | https://www.cumberlandgames.com | `textures/block/advanced_alchemical_furnace.png`, `textures/block/advanced_alchemical_furnace_on.png` |
+
+## Third-party models
+
+| Model | License | Source | Used in |
+| --- | --- | --- | --- |
+| Thaum pack v3.1 infusion pillar model and textures, zozozrob | used with permission | Thaum pack v3.1 | `models/mesh/pillar.ttmesh`, `textures/block/pillar_normal.png`, `textures/block/pillar_ancient.png`, `textures/block/pillar_eldritch.png` |
+| Thaum pack v3.1 infusion stabilizer model and texture, zozozrob | used with permission | Thaum pack v3.1 | `models/block/stabilizer.json`, `textures/block/stabilizer.png` |
+| Thaum pack v3.1 void siphon model and texture, zozozrob | used with permission | Thaum pack v3.1 | `models/block/void_siphon.json`, `textures/block/void_siphon.png` |
+| Thaum pack v3.1 arcane workbench charger model and texture, zozozrob | used with permission | Thaum pack v3.1 | `models/mesh/arcane_workbench_charger.ttmesh`, `textures/block/arcane_workbench_charger.png` |
+| Thaum pack v3.1 essentia tube models and `tube_2` texture, zozozrob | used with permission | Thaum pack v3.1 | `models/block/tube_*.json`, `textures/block/tube_2.png` |
+| ArcanaEx infusion matrix layout and motion, l-Luna | CC0 1.0 | https://github.com/l-Luna/ArcanaEx | `models/block/infusion_matrix.json`, infusion matrix renderer |
+| ArcanaEx warded jar, l-Luna | CC0 1.0 | https://github.com/l-Luna/ArcanaEx | `models/block/jar_normal.json`, `models/block/jar_void.json` |
 
 ## Icons from game-icons.net
 
@@ -125,6 +139,16 @@ By J. W. Bjerk (eleazzaar), licensed under [CC BY 3.0](https://creativecommons.o
 - `textures/research/r_researcher1.png` (https://opengameart.org/content/painterly-spell-icons-part-1)
 - `textures/research/r_researcher2.png` (https://opengameart.org/content/painterly-spell-icons-part-1)
 - `textures/research/r_runicupg.png` (https://opengameart.org/content/painterly-spell-icons-part-3)
+
+## Tainted mob textures
+
+Drawn by **.talonos** (Discord) and donated under the MIT license (text below). The files were adjusted to the 26.1 vanilla texture layouts; `horse/horse_gray.png`, `bee/bee_angry.png`, `bee/bee_nectar.png` and `bee/bee_angry_nectar.png` are derived from their other variants, and the `_glow` masks are cut from their art. The vein fill used by the generated taint overlay was extracted from their source files.
+
+- `textures/tainted/minecraft/entity/allay/` (2 files)
+- `textures/tainted/minecraft/entity/axolotl/` (10 files)
+- `textures/tainted/minecraft/entity/bee/` (8 files)
+- `textures/tainted/minecraft/entity/horse/` (14 files)
+- `textures/entity/taint/vein_fill.png`
 
 ## Sounds
 
@@ -229,6 +253,13 @@ Thaumcraft built these sounds from third-party sound libraries and games. They a
 | `sounds/zap1.ogg` | Sound Ideas - The SFX Kit: Web_StreamShot3 |
 | `sounds/zap2.ogg` | Sound Ideas - The SFX Kit: Web_StreamShot2 |
 
+
+script.png and block_runes.png: https://www.dafont.com/temphis.font
+mod banner: https://www.1001fonts.com/bala-cynwyd-nf-font.html
+tag_x.png (for golems) https://opengameart.org/content/700-rpg-icons
+gui_golembuilder.png craft button anvil: https://github.com/SlimeKnights/TinkersConstruct textures/item/slot/upgrade.png (MIT, Copyright (c) 2022 SlimeKnights)
+
+
 ## License texts
 
 ### Tinkers' Construct (MIT)
@@ -257,5 +288,44 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### .talonos tainted mob textures (MIT)
+
+```
+MIT License
+
+Copyright (c) 2025 .talonos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 - CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
 - CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/
+
+
+## 1.21.1 port inputs
+
+The copper golem body, walking/holding/idle animation clips, and `textures/entity/golem/copper_golem.png` / `copper_golem_eyes.png` are adapted from Minecraft 26.1.2 (Mojang Studios, Minecraft EULA: https://www.minecraft.net/eula). These inputs are included because 1.21.1 does not provide the vanilla copper golem used by the rebrand.
+
+### Historical replacement credits
+
+These baseline entries describe prior versions of assets replaced by this port; they are retained for provenance. Current asset attribution appears above.
+
+- **woxayz** (68): `textures/aspects/_back.png`, `textures/aspects/_unknown.png`, `textures/aspects/aer.png`, `textures/aspects/alkimia.png`, `textures/aspects/aqua.png`, `textures/aspects/auram.png`, `textures/aspects/aversio.png`, `textures/aspects/bestia.png`, `textures/aspects/cognitio.png`, `textures/aspects/desiderium.png`, `textures/aspects/exanimis.png`, `textures/aspects/fabrico.png`, `textures/aspects/gelum.png`, `textures/aspects/herba.png`, `textures/aspects/humanus.png`, `textures/aspects/ignis.png`, `textures/aspects/instrumentum.png`, `textures/aspects/lux.png`, `textures/aspects/machina.png`, `textures/aspects/metallum.png`, `textures/aspects/mortuus.png`, `textures/aspects/motus.png`, `textures/aspects/ordo.png`, `textures/aspects/perditio.png`, `textures/aspects/permutatio.png`, `textures/aspects/potentia.png`, `textures/aspects/praecantatio.png`, `textures/aspects/praemunio.png`, `textures/aspects/sensus.png`, `textures/aspects/spiritus.png`, `textures/aspects/tenebrae.png`, `textures/aspects/terra.png`, `textures/aspects/vacuos.png`, `textures/aspects/victus.png`, `textures/aspects/vinculum.png`, `textures/aspects/vitium.png`, `textures/aspects/vitreus.png`, `textures/aspects/volatus.png`, `textures/block/alembic.png`, `textures/block/brain_box.png`, `textures/block/condenser_lattice.png`, `textures/block/crystal.png`, `textures/block/essentia_input.png`, `textures/entity/arcanebore.png`, `textures/entity/centrifuge.png`, `textures/entity/crossbow.png`, `textures/entity/cultist.png`, `textures/entity/eldritch_golem.png`, `textures/entity/golems/golem_hauler.png`, `textures/entity/golems/golem_head_other.png`, `textures/entity/golems/golem_legs_floater.png`, `textures/entity/golems/golem_legs_wheel.png`, `textures/entity/grappler.png`, `textures/gui/gui_research_back_1.png`, `textures/gui/gui_research_back_2.png`, `textures/gui/gui_research_back_3.png`, `textures/gui/gui_research_back_4.png`, `textures/gui/gui_research_back_5.png`, `textures/gui/gui_research_back_6.png`, `textures/gui/gui_research_back_7.png`, `textures/gui/gui_research_back_over.png`, `textures/gui/hud_wand.png`, `textures/item/creative_node_placer.png`, `textures/item/filter.png`, `textures/item/grapple_gun.png`, `textures/misc/golem/addon_armored.png`, `textures/misc/golem/addon_hauler.png`, `textures/models/golem_decoration.png`
+- **ordeaux** (16): `textures/block/arcane_workbench_charger.png`, `textures/block/inlay_connect_under2.png`, `textures/block/node_stabilizer_over.png`, `textures/entity/brain2.png`, `textures/entity/eldritch_guardian.png`, `textures/foci/air.png`, `textures/foci/bolt.png`, `textures/foci/break.png`, `textures/foci/curse.png`, `textures/misc/architect_arrows.png`, `textures/research/cat_alchemy.png`, `textures/research/cat_artifice.png`, `textures/research/cat_auromancy.png`, `textures/research/cat_eldritch.png`, `textures/research/cat_golemancy.png`, `textures/research/cat_infusion.png`
+| Poly Haven brown_leather | CC0 1.0 | https://polyhaven.com/a/brown_leather | `textures/gui/gui_researchbook.png`, `textures/models/armor/void_robe_layer_1.png` |

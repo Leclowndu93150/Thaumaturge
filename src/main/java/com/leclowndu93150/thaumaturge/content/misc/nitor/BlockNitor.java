@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.misc.nitor;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -83,6 +83,6 @@ public final class BlockNitor extends BaseEntityBlock {
         if (!level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.NITOR.get(), BlockEntityNitor::clientTick);
+        return createTickerHelper(type, TTBlockEntities.NITOR.get(), BlockEntityNitor::clientTick);
     }
 }

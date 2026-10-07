@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.server.command;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.registry.TCFocusElements;
+import com.leclowndu93150.thaumaturge.registry.TTFocusElements;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 public final class FocusElementArguments {
     public static final SuggestionProvider<CommandSourceStack> SUGGESTIONS =
             (ctx, builder) -> SharedSuggestionProvider.suggest(
-                    TCFocusElements.registry().keySet().stream().map(ResourceLocation::toString), builder);
+                    TTFocusElements.registry().keySet().stream().map(ResourceLocation::toString), builder);
 
     private static final DynamicCommandExceptionType ERROR_UNKNOWN_ELEMENT =
             new DynamicCommandExceptionType(value -> Component.literal("Unknown focus element: " + value));
@@ -28,7 +28,7 @@ public final class FocusElementArguments {
         for (String token : raw.trim().split("\\s+")) {
             ResourceLocation id = token.contains(":")
                     ? ResourceLocation.parse(token)
-                    : ResourceLocation.fromNamespaceAndPath(TCIds.MODID, token);
+                    : ResourceLocation.fromNamespaceAndPath(TTIds.MODID, token);
             if (FocusEngine.element(id) == null) {
                 throw ERROR_UNKNOWN_ELEMENT.create(id);
             }

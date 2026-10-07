@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.client.render.research;
 
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.TCTooltips;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTTooltips;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -71,15 +71,15 @@ public final class ItemRequirementWidget {
     private static void renderSectionHeader(GuiGraphics graphics, int x, int y, int v) {
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BOOK,
+                TTScreenTextures.RESEARCH_BOOK,
                 x + SECTION_HEADER_OFFSET_X,
                 y + SECTION_HEADER_OFFSET_Y,
                 (float) SECTION_HEADER_U,
                 (float) v,
                 SECTION_HEADER_WIDTH,
                 SECTION_HEADER_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 SECTION_HEADER_TINT);
     }
 
@@ -99,7 +99,7 @@ public final class ItemRequirementWidget {
                 && mouseY >= y
                 && mouseX < popupX + SECTION_POPUP_WIDTH
                 && mouseY < y + SECTION_POPUP_HEIGHT) {
-            DeferredTooltip.set(TCTooltips.need(which), mouseX, mouseY);
+            DeferredTooltip.set(TTTooltips.need(which), mouseX, mouseY);
         }
     }
 
@@ -119,15 +119,15 @@ public final class ItemRequirementWidget {
         }
         if (hasItem) {
             graphics.blit(
-                    TCScreenTextures.RESEARCH_BOOK,
+                    TTScreenTextures.RESEARCH_BOOK,
                     x + CHECKMARK_OFFSET_X,
                     y,
                     (float) CHECKMARK_U,
                     (float) CHECKMARK_V,
                     CHECKMARK_SIZE,
                     CHECKMARK_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE);
         }
         if (mouseX >= x && mouseY >= y && mouseX < x + ICON_SIZE && mouseY < y + ICON_SIZE && !stack.isEmpty()) {
             DeferredTooltip.setItem(stack, mouseX, mouseY);

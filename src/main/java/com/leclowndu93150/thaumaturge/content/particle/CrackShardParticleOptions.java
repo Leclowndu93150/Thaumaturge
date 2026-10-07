@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,6 +33,6 @@ public record CrackShardParticleOptions(int color, int variant, float scale, int
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.CRACK_SHARD.get();
+        return TTParticles.CRACK_SHARD.get();
     }
 }

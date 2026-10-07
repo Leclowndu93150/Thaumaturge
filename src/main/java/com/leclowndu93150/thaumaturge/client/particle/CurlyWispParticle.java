@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.RandomSource;
 
-public final class CurlyWispParticle extends TCParticle {
+public final class CurlyWispParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final float END_R = 0.1F;
     private static final float END_G = 0.0F;
@@ -68,7 +68,7 @@ public final class CurlyWispParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<CurlyWispParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("curly_wisp");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("curly_wisp");
 
         @Override
         public Particle createParticle(

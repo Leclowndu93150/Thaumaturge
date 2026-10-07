@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.DeconTableModel;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public final class DeconstructionTableRenderer implements BlockEntityRenderer<BlockEntityDeconstructionTable> {
-    private static final ResourceLocation TABLE_TEXTURE = TCIds.rl("textures/entity/decontable.png");
+    private static final ResourceLocation TABLE_TEXTURE = TTIds.rl("textures/entity/decontable.png");
 
     private static final float BOOK_Y = 1.02F;
     private static final float BOOK_SCALE = 0.8F;
@@ -37,7 +37,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
     private final DeconTableModel model;
 
     public DeconstructionTableRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new DeconTableModel(context.bakeLayer(TCModelLayers.DECONSTRUCTION_TABLE));
+        this.model = new DeconTableModel(context.bakeLayer(TTModelLayers.DECONSTRUCTION_TABLE));
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class DeconstructionTableRenderer implements BlockEntityRenderer<Bl
             return;
         }
         float ticks = (table.getLevel().getGameTime() % 360L) + partialTick;
-        ItemStack book = new ItemStack(TCItems.THAUMOMETER.get());
+        ItemStack book = new ItemStack(TTItems.THAUMOMETER.get());
         ItemStack input = table.items().getStackInSlot(BlockEntityDeconstructionTable.SLOT_INPUT);
         Holder<IAspect> aspect = resolveAspect(table);
 

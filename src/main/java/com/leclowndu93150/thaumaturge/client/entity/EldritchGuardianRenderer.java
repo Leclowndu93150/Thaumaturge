@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.EldritchGuardianModel;
 import com.leclowndu93150.thaumaturge.client.render.entity.TintBufferSource;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class EldritchGuardianRenderer
         extends MobRenderer<EntityEldritchGuardian, EldritchGuardianModel<EntityEldritchGuardian>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/eldritch_guardian.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/eldritch_guardian.png");
     private static final float SHADOW = 0.5F;
     private static final float NEAR_ALPHA = 0.6F;
     private static final double NEAR_RANGE_SQ = 256.0;
@@ -26,7 +26,7 @@ public final class EldritchGuardianRenderer
     private static final double FAR_RANGE_SQ = 1024.0;
 
     public EldritchGuardianRenderer(EntityRendererProvider.Context context) {
-        super(context, new EldritchGuardianModel<>(context.bakeLayer(TCModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
+        super(context, new EldritchGuardianModel<>(context.bakeLayer(TTModelLayers.ELDRITCH_GUARDIAN)), SHADOW);
     }
 
     @Override

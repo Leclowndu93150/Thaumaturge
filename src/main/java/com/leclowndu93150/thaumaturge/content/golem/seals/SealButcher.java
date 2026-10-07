@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealGui;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -35,7 +35,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("butcher");
+        return TTIds.rl("butcher");
     }
 
     @Override
@@ -109,7 +109,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_butcher.png");
+        return TTIds.rl("textures/item/seal_butcher.png");
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SealButcher implements ISeal, ISealGui, ISealConfigArea {
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.FIGHTER.get(), TCGolemTraits.SMART.get()};
+        return new GolemTrait[] {TTGolemTraits.FIGHTER.get(), TTGolemTraits.SMART.get()};
     }
 
     @Override

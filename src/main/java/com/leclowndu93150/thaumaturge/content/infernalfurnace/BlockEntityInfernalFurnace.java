@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +40,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public class BlockEntityInfernalFurnace extends BlockEntity {
 
     private final ItemStackHandler inventory = new ItemStackHandler(32) {
@@ -62,14 +62,14 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
     public int facingZ = -5;
 
     public BlockEntityInfernalFurnace(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
+        super(TTBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
     }
 
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
-                TCBlockEntities.INFERNAL_FURNACE.get(),
+                TTBlockEntities.INFERNAL_FURNACE.get(),
                 (be, side) -> side == null || side == Direction.UP ? be.inventory() : null);
     }
 

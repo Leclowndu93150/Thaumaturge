@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidSwordItem extends SwordItem implements IWarpingGear {
     public VoidSwordItem(Properties properties) {
-        super(TCMaterials.TOOL_VOID, properties);
+        super(TTMaterials.TOOL_VOID, properties);
     }
 
     @Override

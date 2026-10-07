@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -181,7 +181,7 @@ public final class InfusionRecipe implements Recipe<InfusionInput>, IInfusionRec
 
     @Override
     public RecipeType<InfusionRecipe> getType() {
-        return TCRecipeTypes.INFUSION.get();
+        return TTRecipeTypes.INFUSION.get();
     }
 
     @Override

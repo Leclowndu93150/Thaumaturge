@@ -5,8 +5,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -47,7 +47,7 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
     private int breakTime;
 
     public BlockEntityDeconstructionTable(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.DECONSTRUCTION_TABLE.get(), pos, state);
+        super(TTBlockEntities.DECONSTRUCTION_TABLE.get(), pos, state);
     }
 
     public ItemStackHandler items() {
@@ -156,7 +156,7 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         inventory.deserializeNBT(registries, input.getCompound("inventory"));
-        resultAspect = TCNbt.read(input, "result_aspect", LegacyIds.IDENTIFIER_CODEC, registries)
+        resultAspect = TTNbt.read(input, "result_aspect", LegacyIds.IDENTIFIER_CODEC, registries)
                 .orElse(null);
         breakTime = input.contains("break_time") ? input.getInt("break_time") : BREAK_TIME_TICKS;
     }
@@ -166,7 +166,7 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
         super.saveAdditional(output, registries);
         output.put("inventory", inventory.serializeNBT(registries));
         if (resultAspect != null) {
-            TCNbt.store(output, "result_aspect", ResourceLocation.CODEC, registries, resultAspect);
+            TTNbt.store(output, "result_aspect", ResourceLocation.CODEC, registries, resultAspect);
         }
         output.putInt("break_time", breakTime);
     }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
@@ -12,7 +12,7 @@ import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -32,7 +32,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ThaumometerAspectOverlay {
     private static final float TAG_SCALE_CAP = 0.5F;
     private static final float TAG_SCALE_GROWTH = 0.031F;
@@ -59,7 +59,7 @@ public final class ThaumometerAspectOverlay {
             return;
         }
         if (mc.options.getCameraType().isFirstPerson()
-                && mc.player.getMainHandItem().is(TCItems.THAUMOMETER.get())
+                && mc.player.getMainHandItem().is(TTItems.THAUMOMETER.get())
                 && mc.player.getOffhandItem().isEmpty()) {
             resetAnimation();
             return;
@@ -133,8 +133,8 @@ public final class ThaumometerAspectOverlay {
     }
 
     private static boolean holdsThaumometer(Player player) {
-        return player.getMainHandItem().is(TCItems.THAUMOMETER.get())
-                || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
+        return player.getMainHandItem().is(TTItems.THAUMOMETER.get())
+                || player.getOffhandItem().is(TTItems.THAUMOMETER.get());
     }
 
     private static AspectList scannedAspects(Player player, AspectList aspects, ResourceLocation scanKey) {

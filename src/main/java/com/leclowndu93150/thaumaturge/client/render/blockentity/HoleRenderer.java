@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.leclowndu93150.thaumaturge.content.focus.BlockEntityHole;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -21,14 +21,14 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole> {
     private static final float SURFACE_INSET = 0.001F;
     private static final RenderType SURFACE = RenderType.create(
-            "tc_hole_surface",
+            "tt_hole_surface",
             DefaultVertexFormat.POSITION,
             VertexFormat.Mode.QUADS,
             1536,
             false,
             false,
             RenderType.CompositeState.builder()
-                    .setShaderState(new RenderStateShard.ShaderStateShard(TCShaders::ender))
+                    .setShaderState(new RenderStateShard.ShaderStateShard(TTShaders::ender))
                     .setTextureState(new RenderStateShard.TextureStateShard(
                             TheEndPortalRenderer.END_PORTAL_LOCATION, false, false))
                     .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
@@ -57,7 +57,7 @@ public final class HoleRenderer implements BlockEntityRenderer<BlockEntityHole> 
         for (Direction direction : Direction.values()) {
             neighborPos.setWithOffset(pos, direction);
             BlockState neighbor = level.getBlockState(neighborPos);
-            if (neighbor.is(TCBlocks.HOLE.get()) || !neighbor.isSolidRender(level, neighborPos)) {
+            if (neighbor.is(TTBlocks.HOLE.get()) || !neighbor.isSolidRender(level, neighborPos)) {
                 continue;
             }
             if (buffer == null) {

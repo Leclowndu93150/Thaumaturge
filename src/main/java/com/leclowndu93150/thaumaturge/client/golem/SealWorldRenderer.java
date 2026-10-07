@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigArea;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
@@ -29,16 +29,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class SealWorldRenderer {
-    private static final ResourceLocation AREA_RING = TCIds.rl("textures/misc/seal_area.png");
-    private static final ResourceLocation CORNER_FRAME = TCIds.rl("textures/misc/frame_corner.png");
+    private static final ResourceLocation AREA_RING = TTIds.rl("textures/misc/seal_area.png");
+    private static final ResourceLocation CORNER_FRAME = TTIds.rl("textures/misc/frame_corner.png");
     private static final double MAX_DIST_SQR = 256.0;
     private static final float RING_SCALE = 0.9F;
     private static final float ICON_SCALE = 0.5F;
     private static final float RING_ALPHA = 0.8F;
     private static final float CORNER_ALPHA = 0.7F;
-    private static final RenderType ICON_TYPE = TCRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
+    private static final RenderType ICON_TYPE = TTRenderTypes.translucentTextured(InventoryMenu.BLOCK_ATLAS);
 
     private static final Direction[][] ROT_FACES = {
         {Direction.DOWN, Direction.NORTH, Direction.WEST},
@@ -58,7 +58,7 @@ public final class SealWorldRenderer {
     private SealWorldRenderer() {}
 
     private static RenderType typeFor(ResourceLocation texture) {
-        return TCRenderTypes.translucentTextured(texture);
+        return TTRenderTypes.translucentTextured(texture);
     }
 
     @SubscribeEvent

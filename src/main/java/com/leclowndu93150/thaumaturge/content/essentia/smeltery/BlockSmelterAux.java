@@ -1,8 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.essentia.smeltery;
 
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -13,11 +16,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public class BlockSmelterAux extends Block {
 
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(
+            box(3.0, 0.0, 3.0, 13.0, 12.0, 13.0),
+            box(2.0, 1.0, 2.0, 14.0, 2.0, 14.0),
+            box(2.0, 10.0, 2.0, 14.0, 11.0, 14.0),
+            box(6.0, 12.0, 6.0, 10.0, 13.0, 10.0),
+            box(6.0, 6.0, 1.0, 10.0, 10.0, 3.0),
+            box(5.0, 5.0, 0.0, 11.0, 11.0, 1.0)));
 
     public BlockSmelterAux(Properties properties) {
         super(properties);
@@ -48,6 +62,11 @@ public class BlockSmelterAux extends Block {
         // The port faces into the smelter. Deriving this from the clicked face, rather than the
         // player's look direction, also makes side placement deterministic from every angle.
         return defaultBlockState().setValue(FACING, face.getOpposite());
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPES.get(state.getValue(FACING));
     }
 
     @Override

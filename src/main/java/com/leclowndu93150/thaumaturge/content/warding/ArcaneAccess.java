@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -66,11 +66,11 @@ public final class ArcaneAccess {
     }
 
     public static boolean isLock(ServerLevel level, BlockPos pos) {
-        return level.getBlockState(pos).is(TCBlocks.ARCANE_DOOR.get())
-                || level.getBlockState(pos).is(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+        return level.getBlockState(pos).is(TTBlocks.ARCANE_DOOR.get())
+                || level.getBlockState(pos).is(TTBlocks.ARCANE_PRESSURE_PLATE.get());
     }
 
     private static ArcaneLockChunkData locks(ServerLevel level, BlockPos pos) {
-        return level.getChunkAt(pos).getData(TCAttachments.ARCANE_LOCKS.get());
+        return level.getChunkAt(pos).getData(TTAttachments.ARCANE_LOCKS.get());
     }
 }

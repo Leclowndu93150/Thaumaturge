@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.warding;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.client.renderer.RenderType;
@@ -128,7 +128,7 @@ public final class WardedGlassBakedModel implements IDynamicBakedModel {
     private static int connectionMask(BlockAndTintGetter level, BlockPos pos, Direction face) {
         int mask = 0;
         for (int bit = 0; bit < 8; bit++) {
-            if (level.getBlockState(offset(pos, face, bit)).is(TCBlocks.WARDED_GLASS.get())) {
+            if (level.getBlockState(offset(pos, face, bit)).is(TTBlocks.WARDED_GLASS.get())) {
                 mask |= 1 << bit;
             }
         }

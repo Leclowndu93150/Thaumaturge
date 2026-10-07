@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +27,7 @@ public final class BlockEntityItemGrate extends BlockEntity {
     };
 
     public BlockEntityItemGrate(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ITEM_GRATE.get(), pos, state);
+        super(TTBlockEntities.ITEM_GRATE.get(), pos, state);
     }
 
     public ItemStackHandler inventory() {
@@ -38,7 +38,7 @@ public final class BlockEntityItemGrate extends BlockEntity {
         if (level == null || level.isClientSide() || !getBlockState().getValue(BlockItemGrate.OPEN)) return false;
         BlockPos below = worldPosition.below();
         BlockState state = level.getBlockState(below);
-        return state.is(TCBlocks.INFERNAL_FURNACE.get()) || !state.isSolidRender(level, below);
+        return state.is(TTBlocks.INFERNAL_FURNACE.get()) || !state.isSolidRender(level, below);
     }
 
     public void eject() {

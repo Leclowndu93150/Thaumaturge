@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -48,7 +48,7 @@ public final class ItemResearchNote extends Item {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    TCSounds.LEARN.get(),
+                    TTSounds.LEARN.get(),
                     SoundSource.PLAYERS,
                     0.66F,
                     1.0F);

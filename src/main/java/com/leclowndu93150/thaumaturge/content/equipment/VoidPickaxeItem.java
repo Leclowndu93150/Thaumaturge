@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 
 public final class VoidPickaxeItem extends PickaxeItem implements IWarpingGear {
     public VoidPickaxeItem(Properties properties) {
-        super(TCMaterials.TOOL_VOID, properties);
+        super(TTMaterials.TOOL_VOID, properties);
     }
 
     @Override

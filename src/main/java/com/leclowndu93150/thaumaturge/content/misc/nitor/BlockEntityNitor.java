@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.misc.nitor;
 
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -11,7 +11,7 @@ public final class BlockEntityNitor extends BlockEntity {
     private int count = 0;
 
     public BlockEntityNitor(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.NITOR.get(), pos, state);
+        super(TTBlockEntities.NITOR.get(), pos, state);
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityNitor be) {

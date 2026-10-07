@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.lighting;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -21,7 +21,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class NitorLightingTests {
     private static final BlockPos SOURCE = new BlockPos(0, 8, 0);
 

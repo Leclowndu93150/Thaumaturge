@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -22,8 +22,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 public final class PechWandItem extends Item {
-    private static final ResourceLocation GATE_RESEARCH = TCIds.rl("base_auromancy");
-    private static final ResourceLocation FOCUS_PECH = TCIds.rl("focuspech");
+    private static final ResourceLocation GATE_RESEARCH = TTIds.rl("base_auromancy");
+    private static final ResourceLocation FOCUS_PECH = TTIds.rl("focuspech");
 
     public PechWandItem(Properties properties) {
         super(properties);
@@ -53,7 +53,7 @@ public final class PechWandItem extends Item {
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    TCSounds.LEARN.get(),
+                    TTSounds.LEARN.get(),
                     SoundSource.NEUTRAL,
                     0.5F,
                     0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));

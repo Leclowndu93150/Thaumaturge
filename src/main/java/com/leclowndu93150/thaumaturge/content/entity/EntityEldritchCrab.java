@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -57,7 +57,11 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
     private static final float HARD_GROUP_EFFECT_CHANCE = 0.1F;
     private static final int BREAK_PARTICLES = 8;
 
+    private static final int SHELL_BREAK_TICKS = 8;
+
     private int attackTime;
+
+    private int shellBreakTicks;
 
     public EntityEldritchCrab(EntityType<? extends EntityEldritchCrab> type, Level level) {
         super(type, level);
@@ -91,6 +95,18 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
 
     public boolean hasHelm() {
         return this.entityData.get(DATA_HELM);
+    }
+
+    public int shellBreakTicks() {
+        return this.shellBreakTicks;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (DATA_HELM.equals(key) && this.level().isClientSide() && !this.hasHelm()) {
+            this.shellBreakTicks = SHELL_BREAK_TICKS;
+        }
     }
 
     public void setHelm(boolean helm) {
@@ -141,6 +157,9 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
             this.fallDistance = 0.0F;
         }
         if (this.level().isClientSide()) {
+            if (this.shellBreakTicks > 0) {
+                this.shellBreakTicks--;
+            }
             return;
         }
         var target = this.getTarget();
@@ -166,7 +185,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
     @Override
     public boolean doHurtTarget(Entity target) {
         if (super.doHurtTarget(target)) {
-            this.playSound(TCSounds.CRABCLAW.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
+            this.playSound(TTSounds.CRABCLAW.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
             return true;
         }
         return false;
@@ -183,7 +202,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
         if (this.hasHelm() && this.getHealth() / this.getMaxHealth() <= HELM_BREAK_HEALTH_FRACTION) {
             this.setHelm(false);
             level.sendParticles(
-                    new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(TCItems.CRIMSON_PLATE_CHEST.get())),
+                    new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(TTItems.CRIMSON_PLATE_CHEST.get())),
                     this.getX(),
                     this.getY() + this.getBbHeight() / 2.0,
                     this.getZ(),
@@ -220,7 +239,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CRABTALK.get();
+        return TTSounds.CRABTALK.get();
     }
 
     @Override
@@ -230,7 +249,7 @@ public class EntityEldritchCrab extends Monster implements IEldritchMob, ISidedH
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.CRABDEATH.get();
+        return TTSounds.CRABDEATH.get();
     }
 
     @Override

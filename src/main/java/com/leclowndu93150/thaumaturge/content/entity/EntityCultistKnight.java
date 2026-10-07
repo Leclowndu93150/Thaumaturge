@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -54,18 +54,18 @@ public class EntityCultistKnight extends EntityCultist {
 
     @Override
     protected void setLoot(DifficultyInstance difficulty) {
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TCItems.CRIMSON_PLATE_HELM.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TCItems.CRIMSON_PLATE_CHEST.get()));
-        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TCItems.CRIMSON_PLATE_LEGS.get()));
-        this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TCItems.CRIMSON_BOOTS.get()));
+        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_PLATE_HELM.get()));
+        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_PLATE_CHEST.get()));
+        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_PLATE_LEGS.get()));
+        this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TTItems.CRIMSON_BOOTS.get()));
         float specialChance =
                 this.level().getDifficulty() == Difficulty.HARD ? SPECIAL_WEAPON_CHANCE_HARD : SPECIAL_WEAPON_CHANCE;
         if (this.random.nextFloat() < specialChance) {
             if (this.random.nextInt(5) == 0) {
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TCItems.VOID_SWORD.get()));
-                this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TCItems.CRIMSON_ROBE_HELM.get()));
+                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TTItems.VOID_SWORD.get()));
+                this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_ROBE_HELM.get()));
             } else {
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TCItems.THAUMIUM_SWORD.get()));
+                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TTItems.THAUMIUM_SWORD.get()));
                 if (this.random.nextBoolean()) {
                     this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
                 }

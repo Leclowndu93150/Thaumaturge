@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
@@ -10,10 +10,10 @@ import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,8 +47,8 @@ public final class CasterManager {
             return 0.0F;
         }
         int total = GogglesAccess.totalVisDiscount(player);
-        MobEffectInstance exhaust = player.getEffect(TCMobEffects.VIS_EXHAUST);
-        MobEffectInstance infectious = player.getEffect(TCMobEffects.INFECTIOUS_VIS_EXHAUST);
+        MobEffectInstance exhaust = player.getEffect(TTMobEffects.VIS_EXHAUST);
+        MobEffectInstance infectious = player.getEffect(TTMobEffects.INFECTIOUS_VIS_EXHAUST);
         if (exhaust != null || infectious != null) {
             int level1 = exhaust != null ? exhaust.getAmplifier() : 0;
             int level2 = infectious != null ? infectious.getAmplifier() : 0;
@@ -76,7 +76,7 @@ public final class CasterManager {
         TreeMap<String, Integer> foci = new TreeMap<>();
         Map<Integer, PouchHandle> pouches = new HashMap<>();
         int pouchCount = 0;
-        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS)) {
             for (ThaumaturgeCuriosCompat.CurioPouchRef ref : ThaumaturgeCuriosCompat.equippedPouches(
                     player, stack -> stack.getItem() instanceof FocusPouchItem)) {
                 pouchCount++;
@@ -111,7 +111,7 @@ public final class CasterManager {
                     && (addFocusToPouch(current.copy(), pouches)
                             || player.getInventory().add(current.copy()))) {
                 caster.setFocus(casterStack, ItemStack.EMPTY);
-                player.playSound(TCSounds.TICKS.get(), SWAP_SOUND_VOLUME, REMOVE_SOUND_PITCH);
+                player.playSound(TTSounds.TICKS.get(), SWAP_SOUND_VOLUME, REMOVE_SOUND_PITCH);
             }
             return;
         }
@@ -140,7 +140,7 @@ public final class CasterManager {
                 return;
             }
         }
-        player.playSound(TCSounds.TICKS.get(), SWAP_SOUND_VOLUME, SWAP_SOUND_PITCH);
+        player.playSound(TTSounds.TICKS.get(), SWAP_SOUND_VOLUME, SWAP_SOUND_PITCH);
         ItemStack current = caster.getFocusStack(casterStack);
         if (!current.isEmpty()
                 && (addFocusToPouch(current.copy(), pouches)
@@ -277,12 +277,12 @@ public final class CasterManager {
     }
 
     private static CasterArea area(ItemStack stack) {
-        CasterArea area = stack.get(TCDataComponents.CASTER_AREA.get());
+        CasterArea area = stack.get(TTDataComponents.CASTER_AREA.get());
         return area == null ? CasterArea.DEFAULT : area;
     }
 
     private static void setArea(ItemStack stack, CasterArea area) {
-        stack.set(TCDataComponents.CASTER_AREA.get(), area);
+        stack.set(TTDataComponents.CASTER_AREA.get(), area);
     }
 
     private static int getAreaSize(ItemStack stack) {
@@ -306,20 +306,20 @@ public final class CasterManager {
     }
 
     public static boolean isOnCooldown(LivingEntity entity) {
-        return entity.getData(TCAttachments.CASTER_COOLDOWN) > entity.level().getGameTime();
+        return entity.getData(TTAttachments.CASTER_COOLDOWN) > entity.level().getGameTime();
     }
 
     public static float getCooldown(LivingEntity entity) {
         long remaining =
-                entity.getData(TCAttachments.CASTER_COOLDOWN) - entity.level().getGameTime();
+                entity.getData(TTAttachments.CASTER_COOLDOWN) - entity.level().getGameTime();
         return remaining > 0 ? (float) remaining / TICKS_PER_SECOND : 0.0F;
     }
 
     public static void setCooldown(LivingEntity entity, int ticks) {
         if (ticks == 0) {
-            entity.setData(TCAttachments.CASTER_COOLDOWN, 0L);
+            entity.setData(TTAttachments.CASTER_COOLDOWN, 0L);
         } else {
-            entity.setData(TCAttachments.CASTER_COOLDOWN, entity.level().getGameTime() + ticks);
+            entity.setData(TTAttachments.CASTER_COOLDOWN, entity.level().getGameTime() + ticks);
         }
     }
 }

@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -65,6 +65,11 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
 
     public void setAnger(int anger) {
         this.entityData.set(DATA_AGGRO, anger);
+    }
+
+    @Override
+    public float enrage() {
+        return this.getAnger() > 0 ? 1.0F : 0.0F;
     }
 
     @Override
@@ -159,7 +164,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritch
                     this.getX(),
                     this.getY() + this.getBbHeight() / 2.0F,
                     this.getZ(),
-                    new ItemStack(TCItems.PRIMORDIAL_PEARL.get())));
+                    new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
         }
     }
 

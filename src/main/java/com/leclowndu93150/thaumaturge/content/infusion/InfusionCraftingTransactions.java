@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGateStatus;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +72,7 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
 
         RecipeHolder<InfusionRecipe> normal = context.level()
                 .getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.INFUSION.get(), input, context.level())
+                .getRecipeFor(TTRecipeTypes.INFUSION.get(), input, context.level())
                 .orElse(null);
         if (normal != null) {
             InfusionRecipe recipe = normal.value();
@@ -92,7 +92,7 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
 
         RecipeHolder<InfusionEnchantmentRecipe> enchantment = context.level()
                 .getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.INFUSION_ENCHANTMENT.get(), input, context.level())
+                .getRecipeFor(TTRecipeTypes.INFUSION_ENCHANTMENT.get(), input, context.level())
                 .orElse(null);
         if (enchantment != null) {
             InfusionEnchantmentRecipe recipe = enchantment.value();
@@ -112,7 +112,7 @@ public final class InfusionCraftingTransactions implements InfusionCraftingTrans
 
         RecipeHolder<InfusionRunicAugmentRecipe> runic = context.level()
                 .getRecipeManager()
-                .getRecipeFor(TCRecipeTypes.RUNIC_AUGMENT.get(), input, context.level())
+                .getRecipeFor(TTRecipeTypes.RUNIC_AUGMENT.get(), input, context.level())
                 .orElse(null);
         if (runic == null) {
             return locked != null

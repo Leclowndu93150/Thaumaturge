@@ -6,9 +6,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.blocks.ILabelable;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,8 +48,19 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
 
+    private static final Map<Direction, VoxelShape> PANE_RECESSES =
+            DeviceShapes.facingShapesFromNorth(box(3.0, 2.0, 1.0, 13.0, 14.0, 2.0));
+
+    private static final Map<Direction, VoxelShape> SPIGOTS = DeviceShapes.facingShapesFromNorth(
+            Shapes.or(box(5.0, 5.0, 0.0, 11.0, 11.0, 1.0), box(6.0, 6.0, 1.0, 10.0, 10.0, 2.0)));
+
+    private static final VoxelShape BODY = body();
+
+    private final Map<BlockState, VoxelShape> shapes;
+
     public BlockAlembic(Properties properties) {
         super(properties);
+        this.shapes = getShapeForEachState(BlockAlembic::shapeFor);
         registerDefaultState(stateDefinition
                 .any()
                 .setValue(NORTH, false)
@@ -124,7 +138,7 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
                         pos.getX() + 0.5,
                         pos.getY() + 0.5,
                         pos.getZ() + 0.5,
-                        TCSounds.PAGE.get(),
+                        TTSounds.PAGE.get(),
                         SoundSource.BLOCKS,
                         1.0F,
                         1.0F);
@@ -147,18 +161,18 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
                     pos.getX() + 0.5,
                     pos.getY() + 0.5,
                     pos.getZ() + 0.5,
-                    TCSounds.PAGE.get(),
+                    TTSounds.PAGE.get(),
                     SoundSource.BLOCKS,
                     1.0F,
                     1.0F);
-            BlockAlembic.popResourceFromFace(level, pos, hitResult.getDirection(), new ItemStack(TCItems.LABEL.get()));
+            BlockAlembic.popResourceFromFace(level, pos, hitResult.getDirection(), new ItemStack(TTItems.LABEL.get()));
         } else {
             level.playSound(
                     null,
                     pos.getX() + 0.5,
                     pos.getY() + 0.5,
                     pos.getZ() + 0.5,
-                    TCSounds.JAR.get(),
+                    TTSounds.JAR.get(),
                     SoundSource.BLOCKS,
                     0.4F,
                     1.0F);
@@ -179,9 +193,27 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
         return InteractionResult.SUCCESS;
     }
 
+    private static VoxelShape body() {
+        VoxelShape cutouts = box(5.0, 15.0, 5.0, 11.0, 16.0, 11.0);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            cutouts = Shapes.or(cutouts, PANE_RECESSES.get(direction));
+        }
+        return Shapes.join(box(1.0, 0.0, 1.0, 15.0, 16.0, 15.0), cutouts, BooleanOp.ONLY_FIRST);
+    }
+
+    private static VoxelShape shapeFor(BlockState state) {
+        VoxelShape shape = BODY;
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (state.getValue(propertyFor(direction))) {
+                shape = Shapes.or(shape, SPIGOTS.get(direction));
+            }
+        }
+        return shape.optimize();
+    }
+
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.box(0.125, 0, 0.125, 0.875, 1, 0.875);
+        return shapes.get(state);
     }
 
     @Override
@@ -202,7 +234,7 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityAlembic alembic))
             return super.playerWillDestroy(level, pos, state, player);
         if (alembic.aspectFilterKey() != null) {
-            popResource(level, pos, new ItemStack(TCItems.LABEL.get()));
+            popResource(level, pos, new ItemStack(TTItems.LABEL.get()));
         }
         return super.playerWillDestroy(level, pos, state, player);
     }

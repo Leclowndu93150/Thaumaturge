@@ -5,7 +5,7 @@
 *.java   text eol=lf
 *.json   text eol=lf
 *.mcmeta text eol=lf
-*.tcmesh text eol=lf
+*.ttmesh text eol=lf
 *.gradle text eol=lf
 *.md     text eol=lf
 *.yml    text eol=lf

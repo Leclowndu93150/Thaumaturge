@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.wands;
 
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
-import com.leclowndu93150.thaumaturge.registry.TCWandParts;
+import com.leclowndu93150.thaumaturge.registry.TTWandParts;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -14,22 +14,22 @@ import net.minecraft.resources.ResourceLocation;
 
 public record WandParts(WandCap cap, WandRod rod, boolean sceptre) {
     public static final Codec<WandParts> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    TCWandParts.caps().byNameCodec().fieldOf("cap").forGetter(WandParts::cap),
-                    TCWandParts.rods().byNameCodec().fieldOf("rod").forGetter(WandParts::rod),
+                    TTWandParts.caps().byNameCodec().fieldOf("cap").forGetter(WandParts::cap),
+                    TTWandParts.rods().byNameCodec().fieldOf("rod").forGetter(WandParts::rod),
                     Codec.BOOL.optionalFieldOf("sceptre", false).forGetter(WandParts::sceptre))
             .apply(instance, WandParts::new));
 
     public static final StreamCodec<ByteBuf, WandParts> STREAM_CODEC = StreamCodec.composite(
-            registryStream(TCWandParts::caps),
+            registryStream(TTWandParts::caps),
             WandParts::cap,
-            registryStream(TCWandParts::rods),
+            registryStream(TTWandParts::rods),
             WandParts::rod,
             ByteBufCodecs.BOOL,
             WandParts::sceptre,
             WandParts::new);
 
     public static WandParts starter() {
-        return new WandParts(TCWandParts.CAP_IRON.get(), TCWandParts.ROD_WOOD.get(), false);
+        return new WandParts(TTWandParts.CAP_IRON.get(), TTWandParts.ROD_WOOD.get(), false);
     }
 
     private static <T> StreamCodec<ByteBuf, T> registryStream(Supplier<Registry<T>> registry) {

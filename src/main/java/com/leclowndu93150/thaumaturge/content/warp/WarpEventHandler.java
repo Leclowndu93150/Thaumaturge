@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.Set;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
@@ -23,20 +23,20 @@ import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class WarpEventHandler {
     private static final int WARP_CHECK_INTERVAL = 2000;
     private static final int DEATH_GAZE_INTERVAL = 20;
     private static final int HUNGER_CURE_DURATION_STEP = 600;
 
     private static final Set<ResourceLocation> MILK_PROOF_EFFECTS = Set.of(
-            TCIds.rl("vis_exhaust"),
-            TCIds.rl("infectious_vis_exhaust"),
-            TCIds.rl("thaumarhia"),
-            TCIds.rl("unnatural_hunger"),
-            TCIds.rl("sun_scorned"),
-            TCIds.rl("death_gaze"),
-            TCIds.rl("flux_taint"));
+            TTIds.rl("vis_exhaust"),
+            TTIds.rl("infectious_vis_exhaust"),
+            TTIds.rl("thaumarhia"),
+            TTIds.rl("unnatural_hunger"),
+            TTIds.rl("sun_scorned"),
+            TTIds.rl("death_gaze"),
+            TTIds.rl("flux_taint"));
 
     private WarpEventHandler() {}
 
@@ -61,10 +61,10 @@ public final class WarpEventHandler {
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
                 && player.tickCount > 0
                 && player.tickCount % WARP_CHECK_INTERVAL == 0
-                && !player.hasEffect(TCMobEffects.WARP_WARD)) {
+                && !player.hasEffect(TTMobEffects.WARP_WARD)) {
             WarpEvents.checkWarpEvent(player);
         }
-        if (player.tickCount % DEATH_GAZE_INTERVAL == 0 && player.hasEffect(TCMobEffects.DEATH_GAZE)) {
+        if (player.tickCount % DEATH_GAZE_INTERVAL == 0 && player.hasEffect(TTMobEffects.DEATH_GAZE)) {
             WarpEvents.checkDeathGaze(player);
         }
     }
@@ -74,7 +74,7 @@ public final class WarpEventHandler {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
-        ItemWarp warp = event.getCrafting().getItem().builtInRegistryHolder().getData(TCDataMaps.ITEM_WARP);
+        ItemWarp warp = event.getCrafting().getItem().builtInRegistryHolder().getData(TTDataMaps.ITEM_WARP);
         if (warp != null) {
             WarpManager.addWarp(player, warp.amount(), WarpType.NORMAL);
         }
@@ -87,23 +87,23 @@ public final class WarpEventHandler {
             return;
         }
         ItemStack used = event.getItem();
-        if (used.is(TCItems.BRAIN.get()) && !ThaumaturgeCommonConfig.WUSS_MODE.get()) {
+        if (used.is(TTItems.BRAIN.get()) && !ThaumaturgeCommonConfig.WUSS_MODE.get()) {
             if (player.getRandom().nextFloat() < 0.1F) {
                 WarpManager.addWarp(player, 1, WarpType.NORMAL);
             } else {
                 WarpManager.addWarp(player, 1 + player.getRandom().nextInt(3), WarpType.TEMPORARY);
             }
         }
-        MobEffectInstance hunger = player.getEffect(TCMobEffects.UNNATURAL_HUNGER);
+        MobEffectInstance hunger = player.getEffect(TTMobEffects.UNNATURAL_HUNGER);
         if (hunger == null || used.get(DataComponents.FOOD) == null) {
             return;
         }
-        if (used.is(Items.ROTTEN_FLESH) || used.is(TCItems.BRAIN.get())) {
-            player.removeEffect(TCMobEffects.UNNATURAL_HUNGER);
+        if (used.is(Items.ROTTEN_FLESH) || used.is(TTItems.BRAIN.get())) {
+            player.removeEffect(TTMobEffects.UNNATURAL_HUNGER);
             int amplifier = hunger.getAmplifier() - 1;
             int duration = hunger.getDuration() - HUNGER_CURE_DURATION_STEP;
             if (duration > 0 && amplifier >= 0) {
-                player.addEffect(new MobEffectInstance(TCMobEffects.UNNATURAL_HUNGER, duration, amplifier, true, true));
+                player.addEffect(new MobEffectInstance(TTMobEffects.UNNATURAL_HUNGER, duration, amplifier, true, true));
             }
             WarpManager.sendActionBar(player, "warp.thaumaturge.text.hunger.2");
         } else {

@@ -10,7 +10,7 @@ import net.minecraft.client.particle.ParticleRenderType;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public final class BlockRunesParticle extends TCParticle {
+public final class BlockRunesParticle extends TTParticle {
     private static final int RUNE_COUNT = 16;
     private static final float QUAD_RADIUS = 0.3F;
     private static final float FACE_OFFSET = -0.51F;
@@ -54,7 +54,7 @@ public final class BlockRunesParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.additive(this.sheet);
+        return TTParticleLayers.additive(this.sheet);
     }
 
     @Override
@@ -75,7 +75,7 @@ public final class BlockRunesParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<BlockRunesParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("block_runes");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("block_runes");
 
         @Override
         public Particle createParticle(

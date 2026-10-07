@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -45,10 +45,10 @@ class GolemPressShapesTest {
                 core.relative(right).relative(back)
             };
             Block[] blocks = {
-                TCBlocks.PLACEHOLDER_IRON_BARS.get(),
-                TCBlocks.PLACEHOLDER_TABLE.get(),
-                TCBlocks.PLACEHOLDER_CAULDRON.get(),
-                TCBlocks.PLACEHOLDER_ANVIL.get()
+                TTBlocks.PLACEHOLDER_IRON_BARS.get(),
+                TTBlocks.PLACEHOLDER_TABLE.get(),
+                TTBlocks.PLACEHOLDER_CAULDRON.get(),
+                TTBlocks.PLACEHOLDER_ANVIL.get()
             };
             // Prime each part's shape before its controller exists.
             for (int i = 0; i < positions.length; i++) {
@@ -56,7 +56,7 @@ class GolemPressShapesTest {
                 states.get(positions[i]).getShape(level, positions[i]);
             }
             states.put(
-                    core, TCBlocks.GOLEM_BUILDER.get().defaultBlockState().setValue(BlockGolemBuilder.FACING, facing));
+                    core, TTBlocks.GOLEM_BUILDER.get().defaultBlockState().setValue(BlockGolemBuilder.FACING, facing));
             VoxelShape base = states.get(core).getShape(level, core);
             assertLocal(base);
             assertNull(

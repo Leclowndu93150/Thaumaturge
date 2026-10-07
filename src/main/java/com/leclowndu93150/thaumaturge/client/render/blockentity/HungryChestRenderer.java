@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityHungryChest;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +16,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.level.block.ChestBlock;
 
 public final class HungryChestRenderer implements BlockEntityRenderer<BlockEntityHungryChest> {
-    private static final Material MATERIAL = new Material(Sheets.CHEST_SHEET, TCIds.rl("entity/chest/hungry"));
+    private static final Material MATERIAL = new Material(Sheets.CHEST_SHEET, TTIds.rl("entity/chest/hungry"));
 
     private final ModelPart bottom;
     private final ModelPart lid;

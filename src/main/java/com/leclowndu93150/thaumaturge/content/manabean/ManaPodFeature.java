@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.manabean;
 
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -29,7 +29,7 @@ public final class ManaPodFeature extends Feature<NoneFeatureConfiguration> {
         RandomSource random = context.random();
         int baseX = context.origin().getX();
         int baseZ = context.origin().getZ();
-        boolean cave = level.getBiome(context.origin()).is(TCBiomes.MAGICAL_FOREST_CAVES);
+        boolean cave = level.getBiome(context.origin()).is(TTBiomes.MAGICAL_FOREST_CAVES);
         int centerY =
                 cave ? context.origin().getY() : level.getHeight(Heightmap.Types.MOTION_BLOCKING, baseX, baseZ) - 1;
         int y = Math.max(level.getMinBuildHeight() + 1, centerY - (cave ? CAVE_SCAN_RANGE : TREE_SCAN_BELOW_SURFACE));
@@ -41,7 +41,7 @@ public final class ManaPodFeature extends Feature<NoneFeatureConfiguration> {
                 if (BlockManaPod.canGrowAt(level, cursor)) {
                     int age = MIN_START_AGE + random.nextInt(START_AGE_SPREAD);
                     level.setBlock(
-                            cursor, TCBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age), 2);
+                            cursor, TTBlocks.MANA_POD.get().defaultBlockState().setValue(BlockManaPod.AGE, age), 2);
                     if (level.getBlockEntity(cursor) instanceof BlockEntityManaPod pod) {
                         pod.assignWildAspect(level.registryAccess(), random);
                     }

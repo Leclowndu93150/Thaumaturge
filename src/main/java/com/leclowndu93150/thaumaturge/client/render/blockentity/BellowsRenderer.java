@@ -1,10 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +15,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBellows> {
@@ -23,9 +23,9 @@ public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBel
     private static final int TOP = 1;
     private static final int BAG = 2;
     public static final ModelResourceLocation[] MODEL_IDS = {
-        ModelResourceLocation.standalone(TCIds.rl("block/bellows/bottom_plank")),
-        ModelResourceLocation.standalone(TCIds.rl("block/bellows/top_plank")),
-        ModelResourceLocation.standalone(TCIds.rl("block/bellows/bag"))
+        ModelResourceLocation.standalone(TTIds.rl("block/bellows/bottom_plank")),
+        ModelResourceLocation.standalone(TTIds.rl("block/bellows/top_plank")),
+        ModelResourceLocation.standalone(TTIds.rl("block/bellows/bag"))
     };
 
     private final RandomSource random = RandomSource.create();
@@ -46,14 +46,7 @@ public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBel
 
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);
-        switch (facing) {
-            case DOWN -> {}
-            case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-            case NORTH -> poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            case EAST -> poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-            case SOUTH -> poseStack.mulPose(Axis.XP.rotationDegrees(270.0F));
-            case WEST -> poseStack.mulPose(Axis.ZP.rotationDegrees(270.0F));
-        }
+        BlockFacingPose.northBased(poseStack, facing);
         poseStack.translate(-0.5F, -0.5F, -0.5F);
 
         poseStack.pushPose();
@@ -84,7 +77,7 @@ public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBel
         for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
             modelRenderer.renderModel(
                     poseStack.last(),
-                    buffers.getBuffer(renderType),
+                    buffers.getBuffer(RenderTypeHelper.getEntityRenderType(renderType, false)),
                     state,
                     model,
                     1.0F,

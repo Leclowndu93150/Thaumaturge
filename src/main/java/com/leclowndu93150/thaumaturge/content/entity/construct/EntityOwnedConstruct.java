@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
@@ -82,17 +82,17 @@ public abstract class EntityOwnedConstruct extends PathfinderMob implements Owna
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.CLACK.get();
+        return TTSounds.CLACK.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.CLACK.get();
+        return TTSounds.CLACK.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.TOOL.get();
+        return TTSounds.TOOL.get();
     }
 
     @Override

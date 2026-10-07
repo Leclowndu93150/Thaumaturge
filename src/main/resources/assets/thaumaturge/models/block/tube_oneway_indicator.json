@@ -2,7 +2,7 @@
   "ambientocclusion": false,
   "textures": {
     "indicator": "minecraft:block/blue_concrete",
-    "particle": "thaumaturge:block/tube"
+    "particle": "thaumaturge:block/tube_2"
   },
   "elements": [
     {

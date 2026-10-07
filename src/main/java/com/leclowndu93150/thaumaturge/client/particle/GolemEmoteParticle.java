@@ -7,7 +7,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.util.RandomSource;
 
-public final class GolemEmoteParticle extends TCParticle {
+public final class GolemEmoteParticle extends TTParticle {
     private static final int CONFUSED_BASE = 3;
     private static final int CONFUSED_FRAMES = 10;
     private static final int TASK_BASE = 13;
@@ -52,11 +52,11 @@ public final class GolemEmoteParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<GolemEmoteParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("golem_emote");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("golem_emote");
 
         @Override
         public Particle createParticle(

@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.content.world.mound;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCStructures;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTStructures;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
 
     public MoundPiece(RandomSource random, int west, int north) {
         super(
-                TCStructures.MOUND_PIECE.get(),
+                TTStructures.MOUND_PIECE.get(),
                 west,
                 64,
                 north,
@@ -61,7 +61,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
     }
 
     public MoundPiece(CompoundTag tag) {
-        super(TCStructures.MOUND_PIECE.get(), tag);
+        super(TTStructures.MOUND_PIECE.get(), tag);
         this.spawnedPortal = tag.getBoolean("Portal");
     }
 
@@ -182,7 +182,7 @@ public class MoundPiece extends ScatteredFeaturePiece {
         }
         this.spawnedPortal = true;
         EntityCultistPortalLesser portal =
-                TCEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel());
+                TTEntities.CULTIST_PORTAL_LESSER.get().create(level.getLevel());
         if (portal != null) {
             portal.setPersistenceRequired();
             portal.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
@@ -195,16 +195,16 @@ public class MoundPiece extends ScatteredFeaturePiece {
         float roll = random.nextFloat();
         boolean crate = random.nextFloat() < CRATE_CHANCE;
         if (roll < RARE_CHANCE) {
-            return (crate ? TCBlocks.LOOT_CRATE_RARE : TCBlocks.LOOT_URN_RARE)
+            return (crate ? TTBlocks.LOOT_CRATE_RARE : TTBlocks.LOOT_URN_RARE)
                     .get()
                     .defaultBlockState();
         }
         if (roll < UNCOMMON_CHANCE) {
-            return (crate ? TCBlocks.LOOT_CRATE_UNCOMMON : TCBlocks.LOOT_URN_UNCOMMON)
+            return (crate ? TTBlocks.LOOT_CRATE_UNCOMMON : TTBlocks.LOOT_URN_UNCOMMON)
                     .get()
                     .defaultBlockState();
         }
-        return (crate ? TCBlocks.LOOT_CRATE_COMMON : TCBlocks.LOOT_URN_COMMON)
+        return (crate ? TTBlocks.LOOT_CRATE_COMMON : TTBlocks.LOOT_URN_COMMON)
                 .get()
                 .defaultBlockState();
     }

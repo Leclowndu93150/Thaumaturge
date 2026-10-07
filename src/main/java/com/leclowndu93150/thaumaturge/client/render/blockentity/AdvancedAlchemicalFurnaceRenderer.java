@@ -1,60 +1,62 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 /** Renders the Advanced Alchemical Furnace model around its modern controller. */
 public final class AdvancedAlchemicalFurnaceRenderer
         implements BlockEntityRenderer<BlockEntityAdvancedAlchemicalFurnace> {
-    public static final ModelResourceLocation BASE_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_base"));
-    public static final ModelResourceLocation BASE_ON_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_base_on"));
-    public static final ModelResourceLocation TANK_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_tank"));
-    public static final ModelResourceLocation TANK_ON_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/advanced_alchemical_furnace_tank_on"));
+    private static final ResourceLocation MODEL = TTIds.rl("models/mesh/advanced_alchemical_furnace.ttmesh");
+    private static final RenderType BASE =
+            RenderType.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace.png"));
+    private static final RenderType BASE_HOT =
+            RenderType.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_on.png"));
+    private static final RenderType TANK =
+            RenderType.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_tank.png"));
+    private static final RenderType TANK_FILLED =
+            RenderType.entityCutout(TTIds.rl("textures/block/advanced_alchemical_furnace_tank_on.png"));
+    private static final RenderType TANK_TRIM = RenderType.entityCutout(TTIds.rl("textures/block/metal_thaumium.png"));
+    private static final String PART_BASE = "Base";
+    private static final String PART_TANK = "Tank";
+    private static final String PART_TANK_TRIM = "TankTrim";
+    private static final int WHITE = 0xFFFFFFFF;
+    private static final int SIDES = 4;
+    private static final float SIDE_ANGLE = 90.0F;
 
     private static final int VENT_FIRE_LIGHT = LightTexture.pack(14, 0);
     private static final int VENT_BACKING_LIGHT = LightTexture.pack(9, 0);
     private static final int TANK_GOO_LIGHT = LightTexture.pack(12, 0);
-
-    private final RandomSource random = RandomSource.create();
-
-    private static final RandomSource PREVIEW_RANDOM = RandomSource.create();
 
     public AdvancedAlchemicalFurnaceRenderer(BlockEntityRendererProvider.Context context) {}
 
     /** Renders the inactive complete furnace for inventory and recipe-viewer previews. */
     public static void renderPreview(
             BlockState state, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay) {
-        renderModel(state, BASE_MODEL_ID, PREVIEW_RANDOM, poseStack, buffers, light, overlay);
-        for (int rotation = 0; rotation < 4; rotation++) {
-            poseStack.pushPose();
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * rotation));
-            renderModel(state, TANK_MODEL_ID, PREVIEW_RANDOM, poseStack, buffers, light, overlay);
-            poseStack.popPose();
-        }
+        renderMesh(false, false, poseStack, buffers, light, null);
     }
 
     @Override
@@ -69,20 +71,12 @@ public final class AdvancedAlchemicalFurnaceRenderer
             return;
         }
 
-        BlockState state = furnace.getBlockState();
         boolean hot = furnace.heat() > 100;
         boolean charged = !furnace.aspects().isEmpty();
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        renderModel(state, hot ? BASE_ON_MODEL_ID : BASE_MODEL_ID, random, poseStack, buffers, light, overlay);
-        ModelResourceLocation tank = charged ? TANK_ON_MODEL_ID : TANK_MODEL_ID;
-        for (int rotation = 0; rotation < 4; rotation++) {
-            poseStack.pushPose();
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * rotation));
-            renderModel(state, tank, random, poseStack, buffers, light, overlay);
-            poseStack.popPose();
-        }
+        renderMesh(hot, charged, poseStack, buffers, light, furnace);
         if (charged) {
             renderStoredEssentia(furnace.aspects().totalAmount(), poseStack, buffers);
         }
@@ -92,14 +86,14 @@ public final class AdvancedAlchemicalFurnaceRenderer
         poseStack.popPose();
     }
 
-    /** The original OBJ leaves these four sloped openings to the renderer for animated fire. */
+    /** Fills the mesh's four sloped vent openings with animated fire. */
     private static void renderHeatVents(int heat, PoseStack poseStack, MultiBufferSource buffers) {
         TextureAtlasSprite fire = Minecraft.getInstance()
                 .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                 .apply(ResourceLocation.withDefaultNamespace("block/fire_0"));
         TextureAtlasSprite backing = Minecraft.getInstance()
                 .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                .apply(TCIds.rl("block/base_metal"));
+                .apply(TTIds.rl("block/base_metal"));
         VertexConsumer fireBuffer = buffers.getBuffer(Sheets.translucentCullBlockSheet());
         VertexConsumer backingBuffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
         float base = 1.0F - Math.min(1.0F, heat / (float) BlockEntityAdvancedAlchemicalFurnace.MAX_POWER);
@@ -119,14 +113,14 @@ public final class AdvancedAlchemicalFurnaceRenderer
         }
     }
 
-    /** Restores the TC4 liquid/window pass omitted by the initial model port. */
+    /** Renders stored essentia behind the tank windows. */
     private static void renderStoredEssentia(int stored, PoseStack poseStack, MultiBufferSource buffers) {
         TextureAtlasSprite goo = Minecraft.getInstance()
                 .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                .apply(TCIds.rl("block/flux_goo"));
+                .apply(TTIds.rl("block/flux_goo"));
         TextureAtlasSprite backing = Minecraft.getInstance()
                 .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                .apply(TCIds.rl("block/base_metal"));
+                .apply(TTIds.rl("block/base_metal"));
         VertexConsumer gooBuffer = buffers.getBuffer(Sheets.translucentCullBlockSheet());
         VertexConsumer backingBuffer = buffers.getBuffer(Sheets.cutoutBlockSheet());
         float fillBase = 1.0F - Math.min(1.0F, stored / (float) BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
@@ -193,34 +187,89 @@ public final class AdvancedAlchemicalFurnaceRenderer
         buffer.addVertex(pose, x, y, 0.0F)
                 .setColor(0xFFFFFFFF)
                 .setUv(u, v)
-                .setOverlay(0)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(pose, 0.0F, 0.0F, normalZ);
     }
 
-    private static void renderModel(
-            BlockState state,
-            ModelResourceLocation modelId,
-            RandomSource random,
-            PoseStack poseStack,
+    private static void renderMesh(
+            boolean hot,
+            boolean filled,
+            PoseStack pose,
             MultiBufferSource buffers,
             int light,
-            int overlay) {
-        BakedModel model = Minecraft.getInstance().getModelManager().getModel(modelId);
-        ModelBlockRenderer renderer = Minecraft.getInstance().getBlockRenderer().getModelRenderer();
-        for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
-            renderer.renderModel(
-                    poseStack.last(),
-                    buffers.getBuffer(renderType),
-                    state,
-                    model,
-                    1.0F,
-                    1.0F,
-                    1.0F,
-                    light,
-                    overlay,
-                    ModelData.EMPTY,
-                    renderType);
+            @Nullable BlockEntityAdvancedAlchemicalFurnace furnace) {
+        for (TTMeshPart part : GolemMeshes.get(MODEL).parts()) {
+            if (PART_BASE.equals(part.name())) {
+                renderPart(part, pose.last(), buffers.getBuffer(hot ? BASE_HOT : BASE), light, furnace, 0);
+            } else if (PART_TANK.equals(part.name())) {
+                renderTankPart(part, filled ? TANK_FILLED : TANK, pose, buffers, light, furnace);
+            } else if (PART_TANK_TRIM.equals(part.name())) {
+                renderTankPart(part, TANK_TRIM, pose, buffers, light, furnace);
+            }
+        }
+    }
+
+    private static void renderTankPart(
+            TTMeshPart part,
+            RenderType type,
+            PoseStack pose,
+            MultiBufferSource buffers,
+            int light,
+            @Nullable BlockEntityAdvancedAlchemicalFurnace furnace) {
+        for (int side = 0; side < SIDES; side++) {
+            pose.pushPose();
+            pose.mulPose(Axis.ZP.rotationDegrees(SIDE_ANGLE * side));
+            renderPart(part, pose.last(), buffers.getBuffer(type), light, furnace, side);
+            pose.popPose();
+        }
+    }
+
+    private static void renderPart(
+            TTMeshPart part,
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            int previewLight,
+            @Nullable BlockEntityAdvancedAlchemicalFurnace furnace,
+            int side) {
+        if (furnace == null || furnace.getLevel() == null) {
+            GolemMeshes.renderPart(part, pose, buffer, previewLight, WHITE);
+            return;
+        }
+        BlockPos origin = furnace.getBlockPos();
+        Matrix4f worldTransform = new Matrix4f()
+                .translate(origin.getX() + 0.5F, origin.getY(), origin.getZ() + 0.5F)
+                .rotateX(-Mth.HALF_PI)
+                .rotateZ(side * Mth.HALF_PI);
+        float[] positions = part.positions();
+        float[] normals = part.normals();
+        float[] uvs = part.uvs();
+        Vector3f center = new Vector3f();
+        Vector3f normal = new Vector3f();
+        for (int quad = 0; quad < part.quadCount(); quad++) {
+            center.zero();
+            normal.zero();
+            for (int corner = 0; corner < 4; corner++) {
+                int index = (quad * 4 + corner) * 3;
+                center.add(positions[index], positions[index + 1], positions[index + 2]);
+                normal.add(normals[index], normals[index + 1], normals[index + 2]);
+            }
+            center.mul(0.25F).mulPosition(worldTransform);
+            normal.mulDirection(worldTransform).normalize();
+            // Sample just outside each surface, rather than inside the enclosed controller cell.
+            center.fma(0.01F, normal);
+            int light =
+                    LevelRenderer.getLightColor(furnace.getLevel(), BlockPos.containing(center.x, center.y, center.z));
+            for (int corner = 0; corner < 4; corner++) {
+                int vertex = quad * 4 + corner;
+                int index = vertex * 3;
+                buffer.addVertex(pose, positions[index], positions[index + 1], positions[index + 2])
+                        .setColor(WHITE)
+                        .setUv(uvs == null ? 0.0F : uvs[vertex * 2], uvs == null ? 0.0F : 1.0F - uvs[vertex * 2 + 1])
+                        .setOverlay(OverlayTexture.NO_OVERLAY)
+                        .setLight(light)
+                        .setNormal(pose, normals[index], normals[index + 1], normals[index + 2]);
+            }
         }
     }
 

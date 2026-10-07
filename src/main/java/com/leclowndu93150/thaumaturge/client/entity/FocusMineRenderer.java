@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.model.entity.FocusMineModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFocusMine;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -15,7 +15,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 
 public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/grappler.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/focus_mine.png");
     private static final float PULSE_PERIOD = 5.0F;
     private static final float PULSE_AMPLITUDE = 0.25F;
     private static final float PULSE_BASE = 0.75F;
@@ -24,12 +24,12 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
     private static final float GROUND_LIFT = 0.05F;
     private static final float COLOR_DIVISOR = 255.0F;
 
-    private final GrapplerModel model;
+    private final FocusMineModel model;
 
     public FocusMineRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;
-        this.model = new GrapplerModel(context.bakeLayer(TCModelLayers.GRAPPLER));
+        this.model = new FocusMineModel(context.bakeLayer(TTModelLayers.FOCUS_MINE));
     }
 
     @Override
@@ -52,7 +52,6 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
         poseStack.pushPose();
         poseStack.translate(0.0F, GROUND_LIFT, 0.0F);
         poseStack.mulPose(Axis.YP.rotationDegrees(ticks * SPIN_DEGREES_PER_TICK));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(-90.0F));
         model.root.render(
                 poseStack,
                 buffers.getBuffer(RenderType.entityCutout(TEXTURE)),

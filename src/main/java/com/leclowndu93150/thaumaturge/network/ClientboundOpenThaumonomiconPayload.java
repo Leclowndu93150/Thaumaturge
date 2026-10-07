@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -10,7 +10,7 @@ public record ClientboundOpenThaumonomiconPayload() implements CustomPacketPaylo
     public static final ClientboundOpenThaumonomiconPayload INSTANCE = new ClientboundOpenThaumonomiconPayload();
 
     public static final Type<ClientboundOpenThaumonomiconPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "open_thaumonomicon"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "open_thaumonomicon"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundOpenThaumonomiconPayload> STREAM_CODEC =
             StreamCodec.unit(INSTANCE);

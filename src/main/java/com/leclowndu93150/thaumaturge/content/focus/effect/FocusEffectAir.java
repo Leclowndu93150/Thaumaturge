@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.particle.AirGustParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.particles.ParticleTypes;
@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectAir implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("air");
+    private static final ResourceLocation KEY = TTIds.rl("air");
 
     private static final int POWER_COMPLEXITY_FACTOR = 2;
     private static final float BASE_RADIUS = 1.2F;
@@ -43,12 +43,12 @@ public final class FocusEffectAir implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_elemental"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_elemental"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.AER;
+        return TTAspects.AER;
     }
 
     @Override
@@ -102,6 +102,6 @@ public final class FocusEffectAir implements FocusEffect {
     public void onCast(LivingEntity caster) {
         caster.level()
                 .playSound(
-                        null, caster.blockPosition().above(), TCSounds.WIND.get(), SoundSource.PLAYERS, 0.125F, 2.0F);
+                        null, caster.blockPosition().above(), TTSounds.WIND.get(), SoundSource.PLAYERS, 0.125F, 2.0F);
     }
 }

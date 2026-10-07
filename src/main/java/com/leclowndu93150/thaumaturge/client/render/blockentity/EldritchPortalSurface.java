@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,18 +16,18 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public final class EldritchPortalSurface {
-    public static final ResourceLocation TUNNEL_TEXTURE = TCIds.rl("textures/misc/tunnel.png");
-    public static final ResourceLocation PARTICLE_FIELD_TEXTURE = TCIds.rl("textures/misc/particlefield.png");
+    public static final ResourceLocation TUNNEL_TEXTURE = TTIds.rl("textures/misc/tunnel.png");
+    public static final ResourceLocation PARTICLE_FIELD_TEXTURE = TTIds.rl("textures/misc/particlefield.png");
 
     public static final RenderType SURFACE = RenderType.create(
-            "tc_eldritch_portal_surface",
+            "tt_eldritch_portal_surface",
             DefaultVertexFormat.POSITION_TEX,
             VertexFormat.Mode.QUADS,
             1536,
             false,
             false,
             RenderType.CompositeState.builder()
-                    .setShaderState(new RenderStateShard.ShaderStateShard(TCShaders::portal))
+                    .setShaderState(new RenderStateShard.ShaderStateShard(TTShaders::portal))
                     .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
                             .add(TUNNEL_TEXTURE, false, false)
                             .add(PARTICLE_FIELD_TEXTURE, true, false)

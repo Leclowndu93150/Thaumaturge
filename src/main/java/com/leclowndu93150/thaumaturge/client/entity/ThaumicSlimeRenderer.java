@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.SlimeModel;
@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 
 public final class ThaumicSlimeRenderer extends MobRenderer<ThaumicSlime, SlimeModel<ThaumicSlime>> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/entity/thaumic_slime.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/entity/thaumic_slime.png");
 
     public ThaumicSlimeRenderer(EntityRendererProvider.Context context) {
         super(context, new SlimeModel<>(context.bakeLayer(ModelLayers.SLIME)), 0.25F);

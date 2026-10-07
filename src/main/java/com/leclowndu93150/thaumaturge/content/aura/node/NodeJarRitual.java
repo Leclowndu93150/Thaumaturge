@@ -1,18 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.content.misc.TCActionBar;
+import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerFx;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 
 public final class NodeJarRitual {
-    public static final ResourceLocation RESEARCH_NODE_JAR = TCIds.rl("node_jar");
+    public static final ResourceLocation RESEARCH_NODE_JAR = TTIds.rl("node_jar");
 
     private static final int JAR_VIS_COST_PER_PRIMAL = 70;
     private static final float MODIFIER_DEGRADE_CHANCE = 0.75F;
@@ -52,22 +52,22 @@ public final class NodeJarRitual {
             return true;
         }
         if (!KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_JAR)) {
-            TCActionBar.sendPurple(player, "tc.jar.noresearch");
+            TTActionBar.sendPurple(player, "tc.jar.noresearch");
             return true;
         }
         if (!fitsStructure(level, nodePos)) {
-            TCActionBar.sendPurple(player, "tc.jar.structure");
+            TTActionBar.sendPurple(player, "tc.jar.structure");
             return true;
         }
         Map<ResourceKey<IAspect>, Integer> cost = new LinkedHashMap<>();
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             cost.put(primal, JAR_VIS_COST_PER_PRIMAL * WandEconomy.CENTIVIS_PER_VIS);
         }
         if (!WandVisHelper.consumeSpecificFromHotbar(player, cost, true)) {
-            TCActionBar.sendPurple(player, "tc.jar.vis", JAR_VIS_COST_PER_PRIMAL);
+            TTActionBar.sendPurple(player, "tc.jar.vis", JAR_VIS_COST_PER_PRIMAL);
             return true;
         }
-        level.playSound(null, nodePos, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, nodePos, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         List<BlockPos> structure = structurePositions(nodePos);
         Vec3 hand = player instanceof ServerPlayer serverPlayer
                 ? DustTriggerFx.posToHand(serverPlayer, InteractionHand.MAIN_HAND)
@@ -103,7 +103,7 @@ public final class NodeJarRitual {
         NodeData data = new NodeData(
                 node.getNodeType(), Optional.ofNullable(modifier), node.getAspects(), node.getAspectsBase());
         level.removeBlockEntity(nodePos);
-        level.setBlock(nodePos, TCBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(nodePos, TTBlocks.JAR_NODE.get().defaultBlockState(), Block.UPDATE_ALL);
         if (level.getBlockEntity(nodePos) instanceof BlockEntityJarNode jar) {
             jar.applyNodeData(data);
             jar.setChanged();

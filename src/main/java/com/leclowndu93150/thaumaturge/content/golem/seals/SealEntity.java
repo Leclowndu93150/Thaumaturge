@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSeals;
+import com.leclowndu93150.thaumaturge.registry.TTSeals;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Optional;
@@ -72,7 +72,7 @@ public final class SealEntity implements ISealEntity {
             Optional<UUID> owner,
             BlockPos area,
             CompoundTag data) {
-        SealType type = TCSeals.registry().get(typeId);
+        SealType type = TTSeals.registry().get(typeId);
         if (type == null) {
             throw new IllegalStateException("Unknown seal type " + typeId);
         }

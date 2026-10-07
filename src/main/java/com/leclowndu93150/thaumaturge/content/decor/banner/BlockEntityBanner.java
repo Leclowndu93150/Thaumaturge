@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.decor.banner;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
@@ -20,7 +20,7 @@ public final class BlockEntityBanner extends BlockEntity {
     private @Nullable ResourceKey<IAspect> aspect;
 
     public BlockEntityBanner(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.BANNER.get(), pos, state);
+        super(TTBlockEntities.BANNER.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspect() {
@@ -69,14 +69,14 @@ public final class BlockEntityBanner extends BlockEntity {
     public void collectImplicitComponents(DataComponentMap.Builder builder) {
         super.collectImplicitComponents(builder);
         if (aspect != null) {
-            builder.set(TCDataComponents.ASPECT_FILTER.get(), aspect);
+            builder.set(TTDataComponents.ASPECT_FILTER.get(), aspect);
         }
     }
 
     @Override
     public void applyImplicitComponents(DataComponentInput components) {
         super.applyImplicitComponents(components);
-        this.aspect = components.get(TCDataComponents.ASPECT_FILTER.get());
+        this.aspect = components.get(TTDataComponents.ASPECT_FILTER.get());
     }
 
     @Override

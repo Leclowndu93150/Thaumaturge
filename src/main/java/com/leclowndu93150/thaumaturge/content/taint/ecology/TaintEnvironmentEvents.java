@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintCrawler;
 import com.leclowndu93150.thaumaturge.network.ClientboundTaintEnvironmentPayload;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,7 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintEnvironmentEvents {
     private static final int SYNC_INTERVAL = 10;
     private static final int BIOME_BLEND_RADIUS = 12;
@@ -86,7 +86,7 @@ public final class TaintEnvironmentEvents {
         }
         BlockPos spawn = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, sample)
                 .above();
-        EntityTaintCrawler crawler = TCEntities.TAINT_CRAWLER.get().create(level);
+        EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level);
         if (crawler == null) return;
         crawler.moveTo(
                 spawn.getX() + 0.5,

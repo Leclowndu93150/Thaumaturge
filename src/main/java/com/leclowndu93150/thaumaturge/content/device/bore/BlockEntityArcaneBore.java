@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,7 +48,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
     private float prevPitch;
 
     public BlockEntityArcaneBore(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ARCANE_BORE.get(), pos, state);
+        super(TTBlockEntities.ARCANE_BORE.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityArcaneBore bore) {
@@ -184,7 +184,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
 
     @Override
     public FakePlayer boreDigger(ServerLevel level) {
-        return TCFakePlayer.BORE.at(level, borePosition().add(0.0, EYE_HEIGHT, 0.0), yaw, pitch);
+        return TTFakePlayer.BORE.at(level, borePosition().add(0.0, EYE_HEIGHT, 0.0), yaw, pitch);
     }
 
     @Override
@@ -237,7 +237,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (!tool.isEmpty()) {
-            TCNbt.store(output, "Tool", ItemStack.CODEC, registries, tool);
+            TTNbt.store(output, "Tool", ItemStack.CODEC, registries, tool);
         }
         output.putFloat("Charge", core.charge());
         writeSyncData(output);
@@ -253,7 +253,7 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        tool = TCNbt.read(input, "Tool", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
+        tool = TTNbt.read(input, "Tool", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
         core.setCharge(input.getFloat("Charge"));
         digging = input.getBoolean("Digging");
         digTarget = input.contains("DigTarget") ? BlockPos.of(input.getLong("DigTarget")) : null;

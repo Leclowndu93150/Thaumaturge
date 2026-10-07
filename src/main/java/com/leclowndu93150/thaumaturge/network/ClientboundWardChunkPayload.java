@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.ChunkPos;
 public record ClientboundWardChunkPayload(ChunkPos chunk, List<ClientboundWardChunkPayload.Group> groups)
         implements CustomPacketPayload {
     public static final Type<ClientboundWardChunkPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "ward_chunk"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "ward_chunk"));
 
     private static final StreamCodec<RegistryFriendlyByteBuf, ChunkPos> CHUNK_POS_CODEC =
             StreamCodec.of((buf, chunk) -> buf.writeLong(chunk.toLong()), buf -> new ChunkPos(buf.readLong()));

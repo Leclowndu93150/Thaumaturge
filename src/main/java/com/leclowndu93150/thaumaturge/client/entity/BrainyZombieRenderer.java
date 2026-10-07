@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.entity.TintBufferSource;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyZombie;
 import com.leclowndu93150.thaumaturge.content.entity.EntityGiantBrainyZombie;
@@ -16,7 +16,7 @@ import net.minecraft.util.Mth;
 
 public final class BrainyZombieRenderer
         extends AbstractZombieRenderer<EntityBrainyZombie, ZombieModel<EntityBrainyZombie>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/brainy_zombie.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/brainy_zombie.png");
     private static final float ANGER_TINT_STRENGTH = 0.5F;
 
     public BrainyZombieRenderer(EntityRendererProvider.Context context) {

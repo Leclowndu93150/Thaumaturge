@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.focus.FocusFX;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.resources.ResourceKey;
@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectHeal implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("heal");
+    private static final ResourceLocation KEY = TTIds.rl("heal");
 
     private static final int POWER_COMPLEXITY_FACTOR = 4;
     private static final float UNDEAD_DAMAGE_FACTOR = 1.5F;
@@ -38,12 +38,12 @@ public final class FocusEffectHeal implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_heal"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_heal"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.VICTUS;
+        return TTAspects.VICTUS;
     }
 
     @Override
@@ -94,6 +94,6 @@ public final class FocusEffectHeal implements FocusEffect {
 
     @Override
     public void impactParticles(Level level, Vec3 pos, Vec3 motion, Vec3 drift) {
-        level.addParticle(TCParticles.HEAL_FLASH.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
+        level.addParticle(TTParticles.HEAL_FLASH.get(), pos.x, pos.y, pos.z, 0.0, 0.0, 0.0);
     }
 }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.EntityAccessor;
@@ -13,7 +13,7 @@ import snownee.jade.api.config.IPluginConfig;
 public enum GolemComponentProvider implements IEntityComponentProvider {
     INSTANCE;
 
-    private static final ResourceLocation UID = TCIds.rl("golem");
+    private static final ResourceLocation UID = TTIds.rl("golem");
 
     @Override
     public ResourceLocation getUid() {
@@ -29,7 +29,7 @@ public enum GolemComponentProvider implements IEntityComponentProvider {
     public void appendTooltip(ITooltip tooltip, EntityAccessor accessor, IPluginConfig config) {
         if (!JadeConfig.shouldShow(config, JadeConfig.GOLEMS, accessor)) return;
         if (!(accessor.getEntity() instanceof EntityThaumaturgeGolem golem)
-                || !golem.getProperties().hasTrait(TCGolemTraits.SMART.get())) {
+                || !golem.getProperties().hasTrait(TTGolemTraits.SMART.get())) {
             return;
         }
         int rank = golem.getProperties().getRank();

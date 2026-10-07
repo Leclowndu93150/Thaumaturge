@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -25,7 +25,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class FocusMediumTouch implements FocusMedium {
-    private static final ResourceLocation KEY = TCIds.rl("touch");
+    private static final ResourceLocation KEY = TTIds.rl("touch");
 
     static final double RAY_MIN_RANGE = 0.25;
     static final float RAY_PADDING = 0.25F;
@@ -40,7 +40,7 @@ public class FocusMediumTouch implements FocusMedium {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("base_auromancy"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("base_auromancy"), Optional.empty(), false);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FocusMediumTouch implements FocusMedium {
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.AVERSIO;
+        return TTAspects.AVERSIO;
     }
 
     protected double range(CastContext ctx) {

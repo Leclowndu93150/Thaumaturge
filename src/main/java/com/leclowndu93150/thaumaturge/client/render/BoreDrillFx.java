@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BeamRenderType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,7 +18,7 @@ public final class BoreDrillFx {
     private static final float BEAM_RADIUS = 0.15F;
     private static final float BEAM_ALPHA = 0.4F;
     private static final int BEAM_TINT = ARGB32.colorFromFloat(BEAM_ALPHA, 0.0F, 1.0F, 0.4F);
-    private static final RenderType BEAM_TYPE = TCRenderTypes.fxAdditive(TCIds.rl("textures/misc/beam1.png"));
+    private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(TTIds.rl("textures/misc/beam1.png"));
     private static final int BEAM_LIGHT = 0x000000C8;
     private static final int BEAM_STRIPS = 3;
     private static final float TIP_FORWARD_OFFSET = 0.5F;

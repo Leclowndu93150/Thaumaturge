@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aspect;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
@@ -36,17 +36,17 @@ final class EquipmentAspects {
         AspectList bonus = AspectList.EMPTY;
         int defense = (int) attributeTotal(stack, Attributes.ARMOR);
         if (defense > 0 && isHumanoidArmor(stack)) {
-            bonus = with(bonus, registries, TCAspects.PRAEMUNIO, defense * ASPECT_PER_POINT);
+            bonus = with(bonus, registries, TTAspects.PRAEMUNIO, defense * ASPECT_PER_POINT);
         }
         if (stack.is(ItemTags.SWORDS)) {
             int attack = (int) attributeTotal(stack, Attributes.ATTACK_DAMAGE);
             if (attack > 0) {
                 int amount = Math.max(1, attack - SWORD_BASE_MODIFIER) * ASPECT_PER_POINT;
-                bonus = with(bonus, registries, TCAspects.AVERSIO, amount);
+                bonus = with(bonus, registries, TTAspects.AVERSIO, amount);
             }
         } else if (item instanceof ProjectileWeaponItem) {
-            bonus = with(bonus, registries, TCAspects.AVERSIO, BOW_AVERSIO);
-            bonus = with(bonus, registries, TCAspects.VOLATUS, BOW_VOLATUS);
+            bonus = with(bonus, registries, TTAspects.AVERSIO, BOW_AVERSIO);
+            bonus = with(bonus, registries, TTAspects.VOLATUS, BOW_VOLATUS);
         } else if (stack.is(ItemTags.PICKAXES)
                 || stack.is(ItemTags.AXES)
                 || stack.is(ItemTags.SHOVELS)
@@ -63,7 +63,7 @@ final class EquipmentAspects {
             } else {
                 amount = 4 * ASPECT_PER_POINT;
             }
-            bonus = with(bonus, registries, TCAspects.INSTRUMENTUM, amount);
+            bonus = with(bonus, registries, TTAspects.INSTRUMENTUM, amount);
         }
         return bonus;
     }

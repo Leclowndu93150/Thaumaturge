@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
-public final class VisSparkleParticle extends TCParticle {
+public final class VisSparkleParticle extends TTParticle {
     private static final int FRAME_COUNT = 16;
     private static final int MAX_LIFETIME = 1000;
     private static final int GROW_TICKS = 10;
@@ -74,7 +74,7 @@ public final class VisSparkleParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<VisSparkleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("vis_sparkle");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("vis_sparkle");
 
         @Override
         public Particle createParticle(

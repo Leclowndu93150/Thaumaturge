@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.screen.golem;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
@@ -14,17 +14,19 @@ import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCButtonIcon;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCHoverButton;
-import com.leclowndu93150.thaumaturge.client.screen.widget.TCScrollButton;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTButtonIcon;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTHoverButton;
+import com.leclowndu93150.thaumaturge.client.screen.widget.TTScrollButton;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.press.MenuGolemBuilder;
 import com.leclowndu93150.thaumaturge.network.ServerboundGolemPressPayload;
-import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -42,9 +44,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGolemBuilder> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_golembuilder.png");
-    private static final ResourceLocation MATERIAL_ICON = TCIds.rl("textures/item/golem.png");
+public final class GolemBuilderScreen extends AbstractTTContainerScreen<MenuGolemBuilder> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_golembuilder.png");
 
     private static final int IMAGE_WIDTH = 208;
     private static final int IMAGE_HEIGHT = 224;
@@ -120,23 +121,23 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
     protected void init() {
         super.init();
         valHeads.clear();
-        TCGolemParts.heads().forEach(head -> {
+        TTGolemParts.heads().forEach(head -> {
             if (knowsAll(head.research())) valHeads.add(head);
         });
         valMats.clear();
-        TCGolemParts.materials().forEach(mat -> {
+        TTGolemParts.materials().forEach(mat -> {
             if (knowsAll(mat.research())) valMats.add(mat);
         });
         valArms.clear();
-        TCGolemParts.arms().forEach(arm -> {
+        TTGolemParts.arms().forEach(arm -> {
             if (knowsAll(arm.research())) valArms.add(arm);
         });
         valLegs.clear();
-        TCGolemParts.legs().forEach(leg -> {
+        TTGolemParts.legs().forEach(leg -> {
             if (knowsAll(leg.research())) valLegs.add(leg);
         });
         valAddons.clear();
-        TCGolemParts.addons().forEach(addon -> {
+        TTGolemParts.addons().forEach(addon -> {
             if (knowsAll(addon.research())) valAddons.add(addon);
         });
         if (headIndex >= valHeads.size()) {
@@ -223,48 +224,48 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             addPartButton(
                     120,
                     24,
-                    valHeads.get(headIndex).icon(),
+                    new TTButtonIcon.TextureIcon(valHeads.get(headIndex).icon()),
                     "head",
-                    keyOf(TCGolemParts.heads(), valHeads.get(headIndex)),
+                    keyOf(TTGolemParts.heads(), valHeads.get(headIndex)),
                     WHITE);
         }
         if (!valMats.isEmpty()) {
             addPartButton(
                     24,
                     24,
-                    MATERIAL_ICON,
+                    new TTButtonIcon.StackIcon(materialStack(valMats.get(matIndex))),
                     "material",
-                    keyOf(TCGolemParts.materials(), valMats.get(matIndex)),
-                    valMats.get(matIndex).itemColor());
+                    keyOf(TTGolemParts.materials(), valMats.get(matIndex)),
+                    WHITE);
         }
         if (!valArms.isEmpty()) {
             addPartButton(
                     120,
                     48,
-                    valArms.get(armIndex).icon(),
+                    new TTButtonIcon.TextureIcon(valArms.get(armIndex).icon()),
                     "arm",
-                    keyOf(TCGolemParts.arms(), valArms.get(armIndex)),
+                    keyOf(TTGolemParts.arms(), valArms.get(armIndex)),
                     WHITE);
         }
         if (!valLegs.isEmpty()) {
             addPartButton(
                     120,
                     72,
-                    valLegs.get(legIndex).icon(),
+                    new TTButtonIcon.TextureIcon(valLegs.get(legIndex).icon()),
                     "leg",
-                    keyOf(TCGolemParts.legs(), valLegs.get(legIndex)),
+                    keyOf(TTGolemParts.legs(), valLegs.get(legIndex)),
                     WHITE);
         }
         if (!valAddons.isEmpty()
                 && !"none"
-                        .equals(keyOf(TCGolemParts.addons(), valAddons.get(addonIndex))
+                        .equals(keyOf(TTGolemParts.addons(), valAddons.get(addonIndex))
                                 .getPath())) {
             addPartButton(
                     24,
                     72,
-                    valAddons.get(addonIndex).icon(),
+                    new TTButtonIcon.TextureIcon(valAddons.get(addonIndex).icon()),
                     "addon",
-                    keyOf(TCGolemParts.addons(), valAddons.get(addonIndex)),
+                    keyOf(TTGolemParts.addons(), valAddons.get(addonIndex)),
                     WHITE);
         }
         if (valHeads.isEmpty() || valMats.isEmpty() || valArms.isEmpty() || valLegs.isEmpty() || valAddons.isEmpty()) {
@@ -300,16 +301,16 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             int row = 0;
             int col = 0;
             for (GolemTrait tag : tags) {
-                TCHoverButton button = TCHoverButton.centered(
+                TTHoverButton button = TTHoverButton.centered(
                         leftPos + 72 + col * 16 - xx,
                         topPos + 48 + 16 * row - yy,
                         16,
-                        new TCButtonIcon.TextureIcon(tag.icon()),
+                        new TTButtonIcon.TextureIcon(tag.icon()),
                         Component.translatable(
-                                GolemTrait.nameKey(TCGolemTraits.registry().getKey(tag))),
+                                GolemTrait.nameKey(TTGolemTraits.registry().getKey(tag))),
                         () -> {});
                 button.setDescription(Component.translatable(
-                        GolemTrait.descriptionKey(TCGolemTraits.registry().getKey(tag))));
+                        GolemTrait.descriptionKey(TTGolemTraits.registry().getKey(tag))));
                 addRenderableWidget(button);
                 if (++row > 3) {
                     row = 0;
@@ -318,22 +319,22 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             }
         }
         int health = 10 + props.getMaterial().healthMod();
-        if (props.hasTrait(TCGolemTraits.FRAGILE.get())) {
+        if (props.hasTrait(TTGolemTraits.FRAGILE.get())) {
             health = (int) (health * 0.75);
         }
         hearts = health / 2.0F;
         int armorValue = props.getMaterial().armor();
-        if (props.hasTrait(TCGolemTraits.ARMORED.get())) {
+        if (props.hasTrait(TTGolemTraits.ARMORED.get())) {
             armorValue = (int) Math.max(armorValue * 1.5, armorValue + 1);
         }
-        if (props.hasTrait(TCGolemTraits.FRAGILE.get())) {
+        if (props.hasTrait(TTGolemTraits.FRAGILE.get())) {
             armorValue = (int) (armorValue * 0.75);
         }
         armor = armorValue / 2.0F;
-        double damageValue = props.hasTrait(TCGolemTraits.FIGHTER.get())
+        double damageValue = props.hasTrait(TTGolemTraits.FIGHTER.get())
                 ? props.getMaterial().damage()
                 : 0.0;
-        if (props.hasTrait(TCGolemTraits.BRUTAL.get())) {
+        if (props.hasTrait(TTGolemTraits.BRUTAL.get())) {
             damageValue = Math.max(damageValue * 1.5, damageValue + 1.0);
         }
         damage = (float) (damageValue / 2.0);
@@ -383,10 +384,10 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         if (optionCount <= 1) {
             return;
         }
-        addRenderableWidget(TCScrollButton.of(
+        addRenderableWidget(TTScrollButton.of(
                 leftPos + baseX - 5 - 6,
                 topPos - 5 + baseY + 8,
-                TCScrollButton.Direction.LEFT,
+                TTScrollButton.Direction.LEFT,
                 Component.translatable("gui.thaumaturge.golem_builder.previous"),
                 () -> {
                     decrement.run();
@@ -395,10 +396,10 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                     }
                     gatherInfo();
                 }));
-        addRenderableWidget(TCScrollButton.of(
+        addRenderableWidget(TTScrollButton.of(
                 leftPos + baseX - 5 + 22,
                 topPos - 5 + baseY + 8,
-                TCScrollButton.Direction.RIGHT,
+                TTScrollButton.Direction.RIGHT,
                 Component.translatable("gui.thaumaturge.golem_builder.next"),
                 () -> {
                     increment.run();
@@ -409,17 +410,22 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                 }));
     }
 
-    private void addPartButton(int x, int y, ResourceLocation icon, String kind, ResourceLocation id, int color) {
-        TCHoverButton button = TCHoverButton.centered(
-                leftPos + x,
-                topPos + y,
-                16,
-                new TCButtonIcon.TextureIcon(icon),
-                Component.translatable(GolemPart.nameKey(kind, id)),
-                () -> {});
+    private void addPartButton(int x, int y, TTButtonIcon icon, String kind, ResourceLocation id, int color) {
+        TTHoverButton button = TTHoverButton.centered(
+                leftPos + x, topPos + y, 16, icon, Component.translatable(GolemPart.nameKey(kind, id)), () -> {});
         button.setDescription(Component.translatable(GolemPart.descriptionKey(kind, id)));
         button.setTintColor(ARGB32.opaque(color));
         addRenderableWidget(button);
+    }
+
+    private static ItemStack materialStack(GolemMaterial material) {
+        GolemProperties defaults = GolemProperties.createDefault();
+        ItemStack stack = new ItemStack(TTItems.GOLEM_PLACER.get());
+        stack.set(
+                TTDataComponents.GOLEM_PROPERTIES.get(),
+                new GolemProperties(
+                        material, defaults.getHead(), defaults.getArms(), defaults.getLegs(), defaults.getAddon(), 0));
+        return stack;
     }
 
     private static <T> ResourceLocation keyOf(Registry<T> registry, T value) {
@@ -452,7 +458,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             }
         }
         for (var widget : children()) {
-            if (widget instanceof TCButton button) {
+            if (widget instanceof TTButton button) {
                 button.active = !disableAll;
             }
         }
@@ -498,11 +504,11 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         if (!components.isEmpty()) {
             Holder<IAspect> machina = machinaHolder();
             if (machina != null) {
-                TCHoverButton aspectButton = TCHoverButton.centered(
+                TTHoverButton aspectButton = TTHoverButton.centered(
                         leftPos + 152,
                         topPos + 24,
                         16,
-                        new TCButtonIcon.AspectIcon(machina),
+                        new TTButtonIcon.AspectIcon(machina),
                         Component.translatable(
                                 "aspect.thaumaturge." + machina.value().tag()),
                         () -> {});
@@ -513,11 +519,11 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             int row = 1;
             int col = 0;
             for (ItemStack stack : components) {
-                TCHoverButton componentButton = TCHoverButton.centered(
+                TTHoverButton componentButton = TTHoverButton.centered(
                         leftPos + 152 + col * 16,
                         topPos + 24 + 16 * row,
                         16,
-                        new TCButtonIcon.StackIcon(stack),
+                        new TTButtonIcon.StackIcon(stack),
                         Component.empty(),
                         () -> {});
                 componentButton.setMessage(stack.getHoverName());
@@ -529,7 +535,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
             }
         }
         for (var widget : children()) {
-            if (widget instanceof TCButton button) {
+            if (widget instanceof TTButton button) {
                 button.active = !disableAll;
             }
         }
@@ -552,7 +558,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
                 .level
                 .registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
-                .get(TCAspects.MACHINA)
+                .get(TTAspects.MACHINA)
                 .orElse(null);
     }
 
@@ -650,7 +656,7 @@ public final class GolemBuilderScreen extends AbstractTCContainerScreen<MenuGole
         graphics.blit(TEXTURE, 108, 60, SOCKET_U, SOCKET_V, SOCKET_SIZE, SOCKET_SIZE, 256, 256);
     }
 
-    static final class CraftButton extends TCButton {
+    static final class CraftButton extends TTButton {
         private CraftButton(int x, int y, Runnable onPress) {
             super(x, y, CRAFT_WIDTH, CRAFT_HEIGHT, Component.empty(), onPress);
         }

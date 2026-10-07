@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
@@ -13,8 +13,8 @@ import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.Optional;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -40,14 +40,14 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> implements IRecipeCategory<RecipeHolder<R>> {
     public static final RecipeType<RecipeHolder<InfusionRecipe>> RECIPE_TYPE =
-            RecipeType.createFromVanilla(TCRecipeTypes.INFUSION.get());
+            RecipeType.createFromVanilla(TTRecipeTypes.INFUSION.get());
     public static final RecipeType<RecipeHolder<InfusionEnchantmentRecipe>> ENCHANTMENT_RECIPE_TYPE =
-            RecipeType.createFromVanilla(TCRecipeTypes.INFUSION_ENCHANTMENT.get());
+            RecipeType.createFromVanilla(TTRecipeTypes.INFUSION_ENCHANTMENT.get());
     public static final RecipeType<RecipeHolder<InfusionRunicAugmentRecipe>> RUNIC_RECIPE_TYPE =
-            RecipeType.createFromVanilla(TCRecipeTypes.RUNIC_AUGMENT.get());
+            RecipeType.createFromVanilla(TTRecipeTypes.RUNIC_AUGMENT.get());
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png");
     private static final int TEXTURE_SIZE = 512;
 
     private static final int WIDTH = 146;
@@ -78,7 +78,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     private final Component title;
 
     public InfusionCategory(IGuiHelper guiHelper, RecipeType<RecipeHolder<R>> recipeType, String titleKey) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.INFUSION_MATRIX.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.INFUSION_MATRIX.get()));
         this.recipeType = recipeType;
         this.title = Component.translatable(titleKey);
     }

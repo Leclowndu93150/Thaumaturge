@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.HashCommon;
@@ -53,7 +53,7 @@ public final class PedestalRenderer<T extends BlockEntityPedestal> implements Bl
 
     private static float pedestalHeight(BlockEntityPedestal pedestal) {
         var state = pedestal.getBlockState();
-        return state.is(TCBlocks.PEDESTAL_ANCIENT.get()) || state.is(TCBlocks.PEDESTAL_ELDRITCH.get())
+        return state.is(TTBlocks.PEDESTAL_ANCIENT.get()) || state.is(TTBlocks.PEDESTAL_ELDRITCH.get())
                 ? ANCIENT_AND_ELDRITCH_HEIGHT
                 : FULL_HEIGHT;
     }

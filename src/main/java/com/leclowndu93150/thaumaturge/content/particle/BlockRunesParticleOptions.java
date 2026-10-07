@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -40,6 +40,6 @@ public record BlockRunesParticleOptions(float r, float g, float b, int duration,
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.BLOCK_RUNES.get();
+        return TTParticles.BLOCK_RUNES.get();
     }
 }

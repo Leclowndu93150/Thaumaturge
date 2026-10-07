@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionDataMaps;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -33,14 +33,14 @@ public final class ChampionWhitelistProvider extends DataMapProvider {
         add(b, EntityType.ENDERMAN, 0);
         add(b, EntityType.SKELETON, 0);
         add(b, EntityType.WITCH, 1);
-        add(b, TCEntities.BRAINY_ZOMBIE.get(), 0);
-        add(b, TCEntities.BRAINY_DROWNED.get(), 0);
-        add(b, TCEntities.BRAINY_HUSK.get(), 0);
-        add(b, TCEntities.GIANT_BRAINY_ZOMBIE.get(), 0);
-        add(b, TCEntities.ELDRITCH_CRAB.get(), 0);
-        add(b, TCEntities.TAINTACLE.get(), 2);
-        add(b, TCEntities.TAINTACLE_SMALL.get(), 2);
-        add(b, TCEntities.INHABITED_ZOMBIE.get(), 3);
+        add(b, TTEntities.BRAINY_ZOMBIE.get(), 0);
+        add(b, TTEntities.BRAINY_DROWNED.get(), 0);
+        add(b, TTEntities.BRAINY_HUSK.get(), 0);
+        add(b, TTEntities.GIANT_BRAINY_ZOMBIE.get(), 0);
+        add(b, TTEntities.ELDRITCH_CRAB.get(), 0);
+        add(b, TTEntities.TAINTACLE.get(), 2);
+        add(b, TTEntities.TAINTACLE_SMALL.get(), 2);
+        add(b, TTEntities.INHABITED_ZOMBIE.get(), 3);
     }
 
     private void add(Builder<Integer, EntityType<?>> b, EntityType<?> type, int weight) {

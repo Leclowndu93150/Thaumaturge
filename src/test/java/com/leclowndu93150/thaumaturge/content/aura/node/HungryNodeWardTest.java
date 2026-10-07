@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,7 +22,7 @@ class HungryNodeWardTest {
     @Test
     void wardedRayHitBlocksConsumptionWhileUnwardedBlockCanBeEaten() throws Exception {
         BlockEntityNode node =
-                new BlockEntityNode(BlockPos.ZERO, TCBlocks.NODE.get().defaultBlockState());
+                new BlockEntityNode(BlockPos.ZERO, TTBlocks.NODE.get().defaultBlockState());
         ServerLevel level = mock(ServerLevel.class);
         RandomSource random = mock(RandomSource.class);
         BlockPos target = new BlockPos(1, 0, 0);

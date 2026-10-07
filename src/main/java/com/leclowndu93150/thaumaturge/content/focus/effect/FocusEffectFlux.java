@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectFlux implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("flux");
+    private static final ResourceLocation KEY = TTIds.rl("flux");
 
     private static final int BASE_DAMAGE = 3;
     private static final int POWER_COMPLEXITY_FACTOR = 3;
@@ -40,12 +40,12 @@ public final class FocusEffectFlux implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_flux"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_flux"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.VITIUM;
+        return TTAspects.VITIUM;
     }
 
     @Override

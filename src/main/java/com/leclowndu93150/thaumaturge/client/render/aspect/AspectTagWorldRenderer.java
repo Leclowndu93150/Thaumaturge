@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.render.aspect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 public final class AspectTagWorldRenderer {
     public static final float DEFAULT_SCALE = 0.0625F;
     public static final ResourceLocation UNKNOWN_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/aspects/_unknown.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/aspects/_unknown.png");
     private static final float UNKNOWN_ALPHA = 0.75F;
     private static final float HALF_QUAD = 0.5F;
     private static final int ROW_SIZE = 5;
@@ -110,7 +110,7 @@ public final class AspectTagWorldRenderer {
             poseStack.scale(tagScale, tagScale, tagScale);
             renderQuad(
                     poseStack,
-                    effectBuffers.getBuffer(TCFlatRenderTypes.entityTranslucentFlat(
+                    effectBuffers.getBuffer(TTFlatRenderTypes.entityTranslucentFlat(
                             known ? entry.aspect().value().texture() : UNKNOWN_TEXTURE)),
                     entry.aspect(),
                     known ? alpha : UNKNOWN_ALPHA,
@@ -191,8 +191,8 @@ public final class AspectTagWorldRenderer {
         IAspect value = aspect.value();
         int color = AspectTagRenderer.colorOf(value, alpha, bw);
         RenderType type = blend == AspectTagRenderer.BlendMode.ADDITIVE
-                ? TCFlatRenderTypes.entityAdditiveFlat(value.texture())
-                : TCFlatRenderTypes.entityTranslucentFlat(value.texture());
+                ? TTFlatRenderTypes.entityAdditiveFlat(value.texture())
+                : TTFlatRenderTypes.entityTranslucentFlat(value.texture());
         VertexConsumer buffer = buffers.getBuffer(type);
         poseStack.pushPose();
         poseStack.mulPose(camera.rotation());

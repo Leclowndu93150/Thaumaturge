@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.dynamictrees;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
@@ -11,7 +11,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class DynamicTreesResourcePack {
     private DynamicTreesResourcePack() {}
 
@@ -22,7 +22,7 @@ public final class DynamicTreesResourcePack {
         }
 
         event.addPackFinders(
-                TCIds.rl("resourcepacks/dynamictrees"),
+                TTIds.rl("resourcepacks/dynamictrees"),
                 PackType.CLIENT_RESOURCES,
                 Component.literal("Thaumaturge Dynamic Trees"),
                 PackSource.BUILT_IN,

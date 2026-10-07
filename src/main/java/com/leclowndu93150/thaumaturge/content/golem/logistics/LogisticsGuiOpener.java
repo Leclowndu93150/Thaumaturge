@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.logistics;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jspecify.annotations.Nullable;
 
 public final class LogisticsGuiOpener {
-    private static final ResourceLocation RESEARCH = TCIds.rl("golem_logistics");
+    private static final ResourceLocation RESEARCH = TTIds.rl("golem_logistics");
 
     private LogisticsGuiOpener() {}
 

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.model.entity.GrapplerModel;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
@@ -28,10 +28,10 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/grappler.png");
-    private static final ResourceLocation ROPE = TCIds.rl("textures/misc/rope.png");
-    private static final RenderType ROPE_TYPE = TCRenderTypes.fxTranslucent(ROPE);
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/grappler.png");
+    private static final ResourceLocation ROPE = TTIds.rl("textures/misc/rope.png");
+    private static final RenderType ROPE_TYPE = TTRenderTypes.fxTranslucent(ROPE);
+    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.GOLEM_ORB_BLUE);
 
     private static final double ROPE_RADIUS = 0.025;
     private static final int ROPE_SIDES = 4;
@@ -44,7 +44,7 @@ public final class GrappleRenderer extends EntityRenderer<EntityGrapple> {
     public GrappleRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.0F;
-        this.model = new GrapplerModel(context.bakeLayer(TCModelLayers.GRAPPLER));
+        this.model = new GrapplerModel(context.bakeLayer(TTModelLayers.GRAPPLER));
     }
 
     @Override

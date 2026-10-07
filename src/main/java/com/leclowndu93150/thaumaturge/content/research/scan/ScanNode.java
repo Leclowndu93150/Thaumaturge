@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
@@ -61,7 +61,7 @@ public final class ScanNode implements IScanThing {
     }
 
     public static ResourceLocation researchKey(Level level, BlockPos pos) {
-        return TCIds.rl("node/" + level.dimension().location().getPath() + "/" + pos.asLong());
+        return TTIds.rl("node/" + level.dimension().location().getPath() + "/" + pos.asLong());
     }
 
     @Override
@@ -86,16 +86,16 @@ public final class ScanNode implements IScanThing {
             points.merge(entry.aspect(), Math.max(MIN_POINTS, entry.amount() / POINTS_DIVISOR), Math::max);
         }
         switch (node.getNodeType()) {
-            case UNSTABLE -> mergeMax(points, player, TCAspects.PERDITIO, TYPE_BONUS);
-            case HUNGRY -> mergeMax(points, player, TCAspects.DESIDERIUM, TYPE_BONUS);
-            case TAINTED -> mergeMax(points, player, TCAspects.VITIUM, TYPE_BONUS);
+            case UNSTABLE -> mergeMax(points, player, TTAspects.PERDITIO, TYPE_BONUS);
+            case HUNGRY -> mergeMax(points, player, TTAspects.DESIDERIUM, TYPE_BONUS);
+            case TAINTED -> mergeMax(points, player, TTAspects.VITIUM, TYPE_BONUS);
             case PURE -> {
-                mergeMax(points, player, TCAspects.VICTUS, TYPE_BONUS_SMALL);
-                mergeSum(points, player, TCAspects.ORDO, TYPE_BONUS_SMALL);
+                mergeMax(points, player, TTAspects.VICTUS, TYPE_BONUS_SMALL);
+                mergeSum(points, player, TTAspects.ORDO, TYPE_BONUS_SMALL);
             }
             case DARK -> {
-                mergeMax(points, player, TCAspects.MORTUUS, TYPE_BONUS_SMALL);
-                mergeSum(points, player, TCAspects.TENEBRAE, TYPE_BONUS_SMALL);
+                mergeMax(points, player, TTAspects.MORTUUS, TYPE_BONUS_SMALL);
+                mergeSum(points, player, TTAspects.TENEBRAE, TYPE_BONUS_SMALL);
             }
             case NORMAL -> {}
         }

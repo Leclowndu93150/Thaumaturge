@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.model;
 
 import com.leclowndu93150.thaumaturge.client.render.blockentity.AdvancedAlchemicalFurnaceRenderer;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -33,7 +33,7 @@ public final class AdvancedAlchemicalFurnaceItemSpecialRenderer extends BlockEnt
         poseStack.scale(SCALE, SCALE, SCALE);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
         AdvancedAlchemicalFurnaceRenderer.renderPreview(
-                TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get().defaultBlockState(), poseStack, buffers, light, overlay);
+                TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get().defaultBlockState(), poseStack, buffers, light, overlay);
         poseStack.popPose();
     }
 }

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityDioptra;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,10 +18,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
 
 public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDioptra> {
-    private static final ResourceLocation GRID_TEXTURE = TCIds.rl("textures/misc/gridblock.png");
-    private static final ResourceLocation SIDE_TEXTURE = TCIds.rl("textures/entity/dioptra_side.png");
-    private static final RenderType GRID_TYPE = TCRenderTypes.additiveTextured(GRID_TEXTURE);
-    private static final RenderType SIDE_TYPE = TCRenderTypes.additiveTextured(SIDE_TEXTURE);
+    private static final ResourceLocation GRID_TEXTURE = TTIds.rl("textures/misc/gridblock.png");
+    private static final ResourceLocation SIDE_TEXTURE = TTIds.rl("textures/entity/dioptra_side.png");
+    private static final RenderType GRID_TYPE = TTRenderTypes.additiveTextured(GRID_TEXTURE);
+    private static final RenderType SIDE_TYPE = TTRenderTypes.additiveTextured(SIDE_TEXTURE);
 
     private static final int CELLS = 12;
     private static final float HEIGHT_SCALE = 96.0F;

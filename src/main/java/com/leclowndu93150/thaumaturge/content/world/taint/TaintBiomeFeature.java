@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintacle;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
@@ -62,7 +62,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             int x = chunkMinX + random.nextInt(16);
             int z = chunkMinZ + random.nextInt(16);
             BlockPos target = firstAirAboveSurface(level, x, z);
-            if (!level.getBiome(target).is(TCBiomes.TAINTED_LANDS)) {
+            if (!level.getBiome(target).is(TTBiomes.TAINTED_LANDS)) {
                 continue;
             }
             BlockState below = level.getBlockState(target.below());
@@ -83,7 +83,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             int x = chunkMinX + random.nextInt(16);
             int z = chunkMinZ + random.nextInt(16);
             BlockPos target = firstAirAboveSurface(level, x, z);
-            if (!level.getBiome(target).is(TCBiomes.TAINTED_LANDS)) {
+            if (!level.getBiome(target).is(TTBiomes.TAINTED_LANDS)) {
                 continue;
             }
             BlockState here = level.getBlockState(target);
@@ -137,7 +137,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
         for (int qx = 0; qx < 4; qx++) {
             for (int qz = 0; qz < 4; qz++) {
                 if (source.getNoiseBiome(baseQuartX + qx, quartY, baseQuartZ + qz, sampler)
-                        .is(TCBiomes.TAINTED_LANDS)) {
+                        .is(TTBiomes.TAINTED_LANDS)) {
                     return true;
                 }
             }
@@ -178,11 +178,11 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
         if (pos == null) {
             return false;
         }
-        if (!level.getBlockState(pos).is(TCBlocks.TAINT_FIBRE.get())) {
+        if (!level.getBlockState(pos).is(TTBlocks.TAINT_FIBRE.get())) {
             level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), PLACE_FLAGS);
         }
 
-        EntityTaintacle taintacle = TCEntities.TAINTACLE.get().create(level.getLevel());
+        EntityTaintacle taintacle = TTEntities.TAINTACLE.get().create(level.getLevel());
         if (taintacle == null) {
             return false;
         }
@@ -217,7 +217,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             int x = chunk.getMinBlockX() + random.nextInt(16);
             int z = chunk.getMinBlockZ() + random.nextInt(16);
             BlockPos pos = firstAirAboveSurface(level, x, z);
-            if (!level.getBiome(pos).is(TCBiomes.TAINTED_LANDS)) {
+            if (!level.getBiome(pos).is(TTBiomes.TAINTED_LANDS)) {
                 continue;
             }
             if ((!level.getBlockState(pos).isAir() && !level.getBlockState(pos).canBeReplaced())
@@ -236,7 +236,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
     private static boolean placeCrustBlob(WorldGenLevel level, RandomSource random, int x, int z) {
         int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
         BlockPos center = new BlockPos(x, y, z);
-        if (!level.getBiome(center).is(TCBiomes.TAINTED_LANDS)) {
+        if (!level.getBiome(center).is(TTBiomes.TAINTED_LANDS)) {
             return false;
         }
         int radius = 1 + random.nextInt(2);
@@ -252,7 +252,7 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
                 if (old.isAir() || !old.getFluidState().isEmpty() || old.getDestroySpeed(level, pos) < 0.0F) {
                     continue;
                 }
-                level.setBlock(pos, TCBlocks.TAINT_CRUST.get().defaultBlockState(), PLACE_FLAGS);
+                level.setBlock(pos, TTBlocks.TAINT_CRUST.get().defaultBlockState(), PLACE_FLAGS);
                 any = true;
             }
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.data.datamap;
 
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -20,11 +20,11 @@ public final class FuelValuesProvider extends DataMapProvider {
     protected void gather(HolderLookup.Provider provider) {
         Builder<FurnaceFuel, Item> b = builder(NeoForgeDataMaps.FURNACE_FUELS);
 
-        b.add(TCItems.ALUMENTUM, new FurnaceFuel(ALUMENTUM_BURN_TICKS), false);
+        b.add(TTItems.ALUMENTUM, new FurnaceFuel(ALUMENTUM_BURN_TICKS), false);
     }
 
     @Override
     public String getName() {
-        return "TC Fuel Values Data Map";
+        return "Thaumaturge Fuel Values Data Map";
     }
 }

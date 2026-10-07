@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -50,8 +50,8 @@ public final class BlockEldritchPortal extends BaseEntityBlock {
     @Override
     protected void neighborChanged(
             BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
-        if (!level.getBlockState(pos.above()).is(TCBlockTags.ELDRITCH_OBELISK_PARTS)
-                || !level.getBlockState(pos.below()).is(TCBlockTags.ELDRITCH_OBELISK_PARTS)) {
+        if (!level.getBlockState(pos.above()).is(TTBlockTags.ELDRITCH_OBELISK_PARTS)
+                || !level.getBlockState(pos.below()).is(TTBlockTags.ELDRITCH_OBELISK_PARTS)) {
             level.removeBlock(pos, false);
         }
     }
@@ -66,7 +66,7 @@ public final class BlockEldritchPortal extends BaseEntityBlock {
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
                 type,
-                TCBlockEntities.ELDRITCH_PORTAL.get(),
+                TTBlockEntities.ELDRITCH_PORTAL.get(),
                 (tickLevel, pos, tickState, portal) -> portal.tick(tickLevel, pos));
     }
 }

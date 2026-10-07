@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -273,7 +273,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
         double dy = target.getY() - this.getY() - target.getBbHeight() / 2.0F;
         double dz = target.getZ() + target.getDeltaMovement().z - this.getZ();
         blast.shoot(dx, dy, dz, 0.66F, 5.0F);
-        this.playSound(TCSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
+        this.playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
         this.level().addFreshEntity(blast);
     }
 
@@ -331,7 +331,7 @@ public class EntityEldritchGolem extends EntityThaumaturgeBoss implements IEldri
             this.arcTarget = pos;
             this.arcing = ARC_DURATION_BASE + this.random.nextInt(5);
             this.playSound(
-                    TCSounds.JACOBS.get(), 0.8F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+                    TTSounds.JACOBS.get(), 0.8F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
         }
     }
 }

@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.client.casters.WandTipTracker;
 import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
@@ -30,12 +30,12 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> {
-    private static final ResourceLocation NODES_TEXTURE = TCIds.rl("textures/misc/auranodes.png");
+    private static final ResourceLocation NODES_TEXTURE = TTIds.rl("textures/misc/auranodes.png");
 
-    private static final RenderType NODE_ADDITIVE = TCRenderTypes.fxAdditive(NODES_TEXTURE);
-    private static final RenderType NODE_ADDITIVE_NO_DEPTH = TCRenderTypes.fxAdditiveNoDepth(NODES_TEXTURE);
-    private static final RenderType NODE_TRANSLUCENT = TCRenderTypes.fxTranslucent(NODES_TEXTURE);
-    private static final RenderType NODE_TRANSLUCENT_NO_DEPTH = TCRenderTypes.fxTranslucentNoDepth(NODES_TEXTURE);
+    private static final RenderType NODE_ADDITIVE = TTRenderTypes.fxAdditive(NODES_TEXTURE);
+    private static final RenderType NODE_ADDITIVE_NO_DEPTH = TTRenderTypes.fxAdditiveNoDepth(NODES_TEXTURE);
+    private static final RenderType NODE_TRANSLUCENT = TTRenderTypes.fxTranslucent(NODES_TEXTURE);
+    private static final RenderType NODE_TRANSLUCENT_NO_DEPTH = TTRenderTypes.fxTranslucentNoDepth(NODES_TEXTURE);
 
     private static final int GRID = 32;
     private static final double VIEW_DISTANCE = 64.0;

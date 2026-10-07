@@ -23,7 +23,7 @@ public class CrimsonBladeItem extends SwordItem implements IWarpingGear {
     private static final int HUNGER_TICKS = 120;
 
     public CrimsonBladeItem(Properties properties) {
-        super(TCMaterials.TOOL_CRIMSON_VOID, properties);
+        super(TTMaterials.TOOL_CRIMSON_VOID, properties);
     }
 
     @Override

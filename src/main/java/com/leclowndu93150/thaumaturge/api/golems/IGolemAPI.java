@@ -78,7 +78,7 @@ public interface IGolemAPI {
     List<ItemStack> getCarrying();
 
     /**
-     * Awards rank experience. Only golems with the {@link GolemTrait#SMART} trait accumulate it.
+     * Awards rank experience. Only golems with the {@link com.leclowndu93150.thaumaturge.registry.TTGolemTraits#SMART} trait accumulate it.
      *
      * @param xp the experience amount
      */

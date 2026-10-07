@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IRechargable;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.component.DataComponents;
@@ -17,7 +17,7 @@ public final class InfusionEnchantmentHelper {
     private InfusionEnchantmentHelper() {}
 
     public static InfusionEnchantments get(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.INFUSION_ENCHANTMENTS.get(), InfusionEnchantments.EMPTY);
+        return stack.getOrDefault(TTDataComponents.INFUSION_ENCHANTMENTS.get(), InfusionEnchantments.EMPTY);
     }
 
     public static int level(ItemStack stack, InfusionEnchantment enchantment) {
@@ -40,7 +40,7 @@ public final class InfusionEnchantmentHelper {
         if (current.level(enchantment) >= level) {
             return;
         }
-        stack.set(TCDataComponents.INFUSION_ENCHANTMENTS.get(), current.with(enchantment, level));
+        stack.set(TTDataComponents.INFUSION_ENCHANTMENTS.get(), current.with(enchantment, level));
     }
 
     public static boolean canApply(ItemStack stack, InfusionEnchantment enchantment) {

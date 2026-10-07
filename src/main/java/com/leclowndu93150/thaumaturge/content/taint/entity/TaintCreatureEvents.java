@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.taint.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityOwnedConstruct;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitEngine;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSplosion;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +32,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintCreatureEvents {
     private static final float BLAST_STRENGTH = 1.5F;
     private static final double POISON_RANGE = 6.0;
@@ -48,7 +48,7 @@ public final class TaintCreatureEvents {
     public static void onExplosionStart(ExplosionEvent.Start event) {
         if (!(event.getLevel() instanceof ServerLevel level)
                 || !(event.getExplosion().getDirectSourceEntity() instanceof Creeper creeper)
-                || !MobTraits.has(creeper, TCMobTraits.TAINT_BLAST.getKey())) {
+                || !MobTraits.has(creeper, TTMobTraits.TAINT_BLAST.getKey())) {
             return;
         }
         event.setCanceled(true);
@@ -66,7 +66,7 @@ public final class TaintCreatureEvents {
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area)) {
             if (!MobTraits.isTainted(living) && !living.getType().is(EntityTypeTags.UNDEAD)) {
                 living.addEffect(
-                        new MobEffectInstance(TCMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
+                        new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_TICKS, 0, false, true, false));
             }
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()) {
@@ -84,7 +84,7 @@ public final class TaintCreatureEvents {
                 && !victim.isInvertedHealAndHarm()
                 && victim.isAlive()
                 && !(victim instanceof EntityOwnedConstruct)
-                && victim.hasEffect(TCMobEffects.FLUX_TAINT)
+                && victim.hasEffect(TTMobEffects.FLUX_TAINT)
                 && victim.getRandom().nextBoolean()) {
             TaintInfection.tryInfect(level, victim);
             return;
@@ -93,7 +93,7 @@ public final class TaintCreatureEvents {
                 && event.getSource().getEntity() instanceof LivingEntity attacker
                 && MobTraits.isTainted(attacker)) {
             victim.addEffect(new MobEffectInstance(
-                    TCMobEffects.FLUX_TAINT, TAINTED_ATTACK_FLUX_TAINT_TICKS, 0, true, false, false));
+                    TTMobEffects.FLUX_TAINT, TAINTED_ATTACK_FLUX_TAINT_TICKS, 0, true, false, false));
         }
     }
 
@@ -111,7 +111,7 @@ public final class TaintCreatureEvents {
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
         LivingEntity entity = event.getEntity();
-        if (MobTraits.has(entity, TCMobTraits.TAINT_BROOD.getKey())) {
+        if (MobTraits.has(entity, TTMobTraits.TAINT_BROOD.getKey())) {
             event.setCanceled(true);
             return;
         }
@@ -146,7 +146,7 @@ public final class TaintCreatureEvents {
 
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
-        if (MobTraits.has(event.getEntity(), TCMobTraits.TAINT_BROOD.getKey())) {
+        if (MobTraits.has(event.getEntity(), TTMobTraits.TAINT_BROOD.getKey())) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
         }
     }

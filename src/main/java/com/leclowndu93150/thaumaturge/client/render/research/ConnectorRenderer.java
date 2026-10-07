@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -209,15 +209,15 @@ public final class ConnectorRenderer {
         for (PendingBlit b : queue) {
             GuiBlend.blitTinted(
                     graphics,
-                    TCScreenTextures.RESEARCH_BROWSER,
+                    TTScreenTextures.RESEARCH_BROWSER,
                     b.x,
                     b.y,
                     (float) b.u,
                     (float) b.v,
                     b.w,
                     b.h,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE,
                     b.color);
         }
         queue.clear();

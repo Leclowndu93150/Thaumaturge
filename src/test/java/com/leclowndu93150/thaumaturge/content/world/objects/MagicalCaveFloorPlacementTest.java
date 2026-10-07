@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +58,7 @@ class MagicalCaveFloorPlacementTest {
 
     private static BlockState[] states() {
         BlockState ground = mock(BlockState.class);
-        when(ground.is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)).thenReturn(true);
+        when(ground.is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)).thenReturn(true);
         BlockState air = mock(BlockState.class);
         when(air.isAir()).thenReturn(true);
         BlockState[] states = new BlockState[384];
@@ -71,7 +71,7 @@ class MagicalCaveFloorPlacementTest {
     private static List<BlockPos> referenceFloors(BlockState[] states, int top) {
         List<BlockPos> result = new ArrayList<>();
         for (int y = top - 1; y >= Math.max(-64, top - 384); y--) {
-            if (y > -64 && states[y + 64].isAir() && states[y + 63].is(TCBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
+            if (y > -64 && states[y + 64].isAir() && states[y + 63].is(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)) {
                 result.add(ORIGIN.atY(y));
             }
         }

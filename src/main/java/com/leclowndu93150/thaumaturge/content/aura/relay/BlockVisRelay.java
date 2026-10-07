@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.relay;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -50,6 +50,6 @@ public final class BlockVisRelay extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.VIS_RELAY.get(), BlockEntityVisRelay::serverTick);
+        return createTickerHelper(type, TTBlockEntities.VIS_RELAY.get(), BlockEntityVisRelay::serverTick);
     }
 }

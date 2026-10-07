@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +44,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("provider");
+        return TTIds.rl("provider");
     }
 
     @Override
@@ -273,7 +273,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_provider.png");
+        return TTIds.rl("textures/item/seal_provider.png");
     }
 
     @Override
@@ -288,7 +288,7 @@ public class SealProvide extends SealFiltered implements ISealConfigToggles {
 
     @Override
     public GolemTrait[] getForbiddenTags() {
-        return new GolemTrait[] {TCGolemTraits.CLUMSY.get()};
+        return new GolemTrait[] {TTGolemTraits.CLUMSY.get()};
     }
 
     @Override

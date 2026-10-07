@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -142,7 +142,7 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
                 target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION, 0, true, false, false));
             }
             target.setDeltaMovement(targetMotion);
-            this.playSound(TCSounds.SWARMATTACK.get(), 0.3F, 0.9F + this.random.nextFloat() * 0.2F);
+            this.playSound(TTSounds.SWARMATTACK.get(), 0.3F, 0.9F + this.random.nextFloat() * 0.2F);
         }
     }
 
@@ -209,17 +209,17 @@ public final class EntityTaintSwarm extends Monster implements ITaintedMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.SWARM.get();
+        return TTSounds.SWARM.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.SWARMATTACK.get();
+        return TTSounds.SWARMATTACK.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.SWARMATTACK.get();
+        return TTSounds.SWARMATTACK.get();
     }
 
     @Override

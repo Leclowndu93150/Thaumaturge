@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -30,7 +30,7 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     }
 
     public MenuHandMirror(int containerId, Inventory inventory) {
-        super(TCMenus.HAND_MIRROR.get(), containerId);
+        super(TTMenus.HAND_MIRROR.get(), containerId);
         this.player = inventory.player;
         this.input = new InputContainer(this);
         this.mirrorHotbarSlot = inventory.selected;

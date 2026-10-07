@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
-import com.leclowndu93150.thaumaturge.registry.TCGolemTraits;
+import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 public class SealEmptyAdvanced extends SealEmpty implements ISealConfigToggles {
     @Override
     public ResourceLocation getKey() {
-        return TCIds.rl("empty_advanced");
+        return TTIds.rl("empty_advanced");
     }
 
     @Override
@@ -22,7 +22,7 @@ public class SealEmptyAdvanced extends SealEmpty implements ISealConfigToggles {
 
     @Override
     public ResourceLocation getSealIcon() {
-        return TCIds.rl("textures/item/seal_empty_advanced.png");
+        return TTIds.rl("textures/item/seal_empty_advanced.png");
     }
 
     @Override
@@ -58,6 +58,6 @@ public class SealEmptyAdvanced extends SealEmpty implements ISealConfigToggles {
 
     @Override
     public GolemTrait[] getRequiredTags() {
-        return new GolemTrait[] {TCGolemTraits.SMART.get()};
+        return new GolemTrait[] {TTGolemTraits.SMART.get()};
     }
 }

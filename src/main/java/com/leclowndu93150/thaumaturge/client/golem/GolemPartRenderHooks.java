@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPartModel;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
-import com.leclowndu93150.thaumaturge.registry.TCGolemParts;
+import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.IdentityHashMap;
@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 
 public final class GolemPartRenderHooks {
+    private static final String OUTER_SUFFIX = "_outer";
     private static final Map<GolemPartModel, GolemPartRenderHook> HOOKS = new IdentityHashMap<>();
 
     private GolemPartRenderHooks() {}
@@ -24,11 +25,27 @@ public final class GolemPartRenderHooks {
     }
 
     private static void registerDefaults() {
-        HOOKS.put(TCGolemParts.LEGS_ROLLER.get().model(), new WheelHook());
-        HOOKS.put(TCGolemParts.ARMS_CLAWS.get().model(), new ClawsHook());
-        HOOKS.put(TCGolemParts.ARMS_BREAKERS.get().model(), new BreakersHook());
-        HOOKS.put(TCGolemParts.ARMS_DARTS.get().model(), new DartsHook());
-        HOOKS.put(TCGolemParts.ADDON_HAULER.get().model(), new HaulerHook());
+        HOOKS.put(TTGolemParts.LEGS_ROLLER.get().model(), new WheelHook());
+        HOOKS.put(TTGolemParts.ARMS_CLAWS.get().model(), new ClawsHook());
+        HOOKS.put(TTGolemParts.ARMS_BREAKERS.get().model(), new BreakersHook());
+        HOOKS.put(TTGolemParts.ARMS_DARTS.get().model(), new DartsHook());
+        HOOKS.put(TTGolemParts.ADDON_HAULER.get().model(), new HaulerHook());
+        for (GolemPartModel model : TTGolemParts.ADDON_ARMORED.get().models()) {
+            if (model.attachPoint() == GolemPartModel.AttachPoint.ARMS) HOOKS.put(model, new PauldronHook());
+        }
+    }
+
+    static final class PauldronHook implements GolemPartRenderHook {
+        @Override
+        public void preRenderObjectPart(
+                String partName,
+                GolemRenderState state,
+                PoseStack poseStack,
+                GolemPartModel.LimbSide side,
+                float partialTick) {
+            if (side == GolemPartModel.LimbSide.LEFT && partName.endsWith(OUTER_SUFFIX))
+                poseStack.mulPose(Axis.YP.rotationDegrees(180));
+        }
     }
 
     static final class WheelHook implements GolemPartRenderHook {
@@ -40,7 +57,7 @@ public final class GolemPartRenderHooks {
                 GolemPartModel.LimbSide side,
                 float partialTick) {
             if (partName.equals("wheel")) {
-                poseStack.translate(0.0, -0.375, 0.0);
+                poseStack.translate(0.0, -2.5 / 16.0, 0.0);
                 poseStack.mulPose(Axis.XN.rotationDegrees(state.wheelRotation));
             }
         }
@@ -57,7 +74,7 @@ public final class GolemPartRenderHooks {
             if (partName.startsWith("claw")) {
                 float open = state.attackTime * 4.1F;
                 open = open * open;
-                poseStack.translate(0.0, -0.2, 0.0);
+                poseStack.translate(0.0, -1.5 / 16.0, 0.0);
                 poseStack.mulPose((partName.endsWith("1") ? Axis.XP : Axis.XN).rotationDegrees(open));
             }
         }
@@ -72,7 +89,7 @@ public final class GolemPartRenderHooks {
                 GolemPartModel.LimbSide side,
                 float partialTick) {
             if (partName.equals("grinder")) {
-                poseStack.translate(0.0, -0.34, 0.0);
+                poseStack.translate(0.0, -1.0 / 16.0, 0.0);
                 float angle =
                         (state.ageInTicks) / 2.0F + state.grinderRot + (side == GolemPartModel.LimbSide.LEFT ? 22 : 0);
                 poseStack.mulPose((side == GolemPartModel.LimbSide.LEFT ? Axis.XN : Axis.XP).rotationDegrees(angle));
@@ -105,18 +122,15 @@ public final class GolemPartRenderHooks {
                 PoseStack poseStack,
                 MultiBufferSource buffers,
                 GolemPartModel.LimbSide side) {
-            if (!state.haulingItem) {
+            if (!state.haulingItem || !partName.equals("cargo")) {
                 return;
             }
             poseStack.pushPose();
-            poseStack.scale(0.375F, 0.375F, 0.375F);
-            poseStack.translate(0.0F, 0.33F, 0.825F);
-            if (!state.haulerItemIsBlock) {
-                poseStack.translate(0.0F, 0.0F, -0.25F);
-            }
+            poseStack.translate(0, 3.0F / 16, 6.5F / 16);
+            poseStack.scale(0.45F, 0.45F, 0.45F);
             ItemRenderHelper.render(
                     state.haulerItem,
-                    ItemDisplayContext.HEAD,
+                    ItemDisplayContext.FIXED,
                     poseStack,
                     buffers,
                     state.lightCoords,

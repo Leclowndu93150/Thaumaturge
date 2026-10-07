@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeStabilizer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -24,15 +24,15 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEntityNodeStabilizer> {
-    private static final ResourceLocation MODEL = TCIds.rl("models/mesh/node_stabilizer.tcmesh");
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/block/node_stabilizer.png");
-    private static final ResourceLocation OVERLAY_TEXTURE = TCIds.rl("textures/block/node_stabilizer_over.png");
+    private static final ResourceLocation MODEL = TTIds.rl("models/mesh/node_stabilizer.ttmesh");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/block/node_stabilizer.png");
+    private static final ResourceLocation OVERLAY_TEXTURE = TTIds.rl("textures/block/node_stabilizer_over.png");
 
     private static final RenderType BASE = RenderType.entityCutout(TEXTURE);
     private static final RenderType OVERLAY = RenderType.entityTranslucent(OVERLAY_TEXTURE);
-    private static final ResourceLocation TRANSDUCER_TEXTURE = TCIds.rl("textures/block/node_converter.png");
+    private static final ResourceLocation TRANSDUCER_TEXTURE = TTIds.rl("textures/block/node_converter.png");
     private static final ResourceLocation TRANSDUCER_OVERLAY_TEXTURE =
-            TCIds.rl("textures/block/node_converter_over.png");
+            TTIds.rl("textures/block/node_converter_over.png");
     private static final RenderType TRANSDUCER_BASE = RenderType.entityCutout(TRANSDUCER_TEXTURE);
     private static final RenderType TRANSDUCER_OVERLAY = RenderType.entityTranslucent(TRANSDUCER_OVERLAY_TEXTURE);
     private static final int TRANSDUCER_EXTEND_CAP = 50;
@@ -41,8 +41,8 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
     private static final int TRANSDUCER_TINT_NODE = 0xFFFF991A;
     private static final int TRANSDUCER_TINT_ENERGIZED = 0xFFFF004D;
     private static final float TRANSDUCER_GLOW_GAIN = 2.5F;
-    private static final ResourceLocation BUBBLE_TEXTURE = TCIds.rl("textures/misc/node_bubble.png");
-    private static final RenderType BUBBLE = TCRenderTypes.fxTranslucent(BUBBLE_TEXTURE);
+    private static final ResourceLocation BUBBLE_TEXTURE = TTIds.rl("textures/misc/node_bubble.png");
+    private static final RenderType BUBBLE = TTRenderTypes.fxTranslucent(BUBBLE_TEXTURE);
 
     private static final String PART_LOCK = "lock";
     private static final String PART_PISTON = "piston";
@@ -130,9 +130,9 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
 
     public static void submitParts(
             int count, boolean advanced, float ticks, PoseStack poseStack, MultiBufferSource buffers, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
-        TCMeshPart lock = findPart(mesh, PART_LOCK);
-        TCMeshPart piston = findPart(mesh, PART_PISTON);
+        TTMesh mesh = GolemMeshes.get(MODEL);
+        TTMeshPart lock = findPart(mesh, PART_LOCK);
+        TTMeshPart piston = findPart(mesh, PART_PISTON);
         if (lock != null) {
             GolemMeshes.renderPart(lock, poseStack.last(), buffers.getBuffer(BASE), light, WHITE);
         }
@@ -156,9 +156,9 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
 
     public static void submitTransducerParts(
             int count, int status, float ticks, PoseStack poseStack, MultiBufferSource buffers, int light) {
-        TCMesh mesh = GolemMeshes.get(MODEL);
-        TCMeshPart lock = findPart(mesh, PART_LOCK);
-        TCMeshPart piston = findPart(mesh, PART_PISTON);
+        TTMesh mesh = GolemMeshes.get(MODEL);
+        TTMeshPart lock = findPart(mesh, PART_LOCK);
+        TTMeshPart piston = findPart(mesh, PART_PISTON);
         float extension = Math.min(TRANSDUCER_EXTEND_CAP, count) / TRANSDUCER_EXTEND_DIVISOR;
         int tint = status == 2 ? TRANSDUCER_TINT_ENERGIZED : status == 1 ? TRANSDUCER_TINT_NODE : TRANSDUCER_TINT_IDLE;
         if (lock != null) {
@@ -191,8 +191,8 @@ public final class NodeStabilizerRenderer implements BlockEntityRenderer<BlockEn
         return OVERLAY_LIGHT_BASE + (int) (OVERLAY_LIGHT_RANGE * extension * TRANSDUCER_GLOW_GAIN * pulse);
     }
 
-    private static @Nullable TCMeshPart findPart(TCMesh mesh, String name) {
-        for (TCMeshPart part : mesh.parts()) {
+    private static @Nullable TTMeshPart findPart(TTMesh mesh, String name) {
+        for (TTMeshPart part : mesh.parts()) {
             if (name.equals(part.name())) {
                 return part;
             }

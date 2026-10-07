@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.entity.champion;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class ChampionEvents {
     private static final int ROLL_BOUND = 100;
     private static final double MIN_CHAMPION_HEALTH = 10.0;
@@ -61,7 +61,7 @@ public final class ChampionEvents {
             roll -= 2;
         }
         Holder<Biome> biome = level.getBiome(mob.blockPosition());
-        if (biome.is(TCBiomeTags.IS_SPOOKY) || level.dimension() == Level.NETHER || level.dimension() == Level.END) {
+        if (biome.is(TTBiomeTags.IS_SPOOKY) || level.dimension() == Level.NETHER || level.dimension() == Level.END) {
             roll -= allowed ? 2 : 1;
         }
         int whitelistBonus = 0;
@@ -108,9 +108,9 @@ public final class ChampionEvents {
                 Mth.floor((entity.getRandom().nextInt(BAG_ROLL_BOUND) + looting) / (float) BAG_TIER_DIVISOR));
         ItemStack bag = new ItemStack(
                 switch (tier) {
-                    case 1 -> TCItems.LOOT_BAG_UNCOMMON.get();
-                    case 2 -> TCItems.LOOT_BAG_RARE.get();
-                    default -> TCItems.LOOT_BAG_COMMON.get();
+                    case 1 -> TTItems.LOOT_BAG_UNCOMMON.get();
+                    case 2 -> TTItems.LOOT_BAG_RARE.get();
+                    default -> TTItems.LOOT_BAG_COMMON.get();
                 });
         event.getDrops()
                 .add(new ItemEntity(server, entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(), bag));

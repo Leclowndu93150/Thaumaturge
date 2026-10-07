@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectIndex;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundAspectIndexPayload(AspectIndex index) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ClientboundAspectIndexPayload> TYPE =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "aspect_index"));
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "aspect_index"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundAspectIndexPayload> STREAM_CODEC =
             AspectIndex.STREAM_CODEC.map(ClientboundAspectIndexPayload::new, ClientboundAspectIndexPayload::index);

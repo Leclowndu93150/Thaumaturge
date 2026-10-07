@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -27,7 +27,7 @@ public record ClientboundStreamEffectPayload(
     public static final byte FLAG_WITH_SOURCE = 2;
 
     public static final Type<ClientboundStreamEffectPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "fx_stream"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "fx_stream"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundStreamEffectPayload> STREAM_CODEC =
             StreamCodec.of(

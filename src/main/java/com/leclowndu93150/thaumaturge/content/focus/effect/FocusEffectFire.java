@@ -1,14 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.SettingDefinition;
 import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
-import com.leclowndu93150.thaumaturge.api.damagesource.TCDamageSources;
+import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageSources;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.focus.FocusFX;
 import com.leclowndu93150.thaumaturge.content.particle.FlameFanParticleOptions;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectFire implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("fire");
+    private static final ResourceLocation KEY = TTIds.rl("fire");
 
     private static final int BASE_DAMAGE = 3;
     private static final int DURATION_COMPLEXITY_FACTOR = 1;
@@ -45,12 +45,12 @@ public final class FocusEffectFire implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("base_auromancy"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("base_auromancy"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.IGNIS;
+        return TTAspects.IGNIS;
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class FocusEffectFire implements FocusEffect {
             float fire = 1 + settings.value("duration") * settings.value("duration");
             float damage = damageForDisplay(settings, ctx.power());
             fire *= ctx.power();
-            struck.hurt(TCDamageSources.focusFire(level, struck, ctx.caster()), damage);
+            struck.hurt(TTDamageSources.focusFire(level, struck, ctx.caster()), damage);
             if (fire > 0.0F) {
                 struck.igniteForSeconds(Math.round(fire));
             }

@@ -24,12 +24,12 @@ public final class ArcaneGrindstoneScreen extends AbstractContainerScreen<MenuAr
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.blit(TCScreenTextures.GRINDSTONE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        graphics.blit(TTScreenTextures.GRINDSTONE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
         boolean hasInput = menu.getSlot(MenuArcaneGrindstone.INPUT_SLOT).hasItem()
                 || menu.getSlot(MenuArcaneGrindstone.ADDITIONAL_SLOT).hasItem();
         if (hasInput && !menu.getSlot(MenuArcaneGrindstone.RESULT_SLOT).hasItem()) {
             graphics.blitSprite(
-                    TCScreenTextures.GRINDSTONE_ERROR, leftPos + ERROR_X, topPos + ERROR_Y, ERROR_W, ERROR_H);
+                    TTScreenTextures.GRINDSTONE_ERROR, leftPos + ERROR_X, topPos + ERROR_Y, ERROR_W, ERROR_H);
         }
     }
 }

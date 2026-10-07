@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IArchitect;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -32,15 +32,15 @@ import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Quaternionf;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ArchitectOverlayRenderer {
-    private static final ResourceLocation FRAME_CORNER = TCIds.rl("textures/misc/frame_corner.png");
-    private static final ResourceLocation FRAME_SIDE = TCIds.rl("textures/misc/frame_side.png");
-    private static final ResourceLocation ARROWS = TCIds.rl("textures/misc/architect_arrows.png");
+    private static final ResourceLocation FRAME_CORNER = TTIds.rl("textures/misc/frame_corner.png");
+    private static final ResourceLocation FRAME_SIDE = TTIds.rl("textures/misc/frame_side.png");
+    private static final ResourceLocation ARROWS = TTIds.rl("textures/misc/architect_arrows.png");
 
-    private static final RenderType SIDE_TYPE = TCRenderTypes.additiveTexturedNoDepth(FRAME_SIDE);
-    private static final RenderType CORNER_TYPE = TCRenderTypes.additiveTexturedNoDepth(FRAME_CORNER);
-    private static final RenderType ARROWS_TYPE = TCRenderTypes.additiveTexturedNoDepth(ARROWS);
+    private static final RenderType SIDE_TYPE = TTRenderTypes.additiveTexturedNoDepth(FRAME_SIDE);
+    private static final RenderType CORNER_TYPE = TTRenderTypes.additiveTexturedNoDepth(FRAME_CORNER);
+    private static final RenderType ARROWS_TYPE = TTRenderTypes.additiveTexturedNoDepth(ARROWS);
 
     private static final int[][] MOS = {
         {4, 5, 6, 7}, {0, 1, 2, 3}, {0, 1, 4, 5}, {2, 3, 6, 7}, {0, 2, 4, 6}, {1, 3, 5, 7}

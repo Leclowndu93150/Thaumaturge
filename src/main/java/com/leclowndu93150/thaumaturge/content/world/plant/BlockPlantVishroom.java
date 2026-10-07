@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.world.plant;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockPlantVishroom extends AbstractTCPlant {
+public final class BlockPlantVishroom extends AbstractTTPlant {
     public static final MapCodec<BlockPlantVishroom> CODEC = simpleCodec(BlockPlantVishroom::new);
 
     public BlockPlantVishroom(BlockBehaviour.Properties properties) {
@@ -30,7 +30,7 @@ public final class BlockPlantVishroom extends AbstractTCPlant {
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(Blocks.GRASS_BLOCK)
-                || state.is(TCBlocks.GRASS_AMBIENT.get())
+                || state.is(TTBlocks.GRASS_AMBIENT.get())
                 || state.is(Blocks.DIRT)
                 || state.is(Blocks.PODZOL)
                 || state.is(Blocks.COARSE_DIRT)

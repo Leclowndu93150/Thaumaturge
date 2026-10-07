@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.util.RandomSource;
 
-public final class MistFlatParticle extends TCParticle {
+public final class MistFlatParticle extends TTParticle {
     private static final int BASE_LIFETIME = 400;
     private static final double WIND_SCALE = 0.001;
 
@@ -36,7 +36,7 @@ public final class MistFlatParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<ColorParticleOption> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("mist_flat");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("mist_flat");
 
         @Override
         public Particle createParticle(

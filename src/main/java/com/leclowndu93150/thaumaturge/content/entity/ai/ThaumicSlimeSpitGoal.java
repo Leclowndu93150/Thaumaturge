@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity.ai;
 
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.EnumSet;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -54,7 +54,7 @@ public final class ThaumicSlimeSpitGoal extends Goal {
             return;
         }
         cooldown = COOLDOWN_RESET_TICKS;
-        ThaumicSlime child = TCEntities.THAUMIC_SLIME.get().create(serverLevel);
+        ThaumicSlime child = TTEntities.THAUMIC_SLIME.get().create(serverLevel);
         if (child == null) {
             return;
         }
@@ -73,7 +73,7 @@ public final class ThaumicSlimeSpitGoal extends Goal {
         }
         serverLevel.addFreshEntity(child);
         slime.playSound(
-                TCSounds.GORE.get(),
+                TTSounds.GORE.get(),
                 1.0F,
                 ((slime.getRandom().nextFloat() - slime.getRandom().nextFloat()) * 0.2F + 1.0F) * 0.8F);
         slime.setSize(slime.getSize() - 1, true);

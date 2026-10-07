@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -265,7 +265,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
                     getX(),
                     getY(),
                     getZ(),
-                    TCSounds.EVILPORTAL.get(),
+                    TTSounds.EVILPORTAL.get(),
                     SoundSource.AMBIENT,
                     (float) (0.15F + rand.nextGaussian() * 0.066),
                     (float) (0.75 + rand.nextGaussian() * 0.1));
@@ -336,7 +336,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
     }
 
     private boolean spawnWisp(ServerLevel level) {
-        WispEntity wisp = TCEntities.WISP.get().create(level);
+        WispEntity wisp = TTEntities.WISP.get().create(level);
         if (wisp == null) {
             return false;
         }
@@ -347,7 +347,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
                 0.0F,
                 0.0F);
         if (this.random.nextInt(5) == 0) {
-            wisp.setAspect(TCAspects.VITIUM.location());
+            wisp.setAspect(TTAspects.VITIUM.location());
         }
         if (level.noCollision(wisp)) {
             return level.addFreshEntity(wisp);
@@ -357,7 +357,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
     }
 
     private boolean spawnTaintSeed(ServerLevel level) {
-        EntityTaintSeedPrime seed = TCEntities.TAINT_SEED_PRIME.get().create(level);
+        EntityTaintSeedPrime seed = TTEntities.TAINT_SEED_PRIME.get().create(level);
         if (seed == null) {
             return false;
         }
@@ -385,7 +385,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
             if (target instanceof ServerPlayer player) {
                 WarpManager.sendActionBar(player, "warp.thaumaturge.fluxevent.2");
             }
-            target.addEffect(new MobEffectInstance(TCMobEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2));
+            target.addEffect(new MobEffectInstance(TTMobEffects.INFECTIOUS_VIS_EXHAUST, 3000, 2));
         }
         return didit;
     }
@@ -393,12 +393,12 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
     private void completeCollapse(ServerLevel level) {
         int strength = (int) Math.sqrt(maxSize);
         if (this.random.nextInt(100) < strength) {
-            ItemStack pearl = new ItemStack(TCItems.PRIMORDIAL_PEARL.get());
+            ItemStack pearl = new ItemStack(TTItems.PRIMORDIAL_PEARL.get());
             pearl.setDamageValue(4 + this.random.nextInt(4));
             spawnAtLocation(pearl, 0.0F);
         }
         for (int a = 0; a < strength; a++) {
-            spawnAtLocation(new ItemStack(TCItems.VOID_SEED.get()), 0.0F);
+            spawnAtLocation(new ItemStack(TTItems.VOID_SEED.get()), 0.0F);
         }
         level.explode(this, getX(), getY(), getZ(), 0.0F, Level.ExplosionInteraction.NONE);
         List<LivingEntity> nearby =
@@ -410,7 +410,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
                     int w = (int)
                             ((1.0 - distanceToSqr(target) / (COLLAPSE_EFFECT_RANGE * COLLAPSE_EFFECT_RANGE)) * 120.0);
                     if (w > 0) {
-                        target.addEffect(new MobEffectInstance(TCMobEffects.FLUX_TAINT, w * 20, 0));
+                        target.addEffect(new MobEffectInstance(TTMobEffects.FLUX_TAINT, w * 20, 0));
                     }
                 }
             }
@@ -524,7 +524,7 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
         if (!level.getEntitiesOfClass(EntityFluxRift.class, exclusion).isEmpty()) {
             return;
         }
-        EntityFluxRift rift = TCEntities.FLUX_RIFT.get().create(level);
+        EntityFluxRift rift = TTEntities.FLUX_RIFT.get().create(level);
         if (rift == null) {
             return;
         }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.compat.dynamictrees;
 
 import com.dtteam.dynamictrees.config.DTConfigs;
-import com.leclowndu93150.thaumaturge.data.worldgen.feature.TCPlacedFeatures;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeModifierSerializers;
+import com.leclowndu93150.thaumaturge.data.worldgen.feature.TTPlacedFeatures;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeModifierSerializers;
 import com.mojang.serialization.MapCodec;
 import java.util.Set;
 import net.minecraft.core.Holder;
@@ -22,10 +22,10 @@ import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
  */
 public final class DynamicTreesWorldgenBiomeModifier implements BiomeModifier {
     private static final Set<ResourceKey<PlacedFeature>> NATIVE_TREE_FEATURES = Set.of(
-            TCPlacedFeatures.TREES_MAGIC_FOREST,
-            TCPlacedFeatures.GREATWOOD_NATURAL,
-            TCPlacedFeatures.GREATWOOD_NATURAL_RARE,
-            TCPlacedFeatures.SILVERWOOD_NATURAL);
+            TTPlacedFeatures.TREES_MAGIC_FOREST,
+            TTPlacedFeatures.GREATWOOD_NATURAL,
+            TTPlacedFeatures.GREATWOOD_NATURAL_RARE,
+            TTPlacedFeatures.SILVERWOOD_NATURAL);
 
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
@@ -39,7 +39,7 @@ public final class DynamicTreesWorldgenBiomeModifier implements BiomeModifier {
 
     @Override
     public MapCodec<? extends BiomeModifier> codec() {
-        return TCBiomeModifierSerializers.DYNAMIC_TREES_WORLDGEN.get();
+        return TTBiomeModifierSerializers.DYNAMIC_TREES_WORLDGEN.get();
     }
 
     private static boolean isDynamicTreesWorldgenEnabled() {

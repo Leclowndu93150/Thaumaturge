@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
@@ -40,8 +40,8 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
     private static final long RAY_SEED = 187L;
     private static final float RAY_ALPHA = 0.66F;
 
-    private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType GLOW_TYPE = TCRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
+    private static final RenderType RAY_TYPE = TTRenderTypes.SPARKLE_CULLED;
+    private static final RenderType GLOW_TYPE = TTRenderTypes.fxAdditiveBlurred(ParticleTextures.STAR_GLINT);
 
     private final RandomSource rayRandom = RandomSource.create();
 

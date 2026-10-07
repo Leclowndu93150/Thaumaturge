@@ -6,7 +6,7 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.RandomSource;
 
-public final class PechCurseParticle extends TCParticle {
+public final class PechCurseParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 50;
     private static final float START_ALPHA = 0.75F;
@@ -49,7 +49,7 @@ public final class PechCurseParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("pech_curse");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("pech_curse");
 
         @Override
         public Particle createParticle(

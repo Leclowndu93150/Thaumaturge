@@ -5,8 +5,8 @@ import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.equipment.RefiningResults;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -99,7 +99,7 @@ public final class ArcaneBoreCore {
                             + SOUND_DELAY_TICKS
                             + host.boreRandom().nextInt(2);
                     host.playBoreSound(
-                            TCSounds.RUMBLE.get(),
+                            TTSounds.RUMBLE.get(),
                             0.25F,
                             0.9F + host.boreRandom().nextFloat() * 0.2F);
                 }
@@ -223,7 +223,7 @@ public final class ArcaneBoreCore {
         int z = origin.getZ() + (facing.getStepX() != 0 ? sideways : 0);
         BlockPos target = new BlockPos(x, y, z);
         if (level.getBlockState(target).isAir() && level.getBrightness(LightLayer.BLOCK, target) < MAX_TUNNEL_LIGHT) {
-            level.setBlock(target, TCBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(target, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 

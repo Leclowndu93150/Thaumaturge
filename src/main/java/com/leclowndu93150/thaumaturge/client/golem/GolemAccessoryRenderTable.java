@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModLoader;
 
 public final class GolemAccessoryRenderTable {
+    public static final GolemAccessoryRenderTable EMPTY = new GolemAccessoryRenderTable(Map.of());
     private final Map<GolemAccessoryAnchor, Map<ResourceLocation, List<GolemAccessoryRenderer>>> renderers;
 
     private GolemAccessoryRenderTable(

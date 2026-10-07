@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class LightningFlashParticle extends TCParticle {
+public final class LightningFlashParticle extends TTParticle {
     private static final int FRAME_COUNT = 4;
     private static final int BASE_LIFETIME = 5;
 
@@ -35,7 +35,7 @@ public final class LightningFlashParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<LightningFlashParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("lightning_flash");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("lightning_flash");
 
         @Override
         public Particle createParticle(

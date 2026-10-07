@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorBase;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,16 +21,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
 public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirrorBase> {
     public static final ModelResourceLocation FRAME_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/mirror"));
+            ModelResourceLocation.standalone(TTIds.rl("block/mirror"));
     public static final ModelResourceLocation FRAME_ESSENTIA_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/mirror_essentia"));
+            ModelResourceLocation.standalone(TTIds.rl("block/mirror_essentia"));
 
-    private static final ResourceLocation PANE_TEXTURE = TCIds.rl("textures/block/mirrorpane.png");
-    private static final ResourceLocation PANE_TRANS_TEXTURE = TCIds.rl("textures/block/mirrorpanetrans.png");
+    private static final ResourceLocation PANE_TEXTURE = TTIds.rl("textures/block/mirrorpane.png");
+    private static final ResourceLocation PANE_TRANS_TEXTURE = TTIds.rl("textures/block/mirrorpanetrans.png");
 
     private static final int[][] WINDOW_ROWS = {
         {2, 5, 11},
@@ -114,7 +115,7 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
         for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
             modelRenderer.renderModel(
                     poseStack.last(),
-                    buffers.getBuffer(renderType),
+                    buffers.getBuffer(RenderTypeHelper.getEntityRenderType(renderType, false)),
                     state,
                     model,
                     1.0F,

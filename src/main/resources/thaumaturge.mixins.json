@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.leclowndu93150.thaumaturge.mixin",
-  "plugin": "com.leclowndu93150.thaumaturge.TCMixinPlugin",
+  "plugin": "com.leclowndu93150.thaumaturge.TTMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "server.network.ServerGamePacketListenerImplAccessor",
@@ -27,7 +27,8 @@
     "client.iris.ExtendedShaderMixin",
     "client.iris.FallbackShaderMixin",
     "client.iris.HandRendererMixin",
-    "client.iris.ShaderInstanceMixin"
+    "client.iris.ShaderInstanceMixin",
+    "client.player.AbstractClientPlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

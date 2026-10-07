@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNodeTransducer;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
@@ -19,7 +19,7 @@ import snownee.jade.api.theme.IThemeHelper;
 public enum MachineComponentProvider implements IBlockComponentProvider {
     INSTANCE;
 
-    private static final ResourceLocation UID = TCIds.rl("machine");
+    private static final ResourceLocation UID = TTIds.rl("machine");
 
     @Override
     public ResourceLocation getUid() {

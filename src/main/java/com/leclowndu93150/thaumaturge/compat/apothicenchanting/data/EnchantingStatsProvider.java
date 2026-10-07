@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.compat.apothicenchanting.data;
 
 import com.google.gson.JsonElement;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.apothicenchanting.BlockEnchantingStats;
 import com.leclowndu93150.thaumaturge.compat.apothicenchanting.EnchantingStats;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.JsonOps;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +46,7 @@ public final class EnchantingStatsProvider implements DataProvider {
                             BlockEnchantingStats.CODEC
                                     .encodeStart(ops, entry.stats())
                                     .getOrThrow(),
-                            this.path.json(TCIds.rl(entry.name()))))
+                            this.path.json(TTIds.rl(entry.name()))))
                     .toArray(CompletableFuture[]::new);
             return CompletableFuture.allOf(writes);
         });
@@ -56,73 +56,73 @@ public final class EnchantingStatsProvider implements DataProvider {
         add(
                 "arcane_stone",
                 new EnchantingStats(40, 1, 0, 0, 0),
-                TCBlocks.STONE_ARCANE,
-                TCBlocks.STONE_ARCANE_BRICK,
-                TCBlocks.SLAB_ARCANE_STONE,
-                TCBlocks.SLAB_ARCANE_BRICK,
-                TCBlocks.STAIRS_ARCANE,
-                TCBlocks.STAIRS_ARCANE_BRICK,
-                TCBlocks.PILLAR_ARCANE,
-                TCBlocks.PEDESTAL_ARCANE);
+                TTBlocks.STONE_ARCANE,
+                TTBlocks.STONE_ARCANE_BRICK,
+                TTBlocks.SLAB_ARCANE_STONE,
+                TTBlocks.SLAB_ARCANE_BRICK,
+                TTBlocks.STAIRS_ARCANE,
+                TTBlocks.STAIRS_ARCANE_BRICK,
+                TTBlocks.PILLAR_ARCANE,
+                TTBlocks.PEDESTAL_ARCANE);
         add(
                 "silverwood",
                 new EnchantingStats(45, 2, 0, 3, 0),
-                TCBlocks.PLANK_SILVERWOOD,
-                TCBlocks.SLAB_SILVERWOOD,
-                TCBlocks.STAIRS_SILVERWOOD,
-                TCBlocks.LOG_SILVERWOOD,
-                TCBlocks.WOOD_SILVERWOOD,
-                TCBlocks.STRIPPED_LOG_SILVERWOOD,
-                TCBlocks.STRIPPED_WOOD_SILVERWOOD);
+                TTBlocks.PLANK_SILVERWOOD,
+                TTBlocks.SLAB_SILVERWOOD,
+                TTBlocks.STAIRS_SILVERWOOD,
+                TTBlocks.LOG_SILVERWOOD,
+                TTBlocks.WOOD_SILVERWOOD,
+                TTBlocks.STRIPPED_LOG_SILVERWOOD,
+                TTBlocks.STRIPPED_WOOD_SILVERWOOD);
         add(
                 "elemental_crystals",
                 new EnchantingStats(50, 3, 3, 0, 0),
-                TCBlocks.CRYSTAL_AER,
-                TCBlocks.CRYSTAL_IGNIS,
-                TCBlocks.CRYSTAL_AQUA,
-                TCBlocks.CRYSTAL_TERRA);
-        add("crystal_ordo", new EnchantingStats(55, 3, -5, 5, 1), TCBlocks.CRYSTAL_ORDO);
-        add("crystal_perditio", new EnchantingStats(50, 3, 12, -5, 0), TCBlocks.CRYSTAL_PERDITIO);
+                TTBlocks.CRYSTAL_AER,
+                TTBlocks.CRYSTAL_IGNIS,
+                TTBlocks.CRYSTAL_AQUA,
+                TTBlocks.CRYSTAL_TERRA);
+        add("crystal_ordo", new EnchantingStats(55, 3, -5, 5, 1), TTBlocks.CRYSTAL_ORDO);
+        add("crystal_perditio", new EnchantingStats(50, 3, 12, -5, 0), TTBlocks.CRYSTAL_PERDITIO);
         add(
                 "taint",
                 new EnchantingStats(0, -5, 20, -10, 0),
-                TCBlocks.CRYSTAL_VITIUM,
-                TCBlocks.TAINT_ROCK,
-                TCBlocks.TAINT_SOIL,
-                TCBlocks.TAINT_CRUST,
-                TCBlocks.TAINT_GEYSER,
-                TCBlocks.TAINT_LOG,
-                TCBlocks.TAINT_FIBRE);
-        add("metal_thaumium", new EnchantingStats(60, 4, 0, 3, 0), TCBlocks.METAL_THAUMIUM_BLOCK);
-        add("metal_void", new EnchantingStats(65, 4, 5, 8, 0), TCBlocks.METAL_VOID_BLOCK);
+                TTBlocks.CRYSTAL_VITIUM,
+                TTBlocks.TAINT_ROCK,
+                TTBlocks.TAINT_SOIL,
+                TTBlocks.TAINT_CRUST,
+                TTBlocks.TAINT_GEYSER,
+                TTBlocks.TAINT_LOG,
+                TTBlocks.TAINT_FIBRE);
+        add("metal_thaumium", new EnchantingStats(60, 4, 0, 3, 0), TTBlocks.METAL_THAUMIUM_BLOCK);
+        add("metal_void", new EnchantingStats(65, 4, 5, 8, 0), TTBlocks.METAL_VOID_BLOCK);
         add(
                 "ancient_stone",
                 new EnchantingStats(75, 6, 3, 5, 0),
-                TCBlocks.STONE_ANCIENT,
-                TCBlocks.STONE_ANCIENT_TILE,
-                TCBlocks.STONE_ANCIENT_ROCK,
-                TCBlocks.STONE_ANCIENT_GLYPHED,
-                TCBlocks.STONE_ANCIENT_DOORWAY,
-                TCBlocks.SLAB_ANCIENT,
-                TCBlocks.STAIRS_ANCIENT,
-                TCBlocks.PILLAR_ANCIENT,
-                TCBlocks.PEDESTAL_ANCIENT);
+                TTBlocks.STONE_ANCIENT,
+                TTBlocks.STONE_ANCIENT_TILE,
+                TTBlocks.STONE_ANCIENT_ROCK,
+                TTBlocks.STONE_ANCIENT_GLYPHED,
+                TTBlocks.STONE_ANCIENT_DOORWAY,
+                TTBlocks.SLAB_ANCIENT,
+                TTBlocks.STAIRS_ANCIENT,
+                TTBlocks.PILLAR_ANCIENT,
+                TTBlocks.PEDESTAL_ANCIENT);
         add(
                 "eldritch_stone",
                 new EnchantingStats(90, 10, 5, 10, 0),
-                TCBlocks.ELDRITCH_STONE,
-                TCBlocks.ELDRITCH_ROCK,
-                TCBlocks.ELDRITCH_CRUST,
-                TCBlocks.STONE_ELDRITCH_TILE,
-                TCBlocks.SLAB_ELDRITCH,
-                TCBlocks.STAIRS_ELDRITCH,
-                TCBlocks.ELDRITCH_DOOR,
-                TCBlocks.PILLAR_ELDRITCH,
-                TCBlocks.PEDESTAL_ELDRITCH);
-        add("eldritch_crust_glowing", new EnchantingStats(95, 12, 5, 12, 1), TCBlocks.ELDRITCH_CRUST_GLOWING);
-        add("eldritch_stone_inert", new EnchantingStats(40, 1, 0, 0, 0), TCBlocks.ELDRITCH_STONE_INERT);
-        add("vis_battery", new EnchantingStats(85, 8, 0, 10, 0), TCBlocks.VIS_BATTERY);
-        add("jar_node", new EnchantingStats(100, 15, 10, 20, 1), TCBlocks.JAR_NODE);
+                TTBlocks.ELDRITCH_STONE,
+                TTBlocks.ELDRITCH_ROCK,
+                TTBlocks.ELDRITCH_CRUST,
+                TTBlocks.STONE_ELDRITCH_TILE,
+                TTBlocks.SLAB_ELDRITCH,
+                TTBlocks.STAIRS_ELDRITCH,
+                TTBlocks.ELDRITCH_DOOR,
+                TTBlocks.PILLAR_ELDRITCH,
+                TTBlocks.PEDESTAL_ELDRITCH);
+        add("eldritch_crust_glowing", new EnchantingStats(95, 12, 5, 12, 1), TTBlocks.ELDRITCH_CRUST_GLOWING);
+        add("eldritch_stone_inert", new EnchantingStats(40, 1, 0, 0, 0), TTBlocks.ELDRITCH_STONE_INERT);
+        add("vis_battery", new EnchantingStats(85, 8, 0, 10, 0), TTBlocks.VIS_BATTERY);
+        add("jar_node", new EnchantingStats(100, 15, 10, 20, 1), TTBlocks.JAR_NODE);
     }
 
     @SafeVarargs

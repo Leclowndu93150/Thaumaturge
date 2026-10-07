@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.aura.ClientAuraCache;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class AuraHudOverlay implements LeftHudStack.Gauge {
-    private static final ResourceLocation HUD = TCIds.rl("textures/gui/hud.png");
+    private static final ResourceLocation HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
 
     private static final float VISCON = 525.0F;

@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.ITaintBlock;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.data.worldgen.biome.TCBiomes;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -51,7 +51,7 @@ public final class EntityTaintacle extends AbstractTaintacle {
 
     private void spawnRemoteTentacle(ServerLevel level, LivingEntity target) {
         BlockPos pos = target.blockPosition();
-        boolean eldritch = level.getBiome(pos).is(TCBiomes.ELDRITCH);
+        boolean eldritch = level.getBiome(pos).is(TTBiomes.ELDRITCH);
         boolean tainted = TaintBiomeManager.isTainted(level, pos);
         boolean taintSubstrate = level.getBlockState(pos).getBlock() instanceof ITaintBlock
                 || level.getBlockState(pos.below()).getBlock() instanceof ITaintBlock;
@@ -59,7 +59,7 @@ public final class EntityTaintacle extends AbstractTaintacle {
             return;
         }
 
-        EntityTaintacleSmall small = TCEntities.TAINTACLE_SMALL.get().create(level);
+        EntityTaintacleSmall small = TTEntities.TAINTACLE_SMALL.get().create(level);
         if (small == null) {
             return;
         }
@@ -77,7 +77,7 @@ public final class EntityTaintacle extends AbstractTaintacle {
                 && level.getBlockState(pos).canBeReplaced()
                 && TaintHelper.isAdjacentToSolidBlock(level, pos)
                 && TaintBiomeManager.taintColumn(level, pos)) {
-            level.setBlock(pos, TCBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
+            level.setBlock(pos, TTBlocks.TAINT_FIBRE.get().defaultBlockState(), 3);
         }
     }
 }

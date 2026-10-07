@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class AirGustParticle extends TCParticle {
+public final class AirGustParticle extends TTParticle {
     private static final int FRAME_COUNT = 5;
     private static final int BASE_LIFETIME = 20;
     private static final float START_ALPHA = 0.5F;
@@ -46,7 +46,7 @@ public final class AirGustParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<AirGustParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("air_gust");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("air_gust");
 
         @Override
         public Particle createParticle(

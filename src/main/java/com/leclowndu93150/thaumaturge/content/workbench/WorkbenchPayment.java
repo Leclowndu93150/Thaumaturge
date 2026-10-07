@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCostEvent;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
@@ -259,7 +259,7 @@ public final class WorkbenchPayment {
 
     private static float averageCraftModifier(ItemStack wand, Player player) {
         float total = 0.0F;
-        for (ResourceKey<IAspect> primal : TCAspects.PRIMALS) {
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
             total += WandVisHelper.getConsumptionModifier(wand, player, primal, true);
         }
         return total / WandEconomy.PRIMAL_COUNT;

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.world.tree;
 
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.Codec;
 import java.util.HashSet;
 import java.util.Set;
@@ -123,7 +123,7 @@ public final class SilverwoodTreeFeature extends Feature<SilverwoodTreeConfig> {
             BlockState state = level.getBlockState(trunkPos);
             if (state.isAir() || state.is(BlockTags.LEAVES) || state.canBeReplaced()) {
                 boolean placeNode = config.node() && trunkY > 0 && !lastNode && random.nextInt(nodeChance) == 0;
-                Block trunkLog = placeNode ? TCBlocks.SILVERWOOD_NODE_LOG.get() : config.log();
+                Block trunkLog = placeNode ? TTBlocks.SILVERWOOD_NODE_LOG.get() : config.log();
                 BlockState trunkState = trunkLog.defaultBlockState();
                 if (trunkState.hasProperty(RotatedPillarBlock.AXIS)) {
                     trunkState = trunkState.setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);

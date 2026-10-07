@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -59,7 +59,7 @@ public final class BlockEntityEverfullUrn extends BlockEntity {
     private int counter;
 
     public BlockEntityEverfullUrn(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.EVERFULL_URN.get(), pos, state);
+        super(TTBlockEntities.EVERFULL_URN.get(), pos, state);
     }
 
     public FluidTank getTank() {

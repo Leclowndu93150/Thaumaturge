@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.data.datamap;
 
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedProfile;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
-import com.leclowndu93150.thaumaturge.registry.TCLootTables;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +34,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
 
     @Override
     protected void gather(HolderLookup.Provider provider) {
-        Builder<TaintedProfile, EntityType<?>> b = builder(TCDataMaps.TAINTED_PROFILE);
+        Builder<TaintedProfile, EntityType<?>> b = builder(TTDataMaps.TAINTED_PROFILE);
         add(
                 b,
                 EntityType.COW,
@@ -44,7 +44,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         true,
                         List.of(),
                         true,
-                        Optional.of(TCLootTables.TAINTED_COW)));
+                        Optional.of(TTLootTables.TAINTED_COW)));
         add(
                 b,
                 EntityType.PIG,
@@ -54,7 +54,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         true,
                         List.of(),
                         true,
-                        Optional.of(TCLootTables.TAINTED_PIG)));
+                        Optional.of(TTLootTables.TAINTED_PIG)));
         add(
                 b,
                 EntityType.CHICKEN,
@@ -62,9 +62,9 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(8.0, 3.0, 0.4, LIVESTOCK_ARMOR),
                         true,
                         true,
-                        List.<Holder<MobTrait>>of(TCMobTraits.LEAPING),
+                        List.<Holder<MobTrait>>of(TTMobTraits.LEAPING),
                         true,
-                        Optional.of(TCLootTables.TAINTED_CHICKEN)));
+                        Optional.of(TTLootTables.TAINTED_CHICKEN)));
         add(
                 b,
                 EntityType.SHEEP,
@@ -72,9 +72,9 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(20.0, 3.0, 0.25, LIVESTOCK_ARMOR),
                         true,
                         false,
-                        List.<Holder<MobTrait>>of(TCMobTraits.TAINT_GRAZING),
+                        List.<Holder<MobTrait>>of(TTMobTraits.TAINT_GRAZING),
                         true,
-                        Optional.of(TCLootTables.TAINTED_SHEEP)));
+                        Optional.of(TTLootTables.TAINTED_SHEEP)));
         add(
                 b,
                 EntityType.VILLAGER,
@@ -84,7 +84,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         false,
                         List.of(),
                         true,
-                        Optional.of(TCLootTables.TAINTED_VILLAGER)));
+                        Optional.of(TTLootTables.TAINTED_VILLAGER)));
         Map<Holder<Attribute>, Double> creeper = new LinkedHashMap<>();
         creeper.put(Attributes.MAX_HEALTH, 24.0);
         creeper.put(Attributes.MOVEMENT_SPEED, 0.28);
@@ -96,9 +96,9 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         creeper,
                         false,
                         false,
-                        List.<Holder<MobTrait>>of(TCMobTraits.TAINT_BLAST),
+                        List.<Holder<MobTrait>>of(TTMobTraits.TAINT_BLAST),
                         false,
-                        Optional.of(TCLootTables.TAINTED_CREEPER)));
+                        Optional.of(TTLootTables.TAINTED_CREEPER)));
     }
 
     private static Map<Holder<Attribute>, Double> stats(double health, double attack, double speed, double armor) {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntityType;
@@ -46,7 +46,8 @@ public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
                         .isEmpty()) {
             return;
         }
-        EntityTaintSwarm swarm = TCEntities.TAINT_SWARM.get().create(server);
+        signalRelease(server);
+        EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(server);
         if (swarm != null) {
             swarm.moveTo(getX(), getY() + 0.5, getZ(), random.nextFloat() * 360.0F, 0.0F);
             server.addFreshEntity(swarm);
@@ -56,7 +57,7 @@ public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
     @Override
     protected void burst(ServerLevel level) {
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            EntityTaintSwarm swarm = TCEntities.TAINT_SWARM.get().create(level);
+            EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
             if (swarm != null) {
                 swarm.moveTo(getX(), getY(), getZ(), random.nextFloat() * 360.0F, 0.0F);
                 level.addFreshEntity(swarm);

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,7 +18,7 @@ public final class LabelAspectTint implements ItemColor {
         if (tintIndex == 0) {
             return WHITE;
         }
-        ResourceKey<IAspect> aspect = stack.get(TCDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> aspect = stack.get(TTDataComponents.ASPECT_FILTER.get());
         ClientLevel level = Minecraft.getInstance().level;
         if (aspect == null || level == null) {
             return ARGB32.opaque(FALLBACK);

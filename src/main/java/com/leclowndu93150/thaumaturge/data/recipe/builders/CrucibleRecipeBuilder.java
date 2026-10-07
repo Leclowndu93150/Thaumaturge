@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.recipe.builders;
 
 import com.google.common.base.Preconditions;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -69,7 +69,7 @@ public class CrucibleRecipeBuilder extends SimpleRecipeBuilder {
 
     @Override
     protected ResourceLocation defaultId() {
-        return TCIds.rl(
+        return TTIds.rl(
                 "crucible/" + RecipeBuilder.getDefaultRecipeId(getResult()).getPath());
     }
 }

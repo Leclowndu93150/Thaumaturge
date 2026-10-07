@@ -3,12 +3,16 @@ package com.leclowndu93150.thaumaturge.config;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class ThaumaturgeClientConfig {
+    public static final String DONATOR_CAPE_KEY = "donator_cape";
+
     public static final ModConfigSpec SPEC;
 
     private static final ModConfigSpec.BooleanValue SHOW_ASPECTS_BY_DEFAULT;
     private static final ModConfigSpec.BooleanValue LARGE_TAG_TEXT;
     private static final ModConfigSpec.BooleanValue DIAL_BOTTOM;
     // private static final ModConfigSpec.BooleanValue HIDE_RECIPES_IF_MISSING_RESEARCH;
+
+    private static final ModConfigSpec.BooleanValue DONATOR_CAPE;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -18,12 +22,16 @@ public final class ThaumaturgeClientConfig {
                 .define("tooltip.show_aspects_by_default", false);
 
         LARGE_TAG_TEXT = builder.comment(
-                        "When true, aspect tag amount and bonus counters render at full font size. When false, they render half-scale to fit narrow GUIs (TC default).")
+                        "When true, aspect tag amount and bonus counters render at full font size. When false, they render half-scale to fit narrow GUIs.")
                 .define("graphics.large_tag_text", false);
 
         DIAL_BOTTOM = builder.comment(
                         "When true, the caster vis dial renders at the bottom left of the screen instead of the top left.")
                 .define("hud.dial_bottom", false);
+
+        DONATOR_CAPE = builder.comment(
+                        "Donators only: shows your Thaumaturge cape. While it is on, every player on the server sees it.")
+                .define(DONATOR_CAPE_KEY, true);
 
         /*HIDE_RECIPES_IF_MISSING_RESEARCH = builder
         .comment("Hide recipes from JEI if you don't have the research for it")
@@ -49,4 +57,7 @@ public final class ThaumaturgeClientConfig {
     /*public static boolean hideRecipesIfMissingResearch(){
         return HIDE_RECIPES_IF_MISSING_RESEARCH.get();
     }*/
+    public static boolean donatorCape() {
+        return DONATOR_CAPE.get();
+    }
 }

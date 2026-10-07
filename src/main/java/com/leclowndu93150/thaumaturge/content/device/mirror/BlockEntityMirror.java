@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -26,7 +26,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     private List<ItemStack> outputStacks = new ArrayList<>();
 
     public BlockEntityMirror(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.MIRROR.get(), pos, state);
+        super(TTBlockEntities.MIRROR.get(), pos, state);
     }
 
     BlockEntityMirror(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -119,7 +119,7 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         outputStacks = new ArrayList<>(
-                TCNbt.read(input, "Items", ItemStack.CODEC.listOf(), registries).orElse(List.of()));
+                TTNbt.read(input, "Items", ItemStack.CODEC.listOf(), registries).orElse(List.of()));
     }
 
     @Override
@@ -127,6 +127,6 @@ public final class BlockEntityMirror extends BlockEntityMirrorBase {
         super.saveAdditional(output, registries);
         List<ItemStack> filtered =
                 outputStacks.stream().filter(stack -> !stack.isEmpty()).toList();
-        TCNbt.store(output, "Items", ItemStack.CODEC.listOf(), registries, filtered);
+        TTNbt.store(output, "Items", ItemStack.CODEC.listOf(), registries, filtered);
     }
 }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusMediumPlan implements FocusMedium, IArchitect {
-    private static final ResourceLocation KEY = TCIds.rl("plan");
+    private static final ResourceLocation KEY = TTIds.rl("plan");
 
     private static final int COMPLEXITY = 4;
     private static final int METHOD_FULL = 0;
@@ -48,7 +48,7 @@ public final class FocusMediumPlan implements FocusMedium, IArchitect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_plan"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_plan"), Optional.empty(), false);
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class FocusMediumPlan implements FocusMedium, IArchitect {
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.FABRICO;
+        return TTAspects.FABRICO;
     }
 
     @Override

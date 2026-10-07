@@ -1,9 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
@@ -34,12 +36,30 @@ public final class BlockArcaneEar extends BaseEntityBlock {
             instance -> instance.group(Codec.BOOL.fieldOf("toggle").forGetter(block -> block.toggle), propertiesCodec())
                     .apply(instance, BlockArcaneEar::new));
 
-    private static final VoxelShape SHAPE_UP = box(2.0, 0.0, 2.0, 14.0, 6.0, 14.0);
-    private static final VoxelShape SHAPE_DOWN = box(2.0, 10.0, 2.0, 14.0, 16.0, 14.0);
-    private static final VoxelShape SHAPE_SOUTH = box(2.0, 2.0, 0.0, 14.0, 14.0, 6.0);
-    private static final VoxelShape SHAPE_NORTH = box(2.0, 2.0, 10.0, 14.0, 14.0, 16.0);
-    private static final VoxelShape SHAPE_EAST = box(0.0, 2.0, 2.0, 6.0, 14.0, 14.0);
-    private static final VoxelShape SHAPE_WEST = box(10.0, 2.0, 2.0, 16.0, 14.0, 14.0);
+    private static final VoxelShape EAR = Shapes.or(
+            box(3.0, 0.0, 3.0, 13.0, 2.0, 13.0),
+            box(5.0, 2.0, 5.0, 11.0, 3.0, 11.0),
+            box(7.0, 3.0, 7.0, 9.0, 6.0, 9.0),
+            box(6.0, 6.0, 6.0, 10.0, 7.0, 10.0),
+            box(5.0, 7.0, 5.0, 11.0, 8.0, 11.0),
+            box(4.0, 8.0, 4.0, 5.0, 10.0, 12.0),
+            box(11.0, 8.0, 5.0, 12.0, 10.0, 11.0),
+            box(5.0, 8.0, 4.0, 12.0, 10.0, 5.0),
+            box(5.0, 8.0, 11.0, 12.0, 10.0, 12.0));
+
+    private static final VoxelShape SWITCH_OFF =
+            Shapes.or(box(5.0, 2.0, 12.0, 6.0, 5.0, 13.0), box(6.0, 2.0, 12.0, 9.0, 3.0, 13.0));
+
+    private static final VoxelShape SWITCH_ON =
+            Shapes.or(box(5.0, 2.0, 12.0, 9.0, 3.0, 13.0), box(8.0, 3.0, 12.0, 9.0, 5.0, 13.0));
+
+    private static final Map<Direction, VoxelShape> EAR_SHAPES = DeviceShapes.facingShapesFromUp(EAR);
+
+    private static final Map<Direction, VoxelShape> TOGGLE_OFF_SHAPES =
+            DeviceShapes.facingShapesFromUp(Shapes.or(EAR, SWITCH_OFF));
+
+    private static final Map<Direction, VoxelShape> TOGGLE_ON_SHAPES =
+            DeviceShapes.facingShapesFromUp(Shapes.or(EAR, SWITCH_ON));
 
     private final boolean toggle;
 
@@ -68,14 +88,10 @@ public final class BlockArcaneEar extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return switch (state.getValue(BlockStateProperties.FACING)) {
-            case DOWN -> SHAPE_DOWN;
-            case NORTH -> SHAPE_NORTH;
-            case SOUTH -> SHAPE_SOUTH;
-            case EAST -> SHAPE_EAST;
-            case WEST -> SHAPE_WEST;
-            default -> SHAPE_UP;
-        };
+        Map<Direction, VoxelShape> shapes = !toggle
+                ? EAR_SHAPES
+                : state.getValue(BlockStateProperties.ENABLED) ? TOGGLE_ON_SHAPES : TOGGLE_OFF_SHAPES;
+        return shapes.get(state.getValue(BlockStateProperties.FACING));
     }
 
     @Override
@@ -162,7 +178,7 @@ public final class BlockArcaneEar extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.ARCANE_EAR.get(), BlockEntityArcaneEar::serverTick);
+        return createTickerHelper(type, TTBlockEntities.ARCANE_EAR.get(), BlockEntityArcaneEar::serverTick);
     }
 
     @Override

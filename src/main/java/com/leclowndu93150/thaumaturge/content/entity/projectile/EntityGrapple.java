@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity.projectile;
 
 import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -80,15 +80,15 @@ public final class EntityGrapple extends ThrowableProjectile {
         }
         if (!level().isClientSide()) {
             if (!added) {
-                int tracked = thrower.getData(TCAttachments.GRAPPLE_ID.get());
+                int tracked = thrower.getData(TTAttachments.GRAPPLE_ID.get());
                 if (tracked >= 0
                         && tracked != getId()
                         && level().getEntity(tracked) instanceof EntityGrapple previous) {
                     previous.discard();
                 }
-                thrower.setData(TCAttachments.GRAPPLE_ID.get(), getId());
+                thrower.setData(TTAttachments.GRAPPLE_ID.get(), getId());
                 added = true;
-            } else if (thrower.getData(TCAttachments.GRAPPLE_ID.get()) != getId()) {
+            } else if (thrower.getData(TTAttachments.GRAPPLE_ID.get()) != getId()) {
                 discard();
                 return;
             }
@@ -137,8 +137,8 @@ public final class EntityGrapple extends ThrowableProjectile {
     }
 
     private void releaseTracker(Entity thrower) {
-        if (!level().isClientSide() && thrower != null && thrower.getData(TCAttachments.GRAPPLE_ID.get()) == getId()) {
-            thrower.setData(TCAttachments.GRAPPLE_ID.get(), -1);
+        if (!level().isClientSide() && thrower != null && thrower.getData(TTAttachments.GRAPPLE_ID.get()) == getId()) {
+            thrower.setData(TTAttachments.GRAPPLE_ID.get(), -1);
         }
     }
 

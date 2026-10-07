@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
-import com.leclowndu93150.thaumaturge.content.world.plant.AbstractTCPlant;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.content.world.plant.AbstractTTPlant;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEtherealBloom extends AbstractTCPlant implements EntityBlock {
+public final class BlockEtherealBloom extends AbstractTTPlant implements EntityBlock {
     public static final MapCodec<BlockEtherealBloom> CODEC = simpleCodec(BlockEtherealBloom::new);
 
     public BlockEtherealBloom(BlockBehaviour.Properties properties) {
@@ -41,7 +41,7 @@ public final class BlockEtherealBloom extends AbstractTCPlant implements EntityB
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide() || type != TCBlockEntities.ETHEREAL_BLOOM.get()) {
+        if (level.isClientSide() || type != TTBlockEntities.ETHEREAL_BLOOM.get()) {
             return null;
         }
         return (tickerLevel, pos, tickerState, blockEntity) -> BlockEntityEtherealBloom.serverTick(

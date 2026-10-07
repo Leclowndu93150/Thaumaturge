@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.data.datamap;
 
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryItem;
-import com.leclowndu93150.thaumaturge.registry.TCGolemAccessories;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTGolemAccessories;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -19,11 +19,11 @@ public final class GolemAccessoryItemProvider extends DataMapProvider {
     @Override
     protected void gather(HolderLookup.Provider provider) {
         Builder<GolemAccessoryItem, Item> builder = builder(GolemAccessoryItem.DATA_MAP);
-        add(builder, TCItems.GOLEM_TOP_HAT, TCGolemAccessories.TOP_HAT);
-        add(builder, TCItems.GOLEM_FEZ, TCGolemAccessories.FEZ);
-        add(builder, TCItems.GOLEM_GLASSES, TCGolemAccessories.GLASSES);
-        add(builder, TCItems.GOLEM_BOWTIE, TCGolemAccessories.BOWTIE);
-        add(builder, TCItems.GOLEM_VISOR, TCGolemAccessories.VISOR);
+        add(builder, TTItems.GOLEM_TOP_HAT, TTGolemAccessories.TOP_HAT);
+        add(builder, TTItems.GOLEM_FEZ, TTGolemAccessories.FEZ);
+        add(builder, TTItems.GOLEM_GLASSES, TTGolemAccessories.GLASSES);
+        add(builder, TTItems.GOLEM_BOWTIE, TTGolemAccessories.BOWTIE);
+        add(builder, TTItems.GOLEM_VISOR, TTGolemAccessories.VISOR);
     }
 
     @Override

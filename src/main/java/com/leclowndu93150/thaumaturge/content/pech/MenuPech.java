@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.pech;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
 import com.leclowndu93150.thaumaturge.content.entity.ai.PechItemGoal;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -47,7 +47,7 @@ public final class MenuPech extends AbstractContainerMenu {
     }
 
     public MenuPech(int containerId, Inventory playerInventory, @Nullable EntityPech pech) {
-        super(TCMenus.PECH.get(), containerId);
+        super(TTMenus.PECH.get(), containerId);
         this.pech = pech;
         if (pech != null) {
             pech.trading = true;
@@ -109,7 +109,7 @@ public final class MenuPech extends AbstractContainerMenu {
         int value = pech.getValue(tradeContainer.getItem(INPUT_SLOT));
         if (rand.nextInt(UNTAME_ROLL) <= value / 2) {
             pech.setTamed(false);
-            pech.playSound(TCSounds.PECH_TRADE.get(), 0.4F, 1.0F);
+            pech.playSound(TTSounds.PECH_TRADE.get(), 0.4F, 1.0F);
         }
         if (rand.nextInt(5) == 0) {
             value += rand.nextInt(3);

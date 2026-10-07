@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.DrownedModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.monster.Drowned;
 
 public final class BrainyDrownedOuterLayer<T extends Drowned> extends RenderLayer<T, DrownedModel<T>> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/brainy_drowned_outer_layer.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/brainy_drowned_outer_layer.png");
 
     private final DrownedModel<T> model;
 

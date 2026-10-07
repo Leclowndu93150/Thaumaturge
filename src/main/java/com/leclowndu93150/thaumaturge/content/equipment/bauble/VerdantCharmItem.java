@@ -2,8 +2,8 @@ package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
 import com.leclowndu93150.thaumaturge.api.items.IRechargable;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -35,7 +35,7 @@ public final class VerdantCharmItem extends Item implements IRechargable {
     }
 
     public static int type(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
+        return stack.getOrDefault(TTDataComponents.VERDANT_TYPE.get(), TYPE_BASE);
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
@@ -52,9 +52,9 @@ public final class VerdantCharmItem extends Item implements IRechargable {
             player.removeEffect(MobEffects.POISON);
             return;
         }
-        if (player.getEffect(TCMobEffects.FLUX_TAINT) != null
+        if (player.getEffect(TTMobEffects.FLUX_TAINT) != null
                 && RechargeAccess.consumeCharge(stack, player, FLUX_TAINT_COST)) {
-            player.removeEffect(TCMobEffects.FLUX_TAINT);
+            player.removeEffect(TTMobEffects.FLUX_TAINT);
             return;
         }
         int type = type(stack);

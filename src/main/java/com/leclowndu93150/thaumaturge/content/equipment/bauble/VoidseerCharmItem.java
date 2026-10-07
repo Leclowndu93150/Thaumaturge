@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
-import com.leclowndu93150.thaumaturge.registry.TCAttributes;
+import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 public final class VoidseerCharmItem extends Item implements IVisDiscountGear, IWarpingGear {
-    public static final ResourceLocation DISCOUNT_MODIFIER_ID = TCIds.rl("voidseer_discount");
+    public static final ResourceLocation DISCOUNT_MODIFIER_ID = TTIds.rl("voidseer_discount");
     private static final int WARP_CAP = 100;
     private static final float MAX_DISCOUNT = 25.0F;
     private static final int WARP_PER_DISCOUNT = 5;
@@ -38,7 +38,7 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
     }
 
     public void wornTick(ItemStack stack, LivingEntity wearer) {
-        AttributeInstance attribute = wearer.getAttribute(TCAttributes.VIS_DISCOUNT);
+        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT);
         if (attribute == null) {
             return;
         }
@@ -55,7 +55,7 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
     }
 
     public static void clearDiscount(LivingEntity wearer) {
-        AttributeInstance attribute = wearer.getAttribute(TCAttributes.VIS_DISCOUNT);
+        AttributeInstance attribute = wearer.getAttribute(TTAttributes.VIS_DISCOUNT);
         if (attribute != null) {
             attribute.removeModifier(DISCOUNT_MODIFIER_ID);
         }

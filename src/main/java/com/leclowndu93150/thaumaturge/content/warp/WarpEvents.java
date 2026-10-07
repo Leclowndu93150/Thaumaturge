@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.warp;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -9,8 +9,8 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityMindSpider;
 import com.leclowndu93150.thaumaturge.content.equipment.FortressArmorItem;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
 import java.util.function.IntPredicate;
 import net.minecraft.core.BlockPos;
@@ -45,10 +45,10 @@ public final class WarpEvents {
     private static final int BATH_SALTS_WARP_THRESHOLD = 10;
     private static final int ELDRITCH_MINOR_WARP_THRESHOLD = 25;
     private static final int ELDRITCH_MAJOR_WARP_THRESHOLD = 50;
-    private static final ResourceLocation BATH_SALTS_ENTRY = TCIds.rl("bath_salts");
-    private static final ResourceLocation BATHSALTS_FLAG = TCIds.rl("bathsalts");
-    private static final ResourceLocation ELDRITCH_MINOR_FLAG = TCIds.rl("eldritchminor");
-    private static final ResourceLocation ELDRITCH_MAJOR_FLAG = TCIds.rl("eldritchmajor");
+    private static final ResourceLocation BATH_SALTS_ENTRY = TTIds.rl("bath_salts");
+    private static final ResourceLocation BATHSALTS_FLAG = TTIds.rl("bathsalts");
+    private static final ResourceLocation ELDRITCH_MINOR_FLAG = TTIds.rl("eldritchminor");
+    private static final ResourceLocation ELDRITCH_MAJOR_FLAG = TTIds.rl("eldritchmajor");
 
     @FunctionalInterface
     private interface Action {
@@ -66,12 +66,12 @@ public final class WarpEvents {
             upTo(
                     16,
                     (player, roll) -> applyEffect(
-                            player, TCMobEffects.VIS_EXHAUST, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
+                            player, TTMobEffects.VIS_EXHAUST, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.1")),
             upTo(
                     20,
                     (player, roll) -> applyEffect(
                             player,
-                            TCMobEffects.THAUMARHIA,
+                            TTMobEffects.THAUMARHIA,
                             Math.min(32000, 10 * roll.warp()),
                             0,
                             "warp.thaumaturge.text.15")),
@@ -79,7 +79,7 @@ public final class WarpEvents {
                     24,
                     (player, roll) -> applyEffect(
                             player,
-                            TCMobEffects.UNNATURAL_HUNGER,
+                            TTMobEffects.UNNATURAL_HUNGER,
                             5000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.2")),
@@ -88,11 +88,11 @@ public final class WarpEvents {
             upTo(
                     36,
                     (player, roll) -> applyEffect(
-                            player, TCMobEffects.BLURRED_VISION, Math.min(32000, 10 * roll.warp()), 0, null)),
+                            player, TTMobEffects.BLURRED_VISION, Math.min(32000, 10 * roll.warp()), 0, null)),
             upTo(
                     40,
                     (player, roll) -> applyEffect(
-                            player, TCMobEffects.SUN_SCORNED, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
+                            player, TTMobEffects.SUN_SCORNED, 5000, ampFor(roll.warp()), "warp.thaumaturge.text.5")),
             upTo(
                     44,
                     (player, roll) -> applyEffect(
@@ -101,7 +101,7 @@ public final class WarpEvents {
                     48,
                     (player, roll) -> applyEffect(
                             player,
-                            TCMobEffects.INFECTIOUS_VIS_EXHAUST,
+                            TTMobEffects.INFECTIOUS_VIS_EXHAUST,
                             6000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.1")),
@@ -116,7 +116,7 @@ public final class WarpEvents {
             upTo(
                     56,
                     (player, roll) -> applyEffect(
-                            player, TCMobEffects.DEATH_GAZE, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
+                            player, TTMobEffects.DEATH_GAZE, 6000, ampFor(roll.warp()), "warp.thaumaturge.text.4")),
             upTo(60, (player, roll) -> suddenlySpiders(player, roll.warp(), false)),
             message(64, "warp.thaumaturge.text.13"),
             upTo(68, (player, roll) -> spawnMist(player, roll.warp() / 30)),
@@ -129,7 +129,7 @@ public final class WarpEvents {
                     80,
                     (player, roll) -> applyEffect(
                             player,
-                            TCMobEffects.UNNATURAL_HUNGER,
+                            TTMobEffects.UNNATURAL_HUNGER,
                             6000,
                             ampFor(roll.warp()),
                             "warp.thaumaturge.text.2")),
@@ -268,7 +268,7 @@ public final class WarpEvents {
         int spawns = Math.min(MAX_SPIDERS, warp);
         for (int i = 0; i < spawns; i++) {
             for (int attempt = 0; attempt < SPAWN_ATTEMPTS; attempt++) {
-                EntityMindSpider spider = TCEntities.MIND_SPIDER.get().create(level);
+                EntityMindSpider spider = TTEntities.MIND_SPIDER.get().create(level);
                 if (spider == null) {
                     return;
                 }
@@ -296,7 +296,7 @@ public final class WarpEvents {
     }
 
     public static void checkDeathGaze(ServerPlayer player) {
-        MobEffectInstance gaze = player.getEffect(TCMobEffects.DEATH_GAZE);
+        MobEffectInstance gaze = player.getEffect(TTMobEffects.DEATH_GAZE);
         if (gaze == null) {
             return;
         }

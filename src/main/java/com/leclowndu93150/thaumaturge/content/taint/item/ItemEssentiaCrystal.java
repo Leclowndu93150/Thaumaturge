@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -37,7 +37,7 @@ public final class ItemEssentiaCrystal extends Item implements IEssentiaContaine
     }*/
 
     public static Holder<IAspect> aspectOf(ItemStack stack) {
-        AspectInstance instance = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance instance = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         return instance == null ? null : instance.aspect();
     }
 
@@ -48,18 +48,18 @@ public final class ItemEssentiaCrystal extends Item implements IEssentiaContaine
 
     @Override
     public AspectList getAspects(ItemStack stack) {
-        AspectInstance stored = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance stored = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         return stored == null ? AspectList.EMPTY : AspectList.of(stored);
     }
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
         if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TCDataComponents.CRYSTAL_ASPECT.get());
+            stack.remove(TTDataComponents.CRYSTAL_ASPECT.get());
             return;
         }
         stack.set(
-                TCDataComponents.CRYSTAL_ASPECT.get(),
+                TTDataComponents.CRYSTAL_ASPECT.get(),
                 aspects.entries().getFirst().withAmount(1));
     }
 

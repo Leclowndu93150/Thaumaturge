@@ -12,10 +12,10 @@ import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.awt.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -66,7 +66,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
     private int delay = 0;
 
     public BlockEntityCrucible(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
+        super(TTBlockEntities.CRUCIBLE.get(), worldPosition, blockState);
     }
 
     private void tick() {
@@ -76,7 +76,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         if (!level.isClientSide()) {
             if (tank.getFluidAmount() > 0) {
                 BlockState below = level.getBlockState(getBlockPos().below());
-                boolean hasHeatBelow = below.is(TCBlockTags.CRUCIBLE_HEAT_SOURCES);
+                boolean hasHeatBelow = below.is(TTBlockTags.CRUCIBLE_HEAT_SOURCES);
                 if (!hasHeatBelow) {
                     if (heat > 0) {
                         heat--;
@@ -222,7 +222,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        TCNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
+        TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
         output.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         output.putShort("Heat", heat);
     }
@@ -233,7 +233,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
         if (input.contains("Tank")) {
             tank.readFromNBT(registries, input.getCompound("Tank"));
         }
-        aspects = TCNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        aspects = TTNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
         heat = (short) input.getShort("Heat");
     }
 
@@ -355,7 +355,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
                     getBlockPos().getX() + 0.5f,
                     getBlockPos().getY() + 0.5,
                     getBlockPos().getZ() + 0.5,
-                    TCSounds.SPILL.get(),
+                    TTSounds.SPILL.get(),
                     SoundSource.BLOCKS,
                     0.2f,
                     1.0F,
@@ -375,7 +375,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
                     getBlockPos().getX() + 0.5f,
                     getBlockPos().getY() + 0.5,
                     getBlockPos().getZ() + 0.5,
-                    TCSounds.SPILL.get(),
+                    TTSounds.SPILL.get(),
                     SoundSource.BLOCKS,
                     0.2f,
                     1.0F,
@@ -485,7 +485,7 @@ public class BlockEntityCrucible extends BlockEntity implements ReadOnlyAspectCo
             level.playSound(
                     null,
                     getBlockPos(),
-                    TCSounds.BUBBLE.get(),
+                    TTSounds.BUBBLE.get(),
                     SoundSource.BLOCKS,
                     0.2F,
                     1.0F + level.getRandom().nextFloat() * 0.4F);

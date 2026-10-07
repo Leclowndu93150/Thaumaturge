@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,10 +33,10 @@ final class AdvancedFurnaceJadeAccess {
     }
 
     private static boolean isPart(BlockState state) {
-        return state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TCBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
+        return state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
+                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
     }
 }

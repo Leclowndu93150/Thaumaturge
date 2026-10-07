@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.item;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectChipsTooltip;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -12,8 +12,8 @@ import com.leclowndu93150.thaumaturge.client.tooltip.AspectChipsClientTooltip;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
 import com.leclowndu93150.thaumaturge.network.ServerboundInventoryScanPayload;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -44,7 +44,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ThaumometerClientHandler {
     private static final int HIGHLIGHT_INTERVAL_TICKS = 5;
     private static final double HIGHLIGHT_ENTITY_RANGE = 16.0;
@@ -86,8 +86,8 @@ public final class ThaumometerClientHandler {
         }
         tickInventoryScanning(mc, player);
         tickScanning(mc, player);
-        boolean held = player.getMainHandItem().is(TCItems.THAUMOMETER.get())
-                || player.getOffhandItem().is(TCItems.THAUMOMETER.get());
+        boolean held = player.getMainHandItem().is(TTItems.THAUMOMETER.get())
+                || player.getOffhandItem().is(TTItems.THAUMOMETER.get());
         if (!held) {
             return;
         }
@@ -107,7 +107,7 @@ public final class ThaumometerClientHandler {
 
     private static void tickInventoryScanning(Minecraft mc, LocalPlayer player) {
         if (!(mc.screen instanceof AbstractContainerScreen<?> screen)
-                || !screen.getMenu().getCarried().is(TCItems.THAUMOMETER.get())
+                || !screen.getMenu().getCarried().is(TTItems.THAUMOMETER.get())
                 || !inventoryScanActive) {
             inventoryScanActive = false;
             clearInventoryScan();
@@ -144,7 +144,7 @@ public final class ThaumometerClientHandler {
                             player.getX(),
                             player.getY(),
                             player.getZ(),
-                            TCSounds.CAMERA_TICKS.get(),
+                            TTSounds.CAMERA_TICKS.get(),
                             SoundSource.PLAYERS,
                             SCAN_TICK_VOLUME,
                             SCAN_TICK_PITCH_BASE + player.level().getRandom().nextFloat() * SCAN_TICK_PITCH_SPREAD,
@@ -166,7 +166,7 @@ public final class ThaumometerClientHandler {
         LocalPlayer player = Minecraft.getInstance().player;
         Slot slot = screen.getSlotUnderMouse();
         if (player == null
-                || !screen.getMenu().getCarried().is(TCItems.THAUMOMETER.get())
+                || !screen.getMenu().getCarried().is(TTItems.THAUMOMETER.get())
                 || slot == null
                 || slot instanceof ResultSlot
                 || !slot.hasItem()
@@ -219,7 +219,7 @@ public final class ThaumometerClientHandler {
     @SubscribeEvent
     public static void onScreenRender(ScreenEvent.Render.Post event) {
         if (!(event.getScreen() instanceof AbstractContainerScreen<?> screen)
-                || !screen.getMenu().getCarried().is(TCItems.THAUMOMETER.get())) {
+                || !screen.getMenu().getCarried().is(TTItems.THAUMOMETER.get())) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
@@ -261,7 +261,7 @@ public final class ThaumometerClientHandler {
     }
 
     private static void tickScanning(Minecraft mc, LocalPlayer player) {
-        boolean scanning = player.isUsingItem() && player.getUseItem().is(TCItems.THAUMOMETER.get());
+        boolean scanning = player.isUsingItem() && player.getUseItem().is(TTItems.THAUMOMETER.get());
         if (!scanning) {
             scanTargetKey = null;
             return;
@@ -288,7 +288,7 @@ public final class ThaumometerClientHandler {
                             player.getX(),
                             player.getY(),
                             player.getZ(),
-                            TCSounds.CAMERA_TICKS.get(),
+                            TTSounds.CAMERA_TICKS.get(),
                             SoundSource.PLAYERS,
                             SCAN_TICK_VOLUME,
                             SCAN_TICK_PITCH_BASE + level.getRandom().nextFloat() * SCAN_TICK_PITCH_SPREAD,

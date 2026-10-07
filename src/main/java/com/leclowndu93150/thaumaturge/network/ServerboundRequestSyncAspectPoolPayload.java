@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundRequestSyncAspectPoolPayload() implements CustomPacketPayload {
     public static final Type<ServerboundRequestSyncAspectPoolPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "request_aspect_pool"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "request_aspect_pool"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundRequestSyncAspectPoolPayload> STREAM_CODEC =
             StreamCodec.unit(new ServerboundRequestSyncAspectPoolPayload());

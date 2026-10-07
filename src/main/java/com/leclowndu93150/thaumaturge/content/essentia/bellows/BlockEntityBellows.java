@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.bellows;
 
 import com.leclowndu93150.thaumaturge.content.essentia.IBellowsPower;
 import com.leclowndu93150.thaumaturge.mixin.world.level.block.entity.AbstractFurnaceBlockEntityAccessor;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -20,7 +20,7 @@ public class BlockEntityBellows extends BlockEntity implements IBellowsPower {
     public int delay = 0;
 
     public BlockEntityBellows(BlockPos worldPosition, BlockState blockState) {
-        super(TCBlockEntities.BELLOWS.get(), worldPosition, blockState);
+        super(TTBlockEntities.BELLOWS.get(), worldPosition, blockState);
     }
 
     public void setCookTime(AbstractFurnaceBlockEntity ent, int hit) {

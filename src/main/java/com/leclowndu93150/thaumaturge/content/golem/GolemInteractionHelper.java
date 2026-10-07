@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.golem;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
-import com.leclowndu93150.thaumaturge.server.TCFakePlayer;
+import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +31,7 @@ public final class GolemInteractionHelper {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        FakePlayer player = TCFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity());
+        FakePlayer player = TTFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity());
         player.setItemInHand(InteractionHand.MAIN_HAND, clickStack);
         player.setShiftKeyDown(sneaking);
         if (!rightClick) {

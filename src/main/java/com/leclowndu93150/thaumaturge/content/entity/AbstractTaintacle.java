@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
-import com.leclowndu93150.thaumaturge.registry.TCBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -31,7 +31,11 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     private static final float FLAIL_MAX = 3.0F;
     private static final float FLAIL_DECAY = 0.01F;
 
+    private static final int STRIKE_TICKS = 20;
+
     public float flailIntensity = 1.0F;
+
+    private int strikeTicks;
 
     protected AbstractTaintacle(EntityType<? extends AbstractTaintacle> type, Level level) {
         super(type, level);
@@ -64,6 +68,7 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     public void handleEntityEvent(byte id) {
         if (id == EVENT_FLAIL) {
             this.flailIntensity = FLAIL_MAX;
+            this.strikeTicks = STRIKE_TICKS;
         } else {
             super.handleEntityEvent(id);
         }
@@ -73,13 +78,16 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
     public void aiStep() {
         super.aiStep();
         if (!(this.level() instanceof ServerLevel server)) {
+            if (this.strikeTicks > 0) {
+                this.strikeTicks--;
+            }
             if (this.flailIntensity > 1.0F) {
                 this.flailIntensity -= FLAIL_DECAY;
             }
             return;
         }
         if (this.tickCount % SUBSTRATE_CHECK_INTERVAL == 0
-                && !server.getBiome(this.blockPosition()).is(TCBiomeTags.IS_TAINTED)) {
+                && !server.getBiome(this.blockPosition()).is(TTBiomeTags.IS_TAINTED)) {
             this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
         }
     }
@@ -95,16 +103,16 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
             MobSpawnType spawnType,
             BlockPos pos,
             RandomSource random) {
-        if (!level.getBiome(pos).is(TCBiomeTags.IS_TAINTED)) {
+        if (!level.getBiome(pos).is(TTBiomeTags.IS_TAINTED)) {
             return false;
         }
 
         BlockState here = level.getBlockState(pos);
         BlockState below = level.getBlockState(pos.below());
-        boolean onTaint = here.is(TCBlocks.TAINT_FIBRE.get())
-                || below.is(TCBlocks.TAINT_FIBRE.get())
-                || here.is(TCBlocks.TAINT_SOIL.get())
-                || below.is(TCBlocks.TAINT_SOIL.get());
+        boolean onTaint = here.is(TTBlocks.TAINT_FIBRE.get())
+                || below.is(TTBlocks.TAINT_FIBRE.get())
+                || here.is(TTBlocks.TAINT_SOIL.get())
+                || below.is(TTBlocks.TAINT_SOIL.get());
         if (!onTaint) {
             return false;
         }
@@ -114,6 +122,14 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
             return false;
         }
         return Monster.checkMonsterSpawnRules(type, level, spawnType, pos, random);
+    }
+
+    public int strikeTicks() {
+        return this.strikeTicks;
+    }
+
+    public float enrage() {
+        return 0.0F;
     }
 
     @Override
@@ -129,16 +145,16 @@ public abstract class AbstractTaintacle extends Monster implements ITaintedMob {
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.GORE.get();
+        return TTSounds.GORE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return TCSounds.TENTACLE.get();
+        return TTSounds.TENTACLE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.TENTACLE.get();
+        return TTSounds.TENTACLE.get();
     }
 }

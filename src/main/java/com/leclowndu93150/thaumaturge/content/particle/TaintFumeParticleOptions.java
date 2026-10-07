@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,6 +29,6 @@ public record TaintFumeParticleOptions(int color, float scale) implements Partic
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.TAINT_FUME.get();
+        return TTParticles.TAINT_FUME.get();
     }
 }

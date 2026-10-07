@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.model;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.JarRenderer;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -51,7 +51,7 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
     }
 
     private static AspectInstance extractContents(ItemStack stack) {
-        var essentiaList = stack.get(TCDataComponents.ESSENTIA_CONTENTS.get());
+        var essentiaList = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
         if (essentiaList == null || essentiaList.isEmpty()) {
             return null;
         }

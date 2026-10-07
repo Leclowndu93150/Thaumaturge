@@ -4,11 +4,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.network.ClientboundAspectGainPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundUpdateJEIAspectListPayload;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Collection;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -32,16 +32,16 @@ public final class AspectPools {
     private static final int PRIMAL_SEED_SPREAD = 5;
 
     private static final List<ResourceKey<IAspect>> PRIMALS = List.of(
-            TCAspects.AER, TCAspects.TERRA, TCAspects.IGNIS, TCAspects.AQUA, TCAspects.ORDO, TCAspects.PERDITIO);
+            TTAspects.AER, TTAspects.TERRA, TTAspects.IGNIS, TTAspects.AQUA, TTAspects.ORDO, TTAspects.PERDITIO);
 
     private AspectPools() {}
 
     public static AspectPoolData data(Player player) {
-        return player.getData(TCAttachments.ASPECT_POOL);
+        return player.getData(TTAttachments.ASPECT_POOL);
     }
 
     public static void sync(ServerPlayer player) {
-        player.syncData(TCAttachments.ASPECT_POOL);
+        player.syncData(TTAttachments.ASPECT_POOL);
         PacketDistributor.sendToPlayer(player, new ClientboundUpdateJEIAspectListPayload());
     }
 
@@ -219,7 +219,7 @@ public final class AspectPools {
                         player.getX(),
                         player.getY(),
                         player.getZ(),
-                        TCSounds.LEARN.get(),
+                        TTSounds.LEARN.get(),
                         SoundSource.PLAYERS,
                         0.5F,
                         1.0F);
@@ -239,7 +239,7 @@ public final class AspectPools {
                         player.getX(),
                         player.getY(),
                         player.getZ(),
-                        TCSounds.LEARN.get(),
+                        TTSounds.LEARN.get(),
                         SoundSource.PLAYERS,
                         0.5F,
                         1.0F);

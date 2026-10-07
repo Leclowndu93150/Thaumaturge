@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -37,7 +37,7 @@ public final class BlockEntityLampFertility extends BlockEntity implements IEsse
     private int drawDelay;
 
     public BlockEntityLampFertility(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LAMP_FERTILITY.get(), pos, state);
+        super(TTBlockEntities.LAMP_FERTILITY.get(), pos, state);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampFertility lamp) {
@@ -116,7 +116,7 @@ public final class BlockEntityLampFertility extends BlockEntity implements IEsse
     }
 
     private Holder<IAspect> desiderium() {
-        return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TCAspects.DESIDERIUM);
+        return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.DESIDERIUM);
     }
 
     @Override

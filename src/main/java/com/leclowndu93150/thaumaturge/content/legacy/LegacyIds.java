@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.legacy;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.mojang.serialization.Codec;
@@ -24,7 +24,7 @@ public final class LegacyIds {
 
     public static ResourceLocation migrate(ResourceLocation id) {
         return LEGACY_NAMESPACE.equals(id.getNamespace())
-                ? ResourceLocation.fromNamespaceAndPath(TCIds.MODID, migratePath(id.getPath()))
+                ? ResourceLocation.fromNamespaceAndPath(TTIds.MODID, migratePath(id.getPath()))
                 : id;
     }
 
@@ -38,7 +38,7 @@ public final class LegacyIds {
             if (i > 0) {
                 migrated.append('/');
             }
-            migrated.append(LEGACY_NAMESPACE.equals(segments[i]) ? TCIds.MODID : segments[i]);
+            migrated.append(LEGACY_NAMESPACE.equals(segments[i]) ? TTIds.MODID : segments[i]);
         }
         return migrated.toString();
     }

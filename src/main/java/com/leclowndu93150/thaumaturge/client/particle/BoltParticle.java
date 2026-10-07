@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public final class BoltParticle extends TCParticle {
+public final class BoltParticle extends TTParticle {
     private static final int FRAME_COUNT = 16;
     private static final int BOLT_LIFETIME = 3;
     private static final float WAVE_AMPLITUDE_RATE = 10.0F;
@@ -162,7 +162,7 @@ public final class BoltParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<BoltParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("bolt");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("bolt");
 
         @Override
         public Particle createParticle(

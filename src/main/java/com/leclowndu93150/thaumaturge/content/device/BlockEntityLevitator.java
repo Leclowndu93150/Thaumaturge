@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,7 +41,7 @@ public final class BlockEntityLevitator extends BlockEntity {
     private int vis;
 
     public BlockEntityLevitator(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.LEVITATOR.get(), pos, state);
+        super(TTBlockEntities.LEVITATOR.get(), pos, state);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, BlockEntityLevitator levitator) {
@@ -153,7 +153,7 @@ public final class BlockEntityLevitator extends BlockEntity {
 
     private static void spawnParticle(
             Level level, RandomSource rand, double x, double y, double z, double vx, double vy, double vz) {
-        level.addParticle(TCParticles.LEVITATOR_MIST.get(), x, y, z, vx, vy, vz);
+        level.addParticle(TTParticles.LEVITATOR_MIST.get(), x, y, z, vx, vy, vz);
     }
 
     public int getCost() {

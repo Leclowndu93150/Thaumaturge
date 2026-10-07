@@ -11,82 +11,117 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 public final class PechModel extends HierarchicalModel<EntityPech> {
+    protected final ModelPart root;
+
+    @Override
+    public ModelPart root() {
+        return root;
+    }
+
     private static final int TEX_WIDTH = 128;
     private static final int TEX_HEIGHT = 64;
-    private static final float DEG_TO_RAD = (float) (Math.PI / 180.0);
-    private static final float BODY_TILT = 0.3129957F;
-    private static final float LOWER_PACK_TILT = 0.3013602F;
-    private static final float UPPER_PACK_TILT = 0.4537856F;
-    private static final float JOWL_BASE_TILT = (float) (Math.PI / 12);
-    private static final float JOWL_MUMBLE_SWING = 0.34906587F;
+    private static final float TORSO_LEAN = 0.2094F;
+    private static final float PACK_TILT = -0.1047F;
+    private static final float WALK_FREQUENCY = 0.62F;
+    private static final float LEG_SWING = 1.3F;
+    private static final float ARM_SWING = 0.9F;
+    private static final float JAW_MUMBLE_OPEN = 0.38F;
+    private static final float JAW_MUMBLE_RATE = 0.14F;
+    private static final float JAW_WALK_CHATTER = 0.12F;
+    private static final float POUCH_SWAY = 0.22F;
+    private static final float POUCH_BOUNCE = 0.12F;
+    private static final float PACK_SWAY = 0.05F;
+    private static final float IDLE_ARM_RATE = 0.08F;
+    private static final float IDLE_ARM_SPREAD = 0.06F;
+    private static final float ATTACK_LIFT = 1.4F;
+    private static final float ATTACK_TWIST = 0.35F;
 
-    private final ModelPart root;
     public final ModelPart head;
     public final ModelPart jowls;
-    public final ModelPart body;
     public final ModelPart rightArm;
     public final ModelPart leftArm;
     public final ModelPart rightLeg;
     public final ModelPart leftLeg;
-    public final ModelPart lowerPack;
+    public final ModelPart pack;
+    public final ModelPart pouch;
 
     public PechModel(ModelPart root) {
         this.root = root;
         this.head = root.getChild("head");
         this.jowls = root.getChild("jowls");
-        this.body = root.getChild("body");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.rightLeg = root.getChild("right_leg");
         this.leftLeg = root.getChild("left_leg");
-        this.lowerPack = root.getChild("lower_pack");
+        this.pack = root.getChild("pack");
+        this.pouch = root.getChild("pouch");
     }
 
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
+        PartDefinition body = root.addOrReplaceChild(
                 "body",
-                CubeListBuilder.create().texOffs(34, 12).addBox(-3.0F, 0.0F, 0.0F, 6, 10, 6),
-                PartPose.offsetAndRotation(0.0F, 9.0F, -3.0F, BODY_TILT, 0.0F, 0.0F));
-        root.addOrReplaceChild(
-                "right_leg",
-                CubeListBuilder.create().texOffs(35, 1).mirror().addBox(-2.9F, 0.0F, 0.0F, 3, 6, 3),
-                PartPose.offset(0.0F, 18.0F, 0.0F));
-        root.addOrReplaceChild(
-                "left_leg",
-                CubeListBuilder.create().texOffs(35, 1).addBox(-0.1F, 0.0F, 0.0F, 3, 6, 3),
-                PartPose.offset(0.0F, 18.0F, 0.0F));
+                CubeListBuilder.create().texOffs(87, 23).addBox(-3.0F, 0.0F, -2.0F, 6.0F, 3.0F, 4.0F),
+                PartPose.offset(0.0F, 16.0F, 0.0F));
+        body.addOrReplaceChild(
+                "torso",
+                CubeListBuilder.create().texOffs(90, 0).addBox(-3.5F, -7.0F, -2.5F, 7.0F, 7.0F, 5.0F),
+                PartPose.rotation(TORSO_LEAN, 0.0F, 0.0F));
         root.addOrReplaceChild(
                 "head",
-                CubeListBuilder.create().texOffs(2, 11).addBox(-3.5F, -5.0F, -5.0F, 7, 5, 5),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
+                CubeListBuilder.create()
+                        .texOffs(0, 23)
+                        .addBox(-3.0F, -6.0F, -3.0F, 6.0F, 6.0F, 5.0F)
+                        .texOffs(85, 35)
+                        .addBox(-3.5F, -5.0F, -3.5F, 7.0F, 1.0F, 1.0F)
+                        .texOffs(78, 35)
+                        .addBox(-1.0F, -4.0F, -4.0F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(0.0F, 9.0F, -1.5F));
         root.addOrReplaceChild(
                 "jowls",
-                CubeListBuilder.create().texOffs(1, 21).addBox(-4.0F, -1.0F, -6.0F, 8, 3, 5),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
+                CubeListBuilder.create().texOffs(41, 23).addBox(-3.5F, -1.0F, -4.0F, 7.0F, 3.0F, 4.0F),
+                PartPose.offset(0.0F, 9.0F, -1.5F));
         root.addOrReplaceChild(
-                "lower_pack",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-5.0F, 0.0F, 0.0F, 10, 5, 5),
-                PartPose.offsetAndRotation(0.0F, 10.0F, 3.5F, LOWER_PACK_TILT, 0.0F, 0.0F));
+                "right_leg",
+                CubeListBuilder.create()
+                        .mirror()
+                        .texOffs(108, 23)
+                        .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F)
+                        .texOffs(48, 35)
+                        .addBox(-1.5F, 4.0F, -2.5F, 3.0F, 1.0F, 4.0F),
+                PartPose.offset(-1.5F, 19.0F, 0.0F));
         root.addOrReplaceChild(
-                "upper_pack",
-                CubeListBuilder.create().texOffs(64, 1).addBox(-7.5F, -14.0F, 0.0F, 15, 14, 11),
-                PartPose.offsetAndRotation(0.0F, 10.0F, 3.0F, UPPER_PACK_TILT, 0.0F, 0.0F));
+                "left_leg",
+                CubeListBuilder.create()
+                        .texOffs(0, 35)
+                        .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F)
+                        .texOffs(63, 35)
+                        .addBox(-1.5F, 4.0F, -2.5F, 3.0F, 1.0F, 4.0F),
+                PartPose.offset(1.5F, 19.0F, 0.0F));
         root.addOrReplaceChild(
                 "right_arm",
-                CubeListBuilder.create().texOffs(52, 2).mirror().addBox(-2.0F, 0.0F, -1.0F, 2, 6, 2),
-                PartPose.offset(-3.0F, 10.0F, -1.0F));
+                CubeListBuilder.create().mirror().texOffs(23, 23).addBox(-2.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F),
+                PartPose.offset(-3.5F, 10.0F, -1.0F));
         root.addOrReplaceChild(
                 "left_arm",
-                CubeListBuilder.create().texOffs(52, 2).addBox(0.0F, 0.0F, -1.0F, 2, 6, 2),
-                PartPose.offset(3.0F, 10.0F, -1.0F));
+                CubeListBuilder.create().texOffs(32, 23).addBox(0.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F),
+                PartPose.offset(3.5F, 10.0F, -1.0F));
+        root.addOrReplaceChild(
+                "pack",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-6.0F, -7.0F, 0.0F, 12.0F, 13.0F, 9.0F)
+                        .texOffs(43, 0)
+                        .addBox(-6.5F, -8.0F, -0.5F, 13.0F, 2.0F, 10.0F)
+                        .texOffs(13, 35)
+                        .addBox(-7.0F, -11.0F, 2.5F, 14.0F, 3.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 11.0F, 2.0F, PACK_TILT, 0.0F, 0.0F));
+        root.addOrReplaceChild(
+                "pouch",
+                CubeListBuilder.create().texOffs(64, 23).addBox(-4.0F, 0.0F, -0.5F, 8.0F, 4.0F, 3.0F),
+                PartPose.offset(0.0F, 16.0F, 2.5F));
         return LayerDefinition.create(mesh, TEX_WIDTH, TEX_HEIGHT);
-    }
-
-    @Override
-    public ModelPart root() {
-        return root;
     }
 
     @Override
@@ -97,35 +132,31 @@ public final class PechModel extends HierarchicalModel<EntityPech> {
             float ageInTicks,
             float netHeadYaw,
             float headPitch) {
-        this.head.yRot = netHeadYaw * DEG_TO_RAD;
-        this.head.xRot = headPitch * DEG_TO_RAD;
+        root.getAllParts().forEach(ModelPart::resetPose);
+        float partialTicks = ageInTicks - entity.tickCount;
+        float phase = limbSwing * WALK_FREQUENCY;
+        float speed = Math.min(limbSwingAmount, 1.0F);
+        float stride = Mth.sin(phase) * speed;
+        this.head.yRot = netHeadYaw * Mth.DEG_TO_RAD;
+        this.head.xRot = headPitch * Mth.DEG_TO_RAD;
         this.jowls.yRot = this.head.yRot;
         this.jowls.xRot = this.head.xRot
-                + (JOWL_BASE_TILT + Mth.cos(limbSwing * 0.6662F) * limbSwingAmount * 0.25F)
-                + JOWL_MUMBLE_SWING * Math.abs(Mth.sin(entity.mumble / 8.0F));
-        this.rightArm.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 2.0F * limbSwingAmount * 0.5F;
-        this.leftArm.xRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.5F;
-        this.rightArm.zRot = 0.0F;
-        this.leftArm.zRot = 0.0F;
-        this.rightLeg.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        this.leftLeg.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-        this.rightLeg.yRot = 0.0F;
-        this.leftLeg.yRot = 0.0F;
-        this.lowerPack.yRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.125F;
-        this.lowerPack.zRot = Mth.cos(limbSwing * 0.6662F) * 2.0F * limbSwingAmount * 0.125F;
-        if (this.attackTime > 0.0F) {
-            float swing = 1.0F - this.attackTime;
-            swing *= swing;
-            swing *= swing;
-            swing = 1.0F - swing;
-            float f7 = Mth.sin(swing * (float) Math.PI);
-            float f8 = Mth.sin(this.attackTime * (float) Math.PI) * -(this.head.xRot - 0.7F) * 0.75F;
-            this.rightArm.xRot -= f7 * 1.2F + f8;
-            this.rightArm.zRot = Mth.sin(this.attackTime * (float) Math.PI) * -0.4F;
+                + JAW_MUMBLE_OPEN * Mth.abs(Mth.sin(entity.mumble * JAW_MUMBLE_RATE))
+                + JAW_WALK_CHATTER * speed * Mth.abs(Mth.sin(phase * 2.0F));
+        this.rightLeg.xRot = stride * LEG_SWING;
+        this.leftLeg.xRot = -stride * LEG_SWING;
+        this.rightArm.xRot = -stride * ARM_SWING;
+        this.leftArm.xRot = stride * ARM_SWING;
+        float spread = IDLE_ARM_SPREAD * (1.0F + Mth.sin(ageInTicks * IDLE_ARM_RATE));
+        this.rightArm.zRot = spread;
+        this.leftArm.zRot = -spread;
+        this.pouch.zRot = stride * POUCH_SWAY;
+        this.pouch.xRot = POUCH_BOUNCE * speed * Mth.abs(Mth.cos(phase));
+        this.pack.zRot = stride * PACK_SWAY;
+        if (entity.getAttackAnim(partialTicks) > 0.0F) {
+            float arc = Mth.sin(Mth.sqrt(entity.getAttackAnim(partialTicks)) * Mth.PI);
+            this.rightArm.xRot -= arc * ATTACK_LIFT;
+            this.rightArm.yRot = -Mth.sin(entity.getAttackAnim(partialTicks) * Mth.PI) * ATTACK_TWIST;
         }
-        this.rightArm.zRot += Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.leftArm.zRot -= Mth.cos(ageInTicks * 0.09F) * 0.05F + 0.05F;
-        this.rightArm.xRot += Mth.sin(ageInTicks * 0.067F) * 0.05F;
-        this.leftArm.xRot -= Mth.sin(ageInTicks * 0.067F) * 0.05F;
     }
 }

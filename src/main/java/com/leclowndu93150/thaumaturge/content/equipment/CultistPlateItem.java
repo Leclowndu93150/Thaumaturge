@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.EntityInhabitedZombie;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -12,9 +12,9 @@ import net.minecraft.world.item.ItemStack;
 
 public final class CultistPlateItem extends ArmorItem {
     private static final ResourceLocation ZOMBIE_PLATE_OUTER =
-            TCIds.rl("textures/models/armor/zombie_plate_layer_1.png");
+            TTIds.rl("textures/models/armor/zombie_plate_layer_1.png");
     private static final ResourceLocation ZOMBIE_PLATE_INNER =
-            TCIds.rl("textures/models/armor/zombie_plate_layer_2.png");
+            TTIds.rl("textures/models/armor/zombie_plate_layer_2.png");
 
     public CultistPlateItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
         super(material, type, properties);

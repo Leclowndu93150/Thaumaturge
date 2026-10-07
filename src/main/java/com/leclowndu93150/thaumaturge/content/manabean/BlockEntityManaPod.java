@@ -3,12 +3,12 @@ package com.leclowndu93150.thaumaturge.content.manabean;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectCombinations;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -39,7 +39,7 @@ public final class BlockEntityManaPod extends BlockEntity {
     private @Nullable ResourceKey<IAspect> aspect;
 
     public BlockEntityManaPod(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.MANA_POD.get(), pos, state);
+        super(TTBlockEntities.MANA_POD.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspectKey() {
@@ -124,7 +124,7 @@ public final class BlockEntityManaPod extends BlockEntity {
 
     public void assignWildAspect(HolderLookup.Provider registries, RandomSource random) {
         if (random.nextInt(HERBA_CHANCE) == 0) {
-            aspect = TCAspects.HERBA;
+            aspect = TTAspects.HERBA;
         } else {
             List<ResourceKey<IAspect>> primals = registries
                     .lookupOrThrow(IAspect.REGISTRY_KEY)
@@ -141,20 +141,20 @@ public final class BlockEntityManaPod extends BlockEntity {
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
         if (aspect != null) {
-            TCNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
+            TTNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
         }
     }
 
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        aspect = TCNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null);
+        aspect = TTNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null);
     }
 
     @Override
     public void applyImplicitComponents(DataComponentInput components) {
         super.applyImplicitComponents(components);
-        AspectInstance stored = components.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        AspectInstance stored = components.get(TTDataComponents.CRYSTAL_ASPECT.get());
         if (stored != null) {
             aspect = stored.aspect().unwrapKey().orElse(null);
         }
@@ -165,7 +165,7 @@ public final class BlockEntityManaPod extends BlockEntity {
         super.collectImplicitComponents(components);
         Holder<IAspect> resolved = aspect();
         if (resolved != null) {
-            components.set(TCDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(resolved, 1));
+            components.set(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(resolved, 1));
         }
     }
 

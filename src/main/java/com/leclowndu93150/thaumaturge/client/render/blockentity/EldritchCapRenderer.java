@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import java.util.function.ToIntFunction;
@@ -17,9 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEntityRenderer<T> {
-    public static final ResourceLocation CAP_TEXTURE = TCIds.rl("textures/entity/obelisk_cap.png");
-    public static final ResourceLocation CAP_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_cap_2.png");
-    public static final ResourceLocation ALTAR_TEXTURE = TCIds.rl("textures/entity/obelisk_cap_altar.png");
+    public static final ResourceLocation CAP_TEXTURE = TTIds.rl("textures/entity/obelisk_cap.png");
+    public static final ResourceLocation CAP_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_cap_2.png");
+    public static final ResourceLocation ALTAR_TEXTURE = TTIds.rl("textures/entity/obelisk_cap_altar.png");
 
     private static final float EYE_OFFSET = 0.46F;
     private static final float EYE_HEIGHT = 0.2F;
@@ -28,6 +28,8 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
     private static final float IN_FRAME_SCALE = 0.5128205F;
     private static final float IN_FRAME_DROP = -0.05F;
 
+    public static final ResourceLocation ALTAR_MODEL = TTIds.rl("models/mesh/obelisk_cap_altar.ttmesh");
+    private final ResourceLocation model;
     private final ResourceLocation texture;
     private final ResourceLocation textureOuter;
     private final ToIntFunction<T> eyeCount;
@@ -35,9 +37,11 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
 
     public EldritchCapRenderer(
             BlockEntityRendererProvider.Context context,
+            ResourceLocation model,
             ResourceLocation texture,
             ResourceLocation textureOuter,
             ToIntFunction<T> eyeCount) {
+        this.model = model;
         this.texture = texture;
         this.textureOuter = textureOuter;
         this.eyeCount = eyeCount;
@@ -51,7 +55,7 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.0F, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        EldritchObeliskRenderer.renderCap(poseStack, buffers, type, light);
+        EldritchObeliskRenderer.renderCap(model, poseStack, buffers, type, light);
         poseStack.popPose();
 
         int eyes = eyeCount.applyAsInt(cap);
@@ -59,7 +63,7 @@ public final class EldritchCapRenderer<T extends BlockEntity> implements BlockEn
             return;
         }
         if (eyeStack.isEmpty()) {
-            eyeStack = new ItemStack(TCItems.ELDRITCH_EYE.get());
+            eyeStack = new ItemStack(TTItems.ELDRITCH_EYE.get());
         }
         for (int a = 0; a < eyes; a++) {
             poseStack.pushPose();

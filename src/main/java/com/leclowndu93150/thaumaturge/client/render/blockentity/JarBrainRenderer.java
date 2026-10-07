@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.BrainModel;
 import com.leclowndu93150.thaumaturge.client.model.entity.JarBrineModel;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarBrain;
@@ -16,19 +16,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJarBrain> {
-    private static final ResourceLocation TEX_BRAIN = TCIds.rl("textures/entity/brain2.png");
-    private static final ResourceLocation TEX_BRINE = TCIds.rl("textures/entity/jarbrine.png");
+    private static final ResourceLocation TEX_BRAIN = TTIds.rl("textures/entity/brain2.png");
+    private static final ResourceLocation TEX_BRINE = TTIds.rl("textures/entity/jarbrine.png");
     private static final float BRAIN_SCALE = 0.4F;
     private static final float BRAIN_LIFT = -0.8F;
     private static final float BOB_PERIOD = 14.0F;
     private static final float BOB_AMPLITUDE = 0.03F;
+    private static final float XP_PULSE_PERIOD = 5.0F;
 
     private final BrainModel brain;
     private final JarBrineModel brine;
 
     public JarBrainRenderer(BlockEntityRendererProvider.Context context) {
-        this.brain = new BrainModel(context.bakeLayer(TCModelLayers.BRAIN));
-        this.brine = new JarBrineModel(context.bakeLayer(TCModelLayers.JAR_BRINE));
+        this.brain = new BrainModel(context.bakeLayer(TTModelLayers.BRAIN));
+        this.brine = new JarBrineModel(context.bakeLayer(TTModelLayers.JAR_BRINE));
     }
 
     @Override
@@ -60,6 +61,7 @@ public final class JarBrainRenderer implements BlockEntityRenderer<BlockEntityJa
         poseStack.mulPose(Axis.YP.rotationDegrees(yawRadians * Mth.RAD_TO_DEG));
         poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
         poseStack.scale(BRAIN_SCALE, BRAIN_SCALE, BRAIN_SCALE);
+        brain.setupAnim(time, Mth.sin(time / XP_PULSE_PERIOD) * jar.xp() / BlockEntityJarBrain.XP_MAX);
         brain.root.render(poseStack, buffers.getBuffer(RenderType.entityCutout(TEX_BRAIN)), light, overlay);
         poseStack.popPose();
 

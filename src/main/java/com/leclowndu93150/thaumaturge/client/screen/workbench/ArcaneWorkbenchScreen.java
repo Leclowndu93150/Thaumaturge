@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.client.screen.workbench;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.IArcaneRecipe;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import com.leclowndu93150.thaumaturge.content.recipe.ThaumaturgeCraftingManager;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandTooltips;
@@ -27,8 +27,8 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
-public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneWorkbench> {
-    private static final ResourceLocation WAND_SLOT_TEXTURE = TCIds.rl("textures/gui/workbench_wand_slot.png");
+public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneWorkbench> {
+    private static final ResourceLocation WAND_SLOT_TEXTURE = TTIds.rl("textures/gui/workbench_wand_slot.png");
     private static final int WAND_SLOT_TEX_W = 38;
     private static final int WAND_SLOT_TEX_H = 34;
     private static final int WAND_SLOT_TEX_OFFSET_X = 10;
@@ -42,7 +42,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
     private Component wandTooltip;
 
     public ArcaneWorkbenchScreen(MenuArcaneWorkbench menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, TCScreenTextures.ARCANE_WORKBENCH, 190, 234);
+        super(menu, inventory, title, TTScreenTextures.ARCANE_WORKBENCH, 190, 234);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ArcaneWorkbenchScreen extends AbstractTCContainerScreen<MenuArcaneW
                 graphics.pose().scale(0.5f, 0.5f, 1.0f);
                 GuiBlend.blitTinted(
                         graphics,
-                        TCScreenTextures.ARCANE_WORKBENCH,
+                        TTScreenTextures.ARCANE_WORKBENCH,
                         -32,
                         -32,
                         192,

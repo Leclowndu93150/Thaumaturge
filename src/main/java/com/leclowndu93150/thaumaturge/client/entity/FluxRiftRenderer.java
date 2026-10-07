@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,17 +24,17 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
     private static final ResourceLocation END_PORTAL = TheEndPortalRenderer.END_PORTAL_LOCATION;
 
     private static final RenderType RIFT_GLOW_TYPE = riftType(
-            "tc_rift_glow",
+            "tt_rift_glow",
             RenderStateShard.ADDITIVE_TRANSPARENCY,
             RenderStateShard.LEQUAL_DEPTH_TEST,
             RenderStateShard.COLOR_WRITE);
     private static final RenderType RIFT_GLOW_NO_DEPTH_TYPE = riftType(
-            "tc_rift_glow_no_depth",
+            "tt_rift_glow_no_depth",
             RenderStateShard.ADDITIVE_TRANSPARENCY,
             RenderStateShard.NO_DEPTH_TEST,
             RenderStateShard.COLOR_WRITE);
     private static final RenderType RIFT_SOLID_TYPE = riftType(
-            "tc_rift_solid",
+            "tt_rift_solid",
             RenderStateShard.TRANSLUCENT_TRANSPARENCY,
             RenderStateShard.LEQUAL_DEPTH_TEST,
             RenderStateShard.COLOR_DEPTH_WRITE);
@@ -70,7 +70,7 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
                 false,
                 false,
                 RenderType.CompositeState.builder()
-                        .setShaderState(new RenderStateShard.ShaderStateShard(TCShaders::ender))
+                        .setShaderState(new RenderStateShard.ShaderStateShard(TTShaders::ender))
                         .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
                                 .add(END_PORTAL, false, false)
                                 .add(END_PORTAL, false, false)

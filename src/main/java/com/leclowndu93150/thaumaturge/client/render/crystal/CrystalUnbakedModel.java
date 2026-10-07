@@ -3,9 +3,9 @@ package com.leclowndu93150.thaumaturge.client.render.crystal;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshLoader;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshLoader;
 import java.io.IOException;
 import java.util.function.Function;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.IUnbakedGeometry;
 
 public final class CrystalUnbakedModel implements IUnbakedGeometry<CrystalUnbakedModel> {
-    public static final ResourceLocation MODEL_LOCATION = TCIds.rl("models/mesh/crystal.tcmesh");
+    public static final ResourceLocation MODEL_LOCATION = TTIds.rl("models/mesh/crystal.ttmesh");
     private static final String PARTICLE_SLOT = "particle";
 
     private CrystalUnbakedModel() {}
@@ -33,14 +33,14 @@ public final class CrystalUnbakedModel implements IUnbakedGeometry<CrystalUnbake
             Function<Material, TextureAtlasSprite> spriteGetter,
             ModelState modelState,
             ItemOverrides overrides) {
-        TCMesh mesh = loadMesh();
+        TTMesh mesh = loadMesh();
         TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial(PARTICLE_SLOT));
         return new CrystalBakedModel(mesh, particle);
     }
 
-    private static TCMesh loadMesh() {
+    private static TTMesh loadMesh() {
         try {
-            return TCMeshLoader.load(Minecraft.getInstance().getResourceManager(), MODEL_LOCATION);
+            return TTMeshLoader.load(Minecraft.getInstance().getResourceManager(), MODEL_LOCATION);
         } catch (IOException e) {
             throw new RuntimeException("Could not load crystal OBJ at " + MODEL_LOCATION, e);
         }

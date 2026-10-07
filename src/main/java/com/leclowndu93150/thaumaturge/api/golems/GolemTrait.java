@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  * with opposing pairs cancelling each other, defines what a golem can do.
  *
  * <p>Traits live in the {@link #REGISTRY_KEY} registry, so addons may contribute their own.
- * The built-in traits are exposed as constants on {@code TCGolemTraits}.
+ * The built-in traits are exposed as constants on {@code TTGolemTraits}.
  *
  * <p>Opposition is symmetric and is declared by {@link #opposite()} returning the id of the
  * opposing trait. A trait and its opposite cancel when merged onto the same golem. The

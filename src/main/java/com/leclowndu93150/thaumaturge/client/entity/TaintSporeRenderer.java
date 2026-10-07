@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeModel;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,13 +11,13 @@ import net.minecraft.util.Mth;
 
 /** Translucent, slowly swelling Taint Spore renderer. */
 public final class TaintSporeRenderer extends MobRenderer<EntityTaintSpore, TaintSporeModel<EntityTaintSpore>> {
-    static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/taint_spore.png");
+    static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/taint_spore.png");
     private static final float SHADOW = 0.25F;
     private static final float SIZE_SCALE = 0.12F;
     private static final float PULSE_SCALE = 0.025F;
 
     public TaintSporeRenderer(EntityRendererProvider.Context context) {
-        super(context, new TaintSporeModel<>(context.bakeLayer(TCModelLayers.TAINT_SPORE)), SHADOW);
+        super(context, new TaintSporeModel<>(context.bakeLayer(TTModelLayers.TAINT_SPORE)), SHADOW);
     }
 
     @Override

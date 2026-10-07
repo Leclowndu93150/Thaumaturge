@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -32,7 +32,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
     private final ItemStackHandler output = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int index, ItemStack resource) {
-            return resource.is(TCItems.VOID_SEED.get());
+            return resource.is(TTItems.VOID_SEED.get());
         }
 
         @Override
@@ -46,7 +46,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
     private int progress;
 
     public BlockEntityVoidSiphon(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.VOID_SIPHON.get(), pos, state);
+        super(TTBlockEntities.VOID_SIPHON.get(), pos, state);
     }
 
     public ItemStackHandler output() {
@@ -79,7 +79,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
             siphon.progress -= PROGRESS_REQUIRED;
             ItemStack current = siphon.output.getStackInSlot(0).copy();
             if (current.isEmpty()) {
-                siphon.output.setStackInSlot(0, new ItemStack(TCItems.VOID_SEED.get()).copyWithCount(1));
+                siphon.output.setStackInSlot(0, new ItemStack(TTItems.VOID_SEED.get()).copyWithCount(1));
             } else {
                 siphon.output.setStackInSlot(0, current.copyWithCount(current.getCount() + 1));
             }
@@ -92,7 +92,7 @@ public final class BlockEntityVoidSiphon extends BlockEntity {
 
     private boolean hasOutputRoom() {
         ItemStack stack = output.getStackInSlot(0).copy();
-        return stack.isEmpty() || stack.is(TCItems.VOID_SEED.get()) && stack.getCount() < stack.getMaxStackSize();
+        return stack.isEmpty() || stack.is(TTItems.VOID_SEED.get()) && stack.getCount() < stack.getMaxStackSize();
     }
 
     private List<EntityFluxRift> getValidRifts(Level level, BlockPos pos) {

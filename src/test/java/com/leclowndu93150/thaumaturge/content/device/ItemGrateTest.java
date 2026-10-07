@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.device;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +25,7 @@ class ItemGrateTest {
         randomField.setAccessible(true);
         randomField.set(level, net.minecraft.util.RandomSource.create(0));
         BlockPos pos = new BlockPos(10, 20, 30);
-        BlockState state = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockState state = TTBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
         BlockEntityItemGrate grate = new BlockEntityItemGrate(pos, state);
         when(level.getBlockState(pos)).thenReturn(state);
         when(level.getBlockState(pos.below())).thenReturn(Blocks.AIR.defaultBlockState());
@@ -47,7 +47,7 @@ class ItemGrateTest {
     @Test
     void cachedHandlerRejectsRealAndSimulatedInsertionAfterClosing() {
         Level level = mock(Level.class);
-        BlockState open = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockState open = TTBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
         BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
         grate.setLevel(level);
         when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(Blocks.AIR.defaultBlockState());
@@ -64,7 +64,7 @@ class ItemGrateTest {
     @Test
     void blockedExitRejectsInsertionButFluidsGlassAndFurnaceRemainValid() {
         Level level = mock(Level.class);
-        BlockState open = TCBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
+        BlockState open = TTBlocks.ITEM_GRATE.get().defaultBlockState().setValue(BlockItemGrate.OPEN, true);
         BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
         grate.setLevel(level);
         ItemStack stack = new ItemStack(Items.STONE, 64);
@@ -77,7 +77,7 @@ class ItemGrateTest {
             Blocks.AIR.defaultBlockState(),
             Blocks.WATER.defaultBlockState(),
             Blocks.GLASS.defaultBlockState(),
-            TCBlocks.INFERNAL_FURNACE.get().defaultBlockState()
+            TTBlocks.INFERNAL_FURNACE.get().defaultBlockState()
         }) {
             when(level.getBlockState(BlockPos.ZERO.below())).thenReturn(exit);
             assertTrue(grate.inventory().insertItem(0, stack, true).isEmpty());
@@ -91,7 +91,7 @@ class ItemGrateTest {
         var randomField = Level.class.getDeclaredField("random");
         randomField.setAccessible(true);
         randomField.set(level, net.minecraft.util.RandomSource.create(0));
-        BlockItemGrate block = TCBlocks.ITEM_GRATE.get();
+        BlockItemGrate block = TTBlocks.ITEM_GRATE.get();
         BlockState open = block.defaultBlockState().setValue(BlockItemGrate.OPEN, true);
         BlockEntityItemGrate grate = new BlockEntityItemGrate(BlockPos.ZERO, open);
         grate.setLevel(level);
@@ -111,18 +111,18 @@ class ItemGrateTest {
     @Test
     void manualAndRedstoneTransitionsPlaySoundButPowerOnlyChangeDoesNot() {
         Level level = mock(Level.class);
-        BlockItemGrate block = TCBlocks.ITEM_GRATE.get();
+        BlockItemGrate block = TTBlocks.ITEM_GRATE.get();
         BlockState closed = block.defaultBlockState();
         block.useWithoutItem(closed, level, BlockPos.ZERO, null, null);
-        verify(level).playSound(null, BlockPos.ZERO, TCSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         clearInvocations(level);
         BlockState open = closed.setValue(BlockItemGrate.OPEN, true);
         block.useWithoutItem(open, level, BlockPos.ZERO, null, null);
-        verify(level).playSound(null, BlockPos.ZERO, TCSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 0.9F);
+        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 0.9F);
         clearInvocations(level);
         when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(true);
         block.neighborChanged(closed, level, BlockPos.ZERO, block, BlockPos.ZERO, false);
-        verify(level).playSound(null, BlockPos.ZERO, TCSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         clearInvocations(level);
         block.neighborChanged(open, level, BlockPos.ZERO, block, BlockPos.ZERO, false);
         verify(level, never())

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
 import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -61,7 +61,7 @@ public final class FocusSlider extends AbstractWidget {
         }
         int hx = vertical ? getX() : getX() + (int) (position * (width - HANDLE_SIZE));
         int hy = vertical ? getY() + (int) (position * (height - HANDLE_SIZE)) : getY();
-        graphics.blit(TCScreenTextures.GUI_BASE, hx, hy, HANDLE_U, HANDLE_V, HANDLE_SIZE, HANDLE_SIZE, ATLAS, ATLAS);
+        graphics.blit(TTScreenTextures.GUI_BASE, hx, hy, HANDLE_U, HANDLE_V, HANDLE_SIZE, HANDLE_SIZE, ATLAS, ATLAS);
     }
 
     @Override

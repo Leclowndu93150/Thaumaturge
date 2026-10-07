@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.NodeRenderState;
 import com.leclowndu93150.thaumaturge.client.render.blockentity.NodeRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.Util;
@@ -38,9 +38,9 @@ public final class JarNodeItemSpecialRenderer extends BlockEntityWithoutLevelRen
             int overlay) {
         Minecraft.getInstance()
                 .getBlockRenderer()
-                .renderSingleBlock(TCBlocks.JAR_NODE.get().defaultBlockState(), poseStack, buffers, light, overlay);
+                .renderSingleBlock(TTBlocks.JAR_NODE.get().defaultBlockState(), poseStack, buffers, light, overlay);
 
-        NodeData data = stack.get(TCDataComponents.NODE_DATA.get());
+        NodeData data = stack.get(TTDataComponents.NODE_DATA.get());
         if (data == null || data.aspects().isEmpty()) {
             return;
         }

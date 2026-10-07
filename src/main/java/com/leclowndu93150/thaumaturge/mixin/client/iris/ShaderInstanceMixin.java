@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.mixin.client.iris;
 
-import com.leclowndu93150.thaumaturge.client.render.TCShaders;
+import com.leclowndu93150.thaumaturge.client.render.TTShaders;
 import net.irisshaders.iris.shadows.ShadowRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.spongepowered.asm.mixin.Dynamic;
@@ -23,7 +23,7 @@ public abstract class ShaderInstanceMixin {
     @Inject(method = "iris$shouldSkipThis", at = @At("HEAD"), cancellable = true, require = 0, remap = false)
     private void thaumaturge$allowCustomEffectShaders(CallbackInfoReturnable<Boolean> cir) {
         ShaderInstance shader = (ShaderInstance) (Object) this;
-        if (!ShadowRenderer.ACTIVE && TCShaders.isIrisAllowedCustomEffectShader(shader)) {
+        if (!ShadowRenderer.ACTIVE && TTShaders.isIrisAllowedCustomEffectShader(shader)) {
             cir.setReturnValue(false);
         }
     }

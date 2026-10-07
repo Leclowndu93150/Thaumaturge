@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -19,7 +19,7 @@ import snownee.jade.api.config.IPluginConfig;
 public enum EssentiaComponentProvider implements IBlockComponentProvider {
     INSTANCE;
 
-    private static final ResourceLocation UID = TCIds.rl("essentia");
+    private static final ResourceLocation UID = TTIds.rl("essentia");
 
     @Override
     public ResourceLocation getUid() {

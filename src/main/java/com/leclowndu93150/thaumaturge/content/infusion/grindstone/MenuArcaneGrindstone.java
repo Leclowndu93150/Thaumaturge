@@ -2,9 +2,9 @@ package com.leclowndu93150.thaumaturge.content.infusion.grindstone;
 
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
@@ -49,7 +49,7 @@ public final class MenuArcaneGrindstone extends AbstractContainerMenu {
     }
 
     public MenuArcaneGrindstone(int containerId, Inventory inventory, ContainerLevelAccess access) {
-        super(TCMenus.ARCANE_GRINDSTONE.get(), containerId);
+        super(TTMenus.ARCANE_GRINDSTONE.get(), containerId);
         this.access = access;
         inputs.addListener(this::slotsChanged);
         addSlot(new InputSlot(inputs, INPUT_SLOT, INPUT_X, INPUT_Y));
@@ -89,7 +89,7 @@ public final class MenuArcaneGrindstone extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         }
         ItemStack stripped = input.copy();
-        stripped.remove(TCDataComponents.INFUSION_ENCHANTMENTS.get());
+        stripped.remove(TTDataComponents.INFUSION_ENCHANTMENTS.get());
         return stripped;
     }
 
@@ -171,7 +171,7 @@ public final class MenuArcaneGrindstone extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(access, player, TCBlocks.ARCANE_GRINDSTONE.get());
+        return stillValid(access, player, TTBlocks.ARCANE_GRINDSTONE.get());
     }
 
     private static final class InputSlot extends Slot {

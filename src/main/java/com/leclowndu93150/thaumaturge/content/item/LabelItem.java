@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.item;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.blocks.ILabelable;
 import com.leclowndu93150.thaumaturge.api.items.ILabel;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -31,8 +31,8 @@ public final class LabelItem extends Item implements ILabel {
     }
 
     public static ItemStack withAspect(ResourceKey<IAspect> aspect) {
-        ItemStack stack = new ItemStack(TCItems.LABEL.get());
-        stack.set(TCDataComponents.ASPECT_FILTER, aspect);
+        ItemStack stack = new ItemStack(TTItems.LABEL.get());
+        stack.set(TTDataComponents.ASPECT_FILTER, aspect);
         return stack;
     }
 
@@ -66,12 +66,12 @@ public final class LabelItem extends Item implements ILabel {
 
     @Override
     public @Nullable ResourceKey<IAspect> getFilteredAspect(ItemStack stack) {
-        return stack.has(TCDataComponents.ASPECT_FILTER.get()) ? stack.get(TCDataComponents.ASPECT_FILTER.get()) : null;
+        return stack.has(TTDataComponents.ASPECT_FILTER.get()) ? stack.get(TTDataComponents.ASPECT_FILTER.get()) : null;
     }
 
     @Override
     public Component getName(ItemStack stack) {
-        if (stack.has(TCDataComponents.ASPECT_FILTER.get())) {
+        if (stack.has(TTDataComponents.ASPECT_FILTER.get())) {
             return Component.translatable("item.thaumaturge.marked_label");
         }
         return super.getName(stack);

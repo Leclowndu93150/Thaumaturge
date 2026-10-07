@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.wands.assembly;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class WandAssemblyPackEvents {
     private WandAssemblyPackEvents() {}
 
@@ -27,7 +27,7 @@ public final class WandAssemblyPackEvents {
         }
         event.addRepositorySource(consumer -> {
             PackLocationInfo location = new PackLocationInfo(
-                    TCIds.MODID + "_wand_assembly",
+                    TTIds.MODID + "_wand_assembly",
                     Component.literal("Thaumaturge Wand Assembly"),
                     PackSource.BUILT_IN,
                     Optional.empty());

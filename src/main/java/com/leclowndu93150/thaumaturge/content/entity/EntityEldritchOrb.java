@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -27,7 +27,7 @@ public class EntityEldritchOrb extends ThrowableProjectile {
     }
 
     public EntityEldritchOrb(Level level, LivingEntity shooter) {
-        super(TCEntities.ELDRITCH_ORB.get(), level);
+        super(TTEntities.ELDRITCH_ORB.get(), level);
         this.setOwner(shooter);
         this.setPos(shooter.getX(), shooter.getEyeY() - EYE_OFFSET, shooter.getZ());
     }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.server.command.admin;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -70,7 +70,7 @@ final class CommandSupport {
                         .lookupOrThrow(registry)
                         .listElementIds()
                         .map(ResourceKey::location)
-                        .filter(id -> id.getNamespace().equals(TCIds.MODID)),
+                        .filter(id -> id.getNamespace().equals(TTIds.MODID)),
                 builder);
     }
 

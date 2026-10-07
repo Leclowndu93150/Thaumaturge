@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warding;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
@@ -24,7 +24,7 @@ public final class ItemArcaneKey extends Item {
         Level level = context.getLevel();
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
-        if (level.getBlockState(pos).is(TCBlocks.ARCANE_DOOR.get())
+        if (level.getBlockState(pos).is(TTBlocks.ARCANE_DOOR.get())
                 && level.getBlockState(pos).getValue(net.minecraft.world.level.block.DoorBlock.HALF)
                         == DoubleBlockHalf.UPPER) pos = pos.below();
         if (player == null || !isLock(level, pos)) {
@@ -35,15 +35,15 @@ public final class ItemArcaneKey extends Item {
         }
 
         GlobalPos target = GlobalPos.of(level.dimension(), pos);
-        GlobalPos link = stack.get(TCDataComponents.ARCANE_KEY_LINK.get());
-        boolean gold = stack.is(com.leclowndu93150.thaumaturge.registry.TCItems.ARCANE_KEY_GOLD.get());
+        GlobalPos link = stack.get(TTDataComponents.ARCANE_KEY_LINK.get());
+        boolean gold = stack.is(com.leclowndu93150.thaumaturge.registry.TTItems.ARCANE_KEY_GOLD.get());
         if (link == null) {
             if (!ArcaneAccess.canBind(server, pos, player, gold)) {
                 player.sendSystemMessage(Component.translatable("message.thaumaturge.arcane_key_no_access"));
                 return InteractionResult.FAIL;
             }
             ItemStack boundKey = stack.copyWithCount(1);
-            boundKey.set(TCDataComponents.ARCANE_KEY_LINK.get(), target);
+            boundKey.set(TTDataComponents.ARCANE_KEY_LINK.get(), target);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
@@ -77,7 +77,7 @@ public final class ItemArcaneKey extends Item {
     }
 
     private static boolean isLock(Level level, BlockPos pos) {
-        return level.getBlockState(pos).is(TCBlocks.ARCANE_DOOR.get())
-                || level.getBlockState(pos).is(TCBlocks.ARCANE_PRESSURE_PLATE.get());
+        return level.getBlockState(pos).is(TTBlocks.ARCANE_DOOR.get())
+                || level.getBlockState(pos).is(TTBlocks.ARCANE_PRESSURE_PLATE.get());
     }
 }

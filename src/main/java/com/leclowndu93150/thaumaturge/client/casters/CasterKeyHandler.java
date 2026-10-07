@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
-import com.leclowndu93150.thaumaturge.client.input.TCKeybinds;
+import com.leclowndu93150.thaumaturge.client.input.TTKeybinds;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.network.ServerboundCasterKeyPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundFocusChangePayload;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CasterKeyHandler {
     private static final int MOD_GROW = 0;
     private static final int MOD_CYCLE_DIM = 1;
@@ -42,7 +42,7 @@ public final class CasterKeyHandler {
         }
         boolean holdingCaster = player.getMainHandItem().getItem() instanceof ICaster
                 || player.getOffhandItem().getItem() instanceof ICaster;
-        if (mc.screen == null && holdingCaster && TCKeybinds.CHANGE_FOCUS.same(mc.options.keySwapOffhand)) {
+        if (mc.screen == null && holdingCaster && TTKeybinds.CHANGE_FOCUS.same(mc.options.keySwapOffhand)) {
             boolean drained = mc.options.keySwapOffhand.consumeClick();
             while (drained) {
                 drained = mc.options.keySwapOffhand.consumeClick();
@@ -50,7 +50,7 @@ public final class CasterKeyHandler {
         }
         boolean inGame = mc.screen == null
                 && (mc.mouseHandler.isMouseGrabbed() || radialActive || RadialFocusOverlay.isAnimating());
-        if (TCKeybinds.CHANGE_FOCUS.isDown()) {
+        if (TTKeybinds.CHANGE_FOCUS.isDown()) {
             if (inGame) {
                 if (!keyPressedF) {
                     radialLock = false;
@@ -70,7 +70,7 @@ public final class CasterKeyHandler {
             radialActive = false;
             keyPressedF = false;
         }
-        if (TCKeybinds.MISC_TOGGLE.isDown()) {
+        if (TTKeybinds.MISC_TOGGLE.isDown()) {
             if (mc.screen == null && mc.mouseHandler.isMouseGrabbed()) {
                 if (!keyPressedG) {
                     int mod = InputConstants.isKeyDown(mc.getWindow().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL)

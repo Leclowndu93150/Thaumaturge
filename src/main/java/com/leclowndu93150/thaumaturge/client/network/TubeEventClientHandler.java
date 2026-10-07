@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.network;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTube;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeCreakPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeVentPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -44,7 +44,7 @@ public final class TubeEventClientHandler {
             playSound(
                     level,
                     payload.pos(),
-                    TCSounds.CREAK.get(),
+                    TTSounds.CREAK.get(),
                     SoundSource.AMBIENT,
                     1.0F,
                     1.3F + level.getRandom().nextFloat() * 0.2F);

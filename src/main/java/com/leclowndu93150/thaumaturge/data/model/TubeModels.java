@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.data.model;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.function.Consumer;
 import net.minecraft.core.Direction;
 import net.minecraft.data.models.blockstates.BlockStateGenerator;
@@ -27,16 +27,16 @@ public final class TubeModels {
     private static final ResourceLocation TUBE_ONEWAY_INDICATOR = id("block/tube_oneway_indicator");
 
     public static void register(Consumer<BlockStateGenerator> blockStateOutput) {
-        registerTube(blockStateOutput, TCBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
-        registerTube(blockStateOutput, TCBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
-        registerTube(blockStateOutput, TCBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
-        registerTube(blockStateOutput, TCBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
+        registerTube(blockStateOutput, TTBlocks.TUBE.get(), TUBE_CORE, TUBE_SIDE);
+        registerTube(blockStateOutput, TTBlocks.TUBE_VALVE.get(), TUBE_CORE_VALVE, TUBE_SIDE);
+        registerTube(blockStateOutput, TTBlocks.TUBE_RESTRICT.get(), TUBE_CORE, TUBE_SIDE_RESTRICT);
+        registerTube(blockStateOutput, TTBlocks.TUBE_FILTER.get(), TUBE_FILTER_CORE, TUBE_SIDE);
         registerOnewayTube(blockStateOutput);
-        registerTube(blockStateOutput, TCBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
+        registerTube(blockStateOutput, TTBlocks.TUBE_BUFFER.get(), TUBE_BUFFER_CORE, TUBE_SIDE);
     }
 
     private static void registerOnewayTube(Consumer<BlockStateGenerator> blockStateOutput) {
-        Block block = TCBlocks.TUBE_ONEWAY.get();
+        Block block = TTBlocks.TUBE_ONEWAY.get();
         MultiPartGenerator generator =
                 MultiPartGenerator.multiPart(block).with(Variant.variant().with(VariantProperties.MODEL, TUBE_CORE));
         for (Direction direction : Direction.values()) {
@@ -55,7 +55,7 @@ public final class TubeModels {
     }
 
     private static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(TCIds.MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(TTIds.MODID, path);
     }
 
     private static void registerTube(

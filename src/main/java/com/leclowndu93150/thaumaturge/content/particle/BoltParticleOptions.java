@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.particle;
 
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -43,6 +43,6 @@ public record BoltParticleOptions(
 
     @Override
     public ParticleType<?> getType() {
-        return TCParticles.BOLT.get();
+        return TTParticles.BOLT.get();
     }
 }

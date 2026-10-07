@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,7 +15,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.player.Player;
 
 public final class SanityHudOverlay implements LeftHudStack.Gauge {
-    private static final ResourceLocation HUD = TCIds.rl("textures/gui/hud.png");
+    private static final ResourceLocation HUD = TTIds.rl("textures/gui/hud.png");
     private static final int TEX_SIZE = 256;
     private static final int HUD_X = 1;
     private static final int HUD_Y = 1;
@@ -100,6 +100,6 @@ public final class SanityHudOverlay implements LeftHudStack.Gauge {
     }
 
     private static boolean holds(Player player, boolean main) {
-        return (main ? player.getMainHandItem() : player.getOffhandItem()).is(TCItems.SANITY_CHECKER.get());
+        return (main ? player.getMainHandItem() : player.getOffhandItem()).is(TTItems.SANITY_CHECKER.get());
     }
 }

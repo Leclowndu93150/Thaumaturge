@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.hud;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
@@ -27,11 +27,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class KnowledgeGainOverlay implements LayeredDraw.Layer {
-    private static final ResourceLocation BOOK = TCIds.rl("textures/item/thaumonomicon.png");
-    private static final ResourceLocation KNOW_OBSERVATION = TCIds.rl("textures/research/knowledge_observation.png");
-    private static final ResourceLocation KNOW_THEORY = TCIds.rl("textures/research/knowledge_theory.png");
+    private static final ResourceLocation BOOK = TTIds.rl("textures/item/thaumonomicon.png");
+    private static final ResourceLocation KNOW_OBSERVATION = TTIds.rl("textures/research/knowledge_observation.png");
+    private static final ResourceLocation KNOW_THEORY = TTIds.rl("textures/research/knowledge_theory.png");
 
     private static final LinkedBlockingQueue<Tracker> TRACKERS = new LinkedBlockingQueue<>();
     private static float bookFade;

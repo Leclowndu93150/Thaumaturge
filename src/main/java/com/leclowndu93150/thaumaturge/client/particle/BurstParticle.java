@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class BurstParticle extends TCParticle {
+public final class BurstParticle extends TTParticle {
     private static final int FRAME_COUNT = 31;
 
     private BurstParticle(
@@ -22,7 +22,7 @@ public final class BurstParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<BurstParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("burst");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("burst");
 
         @Override
         public Particle createParticle(

@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -104,7 +104,7 @@ public final class BlockEssentiaReservoir extends BaseEntityBlock implements IIn
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
                 type,
-                TCBlockEntities.ESSENTIA_RESERVOIR.get(),
+                TTBlockEntities.ESSENTIA_RESERVOIR.get(),
                 level.isClientSide()
                         ? BlockEntityEssentiaReservoir::clientTick
                         : BlockEntityEssentiaReservoir::serverTick);

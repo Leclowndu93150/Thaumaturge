@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.golem.press;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
@@ -9,11 +9,11 @@ import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -69,7 +69,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     public boolean[] hasStuff;
 
     public BlockEntityGolemBuilder(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.GOLEM_BUILDER.get(), pos, state);
+        super(TTBlockEntities.GOLEM_BUILDER.get(), pos, state);
     }
 
     public ItemStackHandler output() {
@@ -104,8 +104,8 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     }
 
     private void finishCraft(Level level, BlockPos pos) {
-        ItemStack placer = new ItemStack(TCItems.GOLEM_PLACER.get());
-        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), pendingGolem.copy());
+        ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
+        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), pendingGolem.copy());
         ItemStack current = output.getStackInSlot(SLOT_OUTPUT).copy();
         if (current.isEmpty()) {
             output.setStackInSlot(SLOT_OUTPUT, placer.copyWithCount(1));
@@ -115,7 +115,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         } else {
             return;
         }
-        level.playSound(null, pos, TCSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.playSound(null, pos, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         cost = 0;
         maxCost = 0;
         pendingGolem = null;
@@ -181,7 +181,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     }
 
     private boolean drawEssentia(Level level, BlockPos pos) {
-        Holder<IAspect> machina = EssentiaTransportHelper.resolve(level, TCAspects.MACHINA);
+        Holder<IAspect> machina = EssentiaTransportHelper.resolve(level, TTAspects.MACHINA);
         if (machina == null) {
             return false;
         }
@@ -215,8 +215,8 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     }
 
     public boolean startCraft(GolemProperties props, Player player) {
-        ItemStack placer = new ItemStack(TCItems.GOLEM_PLACER.get());
-        placer.set(TCDataComponents.GOLEM_PROPERTIES.get(), props.copy());
+        ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
+        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), props.copy());
         ItemStack current = output.getStackInSlot(SLOT_OUTPUT).copy();
         boolean slotFree = current.isEmpty()
                 || current.getCount() < current.getMaxStackSize()
@@ -240,7 +240,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         maxCost = cost;
         setChanged();
         syncToClient();
-        level.playSound(null, worldPosition, TCSounds.WAND.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
+        level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
         return true;
     }
 
@@ -282,7 +282,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         super.saveAdditional(output, registries);
         output.put("inventory", this.output.serializeNBT(registries));
         if (pendingGolem != null) {
-            TCNbt.store(output, "golem", GolemProperties.CODEC, registries, pendingGolem);
+            TTNbt.store(output, "golem", GolemProperties.CODEC, registries, pendingGolem);
         }
         output.putInt("cost", cost);
         output.putInt("mcost", maxCost);
@@ -293,7 +293,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         super.loadAdditional(input, registries);
         this.output.deserializeNBT(registries, input.getCompound("inventory"));
         pendingGolem =
-                TCNbt.read(input, "golem", GolemProperties.CODEC, registries).orElse(null);
+                TTNbt.read(input, "golem", GolemProperties.CODEC, registries).orElse(null);
         cost = input.getInt("cost");
         maxCost = input.getInt("mcost");
     }
@@ -339,7 +339,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     @Override
     public Holder<IAspect> getSuctionType(Direction face) {
-        return EssentiaTransportHelper.resolve(level, TCAspects.MACHINA);
+        return EssentiaTransportHelper.resolve(level, TTAspects.MACHINA);
     }
 
     @Override
@@ -364,7 +364,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!bufferedEssentia && cost > 0 && pendingGolem != null && aspect.is(TCAspects.MACHINA)) {
+        if (!bufferedEssentia && cost > 0 && pendingGolem != null && aspect.is(TTAspects.MACHINA)) {
             bufferedEssentia = true;
             return 1;
         }

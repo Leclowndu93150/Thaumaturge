@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
@@ -50,7 +50,7 @@ public class BlockSpa extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.SPA.get(), BlockEntitySpa::serverTick);
+        return createTickerHelper(type, TTBlockEntities.SPA.get(), BlockEntitySpa::serverTick);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class BlockSpa extends BaseEntityBlock {
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("arcane_spa"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("arcane_spa"))) {
             return ItemInteractionResult.CONSUME;
         }
         if (FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY).isEmpty()) {

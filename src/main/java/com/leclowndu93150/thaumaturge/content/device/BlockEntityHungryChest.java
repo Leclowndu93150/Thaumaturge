@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,7 +18,7 @@ public final class BlockEntityHungryChest extends ChestBlockEntity {
     private static final double EAT_REACH = 0.1;
 
     public BlockEntityHungryChest(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.HUNGRY_CHEST.get(), pos, state);
+        super(TTBlockEntities.HUNGRY_CHEST.get(), pos, state);
     }
 
     @Override

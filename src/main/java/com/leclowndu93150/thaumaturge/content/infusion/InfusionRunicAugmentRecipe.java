@@ -5,9 +5,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItemTags;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeTypes;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
@@ -76,11 +76,11 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
     }
 
     public static int charge(ItemStack stack) {
-        return stack.getOrDefault(TCDataComponents.RUNIC_CHARGE.get(), 0);
+        return stack.getOrDefault(TTDataComponents.RUNIC_CHARGE.get(), 0);
     }
 
     public static boolean isShieldable(ItemStack stack) {
-        if (stack.is(TCItemTags.RUNIC_SHIELDABLE)) {
+        if (stack.is(TTItemTags.RUNIC_SHIELDABLE)) {
             return true;
         }
         return stack.getItem() instanceof ArmorItem armor
@@ -137,7 +137,7 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
 
     public ItemStack augmentedResult(ItemStack catalyst) {
         ItemStack out = catalyst.copyWithCount(1);
-        out.set(TCDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
+        out.set(TTDataComponents.RUNIC_CHARGE.get(), Math.min(MAX_CHARGE, charge(catalyst) + 1));
         return out;
     }
 
@@ -176,7 +176,7 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
                 .map(ItemStack::copy)
                 .orElse(ItemStack.EMPTY);
         if (!base.isEmpty()) {
-            base.set(TCDataComponents.RUNIC_CHARGE.get(), 1);
+            base.set(TTDataComponents.RUNIC_CHARGE.get(), 1);
         }
         return base;
     }
@@ -208,7 +208,7 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
 
     @Override
     public RecipeType<InfusionRunicAugmentRecipe> getType() {
-        return TCRecipeTypes.RUNIC_AUGMENT.get();
+        return TTRecipeTypes.RUNIC_AUGMENT.get();
     }
 
     @Override

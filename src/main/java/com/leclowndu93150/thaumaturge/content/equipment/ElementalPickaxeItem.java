@@ -10,7 +10,7 @@ public final class ElementalPickaxeItem extends PickaxeItem {
     private static final int IGNITE_SECONDS = 2;
 
     public ElementalPickaxeItem(Properties properties) {
-        super(TCMaterials.TOOL_ELEMENTAL, properties);
+        super(TTMaterials.TOOL_ELEMENTAL, properties);
     }
 
     @Override

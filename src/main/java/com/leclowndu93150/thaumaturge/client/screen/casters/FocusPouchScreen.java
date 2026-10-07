@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.client.screen.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public final class FocusPouchScreen extends AbstractTCContainerScreen<MenuFocusPouch> {
+public final class FocusPouchScreen extends AbstractTTContainerScreen<MenuFocusPouch> {
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_focuspouch.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_focuspouch.png");
     private static final int WIDTH = 175;
     private static final int HEIGHT = 232;
     private static final int BLOCKED_X = 8;

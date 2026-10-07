@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
 
-public final class FrostFlakeParticle extends TCParticle {
+public final class FrostFlakeParticle extends TTParticle {
     private static final int BASE_LIFETIME = 40;
     private static final float FRICTION = 0.8F;
     private static final float GRAVITY = 0.033F;
@@ -38,7 +38,7 @@ public final class FrostFlakeParticle extends TCParticle {
     }
 
     public static final class Provider implements ParticleProvider<FrostFlakeParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("frost_flake");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("frost_flake");
 
         @Override
         public Particle createParticle(

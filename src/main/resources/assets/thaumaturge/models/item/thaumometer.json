@@ -1,110 +1,112 @@
 {
-    "loader": "thaumaturge:mesh",
-    "model": "thaumaturge:models/mesh/scanner.tcmesh",
-    "flip_v": true,
-    "render_type": "minecraft:translucent",
-    "textures": {
-        "body": "thaumaturge:item/scanner",
-        "pane": "thaumaturge:item/scanscreen",
-        "particle": "thaumaturge:item/scanner"
+  "loader": "thaumaturge:mesh",
+  "model": "thaumaturge:models/mesh/scanner.ttmesh",
+  "flip_v": true,
+  "textures": {
+    "body": "thaumaturge:item/scanner",
+    "pane": "thaumaturge:item/scanscreen",
+    "particle": "thaumaturge:item/scanner"
+  },
+  "display": {
+    "firstperson_righthand": {
+      "translation": [
+        -0.96,
+        0.096,
+        -6.4
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ]
     },
-    "display": {
-        "firstperson_righthand": {
-            "translation": [
-                -0.96,
-                0.096,
-                -6.4
-            ],
-            "rotation": [
-                90,
-                0,
-                0
-            ]
-        },
-        "thirdperson_righthand": {
-            "translation": [
-                -1.6,
-                1.6,
-                0
-            ],
-            "rotation": [
-                90,
-                0,
-                -90
-            ],
-            "scale": [
-                0.2,
-                0.2,
-                0.2
-            ]
-        },
-        "gui": {
-            "translation": [
-                0,
-                0,
-                -2.8
-            ],
-            "rotation": [
-                90,
-                0,
-                0
-            ],
-            "scale": [
-                0.35,
-                0.35,
-                0.35
-            ]
-        },
-        "ground": {
-            "translation": [
-                0,
-                3.2,
-                0
-            ],
-            "rotation": [
-                90,
-                0,
-                0
-            ],
-            "scale": [
-                0.2,
-                0.2,
-                0.2
-            ]
-        },
-        "fixed": {
-            "translation": [
-                0,
-                0,
-                0.48
-            ],
-            "rotation": [
-                -90,
-                0,
-                0
-            ],
-            "scale": [
-                0.4,
-                0.4,
-                0.4
-            ]
-        },
-        "head": {
-            "translation": [
-                0,
-                0,
-                0
-            ],
-            "rotation": [
-                90,
-                0,
-                0
-            ],
-            "scale": [
-                0.45,
-                0.45,
-                0.45
-            ]
-        }
+    "thirdperson_righthand": {
+      "translation": [
+        -1.6,
+        1.6,
+        0
+      ],
+      "rotation": [
+        90,
+        0,
+        -90
+      ],
+      "scale": [
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "gui": {
+      "translation": [
+        0,
+        0,
+        -2.8
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3.2,
+        0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "scale": [
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "fixed": {
+      "translation": [
+        0,
+        0,
+        0.48
+      ],
+      "rotation": [
+        -90,
+        0,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "head": {
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        90,
+        0,
+        0
+      ],
+      "scale": [
+        0.45,
+        0.45,
+        0.45
+      ]
     }
+  },
+  "translucent_slots": [
+    "pane"
+  ]
 }

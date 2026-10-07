@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
 import com.leclowndu93150.thaumaturge.content.item.CelestialNotesItem;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.Direction;
@@ -27,7 +27,7 @@ public final class ScanSky implements IScanThing {
     private static final int TICKS_PER_DAY = 24000;
     private static final int YAW_TOLERANCE = 10;
     private static final int PITCH_TOLERANCE = 7;
-    private static final ResourceLocation NODES_RESEARCH = TCIds.rl("nodes");
+    private static final ResourceLocation NODES_RESEARCH = TTIds.rl("nodes");
 
     @Override
     public boolean checkThing(Player player, @Nullable Object target) {
@@ -68,7 +68,7 @@ public final class ScanSky implements IScanThing {
             player.displayClientMessage(Component.translatable("tc.celestial.fail.1"), true);
             return;
         }
-        if (isCarrying(player, TCItems.SCRIBING_TOOLS.get()) && consume(player, Items.PAPER)) {
+        if (isCarrying(player, TTItems.SCRIBING_TOOLS.get()) && consume(player, Items.PAPER)) {
             ItemStack stack = CelestialNotesItem.stackOf(note);
             if (!player.getInventory().add(stack)) {
                 player.drop(stack, false);

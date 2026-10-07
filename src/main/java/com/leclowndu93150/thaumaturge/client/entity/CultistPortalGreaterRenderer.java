@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistPortalGreater;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -41,6 +41,6 @@ public final class CultistPortalGreaterRenderer extends EntityRenderer<EntityCul
 
     @Override
     public ResourceLocation getTextureLocation(EntityCultistPortalGreater entity) {
-        return TCIds.rl("textures/misc/cultist_portal.png");
+        return TTIds.rl("textures/misc/cultist_portal.png");
     }
 }

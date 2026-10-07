@@ -134,7 +134,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // mod file points at the compiled classes directory rather than the separate resources output.
 // Mirror only the tree pack into that directory for development runs; the normal resources output
 // remains the sole copy packaged in release jars.
-// Removal note: delete this wiring, compat/dynamictrees, TCBiomeModifierSerializers and its
+// Removal note: delete this wiring, compat/dynamictrees, TTBiomeModifierSerializers and its
 // registration/data file, plus resourcepacks/dynamictrees and trees/thaumaturge. Native tree generation
 // needs no restoration: the modifier removes it only while Dynamic Trees is present and enabled.
 def syncDynamicTreesTreePack = tasks.register('syncDynamicTreesTreePack', Sync) {
@@ -202,6 +202,7 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'thaumaturge.testResourceRoot', file('src/main/resources').absolutePath
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

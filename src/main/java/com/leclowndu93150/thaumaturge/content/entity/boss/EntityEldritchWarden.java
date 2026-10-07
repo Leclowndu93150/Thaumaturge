@@ -12,8 +12,8 @@ import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -230,7 +230,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
                     this.getY(),
                     this.getZ() + (corner / 2 % 2 * 2 - 1) * 0.25F);
             if (server.isEmptyBlock(pos)) {
-                server.setBlockAndUpdate(pos, TCBlocks.EFFECT_SAP.get().defaultBlockState());
+                server.setBlockAndUpdate(pos, TTBlocks.EFFECT_SAP.get().defaultBlockState());
             }
         }
         if (this.getSpawnTimer() > 0 && this.tickCount % 4 == 0) {
@@ -266,9 +266,9 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
                         Mth.floor(this.getZ()) + radius * Math.sin(radians));
                 if (server.isEmptyBlock(pos)
                         && server.getBlockState(pos.below()).isSolidRender(server, pos.below())) {
-                    server.setBlockAndUpdate(pos, TCBlocks.EFFECT_SAP.get().defaultBlockState());
+                    server.setBlockAndUpdate(pos, TTBlocks.EFFECT_SAP.get().defaultBlockState());
                     server.scheduleTick(
-                            pos, TCBlocks.EFFECT_SAP.get(), SAP_TICK_MIN + this.random.nextInt(SAP_TICK_SPREAD));
+                            pos, TTBlocks.EFFECT_SAP.get(), SAP_TICK_MIN + this.random.nextInt(SAP_TICK_SPREAD));
                     if (this.random.nextFloat() < 0.3F) {
                         Effects.arcBolt(server, this.position().add(0.0, this.getBbHeight() / 2.0, 0.0))
                                 .to(Vec3.atCenterOf(pos))
@@ -277,7 +277,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
                     }
                 }
             }
-            this.playSound(TCSounds.ZAP.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.ZAP.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.1F);
         }
         this.fieldFrenzyCounter--;
     }
@@ -382,7 +382,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             double dy = target.getY() - this.getY() - target.getBbHeight() / 2.0F;
             double dz = target.getZ() + target.getDeltaMovement().z - this.getZ();
             blast.shoot(dx, dy, dz, 1.0F, 2.0F);
-            this.playSound(TCSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);
         } else if (this.hasLineOfSight(target)) {
             target.push(
@@ -394,7 +394,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
             if (target instanceof ServerPlayer player) {
                 WarpHelper.addWarp(player, SCREECH_WARP_BASE + this.random.nextInt(3), WarpType.TEMPORARY);
             }
-            this.playSound(TCSounds.EGSCREECH.get(), 4.0F, 1.0F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.EGSCREECH.get(), 4.0F, 1.0F + this.random.nextFloat() * 0.1F);
         }
     }
 
@@ -419,12 +419,12 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return TCSounds.EGIDLE.get();
+        return TTSounds.EGIDLE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.EGDEATH.get();
+        return TTSounds.EGDEATH.get();
     }
 
     @Override

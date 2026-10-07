@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.taint;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.FastColor.ARGB32;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = TCIds.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = TTIds.MODID)
 public final class TaintEnvironmentClientEvents {
     private static final int FUME_COLOR = ARGB32.color(0xD0, 0x75, 0x18, 0x91);
     private static final float MAX_SANE_FOG_PLANE = 4096.0F;

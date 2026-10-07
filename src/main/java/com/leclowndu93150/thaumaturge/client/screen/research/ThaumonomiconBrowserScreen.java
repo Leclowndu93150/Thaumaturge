@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.ResearchFlag;
@@ -15,12 +15,12 @@ import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.research.ConnectorRenderer;
 import com.leclowndu93150.thaumaturge.client.render.research.EntryIconRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCScreen;
-import com.leclowndu93150.thaumaturge.client.screen.TCScreenTextures;
-import com.leclowndu93150.thaumaturge.client.screen.tooltip.TCTooltipRenderer;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTScreen;
+import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.tooltip.TTTooltipRenderer;
 import com.leclowndu93150.thaumaturge.network.ServerboundClearResearchFlagsPayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundUnlockResearchPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -50,7 +50,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
-public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
+public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
     private static final int CELL_SIZE = 24;
     private static final int START_X = 16;
     private static final int START_Y = 16;
@@ -167,7 +167,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private static boolean persistedSearching = false;
     private static @Nullable ResourceLocation persistedEntryId = null;
 
-    private final List<Holder.Reference<IResearchCategory>> categoriesTC = new ArrayList<>();
+    private final List<Holder.Reference<IResearchCategory>> categoriesTT = new ArrayList<>();
     private final List<Holder.Reference<IResearchCategory>> categoriesOther = new ArrayList<>();
     private final List<Holder.Reference<IResearchCategory>> categoriesOtherVisible = new ArrayList<>();
     private final Map<Holder.Reference<IResearchCategory>, List<EntryNode>> nodesByCategory = new HashMap<>();
@@ -245,7 +245,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         searchField.setVisible(false);
         addRenderableWidget(searchField);
         if (persistedCategoryId != null) {
-            for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
+            for (Holder.Reference<IResearchCategory> ref : categoriesTT) {
                 ref.unwrapKey().ifPresent(key -> {
                     if (key.location().equals(persistedCategoryId)) activeCategory = ref;
                 });
@@ -258,8 +258,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 }
             }
         }
-        if (activeCategory == null && !categoriesTC.isEmpty()) {
-            activeCategory = categoriesTC.get(0);
+        if (activeCategory == null && !categoriesTT.isEmpty()) {
+            activeCategory = categoriesTT.get(0);
         } else if (activeCategory == null && !categoriesOther.isEmpty()) {
             activeCategory = categoriesOther.get(0);
         }
@@ -297,7 +297,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private void loadRegistryData() {
         if (minecraft == null || minecraft.player == null) return;
-        categoriesTC.clear();
+        categoriesTT.clear();
         categoriesOther.clear();
         nodesByCategory.clear();
         allEntries.clear();
@@ -307,13 +307,13 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 .lookup(IResearchCategory.REGISTRY_KEY)
                 .ifPresent(lookup -> lookup.listElements()
                         .forEach(ref -> ref.unwrapKey().ifPresent(key -> {
-                            if (key.location().getNamespace().equals(TCIds.MODID)) {
-                                categoriesTC.add(ref);
+                            if (key.location().getNamespace().equals(TTIds.MODID)) {
+                                categoriesTT.add(ref);
                             } else {
                                 categoriesOther.add(ref);
                             }
                         })));
-        categoriesTC.sort(Comparator.comparingInt(ref -> ref.value().index()));
+        categoriesTT.sort(Comparator.comparingInt(ref -> ref.value().index()));
         minecraft
                 .player
                 .registryAccess()
@@ -423,7 +423,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         if (minecraft == null || minecraft.player == null) return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
         String needle = query.toLowerCase(Locale.ROOT);
-        for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
+        for (Holder.Reference<IResearchCategory> ref : categoriesTT) {
             if (!isCategoryUnlocked(knowledge, ref)) continue;
             String name = categoryDisplayName(ref).getString();
             if (name.toLowerCase(Locale.ROOT).contains(needle)) {
@@ -830,15 +830,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             int iconScreenY = textY * 2;
             if (sr.recipeIcon()) {
                 graphics.blit(
-                        TCScreenTextures.RESEARCH_BROWSER,
+                        TTScreenTextures.RESEARCH_BROWSER,
                         iconScreenX,
                         iconScreenY,
                         (float) SEARCH_RESULT_ICON_U,
                         (float) SEARCH_RESULT_ICON_V,
                         SEARCH_RESULT_ICON_W,
                         SEARCH_RESULT_ICON_W,
-                        TCScreenTextures.TEX_SIZE,
-                        TCScreenTextures.TEX_SIZE);
+                        TTScreenTextures.TEX_SIZE,
+                        TTScreenTextures.TEX_SIZE);
             } else if (sr.entryNode != null) {
                 Object icon = resolveDisplayIcon(sr.entryNode);
                 EntryIconRenderer.drawResearchIcon(graphics, iconScreenX, iconScreenY, icon, false);
@@ -877,49 +877,49 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
             int len = Math.min(EDGE_TILE, width - FRAME_MARGIN - x);
             if (len <= 0) continue;
             graphics.blit(
-                    TCScreenTextures.RESEARCH_BROWSER,
+                    TTScreenTextures.RESEARCH_BROWSER,
                     x,
                     BORDER_OFFSET,
                     EDGE_UV,
                     CORNER_UV,
                     len,
                     CORNER_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE);
             graphics.blit(
-                    TCScreenTextures.RESEARCH_BROWSER,
+                    TTScreenTextures.RESEARCH_BROWSER,
                     x,
                     height - FRAME_EDGE_FROM_BOTTOM,
                     EDGE_UV,
                     CORNER_UV,
                     len,
                     CORNER_SIZE,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE);
         }
         for (int y = FRAME_MARGIN; y < height - FRAME_MARGIN; y += EDGE_TILE) {
             int len = Math.min(EDGE_TILE, height - FRAME_MARGIN - y);
             if (len <= 0) continue;
             graphics.blit(
-                    TCScreenTextures.RESEARCH_BROWSER,
+                    TTScreenTextures.RESEARCH_BROWSER,
                     BORDER_OFFSET,
                     y,
                     CORNER_UV,
                     EDGE_UV,
                     CORNER_SIZE,
                     len,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE);
             graphics.blit(
-                    TCScreenTextures.RESEARCH_BROWSER,
+                    TTScreenTextures.RESEARCH_BROWSER,
                     width - FRAME_EDGE_FROM_RIGHT,
                     y,
                     CORNER_UV,
                     EDGE_UV,
                     CORNER_SIZE,
                     len,
-                    TCScreenTextures.TEX_SIZE,
-                    TCScreenTextures.TEX_SIZE);
+                    TTScreenTextures.TEX_SIZE,
+                    TTScreenTextures.TEX_SIZE);
         }
         drawCorner(graphics, BORDER_OFFSET, BORDER_OFFSET);
         drawCorner(graphics, BORDER_OFFSET, height - FRAME_EDGE_FROM_BOTTOM);
@@ -929,27 +929,27 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
 
     private void drawCorner(GuiGraphics graphics, int x, int y) {
         graphics.blit(
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 x,
                 y,
                 CORNER_UV,
                 CORNER_UV,
                 CORNER_SIZE,
                 CORNER_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE);
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE);
     }
 
     private void renderCategoryButtons(GuiGraphics graphics, int mouseX, int mouseY) {
         if (minecraft == null || minecraft.player == null) return;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
-        int tcYIndex = 0;
-        for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
+        int categoryYIndex = 0;
+        for (Holder.Reference<IResearchCategory> ref : categoriesTT) {
             if (!isCategoryUnlocked(knowledge, ref)) continue;
             int x = CATEGORY_BUTTON_X_LEFT;
-            int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (tcYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
+            int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (categoryYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
             drawCategoryButton(graphics, knowledge, ref, x, y, mouseX, mouseY, false, 0);
-            tcYIndex++;
+            categoryYIndex++;
         }
         for (int i = 0; i < categoriesOtherVisible.size(); i++) {
             Holder.Reference<IResearchCategory> ref = categoriesOtherVisible.get(i);
@@ -977,15 +977,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         int frameTint = active ? CATEGORY_TAB_ACTIVE_TINT : CATEGORY_TAB_INACTIVE_TINT;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 x - CATEGORY_FRAME_OFFSET,
                 y - CATEGORY_FRAME_OFFSET + yShift,
                 CORNER_UV,
                 CORNER_UV,
                 CATEGORY_FRAME_SIZE,
                 CATEGORY_FRAME_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 frameTint);
         int iconTint = (active || hover) ? CATEGORY_TAB_ACTIVE_ICON_TINT : CATEGORY_TAB_INACTIVE_ICON_TINT;
         GuiBlend.blitTinted(
@@ -1053,15 +1053,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         graphics.pose().scale(CATEGORY_BADGE_SCALE, CATEGORY_BADGE_SCALE, 1F);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 0,
                 0,
                 (float) u,
                 (float) CATEGORY_BADGE_V,
                 CATEGORY_BADGE_SIZE,
                 CATEGORY_BADGE_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 CATEGORY_BADGE_TINT);
         graphics.pose().popPose();
     }
@@ -1087,15 +1087,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         int tint = hover ? SEARCH_BUTTON_TINT_HOVER : SEARCH_BUTTON_TINT_IDLE;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 x,
                 y,
                 (float) SEARCH_BUTTON_U,
                 (float) SEARCH_BUTTON_V,
                 SEARCH_BUTTON_SIZE,
                 SEARCH_BUTTON_SIZE,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 tint);
         if (hover) {
             graphics.drawString(
@@ -1124,27 +1124,27 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
                 && mouseY < downY + SCROLL_BUTTON_HEIGHT;
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 upX,
                 upY,
                 (float) SCROLL_BUTTON_UV_U,
                 (float) SCROLL_BUTTON_UV_UP_V,
                 SCROLL_BUTTON_WIDTH,
                 SCROLL_BUTTON_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 upHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
         GuiBlend.blitTinted(
                 graphics,
-                TCScreenTextures.RESEARCH_BROWSER,
+                TTScreenTextures.RESEARCH_BROWSER,
                 downX,
                 downY,
                 (float) SCROLL_BUTTON_UV_U,
                 (float) SCROLL_BUTTON_UV_DOWN_V,
                 SCROLL_BUTTON_WIDTH,
                 SCROLL_BUTTON_HEIGHT,
-                TCScreenTextures.TEX_SIZE,
-                TCScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
+                TTScreenTextures.TEX_SIZE,
                 downHover ? SCROLL_BUTTON_TINT_HOVER : SCROLL_BUTTON_TINT_IDLE);
     }
 
@@ -1199,7 +1199,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         if (minecraft.options.advancedItemTooltips) {
             lines.add(Component.literal(ChatFormatting.DARK_GRAY + node.id.toString()));
         }
-        TCTooltipRenderer.render(graphics, font, lines, mouseX, mouseY);
+        TTTooltipRenderer.render(graphics, font, lines, mouseX, mouseY);
     }
 
     private @Nullable EntryNode findGlobalNode(ResourceLocation id) {
@@ -1216,13 +1216,13 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
         if (minecraft != null && minecraft.player != null) {
             minecraft
                     .getSoundManager()
-                    .play(SimpleSoundInstance.forUI(TCSounds.CLACK.get(), 1.0F, BUTTON_CLACK_VOLUME));
+                    .play(SimpleSoundInstance.forUI(TTSounds.CLACK.get(), 1.0F, BUTTON_CLACK_VOLUME));
         }
     }
 
     private void playPageOpen() {
         if (minecraft != null && minecraft.player != null) {
-            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.PAGE.get(), 1.0F, PAGE_OPEN_VOLUME));
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.PAGE.get(), 1.0F, PAGE_OPEN_VOLUME));
         }
     }
 
@@ -1358,15 +1358,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTCScreen {
     private Holder.@Nullable Reference<IResearchCategory> hitCategoryButton(int mx, int my) {
         if (minecraft == null || minecraft.player == null) return null;
         IPlayerKnowledge knowledge = KnowledgeAccess.of(minecraft.player);
-        int tcYIndex = 0;
-        for (Holder.Reference<IResearchCategory> ref : categoriesTC) {
+        int categoryYIndex = 0;
+        for (Holder.Reference<IResearchCategory> ref : categoriesTT) {
             if (!isCategoryUnlocked(knowledge, ref)) continue;
             int x = CATEGORY_BUTTON_X_LEFT;
-            int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (tcYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
+            int y = CATEGORY_BUTTON_FIRST_Y_OFFSET + (categoryYIndex + 1) * CATEGORY_BUTTON_STRIDE_Y;
             if (mx >= x && mx < x + CATEGORY_ICON_SIZE && my >= y && my < y + CATEGORY_ICON_SIZE) {
                 return ref;
             }
-            tcYIndex++;
+            categoryYIndex++;
         }
         for (int i = 0; i < categoriesOtherVisible.size(); i++) {
             int x = width - CATEGORY_BUTTON_X_RIGHT_MARGIN;

@@ -1,10 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchLock;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -24,7 +24,7 @@ import net.minecraft.world.phys.AABB;
 import org.joml.Vector3f;
 
 public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEntityEldritchLock> {
-    private static final ResourceLocation CUBE_TEXTURE = TCIds.rl("textures/entity/eldritch_cube.png");
+    private static final ResourceLocation CUBE_TEXTURE = TTIds.rl("textures/entity/eldritch_cube.png");
 
     private static final int ARMS = 4;
     private static final int ARM_CUBES = 4;
@@ -100,7 +100,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
             return;
         }
         if (tabletStack.isEmpty()) {
-            tabletStack = new ItemStack(TCItems.RUNED_TABLET.get());
+            tabletStack = new ItemStack(TTItems.RUNED_TABLET.get());
         }
         poseStack.pushPose();
         poseStack.translate(

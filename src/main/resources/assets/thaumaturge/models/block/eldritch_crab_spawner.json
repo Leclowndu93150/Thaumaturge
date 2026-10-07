@@ -1,7 +1,7 @@
 {
     "loader": "thaumaturge:mesh",
     "parent": "block/block",
-    "model": "thaumaturge:models/mesh/eldritch_crab_spawner.tcmesh",
+    "model": "thaumaturge:models/mesh/eldritch_crab_spawner.ttmesh",
     "corner_space": true,
     "textures": {
         "texture": "thaumaturge:block/eldritch_crab_spawner",

@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.item.equipment;
 import com.leclowndu93150.thaumaturge.api.items.IGoggles;
 import com.leclowndu93150.thaumaturge.api.items.IRevealer;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
-import com.leclowndu93150.thaumaturge.content.equipment.TCMaterials;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 public final class GogglesItem extends ArmorItem implements IGoggles, IRevealer, IVisDiscountGear {
     public GogglesItem(Properties properties) {
-        super(TCMaterials.ARMOR_GOGGLES, Type.HELMET, properties);
+        super(TTMaterials.ARMOR_GOGGLES, Type.HELMET, properties);
     }
 
     @Override
@@ -55,6 +55,6 @@ public final class GogglesItem extends ArmorItem implements IGoggles, IRevealer,
     // Not a TieredItem/ArmorItem, so the enchantment value has to come from here or the table offers nothing.
     @Override
     public int getEnchantmentValue() {
-        return TCItems.GOGGLES_ENCHANTMENT_VALUE;
+        return TTItems.GOGGLES_ENCHANTMENT_VALUE;
     }
 }

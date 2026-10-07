@@ -1,6 +1,0 @@
-{
-  "parent": "thaumaturge:item/bewlr_block",
-  "textures": {
-    "particle": "thaumaturge:block/base_metal"
-  }
-}

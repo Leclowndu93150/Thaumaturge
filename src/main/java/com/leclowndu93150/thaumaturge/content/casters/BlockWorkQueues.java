@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -131,7 +131,7 @@ public final class BlockWorkQueues {
             }
 
             public void queue(ServerLevel level) {
-                level.getData(TCAttachments.BLOCK_WORK_QUEUES)
+                level.getData(TTAttachments.BLOCK_WORK_QUEUES)
                         .breakers()
                         .add(new BreakerTask(
                                 pos,
@@ -254,7 +254,7 @@ public final class BlockWorkQueues {
             }
 
             public void queue(ServerLevel level) {
-                level.getData(TCAttachments.BLOCK_WORK_QUEUES)
+                level.getData(TTAttachments.BLOCK_WORK_QUEUES)
                         .swappers()
                         .add(new SwapperTask(
                                 pos,

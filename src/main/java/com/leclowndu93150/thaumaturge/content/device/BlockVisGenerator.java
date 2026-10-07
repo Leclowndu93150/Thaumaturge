@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -35,9 +35,17 @@ public final class BlockVisGenerator extends BaseEntityBlock {
     }
 
     private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(Shapes.or(
-            box(6.0, 2.0, 6.0, 10.0, 16.0, 10.0),
-            box(4.0, 4.0, 4.0, 12.0, 8.0, 12.0),
-            box(3.0, 5.0, 3.0, 13.0, 7.0, 13.0)));
+            box(3.0, 0.0, 3.0, 13.0, 1.0, 13.0),
+            box(4.0, 1.0, 4.0, 12.0, 3.0, 12.0),
+            box(5.0, 5.0, 5.0, 11.0, 6.5, 11.0),
+            box(5.0, 8.0, 5.0, 11.0, 9.5, 11.0),
+            box(5.0, 11.0, 5.0, 11.0, 12.5, 11.0),
+            box(5.0, 14.0, 5.0, 11.0, 15.0, 11.0),
+            box(6.0, 3.0, 6.0, 10.0, 5.0, 10.0),
+            box(6.0, 6.5, 6.0, 10.0, 8.0, 10.0),
+            box(6.0, 9.5, 6.0, 10.0, 11.0, 10.0),
+            box(6.0, 12.5, 6.0, 10.0, 14.0, 10.0),
+            box(7.0, 15.0, 7.0, 9.0, 16.0, 9.0)));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -82,7 +90,7 @@ public final class BlockVisGenerator extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.VIS_GENERATOR.get(), BlockEntityVisGenerator::serverTick);
+        return createTickerHelper(type, TTBlockEntities.VIS_GENERATOR.get(), BlockEntityVisGenerator::serverTick);
     }
 
     @Override

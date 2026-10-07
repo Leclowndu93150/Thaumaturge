@@ -31,7 +31,7 @@ import com.leclowndu93150.thaumaturge.content.aura.AuraHelperBindings;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayWorkbenchSource;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitBindings;
-import com.leclowndu93150.thaumaturge.content.equipment.TCMaterials;
+import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.leclowndu93150.thaumaturge.content.golem.GolemBindings;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.item.BathSaltsEvents;
@@ -45,8 +45,8 @@ import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactions;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
-import com.leclowndu93150.thaumaturge.registry.TCIngredientTypes;
-import com.leclowndu93150.thaumaturge.registry.TCParticles;
+import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
+import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -57,54 +57,54 @@ import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(TCIds.MODID)
+@Mod(TTIds.MODID)
 public final class Thaumaturge {
-    public static final Logger LOGGER = LoggerFactory.getLogger(TCIds.MODID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(TTIds.MODID);
 
     public Thaumaturge(IEventBus modBus, ModContainer container) {
         NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onItemExpire);
         NeoForge.EVENT_BUS.addListener(BathSaltsEvents::onEntityTick);
-        TCFluidTypes.register(modBus);
-        TCFluids.register(modBus);
-        TCBlocks.register(modBus);
-        TCMaterials.register(modBus);
-        TCItems.register(modBus);
-        TCFeatures.register(modBus);
-        TCStructures.register(modBus);
-        TCBlockEntities.register(modBus);
-        TCEntities.register(modBus);
-        TCMenus.register(modBus);
-        TCRecipeTypes.register(modBus);
-        TCRecipeSerializers.register(modBus);
-        TCDataComponents.register(modBus);
-        TCCreativeTabs.register(modBus);
-        TCParticles.register(modBus);
-        TCSounds.register(modBus);
-        TCAttachments.register(modBus);
-        TCDamageTypes.register(modBus);
-        TCMobEffects.register(modBus);
-        TCAttributes.register(modBus);
-        TCChunkGenerators.register(modBus);
-        TCBiomeModifierSerializers.register(modBus);
-        TCPlacementModifiers.register(modBus);
-        TCGolemTraits.register(modBus);
-        TCMobTraits.register(modBus);
-        TCFocusElements.register(modBus);
-        TCGolemParts.register(modBus);
-        TCWandParts.register(modBus);
-        TCSeals.register(modBus);
-        TCEntityDataSerializers.register(modBus);
-        TCIngredientTypes.register(modBus);
-        TCGolemAccessories.register();
+        TTFluidTypes.register(modBus);
+        TTFluids.register(modBus);
+        TTBlocks.register(modBus);
+        TTMaterials.register(modBus);
+        TTItems.register(modBus);
+        TTFeatures.register(modBus);
+        TTStructures.register(modBus);
+        TTBlockEntities.register(modBus);
+        TTEntities.register(modBus);
+        TTMenus.register(modBus);
+        TTRecipeTypes.register(modBus);
+        TTRecipeSerializers.register(modBus);
+        TTDataComponents.register(modBus);
+        TTCreativeTabs.register(modBus);
+        TTParticles.register(modBus);
+        TTSounds.register(modBus);
+        TTAttachments.register(modBus);
+        TTDamageTypes.register(modBus);
+        TTMobEffects.register(modBus);
+        TTAttributes.register(modBus);
+        TTChunkGenerators.register(modBus);
+        TTBiomeModifierSerializers.register(modBus);
+        TTPlacementModifiers.register(modBus);
+        TTGolemTraits.register(modBus);
+        TTMobTraits.register(modBus);
+        TTFocusElements.register(modBus);
+        TTGolemParts.register(modBus);
+        TTWandParts.register(modBus);
+        TTSeals.register(modBus);
+        TTEntityDataSerializers.register(modBus);
+        TTIngredientTypes.register(modBus);
+        TTGolemAccessories.register();
 
         LegacyRegistryAliases.register(modBus);
 
-        TaintConfigMigration.migrate(FMLPaths.CONFIGDIR.get().resolve(TCIds.MODID + "-common.toml"));
+        TaintConfigMigration.migrate(FMLPaths.CONFIGDIR.get().resolve(TTIds.MODID + "-common.toml"));
         container.registerConfig(ModConfig.Type.COMMON, ThaumaturgeCommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
         container.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
 
-        KnowledgeAccess.bind(player -> player.getData(TCAttachments.KNOWLEDGE));
+        KnowledgeAccess.bind(player -> player.getData(TTAttachments.KNOWLEDGE));
         AspectIndexAccess.bind(AspectIndexHolder::get);
         AspectIndexBuilder.fireContributorEvent(modBus);
         WandAccess.bind(new WandAccessBindings());
@@ -127,10 +127,10 @@ public final class Thaumaturge {
         GolemHelper.bind(new GolemBindings());
         AspectPoolAccess.bind(new AspectPoolBindings());
         ResearchGate.bind(ResearchManager::doesPassGate);
-        RechargeAccess.bind(TCDataComponents.CHARGE);
-        GogglesAccess.bind(() -> TCAttributes.VIS_DISCOUNT);
-        FocusEngine.bindRegistry(TCFocusElements.registry());
+        RechargeAccess.bind(TTDataComponents.CHARGE);
+        GogglesAccess.bind(() -> TTAttributes.VIS_DISCOUNT);
+        FocusEngine.bindRegistry(TTFocusElements.registry());
 
-        if (ModList.get().isLoaded(TCIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
+        if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
     }
 }

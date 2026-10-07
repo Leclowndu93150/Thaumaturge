@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.api.essentia;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
@@ -21,8 +21,8 @@ public final class EssentiaCrystalAccess {
 
     /** Classifies a stack without treating other aspect-bearing items as crystals. */
     public static State state(ItemStack stack) {
-        if (!stack.is(TCItems.ESSENTIA_CRYSTAL.get())) return State.NOT_CRYSTAL;
-        AspectInstance configured = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
+        if (!stack.is(TTItems.ESSENTIA_CRYSTAL.get())) return State.NOT_CRYSTAL;
+        AspectInstance configured = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
         if (configured == null) return State.UNCONFIGURED;
         return configured.amount() == 1 ? State.CONFIGURED : State.MALFORMED;
     }
@@ -34,7 +34,7 @@ public final class EssentiaCrystalAccess {
     /** Returns the aspect only for a genuine, well-formed configured crystal. */
     public static @Nullable Holder<IAspect> aspect(ItemStack stack) {
         if (!isConfigured(stack)) return null;
-        return stack.get(TCDataComponents.CRYSTAL_ASPECT.get()).aspect();
+        return stack.get(TTDataComponents.CRYSTAL_ASPECT.get()).aspect();
     }
 
     public enum State {

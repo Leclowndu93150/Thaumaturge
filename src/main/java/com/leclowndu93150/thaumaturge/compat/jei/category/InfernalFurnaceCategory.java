@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.compat.jei.category;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -23,24 +23,24 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 public final class InfernalFurnaceCategory implements IRecipeCategory<InfernalFurnaceCategory.InfernalBonusWrapper> {
     public static final RecipeType<InfernalBonusWrapper> RECIPE_TYPE =
-            RecipeType.create(TCIds.MODID, "infernal_furnace", InfernalBonusWrapper.class);
+            RecipeType.create(TTIds.MODID, "infernal_furnace", InfernalBonusWrapper.class);
 
     private static final int WIDTH = 144;
     private static final int HEIGHT = 108;
     private static final IDrawable RESULT_ICON = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             41,
             7,
             30,
             30);
     private static final IDrawable ARROW = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             199,
             168,
             26,
             26);
     private static final IDrawable FURNACE = new AlphaDrawable(
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_researchbook_overlay.png"),
             445,
             452,
             67,
@@ -53,7 +53,7 @@ public final class InfernalFurnaceCategory implements IRecipeCategory<InfernalFu
     private final IDrawable icon;
 
     public InfernalFurnaceCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TCItems.INFERNAL_FURNACE.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(TTItems.INFERNAL_FURNACE.get()));
     }
 
     @Override

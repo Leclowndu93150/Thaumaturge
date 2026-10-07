@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record ClientboundSealPayload(SealPos pos, Optional<SealEntity> seal) implements CustomPacketPayload {
     public static final Type<ClientboundSealPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "seal"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "seal"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundSealPayload> STREAM_CODEC =
             StreamCodec.composite(

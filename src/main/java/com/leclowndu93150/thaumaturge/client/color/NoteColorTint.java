@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +15,7 @@ public final class NoteColorTint implements ItemColor {
         if (tintIndex == 0) {
             return WHITE;
         }
-        ResearchNoteData data = stack.get(TCDataComponents.RESEARCH_NOTE.get());
+        ResearchNoteData data = stack.get(TTDataComponents.RESEARCH_NOTE.get());
         return ARGB32.opaque(data == null ? FALLBACK : data.color());
     }
 }

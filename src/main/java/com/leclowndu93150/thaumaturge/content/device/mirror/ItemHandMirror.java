@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -46,8 +46,8 @@ public final class ItemHandMirror extends Item {
             return InteractionResult.SUCCESS;
         }
         if (level.getBlockEntity(pos) instanceof BlockEntityMirror) {
-            stack.set(TCDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
-            level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
+            stack.set(TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
+            level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
             player.sendSystemMessage(Component.translatable("tc.handmirrorlinked"));
         }
         return InteractionResult.SUCCESS;
@@ -55,18 +55,18 @@ public final class ItemHandMirror extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!level.isClientSide() && !DeviceGate.passes(player, TCIds.rl("mirror_hand"))) {
+        if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("mirror_hand"))) {
             return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
         ItemStack stack = player.getItemInHand(hand);
-        GlobalPos link = stack.get(TCDataComponents.MIRROR_LINK.get());
+        GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
         if (link == null || !(player instanceof ServerPlayer serverPlayer)) {
             return InteractionResultHolder.pass(stack);
         }
         ServerLevel targetLevel = serverPlayer.level().getServer().getLevel(link.dimension());
         BlockEntity target = targetLevel == null ? null : targetLevel.getBlockEntity(link.pos());
         if (!(target instanceof BlockEntityMirror)) {
-            stack.remove(TCDataComponents.MIRROR_LINK.get());
+            stack.remove(TTDataComponents.MIRROR_LINK.get());
             serverPlayer
                     .level()
                     .playSound(
@@ -74,7 +74,7 @@ public final class ItemHandMirror extends Item {
                             serverPlayer.getX(),
                             serverPlayer.getY(),
                             serverPlayer.getZ(),
-                            TCSounds.ZAP.get(),
+                            TTSounds.ZAP.get(),
                             SoundSource.PLAYERS,
                             1.0F,
                             0.8F);
@@ -96,7 +96,7 @@ public final class ItemHandMirror extends Item {
     }
 
     public static boolean transport(ItemStack mirror, ItemStack items, ServerPlayer player) {
-        GlobalPos link = mirror.get(TCDataComponents.MIRROR_LINK.get());
+        GlobalPos link = mirror.get(TTDataComponents.MIRROR_LINK.get());
         if (link == null) {
             return false;
         }
@@ -117,14 +117,14 @@ public final class ItemHandMirror extends Item {
             }
             return true;
         }
-        mirror.remove(TCDataComponents.MIRROR_LINK.get());
+        mirror.remove(TTDataComponents.MIRROR_LINK.get());
         player.level()
                 .playSound(
                         null,
                         player.getX(),
                         player.getY(),
                         player.getZ(),
-                        TCSounds.ZAP.get(),
+                        TTSounds.ZAP.get(),
                         SoundSource.PLAYERS,
                         1.0F,
                         0.8F);
@@ -134,14 +134,14 @@ public final class ItemHandMirror extends Item {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return stack.has(TCDataComponents.MIRROR_LINK.get());
+        return stack.has(TTDataComponents.MIRROR_LINK.get());
     }
 
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        GlobalPos link = stack.get(TCDataComponents.MIRROR_LINK.get());
+        GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
         if (link != null) {
             tooltip.add(Component.translatable(
                     "tc.handmirrorlinkedto.full",

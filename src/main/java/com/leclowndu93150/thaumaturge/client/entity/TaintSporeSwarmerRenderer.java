@@ -7,11 +7,12 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 /** Swarmer shell renderer with a separately blended/full-bright pulsing core. */
-public final class TaintSporeSwarmerRenderer extends MobRenderer<EntityTaintSporeSwarmer, TaintSporeSwarmerModel> {
+public final class TaintSporeSwarmerRenderer
+        extends MobRenderer<EntityTaintSporeSwarmer, TaintSporeSwarmerModel<EntityTaintSporeSwarmer>> {
     private static final float SHADOW = 0.25F;
 
     public TaintSporeSwarmerRenderer(EntityRendererProvider.Context context) {
-        super(context, new TaintSporeSwarmerModel(context.bakeLayer(TCModelLayers.TAINT_SPORE_SWARMER)), SHADOW);
+        super(context, new TaintSporeSwarmerModel<>(context.bakeLayer(TTModelLayers.TAINT_SPORE_SWARMER)), SHADOW);
         addLayer(new TaintSporeSwarmerCoreLayer(this, context.getModelSet()));
     }
 

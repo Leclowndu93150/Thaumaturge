@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.EldritchArenaShapes;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeCell;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -74,22 +74,22 @@ public final class GenContext {
                             decoCommon.add(pos);
                         }
                     }
-                    state = TCBlocks.ELDRITCH_STONE.get().defaultBlockState();
+                    state = TTBlocks.ELDRITCH_STONE.get().defaultBlockState();
                 }
             }
             case STONE_NOSPAWN -> {
                 if (!isNothing(pos)) {
-                    state = TCBlocks.ELDRITCH_STONE_INERT.get().defaultBlockState();
+                    state = TTBlocks.ELDRITCH_STONE_INERT.get().defaultBlockState();
                 }
             }
             case ROCK -> {
                 if (!isNothing(pos)) {
-                    state = TCBlocks.ELDRITCH_ROCK.get().defaultBlockState();
+                    state = TTBlocks.ELDRITCH_ROCK.get().defaultBlockState();
                 }
             }
             case STONE_TRAPPED -> {
                 if (!isNothing(pos)) {
-                    state = TCBlocks.ELDRITCH_TRAP.get().defaultBlockState();
+                    state = TTBlocks.ELDRITCH_TRAP.get().defaultBlockState();
                 }
             }
             case CRUST -> state = crustPlacement(pos, cell);
@@ -123,8 +123,8 @@ public final class GenContext {
                             case EAST -> 4;
                             default -> 5;
                         });
-            case GLOW_TILE -> state = TCBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
-            case VOID -> state = TCBlocks.ELDRITCH_NOTHING.get().defaultBlockState();
+            case GLOW_TILE -> state = TTBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
+            case VOID -> state = TTBlocks.ELDRITCH_NOTHING.get().defaultBlockState();
             case AIR_REPL -> {
                 state = Blocks.AIR.defaultBlockState();
                 decoCommon.remove(pos);
@@ -132,13 +132,13 @@ public final class GenContext {
                 decoUrn.remove(pos);
             }
             case DOOR_BLOCK -> {
-                state = TCBlocks.ELDRITCH_DOOR.get().defaultBlockState();
+                state = TTBlocks.ELDRITCH_DOOR.get().defaultBlockState();
                 decoCommon.remove(pos);
                 crabSpawner.remove(pos);
                 decoUrn.remove(pos);
             }
             case DOOR_LOCK -> {
-                state = TCBlocks.ELDRITCH_LOCK.get().defaultBlockState();
+                state = TTBlocks.ELDRITCH_LOCK.get().defaultBlockState();
                 decoCommon.remove(pos);
                 crabSpawner.remove(pos);
                 decoUrn.remove(pos);
@@ -149,7 +149,7 @@ public final class GenContext {
         if (state != null) {
             Block block = state.getBlock();
             int flags =
-                    block != TCBlocks.ELDRITCH_NOTHING.get() && block != Blocks.BEDROCK && block != Blocks.AIR ? 3 : 2;
+                    block != TTBlocks.ELDRITCH_NOTHING.get() && block != Blocks.BEDROCK && block != Blocks.AIR ? 3 : 2;
             level.setBlock(pos, state, flags);
             if (block instanceof StairBlock || block instanceof BlockEldritchInset) {
                 level.getChunk(pos).markPosForPostprocessing(pos);
@@ -162,7 +162,7 @@ public final class GenContext {
             return null;
         }
         if (random.nextInt(25) == 0) {
-            return TCBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
+            return TTBlocks.ELDRITCH_CRUST_GLOWING.get().defaultBlockState();
         }
         if (random.nextInt(25) == 0) {
             boolean crab = cell.feature == MazeCell.FEATURE_NEST
@@ -172,15 +172,15 @@ public final class GenContext {
                 crabSpawner.add(pos);
             }
         }
-        return TCBlocks.ELDRITCH_CRUST.get().defaultBlockState();
+        return TTBlocks.ELDRITCH_CRUST.get().defaultBlockState();
     }
 
     private boolean isNothing(BlockPos pos) {
-        return level.getBlockState(pos).is(TCBlocks.ELDRITCH_NOTHING.get());
+        return level.getBlockState(pos).is(TTBlocks.ELDRITCH_NOTHING.get());
     }
 
     private BlockState legacyStair(int legacyMeta) {
-        return EldritchArenaShapes.stairFromLegacyMeta(TCBlocks.STAIRS_ELDRITCH.get(), legacyMeta);
+        return EldritchArenaShapes.stairFromLegacyMeta(TTBlocks.STAIRS_ELDRITCH.get(), legacyMeta);
     }
 
     public void setLockFacing(BlockPos pos, Direction dir) {

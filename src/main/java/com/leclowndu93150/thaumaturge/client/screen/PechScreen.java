@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_pech.png");
+public class PechScreen extends AbstractTTContainerScreen<MenuPech> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_pech.png");
     private static final int IMAGE_WIDTH = 175;
     private static final int IMAGE_HEIGHT = 232;
     private static final int TRADE_BUTTON_X = 67;
@@ -53,7 +53,7 @@ public class PechScreen extends AbstractTCContainerScreen<MenuPech> {
                 minecraft
                         .getSoundManager()
                         .play(SimpleSoundInstance.forUI(
-                                TCSounds.PECH_DICE.get(),
+                                TTSounds.PECH_DICE.get(),
                                 0.95F + minecraft.player.getRandom().nextFloat() * 0.1F,
                                 DICE_VOLUME));
             }

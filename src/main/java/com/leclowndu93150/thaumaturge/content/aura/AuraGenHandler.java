@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
-import com.leclowndu93150.thaumaturge.registry.TCDataMaps;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +17,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class AuraGenHandler {
     private AuraGenHandler() {}
 
@@ -32,7 +32,7 @@ public final class AuraGenHandler {
         ChunkPos pos = chunk.getPos();
         AuraManager.onChunkLoaded(serverLevel, pos);
 
-        AuraData data = chunk.getData(TCAttachments.AURA.get());
+        AuraData data = chunk.getData(TTAttachments.AURA.get());
         if (data.getBase() != 0) {
             return;
         }
@@ -73,7 +73,7 @@ public final class AuraGenHandler {
 
     private static float sampleBiome(ServerLevel level, BlockPos pos) {
         Holder<Biome> biome = level.getBiome(pos);
-        BiomeAuraModifier mod = biome.getData(TCDataMaps.BIOME_AURA_MODIFIER);
+        BiomeAuraModifier mod = biome.getData(TTDataMaps.BIOME_AURA_MODIFIER);
         return mod != null ? mod.value() : 0.5F;
     }
 }

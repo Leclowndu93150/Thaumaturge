@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BeamRenderType;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,9 +18,9 @@ import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, ArcaneBoreModel> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/arcanebore.png");
-    private static final ResourceLocation BEAM_TEXTURE = TCIds.rl("textures/misc/beam1.png");
-    private static final RenderType BEAM_TYPE = TCRenderTypes.fxAdditive(BEAM_TEXTURE);
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/arcanebore.png");
+    private static final ResourceLocation BEAM_TEXTURE = TTIds.rl("textures/misc/beam1.png");
+    private static final RenderType BEAM_TYPE = TTRenderTypes.fxAdditive(BEAM_TEXTURE);
 
     private static final float SHADOW = 0.5F;
     private static final double BEAM_LENGTH = 5.0;
@@ -39,7 +39,7 @@ public final class ArcaneBoreRenderer extends MobRenderer<EntityArcaneBore, Arca
     private static final int TIP_FLARE_TINT = ARGB32.colorFromFloat(TIP_FLARE_ALPHA, 0.0F, 1.0F, 0.4F);
 
     public ArcaneBoreRenderer(EntityRendererProvider.Context context) {
-        super(context, new ArcaneBoreModel(context.bakeLayer(TCModelLayers.ARCANE_BORE)), SHADOW);
+        super(context, new ArcaneBoreModel(context.bakeLayer(TTModelLayers.ARCANE_BORE)), SHADOW);
     }
 
     @Override

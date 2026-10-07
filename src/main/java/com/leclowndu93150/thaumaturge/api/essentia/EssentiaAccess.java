@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.essentia;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -51,7 +51,7 @@ public final class EssentiaAccess {
      * it does not make the item an essentia container or grant transfer support.
      */
     public static @Nullable ResourceKey<IAspect> aspectFilter(ItemStack stack) {
-        return stack.get(TCDataComponents.ASPECT_FILTER.get());
+        return stack.get(TTDataComponents.ASPECT_FILTER.get());
     }
 
     /**
@@ -60,8 +60,8 @@ public final class EssentiaAccess {
      */
     public static ItemStack withAspectFilter(ItemStack stack, @Nullable ResourceKey<IAspect> aspect) {
         ItemStack copy = stack.copy();
-        if (aspect == null) copy.remove(TCDataComponents.ASPECT_FILTER.get());
-        else copy.set(TCDataComponents.ASPECT_FILTER.get(), aspect);
+        if (aspect == null) copy.remove(TTDataComponents.ASPECT_FILTER.get());
+        else copy.set(TTDataComponents.ASPECT_FILTER.get(), aspect);
         return copy;
     }
 }

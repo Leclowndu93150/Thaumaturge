@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,11 +61,11 @@ public final class BlockEldritchLock extends BaseEntityBlock {
             Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return createTickerHelper(
-                    type, TCBlockEntities.ELDRITCH_LOCK.get(), (tickLevel, pos, tickState, lock) -> lock.clientTick());
+                    type, TTBlockEntities.ELDRITCH_LOCK.get(), (tickLevel, pos, tickState, lock) -> lock.clientTick());
         }
         return createTickerHelper(
                 type,
-                TCBlockEntities.ELDRITCH_LOCK.get(),
+                TTBlockEntities.ELDRITCH_LOCK.get(),
                 (tickLevel, pos, tickState, lock) -> lock.serverTick(tickLevel, pos));
     }
 
@@ -78,7 +78,7 @@ public final class BlockEldritchLock extends BaseEntityBlock {
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
-        if (!stack.is(TCItems.RUNED_TABLET.get())) {
+        if (!stack.is(TTItems.RUNED_TABLET.get())) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (level.isClientSide()) {
@@ -87,7 +87,7 @@ public final class BlockEldritchLock extends BaseEntityBlock {
         if (level.getBlockEntity(pos) instanceof BlockEntityEldritchLock lock && lock.isIdle()) {
             lock.activate();
             stack.shrink(1);
-            level.playSound(null, pos, TCSounds.RUNICSHIELDCHARGE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, pos, TTSounds.RUNICSHIELDCHARGE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         return ItemInteractionResult.SUCCESS;
     }

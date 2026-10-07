@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.recipe;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCRecipeSerializers;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTRecipeSerializers;
 import com.mojang.serialization.MapCodec;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +37,7 @@ public final class SalisMundusRecipe extends CustomRecipe {
     private static final Ingredient FLINT = Ingredient.of(Items.FLINT);
     private static final Ingredient REDSTONE = Ingredient.of(Tags.Items.DUSTS_REDSTONE);
     private static final Ingredient BOWL = Ingredient.of(Items.BOWL);
-    private static final Ingredient CRYSTAL = Ingredient.of(TCItems.ESSENTIA_CRYSTAL.get());
+    private static final Ingredient CRYSTAL = Ingredient.of(TTItems.ESSENTIA_CRYSTAL.get());
 
     public static List<Ingredient> displayIngredients() {
         return List.of(FLINT, BOWL, REDSTONE, CRYSTAL, CRYSTAL, CRYSTAL);
@@ -70,8 +70,8 @@ public final class SalisMundusRecipe extends CustomRecipe {
                 }
                 redstone = true;
             } else {
-                AspectInstance aspect = stack.get(TCDataComponents.CRYSTAL_ASPECT.get());
-                if (!stack.is(TCItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
+                AspectInstance aspect = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
+                if (!stack.is(TTItems.ESSENTIA_CRYSTAL.get()) || aspect == null) {
                     return false;
                 }
                 if (crystals.size() >= REQUIRED_CRYSTALS
@@ -85,12 +85,12 @@ public final class SalisMundusRecipe extends CustomRecipe {
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
-        return new ItemStack(TCItems.SALIS_MUNDUS.get());
+        return new ItemStack(TTItems.SALIS_MUNDUS.get());
     }
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return new ItemStack(TCItems.SALIS_MUNDUS.get());
+        return new ItemStack(TTItems.SALIS_MUNDUS.get());
     }
 
     @Override
@@ -117,6 +117,6 @@ public final class SalisMundusRecipe extends CustomRecipe {
 
     @Override
     public RecipeSerializer<SalisMundusRecipe> getSerializer() {
-        return TCRecipeSerializers.SALIS_MUNDUS.get();
+        return TTRecipeSerializers.SALIS_MUNDUS.get();
     }
 }

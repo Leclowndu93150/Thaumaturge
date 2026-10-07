@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -17,7 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class AuraTickHandler {
     private static final int TICK_INTERVAL = 20;
 
@@ -73,7 +73,7 @@ public final class AuraTickHandler {
             if (chunk == null) {
                 continue;
             }
-            AuraData data = chunk.getData(TCAttachments.AURA.get());
+            AuraData data = chunk.getData(TTAttachments.AURA.get());
             // Physical Flux is an ecological system in its own right. Evaluate its direct
             // Taint route for every loaded chunk, even when that dimension/chunk has no modern
             // Aura base. Numeric Aura/Rift processing below remains conditional on Aura support.
@@ -176,7 +176,7 @@ public final class AuraTickHandler {
             if (neighbourChunk == null) {
                 continue;
             }
-            AuraData neighbour = neighbourChunk.getData(TCAttachments.AURA.get());
+            AuraData neighbour = neighbourChunk.getData(TTAttachments.AURA.get());
             if (neighbour.getBase() == 0) {
                 continue;
             }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
-import com.leclowndu93150.thaumaturge.registry.TCMenus;
+import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -34,7 +34,7 @@ public final class MenuFocusPouch extends AbstractContainerMenu {
     }
 
     public MenuFocusPouch(int containerId, Inventory inventory, InteractionHand hand) {
-        super(TCMenus.FOCUS_POUCH.get(), containerId);
+        super(TTMenus.FOCUS_POUCH.get(), containerId);
         this.hand = hand;
         this.player = inventory.player;
         this.blockedHotbarSlot = hand == InteractionHand.MAIN_HAND ? inventory.selected : -1;

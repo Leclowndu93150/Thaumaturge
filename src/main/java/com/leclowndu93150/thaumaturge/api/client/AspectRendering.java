@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.api.client;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.render.TCFlatRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -64,8 +64,8 @@ public final class AspectRendering {
     /** Returns the render type for a holder-free missing-aspect placeholder. */
     public static RenderType missingRenderType(BlendMode blendMode) {
         return blendMode == BlendMode.ADDITIVE
-                ? TCFlatRenderTypes.entityAdditiveFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE)
-                : TCFlatRenderTypes.entityTranslucentFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE);
+                ? TTFlatRenderTypes.entityAdditiveFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE)
+                : TTFlatRenderTypes.entityTranslucentFlat(AspectTagWorldRenderer.UNKNOWN_TEXTURE);
     }
 
     /** Renders a camera-facing placeholder for a missing registry entry. */
@@ -94,8 +94,8 @@ public final class AspectRendering {
         ResourceLocation texture =
                 knowledge.isKnown() ? aspect.value().texture() : AspectTagWorldRenderer.UNKNOWN_TEXTURE;
         return blendMode == BlendMode.ADDITIVE
-                ? TCFlatRenderTypes.entityAdditiveFlat(texture)
-                : TCFlatRenderTypes.entityTranslucentFlat(texture);
+                ? TTFlatRenderTypes.entityAdditiveFlat(texture)
+                : TTFlatRenderTypes.entityTranslucentFlat(texture);
     }
 
     /** Renders a camera-facing world icon using a caller-owned buffer source. */

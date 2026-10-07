@@ -6,8 +6,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,7 +23,7 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     private @Nullable ResourceKey<IAspect> aspectFilter;
 
     public BlockEntityTubeFilter(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.TUBE_FILTER.get(), pos, state);
+        super(TTBlockEntities.TUBE_FILTER.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspectFilter() {
@@ -68,7 +68,7 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         ResourceKey<IAspect> loaded =
-                TCNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
+                TTNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
         boolean changed = !Objects.equals(loaded, aspectFilter);
         aspectFilter = loaded;
         if (changed && level != null && level.isClientSide()) {
@@ -79,6 +79,6 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        if (aspectFilter != null) TCNbt.store(output, "AspectFilter", ASPECT_KEY_CODEC, registries, aspectFilter);
+        if (aspectFilter != null) TTNbt.store(output, "AspectFilter", ASPECT_KEY_CODEC, registries, aspectFilter);
     }
 }

@@ -8,9 +8,9 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -34,8 +34,8 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
     }
 
     public static ItemStack makeFilled(Holder<IAspect> aspect, int amount) {
-        ItemStack stack = new ItemStack(TCItems.PHIAL.get());
-        stack.set(TCDataComponents.ASPECTS.get(), AspectList.of(new AspectInstance(aspect, amount)));
+        ItemStack stack = new ItemStack(TTItems.PHIAL.get());
+        stack.set(TTDataComponents.ASPECTS.get(), AspectList.of(new AspectInstance(aspect, amount)));
         return stack;
     }
 
@@ -56,17 +56,17 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
 
     @Override
     public AspectList getAspects(ItemStack stack) {
-        AspectList stored = stack.get(TCDataComponents.ASPECTS.get());
+        AspectList stored = stack.get(TTDataComponents.ASPECTS.get());
         return stored == null ? AspectList.EMPTY : stored;
     }
 
     @Override
     public void setAspects(ItemStack stack, AspectList aspects) {
         if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TCDataComponents.ASPECTS.get());
+            stack.remove(TTDataComponents.ASPECTS.get());
             return;
         }
-        stack.set(TCDataComponents.ASPECTS.get(), aspects);
+        stack.set(TTDataComponents.ASPECTS.get(), aspects);
     }
 
     @Override
@@ -114,7 +114,7 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
                     if (!player.addItem(phial)) {
                         player.drop(phial, false);
                     }
-                    level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
+                    level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 0.25f, 1.0f);
                     return InteractionResult.SUCCESS;
                 }
             }
@@ -128,12 +128,12 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
                 if (container.addEssentia(first.aspect(), first.amount(), Direction.UP) == first.amount()) {
                     if (!player.getAbilities().instabuild) {
                         stack.shrink(1);
-                        ItemStack empty = new ItemStack(TCItems.PHIAL.get());
+                        ItemStack empty = new ItemStack(TTItems.PHIAL.get());
                         if (!player.addItem(empty)) {
                             player.drop(empty, false);
                         }
                     }
-                    level.playSound(null, pos, TCSounds.JAR.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
+                    level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 0.25F, 1.0F);
                     return InteractionResult.SUCCESS;
                 }
             }

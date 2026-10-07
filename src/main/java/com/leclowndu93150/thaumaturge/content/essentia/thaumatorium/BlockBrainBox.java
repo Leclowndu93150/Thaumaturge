@@ -25,8 +25,27 @@ public final class BlockBrainBox extends Block {
         registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.FACING, Direction.DOWN));
     }
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromDown(
-            Shapes.or(box(3.0, 3.0, 3.0, 13.0, 13.0, 13.0), box(5.0, 0.0, 5.0, 11.0, 3.0, 11.0)));
+    private static final VoxelShape CAGE = Shapes.or(
+            box(3.0, 3.0, 3.0, 13.0, 4.0, 4.0),
+            box(3.0, 12.0, 3.0, 13.0, 13.0, 4.0),
+            box(3.0, 3.0, 12.0, 13.0, 4.0, 13.0),
+            box(3.0, 12.0, 12.0, 13.0, 13.0, 13.0),
+            box(3.0, 3.0, 3.0, 4.0, 13.0, 4.0),
+            box(12.0, 3.0, 3.0, 13.0, 13.0, 4.0),
+            box(3.0, 3.0, 12.0, 4.0, 13.0, 13.0),
+            box(12.0, 3.0, 12.0, 13.0, 13.0, 13.0),
+            box(3.0, 3.0, 3.0, 4.0, 4.0, 13.0),
+            box(12.0, 3.0, 3.0, 13.0, 4.0, 13.0),
+            box(3.0, 12.0, 3.0, 4.0, 13.0, 13.0),
+            box(12.0, 12.0, 3.0, 13.0, 13.0, 13.0));
+
+    private static final VoxelShape CORE = box(4.0, 4.0, 4.0, 12.0, 12.0, 12.0);
+
+    private static final VoxelShape CONNECTOR =
+            Shapes.or(box(5.0, 0.0, 5.0, 11.0, 1.0, 11.0), box(6.0, 1.0, 6.0, 10.0, 3.0, 10.0));
+
+    private static final Map<Direction, VoxelShape> SHAPES =
+            DeviceShapes.facingShapesFromDown(Shapes.or(CAGE, CORE, CONNECTOR));
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
 import com.leclowndu93150.thaumaturge.client.render.BoreDrillFx;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
@@ -20,13 +20,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockEntityArcaneBore> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/entity/arcanebore.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/arcanebore.png");
     private static final double BEAM_REACH = 6.0;
 
     private final ArcaneBoreModel model;
 
     public ArcaneBoreBlockRenderer(BlockEntityRendererProvider.Context context) {
-        model = new ArcaneBoreModel(context.bakeLayer(TCModelLayers.ARCANE_BORE));
+        model = new ArcaneBoreModel(context.bakeLayer(TTModelLayers.ARCANE_BORE));
     }
 
     @Override
@@ -43,7 +43,12 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
         poseStack.translate(0.5F, 1.5F, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
+        model.root().getAllParts().forEach(net.minecraft.client.model.geom.ModelPart::resetPose);
         model.setAim(yaw, pitch);
+        model.animate(
+                (bore.getLevel().getGameTime() % Integer.MAX_VALUE) + partialTicks,
+                bore.digging() && bore.boreActive(),
+                BoreDrillFx.beamSpin(bore.getLevel().getGameTime(), partialTicks));
         model.renderToBuffer(
                 poseStack,
                 buffers.getBuffer(RenderType.entityTranslucent(TEXTURE)),

@@ -8,7 +8,7 @@ public final class RobeArmorItem extends ArmorItem implements IVisDiscountGear {
     private final int visDiscount;
 
     public RobeArmorItem(int visDiscount, ArmorItem.Type type, Properties properties) {
-        super(TCMaterials.ARMOR_ROBES, type, properties);
+        super(TTMaterials.ARMOR_ROBES, type, properties);
         this.visDiscount = visDiscount;
     }
 

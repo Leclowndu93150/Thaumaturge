@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSporeSwarmer;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -92,8 +92,8 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
                 && level.getEntitiesOfClass(EntityTaintSporeSwarmer.class, new AABB(pos).inflate(16.0))
                         .isEmpty();
         Monster spore = swarmer
-                ? TCEntities.TAINT_SPORE_SWARMER.get().create(level)
-                : TCEntities.TAINT_SPORE.get().create(level);
+                ? TTEntities.TAINT_SPORE_SWARMER.get().create(level)
+                : TTEntities.TAINT_SPORE.get().create(level);
         if (spore == null) {
             return;
         }

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -33,9 +33,14 @@ public final class BlockEverfullUrn extends BaseEntityBlock {
     public static final MapCodec<BlockEverfullUrn> CODEC = simpleCodec(BlockEverfullUrn::new);
 
     private static final VoxelShape SHAPE = Shapes.or(
-            box(3.0, 0.0, 3.0, 13.0, 10.0, 13.0),
-            box(5.0, 10.0, 5.0, 11.0, 14.0, 11.0),
-            box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0));
+            box(3.0, 1.0, 3.0, 13.0, 9.0, 13.0),
+            box(4.0, 0.0, 4.0, 12.0, 1.0, 12.0),
+            box(4.0, 9.0, 4.0, 12.0, 10.0, 12.0),
+            box(4.0, 13.0, 4.0, 5.0, 16.0, 12.0),
+            box(5.0, 10.0, 5.0, 11.0, 15.0, 11.0),
+            box(5.0, 13.0, 4.0, 12.0, 16.0, 5.0),
+            box(5.0, 13.0, 11.0, 12.0, 16.0, 12.0),
+            box(11.0, 13.0, 5.0, 12.0, 16.0, 11.0));
     private static final int BOTTLE_COST = 333;
 
     public BlockEverfullUrn(BlockBehaviour.Properties properties) {
@@ -107,7 +112,7 @@ public final class BlockEverfullUrn extends BaseEntityBlock {
         if (level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(type, TCBlockEntities.EVERFULL_URN.get(), BlockEntityEverfullUrn::serverTick);
+        return createTickerHelper(type, TTBlockEntities.EVERFULL_URN.get(), BlockEntityEverfullUrn::serverTick);
     }
 
     @Override

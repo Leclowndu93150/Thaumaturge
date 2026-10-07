@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.misc.alumentum;
 
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,12 +21,12 @@ public class ThrownAlumentum extends ThrowableItemProjectile {
     }
 
     public ThrownAlumentum(Level level, LivingEntity mob, ItemStack itemStack) {
-        super(TCEntities.ALUMENTUM.get(), mob, level);
+        super(TTEntities.ALUMENTUM.get(), mob, level);
         this.setItem(itemStack);
     }
 
     public ThrownAlumentum(Level level, double x, double y, double z, ItemStack itemStack) {
-        super(TCEntities.ALUMENTUM.get(), x, y, z, level);
+        super(TTEntities.ALUMENTUM.get(), x, y, z, level);
         this.setItem(itemStack);
     }
 

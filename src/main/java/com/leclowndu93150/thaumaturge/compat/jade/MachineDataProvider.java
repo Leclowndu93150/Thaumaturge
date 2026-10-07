@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jade;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
@@ -11,7 +11,7 @@ import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilde
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +23,7 @@ import snownee.jade.api.IServerDataProvider;
 public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
     INSTANCE;
 
-    private static final ResourceLocation UID = TCIds.rl("machine");
+    private static final ResourceLocation UID = TTIds.rl("machine");
     static final int PERCENT = 100;
     static final String AREA = "MachineArea";
 
@@ -135,12 +135,12 @@ public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
 
         BlockState state = accessor.getBlockState();
         Class<? extends BlockEntity> controllerType;
-        if (state.is(TCBlocks.PLACEHOLDER_IRON_BARS)
-                || state.is(TCBlocks.PLACEHOLDER_ANVIL)
-                || state.is(TCBlocks.PLACEHOLDER_CAULDRON)
-                || state.is(TCBlocks.PLACEHOLDER_TABLE)) {
+        if (state.is(TTBlocks.PLACEHOLDER_IRON_BARS)
+                || state.is(TTBlocks.PLACEHOLDER_ANVIL)
+                || state.is(TTBlocks.PLACEHOLDER_CAULDRON)
+                || state.is(TTBlocks.PLACEHOLDER_TABLE)) {
             controllerType = BlockEntityGolemBuilder.class;
-        } else if (state.is(TCBlocks.NETHER_BRICKS_PLACEHOLDER) || state.is(TCBlocks.OBSIDIAN_PLACEHOLDER)) {
+        } else if (state.is(TTBlocks.NETHER_BRICKS_PLACEHOLDER) || state.is(TTBlocks.OBSIDIAN_PLACEHOLDER)) {
             controllerType = BlockEntityInfernalFurnace.class;
         } else {
             return null;

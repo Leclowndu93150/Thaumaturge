@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.taint.flux;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlockTags;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCFluids;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -27,20 +27,20 @@ public final class PhysicalFlux {
     private PhysicalFlux() {}
 
     public static boolean isPhysicalFlux(BlockState state) {
-        return state.is(TCBlockTags.PHYSICAL_FLUX);
+        return state.is(TTBlockTags.PHYSICAL_FLUX);
     }
 
     public static boolean isScrubbable(BlockState state) {
-        return state.is(TCBlockTags.FLUX_SCRUBBABLE);
+        return state.is(TTBlockTags.FLUX_SCRUBBABLE);
     }
 
     public static int amount(BlockGetter level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (state.is(TCBlocks.FLUX_GAS.get())) {
+        if (state.is(TTBlocks.FLUX_GAS.get())) {
             return state.getValue(BlockFluxGas.AMOUNT);
         }
         FluidState fluid = state.getFluidState();
-        if (!fluid.isEmpty() && fluid.getType().isSame(TCFluids.FLUX_GOO_SOURCE.get())) {
+        if (!fluid.isEmpty() && fluid.getType().isSame(TTFluids.FLUX_GOO_SOURCE.get())) {
             return fluid.getAmount();
         }
         return 0;
@@ -62,7 +62,7 @@ public final class PhysicalFlux {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             return removed;
         }
-        if (state.is(TCBlocks.FLUX_GAS.get())) {
+        if (state.is(TTBlocks.FLUX_GAS.get())) {
             level.setBlock(pos, BlockFluxGas.gasBlockState(remaining), Block.UPDATE_CLIENTS);
             BlockFluxGas.scheduleTick(level, pos);
         } else {
@@ -70,7 +70,7 @@ public final class PhysicalFlux {
             level.scheduleTick(
                     pos,
                     level.getFluidState(pos).getType(),
-                    TCFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
+                    TTFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
         }
         return removed;
     }
@@ -87,7 +87,7 @@ public final class PhysicalFlux {
         int incoming = clamp(amount);
         BlockState existing = level.getBlockState(pos);
         FluidState existingFluid = existing.getFluidState();
-        if (!existingFluid.isEmpty() && existingFluid.getType().isSame(TCFluids.FLUX_GOO_SOURCE.get())) {
+        if (!existingFluid.isEmpty() && existingFluid.getType().isSame(TTFluids.FLUX_GOO_SOURCE.get())) {
             if (existingFluid.getAmount() >= MAX_QUANTA) {
                 return false;
             }
@@ -96,7 +96,7 @@ public final class PhysicalFlux {
             level.scheduleTick(
                     pos,
                     level.getFluidState(pos).getType(),
-                    TCFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
+                    TTFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
             return true;
         }
         if (!canReplaceWithPhysicalFlux(existing)) {
@@ -106,14 +106,14 @@ public final class PhysicalFlux {
         level.scheduleTick(
                 pos,
                 level.getFluidState(pos).getType(),
-                TCFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
+                TTFluids.FLUX_GOO_SOURCE.get().getTickDelay(level));
         return true;
     }
 
     public static boolean placeGas(ServerLevel level, BlockPos pos, int amount, int flags) {
         int incoming = clamp(amount);
         BlockState existing = level.getBlockState(pos);
-        if (existing.is(TCBlocks.FLUX_GAS.get())) {
+        if (existing.is(TTBlocks.FLUX_GAS.get())) {
             if (existing.getValue(BlockFluxGas.AMOUNT) >= MAX_QUANTA) {
                 return false;
             }
@@ -158,11 +158,11 @@ public final class PhysicalFlux {
         // scattering the failed half of the spills elsewhere. Preserve that behavior so sustained
         // pollution naturally builds dangerous Goo/Gas concentrations.
         BlockState existing = level.getBlockState(target);
-        if (existing.is(TCBlocks.FLUX_GAS.get())) {
+        if (existing.is(TTBlocks.FLUX_GAS.get())) {
             return placeGas(level, target, 1);
         }
         FluidState existingFluid = existing.getFluidState();
-        if (!existingFluid.isEmpty() && existingFluid.getType().isSame(TCFluids.FLUX_GOO_SOURCE.get())) {
+        if (!existingFluid.isEmpty() && existingFluid.getType().isSame(TTFluids.FLUX_GOO_SOURCE.get())) {
             return placeGoo(level, target, 1);
         }
         return random.nextBoolean() ? placeGas(level, target, 1) : placeGoo(level, target, 1);

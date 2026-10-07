@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.color;
 
-import com.leclowndu93150.thaumaturge.TCIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.FoliageColor;
@@ -11,7 +11,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
-@EventBusSubscriber(modid = TCIds.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class PlantBlockColors {
     private PlantBlockColors() {}
 
@@ -23,7 +23,7 @@ public final class PlantBlockColors {
         BlockColor foliage = (state, level, pos, tintIndex) -> level != null && pos != null
                 ? BiomeColors.getAverageFoliageColor(level, pos)
                 : FoliageColor.getDefaultColor();
-        event.register(grass, TCBlocks.GRASS_AMBIENT.get());
-        event.register(foliage, TCBlocks.LEAVES_GREATWOOD.get());
+        event.register(grass, TTBlocks.GRASS_AMBIENT.get());
+        event.register(foliage, TTBlocks.LEAVES_GREATWOOD.get());
     }
 }

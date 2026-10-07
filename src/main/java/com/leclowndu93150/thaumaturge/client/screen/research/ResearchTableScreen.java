@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
@@ -8,7 +8,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import com.leclowndu93150.thaumaturge.content.research.note.HexGrid;
 import com.leclowndu93150.thaumaturge.content.research.note.NoteRules;
@@ -21,8 +21,8 @@ import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import com.leclowndu93150.thaumaturge.network.ServerboundTableCombinePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundTableDuplicatePayload;
 import com.leclowndu93150.thaumaturge.network.ServerboundTablePlaceAspectPayload;
-import com.leclowndu93150.thaumaturge.registry.TCItems;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.math.Axis;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,15 +47,15 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuResearchTable> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/guiresearchtable2.png");
-    private static final ResourceLocation PARCHMENT = TCIds.rl("textures/misc/parchment3.png");
-    private static final ResourceLocation HEX_IDLE = TCIds.rl("textures/gui/hex1.png");
-    private static final ResourceLocation HEX_HOVER = TCIds.rl("textures/gui/hex2.png");
-    private static final ResourceLocation LINE_TEXTURE = TCIds.rl("textures/misc/white.png");
+public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuResearchTable> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/guiresearchtable2.png");
+    private static final ResourceLocation PARCHMENT = TTIds.rl("textures/misc/parchment3.png");
+    private static final ResourceLocation HEX_IDLE = TTIds.rl("textures/gui/hex1.png");
+    private static final ResourceLocation HEX_HOVER = TTIds.rl("textures/gui/hex2.png");
+    private static final ResourceLocation LINE_TEXTURE = TTIds.rl("textures/misc/white.png");
     private static final int LINE_HALF_WIDTH = 1;
     private static final float LINE_ALPHA = 0.6F;
-    private static final ResourceLocation UNKNOWN_ASPECT = TCIds.rl("textures/aspects/_unknown.png");
+    private static final ResourceLocation UNKNOWN_ASPECT = TTIds.rl("textures/aspects/_unknown.png");
 
     private static final int GUI_SIZE = 255;
     private static final int MAIN_PANE_H = 167;
@@ -414,7 +414,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         if (duplicateButtonShown()) {
             return;
         }
-        graphics.renderItem(new ItemStack(TCItems.THAUMONOMICON.get()), leftPos + HELPER_X, topPos + HELPER_Y);
+        graphics.renderItem(new ItemStack(TTItems.THAUMONOMICON.get()), leftPos + HELPER_X, topPos + HELPER_Y);
         if (inRect(mouseX, mouseY, leftPos + HELPER_X, topPos + HELPER_Y, HELPER_SIZE, HELPER_SIZE)) {
             DeferredTooltip.set(Component.translatable("tc.table.helper"), mouseX, mouseY);
         }
@@ -735,7 +735,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
             if (!duplicateButtonShown()) {
                 if (inRect(mx, my, leftPos + HELPER_X, topPos + HELPER_Y, HELPER_SIZE, HELPER_SIZE)) {
                     helperOpen = !helperOpen;
-                    playSound(TCSounds.KEY.get(), 0.3F, 1.0F);
+                    playSound(TTSounds.KEY.get(), 0.3F, 1.0F);
                     return true;
                 }
                 if (helperOpen && handleHelperArrows(mx, my)) {
@@ -762,7 +762,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                             if (hasAvailableComponents(select1, select2)) {
                                 combineSelectedAspects();
                             } else {
-                                playSound(TCSounds.HHON.get(), 0.2F, 1.0F);
+                                playSound(TTSounds.HHON.get(), 0.2F, 1.0F);
                             }
                             return true;
                         }
@@ -771,7 +771,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                     draggedAspect = palette;
                     aspectDragStartX = mx;
                     aspectDragStartY = my;
-                    playSound(TCSounds.HHOFF.get(), 0.2F, 1.0F);
+                    playSound(TTSounds.HHOFF.get(), 0.2F, 1.0F);
                 }
                 return true;
             }
@@ -783,7 +783,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                     if (cell != null && cell.type() == ResearchNoteData.TYPE_PLACED) {
                         PacketDistributor.sendToServer(
                                 new ServerboundTablePlaceAspectPayload(menu.pos(), hex.q(), hex.r(), Optional.empty()));
-                        playSound(TCSounds.ERASE.get(), 0.2F, 1.0F);
+                        playSound(TTSounds.ERASE.get(), 0.2F, 1.0F);
                         return true;
                     }
                 }
@@ -806,7 +806,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                 if (cell != null && cell.type() == ResearchNoteData.TYPE_BLANK) {
                     PacketDistributor.sendToServer(new ServerboundTablePlaceAspectPayload(
                             menu.pos(), hex.q(), hex.r(), Optional.of(AspectPools.idOf(draggedAspect))));
-                    playSound(TCSounds.WRITE.get(), 0.2F, 1.0F);
+                    playSound(TTSounds.WRITE.get(), 0.2F, 1.0F);
                 }
             } else if (inRect(
                     mx, my, leftPos + SELECT1_HIT_X - 8, topPos + SELECT_HIT_Y - 8, SELECT_SIZE * 2, SELECT_SIZE * 2)) {
@@ -841,13 +841,13 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         if (helperPage > 0
                 && inRect(mx, my, center - HELPER_PAGE_HALF_GAP - ARROW_W, topPos + HELPER_ARROW_Y, ARROW_W, ARROW_H)) {
             helperPage--;
-            playSound(TCSounds.KEY.get(), 0.3F, 1.0F);
+            playSound(TTSounds.KEY.get(), 0.3F, 1.0F);
             return true;
         }
         if (helperPage < lastPage
                 && inRect(mx, my, center + HELPER_PAGE_HALF_GAP, topPos + HELPER_ARROW_Y, ARROW_W, ARROW_H)) {
             helperPage++;
-            playSound(TCSounds.KEY.get(), 0.3F, 1.0F);
+            playSound(TTSounds.KEY.get(), 0.3F, 1.0F);
             return true;
         }
         return false;
@@ -857,12 +857,12 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         int lastPage = lastPage(discoveredAspects().size());
         if (page > 0 && inRect(mx, my, leftPos + ARROW_PREV_X, topPos + ARROW_Y, ARROW_W, ARROW_H)) {
             page--;
-            playSound(TCSounds.KEY.get(), 0.3F, 1.0F);
+            playSound(TTSounds.KEY.get(), 0.3F, 1.0F);
             return true;
         }
         if (page < lastPage && inRect(mx, my, leftPos + ARROW_NEXT_X, topPos + ARROW_Y, ARROW_W, ARROW_H)) {
             page++;
-            playSound(TCSounds.KEY.get(), 0.3F, 1.0F);
+            playSound(TTSounds.KEY.get(), 0.3F, 1.0F);
             return true;
         }
         return false;
@@ -899,7 +899,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
                 table != null && secondPoolAmount <= 0 && table.bonusAspects().amountOf(select2) > 0;
         PacketDistributor.sendToServer(new ServerboundTableCombinePayload(
                 menu.pos(), AspectPools.idOf(select1), AspectPools.idOf(select2), bonus1, bonus2));
-        playSound(TCSounds.HHON.get(), 0.3F, 1.0F);
+        playSound(TTSounds.HHON.get(), 0.3F, 1.0F);
         return true;
     }
 
@@ -907,13 +907,13 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
         if (select1 != null
                 && inRect(mx, my, leftPos + SELECT1_HIT_X, topPos + SELECT_HIT_Y, SELECT_SIZE, SELECT_SIZE)) {
             select1 = null;
-            playSound(TCSounds.HHOFF.get(), 0.2F, 1.0F);
+            playSound(TTSounds.HHOFF.get(), 0.2F, 1.0F);
             return true;
         }
         if (select2 != null
                 && inRect(mx, my, leftPos + SELECT2_HIT_X, topPos + SELECT_HIT_Y, SELECT_SIZE, SELECT_SIZE)) {
             select2 = null;
-            playSound(TCSounds.HHOFF.get(), 0.2F, 1.0F);
+            playSound(TTSounds.HHOFF.get(), 0.2F, 1.0F);
             return true;
         }
         return false;
@@ -934,7 +934,7 @@ public final class ResearchTableScreen extends AbstractTCContainerScreen<MenuRes
             return false;
         }
         PacketDistributor.sendToServer(new ServerboundTableDuplicatePayload(menu.pos()));
-        playSound(TCSounds.CLACK.get(), 0.4F, 1.0F);
+        playSound(TTSounds.CLACK.get(), 0.4F, 1.0F);
         return true;
     }
 

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.focus.mod;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMod;
@@ -17,7 +17,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
 public final class FocusModScatter implements FocusMod {
-    private static final ResourceLocation KEY = TCIds.rl("scatter");
+    private static final ResourceLocation KEY = TTIds.rl("scatter");
 
     private static final float MIN_COMPLEXITY = 2.0F;
     private static final float CONE_COMPLEXITY_DIVISOR = 45.0F;
@@ -31,7 +31,7 @@ public final class FocusModScatter implements FocusMod {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_scatter"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_scatter"), Optional.empty(), false);
     }
 
     @Override

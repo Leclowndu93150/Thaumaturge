@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<ServerboundDeconCollectPayload> TYPE =
-            new CustomPacketPayload.Type<>(TCIds.rl("decon_collect"));
+            new CustomPacketPayload.Type<>(TTIds.rl("decon_collect"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundDeconCollectPayload> STREAM_CODEC =
             StreamCodec.composite(

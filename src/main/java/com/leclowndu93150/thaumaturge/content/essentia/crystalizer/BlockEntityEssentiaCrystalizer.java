@@ -8,8 +8,8 @@ import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,7 +54,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
     public int venting;
 
     public BlockEntityEssentiaCrystalizer(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ESSENTIA_CRYSTALIZER.get(), pos, state);
+        super(TTBlockEntities.ESSENTIA_CRYSTALIZER.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspectKey() {
@@ -284,7 +284,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         aspect = !input.contains("HasAspect") || input.getBoolean("HasAspect")
-                ? TCNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null)
+                ? TTNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null)
                 : null;
         progress = aspect == null ? 0 : Math.max(0, Math.min(TARGET_PROGRESS, input.getInt("Progress")));
     }
@@ -294,7 +294,7 @@ public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements
         super.saveAdditional(output, registries);
         output.putBoolean("HasAspect", aspect != null);
         if (aspect != null) {
-            TCNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
+            TTNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
             output.putInt("Progress", progress);
         }
     }

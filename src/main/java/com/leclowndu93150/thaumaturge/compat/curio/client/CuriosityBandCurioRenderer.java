@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio.client;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -17,7 +17,7 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
 
 public final class CuriosityBandCurioRenderer implements ICurioRenderer {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/item/curiosity_band_worn.png");
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/item/curiosity_band_worn.png");
     private static final float HALF_WIDTH = 0.25F;
     private static final float TOP_Y = -0.5F;
     private static final float HEIGHT = 0.8125F;

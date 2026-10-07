@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
@@ -11,8 +11,8 @@ import com.leclowndu93150.thaumaturge.api.casters.Trajectory;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFireBat;
 import com.leclowndu93150.thaumaturge.content.particle.FlameFanParticleOptions;
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectHellbat implements FocusEffect {
-    private static final ResourceLocation KEY = TCIds.rl("hellbat");
+    private static final ResourceLocation KEY = TTIds.rl("hellbat");
 
     private static final int BAT_COMPLEXITY_FACTOR = 8;
     private static final int SPAWN_LEVEL_EVENT = 2004;
@@ -45,12 +45,12 @@ public final class FocusEffectHellbat implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_hellbat"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_hellbat"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.BESTIA;
+        return TTAspects.BESTIA;
     }
 
     @Override
@@ -96,7 +96,7 @@ public final class FocusEffectHellbat implements FocusEffect {
         int bonus = Math.round(ctx.power()) - 1;
         boolean spawned = false;
         for (int i = 0; i < bats; i++) {
-            EntityFireBat bat = TCEntities.FIRE_BAT.get().create(level);
+            EntityFireBat bat = TTEntities.FIRE_BAT.get().create(level);
             if (bat == null) {
                 continue;
             }
@@ -123,7 +123,7 @@ public final class FocusEffectHellbat implements FocusEffect {
                     origin.x,
                     origin.y,
                     origin.z,
-                    TCSounds.ICE.get(),
+                    TTSounds.ICE.get(),
                     SoundSource.PLAYERS,
                     0.2F,
                     0.95F + level.getRandom().nextFloat() * 0.1F);

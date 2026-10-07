@@ -6,7 +6,7 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 
-public final class SlimyBubbleParticle extends TCParticle {
+public final class SlimyBubbleParticle extends TTParticle {
     private static final int GROW_TICKS = 6;
     private static final int RISE_END_GAP = 4;
     private static final int GROW_LIFT_AGE = 5;
@@ -52,11 +52,11 @@ public final class SlimyBubbleParticle extends TCParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return TCParticleLayers.translucent(this.sheet);
+        return TTParticleLayers.translucent(this.sheet);
     }
 
     public static final class Provider implements ParticleProvider<SlimyBubbleParticleOptions> {
-        private static final ParticleSheet SHEET = TCParticleSheets.sheet("slimy_bubble");
+        private static final ParticleSheet SHEET = TTParticleSheets.sheet("slimy_bubble");
 
         @Override
         public Particle createParticle(

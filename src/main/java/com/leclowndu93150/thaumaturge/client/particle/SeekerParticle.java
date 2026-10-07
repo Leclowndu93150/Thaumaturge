@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class SeekerParticle extends TCParticle {
+public abstract class SeekerParticle extends TTParticle {
     private static final double APPROACH_CAP = 0.25;
     private static final double APPROACH_RANGE = 15.0;
     private static final double SHRINK_DISTANCE = 2.0;

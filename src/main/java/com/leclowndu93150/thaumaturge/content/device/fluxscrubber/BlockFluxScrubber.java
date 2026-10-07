@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.fluxscrubber;
 
 import com.leclowndu93150.thaumaturge.content.device.DeviceShapes;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -29,8 +29,14 @@ import org.jspecify.annotations.Nullable;
 /** Flux scrubber: consumes aura vis to remove nearby physical Flux and yields Praecantatio. */
 public final class BlockFluxScrubber extends BaseEntityBlock {
     public static final MapCodec<BlockFluxScrubber> CODEC = simpleCodec(BlockFluxScrubber::new);
-    private static final Map<Direction, VoxelShape> SHAPES =
-            DeviceShapes.facingShapesFromDown(Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0));
+
+    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(
+            box(0.0, 0.0, 0.0, 16.0, 16.0, 2.0),
+            box(2.0, 2.0, 2.0, 14.0, 14.0, 10.0),
+            box(3.0, 3.0, 10.0, 13.0, 13.0, 12.0),
+            box(4.0, 4.0, 12.0, 12.0, 12.0, 13.0),
+            box(5.0, 5.0, 12.8, 11.0, 11.0, 13.4),
+            box(6.0, 6.0, 13.4, 10.0, 10.0, 16.0)));
 
     public BlockFluxScrubber(BlockBehaviour.Properties properties) {
         super(properties);
@@ -70,11 +76,6 @@ public final class BlockFluxScrubber extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPES.get(state.getValue(BlockStateProperties.FACING));
-    }
-
-    @Override
     protected VoxelShape getOcclusionShape(BlockState state, BlockGetter level, BlockPos pos) {
         return Shapes.empty();
     }
@@ -82,6 +83,11 @@ public final class BlockFluxScrubber extends BaseEntityBlock {
     @Override
     protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPES.get(state.getValue(BlockStateProperties.FACING));
     }
 
     @Override
@@ -94,7 +100,7 @@ public final class BlockFluxScrubber extends BaseEntityBlock {
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(
                 type,
-                TCBlockEntities.FLUX_SCRUBBER.get(),
+                TTBlockEntities.FLUX_SCRUBBER.get(),
                 level.isClientSide() ? BlockEntityFluxScrubber::clientTick : BlockEntityFluxScrubber::serverTick);
     }
 }

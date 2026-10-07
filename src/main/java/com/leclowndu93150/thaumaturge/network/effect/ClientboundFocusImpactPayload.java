@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.network.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import io.netty.buffer.ByteBuf;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -24,7 +24,7 @@ public record ClientboundFocusImpactPayload(
     public static final int NO_CASTER = -1;
 
     public static final Type<ClientboundFocusImpactPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "fx_focus_impact"));
+            new Type<>(ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "fx_focus_impact"));
 
     private static final StreamCodec<ByteBuf, List<ResourceLocation>> PARTS_CODEC =
             ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list());

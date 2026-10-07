@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.ResearchTablePart;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -29,11 +29,24 @@ public final class BlockTable extends Block {
     public static final MapCodec<BlockTable> CODEC = simpleCodec(BlockTable::new);
 
     private static final VoxelShape SHAPE = Shapes.or(
-            Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0),
-            Block.box(1.0, 0.0, 1.0, 5.0, 12.0, 5.0),
-            Block.box(11.0, 0.0, 1.0, 15.0, 12.0, 5.0),
-            Block.box(1.0, 0.0, 11.0, 5.0, 12.0, 15.0),
-            Block.box(11.0, 0.0, 11.0, 15.0, 12.0, 15.0));
+            Block.box(0.0, 13.0, 0.0, 16.0, 16.0, 16.0),
+            Block.box(1.0, 0.0, 1.0, 5.0, 2.0, 5.0),
+            Block.box(1.0, 0.0, 11.0, 5.0, 2.0, 15.0),
+            Block.box(1.0, 11.0, 1.0, 15.0, 13.0, 15.0),
+            Block.box(2.0, 2.0, 2.0, 4.0, 4.0, 14.0),
+            Block.box(2.0, 4.0, 2.0, 5.0, 11.0, 5.0),
+            Block.box(2.0, 4.0, 11.0, 5.0, 11.0, 14.0),
+            Block.box(4.0, 2.0, 2.0, 5.0, 4.0, 5.0),
+            Block.box(4.0, 2.0, 11.0, 5.0, 4.0, 14.0),
+            Block.box(5.0, 2.0, 2.0, 14.0, 4.0, 4.0),
+            Block.box(5.0, 2.0, 12.0, 14.0, 4.0, 14.0),
+            Block.box(11.0, 0.0, 1.0, 15.0, 2.0, 5.0),
+            Block.box(11.0, 0.0, 11.0, 15.0, 2.0, 15.0),
+            Block.box(11.0, 2.0, 4.0, 14.0, 11.0, 5.0),
+            Block.box(11.0, 2.0, 11.0, 14.0, 11.0, 12.0),
+            Block.box(11.0, 4.0, 2.0, 14.0, 11.0, 4.0),
+            Block.box(11.0, 4.0, 12.0, 14.0, 11.0, 14.0),
+            Block.box(12.0, 2.0, 5.0, 14.0, 4.0, 11.0));
 
     public BlockTable(BlockBehaviour.Properties properties) {
         super(properties);
@@ -61,7 +74,7 @@ public final class BlockTable extends Block {
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
-        if (this != TCBlocks.TABLE_WOOD.get() || !(stack.getItem() instanceof IScribeTools)) {
+        if (this != TTBlocks.TABLE_WOOD.get() || !(stack.getItem() instanceof IScribeTools)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (level.isClientSide()) {
@@ -69,12 +82,12 @@ public final class BlockTable extends Block {
         }
         for (Direction dir : CONVERT_SCAN_ORDER) {
             BlockPos partnerPos = pos.relative(dir);
-            if (!level.getBlockState(partnerPos).is(TCBlocks.TABLE_WOOD.get())) {
+            if (!level.getBlockState(partnerPos).is(TTBlocks.TABLE_WOOD.get())) {
                 continue;
             }
             level.setBlock(
                     pos,
-                    TCBlocks.RESEARCH_TABLE
+                    TTBlocks.RESEARCH_TABLE
                             .get()
                             .defaultBlockState()
                             .setValue(BlockResearchTable.FACING, dir)
@@ -82,7 +95,7 @@ public final class BlockTable extends Block {
                     3);
             level.setBlock(
                     partnerPos,
-                    TCBlocks.RESEARCH_TABLE
+                    TTBlocks.RESEARCH_TABLE
                             .get()
                             .defaultBlockState()
                             .setValue(BlockResearchTable.FACING, dir.getOpposite())
@@ -98,7 +111,7 @@ public final class BlockTable extends Block {
             }
             player.setItemInHand(hand, ItemStack.EMPTY);
             if (player instanceof ServerPlayer serverPlayer) {
-                ResearchProgressionEvents.recordCrafted(serverPlayer, new ItemStack(TCBlocks.RESEARCH_TABLE.get()));
+                ResearchProgressionEvents.recordCrafted(serverPlayer, new ItemStack(TTBlocks.RESEARCH_TABLE.get()));
             }
             return ItemInteractionResult.SUCCESS;
         }

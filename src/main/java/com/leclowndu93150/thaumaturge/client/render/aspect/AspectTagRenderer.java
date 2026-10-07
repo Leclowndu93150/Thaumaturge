@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.aspect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
@@ -18,7 +18,7 @@ public final class AspectTagRenderer {
     public static final int TAG_SIZE = 16;
     public static final int TEXTURE_SIZE = 32;
 
-    private static final ResourceLocation UNKNOWN_TEXTURE = TCIds.rl("textures/aspects/_unknown.png");
+    private static final ResourceLocation UNKNOWN_TEXTURE = TTIds.rl("textures/aspects/_unknown.png");
     private static final float UNKNOWN_ALPHA = 0.45F;
     private static final float DEDUCIBLE_ALPHA = 1.0F;
 

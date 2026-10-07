@@ -21,23 +21,23 @@ public final class PrimalCrusherItem extends Item implements IWarpingGear {
     private static Tool crusherTool() {
         return new Tool(
                 List.of(
-                        Tool.Rule.deniesDrops(TCMaterials.TOOL_PRIMAL_VOID.getIncorrectBlocksForDrops()),
+                        Tool.Rule.deniesDrops(TTMaterials.TOOL_PRIMAL_VOID.getIncorrectBlocksForDrops()),
                         Tool.Rule.minesAndDrops(
-                                BlockTags.MINEABLE_WITH_PICKAXE, TCMaterials.TOOL_PRIMAL_VOID.getSpeed()),
+                                BlockTags.MINEABLE_WITH_PICKAXE, TTMaterials.TOOL_PRIMAL_VOID.getSpeed()),
                         Tool.Rule.minesAndDrops(
-                                BlockTags.MINEABLE_WITH_SHOVEL, TCMaterials.TOOL_PRIMAL_VOID.getSpeed())),
+                                BlockTags.MINEABLE_WITH_SHOVEL, TTMaterials.TOOL_PRIMAL_VOID.getSpeed())),
                 1.0F,
                 1);
     }
 
     @Override
     public int getEnchantmentValue() {
-        return TCMaterials.TOOL_PRIMAL_VOID.getEnchantmentValue();
+        return TTMaterials.TOOL_PRIMAL_VOID.getEnchantmentValue();
     }
 
     @Override
     public boolean isValidRepairItem(ItemStack stack, ItemStack repairCandidate) {
-        return TCMaterials.TOOL_PRIMAL_VOID.getRepairIngredient().test(repairCandidate);
+        return TTMaterials.TOOL_PRIMAL_VOID.getRepairIngredient().test(repairCandidate);
     }
 
     @Override

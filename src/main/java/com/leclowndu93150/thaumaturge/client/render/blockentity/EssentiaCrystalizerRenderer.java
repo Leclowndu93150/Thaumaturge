@@ -1,11 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.util.List;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -17,12 +19,24 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
-/** Four-crystal spinner. */
+/** Animated crystalizer crystals. */
 public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<BlockEntityEssentiaCrystalizer> {
     public static final ModelResourceLocation CRYSTAL_MODEL_ID =
-            ModelResourceLocation.standalone(TCIds.rl("block/crystalizer_crystal"));
+            ModelResourceLocation.standalone(TTIds.rl("block/crystalizer_crystal"));
+
+    private static final float PIXEL = 1.0F / 16.0F;
+    private static final float CRADLE_TOP = 11.0F * PIXEL;
+    private static final float SIDE_CRYSTAL_SCALE = 0.7F;
+
+    private record CrystalPlacement(float x, float z, float turn, float scale) {}
+
+    private static final List<CrystalPlacement> CRYSTALS = List.of(
+            new CrystalPlacement(0.0F, 0.0F, 0.0F, 1.0F),
+            new CrystalPlacement(-3.0F, -2.0F, 120.0F, SIDE_CRYSTAL_SCALE),
+            new CrystalPlacement(2.0F, 3.0F, 240.0F, SIDE_CRYSTAL_SCALE));
 
     private final RandomSource random = RandomSource.create();
 
@@ -36,22 +50,26 @@ public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<Bl
             MultiBufferSource buffers,
             int light,
             int overlay) {
-        if (crystalizer.getLevel() == null || crystalizer.aspectKey() == null) return;
+        if (crystalizer.getLevel() == null || crystalizer.aspectKey() == null) {
+            return;
+        }
         float red = crystalizer.crystalRed;
         float green = crystalizer.crystalGreen;
         float blue = crystalizer.crystalBlue;
         float spin = crystalizer.rotation + crystalizer.rotationSpeed * partialTick;
 
         poseStack.pushPose();
-        orientLegacy(poseStack, crystalizer.getBlockState().getValue(BlockStateProperties.FACING));
-        for (int q = 0; q < 4; q++) {
+        poseStack.translate(0.5F, 0.5F, 0.5F);
+        BlockFacingPose.downBased(poseStack, crystalizer.getBlockState().getValue(BlockStateProperties.FACING));
+        poseStack.translate(0.0F, CRADLE_TOP - 0.5F, 0.0F);
+        for (CrystalPlacement crystal : CRYSTALS) {
             poseStack.pushPose();
-            poseStack.scale(0.75F, 0.75F, 0.75F);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F * q));
-            poseStack.translate(0.34F, 0.0F, 1.2125F);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(spin));
-            renderCrystal(
-                    crystalizer.getBlockState(), poseStack, buffers, Math.max(light, 200), overlay, red, green, blue);
+            poseStack.translate(crystal.x() * PIXEL, 0.0F, crystal.z() * PIXEL);
+            poseStack.mulPose(Axis.YP.rotationDegrees(crystal.turn() + spin));
+            poseStack.scale(crystal.scale(), crystal.scale(), crystal.scale());
+            poseStack.translate(-0.5F, 0.0F, -0.5F);
+            int crystalLight = LightTexture.pack(Math.max(LightTexture.block(light), 12), LightTexture.sky(light));
+            renderCrystal(crystalizer.getBlockState(), poseStack, buffers, crystalLight, overlay, red, green, blue);
             poseStack.popPose();
         }
         poseStack.popPose();
@@ -68,7 +86,7 @@ public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<Bl
             float blue) {
         BakedModel model = Minecraft.getInstance().getModelManager().getModel(CRYSTAL_MODEL_ID);
         for (RenderType renderType : model.getRenderTypes(state, random, ModelData.EMPTY)) {
-            VertexConsumer consumer = buffers.getBuffer(renderType);
+            VertexConsumer consumer = buffers.getBuffer(RenderTypeHelper.getEntityRenderType(renderType, false));
             for (Direction direction : Direction.values()) {
                 random.setSeed(42L);
                 renderQuads(
@@ -104,20 +122,16 @@ public final class EssentiaCrystalizerRenderer implements BlockEntityRenderer<Bl
             int light,
             int overlay) {
         for (BakedQuad quad : quads) {
-            consumer.putBulkData(poseStack.last(), quad, red, green, blue, 1.0F, light, overlay);
+            boolean tinted = quad.isTinted() && quad.getTintIndex() == 0;
+            consumer.putBulkData(
+                    poseStack.last(),
+                    quad,
+                    tinted ? red : 1.0F,
+                    tinted ? green : 1.0F,
+                    tinted ? blue : 1.0F,
+                    1.0F,
+                    light,
+                    overlay);
         }
-    }
-
-    static void orientLegacy(PoseStack poseStack, Direction facing) {
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        switch (facing) {
-            case DOWN -> poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-            case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-            case EAST -> poseStack.mulPose(Axis.YN.rotationDegrees(90.0F));
-            case NORTH -> {}
-        }
-        poseStack.translate(0.0F, 0.0F, -0.5F);
     }
 }

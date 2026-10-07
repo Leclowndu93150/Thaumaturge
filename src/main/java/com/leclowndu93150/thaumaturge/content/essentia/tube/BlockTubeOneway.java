@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.tube;
 
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,7 +25,7 @@ public final class BlockTubeOneway extends BlockTube {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
     public BlockTubeOneway(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties, TubeGeometry.ONEWAY);
         registerDefaultState(stateDefinition
                 .any()
                 .setValue(NORTH, false)
@@ -82,6 +82,6 @@ public final class BlockTubeOneway extends BlockTube {
             Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
         return createTickerHelper(
-                type, TCBlockEntities.TUBE_ONEWAY.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
+                type, TTBlockEntities.TUBE_ONEWAY.get(), (lvl, pos, st, tube) -> tube.tickServer(lvl, pos, st));
     }
 }

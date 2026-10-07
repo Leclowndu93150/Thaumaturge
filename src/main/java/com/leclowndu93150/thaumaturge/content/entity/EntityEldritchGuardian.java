@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -169,14 +169,14 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
                     .subtract(this.position())
                     .normalize();
             blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
-            this.playSound(TCSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.EGATTACK.get(), 2.0F, 1.0F + this.random.nextFloat() * 0.1F);
             this.level().addFreshEntity(blast);
         } else if (this.hasLineOfSight(target)) {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER, WITHER_TICKS, 0));
             if (target instanceof ServerPlayer player) {
                 WarpHelper.addWarp(player, 1 + this.random.nextInt(3), WarpType.TEMPORARY);
             }
-            this.playSound(TCSounds.EGSCREECH.get(), 3.0F, 1.0F + this.random.nextFloat() * 0.1F);
+            this.playSound(TTSounds.EGSCREECH.get(), 3.0F, 1.0F + this.random.nextFloat() * 0.1F);
         }
     }
 
@@ -213,11 +213,11 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
     @Override
     protected @Nullable SoundEvent getAmbientSound() {
-        return TCSounds.EGIDLE.get();
+        return TTSounds.EGIDLE.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return TCSounds.EGDEATH.get();
+        return TTSounds.EGDEATH.get();
     }
 }

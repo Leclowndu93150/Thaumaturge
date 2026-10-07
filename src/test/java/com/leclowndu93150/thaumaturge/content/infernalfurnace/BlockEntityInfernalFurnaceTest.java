@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -60,7 +60,7 @@ class BlockEntityInfernalFurnaceTest {
         private int changes;
 
         private CountingFurnace() {
-            super(BlockPos.ZERO, TCBlocks.INFERNAL_FURNACE.get().defaultBlockState());
+            super(BlockPos.ZERO, TTBlocks.INFERNAL_FURNACE.get().defaultBlockState());
         }
 
         @Override

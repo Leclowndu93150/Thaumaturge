@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TCEntities;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,7 +14,7 @@ public class EntitySpecialItem extends ItemEntity {
     }
 
     public EntitySpecialItem(Level level, double x, double y, double z, ItemStack itemStack) {
-        super(TCEntities.SPECIAL_ITEM.get(), level);
+        super(TTEntities.SPECIAL_ITEM.get(), level);
         this.setPos(x, y, z);
         this.setItem(itemStack);
         this.setDeltaMovement(this.random.nextDouble() * 0.2 - 0.1, 0.2, this.random.nextDouble() * 0.2 - 0.1);
@@ -30,7 +30,7 @@ public class EntitySpecialItem extends ItemEntity {
             double deltaX,
             double deltaY,
             double deltaZ) {
-        this(TCEntities.SPECIAL_ITEM.get(), level);
+        this(TTEntities.SPECIAL_ITEM.get(), level);
         this.setPos(x, y, z);
         this.setItem(itemStack);
         this.setDeltaMovement(deltaX, deltaY, deltaZ);

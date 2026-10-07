@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.effect;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
@@ -17,7 +17,7 @@ import com.leclowndu93150.thaumaturge.content.particle.ShieldSparkParticleOption
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.content.warding.ClientWardHolder;
 import com.leclowndu93150.thaumaturge.content.warding.WardHandler;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusEffectWard implements FocusEffect {
-    public static final ResourceLocation ID = TCIds.rl("ward");
+    public static final ResourceLocation ID = TTIds.rl("ward");
 
     private static final int COMPLEXITY = 4;
     private static final float VIS_COST_PER_BLOCK = 0.5F;
@@ -107,12 +107,12 @@ public final class FocusEffectWard implements FocusEffect {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_ward"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_ward"), Optional.empty(), false);
     }
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.ORDO;
+        return TTAspects.ORDO;
     }
 
     @Override
@@ -133,7 +133,7 @@ public final class FocusEffectWard implements FocusEffect {
     }
 
     private static boolean applyAt(ServerLevel level, Player player, BlockPos pos) {
-        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+        if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TTBlocks.ARCANE_DOOR.get())
                 && level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
             pos = pos.below();
         }
@@ -142,25 +142,25 @@ public final class FocusEffectWard implements FocusEffect {
             if (!WardHandler.unward(level, pos, owner)) {
                 return false;
             }
-            if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())) {
+            if (level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TTBlocks.ARCANE_DOOR.get())) {
                 BlockPos otherHalf = level.getBlockState(pos).getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER
                         ? pos.above()
                         : pos.below();
                 WardHandler.unward(level, otherHalf, owner);
             }
             FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
-            level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
+            level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
             return true;
         }
         if (!WardHandler.canWard(level, pos)) {
             return false;
         }
         BlockPos otherHalf =
-                level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TCBlocks.ARCANE_DOOR.get())
+                level.getBlockState(pos).is(com.leclowndu93150.thaumaturge.registry.TTBlocks.ARCANE_DOOR.get())
                         ? pos.above()
                         : null;
         float visCost = otherHalf == null ? VIS_COST_PER_BLOCK : VIS_COST_PER_BLOCK * 2.0F;
-        if (!WandVisHelper.consumeVisFromHotbar(player, visCost, TCAspects.ORDO, false)) {
+        if (!WandVisHelper.consumeVisFromHotbar(player, visCost, TTAspects.ORDO, false)) {
             return false;
         }
         if (!WardHandler.ward(level, pos, owner)) {
@@ -170,9 +170,9 @@ public final class FocusEffectWard implements FocusEffect {
             WardHandler.unward(level, pos, owner);
             return false;
         }
-        WandVisHelper.consumeVisFromHotbar(player, visCost, TCAspects.ORDO, true);
+        WandVisHelper.consumeVisFromHotbar(player, visCost, TTAspects.ORDO, true);
         FocusFX.impact(level, Vec3.atCenterOf(pos), ID);
-        level.playSound(null, pos, TCSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
+        level.playSound(null, pos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH);
         return true;
     }
 

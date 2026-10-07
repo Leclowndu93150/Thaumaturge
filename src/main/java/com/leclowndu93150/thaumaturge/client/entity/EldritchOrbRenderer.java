@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
-import com.leclowndu93150.thaumaturge.client.render.TCRenderTypes;
+import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchOrb;
@@ -19,8 +19,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class EldritchOrbRenderer extends EntityRenderer<EntityEldritchOrb> {
-    private static final RenderType RAY_TYPE = TCRenderTypes.SPARKLE_CULLED;
-    private static final RenderType BILLBOARD_TYPE = TCRenderTypes.fxTranslucentBlurred(ParticleTextures.ELDRITCH_ORB);
+    private static final RenderType RAY_TYPE = TTRenderTypes.SPARKLE_CULLED;
+    private static final RenderType BILLBOARD_TYPE = TTRenderTypes.fxTranslucentBlurred(ParticleTextures.ELDRITCH_ORB);
 
     private static final long RAY_SEED = 187L;
     private static final int RAY_COUNT = 12;

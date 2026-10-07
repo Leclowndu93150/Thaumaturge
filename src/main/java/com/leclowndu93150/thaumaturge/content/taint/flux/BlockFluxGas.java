@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.particle.TaintFumeParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.FluxImmunityHelper;
-import com.leclowndu93150.thaumaturge.registry.TCBlocks;
-import com.leclowndu93150.thaumaturge.registry.TCMobEffects;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -237,7 +237,7 @@ public final class BlockFluxGas extends Block implements LiquidBlockContainer {
         if (MobTraits.isTainted(living)
                 || living.getType().is(EntityTypeTags.UNDEAD)
                 || FluxImmunityHelper.isImmune(living)
-                || living.hasEffect(TCMobEffects.VIS_EXHAUST)
+                || living.hasEffect(TTMobEffects.VIS_EXHAUST)
                 || living.hasEffect(MobEffects.CONFUSION)
                 || serverLevel.getRandom().nextInt(CONTACT_EFFECT_CHANCE) != 0) {
             return;
@@ -247,7 +247,7 @@ public final class BlockFluxGas extends Block implements LiquidBlockContainer {
         int meta = amount - 1;
         if (serverLevel.getRandom().nextBoolean()) {
             living.addEffect(
-                    new MobEffectInstance(TCMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, meta / 3, true, true, false));
+                    new MobEffectInstance(TTMobEffects.VIS_EXHAUST, VIS_EXHAUST_DURATION, meta / 3, true, true, false));
         } else {
             living.addEffect(new MobEffectInstance(
                     MobEffects.CONFUSION, CONFUSION_BASE_DURATION + meta * CONFUSION_DURATION_PER_LEVEL));
@@ -268,10 +268,10 @@ public final class BlockFluxGas extends Block implements LiquidBlockContainer {
 
     public static BlockState gasBlockState(int amount) {
         int clamped = Math.max(1, Math.min(PhysicalFlux.MAX_QUANTA, amount));
-        return TCBlocks.FLUX_GAS.get().defaultBlockState().setValue(AMOUNT, clamped);
+        return TTBlocks.FLUX_GAS.get().defaultBlockState().setValue(AMOUNT, clamped);
     }
 
     public static void scheduleTick(LevelAccessor level, BlockPos pos) {
-        level.scheduleTick(pos, TCBlocks.FLUX_GAS.get(), TICK_DELAY);
+        level.scheduleTick(pos, TTBlocks.FLUX_GAS.get(), TICK_DELAY);
     }
 }

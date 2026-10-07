@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.casters;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.BreakerTask;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues.SwapperTask;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.jspecify.annotations.Nullable;
 
-@EventBusSubscriber(modid = TCIds.MODID)
+@EventBusSubscriber(modid = TTIds.MODID)
 public final class BlockBreakerEngine {
     private static final int BREAK_PROGRESS_STEPS = 10;
     private static final int LEVEL_EVENT_BLOCK_BREAK = 2001;
@@ -53,7 +53,7 @@ public final class BlockBreakerEngine {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        BlockWorkQueues queues = level.getData(TCAttachments.BLOCK_WORK_QUEUES);
+        BlockWorkQueues queues = level.getData(TTAttachments.BLOCK_WORK_QUEUES);
         tickSwappers(level, queues);
         tickBreakers(level, queues);
     }

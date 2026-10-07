@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.client.entity.TCModelLayers;
+import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ManaPodModel;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockManaPod;
@@ -19,8 +19,8 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 
 public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityManaPod> {
-    private static final ResourceLocation CORE_TEXTURE = TCIds.rl("textures/entity/manapod_0.png");
-    private static final ResourceLocation SHELL_TEXTURE = TCIds.rl("textures/entity/manapod_2.png");
+    private static final ResourceLocation CORE_TEXTURE = TTIds.rl("textures/entity/manapod_0.png");
+    private static final ResourceLocation SHELL_TEXTURE = TTIds.rl("textures/entity/manapod_2.png");
 
     private static final int SHELL_MIN_AGE = 2;
     private static final int CORE_MIN_AGE = 3;
@@ -35,7 +35,7 @@ public final class ManaPodRenderer implements BlockEntityRenderer<BlockEntityMan
     private final ManaPodModel model;
 
     public ManaPodRenderer(BlockEntityRendererProvider.Context context) {
-        this.model = new ManaPodModel(context.bakeLayer(TCModelLayers.MANA_POD));
+        this.model = new ManaPodModel(context.bakeLayer(TTModelLayers.MANA_POD));
     }
 
     @Override

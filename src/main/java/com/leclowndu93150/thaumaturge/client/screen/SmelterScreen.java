@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,10 +8,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class SmelterScreen extends AbstractTCContainerScreen<MenuSmelter> {
+public class SmelterScreen extends AbstractTTContainerScreen<MenuSmelter> {
 
     private static final ResourceLocation TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(TCIds.MODID, "textures/gui/gui_smelter.png");
+            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/gui/gui_smelter.png");
 
     protected SmelterScreen(MenuSmelter menu, Inventory inventory, Component title) {
         super(menu, inventory, title, TEXTURE, 176, 166);

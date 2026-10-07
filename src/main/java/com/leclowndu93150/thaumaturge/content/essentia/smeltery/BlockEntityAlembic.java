@@ -6,9 +6,9 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TCBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TCDataComponents;
-import com.leclowndu93150.thaumaturge.serialization.TCNbt;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -39,7 +39,7 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     private Direction facing = Direction.DOWN;
 
     public BlockEntityAlembic(BlockPos pos, BlockState state) {
-        super(TCBlockEntities.ALEMBIC.get(), pos, state);
+        super(TTBlockEntities.ALEMBIC.get(), pos, state);
     }
 
     public @Nullable ResourceKey<IAspect> aspectKey() {
@@ -247,20 +247,20 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        aspect = TCNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null);
+        aspect = TTNbt.read(input, "Aspect", ASPECT_KEY_CODEC, registries).orElse(null);
         aspectFilter =
-                TCNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
+                TTNbt.read(input, "AspectFilter", ASPECT_KEY_CODEC, registries).orElse(null);
         amount = input.getInt("Amount");
-        facing = TCNbt.read(input, "Facing", Direction.CODEC, registries).orElse(Direction.DOWN);
+        facing = TTNbt.read(input, "Facing", Direction.CODEC, registries).orElse(Direction.DOWN);
     }
 
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
-        if (aspect != null) TCNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
-        if (aspectFilter != null) TCNbt.store(output, "AspectFilter", ASPECT_KEY_CODEC, registries, aspectFilter);
+        if (aspect != null) TTNbt.store(output, "Aspect", ASPECT_KEY_CODEC, registries, aspect);
+        if (aspectFilter != null) TTNbt.store(output, "AspectFilter", ASPECT_KEY_CODEC, registries, aspectFilter);
         output.putInt("Amount", amount);
-        TCNbt.store(output, "Facing", Direction.CODEC, registries, facing);
+        TTNbt.store(output, "Facing", Direction.CODEC, registries, facing);
     }
 
     @Override
@@ -285,18 +285,18 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
         if (level != null && aspect != null && amount > 0) {
             EssentiaList contents = getEssentiaContents(level.registryAccess());
             if (!contents.isEmpty()) {
-                builder.set(TCDataComponents.ESSENTIA_CONTENTS.get(), contents);
+                builder.set(TTDataComponents.ESSENTIA_CONTENTS.get(), contents);
             }
         }
         if (aspectFilter != null) {
-            builder.set(TCDataComponents.ASPECT_FILTER.get(), aspectFilter);
+            builder.set(TTDataComponents.ASPECT_FILTER.get(), aspectFilter);
         }
     }
 
     @Override
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
-        EssentiaList contents = input.get(TCDataComponents.ESSENTIA_CONTENTS.get());
+        EssentiaList contents = input.get(TTDataComponents.ESSENTIA_CONTENTS.get());
         if (contents != null && !contents.isEmpty()) {
             AspectInstance first = contents.contents().entries().get(0);
             ResourceKey<IAspect> key = first.aspect().unwrapKey().orElse(null);
@@ -305,7 +305,7 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
                 amount = Math.min(first.amount(), CAPACITY);
             }
         }
-        ResourceKey<IAspect> filter = input.get(TCDataComponents.ASPECT_FILTER.get());
+        ResourceKey<IAspect> filter = input.get(TTDataComponents.ASPECT_FILTER.get());
         if (filter != null) {
             aspectFilter = filter;
             if (aspect == null) aspect = filter;

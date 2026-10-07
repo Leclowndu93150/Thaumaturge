@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.equipment.runic;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
-import com.leclowndu93150.thaumaturge.registry.TCAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 
 public final class RunicShielding {
-    public static final ResourceLocation MODIFIER_ID = TCIds.rl("runic_shielding");
+    public static final ResourceLocation MODIFIER_ID = TTIds.rl("runic_shielding");
     private static final int SCAN_INTERVAL = 20;
 
     private RunicShielding() {}
@@ -30,7 +30,7 @@ public final class RunicShielding {
                 max += InfusionRunicAugmentRecipe.charge(player.getItemBySlot(slot));
             }
         }
-        if (ModList.get().isLoaded(TCIds.CURIOS)) {
+        if (ModList.get().isLoaded(TTIds.CURIOS)) {
             for (ItemStack stack : ThaumaturgeCuriosCompat.equippedCurios(player)) {
                 max += InfusionRunicAugmentRecipe.charge(stack);
             }
@@ -39,7 +39,7 @@ public final class RunicShielding {
     }
 
     public static void tick(ServerPlayer player) {
-        RunicShieldState state = player.getData(TCAttachments.RUNIC_SHIELD.get());
+        RunicShieldState state = player.getData(TTAttachments.RUNIC_SHIELD.get());
         if (player.tickCount % SCAN_INTERVAL == 0) {
             int max = worn(player);
             applyMaxModifier(player, max);

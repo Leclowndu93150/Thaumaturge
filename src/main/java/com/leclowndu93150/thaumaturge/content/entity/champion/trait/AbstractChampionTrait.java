@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity.champion.trait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraitModifiers;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
-import com.leclowndu93150.thaumaturge.registry.TCMobTraits;
+import com.leclowndu93150.thaumaturge.registry.TTMobTraits;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -31,7 +31,7 @@ public abstract class AbstractChampionTrait implements MobTrait {
     public final void onAdded(LivingEntity mob) {
         mob.heal(ASSIGN_HEAL);
         mob.setCustomName(Component.translatable(
-                NAME_KEY, MobTraitNames.of(TCMobTraits.registry().wrapAsHolder(this)), mob.getName()));
+                NAME_KEY, MobTraitNames.of(TTMobTraits.registry().wrapAsHolder(this)), mob.getName()));
         onChampionAdded(mob);
     }
 

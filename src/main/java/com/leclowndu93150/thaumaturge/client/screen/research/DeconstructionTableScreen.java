@@ -1,15 +1,15 @@
 package com.leclowndu93150.thaumaturge.client.screen.research;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagRenderer;
-import com.leclowndu93150.thaumaturge.client.screen.AbstractTCContainerScreen;
+import com.leclowndu93150.thaumaturge.client.screen.AbstractTTContainerScreen;
 import com.leclowndu93150.thaumaturge.client.screen.tooltip.DeferredTooltip;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import com.leclowndu93150.thaumaturge.network.ServerboundDeconCollectPayload;
-import com.leclowndu93150.thaumaturge.registry.TCSounds;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -21,8 +21,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class DeconstructionTableScreen extends AbstractTCContainerScreen<MenuDeconstructionTable> {
-    private static final ResourceLocation TEXTURE = TCIds.rl("textures/gui/gui_decontable.png");
+public final class DeconstructionTableScreen extends AbstractTTContainerScreen<MenuDeconstructionTable> {
+    private static final ResourceLocation TEXTURE = TTIds.rl("textures/gui/gui_decontable.png");
 
     private static final int GUI_W = 176;
     private static final int GUI_H = 166;
@@ -109,7 +109,7 @@ public final class DeconstructionTableScreen extends AbstractTCContainerScreen<M
                     && mouseY < topPos + RESULT_Y + RESULT_SIZE) {
                 PacketDistributor.sendToServer(new ServerboundDeconCollectPayload(menu.pos()));
                 if (minecraft != null && minecraft.player != null) {
-                    minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TCSounds.HHON.get(), 1.0F, 0.3F));
+                    minecraft.getSoundManager().play(SimpleSoundInstance.forUI(TTSounds.HHON.get(), 1.0F, 0.3F));
                 }
                 return true;
             }

@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.golem.GolemMeshes;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchObelisk;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -20,13 +20,13 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 
 public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockEntityEldritchObelisk> {
-    public static final ResourceLocation CAP_MODEL = TCIds.rl("models/mesh/obelisk_cap.tcmesh");
+    public static final ResourceLocation CAP_MODEL = TTIds.rl("models/mesh/obelisk_cap.ttmesh");
     public static final String CAP_PART = "Cap";
 
-    private static final ResourceLocation SIDE_TEXTURE = TCIds.rl("textures/entity/obelisk_side.png");
-    private static final ResourceLocation SIDE_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_side_2.png");
-    private static final ResourceLocation CAP_TEXTURE = TCIds.rl("textures/entity/obelisk_cap.png");
-    private static final ResourceLocation CAP_TEXTURE_OUTER = TCIds.rl("textures/entity/obelisk_cap_2.png");
+    private static final ResourceLocation SIDE_TEXTURE = TTIds.rl("textures/entity/obelisk_side.png");
+    private static final ResourceLocation SIDE_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_side_2.png");
+    private static final ResourceLocation CAP_TEXTURE = TTIds.rl("textures/entity/obelisk_cap.png");
+    private static final ResourceLocation CAP_TEXTURE_OUTER = TTIds.rl("textures/entity/obelisk_cap_2.png");
 
     private static final float COLUMN_BASE = 1.0F;
     private static final int COLUMN_HEIGHT = 3;
@@ -133,19 +133,20 @@ public final class EldritchObeliskRenderer implements BlockEntityRenderer<BlockE
         poseStack.pushPose();
         poseStack.translate(0.5F, base, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        renderCap(poseStack, buffers, capType, light);
+        renderCap(CAP_MODEL, poseStack, buffers, capType, light);
         poseStack.popPose();
         poseStack.pushPose();
         poseStack.translate(0.5F, top, 0.5F);
         poseStack.mulPose(Axis.XN.rotationDegrees(90.0F));
-        renderCap(poseStack, buffers, capType, light);
+        renderCap(CAP_MODEL, poseStack, buffers, capType, light);
         poseStack.popPose();
     }
 
-    static void renderCap(PoseStack poseStack, MultiBufferSource buffers, RenderType type, int light) {
-        TCMesh mesh = GolemMeshes.get(CAP_MODEL);
+    static void renderCap(
+            ResourceLocation model, PoseStack poseStack, MultiBufferSource buffers, RenderType type, int light) {
+        TTMesh mesh = GolemMeshes.get(model);
         VertexConsumer buffer = buffers.getBuffer(type);
-        for (TCMeshPart part : mesh.parts()) {
+        for (TTMeshPart part : mesh.parts()) {
             if (CAP_PART.equals(part.name())) {
                 GolemMeshes.renderPart(part, poseStack.last(), buffer, light, -1);
             }

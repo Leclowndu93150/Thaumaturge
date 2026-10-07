@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.data.recipe.builders;
 
 import com.google.common.base.Preconditions;
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
@@ -57,7 +57,7 @@ public final class InfusionEnchantmentRecipeBuilder {
     public void save(RecipeOutput output) {
         Preconditions.checkState(!components.isEmpty(), "Infusion enchantment recipe has no components");
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(
-                TCIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName());
+                TTIds.MODID, "infusion_enchantment/" + enchantment.getSerializedName());
         InfusionEnchantmentRecipe recipe = new InfusionEnchantmentRecipe(
                 enchantment, components, aspects, displayCatalyst, Optional.ofNullable(gate));
         output.accept(id, recipe, null);

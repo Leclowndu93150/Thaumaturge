@@ -1,12 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.render.crystal;
 
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TCMeshPart;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
+import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
+import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalFaceTransforms;
+import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalShards;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -27,15 +28,15 @@ import org.jspecify.annotations.Nullable;
 public final class CrystalBakedModel implements IDynamicBakedModel {
     public static final ModelProperty<Integer> FACE_MASK = new ModelProperty<>();
 
-    private static final List<Integer> PART_INDICES = List.of(0, 1, 2, 3, 4, 5, 6, 7);
+    private static final ModelProperty<Long> SHARD_SEED = new ModelProperty<>();
     private static final Direction[] FACES = Direction.values();
     private static final int PART_COUNT = 8;
 
-    private final TCMesh mesh;
+    private final TTMesh mesh;
     private final TextureAtlasSprite particle;
     private final ChunkRenderTypeSet renderTypes;
 
-    public CrystalBakedModel(TCMesh mesh, TextureAtlasSprite particle) {
+    public CrystalBakedModel(TTMesh mesh, TextureAtlasSprite particle) {
         this.mesh = mesh;
         this.particle = particle;
         this.renderTypes = ChunkRenderTypeSet.of(RenderType.cutout());
@@ -50,7 +51,11 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
                 mask |= 1 << face.ordinal();
             }
         }
-        return modelData.derive().with(FACE_MASK, mask).build();
+        return modelData
+                .derive()
+                .with(FACE_MASK, mask)
+                .with(SHARD_SEED, CrystalShards.seed(state, pos))
+                .build();
     }
 
     @Override
@@ -67,7 +72,8 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
         int faceMask = stored == null ? 0 : stored;
         int growth = state.hasProperty(BlockCrystal.SIZE) ? state.getValue(BlockCrystal.SIZE) : 0;
         int partsPerFace = growth + 1;
-        long seed = random.nextLong();
+        Long storedSeed = data.get(SHARD_SEED);
+        long seed = storedSeed == null ? CrystalShards.seed(state, BlockPos.ZERO) : storedSeed;
         List<BakedQuad> quads = new ArrayList<>();
         boolean any = false;
         for (Direction face : FACES) {
@@ -75,18 +81,17 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
                 continue;
             }
             Matrix4f transform = CrystalFaceTransforms.forFace(face);
-            List<Integer> shuffled = new ArrayList<>(PART_INDICES);
-            Collections.shuffle(shuffled, new Random(seed + CrystalFaceTransforms.seedOffset(face)));
+            List<Integer> shuffled = CrystalShards.order(face, seed);
             for (int i = 0; i < partsPerFace; i++) {
-                TCMeshPart part = mesh.parts().get(shuffled.get(i));
+                TTMeshPart part = mesh.parts().get(shuffled.get(i));
                 CrystalQuadBaker.bakePart(part, particle, 0, transform, quads);
                 any = true;
             }
         }
         if (!any) {
-            int unsupportedSeed = (int) (seed & 0x7);
+            int unsupportedSeed = CrystalShards.unsupported(seed);
             Matrix4f transform = CrystalFaceTransforms.forFace(Direction.DOWN);
-            TCMeshPart part = mesh.parts().get(unsupportedSeed % PART_COUNT);
+            TTMeshPart part = mesh.parts().get(unsupportedSeed % PART_COUNT);
             CrystalQuadBaker.bakePart(part, particle, 0, transform, quads);
         }
         return quads;

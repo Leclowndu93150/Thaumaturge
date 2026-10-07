@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.focus.medium;
 
-import com.leclowndu93150.thaumaturge.TCIds;
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.aspect.TCAspects;
+import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastContext;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
@@ -21,7 +21,7 @@ import net.minecraft.world.entity.LivingEntity;
 import org.jspecify.annotations.Nullable;
 
 public final class FocusMediumMine implements FocusMedium {
-    private static final ResourceLocation KEY = TCIds.rl("mine");
+    private static final ResourceLocation KEY = TTIds.rl("mine");
 
     private static final int COMPLEXITY = 4;
 
@@ -32,7 +32,7 @@ public final class FocusMediumMine implements FocusMedium {
 
     @Override
     public ResearchGate research() {
-        return new ResearchGate(TCIds.rl("focus_mine"), Optional.empty(), false);
+        return new ResearchGate(TTIds.rl("focus_mine"), Optional.empty(), false);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class FocusMediumMine implements FocusMedium {
 
     @Override
     public ResourceKey<IAspect> aspect() {
-        return TCAspects.VINCULUM;
+        return TTAspects.VINCULUM;
     }
 
     @Override
