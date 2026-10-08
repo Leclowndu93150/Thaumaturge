@@ -23,6 +23,7 @@ hs_err_pid*
 run
 run-gametest
 run-gametest/config
+/runs/
 
 
 # Reference sources (decompiled, not part of build)

@@ -7,6 +7,7 @@
 *.mcmeta text eol=lf
 *.ttmesh text eol=lf
 *.gradle text eol=lf
+*.kts    text eol=lf
 *.md     text eol=lf
 *.yml    text eol=lf
 *.toml   text eol=lf

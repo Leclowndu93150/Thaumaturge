@@ -5,12 +5,12 @@ on:
   workflow_dispatch:
     inputs:
       is-release:
-        description: 'Publish release to Modrinth, Curseforge and Github'
+        description: 'Publish release to CurseForge, GitHub and Maven'
         required: false
         default: false
         type: boolean
       dry-run:
-        description: 'Dry Run the release, only send Discord Webhook'
+        description: 'Validate the release without publishing'
         required: false
         default: true
         type: boolean
@@ -40,20 +40,16 @@ jobs:
       - name: Maven Release
         if: ${{ inputs.is-release && !inputs.dry-run }}
         env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-        run: ./gradlew publish
+          MAVEN_USER: ${{ secrets.MAVEN_USER }}
+          MAVEN_PASS: ${{ secrets.MAVEN_PASS }}
+        run: ./gradlew prismPublishMaven
 
       - name: Publish
         if: ${{ inputs.is-release }}
         env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
           CURSEFORGE_TOKEN: ${{ secrets.CURSEFORGE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-          DISCORD_WEBHOOK_DRY_RUN: ${{ secrets.DISCORD_WEBHOOK_DRY_RUN }}
-          DRY_RUN: ${{ inputs.dry-run }}
-        run: ./gradlew publishMods
+        run: ./gradlew prismPublishAll -Pprism.publishDryRun=${{ inputs.dry-run }}
       - name: Upload Build Artifact
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry-run }}
         uses: actions/upload-artifact@v4
