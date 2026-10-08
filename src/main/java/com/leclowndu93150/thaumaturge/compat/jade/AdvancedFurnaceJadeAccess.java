@@ -22,6 +22,9 @@ final class AdvancedFurnaceJadeAccess {
             for (int x = -1; x <= 1; x++) {
                 for (int z = -1; z <= 1; z++) {
                     BlockPos candidate = origin.offset(x, y, z);
+                    if (!accessor.getLevel().hasChunkAt(candidate)) {
+                        continue;
+                    }
                     if (accessor.getLevel().getBlockEntity(candidate)
                             instanceof BlockEntityAdvancedAlchemicalFurnace furnace) {
                         return furnace;

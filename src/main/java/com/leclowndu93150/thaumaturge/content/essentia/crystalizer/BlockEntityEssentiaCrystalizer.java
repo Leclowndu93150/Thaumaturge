@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEntityEssentiaCrystalizer extends BlockEntity implements IEssentiaTransport {
     private static final Codec<ResourceKey<IAspect>> ASPECT_KEY_CODEC = LegacyIds.ASPECT_KEY_CODEC;
     private static final int DRAW_INTERVAL = 5;
-    private static final int TARGET_PROGRESS = 200;
+    public static final int TARGET_PROGRESS = 200;
     private static final int SUCTION_EMPTY = 128;
     private static final int SUCTION_BUSY = 64;
     private static final int MAX_VIS_DRAIN = 20;
