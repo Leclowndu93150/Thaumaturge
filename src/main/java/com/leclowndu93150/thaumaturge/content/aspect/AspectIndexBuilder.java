@@ -7,13 +7,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectRecipeContributor;
-import com.leclowndu93150.thaumaturge.api.aspect.RegisterAspectContributorsEvent;
 import com.leclowndu93150.thaumaturge.content.wands.WandAspectVariants;
+import com.leclowndu93150.thaumaturge.registry.TTAspectContributors;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -23,37 +21,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.neoforged.bus.api.IEventBus;
 
 public final class AspectIndexBuilder {
     public static final int MAX_AMOUNT_PER_ASPECT = 500;
     private static final int MAX_RECURSION_DEPTH = 100;
 
-    private static final List<IAspectRecipeContributor> CONTRIBUTORS = new ArrayList<>();
-
-    static {
-        CONTRIBUTORS.add(new CrucibleAspectContributor());
-        CONTRIBUTORS.add(new InfusionAspectContributor());
-        CONTRIBUTORS.add(new CraftingAspectContributor());
-        CONTRIBUTORS.add(new CookingAspectContributor());
-    }
-
     private AspectIndexBuilder() {}
 
-    public static void registerContributor(IAspectRecipeContributor contributor) {
-        CONTRIBUTORS.add(contributor);
-    }
-
-    public static void fireContributorEvent(IEventBus modBus) {
-        RegisterAspectContributorsEvent event = new RegisterAspectContributorsEvent();
-        modBus.post(event);
-        for (IAspectRecipeContributor contributor : event.contributors()) {
-            CONTRIBUTORS.add(contributor);
-        }
-    }
-
     public static AspectIndex build(RecipeManager recipes, HolderLookup.Provider registries) {
-        for (IAspectRecipeContributor contributor : CONTRIBUTORS) {
+        for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
             contributor.beginBuild(recipes, registries);
         }
         RecursiveIndex index = new RecursiveIndex(collectBase(registries), recipes, registries);
@@ -125,7 +101,7 @@ public final class AspectIndexBuilder {
             visiting.add(item);
             try {
                 AspectList derived = AspectList.EMPTY;
-                for (IAspectRecipeContributor contributor : CONTRIBUTORS) {
+                for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
                     Optional<AspectList> result = contributor.derive(item, recipes, registries, this);
                     if (result.isPresent() && !result.get().isEmpty()) {
                         derived = result.get();

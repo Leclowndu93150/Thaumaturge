@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
+import com.leclowndu93150.thaumaturge.registry.TTWorkbenchSources;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,18 +32,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class WorkbenchPayment {
 
-    private static final List<IWorkbenchVisSource> SOURCES = new ArrayList<>();
-    private static final List<IWorkbenchAuraSource> AURA_SOURCES = new ArrayList<>();
-
     private WorkbenchPayment() {}
-
-    public static void registerSources(List<IWorkbenchVisSource> sources) {
-        SOURCES.addAll(sources);
-    }
-
-    public static void registerAuraSources(List<IWorkbenchAuraSource> sources) {
-        AURA_SOURCES.addAll(sources);
-    }
 
     public static Plan plan(
             IArcaneRecipe recipe, IArcaneWorkbench inventory, Player player, ArcaneWorkbenchContext context) {
@@ -162,7 +152,7 @@ public final class WorkbenchPayment {
             Holder<IAspect> aspect = Aspects.resolve(player.level(), entry.getKey());
             if (aspect == null) return null;
             int remaining = entry.getValue();
-            for (IWorkbenchVisSource source : SOURCES) {
+            for (IWorkbenchVisSource source : TTWorkbenchSources.visSources()) {
                 if (remaining <= 0) break;
                 int supplied =
                         clampSupply(source.supply(context, player, inventory, aspect, remaining, true), remaining);
@@ -184,7 +174,7 @@ public final class WorkbenchPayment {
 
         int remainingAura = plan.auraVis();
         List<AuraAllocation> auraAllocations = new ArrayList<>();
-        for (IWorkbenchAuraSource source : AURA_SOURCES) {
+        for (IWorkbenchAuraSource source : TTWorkbenchSources.auraSources()) {
             if (remainingAura <= 0) break;
             int supplied = clampSupply(source.supply(context, player, inventory, remainingAura, true), remainingAura);
             if (supplied > 0) {
@@ -238,7 +228,7 @@ public final class WorkbenchPayment {
             return 0;
         }
         int supplied = 0;
-        for (IWorkbenchVisSource source : SOURCES) {
+        for (IWorkbenchVisSource source : TTWorkbenchSources.visSources()) {
             if (supplied >= need) {
                 break;
             }

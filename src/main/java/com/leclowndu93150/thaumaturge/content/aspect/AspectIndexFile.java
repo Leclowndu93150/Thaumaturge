@@ -6,36 +6,23 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.mojang.serialization.JsonOps;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HexFormat;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.fml.loading.FMLPaths;
 
 public final class AspectIndexFile {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-    private static final int FORMAT_VERSION = 4;
 
     private AspectIndexFile() {}
 
@@ -43,45 +30,7 @@ public final class AspectIndexFile {
         return FMLPaths.CONFIGDIR.get().resolve("thaumaturge").resolve("aspect_index.json");
     }
 
-    public static String fingerprint(MinecraftServer server) {
-        List<String> lines = new ArrayList<>();
-        lines.add("format:" + FORMAT_VERSION);
-        for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) {
-            lines.add("item:" + id);
-        }
-        for (Item item : BuiltInRegistries.ITEM) {
-            AspectList declared = item.builtInRegistryHolder().getData(AspectDataMaps.BASE_ASPECTS);
-            if (declared == null || declared.isEmpty()) {
-                continue;
-            }
-            List<String> parts = new ArrayList<>(declared.entries().size());
-            for (var entry : declared.entries()) {
-                parts.add(entry.aspect()
-                                .unwrapKey()
-                                .map(key -> key.location().toString())
-                                .orElse("?") + "=" + entry.amount());
-            }
-            Collections.sort(parts);
-            lines.add("base:" + BuiltInRegistries.ITEM.getKey(item) + ":" + String.join(",", parts));
-        }
-        for (RecipeHolder<?> holder : server.getRecipeManager().getRecipes()) {
-            lines.add("recipe:" + holder.id());
-        }
-        Collections.sort(lines);
-        MessageDigest digest;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256 is unavailable", e);
-        }
-        for (String line : lines) {
-            digest.update(line.getBytes(StandardCharsets.UTF_8));
-            digest.update((byte) '\n');
-        }
-        return HexFormat.of().formatHex(digest.digest());
-    }
-
-    public static Optional<AspectIndex> load(HolderLookup.Provider registries, String liveFingerprint) {
+    public static Optional<AspectIndex> load(HolderLookup.Provider registries, AspectIndexFingerprint live) {
         Path file = path();
         if (!Files.exists(file)) {
             return Optional.empty();
@@ -94,12 +43,14 @@ public final class AspectIndexFile {
             return Optional.empty();
         }
         String savedFingerprint = GsonHelper.getAsString(root, "fingerprint", "");
-        if (!savedFingerprint.equals(liveFingerprint)) {
+        if (!savedFingerprint.equals(live.digest())) {
+            String changed = live.describeChanges(GsonHelper.getAsJsonObject(root, "sections", new JsonObject()));
             Thaumaturge.LOGGER.info(
-                    "Aspect index cache at {} no longer matches the current item, recipe, and base-aspect sets ({} items / {} recipes when written), rebuilding",
+                    "Aspect index cache at {} is out of date ({} items / {} recipes when written; changed: {}), rebuilding",
                     file,
                     GsonHelper.getAsInt(root, "item_count", -1),
-                    GsonHelper.getAsInt(root, "recipe_count", -1));
+                    GsonHelper.getAsInt(root, "recipe_count", -1),
+                    changed);
             return Optional.empty();
         }
         RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
@@ -108,7 +59,8 @@ public final class AspectIndexFile {
         int skipped = 0;
         for (Map.Entry<String, JsonElement> entry : aspects.entrySet()) {
             ResourceLocation id = ResourceLocation.tryParse(entry.getKey());
-            Item item = id == null ? null : BuiltInRegistries.ITEM.get(id);
+            Item item =
+                    id == null ? null : BuiltInRegistries.ITEM.getOptional(id).orElse(null);
             if (item == null) {
                 skipped++;
                 continue;
@@ -137,7 +89,11 @@ public final class AspectIndexFile {
     }
 
     public static void write(
-            AspectIndex index, HolderLookup.Provider registries, String fingerprint, int itemCount, int recipeCount) {
+            AspectIndex index,
+            HolderLookup.Provider registries,
+            AspectIndexFingerprint fingerprint,
+            int itemCount,
+            int recipeCount) {
         Path file = path();
         RegistryOps<JsonElement> ops = RegistryOps.create(JsonOps.INSTANCE, registries);
         JsonElement aspects = AspectIndex.CODEC.encodeStart(ops, index).result().orElse(null);
@@ -146,9 +102,10 @@ public final class AspectIndexFile {
             return;
         }
         JsonObject root = new JsonObject();
-        root.addProperty("fingerprint", fingerprint);
+        root.addProperty("fingerprint", fingerprint.digest());
         root.addProperty("item_count", itemCount);
         root.addProperty("recipe_count", recipeCount);
+        root.add("sections", fingerprint.sectionsJson());
         root.add("aspects", aspects);
         try {
             Files.createDirectories(file.getParent());

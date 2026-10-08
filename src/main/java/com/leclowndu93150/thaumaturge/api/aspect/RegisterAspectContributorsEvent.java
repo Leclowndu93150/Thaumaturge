@@ -6,11 +6,11 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 
 /**
- * Fired on the mod event bus during aspect-index setup so addons can contribute recipe-derived
+ * Fired on the mod event bus during common setup so addons can contribute recipe-derived
  * aspect strategies. Contributors registered here run after the built-in crucible, infusion, and
  * crafting contributors, in registration order.
  *
- * <p>The event fires once per index build. Contributors must be deterministic and must not depend
+ * <p>The event fires once during common setup. Contributors must be deterministic and must not depend
  * on world state, matching the {@link IAspectRecipeContributor} contract.
  *
  * @since 1.0.0
