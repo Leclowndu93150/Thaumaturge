@@ -1,23 +1,22 @@
 package com.leclowndu93150.thaumaturge.client.render.research;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEffect;
-import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusMedium;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchIcon;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.client.screen.TTScreenTextures;
+import com.leclowndu93150.thaumaturge.client.screen.casters.SpellPartIcons;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -62,12 +61,7 @@ public final class EntryIconRenderer {
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
-    private static final ResourceLocation FOCUS_EFFECT_BACK =
-            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_effect.png");
-    private static final ResourceLocation FOCUS_MEDIUM_BACK =
-            ResourceLocation.fromNamespaceAndPath(TTIds.MODID, "textures/foci/_medium.png");
     private static final float FOCUS_PART_SCALE = 24.0F;
-    private static final int FOCUS_BACK_ALPHA = 220;
     private static final int FOCUS_GLYPH_ALPHA = 220;
     private static final int FOCUS_GLYPH_LOCKED_ALPHA = 50;
 
@@ -197,28 +191,21 @@ public final class EntryIconRenderer {
     public record FocusIcon(ResourceLocation elementId) {}
 
     public static void drawFocusIcon(
-            GuiGraphics graphics, int centerX, int centerY, ResourceLocation elementId, boolean locked) {
-        FocusElement element = FocusEngine.element(elementId);
-        if (element == null) {
+            GuiGraphics graphics, int centerX, int centerY, ResourceLocation partId, boolean locked) {
+        if (Minecraft.getInstance().level == null) {
             return;
         }
-        int color = (FOCUS_BACK_ALPHA << 24) | (FocusEngine.color(elementId) & 0x00FFFFFF);
-        if (element instanceof FocusEffect) {
-            blitCentered(graphics, FOCUS_EFFECT_BACK, centerX, centerY, Math.round(FOCUS_PART_SCALE * 0.9F), color);
-        } else if (element instanceof FocusMedium) {
-            blitCentered(graphics, FOCUS_MEDIUM_BACK, centerX, centerY, Math.round(FOCUS_PART_SCALE * 0.9F), color);
-        }
-        int glyphAlpha = locked ? FOCUS_GLYPH_LOCKED_ALPHA : FOCUS_GLYPH_ALPHA;
-        ResourceLocation glyph = FocusEngine.icon(elementId);
-        if (glyph != null) {
-            blitCentered(
-                    graphics,
-                    glyph,
-                    centerX,
-                    centerY,
-                    Math.round(FOCUS_PART_SCALE / 2.0F),
-                    (glyphAlpha << 24) | 0x00FFFFFF);
-        }
+        float alpha = (locked ? FOCUS_GLYPH_LOCKED_ALPHA : FOCUS_GLYPH_ALPHA) / 255.0F;
+        SpellPartIcons.draw(
+                graphics,
+                Minecraft.getInstance().level.registryAccess(),
+                ResourceKey.create(SpellPart.REGISTRY_KEY, partId),
+                centerX,
+                centerY,
+                Math.round(FOCUS_PART_SCALE * 0.9F),
+                Math.round(FOCUS_PART_SCALE / 2.0F),
+                Math.round(FOCUS_PART_SCALE),
+                alpha);
     }
 
     private static void blitCentered(

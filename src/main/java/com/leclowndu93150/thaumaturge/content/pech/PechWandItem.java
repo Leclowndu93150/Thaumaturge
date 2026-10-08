@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.pech;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
+import com.leclowndu93150.thaumaturge.content.research.KnowledgeGrant;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
@@ -12,8 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -22,55 +22,57 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 public final class PechWandItem extends Item {
-    private static final ResourceLocation GATE_RESEARCH = TTIds.rl("base_auromancy");
-    private static final ResourceLocation FOCUS_PECH = TTIds.rl("focuspech");
+    private static final ResourceLocation PREREQUISITE = TTIds.rl("base_auromancy");
+    private static final ResourceLocation REVEALED_RESEARCH = TTIds.rl("scanned/pechwand");
+    private static final List<KnowledgeGrant> INSIGHTS = List.of(
+            new KnowledgeGrant(KnowledgeType.OBSERVATION, 3, 2), new KnowledgeGrant(KnowledgeType.THEORY, 5, 4));
+    private static final float STUDY_VOLUME = 0.5F;
+    private static final float STUDY_PITCH = 0.42F;
+    private static final float STUDY_PITCH_SPREAD = 0.08F;
 
-    public PechWandItem(Properties properties) {
+    public PechWandItem(Item.Properties properties) {
         super(properties);
     }
 
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("item.curio.text"));
+        tooltip.add(Component.translatable("tooltip.thaumaturge.curio.read"));
         super.appendHoverText(stack, context, tooltip, flag);
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        if (!KnowledgeAccess.of(player).isResearchKnown(GATE_RESEARCH)) {
-            if (!level.isClientSide()) {
-                player.sendSystemMessage(Component.translatable("not.pechwand").withStyle(ChatFormatting.RED));
+        if (!KnowledgeAccess.of(player).isResearchKnown(PREREQUISITE)) {
+            if (player instanceof ServerPlayer) {
+                player.sendSystemMessage(Component.translatable("message.thaumaturge.pech_wand.unfathomable")
+                        .withStyle(ChatFormatting.RED));
             }
-            return super.use(level, player, hand);
+            return new InteractionResultHolder<>(InteractionResult.PASS, player.getItemInHand(hand));
         }
-        if (!player.getAbilities().instabuild) {
-            player.getItemInHand(hand).shrink(1);
+        player.getItemInHand(hand).consume(1, player);
+        if (player instanceof ServerPlayer scholar) {
+            study(scholar);
         }
-        if (player instanceof ServerPlayer serverPlayer) {
-            level.playSound(
-                    null,
-                    player.getX(),
-                    player.getY(),
-                    player.getZ(),
-                    TTSounds.LEARN.get(),
-                    SoundSource.NEUTRAL,
-                    0.5F,
-                    0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-            serverPlayer.sendSystemMessage(
-                    Component.translatable("got.pechwand").withStyle(ChatFormatting.DARK_PURPLE));
-            if (!KnowledgeAccess.of(serverPlayer).isResearchKnown(FOCUS_PECH)) {
-                ResearchManager.complete(serverPlayer, FOCUS_PECH);
-            }
-            int oProg = KnowledgeType.OBSERVATION.progression();
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer,
-                    KnowledgeType.OBSERVATION,
-                    Mth.nextInt(serverPlayer.getRandom(), oProg / 3, oProg / 2));
-            int tProg = KnowledgeType.THEORY.progression();
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer, KnowledgeType.THEORY, Mth.nextInt(serverPlayer.getRandom(), tProg / 5, tProg / 4));
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+    }
+
+    private static void study(ServerPlayer scholar) {
+        scholar.level()
+                .playSound(
+                        null,
+                        scholar.getX(),
+                        scholar.getY(),
+                        scholar.getZ(),
+                        TTSounds.LEARN.get(),
+                        SoundSource.NEUTRAL,
+                        STUDY_VOLUME,
+                        (float) (STUDY_PITCH + scholar.getRandom().triangle(0.0F, STUDY_PITCH_SPREAD)));
+        scholar.sendSystemMessage(Component.translatable("message.thaumaturge.discovery.pech_wand")
+                .withStyle(ChatFormatting.DARK_PURPLE));
+        if (!KnowledgeAccess.of(scholar).isResearchKnown(REVEALED_RESEARCH)) {
+            ResearchManager.complete(scholar, REVEALED_RESEARCH);
         }
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
+        INSIGHTS.forEach(insight -> insight.award(scholar));
     }
 }

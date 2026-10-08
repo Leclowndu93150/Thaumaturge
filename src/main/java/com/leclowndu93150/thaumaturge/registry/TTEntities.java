@@ -7,12 +7,23 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistPortalGre
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchGolem;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchWarden;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityTaintacleGiant;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldritchHierophant;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantCrescent;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantHammer;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantNova;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityHierophantSigil;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.misc.alumentum.ThrownAlumentum;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellCloud;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellMine;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellProjectile;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellSprite;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellWall;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
@@ -160,31 +171,31 @@ public final class TTEntities {
                     .clientTrackingRange(8)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFocusProjectile>> FOCUS_PROJECTILE = register(
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellProjectile>> FOCUS_PROJECTILE = register(
             "focus_projectile",
-            () -> EntityType.Builder.<EntityFocusProjectile>of(EntityFocusProjectile::new, MobCategory.MISC)
-                    .sized(0.15F, 0.15F)
-                    .clientTrackingRange(4)
-                    .updateInterval(10));
+            () -> EntityType.Builder.<SpellProjectile>of(SpellProjectile::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(6)
+                    .updateInterval(5));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFocusCloud>> FOCUS_CLOUD = register(
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellCloud>> FOCUS_CLOUD = register(
             "focus_cloud",
-            () -> EntityType.Builder.<EntityFocusCloud>of(EntityFocusCloud::new, MobCategory.MISC)
+            () -> EntityType.Builder.<SpellCloud>of(SpellCloud::new, MobCategory.MISC)
                     .sized(1.0F, 0.5F)
                     .fireImmune()
                     .clientTrackingRange(10)
                     .updateInterval(20));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntityFocusMine>> FOCUS_MINE = register(
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellMine>> FOCUS_MINE = register(
             "focus_mine",
-            () -> EntityType.Builder.<EntityFocusMine>of(EntityFocusMine::new, MobCategory.MISC)
-                    .sized(0.15F, 0.15F)
+            () -> EntityType.Builder.<SpellMine>of(SpellMine::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
                     .clientTrackingRange(4)
                     .updateInterval(10));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<EntitySpellBat>> SPELL_BAT = register(
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellBat>> SPELL_BAT = register(
             "spell_bat",
-            () -> EntityType.Builder.<EntitySpellBat>of(EntitySpellBat::new, MobCategory.MONSTER)
+            () -> EntityType.Builder.<SpellBat>of(SpellBat::new, MobCategory.MISC)
                     .sized(0.5F, 0.9F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
@@ -200,7 +211,23 @@ public final class TTEntities {
                     () -> EntityType.Builder.of(EntityTaintSporeSwarmer::new, MobCategory.MONSTER)
                             .sized(0.9F, 0.9F)
                             .clientTrackingRange(8)
-                            .updateInterval(3));
+                            .updateInterval(20));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellSprite>> SPELL_SPRITE = register(
+            "spell_sprite",
+            () -> EntityType.Builder.<SpellSprite>of(SpellSprite::new, MobCategory.MISC)
+                    .sized(0.3F, 0.3F)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .updateInterval(2));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SpellWall>> SPELL_WALL = register(
+            "spell_wall",
+            () -> EntityType.Builder.<SpellWall>of(SpellWall::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .fireImmune()
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntitySpecialItem>> SPECIAL_ITEM = register(
             "special_item",
@@ -389,6 +416,49 @@ public final class TTEntities {
                     .sized(0.1F, 0.1F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityEldritchHierophant>> ELDRITCH_HIEROPHANT =
+            register(
+                    "eldritch_hierophant",
+                    () -> EntityType.Builder.of(EntityEldritchHierophant::new, MobCategory.MONSTER)
+                            .sized(1.9F, 4.2F)
+                            .eyeHeight(3.55F)
+                            .clientTrackingRange(12)
+                            .updateInterval(2));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantCrescent>> HIEROPHANT_CRESCENT =
+            register(
+                    "hierophant_crescent",
+                    () -> EntityType.Builder.<EntityHierophantCrescent>of(
+                                    EntityHierophantCrescent::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F)
+                            .noSave()
+                            .clientTrackingRange(12)
+                            .updateInterval(20));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantSigil>> HIEROPHANT_SIGIL = register(
+            "hierophant_sigil",
+            () -> EntityType.Builder.<EntityHierophantSigil>of(EntityHierophantSigil::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .noSave()
+                    .clientTrackingRange(12)
+                    .updateInterval(20));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantNova>> HIEROPHANT_NOVA = register(
+            "hierophant_nova",
+            () -> EntityType.Builder.<EntityHierophantNova>of(EntityHierophantNova::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .noSave()
+                    .clientTrackingRange(12)
+                    .updateInterval(20));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityHierophantHammer>> HIEROPHANT_HAMMER = register(
+            "hierophant_hammer",
+            () -> EntityType.Builder.<EntityHierophantHammer>of(EntityHierophantHammer::new, MobCategory.MISC)
+                    .sized(0.1F, 0.1F)
+                    .noSave()
+                    .clientTrackingRange(12)
+                    .updateInterval(20));
 
     private TTEntities() {}
 

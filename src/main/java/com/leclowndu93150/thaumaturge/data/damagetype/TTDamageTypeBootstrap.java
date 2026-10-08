@@ -11,6 +11,13 @@ public final class TTDamageTypeBootstrap {
 
     public static void bootstrap(BootstrapContext<DamageType> context) {
         context.register(
+                TTDamageTypes.ELDRITCH_SPELL,
+                new DamageType(
+                        "thaumaturge.eldritch_spell",
+                        DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
+                        0.1F,
+                        DamageEffects.HURT));
+        context.register(
                 TTDamageTypes.TAINT,
                 new DamageType(
                         "thaumaturge.taint", DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 0.0F, DamageEffects.HURT));

@@ -6,10 +6,12 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.EntityCultistPortalGre
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchGolem;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityEldritchWarden;
 import com.leclowndu93150.thaumaturge.content.entity.boss.EntityTaintacleGiant;
+import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldritchHierophant;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.SpawnPlacementTypes;
@@ -109,6 +111,9 @@ public final class TTEntityEvents {
 
     @SubscribeEvent
     public static void onAttributes(EntityAttributeCreationEvent event) {
+        event.put(
+                TTEntities.ELDRITCH_HIEROPHANT.get(),
+                EntityEldritchHierophant.createAttributes().build());
         event.put(TTEntities.WISP.get(), WispEntity.createAttributes().build());
         event.put(
                 TTEntities.CULTIST_LEADER.get(),
@@ -164,7 +169,7 @@ public final class TTEntityEvents {
         event.put(
                 TTEntities.TAINTACLE_SMALL.get(),
                 EntityTaintacleSmall.createAttributes().build());
-        event.put(TTEntities.SPELL_BAT.get(), EntitySpellBat.createAttributes().build());
+        event.put(TTEntities.SPELL_BAT.get(), SpellBat.createAttributes().build());
         event.put(
                 TTEntities.THAUMATURGE_GOLEM.get(),
                 EntityThaumaturgeGolem.createAttributes().build());

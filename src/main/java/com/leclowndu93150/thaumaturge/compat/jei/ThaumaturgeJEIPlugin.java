@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.*;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
-import com.leclowndu93150.thaumaturge.client.screen.casters.FocalManipulatorScreen;
+import com.leclowndu93150.thaumaturge.client.screen.casters.focal.FocalManipulatorScreen;
 import com.leclowndu93150.thaumaturge.client.screen.research.EntryDetailScreen;
 import com.leclowndu93150.thaumaturge.compat.jei.category.*;
 import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategory.InfernalBonusWrapper;

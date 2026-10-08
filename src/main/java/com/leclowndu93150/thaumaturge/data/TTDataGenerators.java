@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
 import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanEntry;
+import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.compat.apothicenchanting.data.EnchantingStatsProvider;
 import com.leclowndu93150.thaumaturge.compat.curio.data.TTCurioProvider;
 import com.leclowndu93150.thaumaturge.content.pech.PechTradeTable;
@@ -12,6 +14,7 @@ import com.leclowndu93150.thaumaturge.data.damagetype.TTDamageTypeBootstrap;
 import com.leclowndu93150.thaumaturge.data.datamap.AuraModifierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.ChampionWhitelistProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.EntityAspectsProvider;
+import com.leclowndu93150.thaumaturge.data.datamap.FocusTierProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.FuelValuesProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.GolemAccessoryItemProvider;
 import com.leclowndu93150.thaumaturge.data.datamap.InfernalBonusProvider;
@@ -25,6 +28,8 @@ import com.leclowndu93150.thaumaturge.data.loot.TTGlobalLootModifierProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTTaintedLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.model.TTModelProvider;
 import com.leclowndu93150.thaumaturge.data.recipe.TTRecipeProvider;
+import com.leclowndu93150.thaumaturge.data.spell.AffinityBootstrap;
+import com.leclowndu93150.thaumaturge.data.spell.SpellPartBootstrap;
 import com.leclowndu93150.thaumaturge.data.tag.TTBiomeTagsProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TTBlockTagsProvider;
 import com.leclowndu93150.thaumaturge.data.tag.TTDamageTypeTagsProvider;
@@ -73,7 +78,9 @@ public final class TTDataGenerators {
                 .add(Registries.LEVEL_STEM, OuterLandsBootstrap::bootstrapStems)
                 .add(Registries.STRUCTURE, TTStructureBootstrap::bootstrapStructures)
                 .add(Registries.STRUCTURE_SET, TTStructureBootstrap::bootstrapSets)
-                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TTBiomeModifiers::bootstrap);
+                .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TTBiomeModifiers::bootstrap)
+                .add(SpellPart.REGISTRY_KEY, SpellPartBootstrap::bootstrap)
+                .add(AspectAffinity.REGISTRY_KEY, AffinityBootstrap::bootstrap);
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TTEnglishProvider::new);
@@ -88,6 +95,7 @@ public final class TTDataGenerators {
         event.createProvider(StrippingProvider::new);
         event.createProvider(FuelValuesProvider::new);
         event.createProvider(EnchantingStatsProvider::new);
+        event.createProvider(FocusTierProvider::new);
         event.createProvider(
                 (output, lookupProvider) -> new TTCurioProvider(output, event.getExistingFileHelper(), lookupProvider));
 

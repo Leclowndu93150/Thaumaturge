@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.casters.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.casters.MenuFocusPouch;
 import com.leclowndu93150.thaumaturge.content.device.MenuVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.bore.MenuArcaneBore;
@@ -19,6 +18,7 @@ import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
 import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import com.leclowndu93150.thaumaturge.content.spa.MenuSpa;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.MenuFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;

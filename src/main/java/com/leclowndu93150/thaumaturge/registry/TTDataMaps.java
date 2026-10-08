@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAspects;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryItem;
+import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
 import com.leclowndu93150.thaumaturge.api.warp.ItemWarp;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedProfile;
 import net.minecraft.core.registries.Registries;
@@ -44,5 +45,6 @@ public final class TTDataMaps {
         event.register(ITEM_WARP);
         event.register(GolemAccessoryItem.DATA_MAP);
         event.register(TAINTED_PROFILE);
+        event.register(FocusTier.DATA_MAP);
     }
 }

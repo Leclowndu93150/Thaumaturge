@@ -4,9 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
 import com.leclowndu93150.thaumaturge.content.casters.CasterArea;
@@ -15,6 +15,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantments;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaContentsComponent;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.item.CelestialBody;
+import com.leclowndu93150.thaumaturge.content.legacy.LegacyFocusPackage;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.research.link.LinkBinding;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
@@ -67,10 +68,14 @@ public final class TTDataComponents {
                     builder ->
                             builder.persistent(AspectInstance.CODEC).networkSynchronized(AspectInstance.STREAM_CODEC));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<FocusPackage>> FOCUS_PACKAGE =
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Spell>> SPELL =
+            DATA_COMPONENTS.registerComponentType(
+                    "spell", builder -> builder.persistent(Spell.CODEC).networkSynchronized(Spell.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Spell>> LEGACY_FOCUS_PACKAGE =
             DATA_COMPONENTS.registerComponentType(
                     "focus_package",
-                    builder -> builder.persistent(FocusPackage.CODEC).networkSynchronized(FocusPackage.STREAM_CODEC));
+                    builder -> builder.persistent(LegacyFocusPackage.CODEC).networkSynchronized(Spell.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<SocketedFocus>> SOCKETED_FOCUS =
             DATA_COMPONENTS.registerComponentType(

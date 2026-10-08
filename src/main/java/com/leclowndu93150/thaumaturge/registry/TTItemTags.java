@@ -7,6 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 public final class TTItemTags {
+    public static final TagKey<Item> FLOATING_DROPS = key("floating_drops");
     public static final TagKey<Item> WANDS = key("wands");
     public static final TagKey<Item> WAND_RODS = key("wand_rods");
     public static final TagKey<Item> WAND_CAPS = key("wand_caps");

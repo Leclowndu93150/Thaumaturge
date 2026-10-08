@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.casters;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.DeviceGate;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -9,6 +10,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -45,7 +47,7 @@ public final class FocusPouchItem extends Item {
             ItemStack stack, Item.TooltipContext context, List<Component> builder, TooltipFlag flag) {
         int count = 0;
         for (ItemStack focus : getInventory(stack)) {
-            if (focus.getItem() instanceof ItemFocus) {
+            if (FocusItems.isFocus(focus)) {
                 count++;
             }
         }
@@ -56,7 +58,7 @@ public final class FocusPouchItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (!level.isClientSide() && !DeviceGate.passes(player, TTIds.rl("focus_pouch"))) {
-            return InteractionResultHolder.consume(player.getItemInHand(hand));
+            return new InteractionResultHolder<>(InteractionResult.CONSUME, player.getItemInHand(hand));
         }
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.openMenu(
@@ -74,6 +76,6 @@ public final class FocusPouchItem extends Item {
                     },
                     buf -> buf.writeBoolean(hand == InteractionHand.MAIN_HAND));
         }
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
     }
 }

@@ -6,23 +6,22 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.casters.FocusElement;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.api.casters.FocusSettings;
 import com.leclowndu93150.thaumaturge.api.casters.ICaster;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTrait;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.SpellProblem;
+import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.warp.IPlayerWarp;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.aura.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
@@ -86,6 +85,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -264,8 +264,8 @@ public final class TTCommands {
                 .then(Commands.literal("focus")
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.argument("tier", IntegerArgumentType.integer(1, 3))
-                                .then(Commands.argument("elements", StringArgumentType.greedyString())
-                                        .suggests(FocusElementArguments.SUGGESTIONS)
+                                .then(Commands.argument("parts", StringArgumentType.greedyString())
+                                        .suggests(SpellPartArguments.SUGGESTIONS)
                                         .executes(TTCommands::giveFocus))))
                 .then(Commands.literal("warp")
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -910,29 +910,23 @@ public final class TTCommands {
         try {
             ServerPlayer player = ctx.getSource().getPlayerOrException();
             int tier = IntegerArgumentType.getInteger(ctx, "tier");
-            FocusPackage.Builder core = FocusPackage.builder().caster(player);
-            int complexity = 0;
-            for (ResourceLocation id : FocusElementArguments.parse(StringArgumentType.getString(ctx, "elements"))) {
-                FocusElement element = FocusEngine.element(id);
-                complexity += element.complexity(FocusSettings.defaults(element));
-                core.add(id);
-            }
-            core.complexity(complexity);
-            ItemFocus focusItem =
+            Spell spell = SpellPartArguments.chain(
+                    StringArgumentType.getString(ctx, "parts"), ctx.getSource().registryAccess());
+            Item focusItem =
                     switch (tier) {
                         case 1 -> TTItems.FOCUS_1.get();
                         case 2 -> TTItems.FOCUS_2.get();
                         default -> TTItems.FOCUS_3.get();
                     };
             ItemStack focusStack = new ItemStack(focusItem);
-            ItemFocus.setPackage(focusStack, core.build());
-            int finalComplexity = complexity;
-            if (complexity > focusItem.getMaxComplexity()) {
-                ctx.getSource()
-                        .sendSuccess(
-                                () -> Component.literal("Warning: complexity " + finalComplexity + " exceeds tier cap "
-                                        + focusItem.getMaxComplexity()),
-                                false);
+            Spells.setSpell(focusStack, spell);
+            SpellSummary summary = Spells.analyze(
+                    spell,
+                    Spells.tierOf(focusStack).orElse(null),
+                    ctx.getSource().registryAccess(),
+                    null);
+            for (SpellProblem problem : summary.problems()) {
+                ctx.getSource().sendSuccess(() -> problem.message(), false);
             }
             ItemStack held = player.getMainHandItem();
             if (held.getItem() instanceof ICaster caster) {
@@ -943,13 +937,16 @@ public final class TTCommands {
                 caster.setFocus(held, focusStack);
                 ctx.getSource()
                         .sendSuccess(
-                                () -> Component.literal(
-                                        "Socketed focus (complexity " + finalComplexity + ") into held caster"),
+                                () -> Component.literal("Socketed focus (complexity " + summary.complexity() + "/"
+                                        + summary.budget() + ") into held caster"),
                                 false);
             } else {
                 player.getInventory().add(focusStack);
                 ctx.getSource()
-                        .sendSuccess(() -> Component.literal("Gave focus (complexity " + finalComplexity + ")"), false);
+                        .sendSuccess(
+                                () -> Component.literal("Gave focus (complexity " + summary.complexity() + "/"
+                                        + summary.budget() + ")"),
+                                false);
             }
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {

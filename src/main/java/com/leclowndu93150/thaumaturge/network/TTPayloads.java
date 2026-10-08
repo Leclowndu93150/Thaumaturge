@@ -7,11 +7,11 @@ import com.leclowndu93150.thaumaturge.client.network.AspectGainClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.AspectIndexClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.AuraSnapshotClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.BoreDigClientHandler;
-import com.leclowndu93150.thaumaturge.client.network.FocusImpactClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.InfusionSourceClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.KnowledgeGainClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.OpenThaumonomiconHandler;
 import com.leclowndu93150.thaumaturge.client.network.SpawnParticleClientHandler;
+import com.leclowndu93150.thaumaturge.client.network.SpellFxClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.StreamEffectClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.TubeEventClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.WispZapClientHandler;
@@ -20,9 +20,9 @@ import com.leclowndu93150.thaumaturge.client.taint.TaintEnvironmentClientHandler
 import com.leclowndu93150.thaumaturge.client.warding.WardClientHandler;
 import com.leclowndu93150.thaumaturge.client.warp.WarpFXClientHandler;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundBoreDigPayload;
-import com.leclowndu93150.thaumaturge.network.effect.ClientboundFocusImpactPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundInfusionSourcePayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpawnParticlePayload;
+import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundStreamEffectPayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -175,13 +175,13 @@ public final class TTPayloads {
                 ClientboundWispZapPayload.STREAM_CODEC,
                 (payload, context) -> WispZapClientHandler.handle(payload, context));
         registrar.playToServer(
-                ServerboundFocusDataPayload.TYPE,
-                ServerboundFocusDataPayload.STREAM_CODEC,
-                ServerboundFocusDataPayload::handle);
+                ServerboundSpellDraftPayload.TYPE,
+                ServerboundSpellDraftPayload.STREAM_CODEC,
+                ServerboundSpellDraftPayload::handle);
         registrar.playToClient(
-                ClientboundFocusImpactPayload.TYPE,
-                ClientboundFocusImpactPayload.STREAM_CODEC,
-                (payload, context) -> FocusImpactClientHandler.handle(payload, context));
+                ClientboundSpellFxPayload.TYPE,
+                ClientboundSpellFxPayload.STREAM_CODEC,
+                (payload, context) -> SpellFxClientHandler.handle(payload, context));
         registrar.playToServer(
                 ServerboundFocusChangePayload.TYPE,
                 ServerboundFocusChangePayload.STREAM_CODEC,

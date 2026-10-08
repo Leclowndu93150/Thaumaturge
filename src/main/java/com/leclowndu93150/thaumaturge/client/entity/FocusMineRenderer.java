@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FocusMineModel;
-import com.leclowndu93150.thaumaturge.content.entity.EntityFocusMine;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellMine;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 
-public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
+public final class FocusMineRenderer extends EntityRenderer<SpellMine> {
     private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/focus_mine.png");
     private static final float PULSE_PERIOD = 5.0F;
     private static final float PULSE_AMPLITUDE = 0.25F;
@@ -34,7 +34,7 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
 
     @Override
     public void render(
-            EntityFocusMine entity,
+            SpellMine entity,
             float entityYaw,
             float partialTicks,
             PoseStack poseStack,
@@ -42,9 +42,9 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
             int packedLight) {
         super.render(entity, entityYaw, partialTicks, poseStack, buffers, packedLight);
         float ticks = entity.tickCount + partialTicks;
-        int color = entity.renderColor();
+        int color = entity.color();
         float pulse =
-                entity.isArmed() ? Mth.sin(ticks / PULSE_PERIOD) * PULSE_AMPLITUDE + PULSE_BASE : UNARMED_BRIGHTNESS;
+                entity.armed() ? Mth.sin(ticks / PULSE_PERIOD) * PULSE_AMPLITUDE + PULSE_BASE : UNARMED_BRIGHTNESS;
         float r = ((color >> 16) & 0xFF) / COLOR_DIVISOR * pulse;
         float g = ((color >> 8) & 0xFF) / COLOR_DIVISOR * pulse;
         float b = (color & 0xFF) / COLOR_DIVISOR * pulse;
@@ -62,7 +62,7 @@ public final class FocusMineRenderer extends EntityRenderer<EntityFocusMine> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityFocusMine entity) {
+    public ResourceLocation getTextureLocation(SpellMine entity) {
         return TEXTURE;
     }
 }

@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
@@ -17,6 +16,8 @@ import com.leclowndu93150.thaumaturge.api.recipe.RegisterWorkbenchVisSourcesEven
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.api.research.pool.AspectPoolAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
+import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -41,6 +42,7 @@ import com.leclowndu93150.thaumaturge.content.legacy.LegacyRegistryAliases;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolBindings;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanBindings;
+import com.leclowndu93150.thaumaturge.content.spell.engine.SpellBindings;
 import com.leclowndu93150.thaumaturge.content.taint.TaintApiBindings;
 import com.leclowndu93150.thaumaturge.content.wands.WandAccessBindings;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
@@ -49,6 +51,9 @@ import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
 import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
+import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
+import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -93,7 +98,9 @@ public final class Thaumaturge {
         TTPlacementModifiers.register(modBus);
         TTGolemTraits.register(modBus);
         TTMobTraits.register(modBus);
-        TTFocusElements.register(modBus);
+        TTSpellBehaviors.register(modBus);
+        TTSpellActions.register(modBus);
+        TTSpellFx.register(modBus);
         TTGolemParts.register(modBus);
         TTWandParts.register(modBus);
         TTSeals.register(modBus);
@@ -133,7 +140,8 @@ public final class Thaumaturge {
         ResearchGate.bind(ResearchManager::doesPassGate);
         RechargeAccess.bind(new RechargeBindings());
         GogglesAccess.bind(new GogglesBindings());
-        FocusEngine.bindRegistry(TTFocusElements.registry());
+        SpellRegistries.bind(TTSpellBehaviors.registry(), TTSpellActions.registry(), TTSpellFx.registry());
+        Spells.bind(new SpellBindings());
 
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
     }

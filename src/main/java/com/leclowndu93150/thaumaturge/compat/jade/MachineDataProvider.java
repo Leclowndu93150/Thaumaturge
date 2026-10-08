@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.compat.jade;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
-import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityEverfullUrn;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
@@ -11,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilde
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
 import com.leclowndu93150.thaumaturge.content.spa.BlockEntitySpa;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -120,9 +120,9 @@ public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
             tag.putInt("StoredItems", stored);
         } else if (machine instanceof BlockEntityFocalManipulator manipulator) {
             tag.putString(AREA, "focal_manipulator");
-            tag.putFloat("VisRemaining", manipulator.vis);
+            tag.putFloat("VisRemaining", manipulator.vis());
             tag.putBoolean("HasFocus", !manipulator.focusStack().isEmpty());
-            tag.putString("FocusName", manipulator.focusName);
+            tag.putString("FocusName", manipulator.name());
         }
     }
 

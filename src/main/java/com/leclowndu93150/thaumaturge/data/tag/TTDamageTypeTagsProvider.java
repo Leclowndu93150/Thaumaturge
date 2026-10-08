@@ -26,7 +26,7 @@ public final class TTDamageTypeTagsProvider extends DamageTypeTagsProvider {
         tag(DamageTypeTags.BYPASSES_SHIELD).add(TTDamageTypes.TAINT);
         tag(DamageTypeTags.WITCH_RESISTANT_TO).add(TTDamageTypes.TAINT);
         tag(DamageTypeTags.WITHER_IMMUNE_TO).add(TTDamageTypes.TAINT);
-        tag(IS_MAGIC).add(TTDamageTypes.TAINT);
+        tag(IS_MAGIC).add(TTDamageTypes.TAINT, TTDamageTypes.ELDRITCH_SPELL);
         tag(DamageTypeTags.IS_FIRE).add(TTDamageTypes.FOCUS_FIRE);
         tag(DamageTypeTags.IS_PROJECTILE).add(TTDamageTypes.FOCUS_FIRE);
     }

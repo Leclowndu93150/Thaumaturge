@@ -73,7 +73,12 @@ final class ConfigLangEn {
             Map.entry("infernal_furnace.lavaTurnIntoBlaze", "Lava Becomes a Blaze"),
             Map.entry("liquid_death", "Liquid Death"),
             Map.entry("liquid_death.dropRateBound1", "Minimum Aspect Drop Rate"),
-            Map.entry("liquid_death.dropRateBound2", "Maximum Aspect Drop Rate"));
+            Map.entry("liquid_death.dropRateBound2", "Maximum Aspect Drop Rate"),
+            Map.entry("spells", "Spells"),
+            Map.entry("spells.maxEntitiesPerTick", "Entities per Cast per Tick"),
+            Map.entry("spells.maxBlocksPerTick", "Blocks per Cast per Tick"),
+            Map.entry("spells.maxNodesPerRun", "Nodes per Cast Step"),
+            Map.entry("spells.maxDelayedPerLevel", "Delayed Spells per Level"));
 
     private ConfigLangEn() {}
 

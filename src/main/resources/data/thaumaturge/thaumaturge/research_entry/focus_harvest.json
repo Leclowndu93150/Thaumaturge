@@ -1,0 +1,47 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_harvest.title",
+  "parents": [
+    "thaumaturge:focus_break"
+  ],
+  "column": 2,
+  "row": 8,
+  "icons": [
+    "focus:thaumaturge:harvest"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_harvest.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_harvest.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:herba",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:instrumentum",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:victus",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

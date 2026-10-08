@@ -26,6 +26,7 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TTEntities.CULTIST_PORTAL_GREATER.get()))
                 .add(key(TTEntities.ELDRITCH_GOLEM.get()))
                 .add(key(TTEntities.ELDRITCH_WARDEN.get()))
+                .add(key(TTEntities.ELDRITCH_HIEROPHANT.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
         tag(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS).add(key(TTEntities.ELDRITCH_CRAB.get()));
         tag(EntityTypeTags.UNDEAD)
@@ -56,6 +57,7 @@ public final class TTEntityTypeTagsProvider extends TagsProvider<EntityType<?>> 
                 .add(key(TTEntities.ELDRITCH_GUARDIAN.get()))
                 .add(key(TTEntities.ELDRITCH_GOLEM.get()))
                 .add(key(TTEntities.ELDRITCH_WARDEN.get()))
+                .add(key(TTEntities.ELDRITCH_HIEROPHANT.get()))
                 .add(key(TTEntities.TAINTACLE_GIANT.get()));
         tag(ThaumaturgeEntityTypeTags.TAINTED)
                 .add(key(TTEntities.THAUMIC_SLIME.get()))

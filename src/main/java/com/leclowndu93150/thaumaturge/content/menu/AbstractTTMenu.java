@@ -48,4 +48,9 @@ public abstract class AbstractTTMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, column, x + column * 18, y));
         }
     }
+
+    protected final void addStandardInventorySlots(Inventory inventory, int x, int y) {
+        addInventoryExtendedSlots(inventory, x, y);
+        addInventoryHotbarSlots(inventory, x, y + 58);
+    }
 }

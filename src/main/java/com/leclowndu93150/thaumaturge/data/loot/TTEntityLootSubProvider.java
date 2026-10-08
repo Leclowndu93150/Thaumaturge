@@ -34,6 +34,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
 
     @Override
     public void generate() {
+        add(TTEntities.ELDRITCH_HIEROPHANT.get(), LootTable.lootTable());
         add(
                 TTEntities.BRAINY_ZOMBIE.get(),
                 LootTable.lootTable()

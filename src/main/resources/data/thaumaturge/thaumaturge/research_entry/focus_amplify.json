@@ -1,0 +1,51 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_amplify.title",
+  "parents": [
+    "thaumaturge:focus_advanced"
+  ],
+  "column": 2,
+  "row": -2,
+  "icons": [
+    "focus:thaumaturge:amplify",
+    "focus:thaumaturge:extend",
+    "focus:thaumaturge:widen",
+    "focus:thaumaturge:quicken",
+    "focus:thaumaturge:efficient"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_amplify.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_amplify.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:potentia",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:praecantatio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

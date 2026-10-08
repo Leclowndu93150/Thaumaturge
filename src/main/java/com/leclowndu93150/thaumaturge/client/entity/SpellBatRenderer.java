@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.FireBatModel;
 import com.leclowndu93150.thaumaturge.client.render.entity.TintBufferSource;
-import com.leclowndu93150.thaumaturge.content.entity.EntitySpellBat;
+import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 
-public final class SpellBatRenderer extends MobRenderer<EntitySpellBat, FireBatModel<EntitySpellBat>> {
+public final class SpellBatRenderer extends MobRenderer<SpellBat, FireBatModel<SpellBat>> {
     private static final ResourceLocation TEXTURE = TTIds.rl("textures/entity/spellbat.png");
     private static final float SHADOW = 0.25F;
     private static final float SCALE = 1.0F;
@@ -30,28 +30,28 @@ public final class SpellBatRenderer extends MobRenderer<EntitySpellBat, FireBatM
 
     @Override
     public void render(
-            EntitySpellBat entity,
+            SpellBat entity,
             float entityYaw,
             float partialTick,
             PoseStack poseStack,
             MultiBufferSource buffers,
             int light) {
-        MultiBufferSource tinted = new TintBufferSource(buffers, ARGB32.color(TINT_ALPHA, entity.getColor()));
+        MultiBufferSource tinted = new TintBufferSource(buffers, ARGB32.color(TINT_ALPHA, entity.color()));
         super.render(entity, entityYaw, partialTick, poseStack, tinted, light);
     }
 
     @Override
-    protected int getBlockLightLevel(EntitySpellBat entity, BlockPos pos) {
+    protected int getBlockLightLevel(SpellBat entity, BlockPos pos) {
         return FULLBRIGHT_BLOCK_LIGHT;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntitySpellBat entity) {
+    public ResourceLocation getTextureLocation(SpellBat entity) {
         return TEXTURE;
     }
 
     @Override
-    protected void scale(EntitySpellBat entity, PoseStack poseStack, float partialTick) {
+    protected void scale(SpellBat entity, PoseStack poseStack, float partialTick) {
         poseStack.translate(0.0F, Y_OFFSET, 0.0F);
         poseStack.scale(SCALE, SCALE, SCALE);
     }

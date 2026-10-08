@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public final class TTModelLayers {
+    public static final ModelLayerLocation ELDRITCH_HIEROPHANT =
+            new ModelLayerLocation(TTIds.rl("eldritch_hierophant"), "main");
     public static final ModelLayerLocation CULTIST = new ModelLayerLocation(TTIds.rl("cultist"), "main");
     public static final ModelLayerLocation TAINTACLE = new ModelLayerLocation(TTIds.rl("taintacle"), "main");
 

@@ -23,16 +23,18 @@ public record ServerboundFocusChangePayload(String focusKey) implements CustomPa
                     ServerboundFocusChangePayload::new);
 
     public static void handle(ServerboundFocusChangePayload payload, IPayloadContext ctx) {
-        Player player = ctx.player();
-        ItemStack main = player.getMainHandItem();
-        if (main.getItem() instanceof ICaster) {
-            CasterManager.changeFocus(main, player.level(), player, payload.focusKey());
-            return;
-        }
-        ItemStack off = player.getOffhandItem();
-        if (off.getItem() instanceof ICaster) {
-            CasterManager.changeFocus(off, player.level(), player, payload.focusKey());
-        }
+        ctx.enqueueWork(() -> {
+            Player player = ctx.player();
+            ItemStack main = player.getMainHandItem();
+            if (main.getItem() instanceof ICaster) {
+                CasterManager.changeFocus(main, player.level(), player, payload.focusKey());
+                return;
+            }
+            ItemStack off = player.getOffhandItem();
+            if (off.getItem() instanceof ICaster) {
+                CasterManager.changeFocus(off, player.level(), player, payload.focusKey());
+            }
+        });
     }
 
     @Override

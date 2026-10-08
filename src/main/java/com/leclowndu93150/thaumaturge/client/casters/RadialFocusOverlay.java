@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.network.ServerboundFocusChangePayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.math.Axis;
@@ -154,8 +154,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         if (!(stack.getItem() instanceof ICaster)) {
             stack = mc.player.getOffhandItem();
         }
-        return stack.getItem() instanceof ICaster caster
-                && caster.getFocusStack(stack).getItem() instanceof ItemFocus;
+        return stack.getItem() instanceof ICaster caster && FocusItems.isFocus(caster.getFocusStack(stack));
     }
 
     private static float radialChange(long time, long lastTime, long total) {
@@ -179,8 +178,8 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         NonNullList<ItemStack> main = mc.player.getInventory().items;
         for (int slot = 0; slot < Math.min(INVENTORY_SIZE, main.size()); slot++) {
             ItemStack item = main.get(slot);
-            if (item.getItem() instanceof ItemFocus focus) {
-                String sortKey = focus.getSortingHelper(item);
+            if (FocusItems.isFocus(item)) {
+                String sortKey = FocusItems.sortKey(item);
                 if (sortKey != null) {
                     addEntry(sortKey, slot, item);
                 }
@@ -196,8 +195,8 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         NonNullList<ItemStack> contents = FocusPouchItem.getInventory(pouch);
         for (int slot = 0; slot < contents.size(); slot++) {
             ItemStack stack = contents.get(slot);
-            if (stack.getItem() instanceof ItemFocus focus) {
-                String sortKey = focus.getSortingHelper(stack);
+            if (FocusItems.isFocus(stack)) {
+                String sortKey = FocusItems.sortKey(stack);
                 if (sortKey != null) {
                     addEntry(sortKey, slot + pouchId * POUCH_SLOT_OFFSET, stack);
                 }
@@ -220,7 +219,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         if (!(casterStack.getItem() instanceof ICaster wand)) {
             return;
         }
-        if (fociItem.isEmpty() && !(wand.getFocusStack(casterStack).getItem() instanceof ItemFocus)) {
+        if (fociItem.isEmpty() && !FocusItems.isFocus(wand.getFocusStack(casterStack))) {
             return;
         }
         int mouseX = (int) (mc.mouseHandler.xpos()
@@ -239,7 +238,7 @@ public final class RadialFocusOverlay implements LayeredDraw.Layer {
         drawRing(graphics, RADIAL_2, cx, cy, -ringAngle, width * RING_2_SIZE * radialHudScale);
 
         ItemStack socketed = wand.getFocusStack(casterStack);
-        if (socketed.getItem() instanceof ItemFocus) {
+        if (FocusItems.isFocus(socketed)) {
             graphics.renderItem(socketed.copy(), cx - ITEM_HALF, cy - ITEM_HALF);
             int mx = mouseX - cx;
             int my = mouseY - cy;

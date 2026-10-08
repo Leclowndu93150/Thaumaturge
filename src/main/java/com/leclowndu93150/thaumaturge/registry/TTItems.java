@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.node.CreativeNodePlacerItem;
 import com.leclowndu93150.thaumaturge.content.aura.node.JarNodeItem;
 import com.leclowndu93150.thaumaturge.content.casters.FocusPouchItem;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
@@ -67,6 +66,7 @@ import com.leclowndu93150.thaumaturge.content.research.book.LinkingThaumonomicon
 import com.leclowndu93150.thaumaturge.content.research.book.SharingThaumonomiconItem;
 import com.leclowndu93150.thaumaturge.content.research.book.ThaumonomiconItem;
 import com.leclowndu93150.thaumaturge.content.research.note.ItemResearchNote;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItem;
 import com.leclowndu93150.thaumaturge.content.taint.item.ItemEssentiaCrystal;
 import com.leclowndu93150.thaumaturge.content.wands.ItemPrimalCharm;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
@@ -882,10 +882,6 @@ public final class TTItems {
     public static final DeferredItem<BlockItem> PILLAR_ELDRITCH =
             ITEMS.registerSimpleBlockItem(TTBlocks.PILLAR_ELDRITCH);
 
-    public static final int FOCUS_LESSER_COMPLEXITY = 15;
-    public static final int FOCUS_ADVANCED_COMPLEXITY = 25;
-    public static final int FOCUS_GREATER_COMPLEXITY = 50;
-
     public static final DeferredItem<ItemWand> WAND = ITEMS.registerItem(
             "wand", ItemWand::new, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
 
@@ -959,20 +955,14 @@ public final class TTItems {
     public static final DeferredItem<JarNodeItem> JAR_NODE =
             ITEMS.registerItem("jar_node", props -> new JarNodeItem(TTBlocks.JAR_NODE.get(), props));
 
-    public static final DeferredItem<ItemFocus> FOCUS_1 = ITEMS.registerItem(
-            "focus_1",
-            props -> new ItemFocus(props, FOCUS_LESSER_COMPLEXITY),
-            new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final DeferredItem<FocusItem> FOCUS_1 = ITEMS.registerItem(
+            "focus_1", FocusItem::new, new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
 
-    public static final DeferredItem<ItemFocus> FOCUS_2 = ITEMS.registerItem(
-            "focus_2",
-            props -> new ItemFocus(props, FOCUS_ADVANCED_COMPLEXITY),
-            new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final DeferredItem<FocusItem> FOCUS_2 = ITEMS.registerItem(
+            "focus_2", FocusItem::new, new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
 
-    public static final DeferredItem<ItemFocus> FOCUS_3 = ITEMS.registerItem(
-            "focus_3",
-            props -> new ItemFocus(props, FOCUS_GREATER_COMPLEXITY),
-            new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
+    public static final DeferredItem<FocusItem> FOCUS_3 = ITEMS.registerItem(
+            "focus_3", FocusItem::new, new Item.Properties().stacksTo(1).rarity(Rarity.RARE));
 
     public static final DeferredItem<ThrowableItem> CAUSALITY_COLLAPSER = ITEMS.registerItem(
             "causality_collapser",

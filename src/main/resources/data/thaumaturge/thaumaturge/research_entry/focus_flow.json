@@ -1,0 +1,49 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_flow.title",
+  "parents": [
+    "thaumaturge:focus_split"
+  ],
+  "column": 3,
+  "row": -4,
+  "icons": [
+    "focus:thaumaturge:relay",
+    "focus:thaumaturge:delay",
+    "focus:thaumaturge:sieve"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_flow.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_flow.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:cognitio",
+      "amount": 4
+    }
+  ],
+  "complexity": 3
+}

@@ -60,6 +60,10 @@ public final class TTDamageSources {
         return new DamageSource(holder(level, TTDamageTypes.FOCUS_FIRE), direct, caster);
     }
 
+    public static DamageSource eldritchSpell(Level level, @Nullable Entity caster) {
+        return new DamageSource(holder(level, TTDamageTypes.ELDRITCH_SPELL), caster);
+    }
+
     private static DamageSource source(Level level, ResourceKey<DamageType> key) {
         return new DamageSource(holder(level, key));
     }

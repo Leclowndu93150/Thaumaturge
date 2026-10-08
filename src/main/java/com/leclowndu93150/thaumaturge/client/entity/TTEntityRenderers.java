@@ -1,6 +1,10 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.entity.hierophant.HierophantGeometry;
+import com.leclowndu93150.thaumaturge.client.entity.hierophant.HierophantHammerRenderer;
+import com.leclowndu93150.thaumaturge.client.entity.hierophant.HierophantRenderer;
+import com.leclowndu93150.thaumaturge.client.entity.hierophant.HierophantSpellRenderer;
 import com.leclowndu93150.thaumaturge.client.golem.GolemDartRenderer;
 import com.leclowndu93150.thaumaturge.client.golem.GolemRenderer;
 import com.leclowndu93150.thaumaturge.client.model.entity.ArcaneBoreModel;
@@ -87,6 +91,7 @@ public final class TTEntityRenderers {
         event.registerLayerDefinition(TTModelLayers.ARCANE_BORE, ArcaneBoreModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.GRAPPLER, GrapplerModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.FOCUS_MINE, FocusMineModel::createLayer);
+        event.registerLayerDefinition(TTModelLayers.ELDRITCH_HIEROPHANT, HierophantGeometry::createBodyLayer);
     }
 
     @SubscribeEvent
@@ -113,10 +118,12 @@ public final class TTEntityRenderers {
                 TTEntities.TAINTACLE.get(), context -> new TaintacleRenderer(context, TAINTACLE_SHADOW));
         event.registerEntityRenderer(
                 TTEntities.TAINTACLE_SMALL.get(), context -> new TaintacleRenderer(context, TAINTACLE_SMALL_SHADOW));
-        event.registerEntityRenderer(TTEntities.FOCUS_PROJECTILE.get(), FocusProjectileRenderer::new);
+        event.registerEntityRenderer(TTEntities.FOCUS_PROJECTILE.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FOCUS_CLOUD.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FOCUS_MINE.get(), FocusMineRenderer::new);
         event.registerEntityRenderer(TTEntities.SPELL_BAT.get(), SpellBatRenderer::new);
+        event.registerEntityRenderer(TTEntities.SPELL_WALL.get(), NoModelRenderer::new);
+        event.registerEntityRenderer(TTEntities.SPELL_SPRITE.get(), NoModelRenderer::new);
         event.registerEntityRenderer(TTEntities.FALLING_TAINT.get(), FallingTaintRenderer::new);
         event.registerEntityRenderer(TTEntities.BOTTLE_TAINT.get(), BottleTaintRenderer::new);
         event.registerEntityRenderer(TTEntities.SPECIAL_ITEM.get(), SpecialItemRenderer::new);
@@ -132,6 +139,17 @@ public final class TTEntityRenderers {
         event.registerEntityRenderer(TTEntities.CULTIST_PORTAL_GREATER.get(), CultistPortalGreaterRenderer::new);
         event.registerEntityRenderer(TTEntities.ELDRITCH_GOLEM.get(), EldritchGolemRenderer::new);
         event.registerEntityRenderer(TTEntities.ELDRITCH_WARDEN.get(), EldritchWardenRenderer::new);
+        event.registerEntityRenderer(TTEntities.ELDRITCH_HIEROPHANT.get(), HierophantRenderer::new);
+        event.registerEntityRenderer(
+                TTEntities.HIEROPHANT_CRESCENT.get(),
+                context -> new HierophantSpellRenderer<>(context, HierophantSpellRenderer.Shape.CRESCENT));
+        event.registerEntityRenderer(
+                TTEntities.HIEROPHANT_SIGIL.get(),
+                context -> new HierophantSpellRenderer<>(context, HierophantSpellRenderer.Shape.SIGIL));
+        event.registerEntityRenderer(
+                TTEntities.HIEROPHANT_NOVA.get(),
+                context -> new HierophantSpellRenderer<>(context, HierophantSpellRenderer.Shape.NOVA));
+        event.registerEntityRenderer(TTEntities.HIEROPHANT_HAMMER.get(), HierophantHammerRenderer::new);
         event.registerEntityRenderer(
                 TTEntities.TAINTACLE_GIANT.get(), context -> new TaintacleRenderer(context, TAINTACLE_GIANT_SHADOW));
         event.registerEntityRenderer(TTEntities.CULTIST_KNIGHT.get(), CultistRenderer::new);

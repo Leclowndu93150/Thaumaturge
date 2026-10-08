@@ -17,6 +17,19 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("entity.thaumaturge.hierophant_hammer", "Hierophant's Hammer");
+        add("entity.thaumaturge.eldritch_hierophant", "The Eldritch Hierophant");
+        add("entity.thaumaturge.hierophant_crescent", "Eldritch Crescent");
+        add("entity.thaumaturge.hierophant_sigil", "Seal of Unmaking");
+        add("entity.thaumaturge.hierophant_nova", "Hollow Nova");
+        add(
+                "entity.thaumaturge.eldritch_hierophant.summon",
+                "The stones begin to hum. Beyond the seal, something opens its eye.");
+        add("entity.thaumaturge.eldritch_hierophant.awaken", "The eye burns crimson. YOUR LIGHT ENDS HERE.");
+        add("entity.thaumaturge.eldritch_hierophant.defeat", "The voice breaks. At last, the halls fall silent.");
+        add("death.attack.thaumaturge.eldritch_spell", "%1$s was unmade by an eldritch spell");
+        add("death.attack.thaumaturge.eldritch_spell.player", "%1$s was unmade by %2$s");
+        add("death.attack.thaumaturge.eldritch_spell.item", "%1$s was unmade by %2$s using %3$s");
         add(
                 "message.thaumaturge.research_note.missing_tools",
                 "You need scribing tools and paper to get this research note!");
@@ -341,6 +354,8 @@ public final class TTEnglishProvider extends LanguageProvider {
 
         ResearchTextEn.addAll(this::add);
         CommandTextEn.addAll(this::add);
+        SpellTextEn.addAll(this::add);
+        SpellResearchTextEn.addAll(this::add);
         LoreBookTextEn.addAll(this::add);
 
         add("key.thaumaturge.thaumonomicon", "Open Thaumonomicon");
@@ -1083,8 +1098,6 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.focus_1", "Blank Lesser Focus");
         add("item.thaumaturge.focus_2", "Blank Advanced Focus");
         add("item.thaumaturge.focus_3", "Blank Greater Focus");
-        add("tooltip.thaumaturge.caster.vis_cost", "Vis cost: %s Vis per cast");
-        add("tooltip.thaumaturge.focus.vis_cost", "%s Vis per cast");
         add("entity.thaumaturge.aspect_orb", "Aspect Orb");
         add("entity.thaumaturge.focus_projectile", "Focus Projectile");
         add("entity.thaumaturge.focus_cloud", "Focus Cloud");
@@ -1098,129 +1111,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.hole", "Dimensional Tear");
         add("block.thaumaturge.effect_sap", "Sapping Field");
 
-        add("focus.thaumaturge.root.name", "Caster");
-        add("focus.thaumaturge.root.text", "The caster and point of origin of the spell.");
-        add("focus.thaumaturge.touch.name", "Touch");
-        add(
-                "focus.thaumaturge.touch.text",
-                "Allows you to affect things you can touch, within roughly 4 blocks of the point of origin.");
-        add("focus.thaumaturge.projectile.name", "Projectile");
-        add(
-                "focus.thaumaturge.projectile.text",
-                "Gathers the energy of the focus into a magical orb that you can throw like a projectile. This projectile travels slowly and is affected by gravity.");
-        add("focus.thaumaturge.bolt.name", "Bolt");
-        add(
-                "focus.thaumaturge.bolt.text",
-                "Hurl magic directly at your target as a concentrated bolt of energy. The effect is instantaneous, but the range is limited to 16 blocks.");
-        add("focus.thaumaturge.plan.name", "Plan");
-        add("focus.thaumaturge.plan.text", "Allows you to plan exactly which blocks will be affected.");
-        add("focus.thaumaturge.cloud.name", "Cloud");
-        add(
-                "focus.thaumaturge.cloud.text",
-                "Creates a lingering cloud of magical energy that effects anything inside.");
-        add("focus.thaumaturge.mine.name", "Arcane Mine");
-        add(
-                "focus.thaumaturge.mine.text",
-                "Creates a mystical construct that detonates when a hostile entity passes nearby, releasing the effects upon it.");
-        add("focus.thaumaturge.hellbat.name", "Nine Hells");
-        add("focus.thaumaturge.hellbat.text", "Summons vicious hellbats that harry the target with fire and fury.");
-        add("focus.hellbat.bats", "Bats");
-        add("focus.thaumaturge.primal.name", "Primal");
-        add(
-                "focus.thaumaturge.primal.text",
-                "Unleashes a burst of raw primal energy. Devastating, erratic and occasionally... generative.");
-        add("focus.thaumaturge.spellbat.name", "Summon Spellbat");
-        add(
-                "focus.thaumaturge.spellbat.text",
-                "Conjures a mystical bat that will hunt down enemies and inflict them with the focus's effects.");
-
-        add("focus.thaumaturge.air.name", "Air");
-        add(
-                "focus.thaumaturge.air.text",
-                "Creates a blast of air that knocks things back, but causes only minor damage.");
-        add("focus.thaumaturge.earth.name", "Earth");
-        add(
-                "focus.thaumaturge.earth.text",
-                "Hurls a blast of earthen shrapnel that causes significant damage and may break weaker blocks.");
-        add("focus.thaumaturge.fire.name", "Fire");
-        add("focus.thaumaturge.fire.text", "Hurls flame at your target and sets it alight.");
-        add("focus.thaumaturge.frost.name", "Frost");
-        add(
-                "focus.thaumaturge.frost.text",
-                "Throws chilling cold at your target, causing damage and freezing it. Freezes water and will slow down creatures.");
-        add("focus.thaumaturge.break.name", "Break");
-        add("focus.thaumaturge.break.text", "Summons disruptive energy that breaks down most materials.");
-        add("focus.thaumaturge.curse.name", "Curse");
-        add("focus.thaumaturge.curse.text", "Summons the powers of entropy to harm and disrupt the targeted creature.");
-        add("focus.thaumaturge.flux.name", "Flux");
-        add(
-                "focus.thaumaturge.flux.text",
-                "This effect conjures raw, unfocused vis that disrupts living (and dead) creatures. This energy cannot interact with inanimate objects, but it does bypass mundane armor.");
-        add("focus.thaumaturge.rift.name", "Rift");
-        add(
-                "focus.thaumaturge.rift.text",
-                "Shifts matter into an alternate reality, creating temporary 'holes' through which you can travel.");
-        add("focus.thaumaturge.exchange.name", "Exchange");
-        add("focus.thaumaturge.exchange.text", "Swap one type of block in the world for another.");
-        add("focus.thaumaturge.heal.name", "Heal");
-        add("focus.thaumaturge.heal.text", "This effect heals living creatures and harms undead.");
-        add("focus.thaumaturge.ward.name", "Ward");
-        add(
-                "focus.thaumaturge.ward.text",
-                "Binds a solid block in place without altering it. Warded blocks cannot be mined, burned, exploded, pushed by pistons or destroyed by creatures. Cast again on your own ward to lift it.");
-
-        add("focus.thaumaturge.scatter.name", "Scatter");
-        add("focus.thaumaturge.scatter.text", "Split a single trajectory into multiple random trajectories.");
-        add("focus.thaumaturge.split_target.name", "Split Target");
-        add("focus.thaumaturge.split_target.text", "Split a single target into two weaker ones.");
-        add("focus.thaumaturge.split_trajectory.name", "Split Trajectory");
-        add("focus.thaumaturge.split_trajectory.text", "Split a single trajectory into two weaker ones.");
-
-        add("focus.common.power", "Power");
-        add("focus.common.duration", "Duration (seconds)");
-        add("focus.common.radius", "Radius (blocks)");
-        add("focus.common.silk", "Silk Touch");
-        add("focus.common.no", "No");
-        add("focus.common.yes", "Yes");
-        add("focus.common.fortune", "Fortune");
-        add("focus.common.target", "Target Type");
-        add("focus.common.friend", "Friendly");
-        add("focus.common.enemy", "Non-friendly");
-        add("focus.common.none", "None");
-        add("focus.common.options", "Options");
-        add("focus.fire.burn", "Burn duration (seconds)");
-        add("focus.scatter.cone", "Spread angle (degrees)");
-        add("focus.scatter.forks", "Trajectory forks");
-        add("focus.projectile.speed", "Projectile speed");
-        add("focus.projectile.bouncy", "Bouncy");
-        add("focus.projectile.seeking.friendly", "Seek friendly");
-        add("focus.projectile.seeking.hostile", "Seek hostile");
-        add("focus.break.power", "Breaking strength");
-        add("focus.plan.method", "Planning method");
-        add("focus.plan.full", "Full");
-        add("focus.plan.surface", "Surface");
-        add("focus.rift.depth", "Depth");
-        add("focus.heal.power", "Healing");
-
         add("death.attack.thaumaturge.focus_fire", "%1$s was burned to a crisp by magic");
         add("death.attack.thaumaturge.focus_fire.player", "%1$s was burned to a crisp by %2$s's magic");
         add("block.thaumaturge.focal_manipulator", "Focal Manipulator");
-        add("gui.thaumaturge.wandtable.craft", "Start Crafting");
-        add("gui.thaumaturge.wandtable.complexity", "Total Complexity");
-        add("gui.thaumaturge.wandtable.xp_cost", "Experience Cost");
-        add("gui.thaumaturge.wandtable.vis_cost", "Vis Cost");
-        add("gui.thaumaturge.wandtable.cast_cost", "Vis per cast: %s");
-        add("gui.thaumaturge.wandtable.components", "Crystals Required");
-        add("gui.thaumaturge.wandtable.part_complexity", "Complexity:");
-        add("gui.thaumaturge.wandtable.part_efficiency", "Effect Multiplier:");
-        add("gui.thaumaturge.wandtable.heal_power", "Healing");
-        add("gui.thaumaturge.wandtable.problem.in_progress", "Crafting in progress...");
-        add("gui.thaumaturge.wandtable.problem.complexity", "Too complex: %s/%s");
-        add("gui.thaumaturge.wandtable.problem.empty_nodes", "The spell has unfilled nodes");
-        add("gui.thaumaturge.wandtable.problem.crystal", "Missing %sx %s");
-        add("gui.thaumaturge.wandtable.problem.no_effects", "The spell needs at least one effect");
-        add("gui.thaumaturge.wandtable.problem.xp", "Requires %s experience levels");
-        add("gui.thaumaturge.wandtable.problem.ready", "Ready to craft!");
         add("gui.thaumaturge.golembuilder.stat.health", "Health");
         add("gui.thaumaturge.golembuilder.stat.armor", "Armour");
         add("gui.thaumaturge.golembuilder.stat.damage", "Damage");

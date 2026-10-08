@@ -3,11 +3,12 @@ package com.leclowndu93150.thaumaturge.client.model;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.client.casters.FocusColors;
 import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
-import com.leclowndu93150.thaumaturge.content.casters.ItemFocus;
 import com.leclowndu93150.thaumaturge.content.casters.SocketedFocus;
+import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -327,8 +328,8 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         if (template != null) {
             focusStack = template.focus();
         }
-        boolean hasFocus = focusStack.getItem() instanceof ItemFocus;
-        int color = hasFocus ? ItemFocus.getFocusColor(focusStack) : 0xFFFFFF;
+        boolean hasFocus = FocusItems.isFocus(focusStack);
+        int color = hasFocus ? FocusColors.of(focusStack) : 0xFFFFFF;
         return new WandArg(parts.cap(), parts.rod(), parts.sceptre(), hasFocus, color);
     }
 }

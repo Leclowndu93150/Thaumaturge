@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
-import com.leclowndu93150.thaumaturge.content.casters.BlockEntityFocalManipulator;
+import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocalManipulator;
 import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -72,7 +72,7 @@ public final class FocalManipulatorRenderer implements BlockEntityRenderer<Block
             poseStack.popPose();
         }
 
-        List<AspectInstance> entries = table.crystalsSync.entries();
+        List<AspectInstance> entries = table.crystals().entries();
         int q = entries.size();
         if (q == 0) {
             return;

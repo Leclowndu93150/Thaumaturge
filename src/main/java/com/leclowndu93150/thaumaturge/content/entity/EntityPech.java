@@ -4,9 +4,12 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
-import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
-import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
-import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
+import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.content.entity.ai.FetchItemGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.HoldStillGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
@@ -16,7 +19,6 @@ import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -30,6 +32,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,6 +77,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, ItemCollector {
@@ -253,12 +257,14 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             this.level().addFreshEntity(arrow);
         } else if (this.getPechType() == TYPE_MAGE) {
             double offset = this.distanceTo(target) / MAGE_BLAST_OFFSET_DIVISOR;
-            FocusPackage pack = FocusPackage.builder()
-                    .caster(this)
-                    .add(TTIds.rl("projectile"), Map.of("speed", 2))
-                    .add(randomMageEffect())
-                    .build();
-            FocusEngine.cast(this, pack, CastStreams.fromCasterToTarget(this, target, offset));
+            SpellNode effect = SpellNode.of(ResourceKey.create(SpellPart.REGISTRY_KEY, randomMageEffect()));
+            SpellNode bolt = SpellNode.of(ResourceKey.create(SpellPart.REGISTRY_KEY, TTIds.rl("projectile")))
+                    .withSetting("speed", 2)
+                    .then(effect);
+            Spell spell =
+                    new Spell(CastStyle.INSTANT, SpellNode.of(Spell.ORIGIN).then(bolt));
+            Vec3 aim = target.getBoundingBox().getCenter().add(0.0, offset, 0.0);
+            Spells.cast(this, ItemStack.EMPTY, spell, List.of(SpellTarget.originTowards(this, aim)), 1.0F);
             this.swing(this.getUsedItemHand());
         }
     }

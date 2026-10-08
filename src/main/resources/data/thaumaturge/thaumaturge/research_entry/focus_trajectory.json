@@ -1,0 +1,48 @@
+{
+  "category": "thaumaturge:auromancy",
+  "name": "research.thaumaturge.focus_trajectory.title",
+  "parents": [
+    "thaumaturge:focus_scatter"
+  ],
+  "column": 7,
+  "row": -3,
+  "icons": [
+    "focus:thaumaturge:pierce",
+    "focus:thaumaturge:fan"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.focus_trajectory.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:auromancy",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.focus_trajectory.stage_1"
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:sensus",
+      "amount": 5
+    },
+    {
+      "aspect": "thaumaturge:motus",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:aversio",
+      "amount": 3
+    }
+  ],
+  "complexity": 3
+}

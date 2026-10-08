@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
@@ -118,5 +120,14 @@ public final class WardHandler {
         }
         LevelChunk chunk = level.getChunkAt(pos);
         return chunk.hasData(TTAttachments.WARDS.get()) ? chunk.getData(TTAttachments.WARDS.get()) : null;
+    }
+
+    public static @Nullable BlockPos partner(BlockState state, BlockPos pos) {
+        if (!state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            return null;
+        }
+        return state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER
+                ? pos.above()
+                : pos.below();
     }
 }
