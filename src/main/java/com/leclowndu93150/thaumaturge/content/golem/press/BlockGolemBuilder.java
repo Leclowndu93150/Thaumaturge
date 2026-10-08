@@ -50,13 +50,13 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return GolemPressShapes.at(state.getValue(FACING), BlockPos.ZERO);
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return GolemPressShapes.at(state.getValue(FACING), BlockPos.ZERO);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
@@ -84,8 +84,8 @@ public final class BlockGolemBuilder extends BaseEntityBlock {
         }
         if (player instanceof ServerPlayer serverPlayer
                 && !KnowledgeAccess.of(serverPlayer).isResearchComplete(MIND_CLOCKWORK_RESEARCH)) {
-            serverPlayer.connection.send(
-                    new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown")
+            serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(
+                    Component.translatable("message.thaumaturge.device.not_understood")
                             .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
             return InteractionResult.CONSUME;
         }

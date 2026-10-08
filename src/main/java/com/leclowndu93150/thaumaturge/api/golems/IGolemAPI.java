@@ -1,16 +1,16 @@
 package com.leclowndu93150.thaumaturge.api.golems;
 
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * The surface a golem entity exposes to seals, tasks and part functions.
+ * The surface a golem exposes to seal behaviours, tasks, part abilities and accessories.
+ *
+ * <p>Unless stated otherwise, mutating methods are server-side only and must be called on the server thread.
  *
  * @since 1.0.0
  */
@@ -18,79 +18,44 @@ public interface IGolemAPI {
     /**
      * @return the golem as a living entity
      */
-    LivingEntity getGolemEntity();
-
-    /**
-     * @return the golem's current composition
-     */
-    IGolemProperties getProperties();
-
-    /**
-     * Replaces the golem's composition and refreshes derived attributes.
-     *
-     * @param properties the new composition
-     */
-    void setProperties(IGolemProperties properties);
+    LivingEntity asEntity();
 
     /**
      * @return the level the golem lives in
      */
-    Level getGolemWorld();
+    Level level();
 
     /**
-     * Attempts to store a stack in the golem's carry slots.
+     * @return the golem's current build; an immutable value
+     */
+    IGolemProperties properties();
+
+    /**
+     * Replaces the golem's build, syncs it to clients and refreshes attributes and goals derived from it.
      *
-     * @param stack the stack to store; may be partially consumed
-     * @return the remainder that did not fit
+     * @param properties the new build
      */
-    ItemStack holdItem(ItemStack stack);
-
-    /**
-     * Removes carried items.
-     *
-     * @param stack the stack to match and count against, or an empty stack to remove any
-     * @return the removed items
-     */
-    ItemStack dropItem(ItemStack stack);
-
-    /**
-     * @param stack   the stack to test
-     * @param partial whether carrying only part of the stack counts
-     * @return whether the golem has room for the stack
-     */
-    boolean canCarry(ItemStack stack, boolean partial);
-
-    /**
-     * @param stack the stack to test
-     * @return how many items of the stack the golem could still carry
-     */
-    int canCarryAmount(ItemStack stack);
-
-    /**
-     * @param stack the stack to match
-     * @return whether the golem currently carries a matching stack
-     */
-    boolean isCarrying(ItemStack stack);
+    void setProperties(IGolemProperties properties);
 
     /**
      * @return the golem's carry slots
      */
-    List<ItemStack> getCarrying();
+    IGolemHands hands();
 
     /**
-     * Awards rank experience. Only golems with the {@link com.leclowndu93150.thaumaturge.registry.TTGolemTraits#SMART} trait accumulate it.
+     * Awards rank experience. Only golems with the smart trait accumulate it; ranking up plays a sound and an emote.
      *
      * @param xp the experience amount
      */
     void addRankXp(int xp);
 
     /**
-     * @return the golem's assigned dye color index, or 0 when uncolored
+     * @return the golem's dye colour index, from 1 to 16, or 0 when it has none
      */
-    byte getGolemColor();
+    byte color();
 
     /**
-     * Plays the golem's arm swing animation and syncs it to watchers.
+     * Plays the main-hand swing animation for every watcher.
      */
     void swingArm();
 

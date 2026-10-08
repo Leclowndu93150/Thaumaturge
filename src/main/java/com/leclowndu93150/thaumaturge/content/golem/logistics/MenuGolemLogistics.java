@@ -4,14 +4,13 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
-import com.leclowndu93150.thaumaturge.content.golem.seals.SealProvide;
+import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
@@ -39,15 +38,14 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
 
     private static final int SIZE = COLUMNS * ROWS;
     private static final int RANGE = 32;
-    private static final Comparator<ItemStack> ITEM_ORDER = Comparator.comparing(
-                    (ItemStack stack) -> stack.getHoverName().getString(), String.CASE_INSENSITIVE_ORDER)
-            .thenComparing(stack -> stack.getHoverName().getString())
-            .thenComparing(
-                    stack -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
-            .thenComparing(stack -> stack.getComponents().toString());
+    private static final int COLLECT_INTERVAL_TICKS = 20;
+    private static final char KEY_SEPARATOR = '|';
+    private static final int MAX_REQUEST_STACKS = 16;
 
     private final SimpleContainer display = new SimpleContainer(SIZE);
     private final List<ItemStack> items = new ArrayList<>();
+    private final List<ItemStack> stock = new ArrayList<>();
+    private long collectedAt = Long.MIN_VALUE;
     private final Player player;
     private final @Nullable LogisticsTarget target;
     private final DataSlot start = DataSlot.standalone();
@@ -92,15 +90,15 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
         if (requested.isEmpty() || amount <= 0 || !(player.level() instanceof ServerLevel level)) {
             return;
         }
-        int remaining = Math.min(amount, availableCount(requested));
-        for (int batchIndex = 0; remaining > 0; batchIndex++) {
+        int available = availableCount(requested);
+        int remaining = Math.min(Math.min(amount, available), requested.getMaxStackSize() * MAX_REQUEST_STACKS);
+        for (int ui = 0; remaining > 0; ui++) {
             ItemStack batch = requested.copyWithCount(Math.min(remaining, requested.getMaxStackSize()));
             remaining -= batch.getCount();
-            int requestId = 31 * player.getId() + batchIndex;
             if (target == null) {
-                GolemHelper.requestProvisioning(level, player, batch, requestId);
+                GolemHelper.requestProvisioning(level, player, batch, ui);
             } else {
-                GolemHelper.requestProvisioning(level, target.pos(), target.face(), batch, requestId);
+                GolemHelper.requestProvisioning(level, target.pos(), target.face(), batch, ui);
             }
         }
     }
@@ -146,46 +144,69 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
     }
 
     private int lastPage() {
-        int itemRows = (items.size() + COLUMNS - 1) / COLUMNS;
-        return Math.max(0, itemRows - ROWS);
+        return Math.max(0, items.size() / COLUMNS - (ROWS - 1));
     }
 
     private void refresh(boolean full) {
-        if (full && player.level() instanceof ServerLevel level) {
+        if (full
+                && player.level() instanceof ServerLevel level
+                && level.getGameTime() - collectedAt >= COLLECT_INTERVAL_TICKS) {
             collect(level);
+            collectedAt = level.getGameTime();
+        }
+        if (full) {
+            String filter = searchText.toLowerCase(Locale.ROOT);
+            items.clear();
+            for (ItemStack stack : stock) {
+                if (matchesSearch(stack, filter)) {
+                    items.add(stack);
+                }
+            }
         }
         display.clearContent();
-        int first = start.get() * COLUMNS;
-        for (int slot = 0; slot < SIZE && first + slot < items.size(); slot++) {
-            display.setItem(slot, items.get(first + slot).copy());
+        int skipped = 0;
+        int slot = 0;
+        for (ItemStack stack : items) {
+            if (++skipped > start.get() * COLUMNS) {
+                display.setItem(slot, stack.copy());
+                if (++slot >= SIZE) {
+                    break;
+                }
+            }
         }
         end.set(lastPage());
     }
 
     private void collect(ServerLevel level) {
-        Map<StackKey, ItemStack> found = new HashMap<>();
-        String filter = searchText.toLowerCase(Locale.ROOT);
+        Map<String, ItemStack> found = new TreeMap<>();
         for (SealEntity seal : SealHandler.getSealsInRange(level, player.blockPosition(), RANGE)) {
-            if (!(seal.getSeal() instanceof SealProvide provide)
-                    || !player.getUUID().equals(seal.getOwner())) {
+            if (!(seal.behavior() instanceof ProvideBehavior)
+                    || !player.getUUID().equals(seal.owner())) {
                 continue;
             }
             IItemHandler handler = InvHelper.getItemHandlerAt(
-                    level, seal.getSealPos().pos(), seal.getSealPos().face());
+                    level, seal.pos().pos(), seal.pos().face());
             if (handler == null) {
                 continue;
             }
             for (int index = 0; index < handler.getSlots(); index++) {
-                ItemStack stack = handler.getStackInSlot(index);
-                if (stack.isEmpty() || !provide.matchesFilters(stack) || !matchesSearch(stack, filter)) {
+                ItemStack resource = handler.getStackInSlot(index);
+                if (resource.isEmpty()) {
                     continue;
                 }
-                found.merge(new StackKey(stack), stack.copy(), MenuGolemLogistics::sum);
+                int amount = resource.getCount();
+                if (amount <= 0) {
+                    continue;
+                }
+                ItemStack stack = resource.copy();
+                if (!ProvideBehavior.supplies(seal, stack)) {
+                    continue;
+                }
+                found.merge(keyOf(stack), stack, MenuGolemLogistics::sum);
             }
         }
-        items.clear();
-        items.addAll(found.values());
-        items.sort(ITEM_ORDER);
+        stock.clear();
+        stock.addAll(found.values());
     }
 
     private static boolean matchesSearch(ItemStack stack, String filter) {
@@ -197,21 +218,13 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
         return existing.copyWithCount(existing.getCount() + addition.getCount());
     }
 
-    private record StackKey(ItemStack stack) {
-        private StackKey(ItemStack stack) {
-            this.stack = stack.copyWithCount(1);
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            return this == other
-                    || other instanceof StackKey key && ItemStack.isSameItemSameComponents(stack, key.stack);
-        }
-
-        @Override
-        public int hashCode() {
-            return ItemStack.hashItemAndComponents(stack);
-        }
+    private static String keyOf(ItemStack stack) {
+        String name = stack.getHoverName().getString();
+        return name
+                + KEY_SEPARATOR
+                + BuiltInRegistries.ITEM.getKey(stack.getItem())
+                + KEY_SEPARATOR
+                + stack.getComponentsPatch();
     }
 
     @Override

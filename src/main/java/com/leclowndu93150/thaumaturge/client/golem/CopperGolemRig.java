@@ -58,7 +58,7 @@ public final class CopperGolemRig extends HierarchicalModel<EntityThaumaturgeGol
             float headYaw,
             float headPitch) {
         GolemRenderState state = new GolemRenderState();
-        state.props = (GolemProperties) entity.getProperties();
+        state.props = (GolemProperties) entity.properties();
         state.walkPos = limbSwing;
         state.walkSpeed = limbSwingAmount;
         state.ageInTicks = ageInTicks;
@@ -92,10 +92,10 @@ public final class CopperGolemRig extends HierarchicalModel<EntityThaumaturgeGol
             leftArm.zRot = Math.max(leftArm.zRot, 0.064577185F);
         }
         animate(idle, CopperGolemAnimations.COPPER_GOLEM_IDLE, state.ageInTicks);
-        boolean walking = state.props.getLegs() != TTGolemParts.LEGS_ROLLER.get()
-                && state.props.getLegs() != TTGolemParts.LEGS_FLYER.get();
+        boolean walking = state.props.legs() != TTGolemParts.LEGS_ROLLER.get()
+                && state.props.legs() != TTGolemParts.LEGS_FLYER.get();
         rightLeg.visible = leftLeg.visible = walking;
-        antenna.visible = state.props.getMaterial().antenna()
+        antenna.visible = state.props.material().antenna()
                 && state.accessories.stream().noneMatch(accessory -> accessory.group() == GolemAccessory.Group.HAT);
         if (!walking) {
             body.xRot *= 0.2F;
@@ -104,7 +104,7 @@ public final class CopperGolemRig extends HierarchicalModel<EntityThaumaturgeGol
         if (state.attackTime > 0.0F) {
             rightArm.xRot -= Mth.sin(state.attackTime * Mth.PI) * 1.8F;
         }
-        if (state.combat && state.props.getArms() == TTGolemParts.ARMS_DARTS.get()) {
+        if (state.combat && state.props.arms() == TTGolemParts.ARMS_DARTS.get()) {
             rightArm.xRot = leftArm.xRot = -Mth.HALF_PI + state.pitch * Mth.DEG_TO_RAD;
             rightArm.yRot = leftArm.yRot = rightArm.zRot = leftArm.zRot = 0;
         }

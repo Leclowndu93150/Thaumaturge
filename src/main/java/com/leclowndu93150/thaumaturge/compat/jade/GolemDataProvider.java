@@ -22,15 +22,15 @@ public enum GolemDataProvider implements IServerDataProvider<EntityAccessor> {
     public boolean shouldRequestData(EntityAccessor accessor) {
         return accessor.showDetails()
                 && accessor.getEntity() instanceof EntityThaumaturgeGolem golem
-                && golem.getProperties().hasTrait(TTGolemTraits.SMART.get())
-                && golem.getProperties().getRank() < EntityThaumaturgeGolem.MAX_RANK;
+                && golem.properties().hasTrait(TTGolemTraits.SMART.get())
+                && golem.properties().rank() < EntityThaumaturgeGolem.MAX_RANK;
     }
 
     @Override
     public void appendServerData(CompoundTag tag, EntityAccessor accessor) {
         if (accessor.getEntity() instanceof EntityThaumaturgeGolem golem) {
             tag.putInt("RankXp", golem.getRankXp());
-            int rank = golem.getProperties().getRank();
+            int rank = golem.properties().rank();
             tag.putInt("RankXpRequired", (rank + 1) * (rank + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT);
         }
     }

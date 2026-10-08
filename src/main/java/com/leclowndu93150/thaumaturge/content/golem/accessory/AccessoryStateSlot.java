@@ -1,15 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.golem.accessory;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryContext;
-import com.mojang.serialization.DynamicOps;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -27,17 +26,15 @@ public record AccessoryStateSlot<S>(GolemAccessory accessory, GolemAccessoryBeha
     }
 
     public static <S> AccessoryStateSlot<S> load(
-            GolemAccessory accessory, GolemAccessoryBehavior<S> behavior, CompoundTag input, DynamicOps<Tag> ops) {
-        Tag saved = input.get(accessory.id().toString());
-        if (saved == null) {
-            return new AccessoryStateSlot<>(accessory, behavior, behavior.initialState());
-        }
-        S state = behavior.stateCodec()
-                .parse(ops, saved)
-                .resultOrPartial(error -> Thaumaturge.LOGGER.error(
-                        "Could not load state of golem accessory {}: {}", accessory.id(), error))
-                .orElseGet(behavior::initialState);
-        return new AccessoryStateSlot<>(accessory, behavior, state);
+            GolemAccessory accessory,
+            GolemAccessoryBehavior<S> behavior,
+            CompoundTag input,
+            HolderLookup.Provider registries) {
+        return new AccessoryStateSlot<>(
+                accessory,
+                behavior,
+                TTNbt.read(input, accessory.id().toString(), behavior.stateCodec(), registries)
+                        .orElseGet(behavior::initialState));
     }
 
     public static <S> AccessoryStateSlot<S> decode(
@@ -53,12 +50,8 @@ public record AccessoryStateSlot<S>(GolemAccessory accessory, GolemAccessoryBeha
         behavior.onRemove(context, state, returnedStack);
     }
 
-    public void save(CompoundTag output, DynamicOps<Tag> ops) {
-        behavior.stateCodec()
-                .encodeStart(ops, state)
-                .resultOrPartial(error -> Thaumaturge.LOGGER.error(
-                        "Could not save state of golem accessory {}: {}", accessory.id(), error))
-                .ifPresent(tag -> output.put(accessory.id().toString(), tag));
+    public void save(CompoundTag output, HolderLookup.Provider registries) {
+        TTNbt.store(output, accessory.id().toString(), behavior.stateCodec(), registries, state);
     }
 
     public boolean synced() {

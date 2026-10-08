@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsGuiOpener;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.LogisticsTarget;
+import com.leclowndu93150.thaumaturge.content.golem.seals.SealAccess;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -39,21 +40,16 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
                     SoundEvents.NOTE_BLOCK_BELL.value(),
                     0.6F,
                     1.0F + level.getRandom().nextFloat() * 0.1F);
-            return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
+            return InteractionResultHolder.success(player.getItemInHand(hand));
         }
         ISealEntity seal = getAimedSeal(player);
         if (seal != null) {
-            if (player.isShiftKeyDown()) {
-                SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-                level.playSound(null, seal.getSealPos().pos(), TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-            } else {
-                SealGuiOpener.open(player, seal);
-            }
+            useOnSeal((ServerLevel) level, player, seal);
             return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
         if (LogisticsGuiOpener.canOpen(player)) {
             LogisticsGuiOpener.open(player, null);
-            return InteractionResultHolder.consume(player.getItemInHand(hand));
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
         }
         return super.use(level, player, hand);
     }
@@ -82,13 +78,17 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (player.isShiftKeyDown()) {
-            SealHandler.removeSealEntity((ServerLevel) level, seal.getSealPos(), false);
-            level.playSound(null, context.getClickedPos(), TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-        } else {
-            SealGuiOpener.open(player, seal);
-        }
+        useOnSeal((ServerLevel) level, player, seal);
         return InteractionResult.CONSUME;
+    }
+
+    private static void useOnSeal(ServerLevel level, Player player, ISealEntity seal) {
+        if (!player.isShiftKeyDown()) {
+            SealGuiOpener.open(player, seal);
+        } else if (SealAccess.mayEdit(player, seal)) {
+            SealHandler.removeSealEntity(level, seal.pos(), false);
+            level.playSound(null, seal.pos().pos(), TTSounds.ZAP.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        }
     }
 
     public static @Nullable ISealEntity getAimedSeal(Player player) {
@@ -104,6 +104,12 @@ public final class ItemGolemBell extends Item implements ISealDisplayer {
                 ISealEntity seal = sealOnEntryFace(player, cell, delta);
                 if (seal != null) {
                     return seal;
+                }
+                if (!player.level()
+                        .getBlockState(cell)
+                        .getCollisionShape(player.level(), cell)
+                        .isEmpty()) {
+                    return null;
                 }
                 previous = cell;
             }

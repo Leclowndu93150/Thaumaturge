@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.golem;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigArea;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealArea;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.leclowndu93150.thaumaturge.content.golem.seals.ClientSealHolder;
@@ -31,6 +31,8 @@ import org.joml.Quaternionf;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class SealWorldRenderer {
+    private static final String SEAL_ICON_PREFIX = "textures/item/seal_";
+    private static final String SEAL_ICON_SUFFIX = ".png";
     private static final ResourceLocation AREA_RING = TTIds.rl("textures/misc/seal_area.png");
     private static final ResourceLocation CORNER_FRAME = TTIds.rl("textures/misc/frame_corner.png");
     private static final double MAX_DIST_SQR = 256.0;
@@ -85,7 +87,7 @@ public final class SealWorldRenderer {
         float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(false);
         float time = player.tickCount % 360 + partialTicks;
         for (SealEntity seal : ClientSealHolder.all().values()) {
-            BlockPos pos = seal.getSealPos().pos();
+            BlockPos pos = seal.pos().pos();
             double distSqr = player.distanceToSqr(Vec3.atCenterOf(pos));
             if (distSqr > MAX_DIST_SQR) {
                 continue;
@@ -94,7 +96,7 @@ public final class SealWorldRenderer {
             boolean inactive = seal.isStoppedByRedstone(mc.level);
             drawSealIcon(poseStack, effectBuffers, seal, cam, alpha, inactive);
             drawSealRing(poseStack, effectBuffers, seal, cam, alpha, time);
-            if (seal.getSeal() instanceof ISealConfigArea) {
+            if (seal.type().hasArea()) {
                 drawAreaCorners(poseStack, effectBuffers, seal, cam, alpha, time);
             }
         }
@@ -103,8 +105,8 @@ public final class SealWorldRenderer {
 
     private static void drawSealIcon(
             PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, boolean inactive) {
-        BlockPos pos = seal.getSealPos().pos();
-        Direction face = seal.getSealPos().face();
+        BlockPos pos = seal.pos().pos();
+        Direction face = seal.pos().face();
         poseStack.pushPose();
         poseStack.translate(pos.getX() + 0.5 - cam.x, pos.getY() + 0.5 - cam.y, pos.getZ() + 0.5 - cam.z);
         poseStack.mulPose(new Quaternionf()
@@ -112,7 +114,7 @@ public final class SealWorldRenderer {
         poseStack.translate(0.0, 0.0, face.getStepZ() < 0 ? -0.55 : 0.55);
         float shade = inactive ? 0.5F : 1.0F;
         int color = ARGB32.colorFromFloat(alpha, shade, shade, shade);
-        TextureAtlasSprite sprite = iconSprite(seal.getSeal().getSealIcon());
+        TextureAtlasSprite sprite = iconSprite(seal.type().icon().orElseGet(() -> defaultIcon(seal.typeId())));
         drawQuad(
                 poseStack,
                 buffers.getBuffer(ICON_TYPE),
@@ -123,6 +125,10 @@ public final class SealWorldRenderer {
                 sprite.getU1(),
                 sprite.getV1());
         poseStack.popPose();
+    }
+
+    private static ResourceLocation defaultIcon(ResourceLocation typeId) {
+        return typeId.withPath(path -> SEAL_ICON_PREFIX + path + SEAL_ICON_SUFFIX);
     }
 
     private static TextureAtlasSprite iconSprite(ResourceLocation icon) {
@@ -141,13 +147,13 @@ public final class SealWorldRenderer {
 
     private static void drawSealRing(
             PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
-        BlockPos pos = seal.getSealPos().pos();
-        Direction face = seal.getSealPos().face();
+        BlockPos pos = seal.pos().pos();
+        Direction face = seal.pos().face();
         float r;
         float g;
         float b;
-        if (seal.getColor() > 0) {
-            int dye = DyeColor.byId(seal.getColor() - 1).getTextureDiffuseColor();
+        if (seal.color() > 0) {
+            int dye = DyeColor.byId(seal.color() - 1).getTextureDiffuseColor();
             r = ARGB32.red(dye) / 255.0F;
             g = ARGB32.green(dye) / 255.0F;
             b = ARGB32.blue(dye) / 255.0F;
@@ -172,21 +178,11 @@ public final class SealWorldRenderer {
 
     private static void drawAreaCorners(
             PoseStack poseStack, MultiBufferSource buffers, SealEntity seal, Vec3 cam, float alpha, float time) {
-        BlockPos pos = seal.getSealPos().pos();
-        Direction face = seal.getSealPos().face();
+        BlockPos pos = seal.pos().pos();
         float r = 0.7F + Mth.sin((time + pos.getX()) / 4.0F) * 0.1F;
         float g = 0.7F + Mth.sin((time + pos.getY()) / 5.0F) * 0.1F;
         float b = 0.7F + Mth.sin((time + pos.getZ()) / 6.0F) * 0.1F;
-        AABB area = new AABB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                .move(face.getStepX(), face.getStepY(), face.getStepZ())
-                .expandTowards(
-                        face.getStepX() != 0 ? (seal.getArea().getX() - 1) * face.getStepX() : 0.0,
-                        face.getStepY() != 0 ? (seal.getArea().getY() - 1) * face.getStepY() : 0.0,
-                        face.getStepZ() != 0 ? (seal.getArea().getZ() - 1) * face.getStepZ() : 0.0)
-                .inflate(
-                        face.getStepX() == 0 ? seal.getArea().getX() - 1 : 0.0,
-                        face.getStepY() == 0 ? seal.getArea().getY() - 1 : 0.0,
-                        face.getStepZ() == 0 ? seal.getArea().getZ() - 1 : 0.0);
+        AABB area = SealArea.bounds(seal);
         double[][] corners = {
             {area.minX, area.minY, area.minZ},
             {area.minX, area.maxY - 1.0, area.minZ},

@@ -72,7 +72,6 @@ public final class TurretPlacerItem extends Item {
             bore.setFacing(player.getDirection());
         }
         level.addFreshEntity(construct);
-        construct.setOwned(true);
         construct.setValidSpawn();
         construct.setOwner(player);
         level.playSound(

@@ -29,10 +29,10 @@ public enum GolemComponentProvider implements IEntityComponentProvider {
     public void appendTooltip(ITooltip tooltip, EntityAccessor accessor, IPluginConfig config) {
         if (!JadeConfig.shouldShow(config, JadeConfig.GOLEMS, accessor)) return;
         if (!(accessor.getEntity() instanceof EntityThaumaturgeGolem golem)
-                || !golem.getProperties().hasTrait(TTGolemTraits.SMART.get())) {
+                || !golem.properties().hasTrait(TTGolemTraits.SMART.get())) {
             return;
         }
-        int rank = golem.getProperties().getRank();
+        int rank = golem.properties().rank();
         tooltip.add(Component.translatable("jade.thaumaturge.golem.rank", rank));
         if (accessor.showDetails() && rank < EntityThaumaturgeGolem.MAX_RANK) {
             tooltip.add(Component.translatable(

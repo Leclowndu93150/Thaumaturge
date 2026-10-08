@@ -9,7 +9,7 @@ import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealWorldIndex;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealsChunkData;
-import com.leclowndu93150.thaumaturge.content.golem.tasks.GolemTasks;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSwapQueue;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
@@ -126,8 +126,8 @@ public final class TTAttachments {
                     .serialize(ArcaneLockChunkData.CODEC.codec())
                     .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<GolemTasks>> GOLEM_TASKS = register(
-            "golem_tasks", () -> AttachmentType.builder(GolemTasks::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaskBoard>> GOLEM_TASKS =
+            register("golem_tasks", () -> AttachmentType.builder(TaskBoard::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Set<BlockPos>>> EAR_INDEX = register(
             "ear_index",

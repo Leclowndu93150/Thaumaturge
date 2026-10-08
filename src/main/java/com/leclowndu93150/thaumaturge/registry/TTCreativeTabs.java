@@ -413,9 +413,8 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.SEAL_PROVIDER.get());
                         output.accept(TTItems.SEAL_STOCK.get());
                         TTGolemParts.materials().forEach(material -> {
-                            GolemProperties properties = GolemProperties.createDefault();
-                            properties.setMaterial(material);
-                            output.accept(golemPlacer(properties));
+                            output.accept(
+                                    golemPlacer(GolemProperties.createDefault().withMaterial(material)));
                         });
                         output.accept(TTItems.TRAVELLER_BOOTS.get());
                         output.accept(TTItems.CLOTH_CHEST.get());

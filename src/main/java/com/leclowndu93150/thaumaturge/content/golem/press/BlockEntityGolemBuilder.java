@@ -2,9 +2,11 @@ package com.leclowndu93150.thaumaturge.content.golem.press;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.golem.GolemProperties;
 import com.leclowndu93150.thaumaturge.content.golem.ItemGolemPlacer;
@@ -21,9 +23,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.MenuProvider;
@@ -32,13 +31,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityGolemBuilder extends BlockEntity implements IEssentiaTransport, MenuProvider {
+public final class BlockEntityGolemBuilder extends AbstractSyncedBlockEntity
+        implements IEssentiaTransport, MenuProvider {
     public static final int SLOT_OUTPUT = 0;
     private static final int WORK_INTERVAL_TICKS = 5;
     private static final int SUCTION = 128;
@@ -50,8 +49,8 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     private final ItemStackHandler output = new ItemStackHandler(1) {
         @Override
-        public boolean isItemValid(int index, ItemStack resource) {
-            return resource.copyWithCount(1).getItem() instanceof ItemGolemPlacer;
+        public boolean isItemValid(int index, ItemStack stack) {
+            return stack.getItem() instanceof ItemGolemPlacer;
         }
 
         @Override
@@ -105,8 +104,8 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
 
     private void finishCraft(Level level, BlockPos pos) {
         ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
-        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), pendingGolem.copy());
-        ItemStack current = output.getStackInSlot(SLOT_OUTPUT).copy();
+        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), pendingGolem);
+        ItemStack current = output.getStackInSlot(SLOT_OUTPUT);
         if (current.isEmpty()) {
             output.setStackInSlot(SLOT_OUTPUT, placer.copyWithCount(1));
         } else if (current.getCount() < current.getMaxStackSize()
@@ -206,7 +205,7 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     }
 
     public boolean[] checkCraft(GolemProperties props) {
-        List<ItemStack> components = props.generateComponents();
+        List<ItemStack> components = props.components();
         boolean[] result = new boolean[components.size()];
         for (int i = 0; i < components.size(); i++) {
             result[i] = InvHelper.checkAdjacentChests(level, worldPosition, components.get(i));
@@ -214,10 +213,14 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         return result;
     }
 
-    public boolean startCraft(GolemProperties props, Player player) {
+    public boolean startCraft(GolemProperties requested, Player player) {
+        if (cost > 0 || !requested.isKnownBy(KnowledgeAccess.of(player))) {
+            return false;
+        }
+        GolemProperties props = requested.withRank(0);
         ItemStack placer = new ItemStack(TTItems.GOLEM_PLACER.get());
-        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), props.copy());
-        ItemStack current = output.getStackInSlot(SLOT_OUTPUT).copy();
+        placer.set(TTDataComponents.GOLEM_PROPERTIES.get(), props);
+        ItemStack current = output.getStackInSlot(SLOT_OUTPUT);
         boolean slotFree = current.isEmpty()
                 || current.getCount() < current.getMaxStackSize()
                         && ItemStack.isSameItemSameComponents(current, placer);
@@ -225,14 +228,14 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
             reset();
             return false;
         }
-        pendingGolem = props.copy();
-        List<ItemStack> componentList = props.generateComponents();
+        pendingGolem = props;
+        List<ItemStack> componentList = props.components();
         ItemStack[] components = componentList.toArray(new ItemStack[0]);
         if (!InvHelper.consumeItemsFromAdjacentInventoryOrPlayer(level, worldPosition, player, true, components)) {
             reset();
             return false;
         }
-        cost = pendingGolem.getTraits().size() * 2;
+        cost = pendingGolem.traits().size() * 2;
         for (ItemStack stack : components) {
             cost += stack.getCount();
         }
@@ -270,13 +273,6 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
         return new MenuGolemBuilder(containerId, inventory, this);
     }
 
-    private void syncToClient() {
-        if (level != null && !level.isClientSide()) {
-            BlockState current = getBlockState();
-            level.sendBlockUpdated(getBlockPos(), current, current, 3);
-        }
-    }
-
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
@@ -291,27 +287,11 @@ public final class BlockEntityGolemBuilder extends BlockEntity implements IEssen
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        this.output.deserializeNBT(registries, input.getCompound("inventory"));
+        output.deserializeNBT(registries, input.getCompound("inventory"));
         pendingGolem =
                 TTNbt.read(input, "golem", GolemProperties.CODEC, registries).orElse(null);
-        cost = input.getInt("cost");
-        maxCost = input.getInt("mcost");
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag out = new CompoundTag();
-            saveAdditional(out, registries);
-            nbt.merge(out);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
+        cost = (input.contains("cost") ? input.getInt("cost") : 0);
+        maxCost = (input.contains("mcost") ? input.getInt("mcost") : 0);
     }
 
     @Override

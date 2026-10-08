@@ -4,9 +4,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Visual description of a golem part: the OBJ model rendered on the golem and where it
+ * Visual description of a golem part: the mesh rendered on the golem and where it
  * attaches. Object parts whose name starts with {@code bm} sample the golem material's
- * texture instead of {@link #texture()}.
+ * texture instead of {@link #texture()}. A mesh part's explicit namespaced texture slot
+ * overrides this fallback. Built-in parts are fittings around Minecraft's copper golem rig.
  *
  * <p>Dynamic per-part render behavior (wheel spin, dart recoil, hauler chest swap) is
  * registered client side against the owning part rather than subclassed here.

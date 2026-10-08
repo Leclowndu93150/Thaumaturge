@@ -15,6 +15,6 @@ public final class GolemMaterialTint implements ItemColor {
         if (props == null) {
             return DEFAULT;
         }
-        return OPAQUE | props.getMaterial().itemColor();
+        return OPAQUE | props.material().itemColor();
     }
 }

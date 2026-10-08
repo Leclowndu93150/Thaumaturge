@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.golems.accessory;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.Objects;
 import java.util.Optional;
 import net.minecraft.resources.ResourceLocation;
@@ -81,13 +82,13 @@ public record GolemAccessory(
      */
     public record Group(ResourceLocation id) {
         /** The group of accessories that never exclude each other. */
-        public static final Group NONE = new Group(ResourceLocation.fromNamespaceAndPath("thaumaturge", "none"));
+        public static final Group NONE = new Group(TTIds.rl("none"));
 
         /** Hats, such as the top hat and the fez. */
-        public static final Group HAT = new Group(ResourceLocation.fromNamespaceAndPath("thaumaturge", "hat"));
+        public static final Group HAT = new Group(TTIds.rl("hat"));
 
         /** Eyewear, such as the glasses and the visor. */
-        public static final Group EYES = new Group(ResourceLocation.fromNamespaceAndPath("thaumaturge", "eyes"));
+        public static final Group EYES = new Group(TTIds.rl("eyes"));
 
         /**
          * Validates the id.

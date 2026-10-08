@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.golem.seals;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.world.level.ChunkPos;
 import org.jspecify.annotations.Nullable;
 
 public final class ClientSealHolder {
@@ -19,11 +20,15 @@ public final class ClientSealHolder {
     }
 
     public static void put(SealEntity seal) {
-        SEALS.put(seal.getSealPos(), seal);
+        SEALS.put(seal.pos(), seal);
     }
 
     public static void remove(SealPos pos) {
         SEALS.remove(pos);
+    }
+
+    public static void forgetChunk(ChunkPos chunk) {
+        SEALS.keySet().removeIf(pos -> new ChunkPos(pos.pos()).equals(chunk));
     }
 
     public static void clear() {

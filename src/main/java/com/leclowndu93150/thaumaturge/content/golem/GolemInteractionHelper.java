@@ -31,7 +31,7 @@ public final class GolemInteractionHelper {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        FakePlayer player = TTFakePlayer.GOLEM.at(serverLevel, golem.getGolemEntity());
+        FakePlayer player = TTFakePlayer.GOLEM.at(serverLevel, golem.asEntity());
         player.setItemInHand(InteractionHand.MAIN_HAND, clickStack);
         player.setShiftKeyDown(sneaking);
         if (!rightClick) {
@@ -43,11 +43,11 @@ public final class GolemInteractionHelper {
         } else {
             if (player.getMainHandItem().getItem() instanceof BlockItem
                     && !serverLevel.noCollision(null, new AABB(pos))) {
-                golem.getGolemEntity()
+                golem.asEntity()
                         .setPos(
-                                golem.getGolemEntity().getX() + face.getStepX(),
-                                golem.getGolemEntity().getY() + face.getStepY(),
-                                golem.getGolemEntity().getZ() + face.getStepZ());
+                                golem.asEntity().getX() + face.getStepX(),
+                                golem.asEntity().getY() + face.getStepY(),
+                                golem.asEntity().getZ() + face.getStepZ());
             }
             try {
                 BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos), face, pos, false);
@@ -72,11 +72,11 @@ public final class GolemInteractionHelper {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (golem.canCarry(stack, true)) {
-                stack = golem.holdItem(stack);
+            if (golem.hands().canTake(stack, true)) {
+                stack = golem.hands().hold(stack);
             }
             if (!stack.isEmpty()) {
-                InvHelper.dropItemAtEntity(golem.getGolemWorld(), stack, golem.getGolemEntity());
+                InvHelper.dropItemAtEntity(golem.level(), stack, golem.asEntity());
             }
             inventory.setItem(slot, ItemStack.EMPTY);
         }

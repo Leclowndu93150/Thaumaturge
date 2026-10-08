@@ -48,8 +48,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
 
     @Override
     public ResourceLocation getTextureLocation(EntityThaumaturgeGolem entity) {
-        if (entity.getProperties() instanceof GolemProperties props) {
-            return props.getMaterial().texture();
+        if (entity.properties() instanceof GolemProperties props) {
+            return props.material().texture();
         }
         return FALLBACK_TEXTURE;
     }
@@ -91,8 +91,8 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
 
     private static GolemRenderState build(EntityThaumaturgeGolem entity, float partialTick, int light) {
         GolemRenderState state = new GolemRenderState();
-        state.props = (GolemProperties) entity.getProperties();
-        state.color = entity.getGolemColor();
+        state.props = (GolemProperties) entity.properties();
+        state.color = entity.color();
         state.ageInTicks = entity.tickCount + partialTick;
         state.lightCoords = light;
         state.bodyRot = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
@@ -123,7 +123,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
         state.holdingItem = !held.isEmpty();
         state.heldItemIsBlock = held.getItem() instanceof BlockItem;
         state.heldItem = held;
-        List<ItemStack> carrying = entity.getCarrying();
+        List<ItemStack> carrying = entity.hands().contents();
         ItemStack hauled = carrying.size() > 1 ? carrying.get(1) : ItemStack.EMPTY;
         state.haulingItem = !hauled.isEmpty();
         state.haulerItemIsBlock = hauled.getItem() instanceof BlockItem;
@@ -141,7 +141,7 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
             MultiBufferSource buffers,
             boolean xray,
             int color) {
-        ResourceLocation material = state.props.getMaterial().texture();
+        ResourceLocation material = state.props.material().texture();
         ResourceLocation skin = GolemSkins.forMaterial(material);
         RenderType type = xray
                 ? TTRenderTypes.entityTranslucentNoDepth(skin)
@@ -205,10 +205,10 @@ public final class GolemRenderer extends EntityRenderer<EntityThaumaturgeGolem> 
 
     private static List<GolemPartModel> attachedParts(GolemProperties props, GolemPartModel.AttachPoint point) {
         List<GolemPartModel> out = new ArrayList<>();
-        addPart(out, props.getHead(), point);
-        addPart(out, props.getArms(), point);
-        addPart(out, props.getLegs(), point);
-        addPart(out, props.getAddon(), point);
+        addPart(out, props.head(), point);
+        addPart(out, props.arms(), point);
+        addPart(out, props.legs(), point);
+        addPart(out, props.addon(), point);
         return out;
     }
 

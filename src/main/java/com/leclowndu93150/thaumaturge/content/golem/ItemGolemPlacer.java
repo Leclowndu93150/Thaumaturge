@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
@@ -35,29 +36,33 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
             return;
         }
         if (props.hasTrait(TTGolemTraits.SMART.get())) {
-            if (props.getRank() >= EntityThaumaturgeGolem.MAX_RANK) {
-                tooltip.add(Component.translatable("golem.rank")
-                        .append(" " + props.getRank())
-                        .withStyle(ChatFormatting.GOLD));
+            MutableComponent rank = Component.translatable(
+                            "tooltip.thaumaturge.golem.rank",
+                            Component.translatable("tooltip.thaumaturge.golem.rank_label"),
+                            props.rank())
+                    .withStyle(ChatFormatting.GOLD);
+            if (props.rank() >= EntityThaumaturgeGolem.MAX_RANK) {
+                tooltip.add(rank);
             } else {
                 int xp = stack.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0);
-                int needed = (props.getRank() + 1) * (props.getRank() + 1) * EntityThaumaturgeGolem.XP_PER_RANK_UNIT;
-                tooltip.add(Component.translatable("golem.rank")
-                        .append(" " + props.getRank())
-                        .withStyle(ChatFormatting.GOLD)
-                        .append(Component.literal(" (" + xp + "/" + needed + ")")
+                int needed = EntityThaumaturgeGolem.xpForNextRank(props.rank());
+                tooltip.add(Component.translatable(
+                        "tooltip.thaumaturge.golem.rank_progress",
+                        rank,
+                        Component.translatable("tooltip.thaumaturge.golem.xp", xp, needed)
                                 .withStyle(ChatFormatting.DARK_GREEN)));
             }
         }
-        ResourceLocation materialKey = TTGolemParts.materials().getKey(props.getMaterial());
+        ResourceLocation materialKey = TTGolemParts.materials().getKey(props.material());
         if (materialKey != null) {
             tooltip.add(
                     Component.translatable(GolemMaterial.nameKey(materialKey)).withStyle(ChatFormatting.GREEN));
         }
-        for (GolemTrait trait : props.getTraits()) {
-            tooltip.add(Component.literal("-")
-                    .append(Component.translatable(
-                            GolemTrait.nameKey(TTGolemTraits.registry().getKey(trait))))
+        for (GolemTrait trait : props.traits()) {
+            tooltip.add(Component.translatable(
+                            "tooltip.thaumaturge.golem.trait",
+                            Component.translatable(
+                                    GolemTrait.nameKey(TTGolemTraits.registry().getKey(trait))))
                     .withStyle(ChatFormatting.BLUE));
         }
     }
@@ -91,7 +96,7 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
         ItemStack held = context.getItemInHand();
         GolemProperties props = held.get(TTDataComponents.GOLEM_PROPERTIES.get());
         if (props != null) {
-            golem.setProperties(props.copy());
+            golem.setProperties(props);
         }
         golem.setRankXp(held.getOrDefault(TTDataComponents.GOLEM_XP.get(), 0));
         golem.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(pos), MobSpawnType.MOB_SUMMONED, null);

@@ -1,27 +1,26 @@
 package com.leclowndu93150.thaumaturge.content.golem.seals;
 
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigArea;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigFilter;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealConfigToggles;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
-import com.leclowndu93150.thaumaturge.api.golems.seals.ISealGui;
+import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealPanel;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
+import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-public final class MenuSealBase extends AbstractContainerMenu {
+public final class MenuSealBase extends AbstractTTMenu {
     public static final int BUTTON_BLACKLIST_ON = 20;
     public static final int BUTTON_BLACKLIST_OFF = 21;
     public static final int BUTTON_LOCK = 25;
@@ -46,9 +45,9 @@ public final class MenuSealBase extends AbstractContainerMenu {
     private static final int FILTER_COLUMNS = 3;
 
     private final ISealEntity seal;
-    private final int[] categories;
+    private final List<SealPanel> panels;
     private final int filterSlotCount;
-    private int category;
+    private SealPanel panel;
     private final DataSlot priority = DataSlot.standalone();
     private final DataSlot areaX = DataSlot.standalone();
     private final DataSlot areaY = DataSlot.standalone();
@@ -65,12 +64,11 @@ public final class MenuSealBase extends AbstractContainerMenu {
     public MenuSealBase(int containerId, Inventory playerInventory, @Nullable ISealEntity seal) {
         super(TTMenus.SEAL.get(), containerId);
         this.seal = seal;
-        this.categories = seal != null && seal.getSeal() instanceof ISealGui gui
-                ? gui.getGuiCategories()
-                : new int[] {ISealGui.CAT_PRIORITY};
-        this.category = categories[0];
-        if (seal != null && seal.getSeal() instanceof ISealConfigFilter filter) {
-            filterSlotCount = filter.getFilterSize();
+        this.panels = seal != null ? seal.type().panels() : List.of(SealPanel.PRIORITY);
+        this.panel = panels.get(0);
+        ISealFilter filter = seal == null ? null : seal.filter().orElse(null);
+        if (filter != null) {
+            filterSlotCount = filter.spec().slots();
             int offsetX = 16 + (filterSlotCount - 1) % FILTER_COLUMNS * 12;
             int offsetY = 16 + (filterSlotCount - 1) / FILTER_COLUMNS * 12;
             FilterContainer container = new FilterContainer(filter);
@@ -83,15 +81,8 @@ public final class MenuSealBase extends AbstractContainerMenu {
         } else {
             filterSlotCount = 0;
         }
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
-            }
-        }
-        for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, PLAYER_GRID_X + col * 18, HOTBAR_Y));
-        }
+        addInventoryExtendedSlots(playerInventory, PLAYER_GRID_X, PLAYER_GRID_Y);
+        addInventoryHotbarSlots(playerInventory, PLAYER_GRID_X, HOTBAR_Y);
         addDataSlot(priority);
         addDataSlot(areaX);
         addDataSlot(areaY);
@@ -103,12 +94,12 @@ public final class MenuSealBase extends AbstractContainerMenu {
         return seal;
     }
 
-    public int[] categories() {
-        return categories;
+    public List<SealPanel> panels() {
+        return panels;
     }
 
-    public int category() {
-        return category;
+    public SealPanel panel() {
+        return panel;
     }
 
     public int priority() {
@@ -130,11 +121,11 @@ public final class MenuSealBase extends AbstractContainerMenu {
     @Override
     public void broadcastChanges() {
         if (seal != null) {
-            priority.set(seal.getPriority());
-            areaX.set(seal.getArea().getX());
-            areaY.set(seal.getArea().getY());
-            areaZ.set(seal.getArea().getZ());
-            color.set(seal.getColor());
+            priority.set(seal.priority());
+            areaX.set(seal.area().getX());
+            areaY.set(seal.area().getY());
+            areaZ.set(seal.area().getZ());
+            color.set(seal.color());
         }
         super.broadcastChanges();
     }
@@ -145,63 +136,65 @@ public final class MenuSealBase extends AbstractContainerMenu {
             return false;
         }
         boolean changed = handleButton(player, id);
-        if (changed && !player.level().isClientSide() && player.level() instanceof ServerLevel serverLevel) {
-            SealHandler.markDirty(serverLevel, seal.getSealPos().pos());
-            seal.syncToClient(serverLevel);
+        if (changed) {
+            seal.markChanged(player.level());
         }
         return changed;
     }
 
     private boolean handleButton(Player player, int id) {
-        if (id >= 0 && id < categories.length) {
-            category = categories[id];
+        if (id >= 0 && id < panels.size()) {
+            panel = panels.get(id);
             return true;
         }
-        if (seal.getSeal() instanceof ISealConfigToggles toggles) {
-            int count = toggles.getToggles().length;
-            if (id >= BUTTON_TOGGLE_ON_BASE && id < BUTTON_TOGGLE_ON_BASE + count) {
-                toggles.setToggle(id - BUTTON_TOGGLE_ON_BASE, true);
+        if (id == BUTTON_REDSTONE_ON || id == BUTTON_REDSTONE_OFF) {
+            seal.setRedstoneControlled(id == BUTTON_REDSTONE_ON);
+            return true;
+        }
+        if (!SealAccess.mayEdit(player, seal)) {
+            return false;
+        }
+        if (seal.type().showsSettings()) {
+            List<SealSetting> settings = seal.type().settings();
+            if (id >= BUTTON_TOGGLE_ON_BASE && id < BUTTON_TOGGLE_ON_BASE + settings.size()) {
+                seal.setSetting(settings.get(id - BUTTON_TOGGLE_ON_BASE), true);
                 return true;
             }
-            if (id >= BUTTON_TOGGLE_OFF_BASE && id < BUTTON_TOGGLE_OFF_BASE + count) {
-                toggles.setToggle(id - BUTTON_TOGGLE_OFF_BASE, false);
+            if (id >= BUTTON_TOGGLE_OFF_BASE && id < BUTTON_TOGGLE_OFF_BASE + settings.size()) {
+                seal.setSetting(settings.get(id - BUTTON_TOGGLE_OFF_BASE), false);
                 return true;
             }
         }
         if (id == BUTTON_LOCK || id == BUTTON_UNLOCK) {
-            if (player.getUUID().equals(seal.getOwner())) {
+            if (player.getUUID().equals(seal.owner())) {
                 seal.setLocked(id == BUTTON_LOCK);
                 return true;
             }
             return false;
         }
-        if (id == BUTTON_REDSTONE_ON || id == BUTTON_REDSTONE_OFF) {
-            seal.setRedstoneSensitive(id == BUTTON_REDSTONE_ON);
-            return true;
-        }
         if ((id == BUTTON_BLACKLIST_ON || id == BUTTON_BLACKLIST_OFF)
-                && seal.getSeal() instanceof ISealConfigFilter filter) {
-            filter.setBlacklist(id == BUTTON_BLACKLIST_ON);
+                && seal.filter().isPresent()) {
+            seal.filter().get().setBlacklist(id == BUTTON_BLACKLIST_ON);
             return true;
         }
-        if (id == BUTTON_PRIORITY_DOWN && seal.getPriority() > -MAX_PRIORITY) {
-            seal.setPriority((byte) (seal.getPriority() - 1));
+        if (id == BUTTON_PRIORITY_DOWN && seal.priority() > -MAX_PRIORITY) {
+            seal.setPriority((byte) (seal.priority() - 1));
             return true;
         }
-        if (id == BUTTON_PRIORITY_UP && seal.getPriority() < MAX_PRIORITY) {
-            seal.setPriority((byte) (seal.getPriority() + 1));
+        if (id == BUTTON_PRIORITY_UP && seal.priority() < MAX_PRIORITY) {
+            seal.setPriority((byte) (seal.priority() + 1));
             return true;
         }
-        if (id == BUTTON_COLOR_DOWN && seal.getColor() > 0) {
-            seal.setColor((byte) (seal.getColor() - 1));
+        if (id == BUTTON_COLOR_DOWN && seal.color() > 0) {
+            seal.setColor((byte) (seal.color() - 1));
             return true;
         }
-        if (id == BUTTON_COLOR_UP && seal.getColor() < MAX_COLOR) {
-            seal.setColor((byte) (seal.getColor() + 1));
+        if (id == BUTTON_COLOR_UP && seal.color() < MAX_COLOR) {
+            seal.setColor((byte) (seal.color() + 1));
             return true;
         }
-        if (seal.getSeal() instanceof ISealConfigArea) {
-            BlockPos area = seal.getArea();
+        if (seal.type().hasArea()) {
+            BlockPos area = seal.area();
             switch (id) {
                 case BUTTON_AREA_BASE -> {
                     if (area.getY() > 1) {
@@ -251,56 +244,55 @@ public final class MenuSealBase extends AbstractContainerMenu {
                 && slotId < slots.size()
                 && slots.get(slotId) instanceof GhostSlot ghost
                 && seal != null
-                && seal.getSeal() instanceof ISealConfigFilter filter) {
-            ghostClick(ghost, button, clickType, filter);
-            if (!player.level().isClientSide() && player.level() instanceof ServerLevel serverLevel) {
-                SealHandler.markDirty(serverLevel, seal.getSealPos().pos());
+                && seal.filter().isPresent()) {
+            if (!SealAccess.mayEdit(player, seal)) {
+                return;
             }
+            ghostClick(ghost, button, clickType, seal.filter().get());
+            seal.markChanged(player.level());
             return;
         }
         super.clicked(slotId, button, clickType, player);
     }
 
-    private void ghostClick(GhostSlot slot, int button, ClickType clickType, ISealConfigFilter filter) {
-        boolean limiters = filter.hasStacksizeLimiters();
+    private void ghostClick(GhostSlot slot, int button, ClickType clickType, ISealFilter filter) {
+        boolean limiters = filter.usesLimits();
         ItemStack carried = getCarried().copy();
         int index = slot.getContainerSlot();
         if (button == 1) {
             if (!limiters) {
                 slot.set(ItemStack.EMPTY);
-                filter.setFilterSlotSize(index, 0);
+                filter.setLimit(index, 0);
             } else if (carried.isEmpty()) {
                 if (slot.hasItem()) {
-                    filter.setFilterSlotSize(
-                            index, filter.getFilterSlotSize(index) - (clickType == ClickType.QUICK_MOVE ? 10 : 1));
-                    if (filter.getFilterSlotSize(index) < 0) {
+                    filter.setLimit(index, filter.limit(index) - (clickType == ClickType.QUICK_MOVE ? 10 : 1));
+                    if (filter.limit(index) < 0) {
                         slot.set(ItemStack.EMPTY);
-                        filter.setFilterSlotSize(index, 0);
+                        filter.setLimit(index, 0);
                     }
                 }
             } else if (slot.hasItem() && ItemStack.isSameItemSameComponents(carried, slot.getItem())) {
-                filter.setFilterSlotSize(index, filter.getFilterSlotSize(index) - carried.getCount());
-                if (filter.getFilterSlotSize(index) < 0) {
+                filter.setLimit(index, filter.limit(index) - carried.getCount());
+                if (filter.limit(index) < 0) {
                     slot.set(ItemStack.EMPTY);
-                    filter.setFilterSlotSize(index, 0);
+                    filter.setLimit(index, 0);
                 }
             }
         } else if (carried.isEmpty()) {
             if (limiters && slot.hasItem()) {
-                filter.setFilterSlotSize(
-                        index, filter.getFilterSlotSize(index) + (clickType == ClickType.QUICK_MOVE ? 10 : 1));
+                filter.setLimit(index, filter.limit(index) + (clickType == ClickType.QUICK_MOVE ? 10 : 1));
             }
         } else {
             if (!limiters) {
                 carried.setCount(1);
-                filter.setFilterSlotSize(index, 0);
+                filter.setLimit(index, 0);
             } else {
                 int count = carried.getCount();
                 carried.setCount(1);
                 if (slot.hasItem() && ItemStack.isSameItemSameComponents(carried, slot.getItem())) {
-                    filter.setFilterSlotSize(index, filter.getFilterSlotSize(index) + count);
+                    filter.setLimit(index, filter.limit(index) + count);
                 } else {
-                    filter.setFilterSlotSize(index, 0);
+                    filter.setLimit(index, 0);
                 }
             }
             slot.set(carried);
@@ -309,7 +301,7 @@ public final class MenuSealBase extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return seal != null;
+        return seal != null && SealAccess.isLive(player, seal);
     }
 
     @Override
@@ -337,25 +329,25 @@ public final class MenuSealBase extends AbstractContainerMenu {
 
         @Override
         public boolean isActive() {
-            return menu.category() == ISealGui.CAT_FILTER;
+            return menu.panel() == SealPanel.FILTER;
         }
     }
 
     static final class FilterContainer extends SimpleContainer {
-        private final ISealConfigFilter filter;
+        private final ISealFilter filter;
 
-        FilterContainer(ISealConfigFilter filter) {
-            super(filter.getFilterSize());
+        FilterContainer(ISealFilter filter) {
+            super(filter.spec().slots());
             this.filter = filter;
-            for (int i = 0; i < filter.getFilterSize(); i++) {
-                super.setItem(i, filter.getFilterSlot(i));
+            for (int i = 0; i < filter.spec().slots(); i++) {
+                super.setItem(i, filter.stack(i));
             }
         }
 
         @Override
         public void setItem(int slot, ItemStack stack) {
             super.setItem(slot, stack);
-            filter.setFilterSlot(slot, stack);
+            filter.setStack(slot, stack);
         }
     }
 }

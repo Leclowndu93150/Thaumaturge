@@ -13,9 +13,22 @@ public final class EntityGolemDart extends AbstractArrow {
         super(type, level);
     }
 
-    public EntityGolemDart(Level level, LivingEntity owner) {
-        super(TTEntities.GOLEM_DART.get(), owner, level, new ItemStack(Items.ARROW), null);
-        this.pickup = Pickup.DISALLOWED;
+    private EntityGolemDart(LivingEntity shooter) {
+        super(TTEntities.GOLEM_DART.get(), shooter, shooter.level(), new ItemStack(Items.ARROW), null);
+        pickup = Pickup.DISALLOWED;
+    }
+
+    public static void loose(
+            LivingEntity shooter, LivingEntity target, double damage, double loft, float velocity, float inaccuracy) {
+        EntityGolemDart dart = new EntityGolemDart(shooter);
+        dart.setBaseDamage(damage);
+        dart.shoot(
+                target.getX() - shooter.getX(),
+                target.getEyeY() + loft - dart.getY(),
+                target.getZ() - shooter.getZ(),
+                velocity,
+                inaccuracy);
+        shooter.level().addFreshEntity(dart);
     }
 
     @Override

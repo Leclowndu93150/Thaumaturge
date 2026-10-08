@@ -1,19 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.golem.accessory;
 
-import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryContext;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DynamicOps;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -104,31 +103,19 @@ public final class GolemAccessoryStateHolder {
                 slots.values().stream().filter(AccessoryStateSlot::synced).toList());
     }
 
-    public CompoundTag save(DynamicOps<Tag> ops) {
-        CompoundTag output = new CompoundTag();
+    public void save(CompoundTag output, HolderLookup.Provider registries) {
         if (!items.isEmpty()) {
-            ITEMS_CODEC
-                    .encodeStart(ops, items)
-                    .resultOrPartial(
-                            error -> Thaumaturge.LOGGER.error("Could not save golem accessory items: {}", error))
-                    .ifPresent(tag -> output.put(ITEMS_KEY, tag));
+            TTNbt.store(output, ITEMS_KEY, ITEMS_CODEC, registries, items);
         }
         for (AccessoryStateSlot<?> slot : slots.values()) {
-            slot.save(output, ops);
+            slot.save(output, registries);
         }
-        return output;
     }
 
-    public void load(CompoundTag input, DynamicOps<Tag> ops, List<GolemAccessory> worn) {
+    public void load(CompoundTag input, List<GolemAccessory> worn, HolderLookup.Provider registries) {
         clear();
-        Tag savedItems = input.get(ITEMS_KEY);
-        Map<ResourceLocation, ItemStack> saved = savedItems == null
-                ? Map.of()
-                : ITEMS_CODEC
-                        .parse(ops, savedItems)
-                        .resultOrPartial(
-                                error -> Thaumaturge.LOGGER.error("Could not load golem accessory items: {}", error))
-                        .orElse(Map.of());
+        Map<ResourceLocation, ItemStack> saved =
+                TTNbt.read(input, ITEMS_KEY, ITEMS_CODEC, registries).orElse(Map.of());
         for (GolemAccessory accessory : worn) {
             ItemStack item = saved.get(accessory.id());
             if (item != null) {
@@ -137,7 +124,7 @@ public final class GolemAccessoryStateHolder {
             accessory
                     .behavior()
                     .ifPresent(behavior ->
-                            slots.put(accessory.id(), AccessoryStateSlot.load(accessory, behavior, input, ops)));
+                            slots.put(accessory.id(), AccessoryStateSlot.load(accessory, behavior, input, registries)));
         }
     }
 

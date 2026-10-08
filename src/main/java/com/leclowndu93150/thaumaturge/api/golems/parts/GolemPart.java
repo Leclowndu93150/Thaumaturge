@@ -19,14 +19,16 @@ public abstract class GolemPart {
     private final List<GolemComponent> components;
     private final List<Holder<GolemTrait>> traits;
     private final List<GolemPartModel> models;
+    private final IGolemPartAbility ability;
 
     protected GolemPart(
             List<ResourceLocation> research,
             ResourceLocation icon,
             List<GolemComponent> components,
             List<Holder<GolemTrait>> traits,
-            @Nullable GolemPartModel model) {
-        this(research, icon, components, traits, model == null ? List.of() : List.of(model));
+            @Nullable GolemPartModel model,
+            @Nullable IGolemPartAbility ability) {
+        this(research, icon, components, traits, model == null ? List.of() : List.of(model), ability);
     }
 
     /**
@@ -35,6 +37,7 @@ public abstract class GolemPart {
      * @param components the crafting components consumed by this part
      * @param traits     traits granted by this part
      * @param models     the models rendered for this part, each at its own attach point; empty when it has no visual
+     * @param ability    the ability this part adds to its golem, or null when it adds none
      * @since 1.0.0
      */
     protected GolemPart(
@@ -42,12 +45,14 @@ public abstract class GolemPart {
             ResourceLocation icon,
             List<GolemComponent> components,
             List<Holder<GolemTrait>> traits,
-            List<GolemPartModel> models) {
+            List<GolemPartModel> models,
+            @Nullable IGolemPartAbility ability) {
         this.research = List.copyOf(research);
         this.icon = icon;
         this.components = List.copyOf(components);
         this.traits = List.copyOf(traits);
         this.models = List.copyOf(models);
+        this.ability = ability;
     }
 
     /**
@@ -97,9 +102,11 @@ public abstract class GolemPart {
     }
 
     /**
-     * @return the behavior ticked for this part, or null when it has none
+     * @return the ability this part adds to its golem, or null when it adds none
      */
-    public abstract @Nullable IGolemFunction function();
+    public @Nullable IGolemPartAbility ability() {
+        return ability;
+    }
 
     /**
      * The translation key for a part's display name in golem UIs.

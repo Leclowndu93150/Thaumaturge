@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.golems.parts;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import java.util.List;
 import java.util.function.Supplier;
@@ -19,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 public final class GolemMaterial {
     /** The registry key for golem materials. */
     public static final ResourceKey<Registry<GolemMaterial>> REGISTRY_KEY =
-            ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("thaumaturge", "golem_material"));
+            ResourceKey.createRegistryKey(TTIds.rl("golem_material"));
 
     private final List<ResourceLocation> research;
     private final ResourceLocation texture;
@@ -30,8 +31,12 @@ public final class GolemMaterial {
     private final Supplier<ItemStack> componentBase;
     private final Supplier<ItemStack> componentMechanism;
     private final List<Holder<GolemTrait>> traits;
+    private final boolean antenna;
 
     /**
+     * Creates a material whose golems render without the head antenna.
+     *
+     *
      * @param research           research entries gating this material in the golem press;
      *                           empty means always available
      * @param texture            the body texture rendered on golems of this material
@@ -43,8 +48,6 @@ public final class GolemMaterial {
      * @param componentMechanism supplies the material's mechanism crafting item
      * @param traits             traits granted by the material
      */
-    private final boolean antenna;
-
     public GolemMaterial(
             List<ResourceLocation> research,
             ResourceLocation texture,
@@ -58,6 +61,20 @@ public final class GolemMaterial {
         this(research, texture, itemColor, healthMod, armor, damage, componentBase, componentMechanism, traits, false);
     }
 
+    /**
+     * @param research           research entries gating this material in the golem press;
+     *                           empty means always available
+     * @param texture            the body texture rendered on golems of this material
+     * @param itemColor          the {@code 0xRRGGBB} tint applied to golem placer items
+     * @param healthMod          health added to the golem's base of 10
+     * @param armor              the golem's armor rating
+     * @param damage             the golem's base melee damage when it can fight
+     * @param componentBase      supplies the material's base crafting item
+     * @param componentMechanism supplies the material's mechanism crafting item
+     * @param traits             traits granted by the material
+     * @param antenna            whether golems of this material render the copper golem's head antenna
+     * @since 1.0.0
+     */
     public GolemMaterial(
             List<ResourceLocation> research,
             ResourceLocation texture,
@@ -145,7 +162,8 @@ public final class GolemMaterial {
     }
 
     /**
-     * Whether golems of this material render the head antenna. A hat accessory hides it regardless.
+     * Whether golems of this material render the head antenna of the copper golem model they are
+     * drawn with. A golem wearing a hat accessory hides the antenna regardless.
      *
      * @return true when the antenna is drawn
      * @since 1.0.0

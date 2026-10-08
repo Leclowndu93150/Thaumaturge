@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.golem;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealEntity;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
-import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskHandler;
+import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.network.ClientboundSealPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -36,7 +36,7 @@ public final class GolemWorldEvents {
 
     @SubscribeEvent
     public static void onChunkWatch(ChunkWatchEvent.Sent event) {
-        for (SealEntity seal : SealHandler.getSealsInChunk(event.getLevel(), event.getPos())) {
+        for (SealEntity seal : SealHandler.getSealsInChunk(event.getChunk())) {
             PacketDistributor.sendToPlayer(event.getPlayer(), ClientboundSealPayload.update(seal));
         }
     }
@@ -47,7 +47,7 @@ public final class GolemWorldEvents {
             return;
         }
         if (serverLevel.getGameTime() % TASK_CLEAR_INTERVAL_TICKS == 0) {
-            TaskHandler.clearSuspendedOrExpiredTasks(serverLevel);
+            TaskBoard.of(serverLevel).sweep(serverLevel);
         }
         SealHandler.tickSealEntities(serverLevel);
     }
