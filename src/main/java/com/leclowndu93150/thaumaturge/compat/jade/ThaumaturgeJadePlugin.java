@@ -23,7 +23,7 @@ public final class ThaumaturgeJadePlugin implements IWailaPlugin {
         registration.addRayTraceCallback((hit, accessor, original) -> {
             if (accessor instanceof BlockAccessor blockAccessor) {
                 var furnace = AdvancedFurnaceJadeAccess.resolve(blockAccessor);
-                if (furnace != null && furnace.assembled()) {
+                if (furnace != null && furnace.isAssembled()) {
                     return registration
                             .blockAccessor()
                             .from(blockAccessor)

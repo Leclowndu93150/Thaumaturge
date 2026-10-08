@@ -1,21 +1,17 @@
 package com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
-import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
-import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
-import com.leclowndu93150.thaumaturge.content.aura.relay.LinkedRelaySource;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import java.util.Set;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -24,237 +20,195 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-/**
- * Controller state for the Advanced Alchemical Furnace.
- *
- * <p>The surrounding casing is deliberately checked only through already-loaded neighbouring
- * blocks. It never requests chunks while validating or drawing node charge.
- */
-public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity implements IEssentiaTransport {
+public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity {
     public static final int MAX_ESSENTIA = 500;
     public static final int MAX_POWER = 500;
+    public static final int HOT_HEAT = 100;
+    public static final int HEAT_PER_ASPECT = 2;
     private static final int POWER_DRAW_INTERVAL = 5;
-    private static final int NODE_DRAW_RANGE = 8;
-    private static final int POWER_REFILL_REQUEST = 50;
+    private static final int POWER_REQUEST = 50;
+    private static final int HEAT_DECAY = 1;
+    private static final int MIN_COOLDOWN = 5;
+    private static final float COOLDOWN_RANGE = 100.0F;
 
+    private final Map<Direction, AdvancedFurnaceNozzle> nozzles = new EnumMap<>(Direction.class);
+    private final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
     private AspectList aspects = AspectList.EMPTY;
     private ItemStack input = ItemStack.EMPTY;
+    private @Nullable AspectList inputAspects;
     private int heat;
     private int perditio;
     private int aqua;
     private int cooldown;
     private int cycleDuration;
-    private int ticks;
     private boolean assembled;
 
     public BlockEntityAdvancedAlchemicalFurnace(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ADVANCED_ALCHEMICAL_FURNACE.get(), pos, state);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            nozzles.put(direction, new AdvancedFurnaceNozzle(this, direction));
+        }
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, BlockEntityAdvancedAlchemicalFurnace furnace) {
+    public static void serverTick(
+            Level level, BlockPos pos, BlockState state, BlockEntityAdvancedAlchemicalFurnace furnace) {
         if (level instanceof ServerLevel serverLevel) {
             furnace.tickServer(serverLevel);
         }
     }
 
     private void tickServer(ServerLevel level) {
-        ticks++;
-        boolean wasAssembled = assembled;
-        assembled = validateStructure(level);
-        boolean changed = wasAssembled != assembled;
-        if (!assembled) {
-            updateLit(false);
-            if (changed) sync();
+        if (!AdvancedAlchemicalFurnaceStructure.isLoaded(level, worldPosition)) {
             return;
         }
-        if (ticks % POWER_DRAW_INTERVAL == 0) {
-            changed |= charge(level);
+        boolean visible = false;
+        boolean formed = AdvancedAlchemicalFurnaceStructure.isFormed(level, worldPosition, cursor);
+        if (formed != assembled) {
+            assembled = formed;
+            AdvancedAlchemicalFurnaceStructure.refreshNozzles(level, worldPosition);
+            visible = true;
+        }
+        if (!assembled) {
+            setLit(false);
+            if (visible) {
+                markUpdated();
+            }
+            return;
+        }
+        if (level.getGameTime() % POWER_DRAW_INTERVAL == 0) {
+            visible |= charge(level);
         }
         if (cooldown > 0) {
             cooldown--;
-            if (cooldown == 0) cycleDuration = 0;
-            changed = true;
+            if (cooldown == 0) {
+                cycleDuration = 0;
+            }
+            setChanged();
         }
         if (cooldown == 0 && !input.isEmpty()) {
-            changed |= processInput();
+            visible |= processInput();
         }
-        updateLit(cooldown > 0);
-        if (changed) {
-            setChanged();
-            sync();
-        }
-    }
-
-    /**
-     * The controller occupies the centre of the lower layer. Four adjacent nozzle block entities
-     * expose its shared essentia store; the upper centre remains open.
-     */
-    private boolean validateStructure(ServerLevel level) {
-        for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (!level.getBlockState(worldPosition.relative(direction))
-                    .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
-                return false;
-            }
-        }
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                if (x == 0 && z == 0) continue;
-                BlockPos lower = worldPosition.offset(x, 0, z);
-                BlockPos upper = worldPosition.offset(x, 1, z);
-                if (!level.isLoaded(lower) || !level.isLoaded(upper)) return false;
-                boolean corner = x != 0 && z != 0;
-                if (!(corner
-                                ? level.getBlockState(lower)
-                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
-                                : level.getBlockState(lower).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE))
-                        || !(corner
-                                ? level.getBlockState(upper)
-                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
-                                : level.getBlockState(upper)
-                                        .is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static void restoreStructure(LevelAccessor level, BlockPos controllerPos, BlockPos excludedPos) {
-        if (level.isClientSide()) return;
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                if (x == 0 && z == 0) continue;
-                restorePart(level, controllerPos.offset(x, 0, z), excludedPos);
-                restorePart(level, controllerPos.offset(x, 1, z), excludedPos);
-            }
-        }
-    }
-
-    private static void restorePart(LevelAccessor level, BlockPos target, BlockPos excludedPos) {
-        if (target.equals(excludedPos)) return;
-        BlockState state = level.getBlockState(target);
-        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())) {
-            level.setBlock(target, TTBlocks.ALEMBIC.get().defaultBlockState(), Block.UPDATE_ALL);
-        } else if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())) {
-            level.setBlock(target, TTBlocks.ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
-        } else if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE.get())) {
-            level.setBlock(target, TTBlocks.ADVANCED_ALCHEMICAL_CONSTRUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        setLit(cooldown > 0);
+        if (visible) {
+            markUpdated();
         }
     }
 
     private boolean charge(ServerLevel level) {
-        boolean changed = heat > 0;
-        heat = Math.max(0, heat - 1);
-        HolderLookup.RegistryLookup<IAspect> aspects = level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
-        changed |= refill(level, Power.HEAT, aspects.get(TTAspects.IGNIS).orElse(null));
-        changed |= refill(level, Power.PERDITIO, aspects.get(TTAspects.PERDITIO).orElse(null));
-        changed |= refill(level, Power.AQUA, aspects.get(TTAspects.AQUA).orElse(null));
-        return changed;
+        int heatBefore = heat;
+        int perditioBefore = perditio;
+        int aquaBefore = aqua;
+        heat = Math.max(0, heat - HEAT_DECAY);
+        heat += draw(level, TTAspects.IGNIS, heat);
+        perditio += draw(level, TTAspects.PERDITIO, perditio);
+        aqua += draw(level, TTAspects.AQUA, aqua);
+        return heat != heatBefore || perditio != perditioBefore || aqua != aquaBefore;
     }
 
-    private boolean refill(ServerLevel level, Power power, @Nullable Holder<IAspect> aspect) {
-        if (aspect == null || power.amount(this) >= MAX_POWER) return false;
-        int request = Math.min(POWER_REFILL_REQUEST, MAX_POWER - power.amount(this));
-        int drained = drainRelaySources(level, aspect, request);
-        int remaining = request - drained;
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = -NODE_DRAW_RANGE; remaining > 0 && x <= NODE_DRAW_RANGE; x++) {
-            for (int y = -NODE_DRAW_RANGE; y <= NODE_DRAW_RANGE; y++) {
-                for (int z = -NODE_DRAW_RANGE; z <= NODE_DRAW_RANGE; z++) {
-                    cursor.setWithOffset(worldPosition, x, y, z);
-                    if (!level.isLoaded(cursor)) continue;
-                    if (!(level.getBlockEntity(cursor) instanceof BlockEntityNode node)
-                            || node instanceof BlockEntityJarNode) continue;
-                    int taken = node.drainCentivis(aspect, remaining);
-                    drained += taken;
-                    remaining -= taken;
-                    if (remaining == 0) break;
-                }
-            }
+    private int draw(ServerLevel level, ResourceKey<IAspect> primal, int stored) {
+        if (stored >= MAX_POWER) {
+            return 0;
         }
-        if (drained <= 0) return false;
-        power.add(this, drained);
-        return true;
-    }
-
-    /** Draw from every distinct energized node reachable through a relay near this furnace. */
-    private int drainRelaySources(ServerLevel level, Holder<IAspect> aspect, int request) {
-        int drained = 0;
-        Set<BlockPos> sources = new ObjectOpenHashSet<>();
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = -NODE_DRAW_RANGE; drained < request && x <= NODE_DRAW_RANGE; x++) {
-            for (int y = -NODE_DRAW_RANGE; drained < request && y <= NODE_DRAW_RANGE; y++) {
-                for (int z = -NODE_DRAW_RANGE; drained < request && z <= NODE_DRAW_RANGE; z++) {
-                    cursor.setWithOffset(worldPosition, x, y, z);
-                    if (!(level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) || !relay.isLinked())
-                        continue;
-                    LinkedRelaySource source = relay.resolveSource(level);
-                    if (source == null || !sources.add(source.position())) continue;
-                    drained +=
-                            VisRelayNetwork.drainNow(source, aspect.unwrapKey().orElseThrow(), request - drained);
-                }
-            }
+        int request = Math.min(POWER_REQUEST, MAX_POWER - stored);
+        int drained = VisRelayNetwork.drainEverySourceNear(level, worldPosition, primal, request);
+        if (drained < request) {
+            drained += VisRelayNetwork.drainNodesNear(level, worldPosition, primal, request - drained);
         }
         return drained;
     }
 
     private boolean processInput() {
-        AspectList inputAspects = AspectIndexAccess.index().of(input.copy());
-        int amount = inputAspects.totalAmount();
-        if (amount <= 0
-                || aspects.totalAmount() + amount > MAX_ESSENTIA
-                || heat < amount * 2
+        AspectList result = inputAspects();
+        int amount = result.totalAmount();
+        if (aspects.totalAmount() + amount > MAX_ESSENTIA
+                || heat < amount * HEAT_PER_ASPECT
                 || perditio < amount
                 || aqua < amount) {
             return false;
         }
-        heat -= amount * 2;
+        heat -= amount * HEAT_PER_ASPECT;
         perditio -= amount;
         aqua -= amount;
-        aspects = aspects.add(inputAspects);
-        input.shrink(1);
-        cooldown = 5 + Math.round((1.0F - heat / (float) MAX_POWER) * 100.0F);
+        aspects = aspects.add(result);
+        setInput(ItemStack.EMPTY);
+        cooldown = MIN_COOLDOWN + Math.round((1.0F - heat / (float) MAX_POWER) * COOLDOWN_RANGE);
         cycleDuration = cooldown;
         return true;
     }
 
-    public boolean insertInput(Player player, InteractionHand hand) {
-        ItemStack held = player.getItemInHand(hand);
-        if (!insertInput(held)) return false;
-        if (!player.getAbilities().instabuild) held.shrink(1);
-        return true;
-    }
-
-    /** Accepts one valid item for the next furnace cycle without consuming the supplied stack. */
     public boolean insertInput(ItemStack stack) {
-        if (!assembled
-                || !input.isEmpty()
-                || AspectIndexAccess.index().of(stack.copy()).isEmpty()) return false;
-        input = stack.copyWithCount(1);
-        setChanged();
-        sync();
+        if (!assembled || !input.isEmpty() || stack.isEmpty()) {
+            return false;
+        }
+        int amount = AspectIndexAccess.of(stack).totalAmount();
+        if (amount <= 0 || amount > MAX_ESSENTIA || amount * HEAT_PER_ASPECT > MAX_POWER) {
+            return false;
+        }
+        setInput(stack.copyWithCount(1));
+        markUpdated();
         return true;
     }
 
-    public boolean assembled() {
+    private void setInput(ItemStack stack) {
+        input = stack;
+        inputAspects = null;
+    }
+
+    private AspectList inputAspects() {
+        if (inputAspects == null) {
+            inputAspects = input.isEmpty() ? AspectList.EMPTY : AspectIndexAccess.of(input);
+        }
+        return inputAspects;
+    }
+
+    public int takeEssentia(Holder<IAspect> aspect, int amount) {
+        int available = aspects.amountOf(aspect);
+        if (amount <= 0 || available <= 0) {
+            return 0;
+        }
+        int taken = Math.min(amount, available);
+        aspects = aspects.remove(aspect, taken);
+        markUpdated();
+        return taken;
+    }
+
+    public @Nullable Holder<IAspect> randomEssentia() {
+        List<AspectInstance> entries = aspects.entries();
+        if (entries.isEmpty()) {
+            return null;
+        }
+        return entries.get(level == null ? 0 : level.getRandom().nextInt(entries.size()))
+                .aspect();
+    }
+
+    public AdvancedFurnaceNozzle nozzle(Direction outputFace) {
+        return nozzles.get(outputFace);
+    }
+
+    public boolean isAssembled() {
         return assembled;
     }
 
     public AspectList aspects() {
         return aspects;
+    }
+
+    public ItemStack input() {
+        return input;
+    }
+
+    public int inputCost() {
+        return inputAspects().totalAmount();
     }
 
     public int heat() {
@@ -269,10 +223,6 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         return aqua;
     }
 
-    public ItemStack input() {
-        return input;
-    }
-
     public int cooldown() {
         return cooldown;
     }
@@ -281,97 +231,32 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         return cycleDuration;
     }
 
-    public void dropContents() {
-        if (level == null || level.isClientSide()) return;
+    private void setLit(boolean lit) {
+        BlockState state = getBlockState();
+        if (level != null && state.getValue(BlockAdvancedAlchemicalFurnace.LIT) != lit) {
+            level.setBlock(worldPosition, state.setValue(BlockAdvancedAlchemicalFurnace.LIT, lit), Block.UPDATE_ALL);
+        }
+    }
+
+    private void markUpdated() {
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    public void dropContents(BlockPos pos) {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
         if (!input.isEmpty()) {
-            Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), input);
-            input = ItemStack.EMPTY;
+            Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), input);
+            setInput(ItemStack.EMPTY);
         }
         if (!aspects.isEmpty()) {
-            AuraHelper.polluteAura(level, worldPosition, aspects.totalAmount(), true);
+            AuraHelper.polluteAura(level, pos, aspects.totalAmount(), true);
             aspects = AspectList.EMPTY;
         }
-    }
-
-    private void updateLit(boolean lit) {
-        if (getBlockState().getValue(BlockAdvancedAlchemicalFurnace.LIT) != lit) {
-            level.setBlock(worldPosition, getBlockState().setValue(BlockAdvancedAlchemicalFurnace.LIT, lit), 3);
-        }
-    }
-
-    private void sync() {
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-    }
-
-    @Override
-    public boolean isConnectable(Direction face) {
-        return false;
-    }
-
-    @Override
-    public boolean canInputFrom(Direction face) {
-        return false;
-    }
-
-    @Override
-    public boolean canOutputTo(Direction face) {
-        return false;
-    }
-
-    @Override
-    public void setSuction(@Nullable Holder<IAspect> aspect, int amount) {}
-
-    @Override
-    public @Nullable Holder<IAspect> getSuctionType(Direction face) {
-        return null;
-    }
-
-    @Override
-    public int getSuctionAmount(Direction face) {
-        return 0;
-    }
-
-    @Override
-    public int getMinimumSuction() {
-        return 0;
-    }
-
-    @Override
-    public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (!canOutputTo(face) || amount <= 0 || aspects.amountOf(aspect) <= 0) return 0;
-        int taken = Math.min(amount, aspects.amountOf(aspect));
-        aspects = aspects.reduce(aspect, taken);
-        setChanged();
-        sync();
-        return taken;
-    }
-
-    @Override
-    public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        return 0;
-    }
-
-    @Override
-    public @Nullable Holder<IAspect> getEssentiaType(Direction face) {
-        return aspects.entries().isEmpty() ? null : aspects.entries().getFirst().aspect();
-    }
-
-    @Override
-    public int getEssentiaAmount(Direction face) {
-        return aspects.totalAmount();
-    }
-
-    public int takeEssentiaFromNozzle(Holder<IAspect> aspect, int amount) {
-        if (amount <= 0 || aspects.amountOf(aspect) <= 0) return 0;
-        int taken = Math.min(amount, aspects.amountOf(aspect));
-        aspects = aspects.reduce(aspect, taken);
-        setChanged();
-        sync();
-        return taken;
-    }
-
-    public @Nullable Holder<IAspect> firstEssentia() {
-        return aspects.entries().isEmpty() ? null : aspects.entries().getFirst().aspect();
     }
 
     @Override
@@ -379,7 +264,7 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
         super.saveAdditional(output, registries);
         TTNbt.store(output, "Aspects", AspectList.CODEC, registries, aspects);
         if (!input.isEmpty()) {
-            output.put("Input", input.save(registries));
+            TTNbt.store(output, "Input", ItemStack.CODEC, registries, input);
         }
         output.putInt("Heat", heat);
         output.putInt("Perditio", perditio);
@@ -390,71 +275,25 @@ public final class BlockEntityAdvancedAlchemicalFurnace extends BlockEntity impl
     }
 
     @Override
-    protected void loadAdditional(CompoundTag inputTag, HolderLookup.Provider registries) {
-        super.loadAdditional(inputTag, registries);
-        aspects = TTNbt.read(inputTag, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
-        input = inputTag.contains("Input")
-                ? ItemStack.parse(registries, inputTag.getCompound("Input")).orElse(ItemStack.EMPTY)
-                : ItemStack.EMPTY;
-        heat = Math.min(MAX_POWER, inputTag.getInt("Heat"));
-        perditio = Math.min(MAX_POWER, inputTag.getInt("Perditio"));
-        aqua = Math.min(MAX_POWER, inputTag.getInt("Aqua"));
-        cooldown = Math.max(0, inputTag.getInt("Cooldown"));
-        cycleDuration = Math.max(cooldown, inputTag.getInt("CycleDuration"));
-        assembled = inputTag.getBoolean("Assembled");
+    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+        super.loadAdditional(input, registries);
+        aspects = TTNbt.read(input, "Aspects", AspectList.CODEC, registries).orElse(AspectList.EMPTY);
+        setInput(TTNbt.read(input, "Input", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY));
+        heat = Math.clamp((input.contains("Heat") ? input.getInt("Heat") : 0), 0, MAX_POWER);
+        perditio = Math.clamp((input.contains("Perditio") ? input.getInt("Perditio") : 0), 0, MAX_POWER);
+        aqua = Math.clamp((input.contains("Aqua") ? input.getInt("Aqua") : 0), 0, MAX_POWER);
+        cooldown = Math.max(0, (input.contains("Cooldown") ? input.getInt("Cooldown") : 0));
+        cycleDuration = Math.max(cooldown, (input.contains("CycleDuration") ? input.getInt("CycleDuration") : 0));
+        assembled = (input.contains("Assembled") ? input.getBoolean("Assembled") : false);
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        CompoundTag output = new CompoundTag();
-        saveAdditional(output, registries);
-        tag.merge(output);
-        return tag;
+        return saveWithoutMetadata(registries);
     }
 
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    private enum Power {
-        HEAT {
-            @Override
-            int amount(BlockEntityAdvancedAlchemicalFurnace furnace) {
-                return furnace.heat;
-            }
-
-            @Override
-            void add(BlockEntityAdvancedAlchemicalFurnace furnace, int amount) {
-                furnace.heat = Math.min(MAX_POWER, furnace.heat + amount);
-            }
-        },
-        PERDITIO {
-            @Override
-            int amount(BlockEntityAdvancedAlchemicalFurnace furnace) {
-                return furnace.perditio;
-            }
-
-            @Override
-            void add(BlockEntityAdvancedAlchemicalFurnace furnace, int amount) {
-                furnace.perditio = Math.min(MAX_POWER, furnace.perditio + amount);
-            }
-        },
-        AQUA {
-            @Override
-            int amount(BlockEntityAdvancedAlchemicalFurnace furnace) {
-                return furnace.aqua;
-            }
-
-            @Override
-            void add(BlockEntityAdvancedAlchemicalFurnace furnace, int amount) {
-                furnace.aqua = Math.min(MAX_POWER, furnace.aqua + amount);
-            }
-        };
-
-        abstract int amount(BlockEntityAdvancedAlchemicalFurnace furnace);
-
-        abstract void add(BlockEntityAdvancedAlchemicalFurnace furnace, int amount);
     }
 }

@@ -62,7 +62,6 @@ import com.leclowndu93150.thaumaturge.content.equipment.BlockEffectGlimmer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnace;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockAdvancedAlchemicalFurnaceNozzle;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEssentiaCrystalizer;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
@@ -855,11 +854,10 @@ public final class TTBlocks {
                     BlockPlaceholder::new,
                     advancedFurnacePlaceholderProps());
 
-    public static final DeferredBlock<BlockAdvancedAlchemicalFurnaceNozzle> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE =
-            BLOCKS.registerBlock(
-                    "advanced_alchemical_furnace_nozzle",
-                    BlockAdvancedAlchemicalFurnaceNozzle::new,
-                    advancedFurnacePlaceholderProps().noLootTable().noOcclusion());
+    public static final DeferredBlock<BlockPlaceholder> ADVANCED_ALCHEMICAL_FURNACE_NOZZLE = BLOCKS.registerBlock(
+            "advanced_alchemical_furnace_nozzle",
+            BlockPlaceholder::new,
+            advancedFurnacePlaceholderProps().noLootTable().noOcclusion());
 
     public static final DeferredBlock<BlockPedestal> PEDESTAL_ANCIENT =
             BLOCKS.registerBlock("pedestal_ancient", BlockPedestal::new, pedestalProps());

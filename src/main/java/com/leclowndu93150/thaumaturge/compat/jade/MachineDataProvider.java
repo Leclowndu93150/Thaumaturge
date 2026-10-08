@@ -54,7 +54,7 @@ public enum MachineDataProvider implements IServerDataProvider<BlockAccessor> {
             }
 
             String status;
-            if (!furnace.assembled()) {
+            if (!furnace.isAssembled()) {
                 status = "unformed";
             } else if (furnace.cooldown() > 0) {
                 status = "processing";

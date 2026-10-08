@@ -68,7 +68,7 @@ public enum EssentiaDataProvider implements IServerDataProvider<BlockAccessor> {
         if (advancedFurnace != null) {
             writeStorage(tag, advancedFurnace.aspects(), BlockEntityAdvancedAlchemicalFurnace.MAX_ESSENTIA);
             tag.putString(AREA, "advanced_alchemical_furnace");
-            tag.putBoolean(ACTIVE, advancedFurnace.assembled());
+            tag.putBoolean(ACTIVE, advancedFurnace.isAssembled());
             return;
         }
 

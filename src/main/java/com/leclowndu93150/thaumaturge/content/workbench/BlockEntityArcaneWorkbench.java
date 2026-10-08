@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.workbench;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneWorkbenchContext;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -19,13 +18,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
-@EventBusSubscriber(modid = TTIds.MODID)
 public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvider {
     public int auraVis = 0;
 
@@ -39,14 +32,6 @@ public class BlockEntityArcaneWorkbench extends BlockEntity implements MenuProvi
 
     public BlockEntityArcaneWorkbench(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.ARCANE_WORKBENCH.get(), worldPosition, blockState);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.ARCANE_WORKBENCH.get(),
-                (be, side) -> new InvWrapper(be.getInventory()));
     }
 
     @Override

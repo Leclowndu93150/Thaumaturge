@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
@@ -30,14 +29,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
-@EventBusSubscriber(modid = TTIds.MODID)
 public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     private final ItemStackHandler inventory = new ItemStackHandler(32) {
@@ -60,14 +54,6 @@ public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     public BlockEntityInfernalFurnace(BlockPos worldPosition, BlockState blockState) {
         super(TTBlockEntities.INFERNAL_FURNACE.get(), worldPosition, blockState);
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TTBlockEntities.INFERNAL_FURNACE.get(),
-                (be, side) -> side == null || side == Direction.UP ? be.inventory() : null);
     }
 
     public static void staticTick(Level level, BlockPos pos, BlockState state, BlockEntityInfernalFurnace furnace) {

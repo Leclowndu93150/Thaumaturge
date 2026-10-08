@@ -67,7 +67,7 @@ public final class AdvancedAlchemicalFurnaceRenderer
             MultiBufferSource buffers,
             int light,
             int overlay) {
-        if (!furnace.assembled()) {
+        if (!furnace.isAssembled()) {
             return;
         }
 

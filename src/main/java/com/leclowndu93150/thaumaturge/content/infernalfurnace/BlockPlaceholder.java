@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
+import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedAlchemicalFurnaceStructure;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.AdvancedFurnaceShapes;
-import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.golem.press.BlockGolemBuilder;
 import com.leclowndu93150.thaumaturge.content.golem.press.GolemPressShapes;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -36,10 +36,7 @@ public class BlockPlaceholder extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        if (state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER)
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_NOZZLE)) {
+        if (AdvancedAlchemicalFurnaceStructure.isPart(state)) {
             VoxelShape furnace = AdvancedFurnaceShapes.find(level, pos);
             if (furnace != null) {
                 return furnace;
@@ -133,29 +130,10 @@ public class BlockPlaceholder extends Block {
                 }
             }
         }
-        if (!level.isClientSide() && isAdvancedFurnacePart(state)) {
-            restoreAdvancedFurnace:
-            for (int x = -1; x <= 1; x++) {
-                for (int y = -1; y <= 0; y++) {
-                    for (int z = -1; z <= 1; z++) {
-                        BlockPos controllerPos = pos.offset(x, y, z);
-                        if (level.getBlockState(controllerPos).is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE.get())) {
-                            BlockEntityAdvancedAlchemicalFurnace.restoreStructure(level, controllerPos, pos);
-                            level.setBlock(
-                                    controllerPos, TTBlocks.SMELTER_BASIC.get().defaultBlockState(), Block.UPDATE_ALL);
-                            break restoreAdvancedFurnace;
-                        }
-                    }
-                }
-            }
+        if (!level.isClientSide() && AdvancedAlchemicalFurnaceStructure.isPart(state)) {
+            AdvancedAlchemicalFurnaceStructure.disassembleAround(level, pos);
         }
         super.destroy(level, pos, state);
-    }
-
-    private static boolean isAdvancedFurnacePart(BlockState state) {
-        return state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ALEMBIC_PLACEHOLDER.get())
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_CONSTRUCT_PLACEHOLDER.get())
-                || state.is(TTBlocks.ADVANCED_ALCHEMICAL_FURNACE_ADVANCED_CONSTRUCT_PLACEHOLDER.get());
     }
 
     @Override
