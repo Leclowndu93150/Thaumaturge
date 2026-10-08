@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge;
 
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
@@ -70,6 +71,7 @@ public final class Thaumaturge {
         TTMaterials.register(modBus);
         TTItems.register(modBus);
         TTFeatures.register(modBus);
+        TTTreePlacers.register(modBus);
         TTStructures.register(modBus);
         TTBlockEntities.register(modBus);
         TTEntities.register(modBus);

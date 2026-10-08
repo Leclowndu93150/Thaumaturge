@@ -14,12 +14,6 @@ import com.leclowndu93150.thaumaturge.content.world.objects.ObsidianTotemFeature
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraConfig;
 import com.leclowndu93150.thaumaturge.content.world.plant.MagicForestFloraFeature;
 import com.leclowndu93150.thaumaturge.content.world.taint.TaintBiomeFeature;
-import com.leclowndu93150.thaumaturge.content.world.tree.BigMagicTreeConfig;
-import com.leclowndu93150.thaumaturge.content.world.tree.BigMagicTreeFeature;
-import com.leclowndu93150.thaumaturge.content.world.tree.BigTreeConfig;
-import com.leclowndu93150.thaumaturge.content.world.tree.BigTreeFeature;
-import com.leclowndu93150.thaumaturge.content.world.tree.SilverwoodTreeConfig;
-import com.leclowndu93150.thaumaturge.content.world.tree.SilverwoodTreeFeature;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -30,15 +24,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class TTFeatures {
     public static final DeferredRegister<Feature<?>> FEATURES =
             DeferredRegister.create(Registries.FEATURE, TTIds.MODID);
-
-    public static final DeferredHolder<Feature<?>, BigTreeFeature> BIG_TREE =
-            FEATURES.register("big_tree", () -> new BigTreeFeature(BigTreeConfig.CODEC));
-
-    public static final DeferredHolder<Feature<?>, BigMagicTreeFeature> BIG_MAGIC_TREE =
-            FEATURES.register("big_magic_tree", () -> new BigMagicTreeFeature(BigMagicTreeConfig.CODEC));
-
-    public static final DeferredHolder<Feature<?>, SilverwoodTreeFeature> SILVERWOOD_TREE =
-            FEATURES.register("silverwood_tree", () -> new SilverwoodTreeFeature(SilverwoodTreeConfig.CODEC));
 
     public static final DeferredHolder<Feature<?>, CrystalClusterFeature> CRYSTAL_CLUSTER =
             FEATURES.register("crystal_cluster", () -> new CrystalClusterFeature(CrystalClusterConfig.CODEC));
