@@ -58,7 +58,7 @@ public final class WardHandler {
         BlockState state = level.getBlockState(pos);
         return !state.isAir()
                 && !state.hasBlockEntity()
-                && (state.isSolidRender(level, pos)
+                && (!state.getCollisionShape(level, pos).isEmpty()
                         || state.is(TTBlocks.WARDED_GLASS.get())
                         || state.is(TTBlocks.ARCANE_DOOR.get())
                         || state.is(TTBlocks.ARCANE_PRESSURE_PLATE.get()))
