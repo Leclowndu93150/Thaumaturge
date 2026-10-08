@@ -7,10 +7,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -22,6 +24,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -39,6 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchCrab extends Monster implements ISidedHurt {
@@ -146,6 +150,49 @@ public class EntityEldritchCrab extends Monster implements ISidedHurt {
             case 2 -> MobEffects.REGENERATION;
             default -> MobEffects.INVISIBILITY;
         };
+    }
+
+    @Override
+    public boolean startRiding(Entity vehicle, boolean force) {
+        boolean mounted = super.startRiding(vehicle, force);
+        if (mounted && vehicle instanceof ServerPlayer player) {
+            player.connection.send(new ClientboundSetPassengersPacket(player));
+        }
+        return mounted;
+    }
+
+    @Override
+    public void removeVehicle() {
+        Entity previous = getVehicle();
+        super.removeVehicle();
+        if (previous instanceof ServerPlayer player && getVehicle() != previous) {
+            player.connection.send(new ClientboundSetPassengersPacket(player));
+        }
+    }
+
+    @Override
+    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+        if (!(vehicle instanceof LivingEntity host)) {
+            return super.getVehicleAttachmentPoint(vehicle);
+        }
+        double reach = host.getBbWidth() * 0.5 + getBbWidth() * 0.25;
+        Vec3 face = host.getEyePosition().add(host.getLookAngle().scale(reach)).add(0.0, -getBbHeight() * 0.5, 0.0);
+        return vehicle.getPassengerRidingPosition(this).subtract(face);
+    }
+
+    @Override
+    public void rideTick() {
+        super.rideTick();
+        if (getVehicle() instanceof LivingEntity host) {
+            setYRot(host.getYHeadRot() + 180.0F);
+            setYHeadRot(getYRot());
+            setYBodyRot(getYRot());
+        }
+    }
+
+    @Override
+    public boolean canRiderInteract() {
+        return true;
     }
 
     @Override
