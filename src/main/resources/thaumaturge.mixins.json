@@ -28,7 +28,10 @@
     "client.iris.FallbackShaderMixin",
     "client.iris.HandRendererMixin",
     "client.iris.ShaderInstanceMixin",
-    "client.player.AbstractClientPlayerMixin"
+    "client.player.AbstractClientPlayerMixin",
+    "jei.gui.ingredients.IngredientFilterAccessor",
+    "jei.gui.ingredients.IngredientFilterApiAccessor",
+    "jei.gui.search.ElementSearchAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

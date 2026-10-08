@@ -32,7 +32,7 @@ public final class BaubleEvents {
     private static final double OBSERVATION_CHANCE_PER_XP = 0.2;
 
     private static final long CLOUD_JUMP_GRACE_WINDOW_TICKS = 100L;
-    private static final double CLOUD_JUMP_GRACE_DISTANCE = 16.0;
+    private static final float CLOUD_JUMP_GRACE_DISTANCE = 16.0F;
 
     private BaubleEvents() {}
 
@@ -43,12 +43,17 @@ public final class BaubleEvents {
                 || !ThaumaturgeCuriosCompat.isCurioEquipped(player, TTItems.CLOUD_RING.get())) {
             return;
         }
-        long lastJump = player.getData(TTAttachments.CLOUD_JUMP_TIME);
-        if (lastJump == 0L || player.level().getGameTime() - lastJump > CLOUD_JUMP_GRACE_WINDOW_TICKS) {
+        boolean pending = hasPendingCloudJump(player);
+        player.setData(TTAttachments.CLOUD_JUMP_TIME, 0L);
+        if (!pending) {
             return;
         }
-        player.setData(TTAttachments.CLOUD_JUMP_TIME, 0L);
-        event.setDistance(Math.max(0.0F, event.getDistance() - (float) CLOUD_JUMP_GRACE_DISTANCE));
+        event.setDistance(Math.max(0.0F, event.getDistance() - CLOUD_JUMP_GRACE_DISTANCE));
+    }
+
+    public static boolean hasPendingCloudJump(Player player) {
+        long lastJump = player.getData(TTAttachments.CLOUD_JUMP_TIME);
+        return lastJump != 0L && player.level().getGameTime() - lastJump <= CLOUD_JUMP_GRACE_WINDOW_TICKS;
     }
 
     @SubscribeEvent

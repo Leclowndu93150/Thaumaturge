@@ -36,7 +36,6 @@ public final class AspectGainClientHandler {
                                     mc.level.getRandom().nextLong());
                         }
                     });
-            handleJEISync(new ClientboundUpdateJEIAspectListPayload(), ctx);
         });
     }
 

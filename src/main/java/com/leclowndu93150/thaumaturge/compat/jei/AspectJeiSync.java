@@ -1,19 +1,17 @@
 package com.leclowndu93150.thaumaturge.compat.jei;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.compat.jei.category.AspectCompositionCategory;
 import com.leclowndu93150.thaumaturge.compat.jei.category.AspectFromStacksCategory;
-import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import com.leclowndu93150.thaumaturge.network.ServerboundRequestSyncAspectPoolPayload;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeManager;
@@ -23,13 +21,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public final class AspectJeiSync {
     private static @Nullable IJeiRuntime runtime;
     private static final Set<ResourceLocation> discoveredAspects = new HashSet<>();
-    private static final Map<ResourceLocation, List<ItemStack>> gatedStacks = new HashMap<>();
 
     private AspectJeiSync() {}
 
@@ -37,26 +33,40 @@ public final class AspectJeiSync {
         runtime = jeiRuntime;
         rebuildAspectStackPages();
         discoveredAspects.clear();
-        gatedStacks.clear();
-        IIngredientManager ingredients = jeiRuntime.getIngredientManager();
-        for (ItemStack stack : ingredients.getAllIngredients(VanillaTypes.ITEM_STACK)) {
-            ResourceLocation aspect = gatedAspectOf(stack);
-            if (aspect != null) {
-                gatedStacks.computeIfAbsent(aspect, k -> new ArrayList<>()).add(stack);
-            }
+        syncDiscovered();
+        updateCompositionVisibility(jeiRuntime);
+    }
+
+    private static boolean isAffected(Object ingredient, Set<ResourceLocation> changedIds) {
+        if (ingredient instanceof AspectInstance instance) {
+            return changedIds.contains(AspectPools.idOf(instance.aspect()));
         }
-        Player player = Minecraft.getInstance().player;
-        if (player != null) {
-            player.registryAccess()
-                    .lookupOrThrow(IAspect.REGISTRY_KEY)
-                    .listElements()
-                    .forEach(ref -> {
-                        if (AspectPools.isDiscovered(player, ref)) {
-                            discoveredAspects.add(AspectPools.idOf(ref));
-                        }
-                    });
+        if (ingredient instanceof ItemStack stack) {
+            return changedIds.contains(gatedAspectOf(stack));
         }
-        PacketDistributor.sendToServer(new ServerboundRequestSyncAspectPoolPayload());
+        return false;
+    }
+
+    private static void updateCompositionVisibility(IJeiRuntime runtime) {
+        IRecipeManager recipes = runtime.getRecipeManager();
+        List<AspectCompositionCategory.Composition> hidden = new ArrayList<>();
+        List<AspectCompositionCategory.Composition> shown = new ArrayList<>();
+        recipes.createRecipeLookup(AspectCompositionCategory.RECIPE_TYPE)
+                .includeHidden()
+                .get()
+                .forEach(row -> {
+                    if (AspectKnowledgeAccess.of(row.result()).isCompositionRevealed()) {
+                        shown.add(row);
+                    } else {
+                        hidden.add(row);
+                    }
+                });
+        if (!hidden.isEmpty()) {
+            recipes.hideRecipes(AspectCompositionCategory.RECIPE_TYPE, hidden);
+        }
+        if (!shown.isEmpty()) {
+            recipes.unhideRecipes(AspectCompositionCategory.RECIPE_TYPE, shown);
+        }
     }
 
     private static @Nullable ResourceLocation gatedAspectOf(ItemStack stack) {
@@ -102,8 +112,7 @@ public final class AspectJeiSync {
             return;
         }
         IIngredientManager ingredients = current.getIngredientManager();
-        List<AspectInstance> changedAspects = new ArrayList<>();
-        List<ItemStack> changedStacks = new ArrayList<>();
+        Set<ResourceLocation> changedIds = new HashSet<>();
         player.registryAccess()
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .listElements()
@@ -119,19 +128,12 @@ public final class AspectJeiSync {
                     } else {
                         discoveredAspects.remove(id);
                     }
-                    changedAspects.add(new AspectInstance(ref, 1));
-                    List<ItemStack> stacks = gatedStacks.get(id);
-                    if (stacks != null) {
-                        changedStacks.addAll(stacks);
-                    }
+                    changedIds.add(id);
                 });
-        if (!changedAspects.isEmpty()) {
-            ingredients.removeIngredientsAtRuntime(AspectIngredientType.INSTANCE, changedAspects);
-            ingredients.addIngredientsAtRuntime(AspectIngredientType.INSTANCE, changedAspects);
+        if (changedIds.isEmpty()) {
+            return;
         }
-        if (!changedStacks.isEmpty()) {
-            ingredients.removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, changedStacks);
-            ingredients.addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, changedStacks);
-        }
+        JeiSearchIndex.reindex(current, ingredients, ingredient -> isAffected(ingredient, changedIds));
+        updateCompositionVisibility(current);
     }
 }

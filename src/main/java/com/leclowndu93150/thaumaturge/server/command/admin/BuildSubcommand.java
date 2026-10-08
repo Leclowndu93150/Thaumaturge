@@ -26,7 +26,7 @@ final class BuildSubcommand implements AdminSubcommand {
         ServerPlayer player = source.getPlayerOrException();
         ServerLevel level = source.getLevel();
         BlockPos center = player.blockPosition().relative(player.getDirection(), 4);
-        if (center.getY() < level.getMinBuildHeight() || center.getY() + 2 >= level.getMaxBuildHeight()) {
+        if (center.getY() < level.getMinBuildHeight() || center.getY() + 2 > level.getMaxBuildHeight() - 1) {
             source.sendFailure(Component.translatable("commands.thaumaturge.build.infusion_altar.height"));
             return 0;
         }

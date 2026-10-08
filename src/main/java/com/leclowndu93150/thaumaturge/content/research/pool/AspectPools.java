@@ -41,8 +41,14 @@ public final class AspectPools {
     }
 
     public static void sync(ServerPlayer player) {
-        player.syncData(TTAttachments.ASPECT_POOL);
-        PacketDistributor.sendToPlayer(player, new ClientboundUpdateJEIAspectListPayload());
+        data(player).markSyncPending();
+    }
+
+    public static void flush(ServerPlayer player) {
+        if (data(player).takeSyncPending()) {
+            player.syncData(TTAttachments.ASPECT_POOL);
+            PacketDistributor.sendToPlayer(player, ClientboundUpdateJEIAspectListPayload.INSTANCE);
+        }
     }
 
     public static void seedIfNew(ServerPlayer player) {
@@ -83,7 +89,8 @@ public final class AspectPools {
         int granted = amount;
         if (discovery) {
             granted += DISCOVERY_BONUS;
-            player.sendSystemMessage(Component.translatable("tc.addaspectdiscovery", AspectComponents.trueName(aspect))
+            player.sendSystemMessage(Component.translatable(
+                            "message.thaumaturge.research.aspect_discovered", AspectComponents.trueName(aspect))
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         int current = data.amount(id);
@@ -145,9 +152,10 @@ public final class AspectPools {
 
     public static MutableComponent missingComponentMessage(Player player, Holder<IAspect> component) {
         if (!component.value().isPrimal() && hasDiscoveredComponents(player, component)) {
-            return Component.translatable("tc.discoveryerror.derive", AspectComponents.composition(component));
+            return Component.translatable(
+                    "message.thaumaturge.research.discovery_error.derive", AspectComponents.composition(component));
         }
-        return Component.translatable("tc.discoveryerror", AspectComponents.help(component));
+        return Component.translatable("message.thaumaturge.research.discovery_error", AspectComponents.help(component));
     }
 
     public static boolean spend(ServerPlayer player, Holder<IAspect> aspect, int amount) {

@@ -145,7 +145,7 @@ public final class ResearchNotes {
         if (!player.getInventory().add(note)) {
             player.drop(note, false);
         }
-        player.level().playSound(null, player, TTSounds.WRITE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
+        player.level().playSound(null, player.blockPosition(), TTSounds.WRITE.get(), SoundSource.PLAYERS, 0.5F, 1.0F);
         return true;
     }
 

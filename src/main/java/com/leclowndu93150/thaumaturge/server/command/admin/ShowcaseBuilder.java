@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 final class ShowcaseBuilder {
-    private static final int FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
+    private static final int FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS;
     private static final int BLOCK_COLUMNS = 16;
     private static final int BLOCK_SPACING = 3;
     private static final int SIDE_MARGIN = 2;
@@ -68,7 +68,7 @@ final class ShowcaseBuilder {
 
     boolean fitsHeight() {
         return origin.getY() - 1 >= level.getMinBuildHeight()
-                && origin.getY() + clearHeight < level.getMaxBuildHeight();
+                && origin.getY() + clearHeight <= level.getMaxBuildHeight() - 1;
     }
 
     boolean isLoaded() {

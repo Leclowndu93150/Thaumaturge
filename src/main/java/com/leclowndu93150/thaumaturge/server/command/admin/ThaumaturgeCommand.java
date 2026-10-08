@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.server.command.TTCommandRoot;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -29,9 +30,10 @@ public final class ThaumaturgeCommand {
                 new BuildSubcommand(),
                 new LabyrinthSubcommand());
         for (AdminSubcommand subcommand : subcommands) {
-            root.then(subcommand
-                    .build(event.getBuildContext())
-                    .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS)));
+            LiteralArgumentBuilder<CommandSourceStack> node = subcommand.build(event.getBuildContext());
+            Predicate<CommandSourceStack> requirement = node.getRequirement();
+            root.then(node.requires(
+                    source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS) && requirement.test(source)));
         }
         event.getDispatcher().register(root);
     }

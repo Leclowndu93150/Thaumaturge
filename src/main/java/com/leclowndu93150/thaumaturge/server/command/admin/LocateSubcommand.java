@@ -22,6 +22,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 
 final class LocateSubcommand implements AdminSubcommand {
     private static final DynamicCommandExceptionType INVALID_TYPE = new DynamicCommandExceptionType(
@@ -53,8 +54,8 @@ final class LocateSubcommand implements AdminSubcommand {
             if (!level.hasChunkAt(candidate)) {
                 break;
             }
-            if ((level.getBlockState(candidate).is(TTBlocks.NODE.get())
-                            || level.getBlockState(candidate).is(TTBlocks.SILVERWOOD_NODE_LOG.get()))
+            BlockState candidateState = level.getBlockState(candidate);
+            if ((candidateState.is(TTBlocks.NODE.get()) || candidateState.is(TTBlocks.SILVERWOOD_NODE_LOG.get()))
                     && level.getBlockEntity(candidate) instanceof BlockEntityNode node) {
                 if (node.getNodeType() == type) {
                     break;
@@ -66,12 +67,12 @@ final class LocateSubcommand implements AdminSubcommand {
         }
         if (result.isEmpty()) {
             source.sendFailure(
-                    Component.translatable("commands.thaumaturge.locate.node.not_found", type.getSerializedName()));
+                    Component.translatable("commands.thaumaturge.locate.node.not_found", nodeTypeName(type)));
             return 0;
         }
         BlockPos pos = result.get();
         String coordinatesText = pos.getX() + " " + pos.getY() + " " + pos.getZ();
-        Component coordinates = Component.literal("[" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + "]")
+        Component coordinates = Component.translatable("chat.coordinates", pos.getX(), pos.getY(), pos.getZ())
                 .withStyle(style -> style.withColor(ChatFormatting.GREEN)
                         .withUnderlined(true)
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, coordinatesText))
@@ -81,8 +82,12 @@ final class LocateSubcommand implements AdminSubcommand {
         int distance = (int) Math.round(Math.sqrt(pos.distSqr(origin)));
         source.sendSuccess(
                 () -> Component.translatable(
-                        "commands.thaumaturge.locate.node.found", type.getSerializedName(), coordinates, distance),
+                        "commands.thaumaturge.locate.node.found", nodeTypeName(type), coordinates, distance),
                 false);
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static Component nodeTypeName(NodeType type) {
+        return Component.translatable("nodetype.thaumaturge." + type.getSerializedName());
     }
 }

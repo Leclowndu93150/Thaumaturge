@@ -29,6 +29,7 @@ public final class AspectPoolData {
     private final LinkedHashMap<ResourceLocation, Integer> pool;
     private int completedNotes;
     private long lastGrantSoundTime = Long.MIN_VALUE;
+    private boolean syncPending;
 
     public AspectPoolData() {
         this.pool = new LinkedHashMap<>();
@@ -90,9 +91,31 @@ public final class AspectPoolData {
         completedNotes++;
     }
 
+    public static AspectPoolData snapshotOf(AspectPoolData source) {
+        AspectPoolData snapshot = new AspectPoolData();
+        snapshot.copyFrom(source);
+        return snapshot;
+    }
+
+    public void mergeDiscoveriesFrom(AspectPoolData other) {
+        for (ResourceLocation aspect : other.pool.keySet()) {
+            discover(aspect);
+        }
+    }
+
     public void copyFrom(AspectPoolData other) {
         this.pool.clear();
         this.pool.putAll(other.pool);
         this.completedNotes = other.completedNotes;
+    }
+
+    public void markSyncPending() {
+        syncPending = true;
+    }
+
+    public boolean takeSyncPending() {
+        boolean pending = syncPending;
+        syncPending = false;
+        return pending;
     }
 }

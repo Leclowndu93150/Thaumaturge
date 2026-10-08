@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.wands;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
  * @since 1.0.0
  */
 public final class WandAccess {
-    private static Bindings impl;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("WandAccess");
 
     private WandAccess() {}
 
@@ -32,7 +33,7 @@ public final class WandAccess {
      * @return the stored vis, or {@link WandVis#EMPTY} when the stack has none
      */
     public static WandVis getAllVis(ItemStack wand) {
-        return bindingOrThrow().getAllVis(wand);
+        return BINDING.get().getAllVis(wand);
     }
 
     /**
@@ -57,7 +58,7 @@ public final class WandAccess {
      */
     public static ItemStack withVis(ItemStack wand, ResourceKey<IAspect> aspect, int centivis) {
         ItemStack copy = wand.copy();
-        bindingOrThrow().setAllVis(copy, getAllVis(wand).with(aspect, centivis));
+        BINDING.get().setAllVis(copy, getAllVis(wand).with(aspect, centivis));
         return copy;
     }
 
@@ -68,17 +69,7 @@ public final class WandAccess {
      * @throws IllegalStateException when already bound
      */
     public static void bind(Bindings bindings) {
-        if (impl != null) {
-            throw new IllegalStateException("WandAccess already bound");
-        }
-        impl = bindings;
-    }
-
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
-            throw new IllegalStateException("WandAccess accessed before binding");
-        }
-        return impl;
+        BINDING.bind(bindings);
     }
 
     /**

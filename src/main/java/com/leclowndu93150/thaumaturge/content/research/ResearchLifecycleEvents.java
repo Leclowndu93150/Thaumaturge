@@ -18,6 +18,7 @@ public final class ResearchLifecycleEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             ResearchManager.applyAutoUnlock(player);
             AspectPools.seedIfNew(player);
+            AspectPools.sync(player);
         }
     }
 

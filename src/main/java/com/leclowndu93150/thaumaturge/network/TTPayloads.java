@@ -100,10 +100,6 @@ public final class TTPayloads {
                 ClientboundUpdateJEIAspectListPayload.STREAM_CODEC,
                 (payload, context) -> AspectGainClientHandler.handleJEISync(payload, context));
         registrar.playToServer(
-                ServerboundRequestSyncAspectPoolPayload.TYPE,
-                ServerboundRequestSyncAspectPoolPayload.STREAM_CODEC,
-                ServerboundRequestSyncAspectPoolPayload::handle);
-        registrar.playToServer(
                 ServerboundScanSlotPayload.TYPE,
                 ServerboundScanSlotPayload.STREAM_CODEC,
                 ServerboundScanSlotPayload::handle);

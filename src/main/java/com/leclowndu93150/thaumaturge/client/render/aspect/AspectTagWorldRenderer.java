@@ -240,6 +240,13 @@ public final class AspectTagWorldRenderer {
         addQuadVertex(buffer, pose, -HALF_QUAD, HALF_QUAD, 0.0F, 0.0F, color, packedLight);
     }
 
+    public static void renderQuad(PoseStack.Pose pose, VertexConsumer buffer, int color, int packedLight) {
+        addQuadVertex(buffer, pose, -HALF_QUAD, -HALF_QUAD, 0.0F, 1.0F, color, packedLight);
+        addQuadVertex(buffer, pose, HALF_QUAD, -HALF_QUAD, 1.0F, 1.0F, color, packedLight);
+        addQuadVertex(buffer, pose, HALF_QUAD, HALF_QUAD, 1.0F, 0.0F, color, packedLight);
+        addQuadVertex(buffer, pose, -HALF_QUAD, HALF_QUAD, 0.0F, 0.0F, color, packedLight);
+    }
+
     private static void addQuadVertex(
             VertexConsumer buffer,
             PoseStack.Pose pose,

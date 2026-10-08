@@ -72,14 +72,14 @@ public final class ParticleDemos {
                 (p, v) -> Effects.pechsCurse(p.serverLevel(), v).send());
         register(
                 "cultistSpawn",
-                "Cultist spawn-in animation (white→red gradient)",
+                "Cultist spawn-in animation (white to red gradient)",
                 (p, v) -> Effects.cultistSpawn(p.serverLevel(), v)
                         .motion(0, 0.05, 0)
                         .send());
 
         register(
                 "fireMote",
-                "Tiny glowing red mote (FXFireMote, full-bright)",
+                "Tiny glowing red mote, full-bright",
                 (p, v) -> Effects.fireMote(p.serverLevel(), v)
                         .color(1F, 0.3F, 0F)
                         .scale(1.5F)
@@ -207,7 +207,7 @@ public final class ParticleDemos {
                         .send());
         register(
                 "jarSplash",
-                "Jar splash droplet (color #286176)",
+                "Jar splash droplet (#286176)",
                 (p, v) -> Effects.jarSplash(p.serverLevel(), v).send());
 
         register(
@@ -220,7 +220,7 @@ public final class ParticleDemos {
                         .send());
         register(
                 "vent2",
-                "FXVent2 puff with jittered colors + gaussian gravity",
+                "Second vent puff with jittered colors and gaussian gravity",
                 (p, v) -> Effects.vent2(p.serverLevel(), v)
                         .motion(0, 0.15, 0)
                         .color(0x800080)
@@ -261,7 +261,7 @@ public final class ParticleDemos {
                         .withFlame()
                         .send());
 
-        register("blockRunes", "Block runes (4 calls, 4 face rotations) — purple", (p, v) -> {
+        register("blockRunes", "Block runes (4 calls, 4 face rotations), purple", (p, v) -> {
             for (int i = 0; i < 4; i++)
                 Effects.blockRunes(p.serverLevel(), v)
                         .color(0.8F, 0.2F, 1.0F)
@@ -275,7 +275,7 @@ public final class ParticleDemos {
                         .duration(20)
                         .send();
         });
-        register("smokeSpiral", "Spiral smoke trail spawned 20× in burst", (p, v) -> {
+        register("smokeSpiral", "Spiral smoke trail spawned 20 times in a burst", (p, v) -> {
             for (int i = 0; i < 20; i++) {
                 Effects.smokeSpiral(p.serverLevel(), v)
                         .radius(1.5F)

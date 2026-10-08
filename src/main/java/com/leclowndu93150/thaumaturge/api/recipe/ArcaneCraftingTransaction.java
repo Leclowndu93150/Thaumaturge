@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import org.jspecify.annotations.Nullable;
  * @since 1.0.0
  */
 public final class ArcaneCraftingTransaction {
-    private static Bindings impl;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("ArcaneCraftingTransaction");
 
     private ArcaneCraftingTransaction() {}
 
@@ -37,7 +38,7 @@ public final class ArcaneCraftingTransaction {
      * @throws IllegalStateException when called before the implementation has bound the facade
      */
     public static Result preview(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        return bindingOrThrow().preview(context, player, input);
+        return BINDING.get().preview(context, player, input);
     }
 
     /**
@@ -56,7 +57,7 @@ public final class ArcaneCraftingTransaction {
      * @throws IllegalStateException when called before the implementation has bound the facade
      */
     public static Inspection inspect(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        return bindingOrThrow().inspect(context, player, input);
+        return BINDING.get().inspect(context, player, input);
     }
 
     /**
@@ -85,7 +86,7 @@ public final class ArcaneCraftingTransaction {
             IArcaneCraftingStore store,
             boolean simulate) {
         Objects.requireNonNull(store, "store");
-        return bindingOrThrow().craft(context, player, input, store, simulate);
+        return BINDING.get().craft(context, player, input, store, simulate);
     }
 
     /**
@@ -95,17 +96,7 @@ public final class ArcaneCraftingTransaction {
      * @throws IllegalStateException when already bound
      */
     public static void bind(Bindings bindings) {
-        if (impl != null) {
-            throw new IllegalStateException("ArcaneCraftingTransaction already bound");
-        }
-        impl = bindings;
-    }
-
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
-            throw new IllegalStateException("ArcaneCraftingTransaction accessed before binding");
-        }
-        return impl;
+        BINDING.bind(bindings);
     }
 
     /**

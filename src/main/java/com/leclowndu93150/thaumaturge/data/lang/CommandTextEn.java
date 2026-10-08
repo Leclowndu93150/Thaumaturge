@@ -62,5 +62,87 @@ public final class CommandTextEn {
         add.accept("commands.thaumaturge.showcase.built", "Built a showcase of %s blocks and %s items from %s, %s, %s");
         add.accept("commands.thaumaturge.showcase.too_tall", "The showcase does not fit inside the build height here");
         add.accept("commands.thaumaturge.showcase.unloaded", "Part of the showcase area is not loaded");
+
+        add.accept("commands.thaumaturge.tools.failed", "Command %s failed, see the server log");
+        add.accept("commands.thaumaturge.tools.unknown_trait", "Unknown mob trait: %s");
+        add.accept("commands.thaumaturge.tools.not_living", "Only living entities can be tainted: %s");
+        add.accept("commands.thaumaturge.tools.unknown_research", "Unknown research entry: %s");
+        add.accept("commands.thaumaturge.tools.unknown_aspect", "Unknown aspect: %s");
+        add.accept("commands.thaumaturge.tools.spawn_failed", "Could not create %s");
+        add.accept("commands.thaumaturge.tools.spawned", "Spawned %s");
+        add.accept("commands.thaumaturge.tools.research.reset", "Reset %s research entries and all knowledge");
+        add.accept(
+                "commands.thaumaturge.tools.research.all",
+                "Granted %s research entries and all aspect research points");
+        add.accept("commands.thaumaturge.tools.research.not_known", "Research %s is not known");
+        add.accept("commands.thaumaturge.tools.research.revoke_failed", "Could not revoke research %s");
+        add.accept("commands.thaumaturge.tools.research.revoked", "Revoked research %s");
+        add.accept("commands.thaumaturge.tools.research.already_complete", "Research %s is already complete");
+        add.accept("commands.thaumaturge.tools.research.grant_failed", "Could not grant research %s");
+        add.accept("commands.thaumaturge.tools.research.granted", "Unlocked research %s");
+        add.accept("commands.thaumaturge.tools.aspect.all", "Granted %s research points to all %s aspects");
+        add.accept("commands.thaumaturge.tools.aspect.one", "Granted %s research points of %s");
+        add.accept("commands.thaumaturge.tools.warp.info", "Warp: permanent %s, normal %s, temporary %s, counter %s");
+        add.accept("commands.thaumaturge.tools.warp.unknown_type", "Unknown warp type: %s");
+        add.accept("commands.thaumaturge.tools.warp.added", "Added %s %s warp");
+        add.accept("commands.thaumaturge.tools.warp.removed", "Removed %s %s warp");
+        add.accept("commands.thaumaturge.tools.warp.cleared", "Warp cleared");
+        add.accept("commands.thaumaturge.tools.warp.event", "Warp event check rolled");
+        add.accept("commands.thaumaturge.tools.aura.info", "Aura at %s: vis %s, flux %s, base %s");
+        add.accept("commands.thaumaturge.tools.aura.vis_drained", "Drained %s vis");
+        add.accept("commands.thaumaturge.tools.aura.vis_added", "Added %s vis");
+        add.accept("commands.thaumaturge.tools.aura.flux_drained", "Drained %s flux");
+        add.accept("commands.thaumaturge.tools.aura.flux_added", "Added %s flux");
+        add.accept("commands.thaumaturge.tools.feature.placed", "Placed %s");
+        add.accept(
+                "commands.thaumaturge.tools.feature.refused",
+                "The feature refused to place here (bad soil or no clearance)");
+        add.accept("commands.thaumaturge.tools.taint.spread", "Forced taint spread at %s");
+        add.accept("commands.thaumaturge.tools.flux.goo", "Placed flux goo at level %s");
+        add.accept("commands.thaumaturge.tools.flux.gas", "Placed flux gas at level %s");
+        add.accept("commands.thaumaturge.tools.flux_event.unknown", "Unknown flux event: %s");
+        add.accept(
+                "commands.thaumaturge.tools.flux_event.blocked",
+                "Flux event %s could not trigger here (it needs %s local flux, a valid target, and flux pressure events enabled)");
+        add.accept("commands.thaumaturge.tools.flux_event.triggered", "Triggered flux event %s for %s flux");
+        add.accept("commands.thaumaturge.tools.streampath.direct", "Direct line of sight, no waypoints needed");
+        add.accept("commands.thaumaturge.tools.streampath.none", "No path found (%s nodes searched)");
+        add.accept(
+                "commands.thaumaturge.tools.streampath.route",
+                "Route with %s waypoints (%s nodes searched), all segments clear: %s");
+        add.accept(
+                "commands.thaumaturge.tools.streampath.route_blocked",
+                "Route with %s waypoints (%s nodes searched), segment %s is blocked: %s");
+        add.accept("commands.thaumaturge.tools.rift", "Spawned a flux rift of size %s");
+        add.accept("commands.thaumaturge.tools.champion.unknown", "Unknown champion modifier: %s");
+        add.accept("commands.thaumaturge.tools.champion.not_mob", "Champion modifiers only apply to mobs: %s");
+        add.accept("commands.thaumaturge.tools.champion.spawned", "Spawned %s champion %s");
+        add.accept("commands.thaumaturge.tools.tainted", "Summoned tainted %s");
+        add.accept("commands.thaumaturge.tools.trait.added", "Added %s to %s entities");
+        add.accept("commands.thaumaturge.tools.trait.removed", "Removed %s from %s entities");
+        add.accept("commands.thaumaturge.tools.trait.none", "%s has no traits");
+        add.accept("commands.thaumaturge.tools.trait.list", "%s: %s");
+        add.accept(
+                "commands.thaumaturge.tools.focus.socketed",
+                "Socketed a focus (complexity %s/%s) into the held caster");
+        add.accept("commands.thaumaturge.tools.focus.given", "Gave a focus (complexity %s/%s)");
+        add.accept("commands.thaumaturge.tools.crystal", "Gave a crystal of %s");
+        add.accept("commands.thaumaturge.tools.particle.header", "Thaumaturge particle demos");
+        add.accept(
+                "commands.thaumaturge.tools.particle.usage",
+                "Use /%s particle <name> to spawn one 3 blocks in front of you");
+        add.accept("commands.thaumaturge.tools.particle.entry", "%s: %s");
+        add.accept("commands.thaumaturge.tools.particle.total", "%s demos in total");
+        add.accept("commands.thaumaturge.tools.particle.unknown", "Unknown demo: %s, try /%s particle list");
+        add.accept("commands.thaumaturge.tools.particle.spawned", "Spawned demo: %s");
+        add.accept("commands.thaumaturge.tools.node.created", "Node created");
+        add.accept("commands.thaumaturge.tools.node.failed", "Could not place a node here");
+        add.accept("commands.thaumaturge.tools.node.unknown_type", "Unknown node type: %s");
+        add.accept(
+                "commands.thaumaturge.tools.node.pairs",
+                "Aspects must come in pairs: <aspect> <amount> [<aspect> <amount> ...]");
+        add.accept("commands.thaumaturge.tools.node.bad_amount", "Amounts must be positive whole numbers: %s");
+        add.accept("commands.thaumaturge.tools.link.removed", "Removed %s research links");
+        add.accept("commands.thaumaturge.tools.unknown_spell_part", "Unknown spell part: %s");
     }
 }

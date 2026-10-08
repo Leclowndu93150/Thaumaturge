@@ -5,12 +5,13 @@ import java.util.Set;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.attachment.AttachmentType;
 
 /**
  * Per-player record of completed research, in-progress stages, per-entry flags, and accumulated
  * category knowledge.
  *
- * <p>The instance lives on the player as a NeoForge {@link net.neoforged.neoforge.attachment.AttachmentType data attachment}
+ * <p>The instance lives on the player as a NeoForge {@link AttachmentType data attachment}
  * and is the authoritative source for research progression. The server owns the value; clients
  * receive a copy on login, on dimension change, and whenever the server publishes a change.
  *
@@ -18,8 +19,8 @@ import net.minecraft.server.level.ServerPlayer;
  * observable change, {@code false} otherwise. Callers that mutate must invoke {@link #sync(ServerPlayer)}
  * to publish the new state to the owner.
  *
- * <p>Research is identified by {@link ResourceLocation}. Query staged progress through
- * {@link #researchStage(ResourceLocation)}; see {@link #isResearchKnown(ResourceLocation, int)}.
+ * <p>Research is identified by {@link ResourceLocation}. Stage gating uses {@link
+ * #researchStage(ResourceLocation)} queries; see {@link #isResearchKnown(ResourceLocation, int)}.
  *
  * @since 1.0.0
  */
@@ -165,6 +166,9 @@ public interface IPlayerKnowledge {
     /**
      * Publishes this record to the given player. Call after any mutation that must be reflected
      * in the client's mirror.
+     *
+     * @implNote Since 1.1.0 the update is sent once, to that player only, at the end of the player's
+     *           tick, so several calls in one tick produce a single packet.
      *
      * @param player the player to sync; must not be null
      */

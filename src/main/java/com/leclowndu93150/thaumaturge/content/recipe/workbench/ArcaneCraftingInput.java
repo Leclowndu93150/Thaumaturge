@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
@@ -154,29 +155,19 @@ public class ArcaneCraftingInput implements IArcaneCraftingInput {
         return this.height;
     }
 
+    @Override
     public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        } else {
-            boolean var10000;
-            if (obj instanceof ArcaneCraftingInput) {
-                ArcaneCraftingInput input = (ArcaneCraftingInput) obj;
-                var10000 = this.width == input.width
-                        && this.height == input.height
-                        && this.ingredientCount == input.ingredientCount
-                        && ItemStack.listMatches(this.items, input.items);
-            } else {
-                var10000 = false;
-            }
-
-            return var10000;
-        }
+        return obj == this
+                || obj instanceof ArcaneCraftingInput other
+                        && this.width == other.width
+                        && this.height == other.height
+                        && this.ingredientCount == other.ingredientCount
+                        && ItemStack.listMatches(this.items, other.items);
     }
 
+    @Override
     public int hashCode() {
-        int result = ItemStack.hashStackList(this.items);
-        result = 31 * result + this.width;
-        return 31 * result + this.height;
+        return Objects.hash(this.width, this.height, ItemStack.hashStackList(this.items));
     }
 
     @Override

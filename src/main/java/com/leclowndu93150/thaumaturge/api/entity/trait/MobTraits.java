@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.entity.trait;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ public final class MobTraits {
     public static final ResourceKey<MobTrait> TAINTED =
             ResourceKey.create(MobTrait.REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("thaumaturge", "tainted"));
 
-    private static Bindings impl;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("MobTraits");
 
     private MobTraits() {}
 
@@ -34,7 +35,7 @@ public final class MobTraits {
      * @return {@code true} when the trait was added
      */
     public static boolean add(LivingEntity mob, Holder<MobTrait> trait) {
-        return bindingOrThrow().add(mob, trait);
+        return BINDING.get().add(mob, trait);
     }
 
     /**
@@ -45,7 +46,7 @@ public final class MobTraits {
      * @return {@code true} when the trait was present
      */
     public static boolean remove(LivingEntity mob, Holder<MobTrait> trait) {
-        return bindingOrThrow().remove(mob, trait);
+        return BINDING.get().remove(mob, trait);
     }
 
     /**
@@ -55,7 +56,7 @@ public final class MobTraits {
      * @return the traits, never null
      */
     public static List<Holder<MobTrait>> traits(LivingEntity mob) {
-        return bindingOrThrow().traits(mob);
+        return BINDING.get().traits(mob);
     }
 
     /**
@@ -125,17 +126,7 @@ public final class MobTraits {
      * @throws IllegalStateException when called twice
      */
     public static void bind(Bindings bindings) {
-        if (impl != null) {
-            throw new IllegalStateException("MobTraits already bound");
-        }
-        impl = bindings;
-    }
-
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
-            throw new IllegalStateException("MobTraits used before the mod bound it");
-        }
-        return impl;
+        BINDING.bind(bindings);
     }
 
     /**

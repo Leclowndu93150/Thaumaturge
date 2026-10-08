@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
@@ -11,6 +12,7 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.api.research.ResearchAddendum;
+import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEvent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchParent;
 import com.leclowndu93150.thaumaturge.api.research.ResearchRequirement;
@@ -44,8 +46,19 @@ public final class ResearchManager {
     private ResearchManager() {}
 
     public static ResourceLocation craftedKey(ResourceLocation item) {
-        return ResourceLocation.fromNamespaceAndPath(
-                "thaumaturge", CRAFTED_PREFIX + item.getNamespace() + "/" + item.getPath());
+        return TTIds.rl(CRAFTED_PREFIX + item.getNamespace() + "/" + item.getPath());
+    }
+
+    public static boolean unlockRequested(ServerPlayer player, ResourceLocation research) {
+        IResearchEntry entry = entry(player, research).orElse(null);
+        if (entry == null || !isCategoryOpen(KnowledgeAccess.of(player), entry)) return false;
+        if (entry.hasMeta(ResearchEntryMeta.HIDDEN) && entry.parents().isEmpty()) return false;
+        return unlock(player, research);
+    }
+
+    private static boolean isCategoryOpen(IPlayerKnowledge knowledge, IResearchEntry entry) {
+        Optional<ResourceLocation> gate = entry.category().value().requiredResearch();
+        return gate.isEmpty() || knowledge.isResearchComplete(gate.get());
     }
 
     public static boolean unlock(ServerPlayer player, ResourceLocation research) {
@@ -283,9 +296,10 @@ public final class ResearchManager {
                     if (!knowledge.isResearchComplete(otherId)) return;
                     for (ResearchAddendum addendum : other.addenda()) {
                         if (addendum.requiredResearch().contains(completed)) {
-                            player.sendSystemMessage(
-                                    Component.translatable("tc.addaddendum", Component.translatable(other.nameKey()))
-                                            .withStyle(ChatFormatting.DARK_PURPLE));
+                            player.sendSystemMessage(Component.translatable(
+                                            "message.thaumaturge.research.addendum_added",
+                                            Component.translatable(other.nameKey()))
+                                    .withStyle(ChatFormatting.DARK_PURPLE));
                             knowledge.setResearchFlag(otherId, ResearchFlag.PAGE);
                             break;
                         }

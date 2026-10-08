@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.taint;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.Level;
  * @since 1.0.0
  */
 public final class TaintApi {
-    private static Bindings impl;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("TaintApi");
 
     private TaintApi() {}
 
@@ -27,7 +28,7 @@ public final class TaintApi {
      * @param pos   the seed anchor position
      */
     public static void addTaintSeed(ServerLevel level, BlockPos pos) {
-        bindingOrThrow().addTaintSeed(level, pos);
+        BINDING.get().addTaintSeed(level, pos);
     }
 
     /**
@@ -37,7 +38,7 @@ public final class TaintApi {
      * @param pos   the seed anchor position
      */
     public static void removeTaintSeed(ServerLevel level, BlockPos pos) {
-        bindingOrThrow().removeTaintSeed(level, pos);
+        BINDING.get().removeTaintSeed(level, pos);
     }
 
     /**
@@ -49,7 +50,7 @@ public final class TaintApi {
      * @return {@code true} when a live seed is in range
      */
     public static boolean isNearTaintSeed(Level level, BlockPos pos) {
-        return bindingOrThrow().isNearTaintSeed(level, pos);
+        return BINDING.get().isNearTaintSeed(level, pos);
     }
 
     /**
@@ -61,7 +62,7 @@ public final class TaintApi {
      * @return {@code true} when the position is between 80% and 100% of the spread radius
      */
     public static boolean isAtTaintSeedEdge(Level level, BlockPos pos) {
-        return bindingOrThrow().isAtTaintSeedEdge(level, pos);
+        return BINDING.get().isAtTaintSeedEdge(level, pos);
     }
 
     /**
@@ -75,27 +76,27 @@ public final class TaintApi {
      * @param force when true, allows a viable target to bootstrap its column into Tainted Lands
      */
     public static void spreadFibres(ServerLevel level, BlockPos pos, boolean force) {
-        bindingOrThrow().spreadFibres(level, pos, force);
+        BINDING.get().spreadFibres(level, pos, force);
     }
 
     public static float getEcologicalPressure(Level level, BlockPos pos) {
-        return bindingOrThrow().getEcologicalPressure(level, pos);
+        return BINDING.get().getEcologicalPressure(level, pos);
     }
 
     public static boolean isTainted(Level level, BlockPos pos) {
-        return bindingOrThrow().isTainted(level, pos);
+        return BINDING.get().isTainted(level, pos);
     }
 
     public static boolean hasActiveSource(Level level, BlockPos pos) {
-        return bindingOrThrow().hasActiveSource(level, pos);
+        return BINDING.get().hasActiveSource(level, pos);
     }
 
     public static void addEcologicalPressure(ServerLevel level, BlockPos pos, float amount) {
-        bindingOrThrow().addEcologicalPressure(level, pos, amount);
+        BINDING.get().addEcologicalPressure(level, pos, amount);
     }
 
     public static void cleanEcologicalPressure(ServerLevel level, BlockPos pos, float amount) {
-        bindingOrThrow().cleanEcologicalPressure(level, pos, amount);
+        BINDING.get().cleanEcologicalPressure(level, pos, amount);
     }
 
     /**
@@ -106,17 +107,7 @@ public final class TaintApi {
      * @throws IllegalStateException when already bound
      */
     public static void bind(Bindings bindings) {
-        if (impl != null) {
-            throw new IllegalStateException("TaintApi already bound");
-        }
-        impl = bindings;
-    }
-
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
-            throw new IllegalStateException("TaintApi accessed before binding");
-        }
-        return impl;
+        BINDING.bind(bindings);
     }
 
     /**

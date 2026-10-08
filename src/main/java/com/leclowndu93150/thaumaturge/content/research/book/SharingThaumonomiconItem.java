@@ -28,49 +28,50 @@ public final class SharingThaumonomiconItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
         if (!(player instanceof ServerPlayer serverPlayer)) {
-            return InteractionResultHolder.success(stack);
+            return InteractionResultHolder.success(player.getItemInHand(hand));
         }
+        ItemStack stack = player.getItemInHand(hand);
         ShareBinding binding = stack.get(TTDataComponents.SHARE_BINDING.get());
         IPlayerKnowledge know = ResearchManager.of(serverPlayer);
-        if (!(know instanceof PlayerKnowledge knowledge)) {
-            return InteractionResultHolder.consume(stack);
-        }
+        if (!(know instanceof PlayerKnowledge knowledge))
+            return InteractionResultHolder.consume(player.getItemInHand(hand));
         AspectPoolData discoveredAspects = AspectPools.data(player);
         if (binding == null) {
             stack.set(
                     TTDataComponents.SHARE_BINDING.get(),
                     new ShareBinding(
-                            player.getUUID(), player.getGameProfile().getName(), discoveredAspects, knowledge));
+                            player.getUUID(),
+                            player.getGameProfile().getName(),
+                            AspectPoolData.snapshotOf(discoveredAspects),
+                            PlayerKnowledge.snapshotOf(knowledge)));
             player.playSound(TTSounds.WRITE.get(), 1.0F, 1.0F);
-            TTActionBar.sendPurple(player, "tc.thaumonomicon.sharing.bound");
-            return InteractionResultHolder.consume(stack);
+            TTActionBar.sendPurple(player, "message.thaumaturge.thaumonomicon.sharing_bound");
+            return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
         if (binding.player().equals(player.getUUID())) {
-            TTActionBar.sendPurple(player, "tc.thaumonomicon.sharing.self");
-            return InteractionResultHolder.consume(stack);
+            TTActionBar.sendPurple(player, "message.thaumaturge.thaumonomicon.sharing_self");
+            return InteractionResultHolder.consume(player.getItemInHand(hand));
         }
-        knowledge.copyFrom(binding.knowledge());
-        discoveredAspects.copyFrom(binding.discoveredAspects());
+        knowledge.mergeResearchFrom(binding.knowledge());
+        discoveredAspects.mergeDiscoveriesFrom(binding.discoveredAspects());
 
         knowledge.sync(serverPlayer);
         AspectPools.sync(serverPlayer);
 
         player.playSound(TTSounds.WRITE.get(), 1.0F, 1.0F);
-        TTActionBar.sendPurple(player, "tc.thaumonomicon.sharing.used", binding.name());
+        TTActionBar.sendPurple(player, "message.thaumaturge.thaumonomicon.sharing_used", binding.name());
         stack.shrink(1);
-        return InteractionResultHolder.consume(stack);
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
     @Override
-    public void appendHoverText(
-            ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> builder, TooltipFlag flag) {
         ShareBinding binding = stack.get(TTDataComponents.SHARE_BINDING.get());
         if (binding != null) {
-            tooltip.add(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())
+            builder.add(Component.translatable("tooltip.thaumaturge.sharing.bound", binding.name())
                     .withStyle(ChatFormatting.GRAY));
         }
-        tooltip.add(Component.translatable("tooltip.thaumaturge.sharing.hint").withStyle(ChatFormatting.DARK_GRAY));
+        builder.add(Component.translatable("tooltip.thaumaturge.sharing.hint").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

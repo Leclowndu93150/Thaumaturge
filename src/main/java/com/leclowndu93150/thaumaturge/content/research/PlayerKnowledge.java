@@ -9,7 +9,6 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.ResearchEntryMeta;
 import com.leclowndu93150.thaumaturge.api.research.ResearchUnlockConditions;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
-import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -48,6 +47,7 @@ public final class PlayerKnowledge implements IPlayerKnowledge {
     private final Map<ResourceLocation, Integer> stages = new HashMap<>();
     private final Map<ResourceLocation, EnumSet<ResearchFlag>> flags = new HashMap<>();
     private final Map<KnowledgeKey, Integer> knowledge = new HashMap<>();
+    private boolean syncPending;
 
     public PlayerKnowledge() {}
 
@@ -244,7 +244,27 @@ public final class PlayerKnowledge implements IPlayerKnowledge {
 
     @Override
     public void sync(ServerPlayer player) {
-        player.syncData(TTAttachments.KNOWLEDGE);
+        syncPending = true;
+    }
+
+    public boolean takeSyncPending() {
+        boolean pending = syncPending;
+        syncPending = false;
+        return pending;
+    }
+
+    public static PlayerKnowledge snapshotOf(PlayerKnowledge source) {
+        PlayerKnowledge snapshot = new PlayerKnowledge();
+        snapshot.copyFrom(source);
+        return snapshot;
+    }
+
+    public void mergeResearchFrom(PlayerKnowledge other) {
+        research.addAll(other.research);
+        completed.addAll(other.completed);
+        for (Map.Entry<ResourceLocation, Integer> entry : other.stages.entrySet()) {
+            stages.merge(entry.getKey(), entry.getValue(), Math::max);
+        }
     }
 
     public void copyFrom(PlayerKnowledge other) {

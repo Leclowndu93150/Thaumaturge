@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.recipe;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  * @since 1.0.0
  */
 public final class InfusionCraftingTransaction {
-    private static Bindings impl;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("InfusionCraftingTransaction");
 
     private InfusionCraftingTransaction() {}
 
@@ -49,7 +50,7 @@ public final class InfusionCraftingTransaction {
             InfusionMatrixContext context, ServerPlayer player, ItemStack catalyst, List<ItemStack> components) {
         Objects.requireNonNull(catalyst, "catalyst");
         Objects.requireNonNull(components, "components");
-        return bindingOrThrow().inspect(context, player, catalyst, components);
+        return BINDING.get().inspect(context, player, catalyst, components);
     }
 
     /**
@@ -68,7 +69,7 @@ public final class InfusionCraftingTransaction {
     public static Failure start(
             InfusionMatrixContext context, ServerPlayer player, ResourceKey<Recipe<?>> expectedRecipeId) {
         Objects.requireNonNull(expectedRecipeId, "expectedRecipeId");
-        return bindingOrThrow().start(context, player, expectedRecipeId);
+        return BINDING.get().start(context, player, expectedRecipeId);
     }
 
     /**
@@ -78,17 +79,7 @@ public final class InfusionCraftingTransaction {
      * @throws IllegalStateException when already bound
      */
     public static void bind(Bindings bindings) {
-        if (impl != null) {
-            throw new IllegalStateException("InfusionCraftingTransaction already bound");
-        }
-        impl = bindings;
-    }
-
-    private static Bindings bindingOrThrow() {
-        if (impl == null) {
-            throw new IllegalStateException("InfusionCraftingTransaction accessed before binding");
-        }
-        return impl;
+        BINDING.bind(bindings);
     }
 
     /**

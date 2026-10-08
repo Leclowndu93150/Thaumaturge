@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
+import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureState;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.LabyrinthBinding;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.TransitState;
@@ -40,7 +41,7 @@ public final class TTAttachments {
             "knowledge",
             () -> AttachmentType.builder(PlayerKnowledge::new)
                     .serialize(PlayerKnowledge.CODEC.codec())
-                    .sync(PlayerKnowledge.STREAM_CODEC)
+                    .sync((holder, player) -> holder == player, PlayerKnowledge.STREAM_CODEC)
                     .copyOnDeath()
                     .build());
 
@@ -54,7 +55,7 @@ public final class TTAttachments {
             "aspect_pool",
             () -> AttachmentType.builder(AspectPoolData::new)
                     .serialize(AspectPoolData.CODEC.codec())
-                    .sync(AspectPoolData.STREAM_CODEC)
+                    .sync((holder, player) -> holder == player, AspectPoolData.STREAM_CODEC)
                     .copyOnDeath()
                     .build());
 
@@ -187,6 +188,10 @@ public final class TTAttachments {
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WAYFINDING_PULSE =
             register("wayfinding_pulse", () -> AttachmentType.builder(() -> 0L).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FluxPressureState>> FLUX_PRESSURE = register(
+            "flux_pressure",
+            () -> AttachmentType.builder(FluxPressureState::new).build());
 
     private TTAttachments() {}
 

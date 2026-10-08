@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research.pool;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import net.minecraft.core.Holder;
@@ -27,7 +28,7 @@ import net.minecraft.world.entity.player.Player;
  * @since 1.0.0
  */
 public final class AspectPoolAccess {
-    private static Bindings binding;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("AspectPoolAccess");
 
     private AspectPoolAccess() {}
 
@@ -38,17 +39,7 @@ public final class AspectPoolAccess {
      * @throws IllegalStateException when already bound
      */
     public static void bind(Bindings bindings) {
-        if (binding != null) {
-            throw new IllegalStateException("AspectPoolAccess already bound");
-        }
-        binding = bindings;
-    }
-
-    private static Bindings impl() {
-        if (binding == null) {
-            throw new IllegalStateException("AspectPoolAccess accessed before binding");
-        }
-        return binding;
+        BINDING.bind(bindings);
     }
 
     /**
@@ -60,7 +51,7 @@ public final class AspectPoolAccess {
      * @return {@code true} when the aspect is discovered
      */
     public static boolean isDiscovered(Player player, Holder<IAspect> aspect) {
-        return impl().isDiscovered(player, aspect);
+        return BINDING.get().isDiscovered(player, aspect);
     }
 
     /**
@@ -71,7 +62,7 @@ public final class AspectPoolAccess {
      * @return the balance, zero when undiscovered
      */
     public static int amount(Player player, Holder<IAspect> aspect) {
-        return impl().amount(player, aspect);
+        return BINDING.get().amount(player, aspect);
     }
 
     /**
@@ -83,7 +74,7 @@ public final class AspectPoolAccess {
      * @return {@code true} when all components are discovered
      */
     public static boolean hasDiscoveredComponents(Player player, Holder<IAspect> aspect) {
-        return impl().hasDiscoveredComponents(player, aspect);
+        return BINDING.get().hasDiscoveredComponents(player, aspect);
     }
 
     /**
@@ -96,7 +87,7 @@ public final class AspectPoolAccess {
      * @return the points actually granted after scaling
      */
     public static int grant(ServerPlayer player, Holder<IAspect> aspect, int amount) {
-        return impl().grant(player, aspect, amount);
+        return BINDING.get().grant(player, aspect, amount);
     }
 
     /**
@@ -106,7 +97,7 @@ public final class AspectPoolAccess {
      * @param aspects the aspects and amounts to grant
      */
     public static void grantAll(ServerPlayer player, AspectList aspects) {
-        impl().grantAll(player, aspects);
+        BINDING.get().grantAll(player, aspects);
     }
 
     /**
@@ -118,7 +109,7 @@ public final class AspectPoolAccess {
      * @return {@code true} when the player could afford it and the points were deducted
      */
     public static boolean spend(ServerPlayer player, Holder<IAspect> aspect, int amount) {
-        return impl().spend(player, aspect, amount);
+        return BINDING.get().spend(player, aspect, amount);
     }
 
     /**
@@ -129,7 +120,7 @@ public final class AspectPoolAccess {
      * @return {@code true} when the whole cost is affordable
      */
     public static boolean canAfford(Player player, AspectList cost) {
-        return impl().canAfford(player, cost);
+        return BINDING.get().canAfford(player, cost);
     }
 
     /**
@@ -140,7 +131,7 @@ public final class AspectPoolAccess {
      * @return {@code true} when the whole cost was deducted
      */
     public static boolean spendAll(ServerPlayer player, AspectList cost) {
-        return impl().spendAll(player, cost);
+        return BINDING.get().spendAll(player, cost);
     }
 
     /**
@@ -151,7 +142,7 @@ public final class AspectPoolAccess {
      * @param amount the point amount to return
      */
     public static void refund(ServerPlayer player, Holder<IAspect> aspect, int amount) {
-        impl().refund(player, aspect, amount);
+        BINDING.get().refund(player, aspect, amount);
     }
 
     /**
