@@ -46,7 +46,7 @@ public final class GogglesItem extends ArmorItem implements IVisDiscountGear {
 
     // Not a TieredItem/ArmorItem, so the enchantment value has to come from here or the table offers nothing.
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return TTItems.GOGGLES_ENCHANTMENT_VALUE;
     }
 }

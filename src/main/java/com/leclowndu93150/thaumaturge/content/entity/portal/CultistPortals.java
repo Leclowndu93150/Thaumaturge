@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
 public final class CultistPortals {
@@ -42,8 +43,8 @@ public final class CultistPortals {
                 portal.getX() + random.nextFloat() - random.nextFloat(),
                 portal.getY() + ARRIVAL_LIFT,
                 portal.getZ() + random.nextFloat() - random.nextFloat());
-        arrival.finalizeSpawn(
-                level, level.getCurrentDifficultyAt(arrival.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
+        EventHooks.finalizeMobSpawn(
+                arrival, level, level.getCurrentDifficultyAt(arrival.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
         level.addFreshEntity(arrival);
         if (arrival instanceof EntityCultist cultist) {
             cultist.spawnCultistArrivalParticles();

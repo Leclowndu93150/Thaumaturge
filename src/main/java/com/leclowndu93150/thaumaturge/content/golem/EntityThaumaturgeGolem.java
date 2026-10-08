@@ -781,8 +781,8 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         if (weapon == null || weapon.isEmpty()) {
             return 0;
         }
-        return EnchantmentHelper.getItemEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), weapon);
+        return weapon.getEnchantmentLevel(
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING));
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Tool;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,7 +54,7 @@ public final class ArcaneBoreTool {
     public static int digRadius(ItemStack stack) {
         int radius = 0;
         if (isPickaxe(stack)) {
-            radius = stack.getItem().getEnchantmentValue() / ENCHANTABILITY_PER_RADIUS;
+            radius = stack.getEnchantmentValue() / ENCHANTABILITY_PER_RADIUS;
             radius += InfusionEnchantmentHelper.level(stack, InfusionEnchantment.DESTRUCTIVE) * RADIUS_PER_DESTRUCTIVE;
         }
         return radius <= 1 ? MIN_RADIUS : radius;
@@ -70,8 +69,8 @@ public final class ArcaneBoreTool {
         if (!valid(stack)) {
             return 0;
         }
-        int fortune = EnchantmentHelper.getItemEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE), stack);
+        int fortune = stack.getEnchantmentLevel(
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.FORTUNE));
         return Math.max(fortune, InfusionEnchantmentHelper.level(stack, InfusionEnchantment.SOUNDING));
     }
 
@@ -80,9 +79,8 @@ public final class ArcaneBoreTool {
             return 0;
         }
         int speed = (int) (stack.getDestroySpeed(state) / DESTROY_SPEED_DIVISOR);
-        speed += EnchantmentHelper.getItemEnchantmentLevel(
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY),
-                stack);
+        speed += stack.getEnchantmentLevel(
+                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.EFFICIENCY));
         return speed;
     }
 
@@ -92,11 +90,9 @@ public final class ArcaneBoreTool {
 
     public static boolean silkTouch(Level level, ItemStack stack) {
         return !stack.isEmpty()
-                && EnchantmentHelper.getItemEnchantmentLevel(
-                                level.registryAccess()
-                                        .lookupOrThrow(Registries.ENCHANTMENT)
-                                        .getOrThrow(Enchantments.SILK_TOUCH),
-                                stack)
+                && stack.getEnchantmentLevel(level.registryAccess()
+                                .lookupOrThrow(Registries.ENCHANTMENT)
+                                .getOrThrow(Enchantments.SILK_TOUCH))
                         > 0;
     }
 }

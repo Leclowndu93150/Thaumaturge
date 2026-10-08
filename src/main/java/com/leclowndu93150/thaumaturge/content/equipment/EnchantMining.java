@@ -49,8 +49,9 @@ public final class EnchantMining {
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         level.levelEvent(null, LEVEL_EVENT_BLOCK_BREAK, pos, Block.getId(state));
+        boolean canHarvest = !player.hasInfiniteMaterials() && player.hasCorrectToolForDrops(state, level, pos);
         boolean removed = level.removeBlock(pos, false);
-        if (removed && !player.hasInfiniteMaterials() && player.hasCorrectToolForDrops(state)) {
+        if (removed && canHarvest) {
             Block.dropResources(state, level, pos, blockEntity, player, player.getMainHandItem());
         }
         return removed;

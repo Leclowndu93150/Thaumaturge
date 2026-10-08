@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jspecify.annotations.Nullable;
 
 public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements EntityBlock, NodeHostBlock {
@@ -58,7 +59,8 @@ public final class BlockSilverwoodNodeLog extends RotatedPillarBlock implements 
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(
+            BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         return new ItemStack(TTItems.LOG_SILVERWOOD.get());
     }
 

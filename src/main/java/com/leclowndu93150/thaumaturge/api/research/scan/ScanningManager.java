@@ -199,7 +199,7 @@ public final class ScanningManager {
         if (BINDING.get().hidesItemForm(state)) {
             return ItemStack.EMPTY;
         }
-        ItemStack stack = state.getBlock().getCloneItemStack(player.level(), pos, state);
+        ItemStack stack = state.getCloneItemStack(null, player.level(), pos, player);
         FluidState fluid = state.getFluidState();
         return stack.isEmpty() && !fluid.isEmpty()
                 ? new ItemStack(fluid.getType().getBucket())

@@ -23,6 +23,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.neoforged.neoforge.event.EventHooks;
 
 /** Initial infection placed inside naturally generated Tainted Lands. */
 public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
@@ -187,7 +188,8 @@ public final class TaintBiomeFeature extends Feature<NoneFeatureConfiguration> {
             return false;
         }
         taintacle.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
-        taintacle.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
+        EventHooks.finalizeMobSpawn(
+                taintacle, level, level.getCurrentDifficultyAt(pos), MobSpawnType.CHUNK_GENERATION, null);
         // This is the single biome landmark spawn, not a regular mob-cap spawn. Persistence keeps
         // it from despawning before the player reaches the newly generated patch.
         taintacle.setPersistenceRequired();

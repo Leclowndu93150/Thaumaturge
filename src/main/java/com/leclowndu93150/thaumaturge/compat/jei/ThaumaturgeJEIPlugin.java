@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.compat.jei.category.InfernalFurnaceCategor
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientHelper;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
+import com.leclowndu93150.thaumaturge.compat.jei.ingredient.StringSubtypeInterpreter;
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.InfernalBonus;
 import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
@@ -41,7 +42,7 @@ import mezz.jei.api.gui.builder.IClickableIngredientFactory;
 import mezz.jei.api.gui.handlers.IGuiProperties;
 import mezz.jei.api.gui.handlers.IScreenHandler;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.RecipeType;
@@ -82,10 +83,14 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
-        IIngredientSubtypeInterpreter<ItemStack> aspectsInterpreter = ThaumaturgeJEIPlugin::aspectsSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> essentiaInterpreter = ThaumaturgeJEIPlugin::essentiaSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> filterInterpreter = ThaumaturgeJEIPlugin::aspectFilterSubtype;
-        IIngredientSubtypeInterpreter<ItemStack> crystalAspectInterpreter = ThaumaturgeJEIPlugin::crystalAspectSubtype;
+        ISubtypeInterpreter<ItemStack> aspectsInterpreter =
+                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectsSubtype);
+        ISubtypeInterpreter<ItemStack> essentiaInterpreter =
+                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::essentiaSubtype);
+        ISubtypeInterpreter<ItemStack> filterInterpreter =
+                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectFilterSubtype);
+        ISubtypeInterpreter<ItemStack> crystalAspectInterpreter =
+                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::crystalAspectSubtype);
         registration.registerSubtypeInterpreter(TTItems.JAR_NORMAL.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TTItems.JAR_VOID.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TTItems.LABEL.get(), filterInterpreter);
@@ -94,12 +99,16 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.registerSubtypeInterpreter(TTItems.ESSENTIA_CRYSTAL.get(), crystalAspectInterpreter);
         registration.registerSubtypeInterpreter(TTItems.PHIAL.get(), aspectsInterpreter);
         registration.registerSubtypeInterpreter(
-                TTItems.CELESTIAL_NOTES.asItem(), ThaumaturgeJEIPlugin::celestialBodySubtype);
-        registration.registerSubtypeInterpreter(TTItems.RESEARCH_NOTE.get(), ThaumaturgeJEIPlugin::researchNoteSubtype);
-        registration.registerSubtypeInterpreter(TTItems.WAND.get(), ThaumaturgeJEIPlugin::wandPartsSubtype);
-        registration.registerSubtypeInterpreter(TTItems.VERDANT_CHARM.get(), ThaumaturgeJEIPlugin::verdantTypeSubtype);
+                TTItems.CELESTIAL_NOTES.asItem(),
+                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::celestialBodySubtype));
         registration.registerSubtypeInterpreter(
-                TTItems.GOLEM_PLACER.get(), ThaumaturgeJEIPlugin::golemPropertiesSubtype);
+                TTItems.RESEARCH_NOTE.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::researchNoteSubtype));
+        registration.registerSubtypeInterpreter(
+                TTItems.WAND.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::wandPartsSubtype));
+        registration.registerSubtypeInterpreter(
+                TTItems.VERDANT_CHARM.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::verdantTypeSubtype));
+        registration.registerSubtypeInterpreter(
+                TTItems.GOLEM_PLACER.get(), new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::golemPropertiesSubtype));
     }
 
     @Override
@@ -478,34 +487,34 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     private static String aspectsSubtype(ItemStack stack, UidContext context) {
         AspectList list = stack.get(TTDataComponents.ASPECTS.get());
         if (list == null || list.isEmpty()) {
-            return IIngredientSubtypeInterpreter.NONE;
+            return "";
         }
         return list.toString();
     }
 
     private static String essentiaSubtype(ItemStack stack, UidContext context) {
         var contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
-        return contents == null ? IIngredientSubtypeInterpreter.NONE : contents.toString();
+        return contents == null ? "" : contents.toString();
     }
 
     private static String aspectFilterSubtype(ItemStack stack, UidContext context) {
         var filter = stack.get(TTDataComponents.ASPECT_FILTER.get());
-        return filter == null ? IIngredientSubtypeInterpreter.NONE : filter.toString();
+        return filter == null ? "" : filter.toString();
     }
 
     private static String crystalAspectSubtype(ItemStack stack, UidContext context) {
         var crystal = stack.get(TTDataComponents.CRYSTAL_ASPECT.get());
-        return crystal == null ? IIngredientSubtypeInterpreter.NONE : crystal.toString();
+        return crystal == null ? "" : crystal.toString();
     }
 
     private static String celestialBodySubtype(ItemStack stack, UidContext context) {
         var body = stack.get(TTDataComponents.CELESTIAL_BODY.get());
-        return body == null ? IIngredientSubtypeInterpreter.NONE : body.toString();
+        return body == null ? "" : body.toString();
     }
 
     private static String researchNoteSubtype(ItemStack stack, UidContext context) {
         var note = stack.get(TTDataComponents.RESEARCH_NOTE.get());
-        return note == null ? IIngredientSubtypeInterpreter.NONE : note.toString();
+        return note == null ? "" : note.toString();
     }
 
     private static String wandPartsSubtype(ItemStack stack, UidContext context) {
@@ -514,7 +523,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     private static String verdantTypeSubtype(ItemStack stack, UidContext context) {
         Integer type = stack.get(TTDataComponents.VERDANT_TYPE.get());
-        return type == null ? IIngredientSubtypeInterpreter.NONE : type.toString();
+        return type == null ? "" : type.toString();
     }
 
     private static String golemPropertiesSubtype(ItemStack stack, UidContext context) {
@@ -524,12 +533,12 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     private static <T> String encodedSubtype(ItemStack stack, DataComponentType<T> type) {
         T value = stack.get(type);
         if (value == null || type.codec() == null) {
-            return IIngredientSubtypeInterpreter.NONE;
+            return "";
         }
         return type.codec()
                 .encodeStart(JsonOps.INSTANCE, value)
                 .result()
                 .map(JsonElement::toString)
-                .orElse(IIngredientSubtypeInterpreter.NONE);
+                .orElse("");
     }
 }

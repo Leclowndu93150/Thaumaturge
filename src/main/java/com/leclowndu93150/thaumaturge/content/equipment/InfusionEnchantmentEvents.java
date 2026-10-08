@@ -414,11 +414,10 @@ public final class InfusionEnchantmentEvents {
 
     private static void addRareNugget(BlockDropsEvent event, ServerLevel level, BlockState state) {
         boolean silk = event.getBreaker() instanceof Player p
-                && EnchantmentHelper.getItemEnchantmentLevel(
-                                level.registryAccess()
+                && p.getMainHandItem()
+                                .getEnchantmentLevel(level.registryAccess()
                                         .lookupOrThrow(Registries.ENCHANTMENT)
-                                        .getOrThrow(Enchantments.SILK_TOUCH),
-                                p.getMainHandItem())
+                                        .getOrThrow(Enchantments.SILK_TOUCH))
                         > 0;
         if (silk) {
             return;

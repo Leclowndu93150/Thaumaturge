@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
@@ -119,7 +120,8 @@ public final class BlockManaPod extends BaseEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(
+            BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         ItemStack stack = new ItemStack(TTItems.MANA_BEAN.get());
         if (level.getBlockEntity(pos) instanceof BlockEntityManaPod pod) {
             Holder<IAspect> aspect = pod.aspect();

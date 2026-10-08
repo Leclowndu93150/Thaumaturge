@@ -29,7 +29,7 @@ public final class PrimalCrusherItem extends Item {
     }
 
     @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue(ItemStack stack) {
         return TTMaterials.TOOL_PRIMAL_VOID.getEnchantmentValue();
     }
 
