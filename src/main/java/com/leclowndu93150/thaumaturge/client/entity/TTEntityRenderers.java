@@ -31,6 +31,7 @@ import com.leclowndu93150.thaumaturge.client.model.gear.FortressArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.KnightArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.PraetorArmorModel;
 import com.leclowndu93150.thaumaturge.client.model.gear.RobeArmorModel;
+import com.leclowndu93150.thaumaturge.client.model.gear.ThaumostaticHarnessModel;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
@@ -69,6 +70,7 @@ public final class TTEntityRenderers {
         event.registerLayerDefinition(TTModelLayers.BRAIN, BrainModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.JAR_BRINE, JarBrineModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.MATRIX_CUBE, MatrixCubeModel::createLayer);
+        event.registerLayerDefinition(TTModelLayers.THAUMOSTATIC_HARNESS, ThaumostaticHarnessModel::createChest);
         event.registerLayerDefinition(TTModelLayers.PECH, PechModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.ELDRITCH_CRAB, EldritchCrabModel::createLayer);
         event.registerLayerDefinition(TTModelLayers.ELDRITCH_GUARDIAN, EldritchGuardianModel::createLayer);

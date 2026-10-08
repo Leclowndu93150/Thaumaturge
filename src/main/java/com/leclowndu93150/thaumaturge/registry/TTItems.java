@@ -38,6 +38,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.TrinketItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
+import com.leclowndu93150.thaumaturge.content.equipment.hover.ThaumostaticHarnessItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
@@ -485,6 +486,10 @@ public final class TTItems {
         return ITEMS.registerItem(id, props -> new ItemSealPlacer(sealPath == null ? null : TTIds.rl(sealPath), props));
     }
 
+    public static final DeferredItem<ThaumostaticHarnessItem> THAUMOSTATIC_HARNESS = ITEMS.registerItem(
+            "thaumostatic_harness",
+            ThaumostaticHarnessItem::new,
+            new Item.Properties().durability(400).rarity(Rarity.EPIC));
     public static final DeferredItem<TravellerBootsItem> TRAVELLER_BOOTS = ITEMS.registerItem(
             "traveller_boots",
             props -> new TravellerBootsItem(props.durability(350).rarity(Rarity.RARE)));

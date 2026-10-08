@@ -193,6 +193,18 @@ public final class TTAttachments {
             "flux_pressure",
             () -> AttachmentType.builder(FluxPressureState::new).build());
 
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> HOVERING = register(
+            "hovering",
+            () -> AttachmentType.builder(() -> false)
+                    .serialize(Codec.BOOL, hovering -> hovering)
+                    .sync(ByteBufCodecs.BOOL)
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> HOVER_CHARGE = register(
+            "hover_charge",
+            () -> AttachmentType.builder(() -> 0)
+                    .serialize(Codec.INT, charge -> charge > 0)
+                    .build());
+
     private TTAttachments() {}
 
     private static <T> DeferredHolder<AttachmentType<?>, AttachmentType<T>> register(

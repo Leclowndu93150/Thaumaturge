@@ -18,6 +18,10 @@ public final class TTHudEvents {
     public static void registerLayers(RegisterGuiLayersEvent event) {
         event.registerAbove(
                 VanillaGuiLayers.EXPERIENCE_LEVEL,
+                TTIds.rl("hover_hud"),
+                GuiBlend.alphaBlendedLayer(new HoverHudOverlay()));
+        event.registerAbove(
+                VanillaGuiLayers.EXPERIENCE_LEVEL,
                 TTIds.rl("left_hud_stack"),
                 GuiBlend.alphaBlendedLayer(new LeftHudStack(
                         List.of(CasterHudOverlay.dialGauge(), new AuraHudOverlay(), new SanityHudOverlay()))));

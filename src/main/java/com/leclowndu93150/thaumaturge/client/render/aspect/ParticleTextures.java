@@ -16,5 +16,8 @@ public final class ParticleTextures {
     public static final int ELDRITCH_ORB_FRAMES = 13;
     public static final int GOLEM_ORB_FRAMES = 6;
 
+    public static final ResourceLocation LIGHTNING_RING = TTIds.rl("textures/effect/lightning_ring.png");
+    public static final int LIGHTNING_RING_FRAMES = 16;
+
     private ParticleTextures() {}
 }

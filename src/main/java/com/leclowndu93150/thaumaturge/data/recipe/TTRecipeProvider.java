@@ -116,6 +116,7 @@ public final class TTRecipeProvider extends RecipeProvider {
         buildBannerRecipes();
         buildGearRecipes();
         buildInfusionAltarRecipes();
+        buildThaumostaticHarnessRecipe();
         buildInfusionEnchantmentRecipes();
         buildRunicAugmentRecipe();
         buildElementalToolRecipes();
@@ -1069,6 +1070,35 @@ public final class TTRecipeProvider extends RecipeProvider {
                 Ingredient.of(Items.IRON_CHESTPLATE),
                 Optional.of(gate("runic_shielding")));
         output.accept(TTIds.rl("runic_augment/runic_shielding"), recipe, null);
+    }
+
+    private void buildThaumostaticHarnessRecipe() {
+        Ingredient airCrystal = Ingredient.of(TTItems.CRYSTAL_AER.get());
+        Ingredient greatwoodPlanks = Ingredient.of(TTItemTags.PLANKS_GREATWOOD);
+        Ingredient gold = Ingredient.of(Tags.Items.INGOTS_GOLD);
+        Ingredient iron = Ingredient.of(Tags.Items.INGOTS_IRON);
+        new InfusionRecipeBuilder(
+                        registries.lookupOrThrow(IAspect.REGISTRY_KEY),
+                        RecipeCategory.COMBAT,
+                        new ItemStack(TTItems.THAUMOSTATIC_HARNESS.get()),
+                        Ingredient.of(Items.LEATHER_CHESTPLATE))
+                .component(airCrystal)
+                .component(airCrystal)
+                .component(greatwoodPlanks)
+                .component(greatwoodPlanks)
+                .component(Ingredient.of(Items.COMPARATOR))
+                .component(gold)
+                .component(gold)
+                .component(iron)
+                .component(iron)
+                .aspect(TTAspects.VOLATUS, 32)
+                .aspect(TTAspects.POTENTIA, 32)
+                .aspect(TTAspects.MACHINA, 32)
+                .aspect(TTAspects.MOTUS, 16)
+                .instability(6)
+                .gate(gate("thaumostatic_harness"))
+                .unlockedBy("has", has(TTItems.TRAVELLER_BOOTS))
+                .save(output);
     }
 
     private void buildInfusionEnchantmentRecipes() {

@@ -22,12 +22,16 @@ public final class TTKeybinds {
     public static final KeyMapping MISC_TOGGLE =
             new KeyMapping("key.thaumaturge.misc_toggle", GLFW.GLFW_KEY_G, CATEGORY);
 
+    public static final KeyMapping TOGGLE_HOVER =
+            new KeyMapping("key.thaumaturge.toggle_hover", GLFW.GLFW_KEY_H, CATEGORY);
+
     private TTKeybinds() {}
 
     @SubscribeEvent
     public static void onRegisterMappings(RegisterKeyMappingsEvent event) {
         event.register(OPEN_THAUMONOMICON);
         event.register(CHANGE_FOCUS);
+        event.register(TOGGLE_HOVER);
         event.register(MISC_TOGGLE);
     }
 

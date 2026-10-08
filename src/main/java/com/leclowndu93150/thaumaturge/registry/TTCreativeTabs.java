@@ -416,6 +416,7 @@ public final class TTCreativeTabs {
                             output.accept(
                                     golemPlacer(GolemProperties.createDefault().withMaterial(material)));
                         });
+                        output.accept(TTItems.THAUMOSTATIC_HARNESS.get());
                         output.accept(TTItems.TRAVELLER_BOOTS.get());
                         output.accept(TTItems.CLOTH_CHEST.get());
                         output.accept(TTItems.CLOTH_LEGS.get());

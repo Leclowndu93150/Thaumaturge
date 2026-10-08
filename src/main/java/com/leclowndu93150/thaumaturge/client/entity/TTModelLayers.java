@@ -57,5 +57,8 @@ public final class TTModelLayers {
 
     public static final ModelLayerLocation GOLEM = new ModelLayerLocation(TTIds.rl("golem"), "main");
 
+    public static final ModelLayerLocation THAUMOSTATIC_HARNESS =
+            new ModelLayerLocation(TTIds.rl("thaumostatic_harness"), "chest");
+
     private TTModelLayers() {}
 }

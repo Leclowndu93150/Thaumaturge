@@ -31,6 +31,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Unit;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
@@ -179,6 +180,10 @@ public final class TTDataComponents {
                     "goggles_upgrade",
                     builder -> builder.persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE)));
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemStack>> HARNESS_JAR =
+            DATA_COMPONENTS.registerComponentType(
+                    "harness_jar",
+                    builder -> builder.persistent(ItemStack.CODEC).networkSynchronized(ItemStack.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ItemContainerContents>> POUCH_CONTENTS =
             DATA_COMPONENTS.registerComponentType(
                     "pouch_contents",

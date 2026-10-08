@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.compat.curio.client.CuriosityBandCurioRenderer;
 import com.leclowndu93150.thaumaturge.compat.curio.client.GoggleCurioRenderer;
+import com.leclowndu93150.thaumaturge.compat.curio.client.HoverHarnessCurioRenderer;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
@@ -60,6 +61,10 @@ public final class ThaumaturgeCuriosCompat {
                 TTItems.CLOUD_RING.get(),
                 TTItems.CURIOSITY_BAND.get(),
                 TTItems.FOCUS_POUCH.get());
+        event.registerItem(
+                CuriosCapability.ITEM,
+                (stack, ctx) -> new HoverHarnessCurio(stack),
+                TTItems.THAUMOSTATIC_HARNESS.get());
         event.registerItem(CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS.get());
         event.registerItem(
                 CuriosCapability.ITEM, (stack, ctx) -> tickingCurio(stack), TTItems.AMULET_VIS_CRAFTED.get());
@@ -102,6 +107,7 @@ public final class ThaumaturgeCuriosCompat {
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
+        CuriosRendererRegistry.register(TTItems.THAUMOSTATIC_HARNESS.get(), HoverHarnessCurioRenderer::new);
         CuriosRendererRegistry.register(TTItems.GOGGLES_REVEALING.get(), GoggleCurioRenderer::new);
         CuriosRendererRegistry.register(TTItems.CURIOSITY_BAND.get(), CuriosityBandCurioRenderer::new);
     }
@@ -125,6 +131,13 @@ public final class ThaumaturgeCuriosCompat {
     public static boolean anyCurioMatches(LivingEntity entity, Predicate<ItemStack> predicate) {
         Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
         return invOpt.isPresent() && invOpt.get().findFirstCurio(predicate).isPresent();
+    }
+
+    public static ItemStack findCurio(LivingEntity entity, Predicate<ItemStack> predicate) {
+        return CuriosApi.getCuriosInventory(entity)
+                .flatMap(inv -> inv.findFirstCurio(predicate))
+                .map(SlotResult::stack)
+                .orElse(ItemStack.EMPTY);
     }
 
     public static boolean isCurioEquipped(LivingEntity entity, Item item) {

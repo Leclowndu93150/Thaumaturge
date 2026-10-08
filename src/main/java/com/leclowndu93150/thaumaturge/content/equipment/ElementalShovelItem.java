@@ -9,183 +9,174 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+import net.neoforged.neoforge.event.EventHooks;
 import org.jspecify.annotations.Nullable;
 
-public final class ElementalShovelItem extends ShovelItem implements IArchitect {
-    private static final int BAMF_COLOR = 8401408;
-    private static final int ORIENTATION_COUNT = 3;
+public final class ElementalShovelItem extends Item implements IArchitect {
+    private static final int MODE_PARALLEL = 0;
+    private static final int MODE_VERTICAL = 1;
+    private static final int MODE_COUNT = 3;
+    private static final int SPAN = 1;
+    private static final float PUFF_RED = 128.0F / 255.0F;
+    private static final float PUFF_GREEN = 51.0F / 255.0F;
+    private static final float PUFF_BLUE = 0.0F;
+    private static final float PLACE_VOLUME = 0.6F;
+    private static final float PITCH_MIN = 0.9F;
+    private static final float PITCH_SPREAD = 0.2F;
+    private static final double FALLBACK_REACH = 4.5;
 
-    public ElementalShovelItem(Properties properties) {
-        super(TTMaterials.TOOL_ELEMENTAL, properties);
+    public ElementalShovelItem(Item.Properties properties) {
+        super(properties);
     }
 
     public static int getOrientation(ItemStack stack) {
-        return stack.getOrDefault(TTDataComponents.TOOL_ORIENTATION.get(), 0);
+        return stack.getOrDefault(TTDataComponents.TOOL_ORIENTATION.get(), MODE_PARALLEL) % MODE_COUNT;
     }
 
     public static void cycleOrientation(ItemStack stack) {
-        stack.set(TTDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % ORIENTATION_COUNT);
+        stack.set(TTDataComponents.TOOL_ORIENTATION.get(), (getOrientation(stack) + 1) % MODE_COUNT);
     }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        Direction side = context.getClickedFace();
         Player player = context.getPlayer();
-        if (player == null || level.getBlockEntity(pos) != null) {
+        Level level = context.getLevel();
+        BlockState source = level.getBlockState(context.getClickedPos());
+        if (player == null || source.hasBlockEntity()) {
             return InteractionResult.FAIL;
         }
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
+        List<BlockPos> cells =
+                cells(context.getItemInHand(), level, context.getClickedPos(), context.getClickedFace(), player);
+        if (!(level instanceof ServerLevel server)) {
+            return cells.stream().anyMatch(cell -> fits(level, cell, source))
+                    ? InteractionResult.SUCCESS
+                    : InteractionResult.FAIL;
         }
-        BlockState bs = level.getBlockState(pos);
-        int orientation = getOrientation(context.getItemInHand());
-        boolean placed = false;
-        for (int aa = -1; aa <= 1; aa++) {
-            for (int bb = -1; bb <= 1; bb++) {
-                BlockPos p2 = pos.relative(side).offset(offsetFor(orientation, side, player.getYRot(), aa, bb));
-                if (!level.getBlockState(p2).canBeReplaced() || !bs.canSurvive(level, p2)) {
-                    continue;
-                }
-                if (player.hasInfiniteMaterials() || consumeItem(player, new ItemStack(bs.getBlock()))) {
-                    placeBlock(level, player, context, p2, bs, side);
-                    placed = true;
-                } else if (bs.is(Blocks.GRASS_BLOCK)
-                        && (player.hasInfiniteMaterials() || consumeItem(player, new ItemStack(Blocks.DIRT)))) {
-                    placeBlock(level, player, context, p2, Blocks.DIRT.defaultBlockState(), side);
-                    placed = true;
-                    if (context.getItemInHand().isEmpty()) {
-                        break;
-                    }
-                }
+        ItemStack shovel = context.getItemInHand();
+        int placed = 0;
+        for (BlockPos cell : cells) {
+            if (!fits(level, cell, source) || !mayPlace(server, player, cell, context.getClickedFace(), shovel)) {
+                continue;
+            }
+            BlockState fill = pay(player, source);
+            if (fill == null) {
+                continue;
+            }
+            level.setBlock(cell, fill, Block.UPDATE_ALL);
+            placed++;
+            level.playSound(
+                    null,
+                    cell,
+                    source.getSoundType(level, cell, player).getBreakSound(),
+                    SoundSource.BLOCKS,
+                    PLACE_VOLUME,
+                    PITCH_MIN + level.getRandom().nextFloat() * PITCH_SPREAD);
+            Effects.bamf(server, Vec3.atCenterOf(cell))
+                    .color(PUFF_RED, PUFF_GREEN, PUFF_BLUE)
+                    .side(context.getClickedFace())
+                    .send();
+            player.swing(context.getHand(), true);
+            shovel.hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.getHand()));
+            if (shovel.isEmpty()) {
+                break;
             }
         }
-        return placed ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+        return placed > 0 ? InteractionResult.CONSUME : InteractionResult.FAIL;
     }
 
-    private static void placeBlock(
-            Level level, Player player, UseOnContext context, BlockPos p2, BlockState state, Direction side) {
-        level.playSound(
-                null,
-                p2,
-                state.getSoundType().getBreakSound(),
-                SoundSource.BLOCKS,
-                0.6F,
-                0.9F + level.getRandom().nextFloat() * 0.2F);
-        level.setBlockAndUpdate(p2, state);
-        context.getItemInHand().hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.getHand()));
-        if (level instanceof ServerLevel serverLevel) {
-            Effects.bamf(serverLevel, p2)
-                    .color(
-                            ((BAMF_COLOR >> 16) & 0xFF) / 255.0F,
-                            ((BAMF_COLOR >> 8) & 0xFF) / 255.0F,
-                            (BAMF_COLOR & 0xFF) / 255.0F)
-                    .side(side)
-                    .send();
+    private static boolean mayPlace(ServerLevel level, Player player, BlockPos cell, Direction face, ItemStack shovel) {
+        return player.mayUseItemAt(cell, face, shovel)
+                && player.mayInteract(level, cell)
+                && !EventHooks.onBlockPlace(player, BlockSnapshot.create(level.dimension(), level, cell), face);
+    }
+
+    private static boolean fits(Level level, BlockPos cell, BlockState source) {
+        return level.getBlockState(cell).canBeReplaced() && source.canSurvive(level, cell);
+    }
+
+    private static @Nullable BlockState pay(Player player, BlockState source) {
+        if (player.hasInfiniteMaterials()) {
+            return source;
         }
-        player.swing(context.getHand());
+        if (take(player, source.getBlock().asItem())) {
+            return source;
+        }
+        if (source.is(Blocks.GRASS_BLOCK) && take(player, Items.DIRT)) {
+            return Blocks.DIRT.defaultBlockState();
+        }
+        return null;
     }
 
-    private static boolean consumeItem(Player player, ItemStack wanted) {
-        if (wanted.isEmpty()) {
+    private static boolean take(Player player, Item item) {
+        if (item == Items.AIR) {
             return false;
         }
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack stack = player.getInventory().getItem(slot);
-            if (!stack.isEmpty() && ItemStack.isSameItem(stack, wanted)) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.is(item)) {
                 stack.shrink(1);
-                if (stack.isEmpty()) {
-                    player.getInventory().setItem(slot, ItemStack.EMPTY);
-                }
                 return true;
             }
         }
         return false;
     }
 
-    private static BlockPos offsetFor(int orientation, Direction side, float yRot, int aa, int bb) {
-        int xx = 0;
-        int yy = 0;
-        int zz = 0;
-        if (orientation == 1) {
-            yy = bb;
-            if (side.ordinal() <= 1) {
-                int l = Mth.floor(yRot * 4.0F / 360.0F + 0.5) & 3;
-                if (l != 0 && l != 2) {
-                    zz = aa;
-                } else {
-                    xx = aa;
-                }
-            } else if (side.ordinal() <= 3) {
-                zz = aa;
-            } else {
-                xx = aa;
+    private static List<BlockPos> cells(ItemStack stack, Level level, BlockPos clicked, Direction face, Player player) {
+        Direction.Axis[] axes = axes(getOrientation(stack), face, player.getDirection());
+        BlockPos centre = clicked.relative(face);
+        List<BlockPos> cells = new ArrayList<>();
+        for (int first = -SPAN; first <= SPAN; first++) {
+            for (int second = -SPAN; second <= SPAN; second++) {
+                cells.add(centre.relative(axes[0], first).relative(axes[1], second));
             }
-        } else if (orientation == 2) {
-            if (side.ordinal() <= 1) {
-                int l = Mth.floor(yRot * 4.0F / 360.0F + 0.5) & 3;
-                yy = bb;
-                if (l != 0 && l != 2) {
-                    zz = aa;
-                } else {
-                    xx = aa;
-                }
-            } else {
-                zz = bb;
-                xx = aa;
-            }
-        } else if (side.ordinal() <= 1) {
-            xx = aa;
-            zz = bb;
-        } else if (side.ordinal() <= 3) {
-            xx = aa;
-            yy = bb;
-        } else {
-            zz = aa;
-            yy = bb;
         }
-        return new BlockPos(xx, yy, zz);
+        return cells;
+    }
+
+    private static Direction.Axis[] axes(int mode, Direction face, Direction facing) {
+        Direction.Axis faceAxis = face.getAxis();
+        if (mode == MODE_PARALLEL) {
+            return switch (faceAxis) {
+                case Y -> new Direction.Axis[] {Direction.Axis.X, Direction.Axis.Z};
+                case Z -> new Direction.Axis[] {Direction.Axis.X, Direction.Axis.Y};
+                case X -> new Direction.Axis[] {Direction.Axis.Z, Direction.Axis.Y};
+            };
+        }
+        if (faceAxis == Direction.Axis.Y) {
+            Direction.Axis across = facing.getAxis() == Direction.Axis.Z ? Direction.Axis.X : Direction.Axis.Z;
+            return new Direction.Axis[] {across, Direction.Axis.Y};
+        }
+        if (mode == MODE_VERTICAL) {
+            return new Direction.Axis[] {faceAxis, Direction.Axis.Y};
+        }
+        return new Direction.Axis[] {Direction.Axis.X, Direction.Axis.Z};
     }
 
     @Override
     public List<BlockPos> previewBlocks(ItemStack stack, Level level, BlockPos pos, Direction side, Player player) {
-        List<BlockPos> blocks = new ArrayList<>();
-        if (!player.isShiftKeyDown()) {
-            return blocks;
-        }
-        BlockState bs = level.getBlockState(pos);
-        int orientation = getOrientation(stack);
-        for (int aa = -1; aa <= 1; aa++) {
-            for (int bb = -1; bb <= 1; bb++) {
-                BlockPos p2 = pos.relative(side).offset(offsetFor(orientation, side, player.getYRot(), aa, bb));
-                if (level.getBlockState(p2).canBeReplaced() && bs.canSurvive(level, p2)) {
-                    blocks.add(p2);
-                }
-            }
-        }
-        return blocks;
+        BlockState source = level.getBlockState(pos);
+        return cells(stack, level, pos, side, player).stream()
+                .filter(cell -> fits(level, cell, source))
+                .toList();
     }
 
     @Override
     public @Nullable HitResult aim(ItemStack stack, Level level, LivingEntity caster) {
-        double range = caster instanceof Player player ? player.blockInteractionRange() : 4.5;
-        Vec3 eye = caster.getEyePosition();
-        Vec3 end = eye.add(caster.getViewVector(1.0F).scale(range));
-        return level.clip(new ClipContext(eye, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, caster));
+        double reach = caster instanceof Player player ? player.blockInteractionRange() : FALLBACK_REACH;
+        return caster.pick(reach, 1.0F, false);
     }
 
     @Override

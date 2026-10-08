@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.device.mirror.MenuHandMirror;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.MenuPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.construct.MenuTurretBasic;
+import com.leclowndu93150.thaumaturge.content.equipment.hover.MenuThaumostaticHarness;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.MenuSmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.MenuThaumatorium;
 import com.leclowndu93150.thaumaturge.content.golem.logistics.MenuGolemLogistics;
@@ -86,6 +87,9 @@ public final class TTMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<MenuHandMirror>> HAND_MIRROR =
             MENUS.register("hand_mirror", () -> IMenuTypeExtension.create(MenuHandMirror::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MenuThaumostaticHarness>> THAUMOSTATIC_HARNESS =
+            MENUS.register("thaumostatic_harness", () -> IMenuTypeExtension.create(MenuThaumostaticHarness::new));
 
     private TTMenus() {}
 

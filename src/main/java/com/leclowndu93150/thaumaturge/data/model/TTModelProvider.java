@@ -425,6 +425,7 @@ public final class TTModelProvider implements DataProvider {
         handheldItem(TTItems.ELEMENTAL_SHOVEL.get());
         handheldItem(TTItems.ELEMENTAL_HOE.get());
         handheldItem(TTItems.PRIMAL_CRUSHER.get());
+        flatItem(TTItems.THAUMOSTATIC_HARNESS.get());
         flatItem(TTItems.TRAVELLER_BOOTS.get());
         flatItem(TTItems.THAUMIUM_HELM.get());
         flatItem(TTItems.THAUMIUM_CHEST.get());

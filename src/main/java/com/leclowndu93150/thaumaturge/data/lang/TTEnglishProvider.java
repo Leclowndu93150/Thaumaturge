@@ -18,6 +18,10 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("item.thaumaturge.thaumostatic_harness", "Thaumostatic Harness");
+        add("tooltip.thaumaturge.thaumostatic_harness.fuel", "%1$s x %2$s");
+        add("key.thaumaturge.toggle_hover", "Activate Hover Harness");
+        add("message.thaumaturge.hover_disrupted", "Something disrupts your ability to fly.");
         add("block.thaumaturge.stone_eldritch_pillar", "Eldritch Pillar");
         add("block.thaumaturge.stairs_eldritch_tile", "Eldritch Tile Stairs");
         add("block.thaumaturge.stairs_eldritch_rock", "Eldritch Rock Stairs");

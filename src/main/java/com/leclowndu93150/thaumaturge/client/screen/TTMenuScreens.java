@@ -31,6 +31,7 @@ public final class TTMenuScreens {
         event.register(TTMenus.ARCANE_WORKBENCH.get(), ArcaneWorkbenchScreen::new);
         event.register(TTMenus.SMELTER.get(), SmelterScreen::new);
         event.register(TTMenus.SPA.get(), SpaScreen::new);
+        event.register(TTMenus.THAUMOSTATIC_HARNESS.get(), ThaumostaticHarnessScreen::new);
         event.register(TTMenus.POTION_SPRAYER.get(), PotionSprayerScreen::new);
         event.register(TTMenus.FOCAL_MANIPULATOR.get(), FocalManipulatorScreen::new);
         event.register(TTMenus.GOLEM_BUILDER.get(), GolemBuilderScreen::new);

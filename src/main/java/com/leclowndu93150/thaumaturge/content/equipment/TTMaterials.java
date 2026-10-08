@@ -166,6 +166,16 @@ public final class TTMaterials {
             () -> Ingredient.of(Tags.Items.INGOTS_IRON),
             false);
 
+    public static final Holder<ArmorMaterial> ARMOR_THAUMOSTATIC_HARNESS = register(
+            "thaumostatic_harness",
+            defense(1, 2, 3, 1),
+            25,
+            SoundEvents.ARMOR_EQUIP_LEATHER,
+            0.0F,
+            0.0F,
+            () -> Ingredient.of(Tags.Items.INGOTS_GOLD),
+            false);
+
     private static Holder<ArmorMaterial> register(
             String name,
             Map<ArmorItem.Type, Integer> defense,

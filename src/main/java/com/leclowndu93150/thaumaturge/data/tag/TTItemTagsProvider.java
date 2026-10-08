@@ -244,6 +244,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.VOID_ROBE_CHEST.get(),
                         TTItems.VOID_ROBE_LEGS.get());
 
+        tag(CuriosTags.BACK).add(TTItems.THAUMOSTATIC_HARNESS.get());
+        tag(ItemTags.CHEST_ARMOR).add(TTItems.THAUMOSTATIC_HARNESS.get());
         tag(CuriosTags.HEAD).add(TTItems.GOGGLES_REVEALING.get(), TTItems.CURIOSITY_BAND.get());
         tag(CuriosTags.NECKLACE)
                 .add(
