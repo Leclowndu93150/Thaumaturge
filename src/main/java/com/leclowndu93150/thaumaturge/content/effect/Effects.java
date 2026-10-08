@@ -1042,6 +1042,7 @@ public final class Effects {
         private final Vec3 pos;
         private double vx, vy, vz;
         private float scale = 1.0F;
+        private int color = TaintFumeParticleOptions.RANDOM_COLOR;
 
         Taint(ServerLevel level, Vec3 pos) {
             this.level = level;
@@ -1060,16 +1061,13 @@ public final class Effects {
             return this;
         }
 
+        public Taint color(int argb) {
+            this.color = argb;
+            return this;
+        }
+
         public void send() {
-            spawn(
-                    level,
-                    new TaintFumeParticleOptions(TaintFumeParticleOptions.RANDOM_COLOR, scale),
-                    pos.x,
-                    pos.y,
-                    pos.z,
-                    vx,
-                    vy,
-                    vz);
+            spawn(level, new TaintFumeParticleOptions(color, scale), pos.x, pos.y, pos.z, vx, vy, vz);
         }
     }
 

@@ -18,6 +18,10 @@ import com.leclowndu93150.thaumaturge.content.research.pool.AspectPoolData;
 import com.leclowndu93150.thaumaturge.content.spell.casting.ChannelSummaryCache;
 import com.leclowndu93150.thaumaturge.content.spell.engine.CastBudgets;
 import com.leclowndu93150.thaumaturge.content.spell.engine.DelayedSpells;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomIndex;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintColumns;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintPressure;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxSamples;
 import com.leclowndu93150.thaumaturge.content.warding.ArcaneLockChunkData;
 import com.leclowndu93150.thaumaturge.content.warding.WardChunkData;
 import com.leclowndu93150.thaumaturge.content.warp.WarpData;
@@ -204,6 +208,26 @@ public final class TTAttachments {
             () -> AttachmentType.builder(() -> 0)
                     .serialize(Codec.INT, charge -> charge > 0)
                     .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintPressure>> TAINT_PRESSURE = register(
+            "taint_pressure",
+            () -> AttachmentType.builder(TaintPressure::new)
+                    .serialize(TaintPressure.CODEC.codec())
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintColumns>> TAINT_COLUMNS = register(
+            "taint_columns",
+            () -> AttachmentType.builder(TaintColumns::new)
+                    .serialize(TaintColumns.CODEC.codec())
+                    .build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TaintBloomIndex>> TAINT_BLOOMS = register(
+            "taint_blooms", () -> AttachmentType.builder(TaintBloomIndex::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<PhysicalFluxSamples>> PHYSICAL_FLUX_SAMPLES =
+            register(
+                    "physical_flux_samples",
+                    () -> AttachmentType.builder(PhysicalFluxSamples::new).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> TAINT_LEGACY_IMPORTED = register(
+            "taint_legacy_imported",
+            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).build());
 
     private TTAttachments() {}
 

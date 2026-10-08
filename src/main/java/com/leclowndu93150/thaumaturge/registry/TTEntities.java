@@ -24,6 +24,8 @@ import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellMine;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellProjectile;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellSprite;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellWall;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;

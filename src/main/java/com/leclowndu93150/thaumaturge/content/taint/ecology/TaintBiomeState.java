@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -9,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 
 /** Tracks biome columns that were converted by a runtime taint outbreak rather than worldgen. */
@@ -23,6 +25,19 @@ public final class TaintBiomeState extends SavedData {
 
     public static TaintBiomeState get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+    }
+
+    public void copyTo(LevelChunk chunk) {
+        if (chunk.hasData(TTAttachments.TAINT_COLUMNS.get())) return;
+        int baseX = QuartPos.fromSection(chunk.getPos().x);
+        int baseZ = QuartPos.fromSection(chunk.getPos().z);
+        for (int x = 0; x < 4; x++) {
+            for (int z = 0; z < 4; z++) {
+                if (dynamicColumns.contains(ChunkPos.asLong(baseX + x, baseZ + z))) {
+                    chunk.getData(TTAttachments.TAINT_COLUMNS.get()).setChanged(x, z, true);
+                }
+            }
+        }
     }
 
     public boolean isDynamic(BlockPos pos) {

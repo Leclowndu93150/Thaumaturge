@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.content.item.ThrowProfile;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -136,7 +136,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
             int xx = (int) ((this.random.nextFloat() - this.random.nextFloat()) * TAINT_SPREAD_RADIUS);
             int zz = (int) ((this.random.nextFloat() - this.random.nextFloat()) * TAINT_SPREAD_RADIUS);
             BlockPos column = center.offset(xx, 0, zz);
-            if (!server.hasChunkAt(column) || TaintBloomRegistry.isProtected(server, column)) {
+            if (!server.hasChunkAt(column) || TaintBlooms.isProtected(server, column)) {
                 continue;
             }
             if (!TaintBiomeManager.isTainted(server, column) && !TaintBiomeManager.taintColumn(server, column)) {

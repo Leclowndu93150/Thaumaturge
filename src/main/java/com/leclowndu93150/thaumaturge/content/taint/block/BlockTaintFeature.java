@@ -36,7 +36,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
             Block.box(3.0, 1.0, 11.0, 11.0, 9.0, 12.0),
             Block.box(3.0, 9.0, 3.0, 11.0, 10.0, 11.0),
             Block.box(5.0, 10.0, 6.0, 8.0, 11.0, 9.0));
-
     private static final VoxelShape ORB_1 = Shapes.or(
             Block.box(3.0, 0.0, 4.0, 9.0, 1.0, 10.0),
             Block.box(2.0, 1.0, 4.0, 10.0, 7.0, 10.0),
@@ -52,7 +51,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
             Block.box(9.0, 1.0, 12.0, 13.0, 5.0, 13.0),
             Block.box(10.0, 5.0, 8.0, 13.0, 6.0, 10.0),
             Block.box(9.0, 5.0, 11.0, 13.0, 6.0, 12.0));
-
     private static final VoxelShape ORB_2 = Shapes.or(
             Block.box(2.0, 0.0, 8.0, 6.0, 1.0, 12.0),
             Block.box(1.0, 1.0, 8.0, 7.0, 5.0, 12.0),
@@ -70,7 +68,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
             Block.box(10.0, 1.0, 14.0, 14.0, 5.0, 15.0),
             Block.box(10.0, 5.0, 10.0, 14.0, 6.0, 14.0),
             Block.box(11.0, 6.0, 11.0, 13.0, 7.0, 13.0));
-
     private static final List<Map<Direction, VoxelShape>> ORB_SHAPES = List.of(
             DeviceShapes.facingShapesFromUp(ORB_0),
             DeviceShapes.facingShapesFromUp(ORB_1),
@@ -119,17 +116,17 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         TaintHelper.trySpreadTaintedBiome(level, pos, random);
-        if (!TaintHelper.isEcologicallySustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
+        boolean sustained = TaintHelper.isEcologicallySustained(level, pos);
+        if (!sustained && random.nextInt(DIE_CHANCE) == 0) {
             decay(level, pos, state);
             return;
         }
-        int auraBase = AuraHelper.getAuraBase(level, pos);
-        if (TaintHelper.isEcologicallySustained(level, pos)
-                && auraBase > 0
-                && AuraHelper.getFlux(level, pos) <= auraBase * PASSIVE_POLLUTE_MAX_RATIO
-                && random.nextInt(PASSIVE_POLLUTE_CHANCE) == 0) {
-            AuraHelper.polluteAura(level, pos, PASSIVE_POLLUTE_AMOUNT, true);
-            return;
+        if (sustained && random.nextInt(PASSIVE_POLLUTE_CHANCE) == 0) {
+            int auraBase = AuraHelper.getAuraBase(level, pos);
+            if (auraBase > 0 && AuraHelper.getFlux(level, pos) <= auraBase * PASSIVE_POLLUTE_MAX_RATIO) {
+                AuraHelper.polluteAura(level, pos, PASSIVE_POLLUTE_AMOUNT, true);
+                return;
+            }
         }
         TaintHelper.spreadFibres(level, pos, false);
         BlockState below = level.getBlockState(pos.below());
@@ -142,25 +139,23 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
-
-            if (level.getRandom().nextFloat() < CRAWLER_ON_BREAK_CHANCE) {
-                EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level);
-                if (crawler != null) {
-                    crawler.moveTo(
-                            pos.getX() + 0.5,
-                            pos.getY() + 0.5,
-                            pos.getZ() + 0.5,
-                            level.getRandom().nextInt(360),
-                            0.0F);
-                    level.addFreshEntity(crawler);
-                }
-            } else {
-                AuraHelper.polluteAura(level, pos, BREAK_POLLUTE_AMOUNT, true);
+    protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState next, boolean movedByPiston) {
+        super.onRemove(state, world, pos, next, movedByPiston);
+        if (state.is(next.getBlock()) || !(world instanceof ServerLevel level)) return;
+        if (level.getRandom().nextFloat() < CRAWLER_ON_BREAK_CHANCE) {
+            EntityTaintCrawler crawler = TTEntities.TAINT_CRAWLER.get().create(level);
+            if (crawler != null) {
+                crawler.moveTo(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5,
+                        level.getRandom().nextInt(360),
+                        0.0F);
+                level.addFreshEntity(crawler);
             }
+        } else {
+            AuraHelper.polluteAura(level, pos, BREAK_POLLUTE_AMOUNT, true);
         }
-        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

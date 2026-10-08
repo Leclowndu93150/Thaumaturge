@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.content.aura;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
-import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +19,11 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import org.jspecify.annotations.Nullable;
 
 public final class AuraManager {
+    public static void resetSession() {
+        LOADED_CHUNKS.clear();
+        RIFT_TRIGGER.clear();
+    }
+
     public static final int AURA_CEILING = 500;
     public static final ResourceLocation AURA_PRESERVE_RESEARCH = TTIds.rl("aura_preserve");
 
@@ -175,7 +179,6 @@ public final class AuraManager {
         if (set != null) {
             set.remove(pos);
         }
-        PhysicalFluxAuraContamination.forgetChunk(level, pos);
     }
 
     public static Set<ChunkPos> loadedChunksSnapshot(ServerLevel level) {

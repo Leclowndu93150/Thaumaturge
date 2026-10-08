@@ -12,6 +12,8 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCross
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.world.entity.SpawnPlacementTypes;

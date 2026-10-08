@@ -87,7 +87,7 @@ public final class EntityTaintCrawler extends Monster {
         if (BlockTaintFibre.isOnlyAdjacentToTaint(server, pos)) {
             return;
         }
-        server.setBlockAndUpdate(pos, TTBlocks.TAINT_FIBRE.get().defaultBlockState());
+        server.setBlockAndUpdate(pos, BlockTaintFibre.stateForWorld(server, pos));
     }
 
     @Override

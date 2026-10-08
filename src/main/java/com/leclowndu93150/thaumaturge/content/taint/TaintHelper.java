@@ -7,8 +7,9 @@ import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintSeed;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSeed;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.content.taint.spread.TaintSeedRegistry;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -19,6 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.Level;
@@ -28,16 +30,34 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 public final class TaintHelper {
-    private static final double PERCENT = 100.0;
     private static final float SEED_FLUX_THRESHOLD = 5.0F;
     private static final float SEED_FLUX_COST = 5.0F;
-    private static final double SEED_SPAWN_RATE_FACTOR = 0.01;
+    private static final double SEED_SPAWN_CHANCE = 0.01;
+    private static final float SEED_SPAWN_MIN_PRESSURE = 0.85F;
+    private static final float SEED_SPAWN_PRESSURE = 0.08F;
+    private static final int SATELLITE_ATTEMPTS = 8;
+    private static final int SATELLITE_RANGE_XZ = 9;
+    private static final int SATELLITE_RANGE_Y = 3;
+    private static final float FEATURE_ON_LEAVES_CHANCE = 0.6F;
     private static final double SEED_VALIDATION_RANGE = 1.0;
+    private static final double SEED_EDGE_RATIO = 0.8;
     private static final float MAX_SPREAD_HARDNESS = 10.0F;
     private static final float MAX_CONVERT_HARDNESS = 5.0F;
-    private static final float ECOLOGY_PRESSURE_PER_CONVERSION = 0.01F;
+    private static final double PERCENT = 100.0;
+    private static final int SPREAD_HORIZONTAL = 3;
+    private static final int SPREAD_VERTICAL = 5;
+    private static final int LIGHT_CONVERSION_NEIGHBOURS = 2;
+    private static final int HEAVY_CONVERSION_NEIGHBOURS = 3;
+    private static final float CONVERSION_PRESSURE = 0.01F;
+    private static final float FRONTIER_RATE_SCALE = 5.0F;
+    private static final float FRONTIER_MAX_FLUX = 2.0F;
+    private static final float FRONTIER_FLUX_ACCELERATION = 0.5F;
+    private static final float FRONTIER_PRESSURE = 0.01F;
+    private static final float FRONTIER_FLUX_PRESSURE = 0.01F;
+    private static final float FRONTIER_MAX_FLUX_PRESSURE = 0.02F;
 
     private TaintHelper() {}
 
@@ -59,33 +79,33 @@ public final class TaintHelper {
         }
         double area = spreadArea() * spreadArea();
         TaintSeedRegistry registry = TaintSeedRegistry.get(serverLevel);
-        List<BlockPos> staleSeeds = null;
-        boolean foundLiveSeed = false;
+        List<BlockPos> stale = null;
+        boolean found = false;
         for (BlockPos seed : registry.all()) {
             if (seed.distSqr(pos) > area) {
                 continue;
             }
-            AABB box = new AABB(seed).inflate(SEED_VALIDATION_RANGE);
-            if (serverLevel.getEntitiesOfClass(AbstractTaintSeed.class, box).isEmpty()) {
-                if (staleSeeds == null) {
-                    staleSeeds = new ArrayList<>();
+            if (serverLevel
+                    .getEntitiesOfClass(AbstractTaintSeed.class, new AABB(seed).inflate(SEED_VALIDATION_RANGE))
+                    .isEmpty()) {
+                if (stale == null) {
+                    stale = new ArrayList<>();
                 }
-                staleSeeds.add(seed);
+                stale.add(seed);
                 continue;
             }
-            foundLiveSeed = true;
+            found = true;
             break;
         }
-        if (staleSeeds != null) {
-            registry.removeSeeds(staleSeeds);
+        if (stale != null) {
+            for (BlockPos seed : stale) {
+                registry.removeSeed(seed);
+            }
         }
-        return foundLiveSeed;
+        return found;
     }
 
     public static boolean isEcologicallySustained(ServerLevel level, BlockPos pos) {
-        // Taint survives because the land itself is tainted, not because a Seed or aura Flux
-        // continuously grants permission. Seeds remain a bootstrap/accelerant and are
-        // accepted as a temporary source while they establish Tainted Lands around themselves.
         return TaintBiomeManager.isTainted(level, pos) || isNearTaintSeed(level, pos);
     }
 
@@ -94,7 +114,7 @@ public final class TaintHelper {
             return false;
         }
         double area = spreadArea() * spreadArea();
-        double fringe = spreadArea() * 0.8 * (spreadArea() * 0.8);
+        double fringe = spreadArea() * SEED_EDGE_RATIO * (spreadArea() * SEED_EDGE_RATIO);
         for (BlockPos seed : TaintSeedRegistry.get(serverLevel).all()) {
             double d = seed.distSqr(pos);
             if (d < area && d > fringe) {
@@ -115,31 +135,44 @@ public final class TaintHelper {
         return false;
     }
 
-    public static void spreadFibres(ServerLevel level, BlockPos pos, boolean force) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()) {
-            return;
+    public static int countAdjacentTaint(LevelReader level, BlockPos pos) {
+        int count = 0;
+        for (Direction direction : Direction.values()) {
+            if (level.getBlockState(pos.relative(direction)).getBlock() instanceof ITaintBlock) {
+                count++;
+            }
         }
-        if (!level.hasChunkAt(pos) || TaintBloomRegistry.isProtected(level, pos)) {
-            return;
-        }
+        return count;
+    }
 
+    public static boolean placeFibreFromFlux(ServerLevel level, BlockPos pos) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || !ThaumaturgeCommonConfig.TAINT_FROM_FLUX.get()
+                || TaintBlooms.isProtected(level, pos)) {
+            return false;
+        }
+        return level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
+    }
+
+    public static void spreadFibres(ServerLevel level, BlockPos pos, boolean force) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || !level.hasChunkAt(pos) || TaintBlooms.isProtected(level, pos)) {
+            return;
+        }
         RandomSource random = level.getRandom();
         if (!force && random.nextDouble() * PERCENT >= ThaumaturgeCommonConfig.TAINT_SPREAD_RATE.get()) {
             return;
         }
-        BlockPos target = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 2, random.nextInt(3) - 1);
-        if (target.equals(pos) || !level.hasChunkAt(target) || TaintBloomRegistry.isProtected(level, target)) {
+        BlockPos target = pos.offset(
+                random.nextInt(SPREAD_HORIZONTAL) - 1,
+                random.nextInt(SPREAD_VERTICAL) - SPREAD_VERTICAL / 2,
+                random.nextInt(SPREAD_HORIZONTAL) - 1);
+        if (target.equals(pos) || !level.hasChunkAt(target) || TaintBlooms.isProtected(level, target)) {
             return;
         }
-
-        // Ordinary fibre/terrain colonisation only occurs inside Tainted Lands. Explicit
-        // outbreak sources (Seed/debug/API force calls) may establish the target biome,
-        // but only once they have found a viable placement/conversion target.
-        boolean targetBiomeTainted = TaintBiomeManager.isTainted(level, target);
-        if (!targetBiomeTainted && !force) {
+        boolean targetTainted = TaintBiomeManager.isTainted(level, target);
+        if (!targetTainted && !force) {
             return;
         }
-
         BlockState targetState = level.getBlockState(target);
         float hardness = targetState.getDestroySpeed(level, target);
         if (hardness < 0 || hardness > MAX_SPREAD_HARDNESS || targetState.is(TTBlockTags.TAINT_CONVERSION_IMMUNE)) {
@@ -148,188 +181,138 @@ public final class TaintHelper {
 
         boolean isLeaves = targetState.is(BlockTags.LEAVES);
         boolean isReplaceable = targetState.isAir() || targetState.canBeReplaced();
-
         if (!isLeaves && !targetState.liquid() && isReplaceable) {
-            if (isAdjacentToSolidBlock(level, target) && !BlockTaintFibre.isOnlyAdjacentToTaint(level, target)) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
+            if (isAdjacentToSolidBlock(level, target)
+                    && !BlockTaintFibre.isOnlyAdjacentToTaint(level, target)
+                    && ensureTargetBiome(level, target, force, targetTainted)) {
                 level.setBlock(target, BlockTaintFibre.stateForWorld(level, target), Block.UPDATE_ALL);
-                addConversionPressure(level, target);
+                TaintEcology.addPressure(level, target, CONVERSION_PRESSURE);
             }
             return;
         }
 
         if (isLeaves) {
-            Direction taintLogDirection = adjacentTaintLog(level, target);
-            if (taintLogDirection != null && random.nextFloat() < 0.6F) {
+            Direction logFace = findAdjacentTaintLog(level, target);
+            if (logFace != null && random.nextFloat() < FEATURE_ON_LEAVES_CHANCE) {
                 level.setBlock(
                         target,
                         TTBlocks.TAINT_FEATURE
                                 .get()
                                 .defaultBlockState()
-                                .setValue(DirectionalBlock.FACING, taintLogDirection.getOpposite()),
+                                .setValue(DirectionalBlock.FACING, logFace.getOpposite()),
                         Block.UPDATE_ALL);
             }
             return;
         }
 
         if (hardness < MAX_CONVERT_HARDNESS) {
-            // The infection front uses two distinct pressure thresholds: wood/gourd/cactus-
-            // like material converted with two adjacent taint blocks, while ordinary ground/rock
-            // needed three. Preserve that brake instead of letting one isolated fibre digest solid
-            // terrain. Modern tags keep the rule extensible to modded blocks.
-            int adjacentTaint = countAdjacentTaint(level, target);
-            if (adjacentTaint >= 2
-                    && targetState.is(TTBlockTags.TAINT_CONVERTIBLE_LOG)
-                    && !(targetState.getBlock() instanceof ITaintBlock)) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
+            BlockState converted = convertedState(targetState, countAdjacentTaint(level, target));
+            if (converted != null) {
+                if (ensureTargetBiome(level, target, force, targetTainted)) {
+                    level.setBlock(target, converted, Block.UPDATE_ALL);
+                    TaintEcology.addPressure(level, target, CONVERSION_PRESSURE);
                 }
-                Direction.Axis axis = Direction.Axis.Y;
-                if (targetState.hasProperty(RotatedPillarBlock.AXIS)) {
-                    axis = targetState.getValue(RotatedPillarBlock.AXIS);
-                }
-                level.setBlock(
-                        target,
-                        TTBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis),
-                        Block.UPDATE_ALL);
-                addConversionPressure(level, target);
-                return;
-            }
-            if (adjacentTaint >= 2 && isCrustConvertible(targetState)) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
-                level.setBlock(target, TTBlocks.TAINT_CRUST.get().defaultBlockState(), Block.UPDATE_ALL);
-                addConversionPressure(level, target);
-                return;
-            }
-            if (adjacentTaint >= 3 && isSoilConvertible(targetState)) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
-                level.setBlock(target, TTBlocks.TAINT_SOIL.get().defaultBlockState(), Block.UPDATE_ALL);
-                addConversionPressure(level, target);
-                return;
-            }
-            if (adjacentTaint >= 3 && isRockConvertible(targetState)) {
-                if (!ensureTargetBiome(level, target, force, targetBiomeTainted)) {
-                    return;
-                }
-                level.setBlock(target, TTBlocks.TAINT_ROCK.get().defaultBlockState(), Block.UPDATE_ALL);
-                addConversionPressure(level, target);
                 return;
             }
         }
 
-        // Keep Seed reproduction as an escalation mechanic, but only for an outbreak that
-        // already has a Seed edge. It is deliberately not the foundation of ordinary spread.
         trySpawnTaintSeed(level, target, targetState, random);
     }
 
-    private static Direction adjacentTaintLog(LevelReader level, BlockPos pos) {
-        for (Direction direction : Direction.values()) {
-            if (level.getBlockState(pos.relative(direction)).is(TTBlocks.TAINT_LOG.get())) {
-                return direction;
-            }
+    public static boolean canHostFoothold(BlockState state) {
+        return PhysicalFlux.isPhysicalFlux(state)
+                || state.canBeReplaced() && state.getFluidState().isEmpty();
+    }
+
+    public static void establishFoothold(ServerLevel level, BlockPos pos, float pressure, int spreadAttempts) {
+        if (canHostFoothold(level.getBlockState(pos))) {
+            level.setBlock(pos, BlockTaintFibre.stateForWorld(level, pos), Block.UPDATE_ALL);
         }
-        return null;
+        TaintEcology.addPressure(level, pos, pressure);
+        for (int attempt = 0; attempt < spreadAttempts; attempt++) {
+            spreadFibres(level, pos, true);
+        }
+    }
+
+    public static boolean trySpreadTaintedBiome(ServerLevel level, BlockPos pos, RandomSource random) {
+        int rate = ThaumaturgeCommonConfig.TAINT_FRONTIER_RATE.get();
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || rate <= 0
+                || !TaintBiomeManager.isTainted(level, pos)
+                || countAdjacentTaint(level, pos) < LIGHT_CONVERSION_NEIGHBOURS
+                || TaintBlooms.isProtected(level, pos)) {
+            return false;
+        }
+        float saturation = Mth.clamp(AuraHelper.getFluxSaturation(level, pos), 0.0F, FRONTIER_MAX_FLUX);
+        float acceleration = 1.0F + Math.min(FRONTIER_FLUX_ACCELERATION, saturation * FRONTIER_FLUX_ACCELERATION);
+        if (random.nextInt(Math.max(1, Math.round(rate * FRONTIER_RATE_SCALE / acceleration))) != 0) {
+            return false;
+        }
+        BlockPos target = pos.offset(random.nextInt(SPREAD_HORIZONTAL) - 1, 0, random.nextInt(SPREAD_HORIZONTAL) - 1);
+        if (!level.hasChunkAt(target) || !TaintBiomeManager.taintColumn(level, target)) {
+            return false;
+        }
+        TaintEcology.addPressure(
+                level,
+                target,
+                FRONTIER_PRESSURE + Math.min(FRONTIER_MAX_FLUX_PRESSURE, saturation * FRONTIER_FLUX_PRESSURE));
+        return true;
     }
 
     private static boolean ensureTargetBiome(
             ServerLevel level, BlockPos target, boolean force, boolean alreadyTainted) {
-        if (alreadyTainted || TaintBiomeManager.isTainted(level, target)) {
-            return true;
-        }
-        return force && TaintBiomeManager.taintColumn(level, target);
-    }
-
-    /**
-     * The biome itself is passive: an active taint block at the edge must
-     * win a rare roll and have at least two adjacent taint blocks before one neighbouring quart
-     * column becomes Tainted Lands. Modern aura Flux accelerates this roll but is never required.
-     */
-    public static boolean trySpreadTaintedBiome(ServerLevel level, BlockPos pos, RandomSource random) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
-                || !level.hasChunkAt(pos)
-                || !TaintBiomeManager.isTainted(level, pos)
-                || TaintBloomRegistry.isProtected(level, pos)
-                || countAdjacentTaint(level, pos) < 2) {
-            return false;
-        }
-        int spreadRate = ThaumaturgeCommonConfig.TAINT_FRONTIER_RATE.get();
-        if (spreadRate <= 0) {
-            return false;
-        }
-        float saturation = Math.max(0.0F, Math.min(2.0F, AuraHelper.getFluxSaturation(level, pos)));
-        // Keep the base roll intact. Flux can still make an established outbreak more active,
-        // but it must not turn the 1 / (rate * 5) frontier into a four-times-faster takeover.
-        float acceleration = 1.0F + Math.min(0.5F, saturation * 0.5F);
-        int denominator = Math.max(1, Math.round(spreadRate * 5.0F / acceleration));
-        if (random.nextInt(denominator) != 0) {
-            return false;
-        }
-
-        BlockPos target = pos.offset(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
-        if (!level.hasChunkAt(target)
+        return alreadyTainted
                 || TaintBiomeManager.isTainted(level, target)
-                || TaintBloomRegistry.isProtected(level, target)) {
-            return false;
-        }
-        if (TaintBiomeManager.taintColumn(level, target)) {
-            TaintEcology.addPressure(level, target, 0.01F + Math.min(0.02F, saturation * 0.01F));
-            return true;
-        }
-        return false;
+                || force && TaintBiomeManager.taintColumn(level, target);
     }
 
-    public static int countAdjacentTaint(LevelReader level, BlockPos pos) {
-        int count = 0;
-        for (Direction direction : Direction.values()) {
-            BlockState state = level.getBlockState(pos.relative(direction));
-            if (state.getBlock() instanceof ITaintBlock) {
-                count++;
-            }
+    private static @Nullable BlockState convertedState(BlockState state, int adjacentTaint) {
+        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS
+                && state.is(TTBlockTags.TAINT_CONVERTIBLE_LOG)
+                && !(state.getBlock() instanceof ITaintBlock)) {
+            Direction.Axis axis = state.hasProperty(RotatedPillarBlock.AXIS)
+                    ? state.getValue(RotatedPillarBlock.AXIS)
+                    : Direction.Axis.Y;
+            return TTBlocks.TAINT_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
         }
-        return count;
-    }
-
-    /**
-     * Bounded reproduction hook for mature spore colonies. Satellite outbreaks reuse
-     * the same Seed collision, spacing, Flux threshold, and Flux cost rules as ordinary spread.
-     */
-    public static boolean trySpawnSatelliteSeed(ServerLevel level, BlockPos origin, RandomSource random) {
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
-                || level.getDifficulty() == Difficulty.PEACEFUL
-                || TaintBloomRegistry.isProtected(level, origin)
-                || TaintEcology.getSaturation(level, origin) < 0.85F) {
-            return false;
+        if (adjacentTaint >= LIGHT_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_CRUST)) {
+            return TTBlocks.TAINT_CRUST.get().defaultBlockState();
         }
-        for (int i = 0; i < 8; i++) {
-            BlockPos target = origin.offset(random.nextInt(9) - 4, random.nextInt(3) - 1, random.nextInt(9) - 4);
-            if (!level.hasChunkAt(target)) {
-                continue;
-            }
-            if (tryCreateTaintSeed(level, target, level.getBlockState(target), random, false)) {
-                return true;
-            }
+        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_SOIL)) {
+            return TTBlocks.TAINT_SOIL.get().defaultBlockState();
         }
-        return false;
-    }
-
-    private static void addConversionPressure(ServerLevel level, BlockPos pos) {
-        // The pressure layer is retained for modern atmosphere/fauna escalation, but it no longer
-        // grants biome takeover. Active taint blocks advance the frontier themselves.
-        TaintEcology.addPressure(level, pos, ECOLOGY_PRESSURE_PER_CONVERSION);
+        if (adjacentTaint >= HEAVY_CONVERSION_NEIGHBOURS && state.is(TTBlockTags.TAINT_CONVERTIBLE_ROCK)) {
+            return TTBlocks.TAINT_ROCK.get().defaultBlockState();
+        }
+        return null;
     }
 
     private static void trySpawnTaintSeed(
             ServerLevel level, BlockPos target, BlockState targetState, RandomSource random) {
-        if (random.nextDouble() >= SEED_SPAWN_RATE_FACTOR || TaintEcology.getSaturation(level, target) < 0.85F) {
-            return;
+        if (random.nextDouble() < SEED_SPAWN_CHANCE
+                && TaintEcology.getSaturation(level, target) >= SEED_SPAWN_MIN_PRESSURE) {
+            tryCreateTaintSeed(level, target, targetState, random, true);
         }
-        tryCreateTaintSeed(level, target, targetState, random, true);
+    }
+
+    public static boolean trySpawnSatelliteSeed(ServerLevel level, BlockPos origin, RandomSource random) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || level.getDifficulty() == Difficulty.PEACEFUL
+                || TaintBlooms.isProtected(level, origin)
+                || TaintEcology.getSaturation(level, origin) < SEED_SPAWN_MIN_PRESSURE) {
+            return false;
+        }
+        for (int attempt = 0; attempt < SATELLITE_ATTEMPTS; attempt++) {
+            BlockPos target = origin.offset(
+                    random.nextInt(SATELLITE_RANGE_XZ) - SATELLITE_RANGE_XZ / 2,
+                    random.nextInt(SATELLITE_RANGE_Y) - SATELLITE_RANGE_Y / 2,
+                    random.nextInt(SATELLITE_RANGE_XZ) - SATELLITE_RANGE_XZ / 2);
+            if (level.hasChunkAt(target)
+                    && tryCreateTaintSeed(level, target, level.getBlockState(target), random, false)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean tryCreateTaintSeed(
@@ -339,7 +322,7 @@ public final class TaintHelper {
         }
         if (!level.getBlockState(target.above()).isAir()
                 || AuraHelper.getFlux(level, target) < SEED_FLUX_THRESHOLD
-                || (requireSeedEdge && !isAtTaintSeedEdge(level, target))) {
+                || requireSeedEdge && !isAtTaintSeedEdge(level, target)) {
             return false;
         }
         EntityTaintSeed seed = TTEntities.TAINT_SEED.get().create(level);
@@ -353,7 +336,7 @@ public final class TaintHelper {
         }
         AuraHelper.drainFlux(level, target, SEED_FLUX_COST, false);
         level.addFreshEntity(seed);
-        TaintEcology.addPressure(level, target, 0.08F);
+        TaintEcology.addPressure(level, target, SEED_SPAWN_PRESSURE);
         return true;
     }
 
@@ -364,21 +347,18 @@ public final class TaintHelper {
         if (!level.noCollision(seed)) {
             return false;
         }
-        double fringe = spreadArea() * 0.8;
+        double fringe = spreadArea() * SEED_EDGE_RATIO;
         AABB box = seed.getBoundingBox().inflate(fringe);
         return level.getEntitiesOfClass(AbstractTaintSeed.class, box, other -> other != seed)
                 .isEmpty();
     }
 
-    private static boolean isCrustConvertible(BlockState state) {
-        return state.is(TTBlockTags.TAINT_CONVERTIBLE_CRUST);
-    }
-
-    private static boolean isSoilConvertible(BlockState state) {
-        return state.is(TTBlockTags.TAINT_CONVERTIBLE_SOIL);
-    }
-
-    private static boolean isRockConvertible(BlockState state) {
-        return state.is(TTBlockTags.TAINT_CONVERTIBLE_ROCK);
+    private static @Nullable Direction findAdjacentTaintLog(ServerLevel level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            if (level.getBlockState(pos.relative(direction)).is(TTBlocks.TAINT_LOG.get())) {
+                return direction;
+            }
+        }
+        return null;
     }
 }

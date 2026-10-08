@@ -25,11 +25,7 @@ public final class InfectiousVisExhaustEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity mob, int amplification) {
-        if (mob.level().isClientSide()) {
-            return true;
-        }
-
-        ServerLevel level = (ServerLevel) mob.level();
+        if (!(mob.level() instanceof ServerLevel level)) return true;
         AABB box = mob.getBoundingBox().inflate(SPREAD_RADIUS, SPREAD_RADIUS, SPREAD_RADIUS);
         List<LivingEntity> nearby = level.getEntitiesOfClass(
                 LivingEntity.class,

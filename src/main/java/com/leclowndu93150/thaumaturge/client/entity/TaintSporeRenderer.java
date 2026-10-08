@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeModel;
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;

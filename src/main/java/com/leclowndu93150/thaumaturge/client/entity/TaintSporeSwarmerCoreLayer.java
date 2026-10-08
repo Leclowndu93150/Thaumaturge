@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeSwarmerModel;
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSporeSwarmer;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.EntityModelSet;

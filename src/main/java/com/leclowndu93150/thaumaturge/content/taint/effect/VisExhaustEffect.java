@@ -1,21 +1,13 @@
 package com.leclowndu93150.thaumaturge.content.taint.effect;
 
-import java.util.Set;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.common.EffectCure;
 
 public final class VisExhaustEffect extends MobEffect {
     public VisExhaustEffect() {
         super(MobEffectCategory.HARMFUL, 0x80407F);
-    }
-
-    @Override
-    public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
-        // Flux Goo/Gas explicitly clears curative items from Vis Exhaust. Keep that
-        // property on the effect itself so every source behaves consistently in modern NeoForge.
     }
 
     @Override
@@ -25,6 +17,7 @@ public final class VisExhaustEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity mob, int amplification) {
+        if (!(mob.level() instanceof ServerLevel level)) return true;
         return true;
     }
 }

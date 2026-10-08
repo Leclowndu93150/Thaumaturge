@@ -19,6 +19,10 @@ public final class EssentiaSourceEffectTracker {
 
     private EssentiaSourceEffectTracker() {}
 
+    public static void resetSession() {
+        PENDING.clear();
+    }
+
     public static void dispatch(
             ServerLevel level,
             Vec3 from,

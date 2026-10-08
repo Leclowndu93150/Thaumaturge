@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.entity;
 
 import com.leclowndu93150.thaumaturge.client.model.entity.TaintSporeSwarmerModel;
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSporeSwarmer;
+import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;

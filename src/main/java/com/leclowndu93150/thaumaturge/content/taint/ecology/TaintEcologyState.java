@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 
 /** Persistent, dimension-local ecological taint pressure, stored only for contaminated chunks. */
@@ -28,6 +30,15 @@ public final class TaintEcologyState extends SavedData {
 
     public static TaintEcologyState get(ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(FACTORY, DATA_NAME);
+    }
+
+    public void copyTo(LevelChunk chunk) {
+        Entry entry = entries.get(chunk.getPos().toLong());
+        if (entry != null && !chunk.hasData(TTAttachments.TAINT_PRESSURE.get())) {
+            TaintPressure pressure = chunk.getData(TTAttachments.TAINT_PRESSURE.get());
+            pressure.set(entry.saturation, entry.lastUpdateTick);
+            pressure.markActiveSeed(entry.lastActiveSeedTick);
+        }
     }
 
     public float getSaturation(BlockPos pos, long gameTime, float decayMultiplier) {

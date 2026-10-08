@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -18,7 +19,10 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
     private static final int IDLE_WORK_LIMIT = 300;
     private static final int SLEEP_RECHECK_INTERVAL = 1200;
     private static final float PRESSURE_CLEAN_AMOUNT = 0.005F;
+    private static final int CHUNK_CENTER = 8;
+    private static final int RADIUS_SQ = TaintBlooms.PROTECTION_RADIUS * TaintBlooms.PROTECTION_RADIUS;
 
+    private final BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
     private int ticks;
     private int idleWork;
     private boolean sleeping;
@@ -27,48 +31,47 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
         super(TTBlockEntities.ETHEREAL_BLOOM.get(), pos, state);
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEtherealBloom bloom) {
+    public void serverTick(Level level, BlockPos pos) {
         if (!(level instanceof ServerLevel server)) {
             return;
         }
-        bloom.ticks++;
-        if (bloom.sleeping) {
-            if (bloom.ticks % SLEEP_RECHECK_INTERVAL != 0 || !bloom.hasNearbyEcology(server, pos)) {
+        ticks++;
+        if (sleeping) {
+            if (ticks % SLEEP_RECHECK_INTERVAL != 0 || !hasNearbyEcology(server, pos)) {
                 return;
             }
-            bloom.sleeping = false;
-            bloom.idleWork = 0;
+            sleeping = false;
+            idleWork = 0;
+            setChanged();
         }
-        if (bloom.ticks % WORK_INTERVAL != 0) {
+        if (ticks % WORK_INTERVAL != 0) {
             return;
         }
-
-        boolean worked = bloom.cleanEcology(server, pos);
-        worked |= bloom.cleanSampledBlocks(server, pos, server.getRandom());
+        boolean worked = cleanEcology(server, pos);
+        worked |= cleanSampledBlocks(server, pos, server.getRandom());
         if (worked) {
-            bloom.idleWork = 0;
-        } else if (++bloom.idleWork >= IDLE_WORK_LIMIT) {
-            bloom.sleeping = true;
-            bloom.setChanged();
+            idleWork = 0;
+        } else if (++idleWork >= IDLE_WORK_LIMIT) {
+            sleeping = true;
+            setChanged();
         }
     }
 
     private boolean cleanEcology(ServerLevel level, BlockPos origin) {
         boolean worked = false;
-        int radius = TaintBloomRegistry.PROTECTION_RADIUS;
-        int minChunkX = (origin.getX() - radius) >> 4;
-        int maxChunkX = (origin.getX() + radius) >> 4;
-        int minChunkZ = (origin.getZ() - radius) >> 4;
-        int maxChunkZ = (origin.getZ() + radius) >> 4;
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                BlockPos sample = new BlockPos((chunkX << 4) + 8, origin.getY(), (chunkZ << 4) + 8);
-                if (!level.hasChunkAt(sample)) {
-                    continue;
-                }
-                float before = TaintEcology.getSaturation(level, sample);
-                if (before > 0.0F) {
-                    TaintEcology.clean(level, sample, PRESSURE_CLEAN_AMOUNT);
+        int radius = TaintBlooms.PROTECTION_RADIUS;
+        for (int chunkX = SectionPos.blockToSectionCoord(origin.getX() - radius);
+                chunkX <= SectionPos.blockToSectionCoord(origin.getX() + radius);
+                chunkX++) {
+            for (int chunkZ = SectionPos.blockToSectionCoord(origin.getZ() - radius);
+                    chunkZ <= SectionPos.blockToSectionCoord(origin.getZ() + radius);
+                    chunkZ++) {
+                cursor.set(
+                        SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
+                        origin.getY(),
+                        SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
+                if (level.hasChunkAt(cursor) && TaintEcology.getSaturation(level, cursor) > 0.0F) {
+                    TaintEcology.clean(level, cursor, PRESSURE_CLEAN_AMOUNT);
                     worked = true;
                 }
             }
@@ -77,17 +80,20 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
     }
 
     private boolean hasNearbyEcology(ServerLevel level, BlockPos origin) {
-        int radius = TaintBloomRegistry.PROTECTION_RADIUS;
-        int minChunkX = (origin.getX() - radius) >> 4;
-        int maxChunkX = (origin.getX() + radius) >> 4;
-        int minChunkZ = (origin.getZ() - radius) >> 4;
-        int maxChunkZ = (origin.getZ() + radius) >> 4;
-        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
-            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
-                BlockPos sample = new BlockPos((chunkX << 4) + 8, origin.getY(), (chunkZ << 4) + 8);
-                if (level.hasChunkAt(sample)
-                        && (TaintEcology.getSaturation(level, sample) > 0.0F
-                                || TaintBiomeManager.isTainted(level, sample))) {
+        int radius = TaintBlooms.PROTECTION_RADIUS;
+        for (int chunkX = SectionPos.blockToSectionCoord(origin.getX() - radius);
+                chunkX <= SectionPos.blockToSectionCoord(origin.getX() + radius);
+                chunkX++) {
+            for (int chunkZ = SectionPos.blockToSectionCoord(origin.getZ() - radius);
+                    chunkZ <= SectionPos.blockToSectionCoord(origin.getZ() + radius);
+                    chunkZ++) {
+                cursor.set(
+                        SectionPos.sectionToBlockCoord(chunkX, CHUNK_CENTER),
+                        origin.getY(),
+                        SectionPos.sectionToBlockCoord(chunkZ, CHUNK_CENTER));
+                if (level.hasChunkAt(cursor)
+                        && (TaintEcology.getSaturation(level, cursor) > 0.0F
+                                || TaintBiomeManager.isTainted(level, cursor))) {
                     return true;
                 }
             }
@@ -97,30 +103,26 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
 
     private boolean cleanSampledBlocks(ServerLevel level, BlockPos origin, RandomSource random) {
         boolean worked = false;
-        int radius = TaintBloomRegistry.PROTECTION_RADIUS;
+        int radius = TaintBlooms.PROTECTION_RADIUS;
         for (int sample = 0; sample < SAMPLES_PER_WORK; sample++) {
             int x = random.nextIntBetweenInclusive(-radius, radius);
             int z = random.nextIntBetweenInclusive(-radius, radius);
-            if (x * x + z * z > radius * radius) {
+            if (x * x + z * z > RADIUS_SQ) {
                 continue;
             }
-
-            BlockPos column = origin.offset(x, 0, z);
-            if (!level.hasChunkAt(column)) {
+            cursor.set(origin.getX() + x, origin.getY(), origin.getZ() + z);
+            if (!level.hasChunkAt(cursor)) {
                 continue;
             }
-            // The Ethereal Bloom resets the biome as part of the same cleansing operation. The
-            // quart column is restored from the active generator biome source.
-            worked |= TaintBiomeManager.restoreColumn(level, column);
-
+            worked |= TaintBiomeManager.restoreColumn(level, cursor);
             for (int y = VERTICAL_SAMPLE_RANGE; y >= -VERTICAL_SAMPLE_RANGE; y--) {
-                BlockPos target = origin.offset(x, y, z);
-                if (target.distSqr(origin) > radius * radius) {
+                if (x * x + y * y + z * z > RADIUS_SQ) {
                     continue;
                 }
-                BlockState targetState = level.getBlockState(target);
-                if (targetState.getBlock() instanceof ITaintBlock taintBlock) {
-                    taintBlock.decay(level, target, targetState);
+                cursor.set(origin.getX() + x, origin.getY() + y, origin.getZ() + z);
+                BlockState state = level.getBlockState(cursor);
+                if (state.getBlock() instanceof ITaintBlock taintBlock) {
+                    taintBlock.decay(level, cursor.immutable(), state);
                     worked = true;
                     break;
                 }
@@ -133,31 +135,31 @@ public final class BlockEntityEtherealBloom extends BlockEntity {
     public void onLoad() {
         super.onLoad();
         if (level instanceof ServerLevel server) {
-            TaintBloomRegistry.add(server, worldPosition);
+            TaintBlooms.register(server, worldPosition);
         }
     }
 
     @Override
     public void setRemoved() {
         if (level instanceof ServerLevel server) {
-            TaintBloomRegistry.remove(server, worldPosition);
+            TaintBlooms.unregister(server, worldPosition);
         }
         super.setRemoved();
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putInt("ticks", ticks);
-        tag.putInt("idle_work", idleWork);
-        tag.putBoolean("sleeping", sleeping);
+    protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
+        super.loadAdditional(input, registries);
+        ticks = (input.contains("Ticks") ? input.getInt("Ticks") : 0);
+        idleWork = (input.contains("IdleWork") ? input.getInt("IdleWork") : 0);
+        sleeping = (input.contains("Sleeping") ? input.getBoolean("Sleeping") : false);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        ticks = tag.getInt("ticks");
-        idleWork = tag.getInt("idle_work");
-        sleeping = tag.getBoolean("sleeping");
+    protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
+        super.saveAdditional(output, registries);
+        output.putInt("Ticks", ticks);
+        output.putInt("IdleWork", idleWork);
+        output.putBoolean("Sleeping", sleeping);
     }
 }

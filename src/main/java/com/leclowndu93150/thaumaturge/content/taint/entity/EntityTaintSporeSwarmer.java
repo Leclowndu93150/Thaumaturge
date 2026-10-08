@@ -1,5 +1,6 @@
-package com.leclowndu93150.thaumaturge.content.entity;
+package com.leclowndu93150.thaumaturge.content.taint.entity;
 
+import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSwarm;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.server.level.ServerLevel;
@@ -11,25 +12,26 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
-/** Swarmer variant: a permanent mature spore that periodically emits Taint Swarms. */
-public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
+public final class EntityTaintSporeSwarmer extends AbstractTaintSpore {
+    private static final double MAX_HEALTH = 75.0;
     private static final int EMIT_INTERVAL = 500;
+    private static final double EMIT_RANGE = 16.0;
+    private static final double EMIT_HEIGHT = 0.5;
+    private static final float FULL_TURN = 360.0F;
 
-    public EntityTaintSporeSwarmer(EntityType<? extends EntityTaintSpore> type, Level level) {
+    public EntityTaintSporeSwarmer(EntityType<? extends EntityTaintSporeSwarmer> type, Level level) {
         super(type, level);
-        setSporeSize(10);
+        setSporeSize(MAX_SIZE);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 75.0)
+                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.MOVEMENT_SPEED, 0.0);
     }
 
     @Override
     protected boolean requiresStalkSupport() {
-        // Swarmers are free-standing mature spores; unlike ordinary spores they do not
-        // depend on a fibrous spore-stalk block beneath them.
         return false;
     }
 
@@ -41,29 +43,27 @@ public final class EntityTaintSporeSwarmer extends EntityTaintSpore {
                 || server.getDifficulty() == Difficulty.PEACEFUL
                 || tickCount % EMIT_INTERVAL != 0
                 || !TaintBiomeManager.isTainted(server, blockPosition())
-                || server.getNearestPlayer(this, 16.0) == null
-                || !server.getEntitiesOfClass(EntityTaintSwarm.class, new AABB(blockPosition()).inflate(16.0))
+                || server.getNearestPlayer(this, EMIT_RANGE) == null
+                || !server.getEntitiesOfClass(EntityTaintSwarm.class, new AABB(blockPosition()).inflate(EMIT_RANGE))
                         .isEmpty()) {
             return;
         }
         signalRelease(server);
-        EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(server);
-        if (swarm != null) {
-            swarm.moveTo(getX(), getY() + 0.5, getZ(), random.nextFloat() * 360.0F, 0.0F);
-            server.addFreshEntity(swarm);
-        }
+        releaseSwarm(server, EMIT_HEIGHT);
     }
 
     @Override
-    protected void burst(ServerLevel level) {
+    protected void onBurst(ServerLevel level) {
         if (level.getDifficulty() != Difficulty.PEACEFUL) {
-            EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
-            if (swarm != null) {
-                swarm.moveTo(getX(), getY(), getZ(), random.nextFloat() * 360.0F, 0.0F);
-                level.addFreshEntity(swarm);
-            }
+            releaseSwarm(level, 0.0);
         }
-        demoteSupport(level);
-        discard();
+    }
+
+    private void releaseSwarm(ServerLevel level, double height) {
+        EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
+        if (swarm != null) {
+            swarm.moveTo(getX(), getY() + height, getZ(), random.nextFloat() * FULL_TURN, 0.0F);
+            level.addFreshEntity(swarm);
+        }
     }
 }

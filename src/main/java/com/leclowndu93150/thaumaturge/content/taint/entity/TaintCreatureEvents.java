@@ -133,7 +133,7 @@ public final class TaintCreatureEvents {
                 .withParameter(LootContextParams.DAMAGE_SOURCE, source)
                 .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, source.getEntity())
                 .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, source.getDirectEntity());
-        if (event.isRecentlyHit() && source.getEntity() instanceof Player player) {
+        if (event.isRecentlyHit() && entity.getKillCredit() instanceof Player player) {
             params = params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                     .withLuck(player.getLuck());
         }

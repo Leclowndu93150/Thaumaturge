@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.content.world.plant.AbstractTTPlant;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -19,6 +20,12 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEtherealBloom extends AbstractTTPlant implements EntityBlock {
     public static final MapCodec<BlockEtherealBloom> CODEC = simpleCodec(BlockEtherealBloom::new);
 
+    private static final int PARTICLE_CHANCE = 2;
+    private static final double PARTICLE_Y = 0.45D;
+    private static final double PARTICLE_SPREAD_XZ = 0.18D;
+    private static final double PARTICLE_SPREAD_Y = 0.12D;
+    private static final double PARTICLE_RISE = 0.008D;
+
     public BlockEtherealBloom(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -30,34 +37,33 @@ public final class BlockEtherealBloom extends AbstractTTPlant implements EntityB
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.isFaceSturdy(level, pos, net.minecraft.core.Direction.UP);
+        return state.isFaceSturdy(level, pos, Direction.UP);
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BlockEntityEtherealBloom(pos, state);
     }
 
     @Override
-    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide() || type != TTBlockEntities.ETHEREAL_BLOOM.get()) {
             return null;
         }
-        return (tickerLevel, pos, tickerState, blockEntity) -> BlockEntityEtherealBloom.serverTick(
-                tickerLevel, pos, tickerState, (BlockEntityEtherealBloom) blockEntity);
+        return (tickLevel, pos, tickState, bloom) -> ((BlockEntityEtherealBloom) bloom).serverTick(tickLevel, pos);
     }
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(2) == 0) {
+        if (random.nextInt(PARTICLE_CHANCE) == 0) {
             level.addParticle(
                     ParticleTypes.END_ROD,
-                    pos.getX() + 0.5D + random.nextGaussian() * 0.18D,
-                    pos.getY() + 0.45D + random.nextGaussian() * 0.12D,
-                    pos.getZ() + 0.5D + random.nextGaussian() * 0.18D,
+                    pos.getX() + 0.5D + random.nextGaussian() * PARTICLE_SPREAD_XZ,
+                    pos.getY() + PARTICLE_Y + random.nextGaussian() * PARTICLE_SPREAD_Y,
+                    pos.getZ() + 0.5D + random.nextGaussian() * PARTICLE_SPREAD_XZ,
                     0.0D,
-                    0.008D,
+                    PARTICLE_RISE,
                     0.0D);
         }
     }

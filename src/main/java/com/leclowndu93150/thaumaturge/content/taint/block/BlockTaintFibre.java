@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
@@ -232,7 +232,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
                 && state.getValue(GROWTH3)
-                && !TaintBloomRegistry.isProtected(level, pos)
+                && !TaintBlooms.isProtected(level, pos)
                 && TaintEcology.isTainted(level, pos)) {
             // A growth-3 fibre is the stalk candidate and promotes on its next random tick;
             // BlockTaintSporeStalk uses a 1/10 maturation roll.

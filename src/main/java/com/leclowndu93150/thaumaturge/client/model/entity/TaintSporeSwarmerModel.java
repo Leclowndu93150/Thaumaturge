@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model.entity;
 
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
+import com.leclowndu93150.thaumaturge.content.taint.entity.AbstractTaintSpore;
 import java.util.EnumSet;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,7 +10,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.core.Direction;
 
-public final class TaintSporeSwarmerModel<T extends EntityTaintSpore> extends AbstractTaintSporeModel<T> {
+public final class TaintSporeSwarmerModel<T extends AbstractTaintSpore> extends AbstractTaintSporeModel<T> {
     private static final int TEXTURE_WIDTH = 256;
     private static final int TEXTURE_HEIGHT = 128;
 

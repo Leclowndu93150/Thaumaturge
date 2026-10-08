@@ -1,12 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
+import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.ChunkPos;
@@ -15,148 +21,126 @@ import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.jspecify.annotations.Nullable;
 
-/**
- * Applies and restores the Tainted Lands biome without force-loading chunks.
- *
- * <p>Minecraft stores biomes at quart resolution (4x4x4 cells), so one x/z biome
- * column maps to one 4x4 quart column here. Infection deliberately replaces that quart column at
- * every biome Y layer. Restoration
- * asks the active chunk generator's biome source what each Y layer originally should have been,
- * which also preserves modded biome choices instead of blindly restoring Plains.
- */
 public final class TaintBiomeManager {
+    private static final int QUARTS_PER_CHUNK = 4;
+    private static final int CLEAN_SEARCH_RADIUS = 256;
+
     private TaintBiomeManager() {}
 
     public static boolean isTainted(ServerLevel level, BlockPos pos) {
-        return level.hasChunkAt(pos) && level.getBiome(pos).is(TTBiomes.TAINTED_LANDS);
+        return level.hasChunkAt(pos)
+                && level.getNoiseBiome(
+                                QuartPos.fromBlock(pos.getX()),
+                                QuartPos.fromBlock(pos.getY()),
+                                QuartPos.fromBlock(pos.getZ()))
+                        .is(TTBiomeTags.IS_TAINTED);
     }
 
-    public static boolean isDynamicallyTainted(ServerLevel level, BlockPos pos) {
-        return isTainted(level, pos) && TaintBiomeState.get(level).isDynamic(pos);
+    public static boolean isChangedColumn(ServerLevel level, BlockPos pos) {
+        LevelChunk chunk = loadedChunk(level, pos);
+        TaintColumns columns = chunk == null ? null : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
+        return columns != null && columns.isChanged(QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getZ()));
     }
 
     public static boolean taintColumn(ServerLevel level, BlockPos pos) {
-        if (isTainted(level, pos)) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || isTainted(level, pos)
+                || level.getBiome(pos).is(BiomeTags.IS_RIVER)
+                || TaintBlooms.isProtected(level, pos)) {
             return false;
         }
-        // Keep rivers as natural firebreaks. Fibre struggles to cross open water;
-        // preserving modern river biomes makes that containment behavior explicit and prevents
-        // natural/dynamic Tainted Lands from painting over river channels.
-        if (level.getBiome(pos).is(BiomeTags.IS_RIVER)) {
-            return false;
-        }
-        LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null) {
-            return false;
-        }
-        Holder<Biome> tainted =
-                level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(TTBiomes.TAINTED_LANDS);
-        int targetQuartX = QuartPos.fromBlock(pos.getX());
-        int targetQuartZ = QuartPos.fromBlock(pos.getZ());
-        BiomeSnapshot snapshot = snapshot(level, chunk);
-        if (snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TTBiomes.TAINTED_LANDS))) {
-            return false;
-        }
-
-        rewriteColumn(level, chunk, snapshot, targetQuartX, targetQuartZ, (quartX, quartY, quartZ, sampler) -> tainted);
-        TaintBiomeState.get(level).markDynamic(pos);
-        return true;
+        return replaceColumn(level, pos, TTBiomes.TAINTED_LANDS);
     }
 
-    public static boolean replaceColumn(
-            ServerLevel level, BlockPos pos, net.minecraft.resources.ResourceKey<Biome> biomeKey) {
+    public static boolean replaceColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> biomeKey) {
         LevelChunk chunk = loadedChunk(level, pos);
         if (chunk == null) {
+            return false;
+        }
+        int quartX = QuartPos.fromBlock(pos.getX());
+        int quartZ = QuartPos.fromBlock(pos.getZ());
+        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
+        if (snapshot.columnHas(quartX, quartZ, biome -> biome.is(biomeKey))) {
             return false;
         }
         Holder<Biome> replacement =
-                level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(biomeKey);
-        int targetQuartX = QuartPos.fromBlock(pos.getX());
-        int targetQuartZ = QuartPos.fromBlock(pos.getZ());
-        BiomeSnapshot snapshot = snapshot(level, chunk);
-        if (snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(biomeKey))) {
-            return false;
-        }
-        rewriteColumn(
-                level, chunk, snapshot, targetQuartX, targetQuartZ, (quartX, quartY, quartZ, sampler) -> replacement);
-        if (!biomeKey.equals(TTBiomes.TAINTED_LANDS)) {
-            TaintBiomeState.get(level).clearDynamic(pos);
-        }
+                level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(biomeKey);
+        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, sampler) -> replacement);
+        setChanged(chunk, quartX, quartZ, biomeKey.equals(TTBiomes.TAINTED_LANDS));
         return true;
     }
 
     public static boolean restoreColumn(ServerLevel level, BlockPos pos) {
-        if (!isTainted(level, pos)) {
-            return false;
-        }
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null) {
+        if (chunk == null || !isTainted(level, pos)) {
             return false;
         }
-        int targetQuartX = QuartPos.fromBlock(pos.getX());
-        int targetQuartZ = QuartPos.fromBlock(pos.getZ());
-        BiomeSnapshot snapshot = snapshot(level, chunk);
-        if (!snapshot.columnMatches(targetQuartX, targetQuartZ, biome -> biome.is(TTBiomes.TAINTED_LANDS))) {
+        int quartX = QuartPos.fromBlock(pos.getX());
+        int quartZ = QuartPos.fromBlock(pos.getZ());
+        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
+        if (!snapshot.columnHas(quartX, quartZ, TaintBiomeManager::isTaintedBiome)) {
             return false;
         }
-
-        BiomeSource originalSource = level.getChunkSource().getGenerator().getBiomeSource();
+        BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
         Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
-        boolean dynamic = TaintBiomeState.get(level).isDynamic(pos);
-        CleanOffset naturalFallback = dynamic
-                ? CleanOffset.SAME_COLUMN
-                : findNearestCleanGeneratorColumn(
-                        originalSource, targetQuartX, QuartPos.fromBlock(pos.getY()), targetQuartZ, sampler);
-        Holder<Biome> emergencyFallback =
-                level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
-
-        rewriteColumn(level, chunk, snapshot, targetQuartX, targetQuartZ, (quartX, quartY, quartZ, ignoredSampler) -> {
-            Holder<Biome> current = snapshot.get(quartX, quartY, quartZ);
-            if (!current.is(TTBiomes.TAINTED_LANDS)) {
+        boolean changed = isChangedColumn(level, pos);
+        int[] offset = changed
+                ? new int[] {0, 0}
+                : nearestCleanOffset(source, quartX, QuartPos.fromBlock(pos.getY()), quartZ, sampler);
+        Holder<Biome> fallback =
+                level.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(Biomes.PLAINS);
+        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, ignored) -> {
+            Holder<Biome> current = snapshot.get(x, y, z);
+            if (!isTaintedBiome(current)) {
                 return current;
             }
-            Holder<Biome> restored = originalSource.getNoiseBiome(
-                    quartX + naturalFallback.dx(), quartY, quartZ + naturalFallback.dz(), sampler);
-            return restored.is(TTBiomes.TAINTED_LANDS) ? emergencyFallback : restored;
+            Holder<Biome> restored = source.getNoiseBiome(x + offset[0], y, z + offset[1], sampler);
+            return isTaintedBiome(restored) ? fallback : restored;
         });
-        TaintBiomeState.get(level).clearDynamic(pos);
+        setChanged(chunk, quartX, quartZ, false);
         return true;
     }
 
-    private static CleanOffset findNearestCleanGeneratorColumn(
+    private static boolean isTaintedBiome(Holder<Biome> biome) {
+        return biome.is(TTBiomeTags.IS_TAINTED);
+    }
+
+    private static int[] nearestCleanOffset(
             BiomeSource source, int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
-        if (!source.getNoiseBiome(quartX, quartY, quartZ, sampler).is(TTBiomes.TAINTED_LANDS)) {
-            return CleanOffset.SAME_COLUMN;
+        if (!isTaintedBiome(source.getNoiseBiome(quartX, quartY, quartZ, sampler))) {
+            return new int[] {0, 0};
         }
-        // Natural Tainted Lands has no hidden pre-replacement biome to restore. Sample outward
-        // along cardinal, diagonal, and half-diagonal rays; this stays bounded even when a Bloom
-        // is cleansing a large natural biome while still finding a nearby climate-compatible
-        // generator column in ordinary natural biome regions.
-        for (int radius = 1; radius <= 256; radius++) {
+        for (int radius = 1; radius <= CLEAN_SEARCH_RADIUS; radius++) {
             int half = Math.max(1, radius / 2);
             int[][] offsets = {
-                {radius, 0}, {-radius, 0}, {0, radius}, {0, -radius},
-                {radius, radius}, {radius, -radius}, {-radius, radius}, {-radius, -radius},
-                {radius, half}, {radius, -half}, {-radius, half}, {-radius, -half},
-                {half, radius}, {-half, radius}, {half, -radius}, {-half, -radius}
+                {radius, 0},
+                {-radius, 0},
+                {0, radius},
+                {0, -radius},
+                {radius, radius},
+                {radius, -radius},
+                {-radius, radius},
+                {-radius, -radius},
+                {radius, half},
+                {radius, -half},
+                {-radius, half},
+                {-radius, -half},
+                {half, radius},
+                {-half, radius},
+                {half, -radius},
+                {-half, -radius}
             };
             for (int[] offset : offsets) {
-                CleanOffset clean = cleanOffset(source, quartX, quartY, quartZ, offset[0], offset[1], sampler);
-                if (clean != null) {
-                    return clean;
+                if (!isTaintedBiome(source.getNoiseBiome(quartX + offset[0], quartY, quartZ + offset[1], sampler))) {
+                    return offset;
                 }
             }
         }
-        return CleanOffset.SAME_COLUMN;
-    }
-
-    private static CleanOffset cleanOffset(
-            BiomeSource source, int quartX, int quartY, int quartZ, int dx, int dz, Climate.Sampler sampler) {
-        return source.getNoiseBiome(quartX + dx, quartY, quartZ + dz, sampler).is(TTBiomes.TAINTED_LANDS)
-                ? null
-                : new CleanOffset(dx, dz);
+        return new int[] {0, 0};
     }
 
     private static void rewriteColumn(
@@ -165,67 +149,68 @@ public final class TaintBiomeManager {
             BiomeSnapshot snapshot,
             int targetQuartX,
             int targetQuartZ,
-            BiomeResolver targetResolver) {
+            BiomeResolver target) {
         Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
         chunk.fillBiomesFromNoise(
-                (quartX, quartY, quartZ, ignoredSampler) -> {
-                    if (quartX == targetQuartX && quartZ == targetQuartZ) {
-                        return targetResolver.getNoiseBiome(quartX, quartY, quartZ, sampler);
-                    }
-                    return snapshot.get(quartX, quartY, quartZ);
-                },
+                (x, y, z, ignored) -> x == targetQuartX && z == targetQuartZ
+                        ? target.getNoiseBiome(x, y, z, sampler)
+                        : snapshot.get(x, y, z),
                 sampler);
         chunk.setUnsaved(true);
-        level.getChunkSource().chunkMap.resendBiomesForChunks(List.of(chunk));
+        level.getChunkSource().chunkMap.resendBiomesForChunks(List.<ChunkAccess>of(chunk));
     }
 
-    private static LevelChunk loadedChunk(ServerLevel level, BlockPos pos) {
-        if (!level.hasChunkAt(pos)) {
-            return null;
+    private static void setChanged(LevelChunk chunk, int quartX, int quartZ, boolean changed) {
+        TaintColumns columns = changed
+                ? chunk.getData(TTAttachments.TAINT_COLUMNS.get())
+                : chunk.getExistingDataOrNull(TTAttachments.TAINT_COLUMNS.get());
+        if (columns == null) {
+            return;
         }
-        return level.getChunkSource().getChunkNow(pos.getX() >> 4, pos.getZ() >> 4);
-    }
-
-    private static BiomeSnapshot snapshot(ServerLevel level, LevelChunk chunk) {
-        int minQuartY = QuartPos.fromBlock(level.getMinBuildHeight());
-        int maxQuartY = QuartPos.fromBlock(level.getMaxBuildHeight() - 1);
-        int quartHeight = maxQuartY - minQuartY + 1;
-        int baseQuartX = chunk.getPos().x << 2;
-        int baseQuartZ = chunk.getPos().z << 2;
-        List<Holder<Biome>> biomes = new ArrayList<>(quartHeight * 16);
-        for (int quartY = minQuartY; quartY <= maxQuartY; quartY++) {
-            for (int localQuartZ = 0; localQuartZ < 4; localQuartZ++) {
-                for (int localQuartX = 0; localQuartX < 4; localQuartX++) {
-                    biomes.add(chunk.getNoiseBiome(baseQuartX + localQuartX, quartY, baseQuartZ + localQuartZ));
-                }
-            }
+        columns.setChanged(quartX, quartZ, changed);
+        if (columns.isEmpty()) {
+            chunk.removeData(TTAttachments.TAINT_COLUMNS.get());
         }
-        return new BiomeSnapshot(chunk.getPos(), minQuartY, quartHeight, biomes);
+        chunk.setUnsaved(true);
     }
 
-    private record CleanOffset(int dx, int dz) {
-        private static final CleanOffset SAME_COLUMN = new CleanOffset(0, 0);
+    private static @Nullable LevelChunk loadedChunk(ServerLevel level, BlockPos pos) {
+        LevelChunk chunk = level.getChunkSource()
+                .getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+        if (chunk != null) TaintLegacyData.importChunk(level, chunk);
+        return chunk;
     }
 
     private record BiomeSnapshot(ChunkPos chunkPos, int minQuartY, int quartHeight, List<Holder<Biome>> biomes) {
-        private Holder<Biome> get(int quartX, int quartY, int quartZ) {
-            int localQuartX = quartX - (chunkPos.x << 2);
-            int localQuartZ = quartZ - (chunkPos.z << 2);
-            int localQuartY = quartY - minQuartY;
-            if (localQuartX < 0
-                    || localQuartX >= 4
-                    || localQuartZ < 0
-                    || localQuartZ >= 4
-                    || localQuartY < 0
-                    || localQuartY >= quartHeight) {
-                throw new IllegalArgumentException("Biome resolver requested coordinates outside its chunk snapshot");
+        static BiomeSnapshot of(ServerLevel level, LevelChunk chunk) {
+            int minQuartY = QuartPos.fromBlock(level.getMinBuildHeight());
+            int quartHeight = QuartPos.fromBlock((level.getMaxBuildHeight() - 1)) - minQuartY + 1;
+            int baseX = QuartPos.fromSection(chunk.getPos().x);
+            int baseZ = QuartPos.fromSection(chunk.getPos().z);
+            List<Holder<Biome>> biomes = new ArrayList<>(quartHeight * QUARTS_PER_CHUNK * QUARTS_PER_CHUNK);
+            for (int y = 0; y < quartHeight; y++) {
+                for (int z = 0; z < QUARTS_PER_CHUNK; z++) {
+                    for (int x = 0; x < QUARTS_PER_CHUNK; x++) {
+                        biomes.add(chunk.getNoiseBiome(baseX + x, minQuartY + y, baseZ + z));
+                    }
+                }
             }
-            return biomes.get(localQuartY * 16 + localQuartZ * 4 + localQuartX);
+            return new BiomeSnapshot(chunk.getPos(), minQuartY, quartHeight, biomes);
         }
 
-        private boolean columnMatches(int quartX, int quartZ, java.util.function.Predicate<Holder<Biome>> predicate) {
-            for (int quartY = minQuartY; quartY < minQuartY + quartHeight; quartY++) {
-                if (predicate.test(get(quartX, quartY, quartZ))) {
+        Holder<Biome> get(int quartX, int quartY, int quartZ) {
+            int x = quartX - QuartPos.fromSection(chunkPos.x);
+            int z = quartZ - QuartPos.fromSection(chunkPos.z);
+            int y = Math.clamp(quartY - minQuartY, 0, quartHeight - 1);
+            if (x < 0 || x >= QUARTS_PER_CHUNK || z < 0 || z >= QUARTS_PER_CHUNK) {
+                throw new IllegalArgumentException("Biome resolver asked for a quart outside chunk " + chunkPos);
+            }
+            return biomes.get((y * QUARTS_PER_CHUNK + z) * QUARTS_PER_CHUNK + x);
+        }
+
+        boolean columnHas(int quartX, int quartZ, Predicate<Holder<Biome>> predicate) {
+            for (int y = 0; y < quartHeight; y++) {
+                if (predicate.test(get(quartX, minQuartY + y, quartZ))) {
                     return true;
                 }
             }

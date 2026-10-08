@@ -26,9 +26,7 @@ public final class FluxTaintEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity mob, int amplification) {
-        if (!(mob.level() instanceof ServerLevel level)) {
-            return true;
-        }
+        if (!(mob.level() instanceof ServerLevel level)) return true;
         if (MobTraits.isTainted(mob)) {
             mob.heal(HEAL);
             return true;

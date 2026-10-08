@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -18,11 +19,14 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockFluxGoo extends LiquidBlock {
+public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock {
     public static final MapCodec<LiquidBlock> CODEC =
             simpleCodec(p -> (LiquidBlock) new BlockFluxGoo(FluxGooRefs.sourceFluid(), p));
 
     private static final int REPLACEABLE_AMOUNT_THRESHOLD = 2;
+    private static final float AURA_FLOOR_PER_QUANTUM = 0.5F;
+    private static final float TAINT_WEIGHT_PER_QUANTUM = 1.0F;
+    private static final int OUTBREAK_COST = 0;
     private static final int AMBIENT_FUME_DENOMINATOR = 44;
     private static final int FUME_GRID = 64;
     private static final int FUME_PARTICLE_INDEX = 64;
@@ -60,6 +64,47 @@ public final class BlockFluxGoo extends LiquidBlock {
             BubbleParticleOptions data = new BubbleParticleOptions(
                     ARGB32.colorFromFloat(1.0F, FUME_R, FUME_G, FUME_B), FUME_ALPHA, scale, maxAge, -0.01F, false);
             level.addParticle(data, x, y, z, 0.0, 0.0, 0.0);
+        }
+    }
+
+    @Override
+    public int fluxAmount(BlockState state) {
+        return state.getFluidState().getAmount();
+    }
+
+    @Override
+    public BlockState withFluxAmount(int amount) {
+        return FluxGooFluid.gooBlockState(amount);
+    }
+
+    @Override
+    public void scheduleFluxTick(ServerLevel level, BlockPos pos) {
+        FluidState fluid = level.getFluidState(pos);
+        if (!fluid.isEmpty()) {
+            level.scheduleTick(pos, fluid.getType(), fluid.getType().getTickDelay(level));
+        }
+    }
+
+    @Override
+    public float auraFloorPerQuantum() {
+        return AURA_FLOOR_PER_QUANTUM;
+    }
+
+    @Override
+    public float taintWeightPerQuantum() {
+        return TAINT_WEIGHT_PER_QUANTUM;
+    }
+
+    @Override
+    public int outbreakCost() {
+        return OUTBREAK_COST;
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level instanceof ServerLevel serverLevel) {
+            PhysicalFluxAuraFloor.observe(serverLevel, pos);
         }
     }
 

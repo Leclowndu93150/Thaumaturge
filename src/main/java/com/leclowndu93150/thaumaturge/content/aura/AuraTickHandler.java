@@ -3,7 +3,8 @@ package com.leclowndu93150.thaumaturge.content.aura;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureEvents;
-import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraContamination;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxAuraFloor;
+import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFluxOutbreaks;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -79,7 +80,7 @@ public final class AuraTickHandler {
             // Physical Flux is an ecological system in its own right. Evaluate its direct
             // Taint route for every loaded chunk, even when that dimension/chunk has no modern
             // Aura base. Numeric Aura/Rift processing below remains conditional on Aura support.
-            PhysicalFluxAuraContamination.tryTaintOutbreak(level, pos, rand);
+            PhysicalFluxOutbreaks.tryOutbreak(level, chunk, rand);
             if (data.getBase() == 0) {
                 continue;
             }
@@ -96,7 +97,7 @@ public final class AuraTickHandler {
         float flux = aura.getFlux();
         boolean dirty = false;
 
-        float physicalFluxFloor = PhysicalFluxAuraContamination.targetFlux(level, aura.getChunkPos(), aura.getBase());
+        float physicalFluxFloor = PhysicalFluxAuraFloor.target(chunk, aura.getBase());
         if (flux < physicalFluxFloor) {
             flux += Math.min(PHYSICAL_FLUX_SEEP_CAP, physicalFluxFloor - flux);
             dirty = true;

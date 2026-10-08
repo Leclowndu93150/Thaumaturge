@@ -20,6 +20,10 @@ public final class CraftReferenceHolder {
 
     private CraftReferenceHolder() {}
 
+    public static void resetSession() {
+        items = Set.of();
+    }
+
     @SubscribeEvent
     public static void onDatapackSync(OnDatapackSyncEvent event) {
         if (event.getPlayer() != null) return;

@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.client.model.entity;
 
-import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
+import com.leclowndu93150.thaumaturge.content.taint.entity.AbstractTaintSpore;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 
-public abstract class AbstractTaintSporeModel<T extends EntityTaintSpore> extends HierarchicalModel<T> {
+public abstract class AbstractTaintSporeModel<T extends AbstractTaintSpore> extends HierarchicalModel<T> {
     protected final ModelPart root;
 
     @Override

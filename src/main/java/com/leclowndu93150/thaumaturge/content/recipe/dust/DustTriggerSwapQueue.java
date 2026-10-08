@@ -21,6 +21,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 public final class DustTriggerSwapQueue {
+    public static void resetSession() {
+        ACTIVE.clear();
+        BLOCKED.clear();
+    }
+
     public static final MapCodec<DustTriggerSwapQueue> CODEC =
             RecordCodecBuilder.mapCodec(i -> i.group(PendingSwap.CODEC
                             .listOf()
