@@ -134,6 +134,9 @@ public final class BlockEntityVisRelay extends BlockEntity {
         if (!level.isLoaded(parentPos)) {
             return true;
         }
+        if (!RelaySightline.isClear(level, worldPosition, parentPos)) {
+            return false;
+        }
         if (level.getBlockEntity(parentPos) instanceof BlockEntityVisRelay relay) {
             return relay.isLinked() && relay.depth == depth - 1 && depth <= HOP_CAP;
         }
@@ -156,17 +159,15 @@ public final class BlockEntityVisRelay extends BlockEntity {
                     cursor.setWithOffset(worldPosition, x, y, z);
                     if (level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) {
                         double distance = cursor.distSqr(worldPosition);
-                        if (relay.isLinked()
-                                && relay.depth < HOP_CAP
-                                && (relay.depth < bestRelayDepth
-                                        || (relay.depth == bestRelayDepth && distance < bestRelayDistance))) {
+                        if (relay.isLinked() && relay.depth < HOP_CAP && (relay.depth < bestRelayDepth || (relay.depth == bestRelayDepth && distance < bestRelayDistance))
+                                && RelaySightline.isClear(level, worldPosition, cursor)) {
                             bestRelayDepth = relay.depth;
                             bestRelayDistance = distance;
                             bestRelay = cursor.immutable();
                         }
                     } else if (usableSource(level, cursor) != null) {
                         double distance = cursor.distSqr(worldPosition);
-                        if (distance < bestSourceDistance) {
+                        if (distance < bestSourceDistance && RelaySightline.isClear(level, worldPosition, cursor)) {
                             bestSourceDistance = distance;
                             bestSource = cursor.immutable();
                         }

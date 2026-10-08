@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
+import net.minecraft.world.level.block.state.BlockState;
+import com.leclowndu93150.thaumaturge.content.aura.relay.BlockVisRelay;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VisRelayBeamRenderTypes;
@@ -21,7 +23,6 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVisRelay> {
-    private static final float CRYSTAL_HEIGHT = 0.55F;
     private static final float BEAM_HALF_WIDTH = 0.105F;
     private static final int BEAM_QUADS = 2;
     private static final float QUAD_SCROLL_STEP = 1.0F / 3.0F;
@@ -53,8 +54,10 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         if (parent == null || !relay.isLinked() || relay.getLevel() == null || player == null) {
             return;
         }
-        Vec3 own = Vec3.atCenterOf(relay.getBlockPos()).add(0.0, CRYSTAL_HEIGHT - 0.5, 0.0);
-        Vec3 start = Vec3.atCenterOf(parent).subtract(own);
+        Vec3 own = BlockVisRelay.crystalPosition(relay.getBlockPos(), relay.getBlockState());
+        BlockState parentState = relay.getLevel().getBlockState(parent);
+        Vec3 target = parentState.getBlock() instanceof BlockVisRelay ? BlockVisRelay.crystalPosition(parent, parentState) : Vec3.atCenterOf(parent);
+        Vec3 start = target.subtract(own);
         long now = relay.getLevel().getGameTime();
         float sincePulse = now - relay.pulseStart() + partialTick;
         int color = relay.pulseColor();
