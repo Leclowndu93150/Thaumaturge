@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.client.effect;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.leclowndu93150.thaumaturge.compat.sable.SableClientCompat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,8 @@ public final class LateWorldRenderQueue {
         PoseStack poseStack = event.getPoseStack();
         for (Entry entry : queue) {
             poseStack.pushPose();
-            poseStack.translate(entry.origin.x - cam.x, entry.origin.y - cam.y, entry.origin.z - cam.z);
+            Vec3 origin = SableClientCompat.renderPosition(mc.level, entry.origin);
+            poseStack.translate(origin.x - cam.x, origin.y - cam.y, origin.z - cam.z);
             MultiBufferSource effectBuffers = entry.source != Source.ENTITY
                     ? IrisCompat.blockEntityEffectBuffers(buffers)
                     : IrisCompat.entityEffectBuffers(buffers);

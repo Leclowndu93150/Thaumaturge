@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.client.effect.FloatyLineRenderer;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.leclowndu93150.thaumaturge.compat.sable.SableClientCompat;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
@@ -114,7 +115,10 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         if (data.jarred) {
             poseStack.pushPose();
             poseStack.translate(0.5F, JARRED_HEIGHT, 0.5F);
-            poseStack.mulPose(
+            SableClientCompat.faceCamera(
+                    node.getLevel(),
+                    origin,
+                    poseStack,
                     Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
             drawLayers(data, poseStack, buffers);
             poseStack.popPose();
@@ -209,7 +213,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
                     hand = tip;
                 }
             }
-            Vec3 nodeCenter = Vec3.atCenterOf(node.getBlockPos());
+            Vec3 nodeCenter = SableClientCompat.renderPosition(node.getLevel(), Vec3.atCenterOf(node.getBlockPos()));
             state.draining = true;
             state.drainFromX = hand.x - nodeCenter.x;
             state.drainFromY = hand.y - nodeCenter.y;
