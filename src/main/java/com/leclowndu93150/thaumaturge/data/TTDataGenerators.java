@@ -46,6 +46,7 @@ import com.leclowndu93150.thaumaturge.data.loot.TTGlobalLootModifierProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTTaintedLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.model.TTModelProvider;
 import com.leclowndu93150.thaumaturge.data.recipe.TTRecipeProvider;
+import com.leclowndu93150.thaumaturge.data.sound.TTSoundDefinitionsProvider;
 import com.leclowndu93150.thaumaturge.data.spell.AffinityBootstrap;
 import com.leclowndu93150.thaumaturge.data.spell.SpellPartBootstrap;
 import com.leclowndu93150.thaumaturge.data.tag.TTBiomeTagsProvider;
@@ -108,6 +109,8 @@ public final class TTDataGenerators {
         event.createDatapackRegistryObjects(registries);
 
         event.createProvider(TTEnglishProvider::new);
+        event.createProvider(
+                (output, lookupProvider) -> new TTSoundDefinitionsProvider(output, event.getExistingFileHelper()));
         event.createProvider(LabyrinthRoomProvider::new);
         event.createProvider(SparseTemplateProvider::new);
         event.createProvider(TTLabyrinthRoomTagsProvider::new);
