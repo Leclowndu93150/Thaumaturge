@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.client.model;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.api.wands.render.WandRenderContext;
+import com.leclowndu93150.thaumaturge.api.wands.render.WandRenderers;
 import com.leclowndu93150.thaumaturge.client.casters.FocusColors;
 import com.leclowndu93150.thaumaturge.client.render.BoxGeometry;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
@@ -28,6 +30,7 @@ import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
     public record WandArg(WandCap cap, WandRod rod, boolean sceptre, boolean hasFocus, int focusColor) {}
@@ -74,7 +77,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         poseStack.pushPose();
         poseStack.translate(0.5F, MODEL_LIFT, 0.5F);
         poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
-        submitParts(arg, poseStack, buffers, light);
+        WandRenderers.render(context(stack, arg, poseStack, buffers, light, overlay, displayContext, false));
         poseStack.popPose();
     }
 
@@ -100,6 +103,17 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
      */
     public static void submitParts(
             WandArg arg, PoseStack poseStack, MultiBufferSource buffers, int light, boolean firstPersonHand) {
+        submitParts(arg, poseStack, buffers, light, firstPersonHand, 0xFFFFFFFF, 0xFFFFFFFF);
+    }
+
+    public static void submitParts(
+            WandArg arg,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            boolean firstPersonHand,
+            int rodTint,
+            int capTint) {
         boolean staff = arg.rod().staff();
         float ticks = clientTicks();
 
@@ -107,8 +121,8 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         if (staff) {
             poseStack.translate(0.0F, STAFF_MODEL_SHIFT, 0.0F);
         }
-        submitRod(arg, poseStack, buffers, light, staff, ticks, firstPersonHand);
-        submitCaps(arg, poseStack, buffers, light, staff, firstPersonHand);
+        submitRod(arg, poseStack, buffers, light, staff, ticks, firstPersonHand, rodTint);
+        submitCaps(arg, poseStack, buffers, light, staff, firstPersonHand, capTint);
         if (arg.hasFocus()) {
             submitFocus(arg, poseStack, buffers, staff, ticks);
         }
@@ -128,7 +142,8 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             int light,
             boolean staff,
             float ticks,
-            boolean firstPersonHand) {
+            boolean firstPersonHand,
+            int rodTint) {
         int rodLight = arg.rod().glow() ? (int) (200.0F + Mth.sin((int) ticks) * 5.0F + 5.0F) : light;
         RenderType rodType = firstPersonHand
                 ? RenderType.entityCutoutNoCull(arg.rod().texture())
@@ -138,7 +153,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             poseStack.translate(0.0F, -0.1F, 0.0F);
             poseStack.scale(1.2F, 2.0F, 1.2F);
         }
-        box(poseStack.last(), buffers.getBuffer(rodType), -1.0F, 1.0F, -1.0F, 2, 18, 2, 0, 8, 0xFFFFFFFF, rodLight);
+        box(poseStack.last(), buffers.getBuffer(rodType), -1.0F, 1.0F, -1.0F, 2, 18, 2, 0, 8, rodTint, rodLight);
         poseStack.popPose();
     }
 
@@ -165,7 +180,8 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             MultiBufferSource buffers,
             int light,
             boolean staff,
-            boolean firstPersonHand) {
+            boolean firstPersonHand,
+            int capTint) {
         RenderType capType = firstPersonHand
                 ? RenderType.entityCutoutNoCull(arg.cap().texture())
                 : TTFlatRenderTypes.entityCutoutFlat(arg.cap().texture());
@@ -180,7 +196,7 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
             poseStack.translate(0.0F, placement.offsetY(), 0.0F);
             poseStack.scale(placement.scaleXZ(), placement.scaleY(), placement.scaleXZ());
             poseStack.translate(0.0F, placement.pivotPx() * PX, 0.0F);
-            box(poseStack.last(), buffers.getBuffer(capType), -1.0F, -1.0F, -1.0F, 2, 2, 2, 0, 0, 0xFFFFFFFF, light);
+            box(poseStack.last(), buffers.getBuffer(capType), -1.0F, -1.0F, -1.0F, 2, 2, 2, 0, 0, capTint, light);
             poseStack.popPose();
         }
         poseStack.popPose();
@@ -331,5 +347,30 @@ public final class WandItemSpecialRenderer extends BlockEntityWithoutLevelRender
         boolean hasFocus = FocusItems.isFocus(focusStack);
         int color = hasFocus ? FocusColors.of(focusStack) : 0xFFFFFF;
         return new WandArg(parts.cap(), parts.rod(), parts.sceptre(), hasFocus, color);
+    }
+
+    public static WandRenderContext context(
+            ItemStack stack,
+            WandArg arg,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light,
+            int overlay,
+            @Nullable ItemDisplayContext displayContext,
+            boolean firstPersonHand) {
+        return new WandRenderContext(
+                stack,
+                arg.cap(),
+                arg.rod(),
+                arg.sceptre(),
+                arg.hasFocus(),
+                arg.focusColor(),
+                poseStack,
+                buffers,
+                light,
+                overlay,
+                displayContext,
+                firstPersonHand,
+                (rodTint, capTint) -> submitParts(arg, poseStack, buffers, light, firstPersonHand, rodTint, capTint));
     }
 }

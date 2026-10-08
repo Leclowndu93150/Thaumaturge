@@ -4,6 +4,8 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.client.AspectRendering;
+import com.leclowndu93150.thaumaturge.api.wands.render.WandRenderers;
+import com.leclowndu93150.thaumaturge.client.model.WandRendererRegistry;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectRenderingBindings;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import net.minecraft.client.Minecraft;
@@ -19,6 +21,7 @@ public final class TTClientBindings {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        WandRenderers.bind(new WandRendererRegistry());
         AspectRendering.bind(new AspectRenderingBindings());
         AspectKnowledgeAccess.bind(aspect -> {
             Minecraft minecraft = Minecraft.getInstance();
