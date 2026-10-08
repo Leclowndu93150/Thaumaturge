@@ -17,8 +17,8 @@ public final class RechargePedestalRenderer implements BlockEntityRenderer<Block
 
     private final PedestalRenderer<BlockEntityRechargePedestal> delegate;
 
-    public RechargePedestalRenderer(BlockEntityRendererProvider.Context context, float itemScale) {
-        this.delegate = new PedestalRenderer<>(context, itemScale);
+    public RechargePedestalRenderer(BlockEntityRendererProvider.Context context, float itemScale, float floatHeight) {
+        this.delegate = new PedestalRenderer<>(context, itemScale, floatHeight);
     }
 
     @Override

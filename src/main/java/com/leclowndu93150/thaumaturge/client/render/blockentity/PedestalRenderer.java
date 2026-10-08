@@ -21,13 +21,15 @@ public final class PedestalRenderer<T extends BlockEntityPedestal> implements Bl
     private static final float VOXEL = 1.0F / 16.0F;
 
     private final float itemScale;
+    private final float floatHeight;
 
     public PedestalRenderer(BlockEntityRendererProvider.Context context) {
-        this(context, ITEM_SCALE);
+        this(context, ITEM_SCALE, 0.0F);
     }
 
-    public PedestalRenderer(BlockEntityRendererProvider.Context context, float itemScale) {
+    public PedestalRenderer(BlockEntityRendererProvider.Context context, float itemScale, float floatHeight) {
         this.itemScale = itemScale;
+        this.floatHeight = floatHeight;
     }
 
     @Override
@@ -42,7 +44,7 @@ public final class PedestalRenderer<T extends BlockEntityPedestal> implements Bl
         float ticks = viewEntity == null ? partialTick : viewEntity.tickCount + partialTick;
         float spin = ticks % 360.0F * SPIN_DEGREES_PER_TICK;
         poseStack.pushPose();
-        poseStack.translate(0.5F, pedestalHeight(pedestal), 0.5F);
+        poseStack.translate(0.5F, pedestalHeight(pedestal) + floatHeight, 0.5F);
         poseStack.scale(itemScale, itemScale, itemScale);
         poseStack.mulPose(Axis.YP.rotationDegrees(spin));
         poseStack.translate(0.0F, groundLift, 0.0F);

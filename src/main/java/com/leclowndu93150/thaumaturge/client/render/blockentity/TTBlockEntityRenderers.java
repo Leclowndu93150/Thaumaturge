@@ -12,7 +12,8 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTBlockEntityRenderers {
-    private static final float RECHARGE_PEDESTAL_ITEM_SCALE = 1.5F;
+    private static final float RECHARGE_PEDESTAL_ITEM_SCALE = 1.0F;
+    private static final float RECHARGE_PEDESTAL_FLOAT = 0.2F;
 
     private TTBlockEntityRenderers() {}
 
@@ -24,7 +25,7 @@ public final class TTBlockEntityRenderers {
         event.registerBlockEntityRenderer(TTBlockEntities.PEDESTAL.get(), PedestalRenderer::new);
         event.registerBlockEntityRenderer(
                 TTBlockEntities.RECHARGE_PEDESTAL.get(),
-                context -> new RechargePedestalRenderer(context, RECHARGE_PEDESTAL_ITEM_SCALE));
+                context -> new RechargePedestalRenderer(context, RECHARGE_PEDESTAL_ITEM_SCALE, RECHARGE_PEDESTAL_FLOAT));
         event.registerBlockEntityRenderer(TTBlockEntities.JAR.get(), JarRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.JAR_VOID.get(), JarRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.JAR_BRAIN.get(), JarBrainRenderer::new);
