@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
+import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBloomRegistry;
@@ -222,11 +223,11 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 || state.getValue(GROWTH3)
                 || state.getValue(GROWTH4);
         if (!hasGrowth && isOnlyAdjacentToTaint(level, pos)) {
-            die(level, pos, state);
+            decay(level, pos, state);
             return;
         }
         if (!TaintHelper.isEcologicallySustained(level, pos)) {
-            die(level, pos, state);
+            decay(level, pos, state);
             return;
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()
@@ -254,7 +255,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    public void die(Level level, BlockPos pos, BlockState state) {
+    public void decay(Level level, BlockPos pos, BlockState state) {
         level.removeBlock(pos, false);
     }
 

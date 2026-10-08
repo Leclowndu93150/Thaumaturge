@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,12 +8,12 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class VoidGearItem extends ArmorItem implements IWarpingGear {
+public class VoidGearItem extends ArmorItem {
     private static final int REPAIR_INTERVAL_TICKS = 20;
     static final int VOID_GEAR_WARP = 1;
 
     public VoidGearItem(Holder<ArmorMaterial> material, ArmorItem.Type type, Properties properties) {
-        super(material, type, properties);
+        super(material, type, GearWarp.with(properties, VOID_GEAR_WARP));
     }
 
     static void selfRepairTick(ItemStack stack, Entity entity) {
@@ -29,10 +28,5 @@ public class VoidGearItem extends ArmorItem implements IWarpingGear {
         if (!level.isClientSide()) {
             selfRepairTick(stack, entity);
         }
-    }
-
-    @Override
-    public int getWarp(ItemStack stack, LivingEntity wearer) {
-        return VOID_GEAR_WARP;
     }
 }

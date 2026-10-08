@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.equipment.bauble;
 
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
@@ -14,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
-public final class VerdantCharmItem extends Item implements IRechargable {
+public final class VerdantCharmItem extends Item {
     public static final int TYPE_BASE = 0;
     public static final int TYPE_LIFE = 1;
     public static final int TYPE_SUSTAIN = 2;
@@ -31,7 +32,8 @@ public final class VerdantCharmItem extends Item implements IRechargable {
     private static final float FOOD_SATURATION = 0.3F;
 
     public VerdantCharmItem(Properties properties) {
-        super(properties);
+        super(properties.component(
+                TTDataComponents.RECHARGEABLE.get(), new ChargeProfile(MAX_CHARGE, ChargeDisplay.ALWAYS)));
     }
 
     public static int type(ItemStack stack) {
@@ -73,16 +75,6 @@ public final class VerdantCharmItem extends Item implements IRechargable {
                 player.getFoodData().eat(FOOD_AMOUNT, FOOD_SATURATION);
             }
         }
-    }
-
-    @Override
-    public int getMaxCharge(ItemStack stack, LivingEntity holder) {
-        return MAX_CHARGE;
-    }
-
-    @Override
-    public ChargeDisplay showInHud(ItemStack stack, LivingEntity holder) {
-        return ChargeDisplay.NORMAL;
     }
 
     @Override

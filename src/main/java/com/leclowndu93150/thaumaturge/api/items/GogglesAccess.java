@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,123 +9,111 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Static accessor for detecting goggles, revealers, and vis-discount gear worn by an entity.
+ * Static accessor for revealing gear and vis discounts.
  *
- * <p>Side-agnostic: the head slot lookup uses {@link LivingEntity#getItemBySlot(EquipmentSlot)},
- * which works identically on client and server.
+ * <p>A stack is revealing gear when it carries the {@code thaumaturge:goggles_upgrade} data component. Revealing gear worn on the head
+ * or in a Curios slot shows in-game popups, the aura HUD and hidden aura nodes. Goggles of revealing and the void robe hood carry the
+ * component by default and fortress helms gain it from their goggles upgrade; any other item becomes revealing gear by gaining the
+ * component, including as a default component set by a datapack or KubeJS.
+ *
+ * <p>All queries are side-agnostic and read live equipment.
  *
  * @since 1.0.0
  */
 public final class GogglesAccess {
-    private static Supplier<Holder<Attribute>> visDiscountBinding;
-    private static Curios curios;
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("GogglesAccess");
+    private static @Nullable Curios curios;
+
+    private GogglesAccess() {}
 
     /**
-     * Binds the vis discount attribute. Called by Thaumaturge during mod init; addons must not
-     * call this.
+     * Installs the implementation. Called once by Thaumaturge during mod construction; addons must not call it.
      *
-     * @param impl supplies the vis discount attribute holder
+     * @param impl the implementation
      * @throws IllegalStateException when already bound
      */
-    public static void bind(Supplier<Holder<Attribute>> impl) {
-        if (visDiscountBinding != null) {
-            throw new IllegalStateException("GogglesAccess already bound");
-        }
-        visDiscountBinding = impl;
+    public static void bind(Bindings impl) {
+        BINDING.bind(impl);
     }
 
     /**
-     * Binds curios slot scanning. Called by Thaumaturge when Curios is present; addons must
-     * not call this. When never bound, only vanilla equipment slots are considered.
+     * Installs Curios slot scanning. Called by Thaumaturge when Curios is present; addons must not call it. Without it only the head
+     * slot counts.
      *
-     * @param impl the curios hook
+     * @param impl the Curios hook
      */
     public static void bindCurios(Curios impl) {
         curios = impl;
     }
 
-    private static Holder<Attribute> visDiscountAttribute() {
-        if (visDiscountBinding == null) {
-            throw new IllegalStateException("GogglesAccess accessed before binding");
-        }
-        return visDiscountBinding.get();
+    /**
+     * @param stack the stack to test
+     * @return whether the stack is revealing gear; false for an empty stack
+     */
+    public static boolean isRevealing(ItemStack stack) {
+        return !stack.isEmpty() && BINDING.get().isRevealing(stack);
     }
 
     /**
-     * Curios integration hook. Addons must not implement this interface.
-     *
-     * @since 1.0.0
+     * @param entity the entity to query, or null
+     * @return whether the entity wears revealing gear on its head or in a Curios slot; held gear does not count
      */
-    public interface Curios {
-        boolean wearsGoggles(LivingEntity entity);
-
-        boolean anyCurioMatches(LivingEntity entity, Predicate<ItemStack> predicate);
-    }
-
-    private GogglesAccess() {}
-
-    /**
-     * Returns whether the entity wears a head-slot stack implementing {@link IGoggles} with
-     * popups enabled.
-     *
-     * @param entity the entity to query; null returns {@code false}
-     * @return {@code true} when the wearer should see in-game popups and HUD overlays
-     */
-    public static boolean wearsGoggles(LivingEntity entity) {
+    public static boolean wearsRevealingGear(@Nullable LivingEntity entity) {
         if (entity == null) {
             return false;
         }
-        if (curios != null && curios.wearsGoggles(entity)) {
-            return true;
-        }
-        ItemStack head = entity.getItemBySlot(EquipmentSlot.HEAD);
-        if (head.isEmpty()) {
-            return false;
-        }
-        if (head.getItem() instanceof IGoggles g) {
-            return g.showIngamePopups(head, entity);
-        }
-        return false;
+        return isRevealing(entity.getItemBySlot(EquipmentSlot.HEAD))
+                || curios != null && curios.anyCurioMatches(entity, GogglesAccess::isRevealing);
     }
 
     /**
-     * Returns whether the entity wears a stack implementing {@link IRevealer} that reveals
-     * aura nodes. Held revealers do not count; the gear must occupy the head slot or an
-     * equipped curio slot.
+     * Reads the player's total vis discount. Every item granting a discount does so through an attribute modifier on the vis discount
+     * attribute, so the attribute value already sums held, worn and Curios gear.
      *
-     * @param entity the entity to query; null returns {@code false}
-     * @return {@code true} when nodes should be revealed for the entity
+     * @param player the player to query, or null
+     * @return the total discount in whole percent, never negative; 0 for a null player
      */
-    public static boolean revealsNodes(LivingEntity entity) {
-        if (entity == null) {
-            return false;
-        }
-        ItemStack head = entity.getItemBySlot(EquipmentSlot.HEAD);
-        if (!head.isEmpty() && head.getItem() instanceof IRevealer r && r.showNodes(head, entity)) {
-            return true;
-        }
-        if (curios != null) {
-            return curios.anyCurioMatches(
-                    entity, stack -> stack.getItem() instanceof IRevealer r && r.showNodes(stack, entity));
-        }
-        return false;
-    }
-
-    /**
-     * Sums the vis discount percentages contributed by every held/worn item that has a modifier for the vis discount attribute by the player.
-     * Each piece implementing {@link IVisDiscountGear} automatically obtains an attribute modifier for the vis discount attribute.
-     *
-     * @param player the player to query; null returns zero
-     * @return the total discount in whole percent units, never negative
-     */
-    public static int totalVisDiscount(Player player) {
+    public static int totalVisDiscount(@Nullable Player player) {
         if (player == null) {
             return 0;
         }
-        AttributeInstance attribute = player.getAttribute(visDiscountAttribute());
-        if (attribute == null) return 0;
-        return (int) (attribute.getValue() * 100);
+        AttributeInstance attribute = player.getAttribute(BINDING.get().visDiscount());
+        return attribute == null ? 0 : (int) (attribute.getValue() * 100);
+    }
+
+    /**
+     * The hooks Thaumaturge implements behind this facade.
+     *
+     * @since 1.0.0
+     */
+    public interface Bindings {
+        /**
+         * @return the vis discount attribute
+         */
+        Holder<Attribute> visDiscount();
+
+        /**
+         * @param stack a non-empty stack
+         * @return whether the stack is revealing gear
+         */
+        boolean isRevealing(ItemStack stack);
+    }
+
+    /**
+     * The Curios hook. Addons must not implement it.
+     *
+     * @since 1.0.0
+     */
+    @FunctionalInterface
+    public interface Curios {
+        /**
+         * @param entity    the wearer
+         * @param predicate the test applied to every equipped curio
+         * @return whether any equipped curio passes
+         */
+        boolean anyCurioMatches(LivingEntity entity, Predicate<ItemStack> predicate);
     }
 }

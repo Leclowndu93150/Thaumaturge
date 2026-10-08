@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
@@ -55,7 +54,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob, IEldritchMob, ISidedHurt {
+public class EntityEldritchWarden extends EntityThaumaturgeBoss implements RangedAttackMob, ISidedHurt {
     private static final EntityDataAccessor<Byte> DATA_TITLE =
             SynchedEntityData.defineId(EntityEldritchWarden.class, EntityDataSerializers.BYTE);
 

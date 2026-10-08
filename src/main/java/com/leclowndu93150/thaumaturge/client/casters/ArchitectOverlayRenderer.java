@@ -83,7 +83,7 @@ public final class ArchitectOverlayRenderer {
         if (!(stack.getItem() instanceof IArchitect architect)) {
             return;
         }
-        HitResult target = architect.getArchitectMOP(stack, mc.level, player);
+        HitResult target = architect.aim(stack, mc.level, player);
         if (!(target instanceof BlockHitResult hit) || target.getType() != HitResult.Type.BLOCK) {
             return;
         }
@@ -94,7 +94,7 @@ public final class ArchitectOverlayRenderer {
         if (hash != lastArcHash) {
             lastArcHash = hash;
             bmCache.clear();
-            architectBlocks = architect.getArchitectBlocks(stack, mc.level, anchor, hit.getDirection(), player);
+            architectBlocks = architect.previewBlocks(stack, mc.level, anchor, hit.getDirection(), player);
             architectSet.clear();
             architectSet.addAll(architectBlocks);
         }
@@ -111,9 +111,9 @@ public final class ArchitectOverlayRenderer {
                 player,
                 anchor,
                 cam,
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.X),
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Y),
-                architect.showAxis(stack, mc.level, player, hit.getDirection(), IArchitect.EnumAxis.Z));
+                architect.showsAxis(stack, mc.level, player, hit.getDirection(), Direction.Axis.X),
+                architect.showsAxis(stack, mc.level, player, hit.getDirection(), Direction.Axis.Y),
+                architect.showsAxis(stack, mc.level, player, hit.getDirection(), Direction.Axis.Z));
         for (BlockPos pos : architectBlocks) {
             drawOverlayBlock(poseStack, effectBuffers, pos, cam);
         }
@@ -128,12 +128,12 @@ public final class ArchitectOverlayRenderer {
             return;
         }
         ItemStack stack = heldArchitect(player);
-        if (!(stack.getItem() instanceof IArchitect architect) || !architect.useBlockHighlight(stack)) {
+        if (!(stack.getItem() instanceof IArchitect architect) || !architect.replacesBlockHighlight(stack)) {
             return;
         }
         BlockHitResult hit = event.getTarget();
         if (!architect
-                .getArchitectBlocks(stack, mc.level, hit.getBlockPos(), hit.getDirection(), player)
+                .previewBlocks(stack, mc.level, hit.getBlockPos(), hit.getDirection(), player)
                 .isEmpty()) {
             event.setCanceled(true);
         }

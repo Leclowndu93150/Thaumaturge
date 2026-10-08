@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -28,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class EntityTaintCrawler extends Monster implements ITaintedMob {
+public final class EntityTaintCrawler extends Monster {
     private static final int TRAIL_INTERVAL = 40;
     private static final int FLUX_TAINT_BASE_TICKS = 60;
 

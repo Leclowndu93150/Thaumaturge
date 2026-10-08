@@ -96,8 +96,8 @@ public final class FluxRiftRenderer extends EntityRenderer<EntityFluxRift> {
             return;
         }
         float animationTime = entity.tickCount + partialTicks;
-        boolean goggles =
-                Minecraft.getInstance().player != null && GogglesAccess.wearsGoggles(Minecraft.getInstance().player);
+        boolean goggles = Minecraft.getInstance().player != null
+                && GogglesAccess.wearsRevealingGear(Minecraft.getInstance().player);
         float stab = Mth.clamp(1.0F - entity.getRiftStability() / STAB_DIVISOR, 0.0F, MAX_STAB_FACTOR);
         Vec3[] centers = new Vec3[count];
         float[] radii = new float[count];

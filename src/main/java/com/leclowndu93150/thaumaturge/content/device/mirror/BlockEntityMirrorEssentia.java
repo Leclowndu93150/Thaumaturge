@@ -70,12 +70,12 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
     public void setAspects(AspectList aspects) {}
 
     @Override
-    public boolean doesContainerAccept(Holder<IAspect> aspect) {
+    public boolean accepts(Holder<IAspect> aspect) {
         return isLinkValidSimple();
     }
 
     @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
+    public int fill(Holder<IAspect> aspect, int amount) {
         if (amount > 1 || !isLinkValid()) {
             return amount;
         }
@@ -92,7 +92,7 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
     }
 
     @Override
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    public boolean drain(Holder<IAspect> aspect, int amount) {
         if (amount > 1 || !isLinkValid()) {
             return false;
         }
@@ -109,12 +109,12 @@ public final class BlockEntityMirrorEssentia extends BlockEntityMirrorBase imple
     }
 
     @Override
-    public boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
+    public boolean holds(Holder<IAspect> aspect, int amount) {
         return false;
     }
 
     @Override
-    public int containerContains(Holder<IAspect> aspect) {
+    public int amountOf(Holder<IAspect> aspect) {
         return 0;
     }
 

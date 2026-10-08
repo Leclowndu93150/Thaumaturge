@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura;
 
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWand;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -96,7 +96,7 @@ public final class BlockRechargePedestal extends BaseEntityBlock {
         }
         ItemStack held = player.getItemInHand(hand);
         ItemStack current = pedestal.getItem();
-        if (current.isEmpty() && !(held.getItem() instanceof IRechargable) && !(held.getItem() instanceof ItemWand)) {
+        if (current.isEmpty() && !(RechargeAccess.isRechargeable(held)) && !(held.getItem() instanceof ItemWand)) {
             return InteractionResult.PASS;
         }
         if (level.isClientSide()) {

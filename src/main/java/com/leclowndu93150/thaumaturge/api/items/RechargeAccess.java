@@ -1,150 +1,153 @@
 package com.leclowndu93150.thaumaturge.api.items;
 
+import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Static accessor for reading and writing the vis charge stored on {@link IRechargable} stacks.
+ * Static accessor for the vis charge of rechargeable stacks.
  *
- * <p>Charge is held in the {@code thaumaturge:charge} data component. All mutators operate on the
- * given stack in place. Draining from the aura is server-authoritative and routes through
- * {@link AuraHelper}; call the world-aware recharge methods only on the logical server.
+ * <p>A stack is rechargeable when it carries a {@link ChargeProfile} in the {@code thaumaturge:rechargeable} component. Its charge is
+ * the {@code thaumaturge:charge} component. Every mutator changes the given stack in place. Draining the aura is server-authoritative:
+ * call {@link #rechargeItem} on the logical server only.
  *
  * @since 1.0.0
  */
 public final class RechargeAccess {
-    private static Supplier<DataComponentType<Integer>> chargeBinding;
-
-    /**
-     * Binds the charge component type. Called by Thaumaturge during mod init; addons must not
-     * call this.
-     *
-     * @param impl supplies the {@code thaumaturge:charge} component type
-     * @throws IllegalStateException when already bound
-     */
-    public static void bind(Supplier<DataComponentType<Integer>> impl) {
-        if (chargeBinding != null) {
-            throw new IllegalStateException("RechargeAccess already bound");
-        }
-        chargeBinding = impl;
-    }
-
-    private static DataComponentType<Integer> chargeComponent() {
-        if (chargeBinding == null) {
-            throw new IllegalStateException("RechargeAccess accessed before binding");
-        }
-        return chargeBinding.get();
-    }
+    private static final ApiBinding<Bindings> BINDING = new ApiBinding<>("RechargeAccess");
 
     private RechargeAccess() {}
 
     /**
-     * Recharges a stack by draining vis from the aura at a position.
+     * Installs the implementation. Called once by Thaumaturge during mod construction; addons must not call it.
      *
-     * <p>No charge is transferred when the holder is in an aura-preserving state, when the stack
-     * is already full, or when the aura has no vis to give.
-     *
-     * @param level the world to drain from
-     * @param stack the stack to recharge
-     * @param pos the position whose aura chunk is drained
-     * @param player the player triggering the recharge, or {@code null}
-     * @param amount the requested amount, clamped to remaining capacity
-     * @return the amount actually added
+     * @param impl the implementation
+     * @throws IllegalStateException when already bound
      */
-    public static float rechargeItem(Level level, ItemStack stack, BlockPos pos, Player player, int amount) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
-            return 0.0F;
-        }
-        if (player != null && AuraHelper.shouldPreserveAura(level, player, pos)) {
-            return 0.0F;
-        }
-        int requested = Math.min(amount, rechargable.getMaxCharge(stack, player) - getCharge(stack));
-        int drained = (int) AuraHelper.drainVis(level, pos, requested, false);
-        if (drained > 0) {
-            addCharge(stack, player, drained);
-            return drained;
-        }
-        return 0.0F;
+    public static void bind(Bindings impl) {
+        BINDING.bind(impl);
     }
 
     /**
-     * Recharges a stack without touching the aura, up to remaining capacity.
-     *
-     * @param stack the stack to recharge
-     * @param holder the holder, or {@code null}
-     * @param amount the requested amount, clamped to remaining capacity
-     * @return the amount actually added
+     * @param stack the stack to inspect
+     * @return the stack's charge profile, or null when the stack is not rechargeable
      */
-    public static float rechargeItemBlindly(ItemStack stack, LivingEntity holder, int amount) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
-            return 0.0F;
-        }
-        int requested = Math.min(amount, rechargable.getMaxCharge(stack, holder) - getCharge(stack));
-        if (requested > 0) {
-            addCharge(stack, holder, requested);
-        }
-        return requested;
+    public static @Nullable ChargeProfile profile(ItemStack stack) {
+        return stack.isEmpty() ? null : stack.get(BINDING.get().profile());
     }
 
     /**
-     * Returns the current charge of a stack.
+     * @param stack the stack to inspect
+     * @return whether the stack is rechargeable
+     */
+    public static boolean isRechargeable(ItemStack stack) {
+        return profile(stack) != null;
+    }
+
+    /**
+     * Recharges a stack by draining vis from the aura at a position. Nothing moves when the player is in an aura-preserving state, the
+     * stack is full or the aura is empty.
      *
-     * @param stack the stack under query
-     * @return the charge, or {@code -1} when the stack is not an {@link IRechargable}
+     * @param level  the level to drain
+     * @param stack  the stack to recharge
+     * @param pos    the position whose aura chunk is drained
+     * @param player the player causing the recharge, or null
+     * @param amount the requested amount, clamped to the remaining capacity
+     * @return the amount added
+     */
+    public static float rechargeItem(Level level, ItemStack stack, BlockPos pos, @Nullable Player player, int amount) {
+        ChargeProfile profile = profile(stack);
+        if (profile == null || player != null && AuraHelper.shouldPreserveAura(level, player, pos)) {
+            return 0.0F;
+        }
+        int drained =
+                (int) AuraHelper.drainVis(level, pos, Math.min(amount, profile.capacity() - getCharge(stack)), false);
+        if (drained <= 0) {
+            return 0.0F;
+        }
+        store(stack, profile, getCharge(stack) + drained);
+        return drained;
+    }
+
+    /**
+     * Recharges a stack without touching the aura.
+     *
+     * @param stack  the stack to recharge
+     * @param holder the holder, or null
+     * @param amount the requested amount, clamped to the remaining capacity
+     * @return the amount added; 0 for a stack that is not rechargeable
+     */
+    public static float rechargeItemBlindly(ItemStack stack, @Nullable LivingEntity holder, int amount) {
+        ChargeProfile profile = profile(stack);
+        if (profile == null) {
+            return 0.0F;
+        }
+        int added = Math.min(amount, profile.capacity() - getCharge(stack));
+        if (added > 0) {
+            store(stack, profile, getCharge(stack) + added);
+        }
+        return added;
+    }
+
+    /**
+     * @param stack the stack to inspect
+     * @return the current charge, or -1 when the stack is not rechargeable
      */
     public static int getCharge(ItemStack stack) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) {
-            return -1;
-        }
-        return stack.getOrDefault(chargeComponent(), 0);
+        return isRechargeable(stack) ? stack.getOrDefault(BINDING.get().charge(), 0) : -1;
     }
 
     /**
-     * Returns the charge of a stack as a fraction of its capacity.
-     *
-     * @param stack the stack under query
-     * @param holder the holder, or {@code null}
-     * @return the fraction in {@code [0, 1]}, or {@code -1} when the stack is not an {@link IRechargable}
+     * @param stack  the stack to inspect
+     * @param holder the holder, or null
+     * @return the charge as a fraction of the capacity, from 0 to 1, or -1 when the stack is not rechargeable
      */
-    public static float getChargePercentage(ItemStack stack, LivingEntity holder) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
-            return -1.0F;
-        }
-        float max = rechargable.getMaxCharge(stack, holder);
-        return max <= 0 ? 0.0F : getCharge(stack) / max;
+    public static float getChargePercentage(ItemStack stack, @Nullable LivingEntity holder) {
+        ChargeProfile profile = profile(stack);
+        return profile == null ? -1.0F : getCharge(stack) / (float) profile.capacity();
     }
 
     /**
-     * Consumes charge from a stack when it holds at least the requested amount.
+     * Consumes charge when the stack holds at least the requested amount.
      *
-     * @param stack the stack to drain
-     * @param holder the holder, or {@code null}
+     * @param stack  the stack to drain
+     * @param holder the holder, or null
      * @param amount the amount to consume
-     * @return {@code true} when the charge was available and consumed
+     * @return whether the charge was there and was consumed
      */
-    public static boolean consumeCharge(ItemStack stack, LivingEntity holder, int amount) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable)) {
+    public static boolean consumeCharge(ItemStack stack, @Nullable LivingEntity holder, int amount) {
+        int charge = getCharge(stack);
+        if (charge < amount || charge < 0) {
             return false;
         }
-        int charge = getCharge(stack);
-        if (charge >= amount) {
-            stack.set(chargeComponent(), charge - amount);
-            return true;
-        }
-        return false;
+        stack.set(BINDING.get().charge(), charge - amount);
+        return true;
     }
 
-    private static void addCharge(ItemStack stack, LivingEntity holder, int amount) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof IRechargable rechargable)) {
-            return;
-        }
-        int total = Math.min(rechargable.getMaxCharge(stack, holder), amount + getCharge(stack));
-        stack.set(chargeComponent(), total);
+    private static void store(ItemStack stack, ChargeProfile profile, int charge) {
+        stack.set(BINDING.get().charge(), Math.min(profile.capacity(), charge));
+    }
+
+    /**
+     * The component types Thaumaturge registers behind this facade.
+     *
+     * @since 1.0.0
+     */
+    public interface Bindings {
+        /**
+         * @return the {@code thaumaturge:charge} component type
+         */
+        DataComponentType<Integer> charge();
+
+        /**
+         * @return the {@code thaumaturge:rechargeable} component type
+         */
+        DataComponentType<ChargeProfile> profile();
     }
 }

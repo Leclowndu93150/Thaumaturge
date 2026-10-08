@@ -40,7 +40,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
         }
         IArcaneRecipe recipe = match.holder().value();
         ArcaneCraftingTransaction.Requirements requirements = new ArcaneCraftingTransaction.Requirements(
-                recipe.getBaseVis(), recipe.getCrystals(), recipe.getIngredients());
+                recipe.visCost(), recipe.crystalCost(), recipe.getIngredients());
         return new ArcaneCraftingTransaction.Inspection(
                 match.failure(),
                 ResourceKey.create(Registries.RECIPE, match.holder().id()),

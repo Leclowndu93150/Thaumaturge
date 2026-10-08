@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.essentia.jar;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.item.SingleAspectItemStorage;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -34,37 +34,33 @@ public final class JarCapabilities {
                 EssentiaCapabilities.STORAGE,
                 TTBlockEntities.JAR_VOID.get(),
                 (be, side) -> side != null && be.isConnectable(side) ? be.storage(side) : null);
+
+        event.registerItem(
+                EssentiaCapabilities.CONTAINER, (stack, ctx) -> ComponentEssentia.phial(stack), TTItems.PHIAL.get());
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
-                TTItems.PHIAL.get());
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
-                TTItems.ESSENTIA_CRYSTAL.get());
-        event.registerItem(
-                EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
+                (stack, ctx) -> ComponentEssentia.crystal(stack),
+                TTItems.ESSENTIA_CRYSTAL.get(),
                 TTItems.MANA_BEAN.get());
-
         event.registerItem(
                 EssentiaCapabilities.CONTAINER,
-                (stack, ctx) -> (IEssentiaContainerItem) stack.getItem(),
-                TTItems.JAR_NORMAL.get(),
-                TTItems.JAR_VOID.get());
-
-        event.registerItem(
-                EssentiaCapabilities.ITEM_STORAGE,
-                (stack, ctx) -> new SingleAspectItemStorage(
-                        stack, (IEssentiaContainerItem) stack.getItem(), BlockEntityJar.CAPACITY),
+                (stack, ctx) -> ComponentEssentia.jar(stack),
                 TTItems.JAR_NORMAL.get(),
                 TTItems.JAR_VOID.get());
         event.registerItem(
                 EssentiaCapabilities.ITEM_STORAGE,
                 (stack, ctx) -> new SingleAspectItemStorage(
-                        stack, (IEssentiaContainerItem) stack.getItem(), PhialItem.BASE_AMOUNT),
+                        stack,
+                        ComponentEssentia::jar,
+                        stack.is(TTItems.JAR_VOID.get()) ? BlockEntityJarVoid.CAPACITY : BlockEntityJar.CAPACITY,
+                        false),
+                TTItems.JAR_NORMAL.get(),
+                TTItems.JAR_VOID.get());
+        event.registerItem(
+                EssentiaCapabilities.ITEM_STORAGE,
+                (stack, ctx) ->
+                        new SingleAspectItemStorage(stack, ComponentEssentia::phial, PhialItem.BASE_AMOUNT, true),
                 TTItems.PHIAL.get());
-
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.JAR.get(), (be, side) -> be);
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.JAR_VOID.get(), (be, side) -> be);
     }

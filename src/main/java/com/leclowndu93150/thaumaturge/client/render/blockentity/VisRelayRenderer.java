@@ -73,7 +73,7 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
                         IDLE_OPACITY, PULSE_OPACITY - OPACITY_DECAY * (sincePulse - BlockEntityVisRelay.PULSE_TICKS));
         float slide = player.tickCount + partialTick;
         float scroll = -slide * SCROLL_FAST - Mth.floor(-slide * SCROLL_SLOW);
-        boolean revealing = GogglesAccess.revealsNodes(player);
+        boolean revealing = GogglesAccess.wearsRevealingGear(player);
         int beamColor = ARGB32.colorFromFloat(opacity * (revealing ? REVEALED_ALPHA : BEAM_ALPHA), red, green, blue);
         int flareColor = ARGB32.colorFromFloat(opacity * (revealing ? REVEALED_ALPHA : FLARE_ALPHA), red, green, blue);
         float flareHalf = FLARE_SIZE * opacity;

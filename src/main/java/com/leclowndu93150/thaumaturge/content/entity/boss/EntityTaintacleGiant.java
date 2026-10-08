@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
@@ -29,7 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jspecify.annotations.Nullable;
 
-public class EntityTaintacleGiant extends AbstractTaintacle implements IEldritchMob, ISidedHurt {
+public class EntityTaintacleGiant extends AbstractTaintacle implements ISidedHurt {
     private static final EntityDataAccessor<Integer> DATA_AGGRO =
             SynchedEntityData.defineId(EntityTaintacleGiant.class, EntityDataSerializers.INT);
 

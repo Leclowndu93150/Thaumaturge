@@ -160,7 +160,7 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
         if (state.jarred) {
             state.visible = true;
             state.size = JARRED_SIZE;
-        } else if (GogglesAccess.revealsNodes(player)) {
+        } else if (GogglesAccess.wearsRevealingGear(player)) {
             state.visible = true;
             state.depthIgnore = true;
         } else if (player.getMainHandItem().getItem() instanceof ThaumometerItem

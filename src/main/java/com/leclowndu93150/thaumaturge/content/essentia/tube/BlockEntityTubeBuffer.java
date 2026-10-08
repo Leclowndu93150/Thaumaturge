@@ -165,7 +165,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         return contents.totalAmount();
     }
 
-    public int addToContainer(ResourceKey<IAspect> aspectKey, int amount) {
+    public int fill(ResourceKey<IAspect> aspectKey, int amount) {
         if (amount != 1) return amount;
         if (visSize() < MAX_AMOUNT) {
             Holder<IAspect> holder = EssentiaTransportHelper.resolve(level, aspectKey);
@@ -178,7 +178,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         return amount;
     }
 
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    public boolean drain(Holder<IAspect> aspect, int amount) {
         if (contents.amountOf(aspect) >= amount) {
             contents = contents.remove(aspect, amount);
             setChanged();
@@ -277,7 +277,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         int available = contents.amountOf(aspect);
         int taken = Math.min(amount, available);
         if (taken <= 0) return 0;
-        return takeFromContainer(aspect, taken) ? taken : 0;
+        return drain(aspect, taken) ? taken : 0;
     }
 
     @Override
@@ -285,7 +285,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
         if (!canInputFrom(face)) return 0;
         ResourceKey<IAspect> key = aspect == null ? null : aspect.unwrapKey().orElse(null);
         if (key == null) return 0;
-        return amount - addToContainer(key, amount);
+        return amount - fill(key, amount);
     }
 
     public void tickServer(Level level, BlockPos pos, BlockState state) {
@@ -313,7 +313,7 @@ public final class BlockEntityTubeBuffer extends BlockEntity implements IEssenti
                 if (key == null) continue;
                 int taken = remote.takeEssentia(ta, 1, dir.getOpposite());
                 if (taken > 0) {
-                    addToContainer(key, taken);
+                    fill(key, taken);
                 }
                 return;
             }

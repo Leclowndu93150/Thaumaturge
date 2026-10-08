@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.curio;
 
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
-import com.leclowndu93150.thaumaturge.api.items.IGoggles;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.compat.curio.client.CuriosityBandCurioRenderer;
@@ -40,17 +39,7 @@ public final class ThaumaturgeCuriosCompat {
     private ThaumaturgeCuriosCompat() {}
 
     public static void init(IEventBus modBus) {
-        GogglesAccess.bindCurios(new GogglesAccess.Curios() {
-            @Override
-            public boolean wearsGoggles(LivingEntity entity) {
-                return checkForGoggles(entity);
-            }
-
-            @Override
-            public boolean anyCurioMatches(LivingEntity entity, Predicate<ItemStack> predicate) {
-                return ThaumaturgeCuriosCompat.anyCurioMatches(entity, predicate);
-            }
-        });
+        GogglesAccess.bindCurios(ThaumaturgeCuriosCompat::anyCurioMatches);
         modBus.addListener(ThaumaturgeCuriosCompat::registerCurio);
         modBus.addListener(ThaumaturgeCuriosCompat::onClientSetup);
         NeoForge.EVENT_BUS.addListener(ThaumaturgeCuriosCompat::onItemAttributeModifier);
@@ -115,22 +104,6 @@ public final class ThaumaturgeCuriosCompat {
     private static void onClientSetup(FMLClientSetupEvent event) {
         CuriosRendererRegistry.register(TTItems.GOGGLES_REVEALING.get(), GoggleCurioRenderer::new);
         CuriosRendererRegistry.register(TTItems.CURIOSITY_BAND.get(), CuriosityBandCurioRenderer::new);
-    }
-
-    public static boolean checkForGoggles(LivingEntity entity) {
-        if (entity == null) {
-            return false;
-        }
-        Optional<ICuriosItemHandler> invOpt = CuriosApi.getCuriosInventory(entity);
-        if (invOpt.isEmpty()) return false;
-        ICuriosItemHandler inv = invOpt.get();
-        Optional<SlotResult> slotOpt = inv.findFirstCurio(stack -> stack.getItem() instanceof IGoggles);
-        if (slotOpt.isEmpty()) return false;
-        ItemStack stack = slotOpt.get().stack();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IGoggles g)) {
-            return false;
-        }
-        return g.showIngamePopups(stack, entity);
     }
 
     public static List<ItemStack> equippedCurios(LivingEntity entity) {

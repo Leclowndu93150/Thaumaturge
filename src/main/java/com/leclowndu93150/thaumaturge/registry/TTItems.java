@@ -85,6 +85,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -1043,7 +1044,8 @@ public final class TTItems {
             props -> new VoidRobeArmorItem(
                     TTMaterials.ARMOR_VOID_ROBE,
                     ArmorItem.Type.HELMET,
-                    props.durability(ArmorItem.Type.HELMET.getDurability(TTMaterials.DURABILITY_VOID_ROBE))
+                    props.component(TTDataComponents.GOGGLES_UPGRADE.get(), Unit.INSTANCE)
+                            .durability(ArmorItem.Type.HELMET.getDurability(TTMaterials.DURABILITY_VOID_ROBE))
                             .rarity(Rarity.EPIC)));
     public static final DeferredItem<VoidRobeArmorItem> VOID_ROBE_CHEST = ITEMS.registerItem(
             "void_robe_chest",

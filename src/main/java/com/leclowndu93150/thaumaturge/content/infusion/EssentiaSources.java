@@ -86,9 +86,7 @@ public final class EssentiaSources {
         sortSourcesByPriority(level);
         for (BlockPos sourcePos : sources) {
             IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
-            if (container instanceof IAspectSource source
-                    && !source.isBlocked()
-                    && source.takeFromContainer(aspect, 1)) {
+            if (container instanceof IAspectSource source && !source.isBlocked() && source.drain(aspect, 1)) {
                 BlockEntity be = level.getBlockEntity(sourcePos);
                 if (be != null) be.setChanged();
                 EffectDispatch.spawnEssentiaStream(
@@ -119,9 +117,7 @@ public final class EssentiaSources {
         List<InsertTarget> targets = new ArrayList<>();
         for (BlockPos sourcePos : sources) {
             IAspectContainer container = level.getCapability(AspectCapabilities.CONTAINER, sourcePos, null);
-            if (!(container instanceof IAspectSource source)
-                    || source.isBlocked()
-                    || !source.doesContainerAccept(aspect)) {
+            if (!(container instanceof IAspectSource source) || source.isBlocked() || !source.accepts(aspect)) {
                 continue;
             }
             targets.add(new InsertTarget(
@@ -157,7 +153,7 @@ public final class EssentiaSources {
 
     private boolean insertInto(
             ServerLevel level, Holder<IAspect> aspect, int fxExtendTicks, BlockPos sourcePos, IAspectSource source) {
-        if (source.addToContainer(aspect, 1) != 0) {
+        if (source.fill(aspect, 1) != 0) {
             return false;
         }
         BlockEntity be = level.getBlockEntity(sourcePos);

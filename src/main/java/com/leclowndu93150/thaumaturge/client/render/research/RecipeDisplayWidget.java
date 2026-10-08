@@ -509,7 +509,7 @@ public final class RecipeDisplayWidget {
 
     private static List<ItemStack> crystals(IArcaneRecipe arcane) {
         List<ItemStack> list = new ArrayList<>();
-        for (AspectInstance entry : arcane.getCrystals().entries()) {
+        for (AspectInstance entry : arcane.crystalCost().entries()) {
             ItemStack stack = EssentiaCrystalFactory.of(entry.aspect(), entry.amount());
             if (!stack.isEmpty()) {
                 list.add(stack);
@@ -535,12 +535,12 @@ public final class RecipeDisplayWidget {
         int rw = arcane.getWidth();
         int rh = arcane.getHeight();
         List<Slot> slots = gridSlots(rw, rh, arcane.getIngredients());
-        return new Layout(Kind.ARCANE_SHAPED, slots, resultOf(arcane, reg), arcane.getBaseVis(), crystals(arcane));
+        return new Layout(Kind.ARCANE_SHAPED, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
     }
 
     private static Layout collectArcaneShapeless(ArcaneShapelessCraftingRecipe arcane, HolderLookup.Provider reg) {
         List<Slot> slots = linearSlots(arcane.ingredients());
-        return new Layout(Kind.ARCANE_SHAPELESS, slots, resultOf(arcane, reg), arcane.getBaseVis(), crystals(arcane));
+        return new Layout(Kind.ARCANE_SHAPELESS, slots, resultOf(arcane, reg), arcane.visCost(), crystals(arcane));
     }
 
     private static List<Slot> gridSlots(int rw, int rh, List<Ingredient> ingredients) {

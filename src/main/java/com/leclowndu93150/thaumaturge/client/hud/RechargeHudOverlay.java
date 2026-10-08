@@ -3,7 +3,8 @@ package com.leclowndu93150.thaumaturge.client.hud;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeDisplay;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.mojang.math.Axis;
@@ -60,13 +61,14 @@ public final class RechargeHudOverlay implements LayeredDraw.Layer {
         int shown = 0;
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack stack = player.getItemBySlot(slot);
-            if (!(stack.getItem() instanceof IRechargable rechargable)) {
+            ChargeProfile profile = RechargeAccess.profile(stack);
+            if (profile == null) {
                 lastCharge.remove(slot);
                 changeTick.remove(slot);
                 continue;
             }
-            IRechargable.ChargeDisplay display = rechargable.showInHud(stack, player);
-            if (display == IRechargable.ChargeDisplay.NEVER) {
+            ChargeDisplay display = profile.display();
+            if (display == ChargeDisplay.NEVER) {
                 continue;
             }
             int charge = RechargeAccess.getCharge(stack);
@@ -76,18 +78,11 @@ public final class RechargeHudOverlay implements LayeredDraw.Layer {
             }
             boolean held = slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND;
             if (!held
-                    && display == IRechargable.ChargeDisplay.PERIODIC
+                    && display == ChargeDisplay.ON_CHANGE
                     && player.tickCount - changeTick.getOrDefault(slot, Integer.MIN_VALUE) > PERIODIC_SHOW_TICKS) {
                 continue;
             }
-            drawMeter(
-                    graphics,
-                    mc,
-                    stack,
-                    rechargable.getMaxCharge(stack, player),
-                    charge,
-                    shown++,
-                    player.isShiftKeyDown());
+            drawMeter(graphics, mc, stack, profile.capacity(), charge, shown++, player.isShiftKeyDown());
         }
     }
 

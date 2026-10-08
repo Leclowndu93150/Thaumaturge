@@ -67,7 +67,7 @@ public final class VoidseerCharmItem extends Item implements IVisDiscountGear, I
     }
 
     @Override
-    public int getWarp(ItemStack stack, LivingEntity wearer) {
+    public int warp(ItemStack stack, LivingEntity wearer) {
         return discountFor(wearer) / WARP_PER_DISCOUNT;
     }
 

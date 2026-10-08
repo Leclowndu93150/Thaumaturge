@@ -31,6 +31,8 @@ import com.leclowndu93150.thaumaturge.content.aura.AuraHelperBindings;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayWorkbenchSource;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitBindings;
+import com.leclowndu93150.thaumaturge.content.equipment.GogglesBindings;
+import com.leclowndu93150.thaumaturge.content.equipment.RechargeBindings;
 import com.leclowndu93150.thaumaturge.content.equipment.TTMaterials;
 import com.leclowndu93150.thaumaturge.content.golem.GolemBindings;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionCraftingTransactions;
@@ -129,8 +131,8 @@ public final class Thaumaturge {
         GolemHelper.bind(new GolemBindings());
         AspectPoolAccess.bind(new AspectPoolBindings());
         ResearchGate.bind(ResearchManager::doesPassGate);
-        RechargeAccess.bind(TTDataComponents.CHARGE);
-        GogglesAccess.bind(() -> TTAttributes.VIS_DISCOUNT);
+        RechargeAccess.bind(new RechargeBindings());
+        GogglesAccess.bind(new GogglesBindings());
         FocusEngine.bindRegistry(TTFocusElements.registry());
 
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);

@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -283,7 +283,7 @@ public class EntityThaumaturgeBoss extends Monster implements ISidedHurt {
 
     @Override
     public boolean isAlliedTo(Entity other) {
-        return other instanceof IEldritchMob || super.isAlliedTo(other);
+        return other.getType().is(ThaumaturgeEntityTypeTags.ELDRITCH) || super.isAlliedTo(other);
     }
 
     @Override

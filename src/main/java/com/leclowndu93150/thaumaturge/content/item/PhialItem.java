@@ -4,8 +4,8 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -26,7 +26,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class PhialItem extends Item implements IEssentiaContainerItem {
+public final class PhialItem extends Item {
     public static final int BASE_AMOUNT = 10;
 
     public PhialItem(Item.Properties properties) {
@@ -45,33 +45,13 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
 
     @Override
     public Component getName(ItemStack stack) {
-        AspectList aspects = getAspects(stack);
+        AspectList aspects = ComponentEssentia.phial(stack).getAspects();
         if (aspects.isEmpty()) {
             return Component.translatable(this.getDescriptionId() + ".empty");
         }
         Holder<IAspect> first = aspects.entries().getFirst().aspect();
         MutableComponent aspectName = AspectComponents.name(first);
         return Component.translatable(this.getDescriptionId() + ".filled", aspectName);
-    }
-
-    @Override
-    public AspectList getAspects(ItemStack stack) {
-        AspectList stored = stack.get(TTDataComponents.ASPECTS.get());
-        return stored == null ? AspectList.EMPTY : stored;
-    }
-
-    @Override
-    public void setAspects(ItemStack stack, AspectList aspects) {
-        if (aspects == null || aspects.isEmpty()) {
-            stack.remove(TTDataComponents.ASPECTS.get());
-            return;
-        }
-        stack.set(TTDataComponents.ASPECTS.get(), aspects);
-    }
-
-    @Override
-    public boolean ignoreContainedAspects() {
-        return false;
     }
 
     @Override
@@ -99,7 +79,7 @@ public final class PhialItem extends Item implements IEssentiaContainerItem {
             BlockPos pos,
             IEssentiaTransport container,
             boolean canDeposit) {
-        AspectList aspects = getAspects(stack);
+        AspectList aspects = ComponentEssentia.phial(stack).getAspects();
         // We use Direction.UP to allow insertion/extraction from all faces with fials
         if (aspects.isEmpty()) {
             if (container.getEssentiaAmount(Direction.UP) >= BASE_AMOUNT) {

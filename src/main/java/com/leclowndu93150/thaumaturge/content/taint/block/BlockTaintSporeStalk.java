@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
+import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSpore;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSporeSwarmer;
@@ -104,7 +105,7 @@ public final class BlockTaintSporeStalk extends Block implements ITaintBlock {
     }
 
     @Override
-    public void die(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
+    public void decay(net.minecraft.world.level.Level level, BlockPos pos, BlockState state) {
         level.removeBlock(pos, false);
     }
 }

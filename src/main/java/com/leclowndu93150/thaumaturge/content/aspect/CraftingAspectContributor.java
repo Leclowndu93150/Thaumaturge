@@ -45,7 +45,7 @@ public final class CraftingAspectContributor implements IAspectRecipeContributor
                     if (!output.isEmpty()) {
                         int count = Math.max(1, output.getCount());
                         map.computeIfAbsent(output.getItem(), item -> new ArrayList<>())
-                                .add(new Candidate(List.copyOf(arcane.getIngredients()), count, arcane.getBaseVis()));
+                                .add(new Candidate(List.copyOf(arcane.getIngredients()), count, arcane.visCost()));
                     }
                 } else if (recipe instanceof CraftingRecipe crafting) {
                     ItemStack output = safeAssemble(crafting, registries);

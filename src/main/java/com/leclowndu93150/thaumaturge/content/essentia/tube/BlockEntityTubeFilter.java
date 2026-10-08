@@ -4,10 +4,11 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
-import com.leclowndu93150.thaumaturge.api.items.IGogglesDisplayExtended;
+import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import java.util.List;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,7 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityTubeFilter extends BlockEntityTube implements IAspectQuery, IGogglesDisplayExtended {
+public final class BlockEntityTubeFilter extends BlockEntityTube implements IAspectQuery, IGogglesReadout {
     private @Nullable ResourceKey<IAspect> aspectFilter;
 
     public BlockEntityTubeFilter(BlockPos pos, BlockState state) {
@@ -58,10 +59,10 @@ public final class BlockEntityTubeFilter extends BlockEntityTube implements IAsp
     }
 
     @Override
-    public Component[] getIGogglesText() {
-        if (aspectFilter == null || level == null) return new Component[0];
+    public List<Component> readout() {
+        if (aspectFilter == null || level == null) return List.of();
         Holder<IAspect> aspect = EssentiaTransportHelper.resolve(level, aspectFilter);
-        return aspect == null ? new Component[0] : new Component[] {AspectComponents.name(aspect)};
+        return aspect == null ? List.of() : List.of(AspectComponents.name(aspect));
     }
 
     @Override

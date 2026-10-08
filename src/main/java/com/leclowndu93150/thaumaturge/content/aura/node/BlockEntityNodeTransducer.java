@@ -69,7 +69,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
             node.setEnergized(false);
             List<AspectInstance> stored = node.getAspects().entries();
             for (AspectInstance entry : stored) {
-                node.takeFromContainer(entry.aspect(), entry.amount());
+                node.drain(entry.aspect(), entry.amount());
             }
             status = STATUS_IDLE;
             setChanged();
@@ -83,7 +83,7 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
                     if (!stored.isEmpty()) {
                         List<AspectInstance> entries = stored.entries();
                         AspectInstance chosen = entries.get(level.getRandom().nextInt(entries.size()));
-                        node.takeFromContainer(chosen.aspect(), 1);
+                        node.drain(chosen.aspect(), 1);
                     }
                 }
                 setChanged();

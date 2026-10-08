@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.equipment;
 
-import com.leclowndu93150.thaumaturge.api.items.IWarpingGear;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -16,14 +15,14 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-public class CrimsonBladeItem extends SwordItem implements IWarpingGear {
+public class CrimsonBladeItem extends SwordItem {
     private static final int REPAIR_INTERVAL_TICKS = 20;
     private static final int CRIMSON_BLADE_WARP = 2;
     private static final int WEAKNESS_TICKS = 60;
     private static final int HUNGER_TICKS = 120;
 
     public CrimsonBladeItem(Properties properties) {
-        super(TTMaterials.TOOL_CRIMSON_VOID, properties);
+        super(TTMaterials.TOOL_CRIMSON_VOID, GearWarp.with(properties, CRIMSON_BLADE_WARP));
     }
 
     @Override
@@ -54,10 +53,5 @@ public class CrimsonBladeItem extends SwordItem implements IWarpingGear {
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("enchantment.special.sapgreat").withStyle(ChatFormatting.GOLD));
         super.appendHoverText(stack, context, tooltip, flag);
-    }
-
-    @Override
-    public int getWarp(ItemStack stack, LivingEntity wearer) {
-        return CRIMSON_BLADE_WARP;
     }
 }

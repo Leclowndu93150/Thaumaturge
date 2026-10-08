@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
@@ -40,7 +40,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public class EntityEldritchGuardian extends Monster implements RangedAttackMob, IEldritchMob, ISidedHurt {
+public class EntityEldritchGuardian extends Monster implements RangedAttackMob, ISidedHurt {
     private static final byte ARM_LIFT_LEFT_EVENT = 15;
     private static final byte ARM_LIFT_RIGHT_EVENT = 16;
     private static final float ARM_LIFT_BLAST = 0.5F;
@@ -198,7 +198,7 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob, 
 
     @Override
     public boolean isAlliedTo(Entity entity) {
-        return entity instanceof IEldritchMob || super.isAlliedTo(entity);
+        return entity.getType().is(ThaumaturgeEntityTypeTags.ELDRITCH) || super.isAlliedTo(entity);
     }
 
     @Override

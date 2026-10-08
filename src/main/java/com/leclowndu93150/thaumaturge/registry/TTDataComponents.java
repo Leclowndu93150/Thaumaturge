@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
 import com.leclowndu93150.thaumaturge.content.casters.CasterArea;
@@ -97,6 +98,11 @@ public final class TTDataComponents {
                     "charge",
                     builder -> builder.persistent(ExtraCodecs.NON_NEGATIVE_INT)
                             .networkSynchronized(ByteBufCodecs.VAR_INT));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ChargeProfile>> RECHARGEABLE =
+            DATA_COMPONENTS.registerComponentType(
+                    "rechargeable",
+                    builder -> builder.persistent(ChargeProfile.CODEC).networkSynchronized(ChargeProfile.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<InfusionEnchantments>>
             INFUSION_ENCHANTMENTS = DATA_COMPONENTS.registerComponentType(

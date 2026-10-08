@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aspect;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspectIndex;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -122,9 +122,9 @@ public final class AspectIndex implements IAspectIndex {
             return AspectList.EMPTY;
         }
 
-        IEssentiaContainerItem container = stack.getCapability(EssentiaCapabilities.CONTAINER);
-        if (container != null && !container.ignoreContainedAspects()) {
-            return container.getAspects(stack);
+        IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+        if (essentia != null && essentia.countsTowardItemAspects()) {
+            return essentia.getAspects();
         }
 
         ItemEntry entry = byItem.get(stack.getItem());

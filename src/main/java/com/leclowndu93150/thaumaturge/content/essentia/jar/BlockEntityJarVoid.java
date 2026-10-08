@@ -37,7 +37,7 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
     }
 
     @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
+    public int fill(Holder<IAspect> aspect, int amount) {
         ResourceKey<IAspect> key = aspect.unwrapKey().orElse(null);
         return key == null ? amount : doAddToContainer(key, amount);
     }

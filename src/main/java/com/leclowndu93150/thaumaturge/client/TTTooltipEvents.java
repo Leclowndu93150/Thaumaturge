@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.infusion.IInfusionStabiliser;
-import com.leclowndu93150.thaumaturge.api.items.IRechargable;
+import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
@@ -56,14 +56,15 @@ public final class TTTooltipEvents {
             event.getToolTip()
                     .add(1, Component.translatable("item.thaumaturge.warping").withStyle(ChatFormatting.DARK_PURPLE));
         }
-        if (event.getItemStack().getItem() instanceof IRechargable rechargable) {
+        ChargeProfile charge = RechargeAccess.profile(event.getItemStack());
+        if (charge != null) {
             event.getToolTip()
                     .add(
                             1,
                             Component.translatable(
                                             "tooltip.thaumaturge.charge",
                                             RechargeAccess.getCharge(event.getItemStack()),
-                                            rechargable.getMaxCharge(event.getItemStack(), event.getEntity()))
+                                            charge.capacity())
                                     .withStyle(ChatFormatting.AQUA));
         }
         if (event.getItemStack().getItem() instanceof BlockItem blockItem

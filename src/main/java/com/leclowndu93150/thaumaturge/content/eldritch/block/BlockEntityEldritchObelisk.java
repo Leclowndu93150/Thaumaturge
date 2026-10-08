@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.api.entity.IEldritchMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public final class BlockEntityEldritchObelisk extends BlockEntity {
         }
         List<LivingEntity> nearby = level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(BUFF_RANGE));
         for (LivingEntity entity : nearby) {
-            if (entity instanceof IEldritchMob && !entity.hasEffect(MobEffects.REGENERATION)) {
+            if (entity.getType().is(ThaumaturgeEntityTypeTags.ELDRITCH) && !entity.hasEffect(MobEffects.REGENERATION)) {
                 entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, BUFF_DURATION, 0, true, true));
                 entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, BUFF_DURATION, 0, true, true));
             }

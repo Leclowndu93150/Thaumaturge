@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.recipe.label;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaContainerItem;
+import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
+import com.leclowndu93150.thaumaturge.api.essentia.IItemEssentia;
 import com.leclowndu93150.thaumaturge.content.item.LabelItem;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -48,9 +49,9 @@ public final class LabelFilterRecipe extends CustomRecipe {
 
             if (stack.is(TTItems.PHIAL)) {
                 if (aspect != null) return null;
-                if (!(stack.getItem() instanceof IEssentiaContainerItem it)
-                        || it.getAspects(stack).isEmpty()) return null;
-                aspect = it.getAspects(stack).entries().getFirst().aspect();
+                IItemEssentia essentia = stack.getCapability(EssentiaCapabilities.CONTAINER);
+                if (essentia == null || essentia.getAspects().isEmpty()) return null;
+                aspect = essentia.getAspects().entries().getFirst().aspect();
             } else if (!stack.isEmpty()) {
                 return null;
             }

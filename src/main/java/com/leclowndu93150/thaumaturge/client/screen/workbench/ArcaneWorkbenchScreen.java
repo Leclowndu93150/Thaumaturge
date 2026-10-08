@@ -142,7 +142,7 @@ public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneW
         graphics.pose().popPose();
 
         if (plan != null && requiredVis > 0) {
-            int baseVis = recipe.getBaseVis();
+            int baseVis = recipe.visCost();
             Component required;
             if (requiredVis < baseVis) {
                 int discountPercentage = Math.round(100.0F - requiredVis * 100.0F / baseVis);

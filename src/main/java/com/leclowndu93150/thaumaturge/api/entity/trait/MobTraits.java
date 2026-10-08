@@ -1,6 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.entity.trait;
 
-import com.leclowndu93150.thaumaturge.api.entity.ITaintedMob;
+import com.leclowndu93150.thaumaturge.api.entity.ThaumaturgeEntityTypeTags;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.core.Holder;
@@ -107,7 +107,7 @@ public final class MobTraits {
      * @return {@code true} for tainted mobs
      */
     public static boolean isTainted(LivingEntity mob) {
-        if (mob instanceof ITaintedMob) {
+        if (mob.getType().is(ThaumaturgeEntityTypeTags.TAINTED)) {
             return true;
         }
         for (Holder<MobTrait> held : traits(mob)) {

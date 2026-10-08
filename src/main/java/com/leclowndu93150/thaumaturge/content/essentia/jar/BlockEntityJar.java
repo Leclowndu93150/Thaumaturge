@@ -394,27 +394,27 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
     }
 
     @Override
-    public boolean doesContainerAccept(Holder<IAspect> aspect) {
+    public boolean accepts(Holder<IAspect> aspect) {
         return aspectFilter == null || aspectFilter.equals(aspect.getKey());
     }
 
     @Override
-    public int addToContainer(Holder<IAspect> aspect, int amount) {
+    public int fill(Holder<IAspect> aspect, int amount) {
         return doAddToContainer(aspect.getKey(), amount);
     }
 
     @Override
-    public boolean takeFromContainer(Holder<IAspect> aspect, int amount) {
+    public boolean drain(Holder<IAspect> aspect, int amount) {
         return doTakeFromContainer(aspect.getKey(), amount);
     }
 
     @Override
-    public boolean doesContainerContainAmount(Holder<IAspect> aspect, int amount) {
+    public boolean holds(Holder<IAspect> aspect, int amount) {
         return this.amount >= amount && Objects.equals(this.aspect, aspect.getKey());
     }
 
     @Override
-    public int containerContains(Holder<IAspect> aspect) {
+    public int amountOf(Holder<IAspect> aspect) {
         return Objects.equals(this.aspect, aspect.getKey()) ? this.amount : 0;
     }
 
@@ -437,7 +437,7 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
 
         @Override
         public int insert(Holder<IAspect> aspect, int amount, boolean simulate) {
-            if (amount <= 0 || !canInputFrom(side) || !doesContainerAccept(aspect)) return 0;
+            if (amount <= 0 || !canInputFrom(side) || !accepts(aspect)) return 0;
             if (BlockEntityJar.this.amount > 0 && !Objects.equals(BlockEntityJar.this.aspect, aspect.getKey()))
                 return 0;
             int accepted = storageInsertLimit(aspect, amount);

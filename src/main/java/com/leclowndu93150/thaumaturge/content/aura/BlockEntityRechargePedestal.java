@@ -147,7 +147,7 @@ public final class BlockEntityRechargePedestal extends BlockEntityPedestal {
                         if (WandVisHelper.getVis(wand, key) >= WandVisHelper.getMaxVis(wand)) {
                             continue;
                         }
-                        if (node.takeFromContainer(entry.aspect(), 1)) {
+                        if (node.drain(entry.aspect(), 1)) {
                             WandVisHelper.addVis(wand, key, 1, true);
                             node.setChanged();
                             level.sendBlockUpdated(cursor.immutable(), node.getBlockState(), node.getBlockState(), 3);
