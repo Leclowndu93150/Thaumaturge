@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 
 public final class EnchantMining {
     private static final int LEVEL_EVENT_BLOCK_BREAK = 2001;
@@ -27,7 +27,13 @@ public final class EnchantMining {
     private static final int SEARCH_LIMIT_VERTICAL = 48;
     private static final int SEARCH_NODE_LIMIT = 1024;
 
+    private static final ThreadLocal<Boolean> HARVESTING_FURTHEST = ThreadLocal.withInitial(() -> false);
+
     private EnchantMining() {}
+
+    public static boolean isHarvestingFurthest() {
+        return HARVESTING_FURTHEST.get();
+    }
 
     public static boolean harvestBlock(ServerLevel level, Player player, BlockPos pos, boolean skipEvent) {
         if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -35,7 +41,7 @@ public final class EnchantMining {
         }
         BlockState state = level.getBlockState(pos);
         if (!skipEvent) {
-            BlockEvent.BreakEvent event = CommonHooks.fireBlockBreak(
+            BreakEvent event = CommonHooks.fireBlockBreak(
                     level, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos, state);
             if (event.isCanceled()) {
                 return false;
@@ -52,7 +58,13 @@ public final class EnchantMining {
 
     public static boolean breakFurthest(ServerLevel level, BlockPos origin, BlockState block, Player player) {
         BlockPos furthest = findFurthest(level, origin, block);
-        boolean worked = harvestBlock(level, player, furthest, true);
+        boolean worked;
+        HARVESTING_FURTHEST.set(true);
+        try {
+            worked = harvestBlock(level, player, furthest, false);
+        } finally {
+            HARVESTING_FURTHEST.set(false);
+        }
         if (worked && isLog(level, origin)) {
             for (int xx = -LOG_UPDATE_RADIUS; xx <= LOG_UPDATE_RADIUS; xx++) {
                 for (int yy = -LOG_UPDATE_RADIUS; yy <= LOG_UPDATE_RADIUS; yy++) {

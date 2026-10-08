@@ -26,12 +26,30 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(TTBlockTags.CINDERPEARL_SOIL)
+                .addTag(BlockTags.SAND)
+                .addTag(BlockTags.DIRT)
+                .addTag(BlockTags.TERRACOTTA);
+        tag(TTBlockTags.SHIMMERLEAF_SOIL).addTag(BlockTags.DIRT);
+        tag(TTBlockTags.VISHROOM_SOIL)
+                .add(
+                        Blocks.GRASS_BLOCK,
+                        Blocks.DIRT,
+                        Blocks.PODZOL,
+                        Blocks.COARSE_DIRT,
+                        Blocks.MYCELIUM,
+                        Blocks.MOSS_BLOCK,
+                        Blocks.STONE)
+                .add(TTBlocks.GRASS_AMBIENT.get());
+
         tag(BlockTags.DIRT).add(TTBlocks.GRASS_AMBIENT.get());
         tag(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)
                 .addTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addTag(BlockTags.DIRT)
                 .addTag(BlockTags.LUSH_GROUND_REPLACEABLE);
         tag(TTBlockTags.LAMP_GROWTH_BLACKLIST);
+        tag(BlockTags.WITHER_IMMUNE).add(TTBlocks.STONE_ANCIENT_ROCK.get()).add(TTBlocks.STONE_ANCIENT_DOORWAY.get());
+        tag(BlockTags.DRAGON_IMMUNE).add(TTBlocks.STONE_ANCIENT_ROCK.get()).add(TTBlocks.STONE_ANCIENT_DOORWAY.get());
         TagAppender<Block> candles = tag(TTBlockTags.CANDLES);
         TTBlocks.CANDLES.values().forEach(candle -> candles.add(candle.getKey()));
         tag(TTBlockTags.RESEARCH_BONUS_ORDO)

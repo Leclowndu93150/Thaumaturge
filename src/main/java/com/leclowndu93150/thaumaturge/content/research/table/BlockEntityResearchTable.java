@@ -6,10 +6,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchTableAid;
 import com.leclowndu93150.thaumaturge.content.aspect.AspectCombinations;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.research.note.HexGrid;
 import com.leclowndu93150.thaumaturge.content.research.note.NoteGenerator;
 import com.leclowndu93150.thaumaturge.content.research.note.NoteRules;
@@ -20,8 +20,10 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
+import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -29,9 +31,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -51,12 +50,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityResearchTable extends BlockEntity implements MenuProvider {
+public final class BlockEntityResearchTable extends AbstractSyncedBlockEntity implements MenuProvider {
     public static final int SLOT_SCRIBE_TOOLS = 0;
     public static final int SLOT_NOTE = 1;
     public static final int SLOT_COUNT = 2;
@@ -67,6 +65,8 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
 
     private static final int RECALC_INTERVAL_TICKS = 600;
     private static final int BONUS_SCAN_RADIUS = 8;
+    private static final int BOOKSHELF_BONUS_CHANCE = 300;
+    private static final int BRAIN_JAR_BONUS_CHANCE = 200;
     private static final float EXPERTISE_REFUND_CHANCE = 0.25F;
     private static final float MASTERY_REFUND_CHANCE = 0.5F;
     private static final float MASTERY_FREE_CHANCE = 0.1F;
@@ -129,7 +129,7 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
                     if (!level.isLoaded(cursor)) {
                         continue;
                     }
-                    ResourceKey<IAspect> match = bonusFor(level.getBlockState(cursor), random);
+                    ResourceKey<IAspect> match = bonusFor(level.getBlockState(cursor), random, aspects);
                     if (match != null && addBonus(aspects, match)) {
                         changed = true;
                         break scan;
@@ -143,12 +143,14 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         }
     }
 
-    private @Nullable ResourceKey<IAspect> bonusFor(BlockState state, RandomSource random) {
-        if (state.is(Blocks.BOOKSHELF) && random.nextInt(300) == 0) {
-            return TTAspects.PRIMALS.get(random.nextInt(TTAspects.PRIMALS.size()));
-        }
-        if (state.is(TTBlocks.JAR_BRAIN.get()) && random.nextInt(200) == 0) {
-            return TTAspects.PRIMALS.get(random.nextInt(TTAspects.PRIMALS.size()));
+    private @Nullable ResourceKey<IAspect> bonusFor(
+            BlockState state, RandomSource random, HolderLookup.RegistryLookup<IAspect> aspects) {
+        if ((state.is(Blocks.BOOKSHELF) && random.nextInt(BOOKSHELF_BONUS_CHANCE) == 0)
+                || (state.is(TTBlocks.JAR_BRAIN.get()) && random.nextInt(BRAIN_JAR_BONUS_CHANCE) == 0)) {
+            List<Holder.Reference<IAspect>> candidates = aspects.listElements().toList();
+            return candidates.isEmpty()
+                    ? null
+                    : candidates.get(random.nextInt(candidates.size())).key();
         }
         if (state.is(TTBlocks.CRYSTAL_AER.get()) && random.nextInt(10) == 0) return TTAspects.AER;
         if (state.is(TTBlocks.CRYSTAL_IGNIS.get()) && random.nextInt(10) == 0) return TTAspects.IGNIS;
@@ -198,19 +200,19 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
     }
 
     public @Nullable ResearchNoteData noteData() {
-        ItemStack note = inventory.getStackInSlot(SLOT_NOTE);
+        ItemStack note = inventory.getStackInSlot(SLOT_NOTE).copyWithCount(1);
         return note.isEmpty() ? null : ResearchNotes.dataOf(note);
     }
 
     private void writeNoteData(ResearchNoteData data) {
-        ItemStack current = inventory.getStackInSlot(SLOT_NOTE);
-        int amount = Math.max(1, current.getCount());
-        ItemStack note = current.copyWithCount(amount);
+        ItemStack resource = inventory.getStackInSlot(SLOT_NOTE);
+        int amount = Math.max(1, inventory.getStackInSlot(SLOT_NOTE).getCount());
+        ItemStack note = resource.copyWithCount(amount);
         note.set(TTDataComponents.RESEARCH_NOTE.get(), data);
         if (data.complete()) {
             note.set(TTDataComponents.NOTE_COMPLETE.get(), true);
         }
-        inventory.setStackInSlot(SLOT_NOTE, note);
+        inventory.setStackInSlot(SLOT_NOTE, note.copyWithCount(amount));
         setChanged();
         syncToClient();
     }
@@ -282,19 +284,34 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
             boolean bonusFirst,
             boolean bonusSecond) {
         Holder<IAspect> result = combinationResult(player, first, second);
-        if (!consumeCombinationInput(player, first, bonusFirst)) {
+        if (result == null || !canPayCombination(player, first, bonusFirst, second, bonusSecond)) {
             return;
         }
-        if (!consumeCombinationInput(player, second, bonusSecond)) {
+        if (!consumeCombinationInput(player, first, bonusFirst)
+                || !consumeCombinationInput(player, second, bonusSecond)) {
             return;
         }
         setChanged();
         syncToClient();
-        if (result != null && getLevel() != null) {
+        if (getLevel() != null) {
             AspectPools.grant(player, result, 1);
             getLevel()
                     .playSound(null, worldPosition, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, 0.3F, 1.0F);
         }
+    }
+
+    private boolean canPayCombination(
+            ServerPlayer player,
+            Holder<IAspect> first,
+            boolean bonusFirst,
+            Holder<IAspect> second,
+            boolean bonusSecond) {
+        int needFirst = first.equals(second) && bonusFirst == bonusSecond ? 2 : 1;
+        return available(player, first, bonusFirst) >= needFirst && available(player, second, bonusSecond) >= 1;
+    }
+
+    private int available(ServerPlayer player, Holder<IAspect> aspect, boolean fromBonus) {
+        return fromBonus ? bonusAspects.amountOf(aspect) : AspectPools.amount(player, aspect);
     }
 
     private boolean consumeCombinationInput(ServerPlayer player, Holder<IAspect> aspect, boolean fromBonus) {
@@ -414,32 +431,26 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         int max = tools.getMaxDamage();
         if (max <= 0 || damage >= max) return false;
         tools.setDamageValue(damage + 1);
-        inventory.setStackInSlot(SLOT_SCRIBE_TOOLS, tools);
+        inventory.setStackInSlot(SLOT_SCRIBE_TOOLS, tools.copyWithCount(1));
         setChanged();
         return true;
     }
 
     public boolean hasInkReady() {
-        ItemStack tools = inventory.getStackInSlot(SLOT_SCRIBE_TOOLS);
+        ItemStack tools = inventory.getStackInSlot(SLOT_SCRIBE_TOOLS).copyWithCount(1);
         return !tools.isEmpty() && tools.isDamageableItem() && tools.getDamageValue() < tools.getMaxDamage();
     }
 
     public void dropContents(Level level, BlockPos pos) {
         SimpleContainer container = new SimpleContainer(SLOT_COUNT);
         for (int i = 0; i < SLOT_COUNT; i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            if (!stack.isEmpty()) {
-                container.setItem(i, stack.copy());
+            ItemStack resource = inventory.getStackInSlot(i);
+            int amount = inventory.getStackInSlot(i).getCount();
+            if (!resource.isEmpty() && amount > 0) {
+                container.setItem(i, resource.copyWithCount(amount));
             }
         }
         Containers.dropContents(level, pos, container);
-    }
-
-    private void syncToClient() {
-        if (level != null && !level.isClientSide()) {
-            BlockState current = getBlockState();
-            level.sendBlockUpdated(getBlockPos(), current, current, 3);
-        }
     }
 
     @Override
@@ -455,20 +466,6 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         super.saveAdditional(output, registries);
         output.put("inventory", inventory.serializeNBT(registries));
         TTNbt.store(output, "bonus_aspects", AspectList.CODEC, registries, bonusAspects);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        CompoundTag output = new CompoundTag();
-        saveAdditional(output, registries);
-        nbt.merge(output);
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private final class TableInventory extends ItemStackHandler {
@@ -488,7 +485,7 @@ public final class BlockEntityResearchTable extends BlockEntity implements MenuP
         @Override
         public boolean isItemValid(int index, ItemStack resource) {
             return switch (index) {
-                case SLOT_SCRIBE_TOOLS -> resource.getItem() instanceof IScribeTools;
+                case SLOT_SCRIBE_TOOLS -> resource.is(TTItemTags.SCRIBING_TOOLS);
                 case SLOT_NOTE -> resource.has(TTDataComponents.RESEARCH_NOTE.get());
                 default -> false;
             };

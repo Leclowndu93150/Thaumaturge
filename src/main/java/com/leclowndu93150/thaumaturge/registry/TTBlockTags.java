@@ -47,6 +47,10 @@ public final class TTBlockTags {
     public static final TagKey<Block> TAINT_CONVERTIBLE_CRUST = key("taint_convertible/crust");
     public static final TagKey<Block> TAINT_CONVERSION_IMMUNE = key("taint_conversion_immune");
 
+    public static final TagKey<Block> CINDERPEARL_SOIL = key("cinderpearl_soil");
+    public static final TagKey<Block> SHIMMERLEAF_SOIL = key("shimmerleaf_soil");
+    public static final TagKey<Block> VISHROOM_SOIL = key("vishroom_soil");
+
     private TTBlockTags() {}
 
     private static TagKey<Block> key(String path) {

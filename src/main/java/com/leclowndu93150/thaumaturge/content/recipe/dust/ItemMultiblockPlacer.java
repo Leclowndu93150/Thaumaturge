@@ -1,15 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.recipe.dust;
 
 import com.leclowndu93150.thaumaturge.api.recipe.Blueprint;
-import com.leclowndu93150.thaumaturge.api.recipe.BlueprintPart;
 import com.leclowndu93150.thaumaturge.api.recipe.BlueprintTarget;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -38,16 +35,16 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
             return super.place(context);
         }
         Direction placementFacing = context.getHorizontalDirection().getOpposite();
-        List<BlueprintMatrix> layers = rotatedLayers(blueprint, MultiblockMatcher.rotationsFor(placementFacing));
-        Vec3i anchor = anchorOffset(layers, blueprint.ySize());
+        RotatedBlueprint rotated = new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placementFacing));
+        List<BlueprintCell> cells = rotated.cells();
+        BlockPos anchor = anchorOffset(cells);
         if (anchor == null) {
             return super.place(context);
         }
         BlockPos origin = context.getClickedPos().offset(-anchor.getX(), 0, -anchor.getZ());
-        BlueprintMatrix footprint = layers.get(0);
-        for (int x = 0; x < footprint.rows(); x++) {
-            for (int y = 0; y < blueprint.ySize(); y++) {
-                for (int z = 0; z < footprint.cols(); z++) {
+        for (int x = 0; x < rotated.width(); x++) {
+            for (int y = 0; y < rotated.height(); y++) {
+                for (int z = 0; z < rotated.depth(); z++) {
                     if (!level.getBlockState(origin.offset(x, y, z)).canBeReplaced()) {
                         return InteractionResult.FAIL;
                     }
@@ -58,21 +55,10 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
             return InteractionResult.SUCCESS;
         }
         Player player = context.getPlayer();
-        int ys = blueprint.ySize();
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = layers.get(y);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part == null) {
-                        continue;
-                    }
-                    BlockPos cellPos = origin.offset(x, -y + (ys - 1), z);
-                    placeTarget(level, cellPos, part.target(), placementFacing, context, player);
-                }
-            }
+        for (BlueprintCell cell : cells) {
+            placeTarget(level, origin.offset(cell.offset()), cell.part().target(), placementFacing, context, player);
         }
-        BlockPos corePos = origin.offset(anchor.getX(), anchor.getY(), anchor.getZ());
+        BlockPos corePos = origin.offset(anchor);
         level.playSound(
                 null,
                 corePos,
@@ -86,28 +72,11 @@ public abstract class ItemMultiblockPlacer extends BlockItem {
         return InteractionResult.SUCCESS;
     }
 
-    private static List<BlueprintMatrix> rotatedLayers(Blueprint blueprint, int rotations) {
-        List<BlueprintMatrix> layers = new ArrayList<>(blueprint.ySize());
-        for (int y = 0; y < blueprint.ySize(); y++) {
-            BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-            matrix.rotate90DegRight(rotations);
-            layers.add(matrix);
-        }
-        return layers;
-    }
-
-    private @Nullable Vec3i anchorOffset(List<BlueprintMatrix> layers, int ys) {
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = layers.get(y);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part != null
-                            && part.target() instanceof BlueprintTarget.BlockTarget blockTarget
-                            && blockTarget.block() == getBlock()) {
-                        return new Vec3i(x, -y + (ys - 1), z);
-                    }
-                }
+    private @Nullable BlockPos anchorOffset(List<BlueprintCell> cells) {
+        for (BlueprintCell cell : cells) {
+            if (cell.part().target() instanceof BlueprintTarget.BlockTarget blockTarget
+                    && blockTarget.block() == getBlock()) {
+                return cell.offset();
             }
         }
         return null;

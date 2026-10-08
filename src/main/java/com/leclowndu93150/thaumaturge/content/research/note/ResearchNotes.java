@@ -4,16 +4,16 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.api.research.IResearchStage;
 import com.leclowndu93150.thaumaturge.api.research.KnowledgeReward;
 import com.leclowndu93150.thaumaturge.content.research.PlayerKnowledge;
-import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
@@ -40,6 +40,18 @@ public final class ResearchNotes {
             count += theoryRows(entry.stages().get(i));
         }
         return count;
+    }
+
+    private static boolean isReachableTheoryRow(
+            IPlayerKnowledge knowledge, ResourceLocation entryId, IResearchEntry entry, int ordinal) {
+        if (!knowledge.isResearchKnown(entryId) || knowledge.isResearchComplete(entryId)) {
+            return false;
+        }
+        int stage = Math.max(0, knowledge.researchStage(entryId));
+        if (stage >= entry.stages().size()) {
+            return false;
+        }
+        return ordinal >= 0 && ordinal < theoryRowsBefore(entry, stage + 1);
     }
 
     public static int theoryRows(IResearchStage stage) {
@@ -110,17 +122,17 @@ public final class ResearchNotes {
                 .get(key)
                 .map(holder -> holder.value())
                 .orElse(null);
-        if (entry == null) {
+        PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
+        if (entry == null || !isReachableTheoryRow(knowledge, entryId, entry, ordinal)) {
             return false;
         }
         ResourceLocation learnKey = ResearchNoteData.learnKey(entryId, ordinal);
-        PlayerKnowledge knowledge = (PlayerKnowledge) KnowledgeAccess.of(player);
         if (knowledge.isResearchKnown(learnKey) || hasNoteFor(player, learnKey)) {
             return false;
         }
         if ((!consumeInk(player, true) || !hasItem(player, Items.PAPER)) && !player.getAbilities().instabuild) {
-            player.sendSystemMessage(
-                    Component.translatable("tc.researchnote.missing").withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.research_note.missing_tools")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
             return false;
         }
         consumeInk(player, false);
@@ -141,7 +153,7 @@ public final class ResearchNotes {
         Inventory inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            if (stack.getItem() instanceof IScribeTools && stack.getDamageValue() < stack.getMaxDamage()) {
+            if (stack.is(TTItemTags.SCRIBING_TOOLS) && stack.getDamageValue() < stack.getMaxDamage()) {
                 if (!simulate) {
                     stack.setDamageValue(stack.getDamageValue() + 1);
                 }
@@ -149,9 +161,11 @@ public final class ResearchNotes {
             }
         }
         if (player.containerMenu instanceof MenuResearchTable table) {
-            BlockEntityResearchTable be = table.blockEntity();
-            if (be != null && be.hasInkReady()) {
-                return simulate || be.consumeInk();
+            if (table.blockEntity() != null && table.blockEntity().hasInkReady()) {
+                if (!simulate) {
+                    return table.blockEntity().consumeInk();
+                }
+                return true;
             }
         }
         return false;

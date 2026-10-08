@@ -155,7 +155,7 @@ class BakedBlockEntityRenderTest {
                 case BELLOWS -> {
                     BlockEntityBellows entity = mock(BlockEntityBellows.class);
                     when(entity.getBlockState()).thenReturn(state);
-                    entity.inflation = 0.5F;
+                    when(entity.inflation(0.5F)).thenReturn(0.5F);
                     new BellowsRenderer(null).render(entity, 0.5F, pose, buffers, 0, OverlayTexture.NO_OVERLAY);
                 }
                 case CRYSTALIZER -> {

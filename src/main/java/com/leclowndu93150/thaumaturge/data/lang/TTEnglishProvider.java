@@ -17,6 +17,14 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add(
+                "message.thaumaturge.research_note.missing_tools",
+                "You need scribing tools and paper to get this research note!");
+        add("message.thaumaturge.curio.knowledge_gained", "You have gained some knowledge");
+        add("message.thaumaturge.curio.crimson_rites", "This book contains nothing but crazed ravings.");
+        add("message.thaumaturge.flux_sponge.drained", "%s flux drained from 81 chunks.");
+        add("message.thaumaturge.flux_sponge.rifts", "%s flux rifts removed.");
+        add("tooltip.thaumaturge.curio.read", "What knowledge does this hold?");
         add("message.thaumaturge.scan.nothing_new", "Nothing new can be learned from this.");
         add("message.thaumaturge.scan.learned", "You have learned something new.");
         add("message.thaumaturge.celestial.already_studied", "You have already studied that today.");

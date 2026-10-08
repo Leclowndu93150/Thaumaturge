@@ -52,20 +52,23 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.BlockEvent.BreakEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class InfusionEnchantmentEvents {
-    private static final int FOLLOW_TYPE = 10;
     private static final float REFINING_CHANCE_PER_LEVEL = 0.125F;
     private static final int SOUNDING_DAMAGE = 5;
     private static final float ARCING_DAMAGE_FRACTION = 0.5F;
     private static final int SLASH_LIFE = 8;
     private static final int GLIMMER_LIGHT_THRESHOLD = 10;
-    private static final float TT_QUARTZ_NUGGET_CHANCE = 0.05F;
+    private static final float TC_QUARTZ_NUGGET_CHANCE = 0.05F;
 
     private static final ThreadLocal<Boolean> DESTRUCTIVE_RECURSION = ThreadLocal.withInitial(() -> false);
     private static final Map<UUID, DestructiveTarget> DESTRUCTIVE_TARGETS = new HashMap<>();
+
+    public static void resetSession() {
+        DESTRUCTIVE_TARGETS.clear();
+    }
 
     private record DestructiveTarget(ResourceKey<Level> dimension, BlockPos pos, Direction face) {
         private boolean matches(ServerLevel level, BlockPos pos) {
@@ -178,8 +181,8 @@ public final class InfusionEnchantmentEvents {
     }
 
     @SubscribeEvent
-    public static void onBreakBlock(BlockEvent.BreakEvent event) {
-        if (event.getLevel().isClientSide() || event.getPlayer() == null) {
+    public static void onBreakBlock(BreakEvent event) {
+        if (event.getLevel().isClientSide() || event.getPlayer() == null || EnchantMining.isHarvestingFurthest()) {
             return;
         }
         Player player = event.getPlayer();
@@ -271,7 +274,10 @@ public final class InfusionEnchantmentEvents {
             try {
                 Direction face = target != null && target.matches(level, pos)
                         ? target.face()
-                        : Direction.getNearest(player.getViewVector(1.0F));
+                        : Direction.getNearest(
+                                player.getViewVector(1.0F).x,
+                                player.getViewVector(1.0F).y,
+                                player.getViewVector(1.0F).z);
                 for (int aa = -1; aa <= 1; aa++) {
                     for (int bb = -1; bb <= 1; bb++) {
                         if (aa == 0 && bb == 0) {
@@ -313,8 +319,7 @@ public final class InfusionEnchantmentEvents {
                         drop.getY(),
                         drop.getZ(),
                         drop.getItem().copy(),
-                        player,
-                        FOLLOW_TYPE);
+                        player);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 level.addFreshEntity(follow);
@@ -360,8 +365,7 @@ public final class InfusionEnchantmentEvents {
                         drop.getY(),
                         drop.getZ(),
                         drop.getItem().copy(),
-                        player,
-                        FOLLOW_TYPE);
+                        player);
                 follow.setDeltaMovement(drop.getDeltaMovement());
                 follow.setDefaultPickUpDelay();
                 event.getDrops().add(follow);
@@ -397,7 +401,7 @@ public final class InfusionEnchantmentEvents {
             remaining = remaining.remove(entry.aspect(), 1);
             ItemStack crystal = EssentiaCrystalFactory.of(entry.aspect());
             if (collector) {
-                event.getDrops().add(new EntityFollowingItem(level, x, y, z, crystal, player, FOLLOW_TYPE));
+                event.getDrops().add(new EntityFollowingItem(level, x, y, z, crystal, player));
             } else {
                 event.getDrops().add(new ItemEntity(level, x, y, z, crystal));
             }
@@ -425,7 +429,7 @@ public final class InfusionEnchantmentEvents {
                 || state.is(BlockTags.LAPIS_ORES) && roll < 0.01F
                 || state.is(BlockTags.COAL_ORES) && roll < 0.001F
                 || state.is(BlockTags.REDSTONE_ORES) && roll < 0.01F
-                || state.is(TTBlocks.ORE_QUARTZ.get()) && roll < TT_QUARTZ_NUGGET_CHANCE
+                || state.is(TTBlocks.ORE_QUARTZ.get()) && roll < TC_QUARTZ_NUGGET_CHANCE
                 || state.is(Tags.Blocks.ORES_QUARTZ) && roll < 0.01F
                 || state.is(TTBlockTags.ORES_AMBER) && roll < 0.05F;
         if (rare) {

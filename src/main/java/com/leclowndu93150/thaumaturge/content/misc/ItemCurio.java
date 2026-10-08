@@ -7,7 +7,7 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchCategory;
 import com.leclowndu93150.thaumaturge.api.research.TTResearchCategories;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
-import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
+import com.leclowndu93150.thaumaturge.content.research.KnowledgeGrant;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
@@ -18,8 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -53,6 +51,8 @@ public final class ItemCurio extends Item {
     private static final int RITES_WARP_THRESHOLD = 20;
     private static final int NORMAL_WARP = 1;
     private static final int TEMPORARY_WARP = 5;
+    private static final List<KnowledgeGrant> INSIGHTS = List.of(
+            new KnowledgeGrant(KnowledgeType.OBSERVATION, 2, 1), new KnowledgeGrant(KnowledgeType.THEORY, 3, 2));
 
     private final Variant variant;
 
@@ -69,7 +69,7 @@ public final class ItemCurio extends Item {
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        tooltip.add(Component.translatable("item.curio.text"));
+        tooltip.add(Component.translatable("tooltip.thaumaturge.curio.read"));
     }
 
     @Override
@@ -85,14 +85,14 @@ public final class ItemCurio extends Item {
                     0.5F,
                     0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
             if (variant.rites && WarpHelper.getActualWarp(player) <= RITES_WARP_THRESHOLD) {
-                player.sendSystemMessage(
-                        Component.translatable("fail.crimsonrites").withStyle(ChatFormatting.DARK_PURPLE));
-                return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
+                player.sendSystemMessage(Component.translatable("message.thaumaturge.curio.crimson_rites")
+                        .withStyle(ChatFormatting.DARK_PURPLE));
+                return InteractionResultHolder.success(player.getItemInHand(hand));
             }
             if (variant.rites && !KnowledgeAccess.of(player).isResearchKnown(CRIMSON_RITES_RESEARCH)) {
                 ResearchManager.complete(serverPlayer, CRIMSON_RITES_RESEARCH);
             }
-            grantKnowledge(serverPlayer);
+            INSIGHTS.forEach(insight -> insight.award(serverPlayer));
             if (variant.warping) {
                 WarpHelper.addWarp(serverPlayer, NORMAL_WARP, WarpType.NORMAL);
                 WarpHelper.addWarp(serverPlayer, TEMPORARY_WARP, WarpType.TEMPORARY);
@@ -100,36 +100,13 @@ public final class ItemCurio extends Item {
                     WarpHelper.addWarp(serverPlayer, NORMAL_WARP, WarpType.PERMANENT);
                 }
             }
-            RandomSource random = serverPlayer.getRandom();
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer,
-                    KnowledgeType.OBSERVATION,
-                    Mth.randomBetweenInclusive(
-                            random,
-                            KnowledgeType.OBSERVATION.progression() / 2,
-                            KnowledgeType.OBSERVATION.progression()));
-            ResearchGrants.grantConvertedKnowledge(
-                    serverPlayer,
-                    KnowledgeType.THEORY,
-                    Mth.randomBetweenInclusive(
-                            random, KnowledgeType.THEORY.progression() / 3, KnowledgeType.THEORY.progression() / 2));
             if (!player.getAbilities().instabuild) {
                 player.getItemInHand(hand).shrink(1);
             }
-            player.sendSystemMessage(
-                    Component.translatable("tc.knowledge.gained").withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.curio.knowledge_gained")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
         }
         player.awardStat(Stats.ITEM_USED.get(this));
-        return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
-    }
-
-    private static void grantKnowledge(ServerPlayer player) {
-        RandomSource random = player.getRandom();
-        int observation = KnowledgeType.OBSERVATION.progression();
-        int theory = KnowledgeType.THEORY.progression();
-        ResearchGrants.grantConvertedKnowledge(
-                player, KnowledgeType.OBSERVATION, Mth.randomBetweenInclusive(random, observation / 2, observation));
-        ResearchGrants.grantConvertedKnowledge(
-                player, KnowledgeType.THEORY, Mth.randomBetweenInclusive(random, theory / 3, theory / 2));
+        return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 }

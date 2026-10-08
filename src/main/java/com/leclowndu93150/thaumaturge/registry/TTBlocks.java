@@ -21,8 +21,6 @@ import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotemCharged;
 import com.leclowndu93150.thaumaturge.content.decor.BlockPavingStone;
 import com.leclowndu93150.thaumaturge.content.decor.BlockStairsTT;
-import com.leclowndu93150.thaumaturge.content.decor.BlockStonePorous;
-import com.leclowndu93150.thaumaturge.content.decor.BlockStoneTT;
 import com.leclowndu93150.thaumaturge.content.decor.BlockTable;
 import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.decor.banner.BannerStandingBlock;
@@ -38,7 +36,6 @@ import com.leclowndu93150.thaumaturge.content.device.BlockItemGrate;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampArcane;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampFertility;
 import com.leclowndu93150.thaumaturge.content.device.BlockLampGrowth;
-import com.leclowndu93150.thaumaturge.content.device.BlockLevitator;
 import com.leclowndu93150.thaumaturge.content.device.BlockRedstoneRelay;
 import com.leclowndu93150.thaumaturge.content.device.BlockStabilizer;
 import com.leclowndu93150.thaumaturge.content.device.BlockVisBattery;
@@ -46,6 +43,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockVisGenerator;
 import com.leclowndu93150.thaumaturge.content.device.BlockVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.bore.BlockArcaneBore;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockFluxScrubber;
+import com.leclowndu93150.thaumaturge.content.device.levitator.BlockLevitator;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockPotionSprayer;
@@ -120,14 +118,14 @@ import com.leclowndu93150.thaumaturge.content.workbench.BlockArcaneWorkbenchChar
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.content.world.mound.BlockLoot;
 import com.leclowndu93150.thaumaturge.content.world.plant.BlockGrassAmbient;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantCinderpearl;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantShimmerleaf;
-import com.leclowndu93150.thaumaturge.content.world.plant.BlockPlantVishroom;
+import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantBlock;
+import com.leclowndu93150.thaumaturge.content.world.plant.MagicPlantTraits;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSaplingTT;
 import com.leclowndu93150.thaumaturge.content.world.tree.BlockSilverwoodNodeLog;
 import com.leclowndu93150.thaumaturge.content.world.tree.TTTreeGrowers;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -876,32 +874,32 @@ public final class TTBlocks {
     public static final DeferredBlock<BlockPillar> PILLAR_ELDRITCH =
             BLOCKS.registerBlock("pillar_eldritch", BlockPillar::new, pillarProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ARCANE =
-            BLOCKS.registerBlock("stone_arcane", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> STONE_ARCANE =
+            BLOCKS.registerBlock("stone_arcane", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ARCANE_BRICK =
-            BLOCKS.registerBlock("stone_arcane_brick", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> STONE_ARCANE_BRICK =
+            BLOCKS.registerBlock("stone_arcane_brick", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ANCIENT =
-            BLOCKS.registerBlock("stone_ancient", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> STONE_ANCIENT =
+            BLOCKS.registerBlock("stone_ancient", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ANCIENT_TILE =
-            BLOCKS.registerBlock("stone_ancient_tile", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> STONE_ANCIENT_TILE =
+            BLOCKS.registerBlock("stone_ancient_tile", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ANCIENT_ROCK =
-            BLOCKS.registerBlock("stone_ancient_rock", props -> new BlockStoneTT(props, true), unbreakableProps());
+    public static final DeferredBlock<Block> STONE_ANCIENT_ROCK =
+            BLOCKS.registerBlock("stone_ancient_rock", Block::new, unbreakableProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ANCIENT_GLYPHED =
-            BLOCKS.registerBlock("stone_ancient_glyphed", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> STONE_ANCIENT_GLYPHED =
+            BLOCKS.registerBlock("stone_ancient_glyphed", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ANCIENT_DOORWAY =
-            BLOCKS.registerBlock("stone_ancient_doorway", props -> new BlockStoneTT(props, true), unbreakableProps());
+    public static final DeferredBlock<Block> STONE_ANCIENT_DOORWAY =
+            BLOCKS.registerBlock("stone_ancient_doorway", Block::new, unbreakableProps());
 
-    public static final DeferredBlock<BlockStoneTT> STONE_ELDRITCH_TILE =
-            BLOCKS.registerBlock("stone_eldritch_tile", props -> new BlockStoneTT(props, false), eldritchTileProps());
+    public static final DeferredBlock<Block> STONE_ELDRITCH_TILE =
+            BLOCKS.registerBlock("stone_eldritch_tile", Block::new, eldritchTileProps());
 
-    public static final DeferredBlock<BlockStonePorous> STONE_POROUS =
-            BLOCKS.registerBlock("stone_porous", BlockStonePorous::new, porousProps());
+    public static final DeferredBlock<Block> STONE_POROUS =
+            BLOCKS.registerBlock("stone_porous", Block::new, porousProps());
 
     public static final DeferredBlock<BlockStairsTT> STAIRS_ARCANE = BLOCKS.registerBlock(
             "stairs_arcane", props -> new BlockStairsTT(STONE_ARCANE.get().defaultBlockState(), props), stoneProps());
@@ -914,11 +912,11 @@ public final class TTBlocks {
     public static final DeferredBlock<BlockStairsTT> STAIRS_ANCIENT = BLOCKS.registerBlock(
             "stairs_ancient", props -> new BlockStairsTT(STONE_ANCIENT.get().defaultBlockState(), props), stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> MATRIX_SPEED =
-            BLOCKS.registerBlock("matrix_speed", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> MATRIX_SPEED =
+            BLOCKS.registerBlock("matrix_speed", Block::new, stoneProps());
 
-    public static final DeferredBlock<BlockStoneTT> MATRIX_COST =
-            BLOCKS.registerBlock("matrix_cost", props -> new BlockStoneTT(props, false), stoneProps());
+    public static final DeferredBlock<Block> MATRIX_COST =
+            BLOCKS.registerBlock("matrix_cost", Block::new, stoneProps());
 
     public static final DeferredBlock<BlockVisBattery> VIS_BATTERY = BLOCKS.registerBlock(
             "vis_battery",
@@ -1303,9 +1301,10 @@ public final class TTBlocks {
 
     //
 
-    public static final DeferredBlock<BlockPlantShimmerleaf> PLANT_SHIMMERLEAF = BLOCKS.registerBlock(
+    public static final DeferredBlock<MagicPlantBlock> PLANT_SHIMMERLEAF = BLOCKS.registerBlock(
             "shimmerleaf",
-            BlockPlantShimmerleaf::new,
+            props -> new MagicPlantBlock(
+                    TTBlockTags.SHIMMERLEAF_SOIL, MagicPlantTraits.SHIMMERLEAF_GLINTS, Optional.empty(), props),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.PLANT)
                     .noCollission()
@@ -1327,9 +1326,10 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPlantCinderpearl> PLANT_CINDERPEARL = BLOCKS.registerBlock(
+    public static final DeferredBlock<MagicPlantBlock> PLANT_CINDERPEARL = BLOCKS.registerBlock(
             "cinderpearl",
-            BlockPlantCinderpearl::new,
+            props -> new MagicPlantBlock(
+                    TTBlockTags.CINDERPEARL_SOIL, MagicPlantTraits.CINDERPEARL_EMBERS, Optional.empty(), props),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .noCollission()
@@ -1339,9 +1339,13 @@ public final class TTBlocks {
                     .pushReaction(PushReaction.DESTROY)
                     .noOcclusion());
 
-    public static final DeferredBlock<BlockPlantVishroom> PLANT_VISHROOM = BLOCKS.registerBlock(
+    public static final DeferredBlock<MagicPlantBlock> PLANT_VISHROOM = BLOCKS.registerBlock(
             "vishroom",
-            BlockPlantVishroom::new,
+            props -> new MagicPlantBlock(
+                    TTBlockTags.VISHROOM_SOIL,
+                    MagicPlantTraits.VISHROOM_SPORES,
+                    MagicPlantTraits.VISHROOM_NAUSEA,
+                    props),
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_PURPLE)
                     .noCollission()

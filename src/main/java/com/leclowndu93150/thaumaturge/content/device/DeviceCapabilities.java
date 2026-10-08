@@ -17,9 +17,10 @@ public final class DeviceCapabilities {
 
     @SubscribeEvent
     public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.LAMP_GROWTH.get(), (be, side) -> be);
         event.registerBlockEntity(
-                EssentiaCapabilities.TRANSPORT, TTBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be);
+                EssentiaCapabilities.TRANSPORT, TTBlockEntities.LAMP_GROWTH.get(), (be, side) -> be.intake());
+        event.registerBlockEntity(
+                EssentiaCapabilities.TRANSPORT, TTBlockEntities.LAMP_FERTILITY.get(), (be, side) -> be.intake());
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(
                 EssentiaCapabilities.TRANSPORT,

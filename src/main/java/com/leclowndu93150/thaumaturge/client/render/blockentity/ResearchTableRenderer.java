@@ -1,13 +1,13 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.client.entity.TTModelLayers;
 import com.leclowndu93150.thaumaturge.client.model.entity.ResearchTableModel;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -68,9 +68,8 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
                 ? table.getBlockState().getValue(BlockResearchTable.FACING)
                 : Direction.NORTH;
         boolean hasTools = table.items()
-                        .getStackInSlot(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS)
-                        .getItem()
-                instanceof IScribeTools;
+                .getStackInSlot(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS)
+                .is(TTItemTags.SCRIBING_TOOLS);
         ItemStack note = table.items().getStackInSlot(BlockEntityResearchTable.SLOT_NOTE);
         ResearchNoteData data = ResearchNotes.dataOf(note);
         boolean hasNote = !note.isEmpty() && data != null;

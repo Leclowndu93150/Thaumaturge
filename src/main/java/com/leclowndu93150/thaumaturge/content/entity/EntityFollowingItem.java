@@ -1,145 +1,114 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
+import com.leclowndu93150.thaumaturge.content.particle.BubbleParticleOptions;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.Mth;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
+import org.jspecify.annotations.Nullable;
 
-public class EntityFollowingItem extends EntitySpecialItem implements IEntityWithComplexSpawn {
-    private static final int BUBBLE_TYPE = 10;
-    private static final double DEFAULT_GRAVITY = 0.04;
+public final class EntityFollowingItem extends ItemEntity implements IEntityWithComplexSpawn {
+    private static final int NO_COLLECTOR = -1;
+    private static final int ACCELERATION_TICKS = 20;
+    private static final double ARRIVAL_RADIUS = 0.5;
+    private static final double ARRIVAL_BRAKE = 0.1;
+    private static final int BUBBLE_COLOR = 0xFF6F86FF;
+    private static final float BUBBLE_SCALE = 0.35F;
+    private static final float BUBBLE_SCALE_SPREAD = 0.25F;
+    private static final int BUBBLE_AGE = 14;
+    private static final int BUBBLE_AGE_SPREAD = 8;
+    private static final float BUBBLE_RISE = -0.002F;
+    private static final double BUBBLE_SCATTER = 0.12;
 
-    private double targetX;
-    private double targetY;
-    private double targetZ;
-    private int type = 3;
-    public Entity target = null;
-    private int age = 20;
-    private double gravity = DEFAULT_GRAVITY;
+    private @Nullable Entity collector;
+    private int pursuitTicks;
 
     public EntityFollowingItem(EntityType<? extends EntityFollowingItem> type, Level level) {
         super(type, level);
     }
 
-    public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack) {
-        super(TTEntities.FOLLOWING_ITEM.get(), level);
-        this.setPos(x, y, z);
-        this.setItem(stack);
-        this.setYRot((float) (Math.random() * 360.0));
-        this.lifespan = stack.getItem() == null ? 6000 : stack.getEntityLifespan(level);
-    }
-
-    public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack, Entity target, int type) {
-        this(level, x, y, z, stack);
-        this.target = target;
-        this.targetX = target.getX();
-        this.targetY = target.getBoundingBox().minY + target.getBbHeight() / 2.0F;
-        this.targetZ = target.getZ();
-        this.type = type;
-        this.noPhysics = true;
-    }
-
-    public EntityFollowingItem(
-            Level level, double x, double y, double z, ItemStack stack, double tx, double ty, double tz) {
-        this(level, x, y, z, stack);
-        this.targetX = tx;
-        this.targetY = ty;
-        this.targetZ = tz;
+    public EntityFollowingItem(Level level, double x, double y, double z, ItemStack stack, Entity collector) {
+        this(TTEntities.FOLLOWING_ITEM.get(), level);
+        setPos(x, y, z);
+        setItem(stack);
+        setYRot(random.nextFloat() * 360.0F);
+        lifespan = stack.getEntityLifespan(level);
+        follow(collector);
     }
 
     @Override
     public void tick() {
-        if (this.target != null) {
-            this.targetX = this.target.getX();
-            this.targetY = this.target.getBoundingBox().minY + this.target.getBbHeight() / 2.0F;
-            this.targetZ = this.target.getZ();
+        if (collector != null) {
+            pursue(collector);
         }
-
-        if (this.targetX == 0.0 && this.targetY == 0.0 && this.targetZ == 0.0) {
-            this.setDeltaMovement(this.getDeltaMovement().subtract(0.0, this.gravity, 0.0));
-        } else {
-            float xd = (float) (this.targetX - this.getX());
-            float yd = (float) (this.targetY - this.getY());
-            float zd = (float) (this.targetZ - this.getZ());
-            if (this.age > 1) {
-                this.age--;
-            }
-
-            double distance = Mth.sqrt(xd * xd + yd * yd + zd * zd);
-            if (distance > 0.5) {
-                distance *= this.age;
-                this.setDeltaMovement(xd / distance, yd / distance, zd / distance);
-            } else {
-                this.setDeltaMovement(this.getDeltaMovement().scale(0.1));
-                this.targetX = 0.0;
-                this.targetY = 0.0;
-                this.targetZ = 0.0;
-                this.target = null;
-                this.noPhysics = false;
-            }
-
-            if (this.level().isClientSide()) {
-                float h = (float) ((this.getBoundingBox().maxY - this.getBoundingBox().minY) / 2.0)
-                        + Mth.sin(this.getAge() / 10.0F + this.bobOffs) * 0.1F
-                        + 0.1F;
-                double fx = this.xo + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
-                double fy = this.yo + h + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
-                double fz = this.zo + (this.random.nextFloat() - this.random.nextFloat()) * 0.125F;
-                if (this.type != BUBBLE_TYPE) {
-                    ClientEffects.nitorCore(
-                            this.level(),
-                            fx,
-                            fy,
-                            fz,
-                            this.random.nextGaussian() * 0.01,
-                            this.random.nextGaussian() * 0.01,
-                            this.random.nextGaussian() * 0.01,
-                            0xFFFFFF);
-                } else {
-                    ClientEffects.followingBubble(this.level(), fx, fy, fz);
-                }
-            }
-        }
-
         super.tick();
     }
 
-    @Override
-    public void addAdditionalSaveData(CompoundTag output) {
-        super.addAdditionalSaveData(output);
-        output.putShort("type", (short) this.type);
+    private void follow(@Nullable Entity entity) {
+        collector = entity;
+        setNoGravity(entity != null);
+    }
+
+    private void pursue(Entity target) {
+        if (target.isRemoved()) {
+            follow(null);
+            return;
+        }
+        Vec3 toTarget =
+                target.position().add(0.0, target.getBbHeight() * 0.5, 0.0).subtract(position());
+        double distance = toTarget.length();
+        if (distance <= ARRIVAL_RADIUS) {
+            setDeltaMovement(getDeltaMovement().scale(ARRIVAL_BRAKE));
+            follow(null);
+            return;
+        }
+        pursuitTicks = Math.min(pursuitTicks + 1, ACCELERATION_TICKS - 1);
+        setDeltaMovement(toTarget.scale(1.0 / (distance * (ACCELERATION_TICKS - pursuitTicks))));
+        if (level().isClientSide()) {
+            trailBubble();
+        }
+    }
+
+    private void trailBubble() {
+        RandomSource random = getRandom();
+        BubbleParticleOptions bubble = new BubbleParticleOptions(
+                BUBBLE_COLOR,
+                1.0F,
+                BUBBLE_SCALE + random.nextFloat() * BUBBLE_SCALE_SPREAD,
+                BUBBLE_AGE + random.nextInt(BUBBLE_AGE_SPREAD),
+                BUBBLE_RISE,
+                false);
+        level().addParticle(
+                        bubble,
+                        xo + random.triangle(0.0, BUBBLE_SCATTER),
+                        yo + getBbHeight() * 0.5 + random.triangle(0.0, BUBBLE_SCATTER),
+                        zo + random.triangle(0.0, BUBBLE_SCATTER),
+                        0.0,
+                        0.0,
+                        0.0);
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag input) {
-        super.readAdditionalSaveData(input);
-        this.type = (input.contains("type") ? input.getShort("type") : (short) 3);
+    public boolean ignoreExplosion(Explosion explosion) {
+        return true;
     }
 
     @Override
     public void writeSpawnData(RegistryFriendlyByteBuf buffer) {
-        buffer.writeInt(this.target == null ? -1 : this.target.getId());
-        buffer.writeDouble(this.targetX);
-        buffer.writeDouble(this.targetY);
-        buffer.writeDouble(this.targetZ);
-        buffer.writeByte(this.type);
+        ByteBufCodecs.VAR_INT.encode(buffer, collector == null ? NO_COLLECTOR : collector.getId());
     }
 
     @Override
     public void readSpawnData(RegistryFriendlyByteBuf buffer) {
-        int id = buffer.readInt();
-        if (id > -1) {
-            this.target = this.level().getEntity(id);
-        }
-        this.targetX = buffer.readDouble();
-        this.targetY = buffer.readDouble();
-        this.targetZ = buffer.readDouble();
-        this.type = buffer.readByte();
+        int collectorId = ByteBufCodecs.VAR_INT.decode(buffer);
+        follow(collectorId == NO_COLLECTOR ? null : level().getEntity(collectorId));
     }
 }

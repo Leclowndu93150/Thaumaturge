@@ -1,4 +1,4 @@
-package com.leclowndu93150.thaumaturge.content.device;
+package com.leclowndu93150.thaumaturge.content.device.levitator;
 
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -15,7 +15,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -78,7 +77,12 @@ public final class BlockLevitator extends BaseEntityBlock {
 
     @Override
     protected void neighborChanged(
-            BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos fromPos, boolean movedByPiston) {
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Block neighborBlock,
+            BlockPos neighborPos,
+            boolean movedByPiston) {
         boolean enabled = !level.hasNeighborSignal(pos);
         if (enabled != state.getValue(BlockStateProperties.ENABLED)) {
             level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, enabled), 3);
@@ -96,7 +100,7 @@ public final class BlockLevitator extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityLevitator levitator)) {
             return InteractionResult.PASS;
         }
-        levitator.increaseRange(player);
+        levitator.cycleReach(player);
         level.playSound(
                 null,
                 pos.getX() + 0.5,
@@ -118,10 +122,5 @@ public final class BlockLevitator extends BaseEntityBlock {
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
         return createTickerHelper(type, TTBlockEntities.LEVITATOR.get(), BlockEntityLevitator::tick);
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
     }
 }

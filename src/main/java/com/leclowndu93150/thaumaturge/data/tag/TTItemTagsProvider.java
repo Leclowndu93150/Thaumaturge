@@ -63,6 +63,7 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
             tag(TTItemTags.NITORS).add(TTItems.NITORS.get(dye).get());
         }
 
+        tag(TTItemTags.SCRIBING_TOOLS).add(TTItems.SCRIBING_TOOLS.get());
         tag(TTItemTags.WANDS).add(TTItems.WAND.get(), TTItems.PECH_WAND.get());
         tag(TTItemTags.WAND_RODS)
                 .add(

@@ -1,11 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.decor;
 
-import com.leclowndu93150.thaumaturge.api.items.IScribeTools;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockResearchTable;
 import com.leclowndu93150.thaumaturge.content.research.table.ResearchTablePart;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -74,7 +74,7 @@ public final class BlockTable extends Block {
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
-        if (this != TTBlocks.TABLE_WOOD.get() || !(stack.getItem() instanceof IScribeTools)) {
+        if (this != TTBlocks.TABLE_WOOD.get() || !stack.is(TTItemTags.SCRIBING_TOOLS)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         if (level.isClientSide()) {
@@ -103,10 +103,7 @@ public final class BlockTable extends Block {
                     3);
             if (level.getBlockEntity(pos) instanceof BlockEntityResearchTable researchTable) {
                 ItemStack tools = stack.copy();
-                researchTable
-                        .items()
-                        .setStackInSlot(
-                                BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, tools.copyWithCount(tools.getCount()));
+                researchTable.items().setStackInSlot(BlockEntityResearchTable.SLOT_SCRIBE_TOOLS, tools);
                 researchTable.setChanged();
             }
             player.setItemInHand(hand, ItemStack.EMPTY);

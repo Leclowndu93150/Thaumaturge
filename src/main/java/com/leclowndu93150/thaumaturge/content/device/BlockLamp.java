@@ -4,12 +4,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -26,7 +26,13 @@ public abstract class BlockLamp extends BaseEntityBlock {
         registerDefaultState(getStateDefinition()
                 .any()
                 .setValue(BlockStateProperties.FACING, Direction.DOWN)
-                .setValue(BlockStateProperties.ENABLED, true));
+                .setValue(BlockStateProperties.ENABLED, false));
+    }
+
+    public static void showLit(Level level, BlockPos pos, BlockState state, boolean lit) {
+        if (state.getValue(BlockStateProperties.ENABLED) != lit) {
+            level.setBlock(pos, state.setValue(BlockStateProperties.ENABLED, lit), Block.UPDATE_ALL);
+        }
     }
 
     @Override
@@ -43,7 +49,7 @@ public abstract class BlockLamp extends BaseEntityBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
                 .setValue(BlockStateProperties.FACING, context.getClickedFace().getOpposite())
-                .setValue(BlockStateProperties.ENABLED, !context.getLevel().hasNeighborSignal(context.getClickedPos()));
+                .setValue(BlockStateProperties.ENABLED, false);
     }
 
     @Override
@@ -64,10 +70,5 @@ public abstract class BlockLamp extends BaseEntityBlock {
             return Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, directionToNeighbour, neighbourState, level, pos, neighbourPos);
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
     }
 }

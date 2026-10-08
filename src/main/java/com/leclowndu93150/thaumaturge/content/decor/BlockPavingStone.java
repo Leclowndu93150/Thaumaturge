@@ -84,10 +84,7 @@ public final class BlockPavingStone extends BaseEntityBlock {
         if (!barrier || level.isClientSide()) {
             return null;
         }
-        return createTickerHelper(
-                type,
-                TTBlockEntities.BARRIER_STONE.get(),
-                (tickLevel, pos, tickState, barrierStone) -> barrierStone.serverTick(tickLevel, pos));
+        return createTickerHelper(type, TTBlockEntities.BARRIER_STONE.get(), BlockEntityBarrierStone::serverTick);
     }
 
     @Override

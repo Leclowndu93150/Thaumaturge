@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerInput;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTriggerPlacement;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
-import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -50,8 +49,17 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
                     r -> r.research,
                     DustTriggerMultiblockRecipe::new);
 
-    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER =
-            new SimpleRecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+    public static final RecipeSerializer<DustTriggerMultiblockRecipe> SERIALIZER = new RecipeSerializer<>() {
+        @Override
+        public MapCodec<DustTriggerMultiblockRecipe> codec() {
+            return MAP_CODEC;
+        }
+
+        @Override
+        public StreamCodec<RegistryFriendlyByteBuf, DustTriggerMultiblockRecipe> streamCodec() {
+            return STREAM_CODEC;
+        }
+    };
 
     private final ResourceLocation blueprintId;
     private final ItemStack result;
@@ -107,24 +115,9 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         if (blueprint == null || placement == null || placement.facing() == null) {
             return List.of(pos);
         }
-        int ys = blueprint.ySize();
-        int rotations = MultiblockMatcher.rotationsFor(placement.facing());
         BlockPos origin = pos.offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
-        List<BlockPos> out = new java.util.ArrayList<>();
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-            matrix.rotate90DegRight(rotations);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part == null) {
-                        continue;
-                    }
-                    out.add(origin.offset(x, -y + (ys - 1), z));
-                }
-            }
-        }
-        return out;
+        return new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing()))
+                .cells().stream().map(cell -> origin.offset(cell.offset())).toList();
     }
 
     @Override
@@ -141,24 +134,19 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         if (blueprint == null) {
             return;
         }
-        int ys = blueprint.ySize();
-        int rotations = MultiblockMatcher.rotationsFor(placement.facing());
         BlockPos origin = input.pos().offset(placement.xOffset(), placement.yOffset(), placement.zOffset());
-        for (int y = 0; y < ys; y++) {
-            BlueprintMatrix matrix = new BlueprintMatrix(blueprint, y);
-            matrix.rotate90DegRight(rotations);
-            for (int x = 0; x < matrix.rows(); x++) {
-                for (int z = 0; z < matrix.cols(); z++) {
-                    BlueprintPart part = matrix.get(x, z);
-                    if (part == null) {
-                        continue;
-                    }
-                    BlockPos cellPos = origin.offset(x, -y + (ys - 1), z);
-                    int delay = part.priority();
-                    BlockState original = level.getBlockState(cellPos);
-                    enqueueForPart(serverLevel, cellPos, original, part, placement.facing(), useFace, player, delay);
-                }
-            }
+        for (BlueprintCell cell :
+                new RotatedBlueprint(blueprint, MultiblockMatcher.rotationsFor(placement.facing())).cells()) {
+            BlockPos cellPos = origin.offset(cell.offset());
+            enqueueForPart(
+                    serverLevel,
+                    cellPos,
+                    level.getBlockState(cellPos),
+                    cell.part(),
+                    placement.facing(),
+                    useFace,
+                    player,
+                    cell.part().priority());
         }
     }
 
@@ -216,7 +204,8 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
         if (registry == null) {
             return null;
         }
-        return registry.get(key).map(Holder::value).orElse(null);
+        Holder<Blueprint> holder = registry.get(key).orElse(null);
+        return holder == null ? null : holder.value();
     }
 
     @Override
@@ -225,8 +214,8 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return ItemStack.EMPTY;
+    public String getGroup() {
+        return "";
     }
 
     @Override
@@ -237,5 +226,10 @@ public final class DustTriggerMultiblockRecipe implements DustTrigger {
     @Override
     public RecipeType<DustTrigger> getType() {
         return TTRecipeTypes.DUST_TRIGGER.get();
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider registries) {
+        return result.copy();
     }
 }

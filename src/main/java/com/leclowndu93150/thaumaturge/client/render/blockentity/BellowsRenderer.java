@@ -42,7 +42,7 @@ public final class BellowsRenderer implements BlockEntityRenderer<BlockEntityBel
             int overlay) {
         BlockState state = bellows.getBlockState();
         Direction facing = state.getValue(BlockBellows.FACING);
-        float scale = bellows.inflation;
+        float scale = bellows.inflation(partialTick);
 
         poseStack.pushPose();
         poseStack.translate(0.5F, 0.5F, 0.5F);

@@ -30,7 +30,6 @@ public class BlockBellows extends BaseEntityBlock {
     public static final BooleanProperty ENABLED = BlockStateProperties.ENABLED;
 
     private static final MapCodec<BlockBellows> CODEC = simpleCodec(BlockBellows::new);
-
     private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromNorth(Shapes.or(
             Block.box(2.0, 2.0, 2.0, 14.0, 4.0, 14.0),
             Block.box(2.0, 7.0, 2.0, 14.0, 9.0, 14.0),
@@ -61,8 +60,6 @@ public class BlockBellows extends BaseEntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState()
-                // Bellows point toward the block face they were attached to; player pitch must not change
-                // a side attachment's direction.
                 .setValue(FACING, context.getClickedFace().getOpposite())
                 .setValue(ENABLED, true);
     }
@@ -80,6 +77,9 @@ public class BlockBellows extends BaseEntityBlock {
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TTBlockEntities.BELLOWS.get(), BlockEntityBellows::staticTick);
+        if (level.isClientSide()) {
+            return null;
+        }
+        return createTickerHelper(type, TTBlockEntities.BELLOWS.get(), BlockEntityBellows::serverTick);
     }
 }
