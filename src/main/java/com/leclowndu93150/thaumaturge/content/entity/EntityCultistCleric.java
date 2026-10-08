@@ -4,21 +4,19 @@ import com.leclowndu93150.thaumaturge.content.entity.ai.AltarFocusGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,8 +31,8 @@ import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.SmallFireball;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 
 public class EntityCultistCleric extends EntityCultist implements RangedAttackMob, ISidedHurt {
@@ -48,9 +46,6 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     private static final int RITUAL_RESTRICTION_RADIUS = 8;
     private static final int RITUAL_ANCHOR_SEARCH_RADIUS = 4;
     private static final int RITUAL_ANCHOR_SEARCH_HEIGHT = 2;
-
-    private static final float BOOTS_CHANCE_HARD = 0.3F;
-    private static final float BOOTS_CHANCE = 0.1F;
     private static final float ORB_CHANCE = 0.34F;
     private static final float ORB_SPEED = 0.66F;
     private static final float ORB_SPREAD = 3.0F;
@@ -106,14 +101,8 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     }
 
     @Override
-    protected void setLoot(DifficultyInstance difficulty) {
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_ROBE_HELM.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_ROBE_CHEST.get()));
-        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_ROBE_LEGS.get()));
-        float bootsChance = this.level().getDifficulty() == Difficulty.HARD ? BOOTS_CHANCE_HARD : BOOTS_CHANCE;
-        if (this.random.nextFloat() < bootsChance) {
-            this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TTItems.CRIMSON_BOOTS.get()));
-        }
+    protected ResourceKey<LootTable> equipmentTable() {
+        return TTLootTables.EQUIPMENT_CULTIST_CLERIC;
     }
 
     @Override

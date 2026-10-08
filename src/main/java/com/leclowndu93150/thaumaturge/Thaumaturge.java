@@ -52,6 +52,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.ArcaneCraftingTransactio
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
 import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
+import com.leclowndu93150.thaumaturge.registry.TTLootTypes;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
 import com.leclowndu93150.thaumaturge.registry.TTSpellActions;
 import com.leclowndu93150.thaumaturge.registry.TTSpellBehaviors;
@@ -110,6 +111,7 @@ public final class Thaumaturge {
         TTIngredientTypes.register(modBus);
         TTLabyrinthMarkers.register(modBus);
         TTLabyrinthEncounterTypes.register(modBus);
+        TTLootTypes.register(modBus);
         TTObeliskSiteBehaviors.register(modBus);
         TTStructureProcessors.register(modBus);
         TTGolemAccessories.register();

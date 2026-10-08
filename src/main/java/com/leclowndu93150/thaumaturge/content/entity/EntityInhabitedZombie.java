@@ -1,19 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
@@ -24,7 +23,6 @@ import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -32,8 +30,7 @@ import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public class EntityInhabitedZombie extends Zombie {
-    private static final float GEAR_CHANCE_HARD = 0.9F;
-    private static final float GEAR_CHANCE = 0.6F;
+
     private static final int BURST_PARTICLES = 20;
 
     public EntityInhabitedZombie(EntityType<? extends EntityInhabitedZombie> type, Level level) {
@@ -76,14 +73,9 @@ public class EntityInhabitedZombie extends Zombie {
             DifficultyInstance difficulty,
             MobSpawnType reason,
             @Nullable SpawnGroupData groupData) {
-        float gearChance = level.getDifficulty() == Difficulty.HARD ? GEAR_CHANCE_HARD : GEAR_CHANCE;
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_PLATE_HELM.get()));
-        if (this.random.nextFloat() <= gearChance) {
-            this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_PLATE_CHEST.get()));
-        }
-        if (this.random.nextFloat() <= gearChance) {
-            this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_PLATE_LEGS.get()));
-        }
+
+        this.equip(TTLootTables.EQUIPMENT_INHABITED_ZOMBIE, Map.of());
+
         return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
 

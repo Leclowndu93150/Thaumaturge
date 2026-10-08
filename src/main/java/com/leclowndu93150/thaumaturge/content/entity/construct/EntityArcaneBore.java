@@ -11,6 +11,7 @@ import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -54,8 +55,6 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     private static final int DIG_VISUAL_GRACE_TICKS = 4;
     private static final double EJECT_DISTANCE = 0.75;
     private static final float DISMANTLE_DROP_HEIGHT = 0.5F;
-    private static final float COMMON_LOOT_CHANCE = 0.5F;
-    private static final float RARE_LOOT_CHANCE = 0.2F;
     private static final double HURT_YAW_SPREAD = 45.0;
     private static final double HURT_PITCH_SPREAD = 20.0;
     private static final double KNOCKBACK_CLAMP = 0.1;
@@ -232,12 +231,10 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (level().isClientSide()) {
-            return super.hurt(source, amount);
-        }
+        if (!(level() instanceof ServerLevel level)) return false;
         if (source.getEntity() instanceof LivingEntity living && isOwner(living)) {
             Direction face =
-                    Direction.getNearest(getX() - living.getX(), getY() - living.getY(), getZ() - living.getZ());
+                    Direction.getNearest(living.getX() - getX(), living.getY() - getY(), living.getZ() - getZ());
             if (face != Direction.DOWN) {
                 setFacing(face);
             }
@@ -262,7 +259,7 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
     }
 
     private void dropHeld() {
-        if (!getMainHandItem().isEmpty()) {
+        if (!getMainHandItem().isEmpty() && level() instanceof ServerLevel serverLevel) {
             spawnAtLocation(getMainHandItem(), DISMANTLE_DROP_HEIGHT);
             setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
@@ -317,44 +314,20 @@ public class EntityArcaneBore extends EntityOwnedConstruct implements ArcaneBore
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
+        HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
-        core.setCharge(input.getFloat("charge"));
-        setFacing(Direction.values()[input.getByte("facing")]);
-        setActive(input.getBoolean("active"));
+        core.setCharge((input.contains("charge") ? input.getFloat("charge") : 0.0F));
+        setFacing(Direction.values()[(input.contains("facing") ? input.getByte("facing") : (byte) 0)]);
+        setActive((input.contains("active") ? input.getBoolean("active") : false));
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
+        HolderLookup.Provider registries = registryAccess();
         super.addAdditionalSaveData(output);
         output.putFloat("charge", core.charge());
         output.putByte("facing", (byte) getFacing().ordinal());
         output.putBoolean("active", isActive());
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTItems.MIND_CLOCKWORK.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTItems.MORPHIC_RESONATOR.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTBlocks.CRYSTAL_AER.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < RARE_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTBlocks.CRYSTAL_TERRA.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTItems.MECHANISM_SIMPLE.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTItems.PLATE_BRASS.get()), DISMANTLE_DROP_HEIGHT);
-        }
-        if (random.nextFloat() < COMMON_LOOT_CHANCE) {
-            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), DISMANTLE_DROP_HEIGHT);
-        }
     }
 
     @Override

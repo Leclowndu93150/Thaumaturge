@@ -7,7 +7,9 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityLampArcane;
 import com.leclowndu93150.thaumaturge.content.equipment.RefiningResults;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -131,9 +133,10 @@ public final class ArcaneBoreCore {
         boolean dug = false;
         if (digTarget != null && !level.isEmptyBlock(digTarget)) {
             BlockState state = level.getBlockState(digTarget);
+            Set<ItemEntity> lying = new HashSet<>(itemsAround(level, digTarget));
             dug = breakAsFakePlayer(host, level, digTarget);
             if (dug) {
-                collectAndEjectDrops(host, level, digTarget, state);
+                collectAndEjectDrops(host, level, digTarget, state, lying);
                 damageTool(host);
                 lightTunnel(host, level);
             }
@@ -158,12 +161,18 @@ public final class ArcaneBoreCore {
         }
     }
 
-    private void collectAndEjectDrops(ArcaneBoreHost host, ServerLevel level, BlockPos target, BlockState state) {
-        List<ItemEntity> nearby = level.getEntitiesOfClass(
-                ItemEntity.class, new AABB(target).inflate(DROP_COLLECT_RANGE, DROP_COLLECT_RANGE, DROP_COLLECT_RANGE));
+    private static List<ItemEntity> itemsAround(ServerLevel level, BlockPos target) {
+        return level.getEntitiesOfClass(ItemEntity.class, new AABB(target).inflate(DROP_COLLECT_RANGE));
+    }
+
+    private void collectAndEjectDrops(
+            ArcaneBoreHost host, ServerLevel level, BlockPos target, BlockState state, Set<ItemEntity> lying) {
         int refining = ArcaneBoreTool.refining(host.boreTool());
         boolean silk = ArcaneBoreTool.silkTouch(level, host.boreTool());
-        for (ItemEntity item : nearby) {
+        for (ItemEntity item : itemsAround(level, target)) {
+            if (lying.contains(item)) {
+                continue;
+            }
             ItemStack drop = item.getItem().copy();
             item.discard();
             ItemStack ejected = drop;

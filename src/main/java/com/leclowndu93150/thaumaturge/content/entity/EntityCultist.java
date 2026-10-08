@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import java.util.Map;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootTable;
 import org.jspecify.annotations.Nullable;
 
 public abstract class EntityCultist extends Monster {
@@ -42,7 +45,7 @@ public abstract class EntityCultist extends Monster {
         return false;
     }
 
-    protected void setLoot(DifficultyInstance difficulty) {}
+    protected abstract ResourceKey<LootTable> equipmentTable();
 
     @Override
     protected void populateDefaultEquipmentEnchantments(
@@ -54,7 +57,7 @@ public abstract class EntityCultist extends Monster {
             DifficultyInstance difficulty,
             MobSpawnType reason,
             @Nullable SpawnGroupData groupData) {
-        this.setLoot(difficulty);
+        this.equip(equipmentTable(), Map.of());
         return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
 

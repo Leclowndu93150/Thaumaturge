@@ -1,12 +1,11 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -19,15 +18,14 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.providers.VanillaEnchantmentProviders;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 public class EntityCultistKnight extends EntityCultist {
-    private static final float SPECIAL_WEAPON_CHANCE_HARD = 0.05F;
-    private static final float SPECIAL_WEAPON_CHANCE = 0.01F;
+
     private static final float ENCHANT_CHANCE = 0.25F;
 
     public EntityCultistKnight(EntityType<? extends EntityCultistKnight> type, Level level) {
@@ -53,26 +51,8 @@ public class EntityCultistKnight extends EntityCultist {
     }
 
     @Override
-    protected void setLoot(DifficultyInstance difficulty) {
-        this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_PLATE_HELM.get()));
-        this.setItemSlot(EquipmentSlot.CHEST, new ItemStack(TTItems.CRIMSON_PLATE_CHEST.get()));
-        this.setItemSlot(EquipmentSlot.LEGS, new ItemStack(TTItems.CRIMSON_PLATE_LEGS.get()));
-        this.setItemSlot(EquipmentSlot.FEET, new ItemStack(TTItems.CRIMSON_BOOTS.get()));
-        float specialChance =
-                this.level().getDifficulty() == Difficulty.HARD ? SPECIAL_WEAPON_CHANCE_HARD : SPECIAL_WEAPON_CHANCE;
-        if (this.random.nextFloat() < specialChance) {
-            if (this.random.nextInt(5) == 0) {
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TTItems.VOID_SWORD.get()));
-                this.setItemSlot(EquipmentSlot.HEAD, new ItemStack(TTItems.CRIMSON_ROBE_HELM.get()));
-            } else {
-                this.setItemInHand(this.getUsedItemHand(), new ItemStack(TTItems.THAUMIUM_SWORD.get()));
-                if (this.random.nextBoolean()) {
-                    this.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
-                }
-            }
-        } else {
-            this.setItemInHand(this.getUsedItemHand(), new ItemStack(Items.IRON_SWORD));
-        }
+    protected ResourceKey<LootTable> equipmentTable() {
+        return TTLootTables.EQUIPMENT_CULTIST_KNIGHT;
     }
 
     @Override

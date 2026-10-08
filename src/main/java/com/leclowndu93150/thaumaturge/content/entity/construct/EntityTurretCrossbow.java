@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.entity.construct;
 
-import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -36,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityTurretCrossbow extends EntityOwnedConstruct implements RangedAttackMob, ISidedHurt {
+public class EntityTurretCrossbow extends EntityOwnedConstruct implements RangedAttackMob {
     private static final int HEAL_INTERVAL = 80;
     private static final int SWING_TICKS = 6;
     private static final int LOAD_TICKS = 10;
@@ -227,18 +226,9 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        return hurtSided(level(), source, amount);
-    }
-
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        if (!(level() instanceof ServerLevel level)) return false;
         setYRot((float) (getYRot() + random.nextGaussian() * 45.0));
         setXRot((float) (getXRot() + random.nextGaussian() * 20.0));
-        return super.hurt(source, amount);
-    }
-
-    @Override
-    public boolean hurtClient(DamageSource source, float amount) {
         return super.hurt(source, amount);
     }
 
@@ -297,24 +287,6 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
         if (!getMainHandItem().isEmpty() && level() instanceof ServerLevel serverLevel) {
             spawnAtLocation(getMainHandItem(), 0.5F);
             setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-        }
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, source, recentlyHit);
-        float bonus = 0.0F;
-        if (random.nextFloat() < 0.2F + bonus) {
-            spawnAtLocation(new ItemStack(TTItems.MIND_CLOCKWORK.get()), 0.5F);
-        }
-        if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TTItems.MECHANISM_SIMPLE.get()), 0.5F);
-        }
-        if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
-        }
-        if (random.nextFloat() < 0.5F + bonus) {
-            spawnAtLocation(new ItemStack(TTBlocks.PLANK_GREATWOOD.get()), 0.5F);
         }
     }
 

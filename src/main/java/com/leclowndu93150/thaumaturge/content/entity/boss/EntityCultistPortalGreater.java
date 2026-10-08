@@ -1,15 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
-import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultist;
-import com.leclowndu93150.thaumaturge.content.entity.EntityCultistCleric;
-import com.leclowndu93150.thaumaturge.content.entity.EntityCultistKnight;
+import com.leclowndu93150.thaumaturge.content.entity.portal.CultistPortals;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -18,7 +17,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -31,13 +29,11 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
-    private static final byte PULSE_EVENT = 16;
     private static final int PORTAL_XP = 30;
     private static final double ACTIVATION_RANGE = 48.0;
     private static final double MINION_SCAN_RANGE = 32.0;
     private static final int MINION_TIMING_PER_CULTIST = 20;
     private static final int BOSS_STAGE = 12;
-    private static final float KNIGHT_CHANCE = 0.67F;
     private static final int BANNER_DISTANCE = 6;
     private static final int BANNER_STAGE_TICK = 160;
     private static final int CRATE_WINDOW_MAX = 150;
@@ -47,10 +43,10 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
     private static final float CRATE_RARE_CHANCE = 0.05F;
     private static final float CRATE_UNCOMMON_CHANCE = 0.2F;
     private static final float TOUCH_DAMAGE = 8.0F;
-    private static final double TOUCH_RANGE_SQ = 3.0;
     private static final int OVERSPAWN_DAMAGE_BASE = 5;
     private static final float DEATH_EXPLOSION_POWER = 2.0F;
     private static final int ARC_COLOR = 0xBB2222;
+    private static final int HOME_RADIUS = 32;
 
     private int stage;
     private int stageCounter = 200;
@@ -74,14 +70,16 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
+        HolderLookup.Provider registries = registryAccess();
         super.addAdditionalSaveData(output);
         output.putInt("stage", this.stage);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
+        HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
-        this.stage = input.getInt("stage");
+        this.stage = (input.contains("stage") ? input.getInt("stage") : 0);
     }
 
     @Override
@@ -108,7 +106,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         ServerLevel server = (ServerLevel) this.level();
         if (this.stageCounter <= 0) {
             if (this.level().getNearestPlayer(this, ACTIVATION_RANGE) != null) {
-                this.level().broadcastEntityEvent(this, PULSE_EVENT);
+                this.level().broadcastEntityEvent(this, CultistPortals.PULSE_EVENT);
                 if (this.stage <= 4) {
                     this.stageCounter = 15 + this.random.nextInt(10 - this.stage) - this.stage;
                     this.spawnMinions(server);
@@ -127,7 +125,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         } else {
             this.stageCounter--;
             if (this.stageCounter == BANNER_STAGE_TICK && this.stage == 0) {
-                this.level().broadcastEntityEvent(this, PULSE_EVENT);
+                this.level().broadcastEntityEvent(this, CultistPortals.PULSE_EVENT);
                 this.placeBanners(server);
             }
             if (this.stageCounter > CRATE_WINDOW_MIN
@@ -175,7 +173,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
         if (x == (int) this.getX() || z == (int) this.getZ() || !server.isEmptyBlock(pos)) {
             return;
         }
-        this.level().broadcastEntityEvent(this, PULSE_EVENT);
+        this.level().broadcastEntityEvent(this, CultistPortals.PULSE_EVENT);
         float roll = this.random.nextFloat();
         Block crate = TTBlocks.LOOT_CRATE_COMMON.get();
         if (roll < CRATE_RARE_CHANCE) {
@@ -192,61 +190,44 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
     }
 
     private int getTiming() {
-        return this.level()
-                        .getEntitiesOfClass(
-                                EntityCultist.class, this.getBoundingBox().inflate(MINION_SCAN_RANGE))
-                        .size()
-                * MINION_TIMING_PER_CULTIST;
+        return CultistPortals.cultistsNear(this, MINION_SCAN_RANGE) * MINION_TIMING_PER_CULTIST;
     }
 
     private void spawnMinions(ServerLevel server) {
-        EntityCultist cultist = this.random.nextFloat() < KNIGHT_CHANCE
-                ? new EntityCultistKnight(TTEntities.CULTIST_KNIGHT.get(), server)
-                : new EntityCultistCleric(TTEntities.CULTIST_CLERIC.get(), server);
-        this.spawnCultist(server, cultist);
+        EntityCultist cultist = CultistPortals.rollMinion(server, this.random);
+        if (cultist != null) {
+            this.spawnCultist(server, cultist);
+        }
         if (this.stage > BOSS_STAGE) {
             this.hurt(this.damageSources().fellOutOfWorld(), OVERSPAWN_DAMAGE_BASE + this.random.nextInt(5));
         }
     }
 
     private void spawnBoss(ServerLevel server) {
-        EntityCultistLeader leader = new EntityCultistLeader(TTEntities.CULTIST_LEADER.get(), server);
-        this.spawnCultist(server, leader);
+        EntityCultistLeader leader = TTEntities.CULTIST_LEADER.get().create(server);
+        if (leader != null) {
+            this.spawnCultist(server, leader);
+        }
     }
 
     private void spawnCultist(ServerLevel server, Mob cultist) {
-        cultist.setPos(
-                this.getX() + this.random.nextFloat() - this.random.nextFloat(),
-                this.getY() + 0.25,
-                this.getZ() + this.random.nextFloat() - this.random.nextFloat());
-        cultist.finalizeSpawn(
-                server, server.getCurrentDifficultyAt(cultist.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-        cultist.restrictTo(this.blockPosition(), 32);
-        server.addFreshEntity(cultist);
-        if (cultist instanceof EntityCultist minion) {
-            minion.spawnCultistArrivalParticles();
-        }
-        cultist.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
+        cultist.restrictTo(this.blockPosition(), HOME_RADIUS);
+        CultistPortals.summon(this, server, cultist);
     }
 
     @Override
     public void playerTouch(Player player) {
-        if (this.level().isClientSide() || this.distanceToSqr(player) >= TOUCH_RANGE_SQ) {
-            return;
-        }
-        if (player.hurt(this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
-            this.playSound(TTSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
-        }
+        CultistPortals.touch(this, player, TOUCH_DAMAGE);
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0.75F;
+        return CultistPortals.SOUND_VOLUME;
     }
 
     @Override
     public int getAmbientSoundInterval() {
-        return 540;
+        return CultistPortals.AMBIENT_INTERVAL;
     }
 
     @Override
@@ -265,17 +246,9 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
     }
 
     @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
-        if (LabyrinthHelper.isLabyrinthBound(this)) {
-            return;
-        }
-        BossHooks.dropPearl(level, this);
-    }
-
-    @Override
     public void handleEntityEvent(byte event) {
-        if (event == PULSE_EVENT) {
-            this.pulse = 10;
+        if (event == CultistPortals.PULSE_EVENT) {
+            this.pulse = CultistPortals.PULSE_TICKS;
         } else {
             super.handleEntityEvent(event);
         }
@@ -288,17 +261,7 @@ public class EntityCultistPortalGreater extends EntityThaumaturgeBoss {
 
     @Override
     public void die(DamageSource source) {
-        if (!this.level().isClientSide()) {
-            this.level()
-                    .explode(
-                            this,
-                            this.getX(),
-                            this.getY(),
-                            this.getZ(),
-                            DEATH_EXPLOSION_POWER,
-                            false,
-                            Level.ExplosionInteraction.NONE);
-        }
+        CultistPortals.collapse(this, DEATH_EXPLOSION_POWER);
         super.die(source);
     }
 }

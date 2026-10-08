@@ -28,6 +28,7 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(TTItemTags.FLOATING_DROPS).add(TTItems.PRIMORDIAL_PEARL.get());
         copy(BlockTags.LOGS_THAT_BURN, ItemTags.LOGS_THAT_BURN);
         copy(BlockTags.LOGS, ItemTags.LOGS);
         copy(BlockTags.LEAVES, ItemTags.LEAVES);

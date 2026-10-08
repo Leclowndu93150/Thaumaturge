@@ -6,11 +6,9 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -19,14 +17,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -37,9 +35,6 @@ public final class ChampionEvents {
     private static final double MIN_CHAMPION_HEALTH = 10.0;
     private static final int XP_BASE = 5;
     private static final int XP_SPREAD = 3;
-    private static final int BAG_ROLL_BOUND = 9;
-    private static final int BAG_TIER_DIVISOR = 5;
-    private static final int MAX_BAG_TIER = 2;
 
     private ChampionEvents() {}
 
@@ -98,31 +93,35 @@ public final class ChampionEvents {
             return;
         }
         Entity killer = event.getSource().getEntity();
-        if (killer instanceof Player player && player.getGameProfile().getName().startsWith("FakeThaumaturge")) {
+        if (killer instanceof FakePlayer) {
             return;
         }
         int xp = XP_BASE + entity.getRandom().nextInt(XP_SPREAD);
         ExperienceOrb.award(server, entity.position(), xp);
-        int looting = lootingLevel(server, killer);
-        int tier = Math.min(
-                MAX_BAG_TIER,
-                Mth.floor((entity.getRandom().nextInt(BAG_ROLL_BOUND) + looting) / (float) BAG_TIER_DIVISOR));
-        ItemStack bag = new ItemStack(
-                switch (tier) {
-                    case 1 -> TTItems.LOOT_BAG_UNCOMMON.get();
-                    case 2 -> TTItems.LOOT_BAG_RARE.get();
-                    default -> TTItems.LOOT_BAG_COMMON.get();
-                });
-        event.getDrops()
-                .add(new ItemEntity(server, entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ(), bag));
-    }
-
-    private static int lootingLevel(ServerLevel level, Entity killer) {
-        if (!(killer instanceof LivingEntity living)) {
-            return 0;
+        LootParams.Builder params = new LootParams.Builder(server)
+                .withParameter(LootContextParams.THIS_ENTITY, entity)
+                .withParameter(LootContextParams.ORIGIN, entity.position())
+                .withParameter(LootContextParams.DAMAGE_SOURCE, event.getSource())
+                .withOptionalParameter(
+                        LootContextParams.ATTACKING_ENTITY, event.getSource().getEntity())
+                .withOptionalParameter(
+                        LootContextParams.DIRECT_ATTACKING_ENTITY,
+                        event.getSource().getDirectEntity());
+        if (entity.getKillCredit() instanceof Player player) {
+            params.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player).withLuck(player.getLuck());
         }
-        Holder<Enchantment> looting =
-                level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING);
-        return EnchantmentHelper.getItemEnchantmentLevel(looting, living.getMainHandItem());
+        server.getServer()
+                .reloadableRegistries()
+                .getLootTable(TTLootTables.CHAMPION_BAG)
+                .getRandomItems(
+                        params.create(LootContextParamSets.ENTITY),
+                        entity.getLootTableSeed(),
+                        bag -> event.getDrops()
+                                .add(new ItemEntity(
+                                        server,
+                                        entity.getX(),
+                                        entity.getY() + entity.getEyeHeight(),
+                                        entity.getZ(),
+                                        bag)));
     }
 }

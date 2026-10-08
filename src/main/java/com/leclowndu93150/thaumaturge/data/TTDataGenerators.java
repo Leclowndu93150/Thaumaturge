@@ -35,6 +35,8 @@ import com.leclowndu93150.thaumaturge.data.labyrinth.TTLabyrinthRoomTagsProvider
 import com.leclowndu93150.thaumaturge.data.lang.TTEnglishProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTBlockLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTEntityLootSubProvider;
+import com.leclowndu93150.thaumaturge.data.loot.TTEntityRewardLootSubProvider;
+import com.leclowndu93150.thaumaturge.data.loot.TTEquipmentLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTGameplayLootSubProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTGlobalLootModifierProvider;
 import com.leclowndu93150.thaumaturge.data.loot.TTTaintedLootSubProvider;
@@ -136,6 +138,10 @@ public final class TTDataGenerators {
                         new LootTableProvider.SubProviderEntry(TTBlockLootSubProvider::new, LootContextParamSets.BLOCK),
                         new LootTableProvider.SubProviderEntry(
                                 TTEntityLootSubProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(
+                                TTEntityRewardLootSubProvider::new, LootContextParamSets.ENTITY),
+                        new LootTableProvider.SubProviderEntry(
+                                TTEquipmentLootSubProvider::new, LootContextParamSets.EQUIPMENT),
                         new LootTableProvider.SubProviderEntry(
                                 TTTaintedLootSubProvider::new, LootContextParamSets.ENTITY),
                         new LootTableProvider.SubProviderEntry(

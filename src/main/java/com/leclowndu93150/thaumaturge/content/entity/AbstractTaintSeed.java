@@ -11,41 +11,31 @@ import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public abstract class AbstractTaintSeed extends Monster {
+public abstract class AbstractTaintSeed extends AbstractRootedTaint {
     private static final int SPREAD_INTERVAL = 20;
     private static final int AMBIENT_FUMES = 3;
     private static final double AMBIENT_FUME_RISE = 0.015;
     private static final float AMBIENT_FUME_SCALE = 1.5F;
     private static final float STARVE_DAMAGE = 0.5F;
     private static final float STARVE_POLLUTION = 0.1F;
+    private static final int MAX_EXTRA_SPREAD_ATTEMPTS = 3;
+    private static final float SPREAD_ATTEMPTS_PER_SATURATION = 2.0F;
     private static final float FLUX_TAINT_RADIUS_MULT = 4.0F;
     private static final int FLUX_TAINT_TICKS = 100;
-    private static final byte EVENT_ATTACK = 16;
     private static final float ATTACK_ANIM_START = 0.5F;
     private static final float ATTACK_ANIM_DECAY = 0.75F;
     private static final float ATTACK_ANIM_EPSILON = 0.001F;
-
-    private static final int STRIKE_TICKS = 20;
+    private static final double FOLLOW_RANGE = 16.0;
 
     public float attackAnim;
-
-    private int strikeTicks;
 
     private boolean registered;
 
@@ -55,59 +45,32 @@ public abstract class AbstractTaintSeed extends Monster {
 
     public abstract int getArea();
 
-    public int strikeTicks() {
-        return this.strikeTicks;
-    }
-
     public static AttributeSupplier.Builder createSeedAttributes(double maxHealth, double attackDamage) {
-        return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, maxHealth)
-                .add(Attributes.ATTACK_DAMAGE, attackDamage)
-                .add(Attributes.MOVEMENT_SPEED, 0.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
+        return createRootedAttributes(maxHealth, attackDamage, FOLLOW_RANGE);
     }
 
     @Override
-    protected void registerGoals() {
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-    }
-
-    @Override
-    public boolean doHurtTarget(Entity target) {
-        ServerLevel level = (ServerLevel) level();
-        level.broadcastEntityEvent(this, EVENT_ATTACK);
+    protected void onStrike(ServerLevel level) {
         this.playSound(TTSounds.TENTACLE.get(), this.getSoundVolume(), this.getVoicePitch());
-        return super.doHurtTarget(target);
     }
 
     @Override
-    public void handleEntityEvent(byte id) {
-        if (id == EVENT_ATTACK) {
-            this.attackAnim = ATTACK_ANIM_START;
-            this.strikeTicks = STRIKE_TICKS;
-        } else {
-            super.handleEntityEvent(id);
+    protected void startStrikeAnimation() {
+        this.attackAnim = ATTACK_ANIM_START;
+    }
+
+    @Override
+    protected void tickStrikeAnimation() {
+        if (this.attackAnim > 0.0F) {
+            this.attackAnim *= ATTACK_ANIM_DECAY;
+            if (this.attackAnim < ATTACK_ANIM_EPSILON) {
+                this.attackAnim = 0.0F;
+            }
         }
     }
 
     @Override
-    public void aiStep() {
-        super.aiStep();
-        if (!(this.level() instanceof ServerLevel server)) {
-            if (this.strikeTicks > 0) {
-                this.strikeTicks--;
-            }
-            if (this.attackAnim > 0.0F) {
-                this.attackAnim *= ATTACK_ANIM_DECAY;
-                if (this.attackAnim < ATTACK_ANIM_EPSILON) {
-                    this.attackAnim = 0.0F;
-                }
-            }
-            return;
-        }
+    protected void rootedServerStep(ServerLevel server) {
         if (!registered) {
             TaintSeedRegistry.get(server).addSeed(this.blockPosition());
             registered = true;
@@ -130,17 +93,13 @@ public abstract class AbstractTaintSeed extends Monster {
         BlockPos pos = this.blockPosition();
         TaintEcology.touchActiveSeed(server, pos);
         TaintBiomeManager.taintColumn(server, pos);
-
         float saturation = Math.max(0.0F, AuraHelper.getFluxSaturation(server, pos));
         if (saturation <= 0.0F) {
-            // The Seed itself is Flux-fed and eventually starves, but the
-            // Tainted Lands it established remains a self-sustaining ecological problem.
             this.hurt(server.damageSources().starve(), STARVE_DAMAGE);
             AuraHelper.polluteAura(server, pos, STARVE_POLLUTION, false);
         }
-
         int area = getArea();
-        int attempts = 1 + Math.min(3, Mth.floor(saturation * 2.0F));
+        int attempts = 1 + Math.min(MAX_EXTRA_SPREAD_ATTEMPTS, Mth.floor(saturation * SPREAD_ATTEMPTS_PER_SATURATION));
         for (int attempt = 0; attempt < attempts; attempt++) {
             int dx = Mth.nextInt(server.getRandom(), -area * 3, area * 3);
             int dy = Mth.nextInt(server.getRandom(), -area, area);
@@ -165,31 +124,5 @@ public abstract class AbstractTaintSeed extends Monster {
             TaintSeedRegistry.get(server).removeSeed(this.blockPosition());
         }
         super.remove(reason);
-    }
-
-    @Override
-    public boolean isPushable() {
-        return false;
-    }
-
-    @Override
-    public void push(double x, double y, double z) {}
-
-    @Override
-    public void push(Entity entity) {}
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return TTSounds.GORE.get();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return TTSounds.TENTACLE.get();
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return TTSounds.TENTACLE.get();
     }
 }

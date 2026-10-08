@@ -1,9 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.entity.ai.ThaumicSlimeSpitGoal;
 import com.leclowndu93150.thaumaturge.content.particle.FluxGooDropletParticleOptions;
-import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.mixin.world.entity.monster.SlimeAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
@@ -181,14 +179,6 @@ public final class ThaumicSlime extends Slime {
             this.setSize(1, false);
         }
         super.remove(reason);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
-        super.dropCustomDeathLoot(level, damageSource, recentlyHit);
-        if (this.getSize() > 1) {
-            this.spawnAtLocation(EssentiaCrystalFactory.of(level.registryAccess(), TTAspects.VITIUM));
-        }
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.leclowndu93150.thaumaturge.content.entity.portal.CultistPortals;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -12,7 +13,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -26,13 +26,10 @@ public class EntityCultistPortalLesser extends Monster {
     private static final EntityDataAccessor<Boolean> DATA_ACTIVE =
             SynchedEntityData.defineId(EntityCultistPortalLesser.class, EntityDataSerializers.BOOLEAN);
 
-    private static final byte PULSE_EVENT = 16;
     private static final double ACTIVATION_RANGE = 32.0;
     private static final double MINION_SCAN_RANGE = 32.0;
     private static final int STAGE_BASE_TICKS = 50;
-    private static final float KNIGHT_CHANCE = 0.67F;
     private static final float TOUCH_DAMAGE = 4.0F;
-    private static final double TOUCH_RANGE_SQ = 3.0;
     private static final float DEATH_EXPLOSION_POWER = 1.5F;
 
     private int stageCounter = 100;
@@ -112,12 +109,9 @@ public class EntityCultistPortalLesser extends Monster {
                             case NORMAL -> 4;
                             default -> 2;
                         };
-                count -= this.level()
-                        .getEntitiesOfClass(
-                                EntityCultist.class, this.getBoundingBox().inflate(MINION_SCAN_RANGE))
-                        .size();
+                count -= CultistPortals.cultistsNear(this, MINION_SCAN_RANGE);
                 if (count > 0) {
-                    this.level().broadcastEntityEvent(this, PULSE_EVENT);
+                    this.level().broadcastEntityEvent(this, CultistPortals.PULSE_EVENT);
                     this.spawnMinion();
                 }
             }
@@ -127,44 +121,22 @@ public class EntityCultistPortalLesser extends Monster {
 
     private void spawnMinion() {
         ServerLevel server = (ServerLevel) this.level();
-        EntityCultist cultist = this.random.nextFloat() < KNIGHT_CHANCE
-                ? TTEntities.CULTIST_KNIGHT.get().create(server)
-                : TTEntities.CULTIST_CLERIC.get().create(server);
+        EntityCultist cultist = CultistPortals.rollMinion(server, this.random);
         if (cultist == null) {
             return;
         }
-        cultist.setPos(
-                this.getX() + this.random.nextFloat() - this.random.nextFloat(),
-                this.getY() + 0.25,
-                this.getZ() + this.random.nextFloat() - this.random.nextFloat());
-        cultist.finalizeSpawn(
-                server, server.getCurrentDifficultyAt(cultist.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
-        server.addFreshEntity(cultist);
-        cultist.spawnCultistArrivalParticles();
-        cultist.playSound(TTSounds.WANDFAIL.get(), 1.0F, 1.0F);
+        CultistPortals.summon(this, server, cultist);
         this.hurt(this.damageSources().fellOutOfWorld(), 5 + this.random.nextInt(5));
     }
 
     @Override
     public void playerTouch(Player player) {
-        if (this.level() instanceof ServerLevel server
-                && this.distanceToSqr(player) < TOUCH_RANGE_SQ
-                && player.hurt(this.damageSources().indirectMagic(this, this), TOUCH_DAMAGE)) {
-            this.playSound(TTSounds.ZAP.get(), 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.1F + 1.0F);
-        }
+        CultistPortals.touch(this, player, TOUCH_DAMAGE);
     }
 
     @Override
     public void die(DamageSource source) {
-        if (this.level() instanceof ServerLevel server) {
-            server.explode(
-                    this,
-                    this.getX(),
-                    this.getY(),
-                    this.getZ(),
-                    DEATH_EXPLOSION_POWER,
-                    Level.ExplosionInteraction.NONE);
-        }
+        CultistPortals.collapse(this, DEATH_EXPLOSION_POWER);
         super.die(source);
     }
 
@@ -180,24 +152,26 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
+        HolderLookup.Provider registries = registryAccess();
         super.addAdditionalSaveData(output);
         output.putBoolean("active", this.isActive());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
+        HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
-        this.setActive(input.getBoolean("active"));
+        this.setActive((input.contains("active") ? input.getBoolean("active") : false));
     }
 
     @Override
     protected float getSoundVolume() {
-        return 0.75F;
+        return CultistPortals.SOUND_VOLUME;
     }
 
     @Override
     public int getAmbientSoundInterval() {
-        return 540;
+        return CultistPortals.AMBIENT_INTERVAL;
     }
 
     @Override
@@ -217,8 +191,8 @@ public class EntityCultistPortalLesser extends Monster {
 
     @Override
     public void handleEntityEvent(byte event) {
-        if (event == PULSE_EVENT) {
-            this.pulse = 10;
+        if (event == CultistPortals.PULSE_EVENT) {
+            this.pulse = CultistPortals.PULSE_TICKS;
         } else {
             super.handleEntityEvent(event);
         }
