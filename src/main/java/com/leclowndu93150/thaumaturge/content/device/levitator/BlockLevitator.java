@@ -97,7 +97,8 @@ public final class BlockLevitator extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof BlockEntityLevitator levitator)) {
+        if (hit.getDirection() != state.getValue(FACING).getOpposite()
+                || !(level.getBlockEntity(pos) instanceof BlockEntityLevitator levitator)) {
             return InteractionResult.PASS;
         }
         levitator.cycleReach(player);
