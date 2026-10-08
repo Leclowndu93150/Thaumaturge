@@ -2,6 +2,7 @@ import com.diffplug.spotless.LineEnding
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.external.javadoc.CoreJavadocOptions
 import org.gradle.jvm.tasks.Jar
+import org.slf4j.event.Level
 
 plugins {
     id("dev.prism")
@@ -119,7 +120,7 @@ prism {
                     runs.configureEach {
                         systemProperty("neoforge.enabledGameTestNamespaces", prop("mod_id"))
                         systemProperty("forge.logging.markers", "REGISTRIES")
-                        logLevel.set(org.slf4j.event.Level.DEBUG)
+                        logLevel.set(Level.DEBUG)
                     }
                 }
                 val syncDynamicTreesTreePack = tasks.register<Sync>("syncDynamicTreesTreePack") {

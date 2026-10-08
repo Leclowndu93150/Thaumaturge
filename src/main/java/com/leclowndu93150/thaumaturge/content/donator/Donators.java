@@ -23,7 +23,8 @@ public final class Donators {
             Map.entry("Demonseed", UUID.fromString("41aa8244-03f4-4e22-9dc7-69ac7bd541a6")),
             Map.entry("SoyGoulden", UUID.fromString("d91707fa-b0a6-453d-9251-03d6aeebf6fa")),
             Map.entry("Atomizate", UUID.fromString("bf3418d8-5f73-47ce-9da1-1d05a988faa1")),
-            Map.entry("WoXayZ", UUID.fromString("d83a8dbc-0c6f-48b2-9ae7-8737575d1148")));
+            Map.entry("WoXayZ", UUID.fromString("d83a8dbc-0c6f-48b2-9ae7-8737575d1148")),
+            Map.entry("Ordeaux", UUID.fromString("f140f8e1-67eb-4693-96aa-c2541ba24944")));
 
     private static final Map<String, UUID> DEVELOPERS = Map.ofEntries(
             Map.entry("JustReclipse", UUID.fromString("119d9971-936d-478f-96bd-82d66c0e978d")),

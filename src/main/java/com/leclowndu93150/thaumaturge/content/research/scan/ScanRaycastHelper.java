@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-
 import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -12,8 +11,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-
 
 public final class ScanRaycastHelper {
 
