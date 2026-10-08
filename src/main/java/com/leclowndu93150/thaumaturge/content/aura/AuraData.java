@@ -13,7 +13,8 @@ public final class AuraData implements IAuraChunk {
     public static final MapCodec<AuraData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                     Codec.SHORT.optionalFieldOf("base", (short) 0).forGetter(AuraData::getBase),
                     Codec.FLOAT.optionalFieldOf("vis", 0.0F).forGetter(AuraData::getVis),
-                    Codec.FLOAT.optionalFieldOf("flux", 0.0F).forGetter(AuraData::getFlux))
+                    Codec.FLOAT.optionalFieldOf("flux", 0.0F).forGetter(AuraData::getFlux),
+                    Codec.BOOL.optionalFieldOf("initialized", false).forGetter(AuraData::isInitialized))
             .apply(instance, AuraData::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AuraData> STREAM_CODEC = StreamCodec.composite(
@@ -23,19 +24,31 @@ public final class AuraData implements IAuraChunk {
             AuraData::getVis,
             ByteBufCodecs.FLOAT,
             AuraData::getFlux,
+            ByteBufCodecs.BOOL,
+            AuraData::isInitialized,
             AuraData::new);
 
     private short base;
     private float vis;
     private float flux;
+    private boolean initialized;
     private ChunkPos pos = new ChunkPos(0, 0);
 
     public AuraData() {}
 
     public AuraData(short base, float vis, float flux) {
+        this(base, vis, flux, false);
+    }
+
+    private AuraData(short base, float vis, float flux, boolean initialized) {
         this.base = base;
         this.vis = clamp(vis);
         this.flux = clamp(flux);
+        this.initialized = initialized || base != 0;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override
@@ -45,6 +58,7 @@ public final class AuraData implements IAuraChunk {
 
     public void setBase(short value) {
         this.base = value;
+        this.initialized = true;
     }
 
     @Override

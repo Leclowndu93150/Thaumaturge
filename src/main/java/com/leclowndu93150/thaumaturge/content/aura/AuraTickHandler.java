@@ -74,6 +74,7 @@ public final class AuraTickHandler {
                 continue;
             }
             AuraData data = chunk.getData(TTAttachments.AURA.get());
+            AuraGenHandler.initializeIfNeeded(level, chunk, data);
             // Physical Flux is an ecological system in its own right. Evaluate its direct
             // Taint route for every loaded chunk, even when that dimension/chunk has no modern
             // Aura base. Numeric Aura/Rift processing below remains conditional on Aura support.
