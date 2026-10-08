@@ -179,7 +179,7 @@ public final class TTBiomeModifiers {
         context.register(
                 ADD_PECHS,
                 new BiomeModifiers.AddSpawnsBiomeModifier(
-                        biomes.getOrThrow(TTBiomeTags.IS_MAGICAL),
+                        biomes.getOrThrow(TTBiomeTags.HAS_PECH),
                         List.of(new MobSpawnSettings.SpawnerData(TTEntities.PECH.get(), PECH_WEIGHT, 1, 1))));
     }
 }

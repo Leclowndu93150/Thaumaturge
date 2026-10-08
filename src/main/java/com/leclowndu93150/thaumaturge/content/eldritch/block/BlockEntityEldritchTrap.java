@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -15,7 +16,6 @@ import net.minecraft.world.phys.Vec3;
 
 public final class BlockEntityEldritchTrap extends BlockEntity {
     private static final double TRIGGER_RANGE = 3.0;
-    private static final float ZAP_DAMAGE = 2.0F;
     private static final int COOLDOWN_BASE = 10;
     private static final int COOLDOWN_SPREAD = 25;
 
@@ -35,7 +35,9 @@ public final class BlockEntityEldritchTrap extends BlockEntity {
         if (player == null || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        player.hurt(serverLevel.damageSources().magic(), ZAP_DAMAGE);
+        player.hurt(
+                serverLevel.damageSources().magic(),
+                ThaumaturgeServerConfig.LABYRINTH.trapDamage.get().floatValue());
         if (level.getRandom().nextBoolean() && player instanceof ServerPlayer serverPlayer) {
             WarpManager.addWarp(serverPlayer, 1 + level.getRandom().nextInt(2), WarpType.TEMPORARY);
         }

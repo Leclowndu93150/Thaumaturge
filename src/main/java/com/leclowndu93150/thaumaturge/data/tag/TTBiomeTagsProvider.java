@@ -43,6 +43,7 @@ public final class TTBiomeTagsProvider extends TagsProvider<Biome> {
                 .addTag(TTBiomeTags.IS_MAGICAL)
                 .addOptionalTag(Tags.Biomes.IS_MAGICAL)
                 .remove(TTBiomes.MAGICAL_FOREST, TTBiomes.TAINTED_LANDS);
+        tag(TTBiomeTags.HAS_PECH).addTag(TTBiomeTags.IS_MAGICAL).remove(TTBiomes.ELDRITCH);
         tag(TTBiomeTags.HAS_CINDERPEARL)
                 .add(Biomes.DESERT)
                 .add(Biomes.BADLANDS)

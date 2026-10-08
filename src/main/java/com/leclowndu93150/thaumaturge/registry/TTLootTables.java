@@ -24,6 +24,14 @@ public final class TTLootTables {
     public static final ResourceKey<LootTable> TREASURE_LIBRARY = key("chests/treasure_library");
     public static final ResourceKey<LootTable> TREASURE_SMITH = key("chests/treasure_smith");
 
+    public static final ResourceKey<LootTable> LABYRINTH_KEY_ROOM = key("labyrinth/reward/key_room");
+    public static final ResourceKey<LootTable> LABYRINTH_WARDEN = key("labyrinth/reward/warden");
+    public static final ResourceKey<LootTable> LABYRINTH_GOLEM = key("labyrinth/reward/golem");
+    public static final ResourceKey<LootTable> LABYRINTH_CRIMSON_PORTAL = key("labyrinth/reward/crimson_portal");
+    public static final ResourceKey<LootTable> LABYRINTH_TAINT_SWARM = key("labyrinth/reward/taint_swarm");
+    public static final ResourceKey<LootTable> LABYRINTH_HIEROPHANT = key("labyrinth/reward/hierophant");
+    public static final ResourceKey<LootTable> LABYRINTH_PRIMORDIAL_PEARL = key("labyrinth/primordial_pearl");
+
     private static ResourceKey<LootTable> key(String path) {
         return ResourceKey.create(Registries.LOOT_TABLE, TTIds.rl(path));
     }

@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
+import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthHelper;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftCost;
 import com.leclowndu93150.thaumaturge.api.recipe.ArcaneCraftingTransaction;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
@@ -31,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.aspect.AspectIndexHolder;
 import com.leclowndu93150.thaumaturge.content.aura.AuraHelperBindings;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayNetwork;
 import com.leclowndu93150.thaumaturge.content.aura.relay.VisRelayWorkbenchSource;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthBindings;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitBindings;
 import com.leclowndu93150.thaumaturge.content.equipment.GogglesBindings;
 import com.leclowndu93150.thaumaturge.content.equipment.RechargeBindings;
@@ -106,6 +108,10 @@ public final class Thaumaturge {
         TTSeals.register(modBus);
         TTEntityDataSerializers.register(modBus);
         TTIngredientTypes.register(modBus);
+        TTLabyrinthMarkers.register(modBus);
+        TTLabyrinthEncounterTypes.register(modBus);
+        TTObeliskSiteBehaviors.register(modBus);
+        TTStructureProcessors.register(modBus);
         TTGolemAccessories.register();
 
         LegacyRegistryAliases.register(modBus);
@@ -143,6 +149,7 @@ public final class Thaumaturge {
         SpellRegistries.bind(TTSpellBehaviors.registry(), TTSpellActions.registry(), TTSpellFx.registry());
         Spells.bind(new SpellBindings());
 
+        LabyrinthHelper.bind(new LabyrinthBindings());
         if (ModList.get().isLoaded(TTIds.CURIOS)) ThaumaturgeCuriosCompat.init(modBus);
     }
 }

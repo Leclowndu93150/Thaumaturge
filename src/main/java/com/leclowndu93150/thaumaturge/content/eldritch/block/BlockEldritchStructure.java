@@ -1,25 +1,25 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
-import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class BlockEldritchStructure extends Block {
     public static final MapCodec<BlockEldritchStructure> CODEC = simpleCodec(BlockEldritchStructure::new);
-
-    private static final int SWEEP_XZ = 3;
-    private static final int SWEEP_Y = 2;
-    private static final float COLLAPSE_EXPLOSION = 1.0F;
+    public static final BooleanProperty SEALED = BooleanProperty.create("sealed");
 
     public BlockEldritchStructure(BlockBehaviour.Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(SEALED, Boolean.FALSE));
     }
 
     @Override
@@ -28,32 +28,27 @@ public class BlockEldritchStructure extends Block {
     }
 
     @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(SEALED);
+    }
+
+    @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
     @Override
-    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
-        super.destroy(level, pos, state);
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        for (int xx = -SWEEP_XZ; xx <= SWEEP_XZ; xx++) {
-            for (int yy = -SWEEP_Y; yy <= SWEEP_Y; yy++) {
-                for (int zz = -SWEEP_XZ; zz <= SWEEP_XZ; zz++) {
-                    BlockPos target = pos.offset(xx, yy, zz);
-                    if (serverLevel.getBlockState(target).is(TTBlockTags.ELDRITCH_OBELISK_PARTS)) {
-                        serverLevel.removeBlock(target, false);
-                    }
-                }
-            }
-        }
-        serverLevel.explode(
-                null,
-                pos.getX() + 0.5,
-                pos.getY() + 0.5,
-                pos.getZ() + 0.5,
-                COLLAPSE_EXPLOSION,
-                Level.ExplosionInteraction.NONE);
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        return state.getValue(SEALED) ? 0.0F : super.getDestroyProgress(state, player, level, pos);
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+        return state.getValue(SEALED) ? Float.MAX_VALUE : super.getExplosionResistance(state, level, pos, explosion);
+    }
+
+    @Override
+    public boolean canEntityDestroy(BlockState state, BlockGetter level, BlockPos pos, Entity entity) {
+        return !state.getValue(SEALED) && super.canEntityDestroy(state, level, pos, entity);
     }
 }

@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.eldritch.gen.ObeliskPiece;
-import com.leclowndu93150.thaumaturge.content.eldritch.gen.ObeliskStructure;
+import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSitePiece;
+import com.leclowndu93150.thaumaturge.content.eldritch.site.ObeliskSiteStructure;
 import com.leclowndu93150.thaumaturge.content.world.mound.MoundPiece;
 import com.leclowndu93150.thaumaturge.content.world.mound.MoundStructure;
 import net.minecraft.core.registries.Registries;
@@ -21,13 +21,13 @@ public final class TTStructures {
     public static final DeferredHolder<StructureType<?>, StructureType<MoundStructure>> MOUND =
             STRUCTURE_TYPES.register("mound", () -> () -> MoundStructure.CODEC);
 
-    public static final DeferredHolder<StructureType<?>, StructureType<ObeliskStructure>> ELDRITCH_OBELISK =
-            STRUCTURE_TYPES.register("eldritch_obelisk", () -> () -> ObeliskStructure.CODEC);
+    public static final DeferredHolder<StructureType<?>, StructureType<ObeliskSiteStructure>> ELDRITCH_OBELISK =
+            STRUCTURE_TYPES.register("eldritch_obelisk", () -> () -> ObeliskSiteStructure.CODEC);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> MOUND_PIECE =
             STRUCTURE_PIECES.register("mound", () -> (StructurePieceType.ContextlessType) MoundPiece::new);
 
     public static final DeferredHolder<StructurePieceType, StructurePieceType> ELDRITCH_OBELISK_PIECE =
-            STRUCTURE_PIECES.register("eldritch_obelisk", () -> (StructurePieceType.ContextlessType) ObeliskPiece::new);
+            STRUCTURE_PIECES.register("eldritch_obelisk", () -> (StructurePieceType) ObeliskSitePiece::new);
 
     private TTStructures() {}
 

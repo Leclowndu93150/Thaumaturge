@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetWrittenBookPagesFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
 public final class TTGameplayLootSubProvider implements LootTableSubProvider {
@@ -39,6 +40,14 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
     private static final int SMITH_EMPTY_WEIGHT = 1;
 
     private static final float LORE_CHANCE = 0.0005F;
+    private static final float KEY_ROOM_POOL_MIN = 2.0F;
+    private static final float KEY_ROOM_POOL_MAX = 4.0F;
+    private static final float KEY_ROOM_CHEST_ROLLS = 2.0F;
+    private static final float BOSS_BAGS_MIN = 1.0F;
+    private static final float BOSS_BAGS_MAX = 2.0F;
+    private static final float BOSS_POOL_MIN = 4.0F;
+    private static final float BOSS_POOL_MAX = 6.0F;
+    private static final float BOSS_CHEST_ROLLS = 4.0F;
     private static final String LORE_TITLE = "A Message to the World";
     private static final String LORE_AUTHOR = "A Thaumaturge";
 
@@ -118,6 +127,38 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                 .add(entry(TTItems.QUICKSILVER, 2, 1.0F, 3.0F))));
 
         output.accept(
+                TTLootTables.LABYRINTH_KEY_ROOM,
+                labyrinthReward(
+                        TTItems.LOOT_BAG_UNCOMMON,
+                        ConstantValue.exactly(1.0F),
+                        TreasureLootPools.UNCOMMON,
+                        UniformGenerator.between(KEY_ROOM_POOL_MIN, KEY_ROOM_POOL_MAX),
+                        KEY_ROOM_CHEST_ROLLS,
+                        TTLootTables.TREASURE_UNCOMMON));
+        for (ResourceKey<LootTable> boss : List.of(
+                TTLootTables.LABYRINTH_WARDEN,
+                TTLootTables.LABYRINTH_GOLEM,
+                TTLootTables.LABYRINTH_CRIMSON_PORTAL,
+                TTLootTables.LABYRINTH_TAINT_SWARM,
+                TTLootTables.LABYRINTH_HIEROPHANT)) {
+            output.accept(
+                    boss,
+                    labyrinthReward(
+                            TTItems.LOOT_BAG_RARE,
+                            UniformGenerator.between(BOSS_BAGS_MIN, BOSS_BAGS_MAX),
+                            TreasureLootPools.RARE,
+                            UniformGenerator.between(BOSS_POOL_MIN, BOSS_POOL_MAX),
+                            BOSS_CHEST_ROLLS,
+                            TTLootTables.TREASURE_RARE));
+        }
+        output.accept(
+                TTLootTables.LABYRINTH_PRIMORDIAL_PEARL,
+                LootTable.lootTable()
+                        .withPool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(LootItem.lootTableItem(TTItems.PRIMORDIAL_PEARL.get()))));
+
+        output.accept(
                 TTLootTables.LORE_BOOK,
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
@@ -130,6 +171,23 @@ public final class TTGameplayLootSubProvider implements LootTableSubProvider {
                                                 Optional.of(Filterable.passThrough(LORE_TITLE)),
                                                 Optional.of(LORE_AUTHOR),
                                                 Optional.empty())))));
+    }
+
+    private LootTable.Builder labyrinthReward(
+            ItemLike bag,
+            NumberProvider bags,
+            int rarity,
+            NumberProvider treasureRolls,
+            float chestRolls,
+            ResourceKey<LootTable> chest) {
+        return LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(bag).apply(SetItemCountFunction.setCount(bags))))
+                .withPool(TreasureLootPools.treasurePool(registries, rarity, treasureRolls))
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(chestRolls))
+                        .add(NestedLootTable.lootTableReference(chest)));
     }
 
     private static LootPool.Builder lorePool() {

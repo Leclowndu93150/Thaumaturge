@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.config;
 
+import com.leclowndu93150.thaumaturge.config.labyrinth.LabyrinthConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class ThaumaturgeServerConfig {
@@ -13,6 +14,8 @@ public final class ThaumaturgeServerConfig {
     public static final ModConfigSpec.IntValue SPELL_MAX_BLOCKS_PER_TICK;
     public static final ModConfigSpec.IntValue SPELL_MAX_NODES_PER_RUN;
     public static final ModConfigSpec.IntValue SPELL_MAX_DELAYED_PER_LEVEL;
+
+    public static final LabyrinthConfig LABYRINTH;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -40,6 +43,7 @@ public final class ThaumaturgeServerConfig {
         SPELL_MAX_DELAYED_PER_LEVEL = builder.comment("How many delayed spell continuations a level holds at once.")
                 .defineInRange("maxDelayedPerLevel", 256, 16, 4096);
         builder.pop();
+        LABYRINTH = new LabyrinthConfig(builder);
         SPEC = builder.build();
     }
 

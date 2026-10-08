@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
+import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeData;
@@ -86,6 +87,11 @@ public final class TTDataComponents {
             DATA_COMPONENTS.registerComponentType(
                     "caster_area",
                     builder -> builder.persistent(CasterArea.CODEC).networkSynchronized(CasterArea.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<MazeId>> LABYRINTH_KEY =
+            DATA_COMPONENTS.registerComponentType(
+                    "labyrinth_key",
+                    builder -> builder.persistent(MazeId.CODEC).networkSynchronized(MazeId.STREAM_CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlockState>> PICKED_BLOCK =
             DATA_COMPONENTS.registerComponentType(

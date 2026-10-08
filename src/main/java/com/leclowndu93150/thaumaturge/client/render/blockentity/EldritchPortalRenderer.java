@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchPortal;
+import com.leclowndu93150.thaumaturge.content.eldritch.portal.BlockEntityEldritchPortal;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -37,7 +37,7 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
             MultiBufferSource buffers,
             int light,
             int overlay) {
-        float openCount = portal.opencount + partialTick;
+        float openCount = portal.openTicks() + partialTick;
         if (openCount < 0.0F) {
             return;
         }

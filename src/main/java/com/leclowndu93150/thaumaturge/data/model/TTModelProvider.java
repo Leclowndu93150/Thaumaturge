@@ -2350,6 +2350,35 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private void eldritchModels() {
+        blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(TTBlocks.ELDRITCH_RELIQUARY.get(), vName("eldritch_reliquary"))
+                        .with(horizontalDispatch()));
+        ResourceLocation dormant = ModelTemplates.CUBE_ALL.create(
+                TTBlocks.ELDRITCH_NOTHING_DORMANT.get(),
+                new TextureMapping().put(TextureSlot.ALL, blockTexture("eldritch_rock")),
+                modelOutput);
+        simpleBlock(TTBlocks.ELDRITCH_NOTHING_DORMANT.get(), dormant);
+        stairsFromTexture(TTBlocks.STAIRS_ELDRITCH_TILE.get(), blockTexture("stone_eldritch_tile"));
+        stairsFromTexture(TTBlocks.STAIRS_ELDRITCH_ROCK.get(), blockTexture("eldritch_rock"));
+        Block pillar = TTBlocks.STONE_ELDRITCH_PILLAR.get();
+        ResourceLocation pillarModel = ModelTemplates.CUBE_COLUMN.create(
+                pillar,
+                new TextureMapping()
+                        .put(TextureSlot.SIDE, blockTexture("stone_eldritch_pillar_side"))
+                        .put(TextureSlot.END, blockTexture("eldritch_stone")),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(pillar, v(pillarModel))
+                .with(PropertyDispatch.property(BlockStateProperties.AXIS)
+                        .select(Direction.Axis.Y, Variant.variant())
+                        .select(
+                                Direction.Axis.Z,
+                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(
+                                Direction.Axis.X,
+                                Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
+        delegateItem(pillar.asItem(), pillarModel);
         cube(TTBlocks.OBSIDIAN_TILE.get(), "obsidian_tile");
         obsidianTotem();
         cube(TTBlocks.ELDRITCH_STONE.get(), "eldritch_stone");

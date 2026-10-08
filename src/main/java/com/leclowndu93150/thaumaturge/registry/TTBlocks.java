@@ -46,16 +46,18 @@ import com.leclowndu93150.thaumaturge.content.device.levitator.BlockLevitator;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockPotionSprayer;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchAltar;
+import com.leclowndu93150.thaumaturge.content.eldritch.altar.BlockEldritchAltar;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCap;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchCrabSpawner;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchInset;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchNothing;
+import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchNothingDormant;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchObelisk;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchPortal;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchStructure;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchTrap;
+import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEldritchLock;
+import com.leclowndu93150.thaumaturge.content.eldritch.portal.BlockEldritchPortal;
+import com.leclowndu93150.thaumaturge.content.eldritch.reliquary.BlockEldritchReliquary;
 import com.leclowndu93150.thaumaturge.content.equipment.BlockEffectGlimmer;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEssentiaPort;
@@ -1868,6 +1870,31 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
+    public static final DeferredBlock<RotatedPillarBlock> STONE_ELDRITCH_PILLAR = BLOCKS.registerBlock(
+            "stone_eldritch_pillar",
+            RotatedPillarBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0F, 10.0F)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops());
+    public static final DeferredBlock<BlockStairsTT> STAIRS_ELDRITCH_TILE = BLOCKS.registerBlock(
+            "stairs_eldritch_tile",
+            props -> new BlockStairsTT(STONE_ELDRITCH_TILE.get().defaultBlockState(), props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0F, 10.0F)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops());
+    public static final DeferredBlock<BlockStairsTT> STAIRS_ELDRITCH_ROCK = BLOCKS.registerBlock(
+            "stairs_eldritch_rock",
+            props -> new BlockStairsTT(ELDRITCH_ROCK.get().defaultBlockState(), props),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0F, 10.0F)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops());
+
     public static final DeferredBlock<Block> ELDRITCH_DOOR = BLOCKS.registerBlock(
             "eldritch_door",
             Block::new,
@@ -1907,6 +1934,29 @@ public final class TTBlocks {
                     .noOcclusion()
                     .noLootTable()
                     .dynamicShape());
+
+    public static final DeferredBlock<BlockEldritchNothingDormant> ELDRITCH_NOTHING_DORMANT = BLOCKS.registerBlock(
+            "eldritch_nothing_dormant",
+            BlockEldritchNothingDormant::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(-1.0F, 6000000.0F)
+                    .sound(SoundType.WOOL)
+                    .noLootTable()
+                    .pushReaction(PushReaction.BLOCK)
+                    .isValidSpawn((state, level, pos, type) -> false));
+
+    public static final DeferredBlock<BlockEldritchReliquary> ELDRITCH_RELIQUARY = BLOCKS.registerBlock(
+            "eldritch_reliquary",
+            BlockEldritchReliquary::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(-1.0F, 6000000.0F)
+                    .sound(SoundType.STONE)
+                    .noLootTable()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)
+                    .isValidSpawn((state, level, pos, type) -> false));
 
     public static final DeferredBlock<BlockEldritchLock> ELDRITCH_LOCK = BLOCKS.registerBlock(
             "eldritch_lock",
@@ -1991,7 +2041,8 @@ public final class TTBlocks {
                     .lightLevel(state -> 15)
                     .noOcclusion()
                     .noLootTable()
-                    .noCollission());
+                    .noCollission()
+                    .pushReaction(PushReaction.BLOCK));
 
     public static final DeferredBlock<BlockAmber> AMBER_BLOCK =
             BLOCKS.registerBlock("amber_block", BlockAmber::new, amberProps());

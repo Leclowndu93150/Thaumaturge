@@ -9,15 +9,13 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 
 public final class OuterLands {
+    public static final ResourceLocation EFFECTS = TTIds.rl("outer_lands");
     public static final ResourceKey<Level> DIMENSION =
             ResourceKey.create(Registries.DIMENSION, TTIds.rl("outer_lands"));
-    public static final ResourceLocation EFFECTS = TTIds.rl("outer_lands");
     public static final ResourceKey<DimensionType> DIMENSION_TYPE =
             ResourceKey.create(Registries.DIMENSION_TYPE, TTIds.rl("outer_lands"));
     public static final ResourceKey<LevelStem> STEM =
             ResourceKey.create(Registries.LEVEL_STEM, TTIds.rl("outer_lands"));
-
-    public static final int MAZE_Y = 50;
 
     private OuterLands() {}
 }

@@ -448,6 +448,10 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.ELDRITCH_CRUST.get());
         dropSelf(TTBlocks.ELDRITCH_CRUST_GLOWING.get());
         dropSelf(TTBlocks.STAIRS_ELDRITCH.get());
+        dropSelf(TTBlocks.STONE_ELDRITCH_PILLAR.get());
+        dropSelf(TTBlocks.STAIRS_ELDRITCH_TILE.get());
+        dropSelf(TTBlocks.STAIRS_ELDRITCH_ROCK.get());
+
         dropSelf(TTBlocks.ELDRITCH_PEDESTAL.get());
         add(TTBlocks.ELDRITCH_STONE_CRYSTAL.get(), createSingleItemTable(TTItems.CURIO_KNOWLEDGE.get()));
         dropSelf(TTBlocks.ELDRITCH_DOOR.get());

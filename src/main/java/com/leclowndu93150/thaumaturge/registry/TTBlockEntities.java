@@ -30,14 +30,15 @@ import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorEssentia;
 import com.leclowndu93150.thaumaturge.content.device.patterncrafter.BlockEntityPatternCrafter;
 import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockEntityPotionSprayer;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchAltar;
+import com.leclowndu93150.thaumaturge.content.eldritch.altar.BlockEntityEldritchAltar;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchCap;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchCrabSpawner;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchNothing;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchObelisk;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchPortal;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchTrap;
+import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEntityEldritchLock;
+import com.leclowndu93150.thaumaturge.content.eldritch.portal.BlockEntityEldritchPortal;
+import com.leclowndu93150.thaumaturge.content.eldritch.reliquary.BlockEntityEldritchReliquary;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
@@ -345,6 +346,13 @@ public final class TTBlockEntities {
                     "eldritch_obelisk",
                     () -> new BlockEntityType<>(
                             BlockEntityEldritchObelisk::new, Set.of(TTBlocks.ELDRITCH_OBELISK.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchReliquary>>
+            ELDRITCH_RELIQUARY = BLOCK_ENTITIES.register(
+                    "eldritch_reliquary",
+                    () -> BlockEntityType.Builder.of(
+                                    BlockEntityEldritchReliquary::new, TTBlocks.ELDRITCH_RELIQUARY.get())
+                            .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityEldritchLock>> ELDRITCH_LOCK =
             BLOCK_ENTITIES.register(

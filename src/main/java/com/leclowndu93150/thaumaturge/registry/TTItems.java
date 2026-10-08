@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
 import com.leclowndu93150.thaumaturge.content.device.bore.ArcaneBoreItem;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemBlockMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.ItemHandMirror;
+import com.leclowndu93150.thaumaturge.content.eldritch.lock.RunedTabletItem;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBottleTaint;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCausalityCollapser;
 import com.leclowndu93150.thaumaturge.content.entity.construct.ConstructDeployment;
@@ -1131,6 +1132,12 @@ public final class TTItems {
             ITEMS.registerSimpleBlockItem(TTBlocks.ELDRITCH_CRUST_GLOWING);
     public static final DeferredItem<BlockItem> STAIRS_ELDRITCH =
             ITEMS.registerSimpleBlockItem(TTBlocks.STAIRS_ELDRITCH);
+    public static final DeferredItem<BlockItem> STONE_ELDRITCH_PILLAR =
+            ITEMS.registerSimpleBlockItem(TTBlocks.STONE_ELDRITCH_PILLAR);
+    public static final DeferredItem<BlockItem> STAIRS_ELDRITCH_TILE =
+            ITEMS.registerSimpleBlockItem(TTBlocks.STAIRS_ELDRITCH_TILE);
+    public static final DeferredItem<BlockItem> STAIRS_ELDRITCH_ROCK =
+            ITEMS.registerSimpleBlockItem(TTBlocks.STAIRS_ELDRITCH_ROCK);
     public static final DeferredItem<BlockItem> ELDRITCH_DOOR = ITEMS.registerSimpleBlockItem(TTBlocks.ELDRITCH_DOOR);
     public static final DeferredItem<BlockItem> ELDRITCH_PEDESTAL =
             ITEMS.registerSimpleBlockItem(TTBlocks.ELDRITCH_PEDESTAL);
@@ -1149,8 +1156,8 @@ public final class TTItems {
             ITEMS.registerSimpleBlockItem(TTBlocks.ELDRITCH_CAPSTONE);
     public static final DeferredItem<Item> ELDRITCH_EYE =
             ITEMS.registerItem("eldritch_eye", Item::new, new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> RUNED_TABLET =
-            ITEMS.registerItem("runed_tablet", Item::new, new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<RunedTabletItem> RUNED_TABLET =
+            ITEMS.registerItem("runed_tablet", RunedTabletItem::new, new Item.Properties().rarity(Rarity.RARE));
     public static final DeferredItem<BlockItem> SLAB_GREATWOOD = ITEMS.registerSimpleBlockItem(TTBlocks.SLAB_GREATWOOD);
     public static final DeferredItem<BlockItem> SLAB_SILVERWOOD =
             ITEMS.registerSimpleBlockItem(TTBlocks.SLAB_SILVERWOOD);

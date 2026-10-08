@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchAltar;
+import com.leclowndu93150.thaumaturge.content.eldritch.altar.BlockEntityEldritchAltar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -68,6 +68,7 @@ public final class TTBlockEntityRenderers {
         event.registerBlockEntityRenderer(TTBlockEntities.ELDRITCH_NOTHING.get(), EldritchNothingRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.HOLE.get(), HoleRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.ELDRITCH_LOCK.get(), EldritchLockRenderer::new);
+        event.registerBlockEntityRenderer(TTBlockEntities.ELDRITCH_RELIQUARY.get(), EldritchReliquaryRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.PATTERN_CRAFTER.get(), PatternCrafterRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.NODE.get(), NodeRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.JAR_NODE.get(), NodeRenderer::new);

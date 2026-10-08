@@ -1,10 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.entity.boss;
 
+import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthHelper;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintacle;
-import com.leclowndu93150.thaumaturge.content.entity.EntitySpecialItem;
 import com.leclowndu93150.thaumaturge.content.entity.ISidedHurt;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
-import com.leclowndu93150.thaumaturge.registry.TTItems;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetActionBarTextPacket;
@@ -23,7 +22,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jspecify.annotations.Nullable;
@@ -108,12 +106,13 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements ISidedHur
         ServerLevel level = (ServerLevel) level();
         super.customServerAiStep();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        BossHooks.syncSharedBar(this, this.bossEvent);
     }
 
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        this.bossEvent.addPlayer(player);
+        BossHooks.showBar(this, this.bossEvent, player);
     }
 
     @Override
@@ -155,15 +154,13 @@ public class EntityTaintacleGiant extends AbstractTaintacle implements ISidedHur
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-        if (level.getEntitiesOfClass(
-                        EntityTaintacleGiant.class, this.getBoundingBox().inflate(LONELY_RANGE), other -> other != this)
-                .isEmpty()) {
-            level.addFreshEntity(new EntitySpecialItem(
-                    level,
-                    this.getX(),
-                    this.getY() + this.getBbHeight() / 2.0F,
-                    this.getZ(),
-                    new ItemStack(TTItems.PRIMORDIAL_PEARL.get())));
+        if (!LabyrinthHelper.isLabyrinthBound(this)
+                && level.getEntitiesOfClass(
+                                EntityTaintacleGiant.class,
+                                this.getBoundingBox().inflate(LONELY_RANGE),
+                                other -> other != this)
+                        .isEmpty()) {
+            BossHooks.dropPearl(level, this);
         }
     }
 

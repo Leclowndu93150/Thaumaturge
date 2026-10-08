@@ -3,6 +3,8 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
+import com.leclowndu93150.thaumaturge.content.eldritch.encounter.LabyrinthBinding;
+import com.leclowndu93150.thaumaturge.content.eldritch.portal.TransitState;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitRuntime;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
 import com.leclowndu93150.thaumaturge.content.equipment.runic.RunicShieldState;
@@ -70,6 +72,28 @@ public final class TTAttachments {
                     () -> AttachmentType.builder(DustTriggerSwapQueue::new)
                             .serialize(DustTriggerSwapQueue.CODEC.codec())
                             .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LABYRINTH_STAMP = register(
+            "labyrinth_stamp",
+            () -> AttachmentType.builder(() -> -1)
+                    .serialize(Codec.INT.fieldOf("maze").codec(), value -> value >= 0)
+                    .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<BlockPos>> OBELISK_SITE_MEMBER = register(
+            "obelisk_site_member",
+            () -> AttachmentType.builder(() -> BlockPos.ZERO)
+                    .serialize(BlockPos.CODEC.fieldOf("altar").codec())
+                    .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<LabyrinthBinding>> LABYRINTH_BINDING =
+            register(
+                    "labyrinth_binding",
+                    () -> AttachmentType.builder(() -> LabyrinthBinding.NONE)
+                            .serialize(LabyrinthBinding.CODEC.codec(), LabyrinthBinding::bound)
+                            .build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<TransitState>> LABYRINTH_TRANSIT = register(
+            "labyrinth_transit", () -> AttachmentType.builder(TransitState::new).build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> GRAPPLE_ID =
             register("grapple_id", () -> AttachmentType.builder(() -> -1).build());
@@ -160,6 +184,9 @@ public final class TTAttachments {
             register(
                     "channel_summary",
                     () -> AttachmentType.builder(ChannelSummaryCache::new).build());
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> WAYFINDING_PULSE =
+            register("wayfinding_pulse", () -> AttachmentType.builder(() -> 0L).build());
 
     private TTAttachments() {}
 

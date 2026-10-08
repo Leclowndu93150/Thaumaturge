@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
-import com.leclowndu93150.thaumaturge.content.eldritch.ChunkGeneratorOuter;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.OuterLandsChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -13,8 +13,8 @@ public final class TTChunkGenerators {
     public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS =
             DeferredRegister.create(Registries.CHUNK_GENERATOR, TTIds.MODID);
 
-    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<ChunkGeneratorOuter>> OUTER_LANDS =
-            CHUNK_GENERATORS.register("outer_lands", () -> ChunkGeneratorOuter.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<OuterLandsChunkGenerator>>
+            OUTER_LANDS = CHUNK_GENERATORS.register("outer_lands", () -> OuterLandsChunkGenerator.CODEC);
 
     private TTChunkGenerators() {}
 

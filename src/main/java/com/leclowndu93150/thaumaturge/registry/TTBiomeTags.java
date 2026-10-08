@@ -27,6 +27,7 @@ public final class TTBiomeTags {
     public static final TagKey<Biome> HAS_ELDRITCH_OBELISK = biome("has_structure/eldritch_obelisk");
     public static final TagKey<Biome> HAS_BRAINY_HUSK = biome("has_spawn/brainy_husk");
     public static final TagKey<Biome> IS_MAGICAL = biome("is_magical");
+    public static final TagKey<Biome> HAS_PECH = biome("has_spawn/pech");
     public static final TagKey<Biome> IS_SPOOKY = biome("is_spooky");
     public static final TagKey<Biome> IS_TAINTED = biome("is_tainted");
 

@@ -11,7 +11,13 @@ public final class BlockEldritchSparkFX {
 
     public static void spawnShockSpark(Level level, BlockPos pos, RandomSource random) {
         SparkParticleOptions data = new SparkParticleOptions(
-                ARGB32.colorFromFloat(1.0F, 0.65F + random.nextFloat() * 0.1F, 1.0F, 1.0F), 0.8F, 0.5F);
+                ARGB32.color(
+                        (int) ((1.0F) * 255.0F),
+                        (int) ((0.65F + random.nextFloat() * 0.1F) * 255.0F),
+                        (int) ((1.0F) * 255.0F),
+                        (int) ((1.0F) * 255.0F)),
+                0.8F,
+                0.5F);
         level.addParticle(
                 data,
                 pos.getX() + random.nextFloat(),

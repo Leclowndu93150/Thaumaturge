@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.eldritch.ReliquaryViewClientHandler;
 import com.leclowndu93150.thaumaturge.client.golem.GolemPressClientHandler;
 import com.leclowndu93150.thaumaturge.client.golem.SealClientHandler;
 import com.leclowndu93150.thaumaturge.client.network.AspectGainClientHandler;
@@ -62,6 +63,10 @@ public final class TTPayloads {
                 ClientboundThaumatoriumRecipesPayload.TYPE,
                 ClientboundThaumatoriumRecipesPayload.STREAM_CODEC,
                 ThaumatoriumClientHandler::handle);
+        registrar.playToClient(
+                ClientboundReliquaryViewPayload.TYPE,
+                ClientboundReliquaryViewPayload.STREAM_CODEC,
+                ReliquaryViewClientHandler::handle);
         registrar.playToServer(
                 ServerboundThaumatoriumTogglePayload.TYPE,
                 ServerboundThaumatoriumTogglePayload.STREAM_CODEC,

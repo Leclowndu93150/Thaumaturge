@@ -23,7 +23,6 @@ import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.aura.FluxPressureEvents;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
-import com.leclowndu93150.thaumaturge.content.eldritch.maze.MazeSavedData;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
@@ -78,7 +77,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.commands.SummonCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -145,15 +143,6 @@ public final class TTCommands {
     public static void onRegister(RegisterCommandsEvent event) {
         LiteralArgumentBuilder<CommandSourceStack> tc = TTCommandRoot.root()
                 .then(Commands.literal("table").executes(TTCommands::giveResearchTable))
-                .then(Commands.literal("outermaze")
-                        .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
-                        .executes(ctx -> generateOuterMaze(ctx, 0, 0))
-                        .then(Commands.argument("width", IntegerArgumentType.integer(5, 31))
-                                .then(Commands.argument("height", IntegerArgumentType.integer(5, 31))
-                                        .executes(ctx -> generateOuterMaze(
-                                                ctx,
-                                                IntegerArgumentType.getInteger(ctx, "width"),
-                                                IntegerArgumentType.getInteger(ctx, "height"))))))
                 .then(Commands.literal("book").executes(TTCommands::giveThaumonomicon))
                 .then(Commands.literal("particle")
                         .then(Commands.literal("list").executes(TTCommands::listParticles))
@@ -964,32 +953,6 @@ public final class TTCommands {
             ItemStack stack = EssentiaCrystalFactory.of(player.registryAccess(), key);
             player.getInventory().add(stack);
             ctx.getSource().sendSuccess(() -> Component.literal("Gave crystal of " + tag), false);
-            return Command.SINGLE_SUCCESS;
-        } catch (Exception e) {
-            ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));
-            return 0;
-        }
-    }
-
-    private static int generateOuterMaze(CommandContext<CommandSourceStack> ctx, int w, int h) {
-        try {
-            ServerLevel level = ctx.getSource().getLevel();
-            MazeSavedData maze = MazeSavedData.get(level);
-            RandomSource rand = level.getRandom();
-            int width = w > 0 ? w : 15 + rand.nextInt(8) * 2;
-            int height = h > 0 ? h : 15 + rand.nextInt(8) * 2;
-            int chunkX = (int) ctx.getSource().getPosition().x >> 4;
-            int chunkZ = (int) ctx.getSource().getPosition().z >> 4;
-            if (maze.mazesInRange(chunkX, chunkZ, width, height)) {
-                ctx.getSource().sendFailure(Component.literal("A maze already exists in range."));
-                return 0;
-            }
-            maze.generateMaze(chunkX, chunkZ, width, height, rand.nextLong());
-            ctx.getSource()
-                    .sendSuccess(
-                            () -> Component.literal("Maze " + width + "x" + height + " generated around chunk " + chunkX
-                                    + "," + chunkZ + " (portal room at that chunk in the Outer Lands)"),
-                            true);
             return Command.SINGLE_SUCCESS;
         } catch (Exception e) {
             ctx.getSource().sendFailure(Component.literal("Failed: " + e.getMessage()));

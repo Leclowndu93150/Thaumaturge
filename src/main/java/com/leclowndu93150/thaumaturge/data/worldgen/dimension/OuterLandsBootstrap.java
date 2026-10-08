@@ -1,7 +1,8 @@
 package com.leclowndu93150.thaumaturge.data.worldgen.dimension;
 
-import com.leclowndu93150.thaumaturge.content.eldritch.ChunkGeneratorOuter;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.BandSettings;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.OuterLandsChunkGenerator;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import java.util.OptionalLong;
 import net.minecraft.core.registries.Registries;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.dimension.LevelStem;
 
 public final class OuterLandsBootstrap {
     private static final float AMBIENT_LIGHT = 0.05F;
-    private static final int HEIGHT = 128;
+    private static final int HEIGHT = OuterLandsChunkGenerator.GEN_DEPTH;
     private static final int MONSTER_SPAWN_LIGHT = 7;
     private static final int MONSTER_SPAWN_BLOCK_LIGHT_LIMIT = 15;
 
@@ -46,6 +47,7 @@ public final class OuterLandsBootstrap {
                 OuterLands.STEM,
                 new LevelStem(
                         context.lookup(Registries.DIMENSION_TYPE).getOrThrow(OuterLands.DIMENSION_TYPE),
-                        new ChunkGeneratorOuter(context.lookup(Registries.BIOME).getOrThrow(TTBiomes.ELDRITCH))));
+                        new OuterLandsChunkGenerator(
+                                context.lookup(Registries.BIOME).getOrThrow(TTBiomes.ELDRITCH), BandSettings.DEFAULT)));
     }
 }

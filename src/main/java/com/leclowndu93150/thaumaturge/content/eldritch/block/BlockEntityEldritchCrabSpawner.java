@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.eldritch.block;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchCrab;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
@@ -21,8 +22,6 @@ import net.minecraft.world.phys.AABB;
 
 public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     private static final int VENT_EVENT = 1;
-    private static final int ACTIVATION_RANGE = 16;
-    private static final int MAX_CRABS = 5;
     private static final int CRAB_SCAN_RANGE = 16;
     private static final int VENT_COLOR = 0x9988AA;
     private static final float VENT_SPEED = 0.25F;
@@ -121,13 +120,18 @@ public final class BlockEntityEldritchCrabSpawner extends BlockEntity {
     }
 
     private static boolean canSpawnCrab(Level level, BlockPos pos) {
-        if (level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, ACTIVATION_RANGE, false)
+        if (level.getNearestPlayer(
+                        pos.getX() + 0.5,
+                        pos.getY() + 0.5,
+                        pos.getZ() + 0.5,
+                        ThaumaturgeServerConfig.LABYRINTH.crabVentActivationRange.get(),
+                        false)
                 == null) {
             return false;
         }
         List<EntityEldritchCrab> crabs =
                 level.getEntitiesOfClass(EntityEldritchCrab.class, new AABB(pos).inflate(CRAB_SCAN_RANGE));
-        return crabs.size() < MAX_CRABS;
+        return crabs.size() < ThaumaturgeServerConfig.LABYRINTH.crabVentMaxCrabs.get();
     }
 
     private void spawnCrab(Level level, BlockPos pos, BlockState state) {

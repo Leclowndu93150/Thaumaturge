@@ -26,7 +26,8 @@ public final class ThaumaturgeCommand {
                 PlacementSubcommand.features(),
                 new ShowcaseSubcommand(),
                 new LocateSubcommand(),
-                new BuildSubcommand());
+                new BuildSubcommand(),
+                new LabyrinthSubcommand());
         for (AdminSubcommand subcommand : subcommands) {
             root.then(subcommand
                     .build(event.getBuildContext())

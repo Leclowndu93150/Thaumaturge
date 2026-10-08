@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPart;
+import com.leclowndu93150.thaumaturge.data.labyrinth.LabyrinthEncounterBootstrap;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
@@ -17,6 +18,9 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("block.thaumaturge.stone_eldritch_pillar", "Eldritch Pillar");
+        add("block.thaumaturge.stairs_eldritch_tile", "Eldritch Tile Stairs");
+        add("block.thaumaturge.stairs_eldritch_rock", "Eldritch Rock Stairs");
         add("entity.thaumaturge.hierophant_hammer", "Hierophant's Hammer");
         add("entity.thaumaturge.eldritch_hierophant", "The Eldritch Hierophant");
         add("entity.thaumaturge.hierophant_crescent", "Eldritch Crescent");
@@ -860,7 +864,7 @@ public final class TTEnglishProvider extends LanguageProvider {
                 "The whispers have grown into a chorus and at last I understand what they want of me. The obelisks scattered across the world are not monuments - they are doors, and every door has a key.<BR>The strange altars where I first encountered the crimson cult hold a keystone marked with four empty sockets. Four eyes must be seated there, crafted or bargained for, and the sinister energies above the keystone must remain intact.<BR>Before I attempt something this reckless I should set my theories in order.");
         add(
                 "research.thaumaturge.oculus.stage_1",
-                "It was all so simple - I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a focused discharge of vis channeled through my wand into the altar. The local aura pays the price, and the so-called Eye is opened.<BR>The eyes are spent in the opening, and a keystone left empty will take four more. Seat them and channel again and the door swings onto somewhere else entirely - an altar already used is not an altar exhausted.<BR>Of course I have no idea what that means. No matter - only fools fear the unknown!");
+                "It was all so simple. I am amazed the Crimson Cultists never discovered this.<BR>Four Eldritch Eyes seated upon the keystone, then a slow, steady discharge of vis channeled through my wand into the altar. I must hold the channel until the Eye opens. If I wander off or the aura runs dry the working fizzles and the vis is lost, though the eyes stay seated.<BR>A warning to myself: once three eyes are in place the obelisk stirs, and its guardians come looking for whoever is meddling with it.<BR>The eyes are spent in the opening, and a keystone left empty will take four more. Seat them and channel again and the door swings onto somewhere else entirely. An altar already used is not an altar exhausted.<BR>Of course I have no idea what that means. No matter, only fools fear the unknown!");
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
         add(
                 "research.thaumaturge.enter_outer_lands.stage_0",
@@ -872,6 +876,79 @@ public final class TTEnglishProvider extends LanguageProvider {
         add(
                 "gui.thaumaturge.altar.ritual_unknown",
                 "The keystone hums with power, but its purpose escapes you... for now.");
+        add("gui.thaumaturge.labyrinth.unavailable", "The way beyond is sealed. Nothing answers from the other side.");
+        add("gui.thaumaturge.labyrinth.closed", "The way beyond has closed.");
+        add(
+                "gui.thaumaturge.labyrinth.lock.peaceful",
+                "The lock does not stir. Nothing waits beyond while the world is at peace.");
+        add("gui.thaumaturge.labyrinth.lock.open", "The lock has already been opened.");
+        add("gui.thaumaturge.labyrinth.lock.wrong_key", "This tablet was carved for another labyrinth.");
+        add("gui.thaumaturge.reliquary.claimed", "The reliquary yields its contents to you.");
+        add("gui.thaumaturge.reliquary.already_claimed", "The reliquary has nothing more for you.");
+        add(
+                "gui.thaumaturge.reliquary.ineligible",
+                "The reliquary does not recognise you. You took no part in the fight.");
+        add("gui.thaumaturge.reliquary.warded", "Wards still bind the reliquary.");
+        add("gui.thaumaturge.reliquary.reissued", "The reliquary carves you a new tablet.");
+        add("tooltip.thaumaturge.runed_tablet.bound", "Bound to labyrinth %s");
+        add("gui.thaumaturge.runed_tablet.faint", "The tablet hums faintly.");
+        add("gui.thaumaturge.runed_tablet.warm", "The tablet grows warm in your hand.");
+        add("gui.thaumaturge.runed_tablet.fierce", "The tablet burns with the lock's call.");
+        add("block.thaumaturge.eldritch_reliquary", "Eldritch Reliquary");
+        add("gui.thaumaturge.labyrinth.lock.title", "The Lock Awakens");
+        add("gui.thaumaturge.labyrinth.lock.subtitle", "Something stirs beyond the door");
+        add("gui.thaumaturge.labyrinth.conquered.title", "Labyrinth Conquered");
+        add("gui.thaumaturge.labyrinth.conquered.subtitle", "The guardian of this place has fallen");
+        add("gui.thaumaturge.labyrinth.hall_protected", "The hall resists your meddling.");
+        add("gui.thaumaturge.labyrinth.encounter", "Labyrinth Guardian");
+        add(LabyrinthEncounterBootstrap.nameKey(LabyrinthEncounterBootstrap.WARDEN), "The Eldritch Warden");
+        add(
+                LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.WARDEN),
+                "The Warden rises to bar the way");
+        add(LabyrinthEncounterBootstrap.nameKey(LabyrinthEncounterBootstrap.GOLEM), "The Eldritch Golem");
+        add(
+                LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.GOLEM),
+                "Ancient stone grinds into motion");
+        add(LabyrinthEncounterBootstrap.nameKey(LabyrinthEncounterBootstrap.CRIMSON_PORTAL), "The Crimson Portal");
+        add(
+                LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.CRIMSON_PORTAL),
+                "The Crimson Cult tears open a gate");
+        add(LabyrinthEncounterBootstrap.nameKey(LabyrinthEncounterBootstrap.TAINT_SWARM), "The Taint Swarm");
+        add(
+                LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.TAINT_SWARM),
+                "Writhing taint erupts from below");
+        add(LabyrinthEncounterBootstrap.nameKey(LabyrinthEncounterBootstrap.HIEROPHANT), "The Hierophant");
+        add(
+                LabyrinthEncounterBootstrap.announceKey(LabyrinthEncounterBootstrap.HIEROPHANT),
+                "The Hierophant descends to judge you");
+        add("gui.thaumaturge.altar.need_eyes", "The keystone needs four Eldritch Eyes before it will answer.");
+        add("gui.thaumaturge.altar.no_node", "There is no aura node above the keystone to tear open.");
+        add("gui.thaumaturge.altar.already_open", "The way beyond already stands open.");
+        add("gui.thaumaturge.altar.ritual_begin", "The keystone drinks from the aura...");
+        add("gui.thaumaturge.altar.ritual_broken", "The ritual breaks apart.");
+        add("gui.thaumaturge.altar.ritual_complete", "The veil tears open.");
+        add("gui.thaumaturge.altar.labyrinth_full", "Nothing answers from beyond. Too many ways already stand open.");
+        add("commands.thaumaturge.labyrinth.unknown", "No labyrinth with id %s");
+        add("commands.thaumaturge.labyrinth.not_inside", "You are not inside a labyrinth");
+        add(
+                "commands.thaumaturge.labyrinth.create.failed",
+                "The labyrinth could not be created. Check the server log.");
+        add("commands.thaumaturge.labyrinth.create.success", "Created labyrinth %s (%sx%s cells, encounter %s)");
+        add("commands.thaumaturge.labyrinth.list.header", "%s labyrinths:");
+        add("commands.thaumaturge.labyrinth.list.entry", "#%s %sx%s %s, opened from %s %s");
+        add(
+                "commands.thaumaturge.labyrinth.info",
+                "Labyrinth %s (%s): %sx%s cells, phase %s, encounter %s, arrival %s, key room %s, lock %s, boss hall centre %s, %s pending triggers");
+        add(
+                "commands.thaumaturge.labyrinth.info.encounter",
+                "Encounter %s (forced %s): %s bound, %s defeated, scaled for %s; boss hall %s to %s");
+        add("commands.thaumaturge.labyrinth.retire.success", "Retired labyrinth %s");
+        add("commands.thaumaturge.labyrinth.restamp.success", "Queued %s loaded chunks of labyrinth %s for rebuilding");
+        add("commands.thaumaturge.labyrinth.portal.success", "Opened a portal into labyrinth %s at %s");
+        add("commands.thaumaturge.labyrinth.phase.success", "Labyrinth %s is now %s");
+        add("commands.thaumaturge.labyrinth.phase.unknown", "Unknown phase %s");
+        add("commands.thaumaturge.labyrinth.encounter.success", "Labyrinth %s will run encounter %s");
+        add("commands.thaumaturge.labyrinth.encounter.unknown", "Unknown encounter %s");
     }
 
     private void langDecor() {
@@ -1441,6 +1518,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.eldritch_pedestal", "Eldritch Pedestal");
         add("block.thaumaturge.eldritch_stone_crystal", "Crystallized Eldritch Stone");
         add("block.thaumaturge.eldritch_nothing", "Nothingness");
+        add("block.thaumaturge.eldritch_nothing_dormant", "Nothingness");
         add("block.thaumaturge.eldritch_lock", "Eldritch Lock");
         add("block.thaumaturge.eldritch_crab_spawner", "Crusted Opening");
         add("block.thaumaturge.eldritch_trap", "Eldritch Stone");
