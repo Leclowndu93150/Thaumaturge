@@ -38,4 +38,10 @@ public final class FXManagerRegistry {
         float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(false);
         for (AbstractFXManager<?> m : MANAGERS) m.renderAll(poseStack, camera, partialTick);
     }
+
+    public static void clearAll() {
+        for (AbstractFXManager<?> manager : MANAGERS) {
+            manager.clear();
+        }
+    }
 }

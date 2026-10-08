@@ -28,6 +28,7 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    maven { url = 'https://maven.ftb.dev/releases' }
     maven {
         name = 'JEI Maven'
         url = 'https://maven.blamejared.com/'
@@ -197,6 +198,7 @@ dependencies {
 
     compileOnly "maven.modrinth:vdjF5PL5:1.7.2"
 
+    compileOnly("dev.ftb.mods:ftb-library-neoforge:${ftb_library_version}") { transitive = false }
     compileOnly "maven.modrinth:iris:${iris_version}"
     compileOnly "maven.modrinth:distanthorizons:${distant_horizons_version}"
 }

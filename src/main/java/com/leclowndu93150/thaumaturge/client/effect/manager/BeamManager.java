@@ -8,7 +8,6 @@ import com.leclowndu93150.thaumaturge.client.effect.rendertype.ArcRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BeamRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.BoltRenderType;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -74,21 +73,24 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         Vec3 camPos = camera.getPosition();
 
         if (!ARCS.isEmpty()) {
-            MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
+            MultiBufferSource.BufferSource bufSource =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer consumer = IrisCompat.entityEffectBuffers(bufSource).getBuffer(ArcRenderType.RENDER_TYPE);
             for (ArcInstance arc : ARCS) renderArc(poseStack, consumer, arc, camPos, partialTick);
             bufSource.endBatch();
         }
 
         if (!BOLTS.isEmpty()) {
-            MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(4096));
+            MultiBufferSource.BufferSource bufSource =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer consumer = IrisCompat.entityEffectBuffers(bufSource).getBuffer(BoltRenderType.RENDER_TYPE);
             for (BoltInstance bolt : BOLTS) renderBolt(poseStack, consumer, bolt, camPos, partialTick);
             bufSource.endBatch();
         }
 
         if (!BEAMS.isEmpty()) {
-            MultiBufferSource.BufferSource bufSource = MultiBufferSource.immediate(new ByteBufferBuilder(8192));
+            MultiBufferSource.BufferSource bufSource =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             MultiBufferSource effectBuffers = IrisCompat.entityEffectBuffers(bufSource);
             for (BeamInstance beam : BEAMS) renderBeam(poseStack, effectBuffers, beam, camPos, partialTick);
             bufSource.endBatch();
@@ -244,5 +246,12 @@ public final class BeamManager extends AbstractFXManager<IFXInstance> {
         for (int i = 0; i < n; i++) radii[i] /= 3.0;
         PolyCone.render(poseStack, consumer, points, colours, radii, 0, 1.0F, 0.0F);
         poseStack.popPose();
+    }
+
+    @Override
+    public void clear() {
+        ARCS.clear();
+        BOLTS.clear();
+        BEAMS.clear();
     }
 }

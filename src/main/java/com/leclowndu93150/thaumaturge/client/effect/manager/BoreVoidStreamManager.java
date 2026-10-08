@@ -7,7 +7,6 @@ import com.leclowndu93150.thaumaturge.client.effect.instance.VoidStreamInstance;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.EssentiaStreamRenderType;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VoidStreamRenderType;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
-import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 
@@ -62,7 +62,8 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
         double cz = camera.getPosition().z;
 
         if (!BORES.isEmpty()) {
-            MultiBufferSource.BufferSource buf = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
+            MultiBufferSource.BufferSource buf =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer consumer =
                     IrisCompat.entityEffectBuffers(buf).getBuffer(EssentiaStreamRenderType.RENDER_TYPE);
             for (BoreStreamInstance inst : BORES) {
@@ -92,7 +93,8 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
                     / (float) (2.0 * Math.PI);
             float pitchNorm = (pitchRad + (float) (Math.PI * 0.5)) / (float) Math.PI;
 
-            MultiBufferSource.BufferSource bufA = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
+            MultiBufferSource.BufferSource bufA =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer addConsumer = IrisCompat.entityEffectBuffers(bufA).getBuffer(VoidStreamRenderType.ADDITIVE);
             for (VoidStreamInstance inst : VOIDS) {
                 StreamInstance.Snapshot snap = inst.snapshotWithRadiusMul(partialTick, 1.5F);
@@ -113,7 +115,8 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
             }
             bufA.endBatch();
 
-            MultiBufferSource.BufferSource bufT = MultiBufferSource.immediate(new ByteBufferBuilder(2048));
+            MultiBufferSource.BufferSource bufT =
+                    Minecraft.getInstance().renderBuffers().bufferSource();
             VertexConsumer trConsumer =
                     IrisCompat.entityEffectBuffers(bufT).getBuffer(VoidStreamRenderType.TRANSLUCENT);
             for (VoidStreamInstance inst : VOIDS) {
@@ -145,5 +148,11 @@ public final class BoreVoidStreamManager extends AbstractFXManager<IFXInstance> 
             colours[i][2] = 0.0F;
             colours[i][3] = alpha;
         }
+    }
+
+    @Override
+    public void clear() {
+        BORES.clear();
+        VOIDS.clear();
     }
 }

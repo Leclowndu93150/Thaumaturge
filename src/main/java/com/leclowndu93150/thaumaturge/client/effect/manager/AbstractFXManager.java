@@ -19,4 +19,8 @@ public abstract class AbstractFXManager<I extends IFXInstance> {
     }
 
     public abstract void renderAll(PoseStack poseStack, Camera camera, float partialTick);
+
+    public void clear() {
+        activeInstances().clear();
+    }
 }

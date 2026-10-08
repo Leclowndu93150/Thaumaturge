@@ -3,11 +3,10 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -22,8 +21,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
 
 public final class EntityFallingTaint extends Entity implements IEntityWithComplexSpawn, ISidedHurt {
-    private static final EntityDataAccessor<Integer> SOURCE_BLOCK_ID =
-            SynchedEntityData.defineId(EntityFallingTaint.class, EntityDataSerializers.INT);
 
     private static final int MAX_HANG_TIME = 100;
     private static final int MAX_FALL_TIME = 600;
@@ -54,10 +51,12 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         return fallTile;
     }
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder data) {
-        data.define(SOURCE_BLOCK_ID, Block.getId(fallTile));
+    public BlockPos origin() {
+        return originPos;
     }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder data) {}
 
     @Override
     public void tick() {
@@ -96,7 +95,8 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         boolean overGoo = below.is(TTBlocks.FLUX_GOO.get());
 
         if (!this.onGround() && !overGoo) {
-            if (fallTime > MAX_HANG_TIME && (here.getY() < 1 || here.getY() > 256)) {
+            if (fallTime > MAX_HANG_TIME
+                    && (here.getY() < server.getMinBuildHeight() || here.getY() >= server.getMaxBuildHeight())) {
                 this.discard();
                 return;
             }
@@ -121,7 +121,7 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        output.putInt("BlockId", Block.getId(fallTile));
+        TTNbt.store(output, "Block", BlockState.CODEC, registryAccess(), fallTile);
         output.putLong("Origin", originPos.asLong());
         output.putInt("Time", fallTime);
     }
@@ -133,6 +133,9 @@ public final class EntityFallingTaint extends Entity implements IEntityWithCompl
         if (!resolved.isAir()) {
             fallTile = resolved;
         }
+        TTNbt.read(input, "Block", BlockState.CODEC, registryAccess())
+                .filter(state -> !state.isAir())
+                .ifPresent(state -> fallTile = state);
         originPos = BlockPos.of(input.getLong("Origin"));
         fallTime = input.getInt("Time");
     }

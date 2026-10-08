@@ -32,6 +32,11 @@ public final class LateWorldRenderQueue {
 
     private LateWorldRenderQueue() {}
 
+    public static void clear() {
+        QUEUE.clear();
+        AFTER_BLOCK_ENTITIES.clear();
+    }
+
     public static void enqueue(Vec3 origin, LateDraw draw) {
         enqueueEntity(origin, draw);
     }

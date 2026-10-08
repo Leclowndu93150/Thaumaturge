@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.device.bore.BlockEntityArcaneBore;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -43,7 +44,7 @@ public final class ArcaneBoreBlockRenderer implements BlockEntityRenderer<BlockE
         poseStack.translate(0.5F, 1.5F, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         poseStack.scale(-1.0F, -1.0F, 1.0F);
-        model.root().getAllParts().forEach(net.minecraft.client.model.geom.ModelPart::resetPose);
+        model.root().getAllParts().forEach(ModelPart::resetPose);
         model.setAim(yaw, pitch);
         model.animate(
                 (bore.getLevel().getGameTime() % Integer.MAX_VALUE) + partialTicks,

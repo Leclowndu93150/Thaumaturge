@@ -1,10 +1,16 @@
 package com.leclowndu93150.thaumaturge.client.aura;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.level.ChunkPos;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jspecify.annotations.Nullable;
 
+@EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class ClientAuraCache {
     private static final Map<Long, Snapshot> ENTRIES = new ConcurrentHashMap<>();
     private static final Map<Long, Long> REQUESTS = new ConcurrentHashMap<>();
@@ -17,12 +23,12 @@ public final class ClientAuraCache {
 
     public static void put(ChunkPos pos, short base, float vis, float flux) {
         Snapshot snapshot = new Snapshot(base, vis, flux, currentTick);
-        ENTRIES.put(ChunkPos.asLong(pos.x, pos.z), snapshot);
+        ENTRIES.put(pos.toLong(), snapshot);
         latest = snapshot;
     }
 
     public static @Nullable Snapshot get(ChunkPos pos) {
-        return ENTRIES.get(ChunkPos.asLong(pos.x, pos.z));
+        return ENTRIES.get(pos.toLong());
     }
 
     public static @Nullable Snapshot latest() {
@@ -30,7 +36,7 @@ public final class ClientAuraCache {
     }
 
     public static boolean shouldRequest(ChunkPos pos) {
-        long key = ChunkPos.asLong(pos.x, pos.z);
+        long key = pos.toLong();
         Snapshot snap = ENTRIES.get(key);
         if (snap != null && currentTick - snap.tick() <= STALE_TICKS) {
             return false;
@@ -43,7 +49,8 @@ public final class ClientAuraCache {
         return true;
     }
 
-    public static void tick() {
+    @SubscribeEvent
+    public static void onClientTick(ClientTickEvent.Post event) {
         currentTick++;
     }
 
