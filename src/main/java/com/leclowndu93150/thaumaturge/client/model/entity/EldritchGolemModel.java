@@ -239,9 +239,9 @@ public final class EldritchGolemModel extends HierarchicalModel<EntityEldritchGo
             float awakening = Mth.clamp(entity.getSpawnTimer() / 100.0F, 0.0F, 1.0F);
             head.xRot += awakening * 0.7F;
             leftArm.xRot = rightArm.xRot = -awakening * 0.3F;
-        } else if (Math.max(0.0F, entity.getAttackTimer() - partialTicks) > 0.0F) {
+        } else if (Math.max(0.0F, entity.swingCooldown() - partialTicks) > 0.0F) {
             float progress =
-                    1.0F - Mth.clamp(Math.max(0.0F, entity.getAttackTimer() - partialTicks) / 10.0F, 0.0F, 1.0F);
+                    1.0F - Mth.clamp(Math.max(0.0F, entity.swingCooldown() - partialTicks) / 10.0F, 0.0F, 1.0F);
             float swing = progress < 0.25F
                     ? easedSwing(progress / 0.25F, 0.0F, -2.25F)
                     : progress < 0.6F

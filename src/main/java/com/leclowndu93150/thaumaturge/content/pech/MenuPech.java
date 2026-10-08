@@ -1,13 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.pech;
 
 import com.leclowndu93150.thaumaturge.content.entity.EntityPech;
-import com.leclowndu93150.thaumaturge.content.entity.ai.PechItemGoal;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import com.leclowndu93150.thaumaturge.registry.TTSounds;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.IntStream;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,32 +14,35 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuPech extends AbstractContainerMenu {
-    public static final int INPUT_X = 36;
-    public static final int INPUT_Y = 29;
-    public static final int OUTPUT_X = 106;
-    public static final int OUTPUT_Y = 20;
-    public static final int PLAYER_GRID_X = 8;
-    public static final int PLAYER_GRID_Y = 84;
-    public static final int HOTBAR_Y = 142;
     public static final int TRADE_BUTTON_ID = 0;
 
-    public static final int INPUT_SLOT = 0;
-    public static final int OUTPUT_SLOTS = 4;
-    public static final int SLOT_COUNT = 1 + OUTPUT_SLOTS;
-    public static final int TOTAL_INVENTORY_SLOTS = SLOT_COUNT + 36;
-
-    private static final int UNTAME_ROLL = 100;
-    private static final int MAX_TIER = 5;
-    private static final float PACK_ITEM_CHANCE = 0.5F;
+    private static final int OFFER_SLOT = 0;
+    private static final int OFFER_X = 36;
+    private static final int OFFER_Y = 29;
+    private static final int PAYOUT_COLUMNS = 2;
+    private static final int PAYOUT_ROWS = 2;
+    private static final int PAYOUT_SLOTS = PAYOUT_COLUMNS * PAYOUT_ROWS;
+    private static final int PAYOUT_X = 106;
+    private static final int PAYOUT_Y = 20;
+    private static final int TABLE_SLOTS = 1 + PAYOUT_SLOTS;
+    private static final int SLOT_PITCH = 18;
+    private static final int BACKPACK_X = 8;
+    private static final int BACKPACK_Y = 84;
+    private static final int HOTBAR_Y = 142;
+    private static final int BACKPACK_ROWS = 3;
+    private static final int ROW_LENGTH = 9;
+    private static final int PLAYER_SLOTS = ROW_LENGTH * (BACKPACK_ROWS + 1);
 
     private final @Nullable EntityPech pech;
-    private final SimpleContainer tradeContainer = new SimpleContainer(SLOT_COUNT);
+    private final SimpleContainer table = new SimpleContainer(TABLE_SLOTS);
 
     public MenuPech(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         this(
                 containerId,
                 playerInventory,
-                playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityPech p ? p : null);
+                playerInventory.player.level().getEntity(buf.readVarInt()) instanceof EntityPech trader
+                        ? trader
+                        : null);
     }
 
     public MenuPech(int containerId, Inventory playerInventory, @Nullable EntityPech pech) {
@@ -52,26 +51,23 @@ public final class MenuPech extends AbstractContainerMenu {
         if (pech != null) {
             pech.trading = true;
         }
-
-        addSlot(new Slot(tradeContainer, INPUT_SLOT, INPUT_X, INPUT_Y));
-        for (int row = 0; row < 2; row++) {
-            for (int col = 0; col < 2; col++) {
-                addSlot(new Slot(tradeContainer, 1 + col + row * 2, OUTPUT_X + 18 * col, OUTPUT_Y + 18 * row) {
-                    @Override
-                    public boolean mayPlace(ItemStack stack) {
-                        return false;
-                    }
-                });
-            }
+        addSlot(new Slot(table, OFFER_SLOT, OFFER_X, OFFER_Y));
+        for (int index = 0; index < PAYOUT_SLOTS; index++) {
+            addSlot(new PechPayoutSlot(
+                    table,
+                    1 + index,
+                    PAYOUT_X + SLOT_PITCH * (index % PAYOUT_COLUMNS),
+                    PAYOUT_Y + SLOT_PITCH * (index / PAYOUT_COLUMNS)));
         }
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9, PLAYER_GRID_X + col * 18, PLAYER_GRID_Y + row * 18));
-            }
+        for (int index = ROW_LENGTH; index < PLAYER_SLOTS; index++) {
+            addSlot(new Slot(
+                    playerInventory,
+                    index,
+                    BACKPACK_X + SLOT_PITCH * (index % ROW_LENGTH),
+                    BACKPACK_Y + SLOT_PITCH * (index / ROW_LENGTH - 1)));
         }
-        for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col, PLAYER_GRID_X + col * 18, HOTBAR_Y));
+        for (int index = 0; index < ROW_LENGTH; index++) {
+            addSlot(new Slot(playerInventory, index, BACKPACK_X + SLOT_PITCH * index, HOTBAR_Y));
         }
     }
 
@@ -80,96 +76,41 @@ public final class MenuPech extends AbstractContainerMenu {
     }
 
     public boolean canTrade() {
-        ItemStack input = tradeContainer.getItem(INPUT_SLOT);
-        if (pech == null || input.isEmpty() || !pech.isValued(input)) {
-            return false;
-        }
-        for (int slot = 1; slot <= OUTPUT_SLOTS; slot++) {
-            if (!tradeContainer.getItem(slot).isEmpty()) {
-                return false;
-            }
-        }
-        return true;
+        ItemStack offer = table.getItem(OFFER_SLOT);
+        return pech != null
+                && !offer.isEmpty()
+                && pech.isValued(offer)
+                && IntStream.rangeClosed(1, PAYOUT_SLOTS)
+                        .allMatch(index -> table.getItem(index).isEmpty());
     }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        if (id == TRADE_BUTTON_ID) {
-            generateContents(player);
-            return true;
+        if (id != TRADE_BUTTON_ID) {
+            return super.clickMenuButton(player, id);
         }
-        return super.clickMenuButton(player, id);
+        if (!player.level().isClientSide() && pech != null && canTrade()) {
+            PechBarter.haggle(
+                            pech,
+                            table.getItem(OFFER_SLOT),
+                            player.level().getRandom(),
+                            player.level().registryAccess())
+                    .forEach(this::shelve);
+            table.removeItem(OFFER_SLOT, 1);
+        }
+        return true;
     }
 
-    private void generateContents(Player player) {
-        if (player.level().isClientSide() || pech == null || !canTrade()) {
-            return;
-        }
-        RandomSource rand = player.level().getRandom();
-        int value = pech.getValue(tradeContainer.getItem(INPUT_SLOT));
-        if (rand.nextInt(UNTAME_ROLL) <= value / 2) {
-            pech.setTamed(false);
-            pech.playSound(TTSounds.PECH_TRADE.get(), 0.4F, 1.0F);
-        }
-        if (rand.nextInt(5) == 0) {
-            value += rand.nextInt(3);
-        } else if (rand.nextBoolean()) {
-            value -= rand.nextInt(3);
-        }
-        List<PechTrades.Entry> trades =
-                PechTrades.tradesFor(pech.getPechType(), player.level().registryAccess());
-        while (value > 0) {
-            int amount = Math.min(MAX_TIER, Math.max((value + 1) / 2, rand.nextInt(value) + 1));
-            value -= amount;
-            if (amount == 1 && rand.nextFloat() < PACK_ITEM_CHANCE && hasStuffInPack()) {
-                List<Integer> filled = new ArrayList<>();
-                for (int a = 0; a < pech.loot.size(); a++) {
-                    if (!pech.loot.get(a).isEmpty()) {
-                        filled.add(a);
-                    }
-                }
-                int slot = filled.get(rand.nextInt(filled.size()));
-                ItemStack given = pech.loot.get(slot).copy();
-                given.setCount(1);
-                addStack(given);
-                pech.loot.get(slot).shrink(1);
-                if (pech.loot.get(slot).isEmpty()) {
-                    pech.loot.set(slot, ItemStack.EMPTY);
-                }
-            } else if (amount < 4 || !rand.nextBoolean()) {
-                int wanted = amount;
-                List<PechTrades.Entry> pool =
-                        trades.stream().filter(entry -> entry.tier() == wanted).toList();
-                if (!pool.isEmpty()) {
-                    addStack(pool.get(rand.nextInt(pool.size())).stack().copy());
-                }
-            }
-        }
-        tradeContainer.removeItem(INPUT_SLOT, 1);
-    }
-
-    private boolean hasStuffInPack() {
-        if (pech == null) {
-            return false;
-        }
-        for (ItemStack stack : pech.loot) {
-            if (!stack.isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void addStack(ItemStack stack) {
-        for (int slot = 1; slot <= OUTPUT_SLOTS; slot++) {
-            ItemStack existing = tradeContainer.getItem(slot);
-            if (existing.isEmpty()) {
-                tradeContainer.setItem(slot, stack);
+    private void shelve(ItemStack stack) {
+        for (int index = 1; index <= PAYOUT_SLOTS; index++) {
+            ItemStack shelved = table.getItem(index);
+            if (shelved.isEmpty()) {
+                table.setItem(index, stack);
                 return;
             }
-            if (ItemStack.isSameItemSameComponents(existing, stack)
-                    && existing.getCount() + stack.getCount() < existing.getMaxStackSize()) {
-                existing.grow(stack.getCount());
+            if (ItemStack.isSameItemSameComponents(shelved, stack)
+                    && shelved.getCount() + stack.getCount() < shelved.getMaxStackSize()) {
+                shelved.grow(stack.getCount());
                 return;
             }
         }
@@ -186,43 +127,41 @@ public final class MenuPech extends AbstractContainerMenu {
         if (pech != null) {
             pech.trading = false;
         }
-        if (!player.level().isClientSide()) {
-            for (int slot = 0; slot < SLOT_COUNT; slot++) {
-                ItemStack stack = tradeContainer.removeItemNoUpdate(slot);
-                if (!stack.isEmpty()) {
-                    ItemEntity dropped = player.drop(stack, false);
-                    if (dropped != null) {
-                        dropped.addTag(PechItemGoal.PECH_DROP_TAG);
-                    }
-                }
+        if (player.level().isClientSide()) {
+            return;
+        }
+        for (int index = 0; index < TABLE_SLOTS; index++) {
+            ItemStack leftover = table.removeItemNoUpdate(index);
+            ItemEntity dropped = leftover.isEmpty() ? null : player.drop(leftover, false);
+            if (dropped != null) {
+                dropped.addTag(EntityPech.DROPPED_BY_PECH_TAG);
             }
         }
     }
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
-        ItemStack returnStack = ItemStack.EMPTY;
         Slot slot = slots.get(slotIndex);
-        if (slot != null && slot.hasItem()) {
-            ItemStack stackInSlot = slot.getItem();
-            returnStack = stackInSlot.copy();
-            if (slotIndex < SLOT_COUNT) {
-                if (!moveItemStackTo(stackInSlot, SLOT_COUNT, TOTAL_INVENTORY_SLOTS, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!moveItemStackTo(stackInSlot, 0, 1, true)) {
-                return ItemStack.EMPTY;
-            }
-            if (stackInSlot.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-            if (stackInSlot.getCount() == returnStack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-            slot.onTake(player, stackInSlot);
+        if (!slot.hasItem()) {
+            return ItemStack.EMPTY;
         }
-        return returnStack;
+        ItemStack moving = slot.getItem();
+        ItemStack original = moving.copy();
+        boolean moved = slotIndex < TABLE_SLOTS
+                ? moveItemStackTo(moving, TABLE_SLOTS, TABLE_SLOTS + PLAYER_SLOTS, true)
+                : moveItemStackTo(moving, OFFER_SLOT, OFFER_SLOT + 1, true);
+        if (!moved) {
+            return ItemStack.EMPTY;
+        }
+        if (moving.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
+        }
+        if (moving.getCount() == original.getCount()) {
+            return ItemStack.EMPTY;
+        }
+        slot.onTake(player, moving);
+        return original;
     }
 }

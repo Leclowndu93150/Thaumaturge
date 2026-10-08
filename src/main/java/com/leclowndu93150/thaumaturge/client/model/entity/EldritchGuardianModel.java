@@ -216,11 +216,11 @@ public final class EldritchGuardianModel<T extends Mob> extends HierarchicalMode
         root.getAllParts().forEach(ModelPart::resetPose);
         float partialTicks = ageInTicks - entity.tickCount;
         float armLiftL = entity instanceof EntityEldritchGuardian guardian
-                ? guardian.armLiftL
-                : entity instanceof EntityEldritchWarden warden ? warden.armLiftL : 0.0F;
+                ? guardian.arms().leftLift()
+                : entity instanceof EntityEldritchWarden warden ? warden.arms().leftLift() : 0.0F;
         float armLiftR = entity instanceof EntityEldritchGuardian guardian
-                ? guardian.armLiftR
-                : entity instanceof EntityEldritchWarden warden ? warden.armLiftR : 0.0F;
+                ? guardian.arms().rightLift()
+                : entity instanceof EntityEldritchWarden warden ? warden.arms().rightLift() : 0.0F;
         float death = Mth.clamp((entity.deathTime > 0 ? entity.deathTime + partialTicks : 0.0F) / 20.0F, 0.0F, 1.0F);
         float alive = 1.0F - death;
         float phase = ageInTicks * Mth.PI / 20.0F;

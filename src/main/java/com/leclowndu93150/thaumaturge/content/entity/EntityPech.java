@@ -7,8 +7,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.CastStreams;
 import com.leclowndu93150.thaumaturge.api.casters.FocusEngine;
 import com.leclowndu93150.thaumaturge.api.casters.FocusPackage;
-import com.leclowndu93150.thaumaturge.content.entity.ai.PechItemGoal;
-import com.leclowndu93150.thaumaturge.content.entity.ai.PechTradeGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.FetchItemGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.HoldStillGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.HoldsStill;
+import com.leclowndu93150.thaumaturge.content.entity.ai.ItemCollector;
 import com.leclowndu93150.thaumaturge.content.pech.MenuPech;
 import com.leclowndu93150.thaumaturge.registry.TTBiomeTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
@@ -60,6 +63,7 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
@@ -72,7 +76,9 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
-public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
+public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, ItemCollector {
+    public static final String DROPPED_BY_PECH_TAG = "PechDrop";
+
     public static final int TYPE_FORAGER = 0;
     public static final int TYPE_MAGE = 1;
     public static final int TYPE_STALKER = 2;
@@ -139,8 +145,8 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new PechTradeGoal(this));
-        this.goalSelector.addGoal(3, new PechItemGoal(this));
+        this.goalSelector.addGoal(1, new HoldStillGoal<>(this));
+        this.goalSelector.addGoal(3, new FetchItemGoal<>(this));
         this.goalSelector.addGoal(5, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 0.5));
         this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.6));
@@ -380,11 +386,7 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
 
     @Override
     public boolean hurt(DamageSource source, float damage) {
-        return hurtSided(level(), source, damage);
-    }
-
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
+        if (!(level() instanceof ServerLevel level)) return false;
         if (this.isInvulnerableTo(source)) {
             return false;
         }
@@ -398,11 +400,6 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
             }
             this.becomeAngryAt(attacker);
         }
-        return super.hurt(source, damage);
-    }
-
-    @Override
-    public boolean hurtClient(DamageSource source, float damage) {
         return super.hurt(source, damage);
     }
 
@@ -500,6 +497,21 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
         }
     }
 
+    @Override
+    public boolean holdingStill() {
+        return this.isTamed() && this.trading;
+    }
+
+    @Override
+    public void releaseHold() {
+        this.trading = false;
+    }
+
+    @Override
+    public boolean wantsToCollect(ItemEntity item) {
+        return !item.getTags().contains(DROPPED_BY_PECH_TAG) && this.canPickup(item.getItem());
+    }
+
     public boolean canPickup(ItemStack stack) {
         if (stack.isEmpty()) {
             return false;
@@ -519,7 +531,8 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
         return false;
     }
 
-    public ItemStack pickupItem(ItemStack stack) {
+    @Override
+    public ItemStack collect(ItemStack stack) {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
@@ -597,21 +610,23 @@ public class EntityPech extends Monster implements RangedAttackMob, ISidedHurt {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
+        HolderLookup.Provider registries = registryAccess();
         super.addAdditionalSaveData(output);
         output.putByte("PechType", (byte) this.getPechType());
         output.putShort("Anger", (short) this.getAnger());
         output.putBoolean("Tamed", this.isTamed());
-        ContainerHelper.saveAllItems(output, this.loot, registryAccess());
+        ContainerHelper.saveAllItems(output, this.loot, registries);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
+        HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
-        this.setPechType(input.getByte("PechType"));
-        this.setAnger(input.getShort("Anger"));
-        this.setTamed(input.getBoolean("Tamed"));
+        this.setPechType((input.contains("PechType") ? input.getByte("PechType") : (byte) 0));
+        this.setAnger((input.contains("Anger") ? input.getShort("Anger") : (short) 0));
+        this.setTamed((input.contains("Tamed") ? input.getBoolean("Tamed") : false));
         this.loot = NonNullList.withSize(LOOT_SLOTS, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(input, this.loot, registryAccess());
+        ContainerHelper.loadAllItems(input, this.loot, registries);
         this.setCombatTask();
     }
 }
