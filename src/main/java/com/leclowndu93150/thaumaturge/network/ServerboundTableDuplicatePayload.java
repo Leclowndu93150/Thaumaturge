@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.network;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
+import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,14 +22,9 @@ public record ServerboundTableDuplicatePayload(BlockPos pos) implements CustomPa
 
     public static void handle(ServerboundTableDuplicatePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) {
-                return;
-            }
-            if (payload.pos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) > 64.0) {
-                return;
-            }
-            if (player.level().getBlockEntity(payload.pos()) instanceof BlockEntityResearchTable table) {
-                table.duplicateNote(player);
+            BlockEntityResearchTable table = BlockMenuGuard.target(context, payload.pos(), MenuResearchTable.class);
+            if (table != null) {
+                table.duplicateNote((ServerPlayer) context.player());
             }
         });
     }

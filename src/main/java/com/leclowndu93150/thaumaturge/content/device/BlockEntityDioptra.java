@@ -2,21 +2,17 @@ package com.leclowndu93150.thaumaturge.content.device;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.IAuraChunk;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import java.util.Arrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
-public final class BlockEntityDioptra extends BlockEntity {
+public final class BlockEntityDioptra extends AbstractSyncedBlockEntity {
     public static final int GRID_SIZE = 13;
     public static final int GRID_LENGTH = GRID_SIZE * GRID_SIZE;
     private static final int SAMPLE_INTERVAL = 20;
@@ -44,7 +40,7 @@ public final class BlockEntityDioptra extends BlockEntity {
         if (dioptra.counter % SAMPLE_INTERVAL != 0 || !(level instanceof ServerLevel server)) {
             return;
         }
-        Arrays.fill(dioptra.grid, (byte) 0);
+        boolean changed = false;
         boolean enabled = state.getValue(BlockStateProperties.ENABLED);
         int baseChunkX = pos.getX() >> 4;
         int baseChunkZ = pos.getZ() >> 4;
@@ -54,11 +50,18 @@ public final class BlockEntityDioptra extends BlockEntity {
                 cursor.set((baseChunkX + xx - CHUNK_OFFSET) << 4, 0, (baseChunkZ + zz - CHUNK_OFFSET) << 4);
                 IAuraChunk aura = AuraHelper.of(server, cursor);
                 float value = enabled ? aura.getVis() : aura.getFlux();
-                dioptra.grid[xx + zz * GRID_SIZE] = (byte) Math.min(GRID_MAX, value / AURA_SCALE * GRID_MAX);
+                byte sample = (byte) Math.min(GRID_MAX, value / AURA_SCALE * GRID_MAX);
+                int index = xx + zz * GRID_SIZE;
+                if (dioptra.grid[index] != sample) {
+                    dioptra.grid[index] = sample;
+                    changed = true;
+                }
             }
         }
-        dioptra.setChanged();
-        server.sendBlockUpdated(pos, state, state, 3);
+        if (changed) {
+            dioptra.setChanged();
+            server.sendBlockUpdated(pos, state, state, 3);
+        }
     }
 
     @Override
@@ -80,21 +83,5 @@ public final class BlockEntityDioptra extends BlockEntity {
             out[i] = grid[i];
         }
         output.putIntArray("grid_a", out);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag output = new CompoundTag();
-            saveAdditional(output, registries);
-            nbt.merge(output);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

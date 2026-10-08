@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spa;
 
+import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
@@ -8,14 +9,13 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jspecify.annotations.Nullable;
 
-public final class MenuSpa extends AbstractContainerMenu {
+public final class MenuSpa extends AbstractTTMenu {
     public static final int SALTS_X = 65;
     public static final int SALTS_Y = 31;
     public static final int PLAYER_GRID_X = 8;
@@ -24,9 +24,6 @@ public final class MenuSpa extends AbstractContainerMenu {
     public static final int MIX_BUTTON_ID = 1;
 
     public static final int SLOT_COUNT = 1;
-    public static final int PLAYER_ROW_SLOTS = 9;
-    public static final int PLAYER_ROWS = 3;
-    public static final int TOTAL_INVENTORY_SLOTS = SLOT_COUNT + PLAYER_ROW_SLOTS * (PLAYER_ROWS + 1);
 
     private final ItemStackHandler items;
     private final ContainerLevelAccess access;
@@ -59,18 +56,8 @@ public final class MenuSpa extends AbstractContainerMenu {
             }
         });
 
-        for (int row = 0; row < PLAYER_ROWS; row++) {
-            for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        PLAYER_GRID_X + col * 18,
-                        PLAYER_GRID_Y + row * 18));
-            }
-        }
-        for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-            addSlot(new Slot(playerInventory, col, PLAYER_GRID_X + col * 18, HOTBAR_Y));
-        }
+        addInventoryExtendedSlots(playerInventory, PLAYER_GRID_X, PLAYER_GRID_Y);
+        addInventoryHotbarSlots(playerInventory, PLAYER_GRID_X, HOTBAR_Y);
     }
 
     public @Nullable BlockEntitySpa blockEntity() {
@@ -97,25 +84,6 @@ public final class MenuSpa extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
-        ItemStack returnStack = ItemStack.EMPTY;
-        Slot slot = slots.get(slotIndex);
-        if (slot != null && slot.hasItem()) {
-            ItemStack stackInSlot = slot.getItem();
-            returnStack = stackInSlot.copy();
-            if (slotIndex < SLOT_COUNT) {
-                if (!moveItemStackTo(stackInSlot, SLOT_COUNT, TOTAL_INVENTORY_SLOTS, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (!stackInSlot.is(TTItems.BATH_SALTS.get())
-                    || !moveItemStackTo(stackInSlot, 0, SLOT_COUNT, false)) {
-                return ItemStack.EMPTY;
-            }
-            if (stackInSlot.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-        }
-        return returnStack;
+        return quickMoveBetween(slotIndex, SLOT_COUNT, stackInSlot -> stackInSlot.is(TTItems.BATH_SALTS.get()));
     }
 }

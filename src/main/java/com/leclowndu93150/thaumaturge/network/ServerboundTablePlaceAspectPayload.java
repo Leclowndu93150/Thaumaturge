@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.research.note.HexGrid;
 import com.leclowndu93150.thaumaturge.content.research.table.BlockEntityResearchTable;
+import com.leclowndu93150.thaumaturge.content.research.table.MenuResearchTable;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -35,15 +36,11 @@ public record ServerboundTablePlaceAspectPayload(BlockPos pos, int q, int r, Opt
 
     public static void handle(ServerboundTablePlaceAspectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) {
+            BlockEntityResearchTable table = BlockMenuGuard.target(context, payload.pos(), MenuResearchTable.class);
+            if (table == null) {
                 return;
             }
-            if (payload.pos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) > 64.0) {
-                return;
-            }
-            if (!(player.level().getBlockEntity(payload.pos()) instanceof BlockEntityResearchTable table)) {
-                return;
-            }
+            ServerPlayer player = (ServerPlayer) context.player();
             Holder<IAspect> holder = payload.aspect()
                     .flatMap(id -> player.registryAccess()
                             .lookupOrThrow(IAspect.REGISTRY_KEY)

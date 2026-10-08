@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.research.decon;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -14,9 +15,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,12 +28,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityDeconstructionTable extends BlockEntity implements MenuProvider {
+public final class BlockEntityDeconstructionTable extends AbstractSyncedBlockEntity implements MenuProvider {
     public static final int SLOT_INPUT = 0;
     public static final int BREAK_TIME_TICKS = 40;
     private static final int YIELD_ROLL = 80;
@@ -77,16 +74,12 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
             if (table.breakTime != BREAK_TIME_TICKS) {
                 table.breakTime = BREAK_TIME_TICKS;
                 table.setChanged();
-                table.syncToClient();
             }
             return;
         }
         if (--table.breakTime <= 0) {
             table.breakTime = BREAK_TIME_TICKS;
             table.breakItem(level, pos);
-        }
-        if (table.breakTime % 10 == 0) {
-            table.syncToClient();
         }
     }
 
@@ -145,13 +138,6 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
         Containers.dropContents(level, pos, container);
     }
 
-    private void syncToClient() {
-        if (level != null && !level.isClientSide()) {
-            BlockState current = getBlockState();
-            level.sendBlockUpdated(getBlockPos(), current, current, 3);
-        }
-    }
-
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
@@ -169,20 +155,6 @@ public final class BlockEntityDeconstructionTable extends BlockEntity implements
             TTNbt.store(output, "result_aspect", ResourceLocation.CODEC, registries, resultAspect);
         }
         output.putInt("break_time", breakTime);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        CompoundTag out = new CompoundTag();
-        saveAdditional(out, registries);
-        nbt.merge(out);
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private final class TableInventory extends ItemStackHandler {

@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.bore;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -11,9 +12,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -23,14 +21,13 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBoreHost {
+public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity implements ArcaneBoreHost {
     public static final float EYE_HEIGHT = 0.8125F;
 
     private static final float MAX_HEAD_PITCH = 90.0F;
@@ -240,10 +237,11 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
             TTNbt.store(output, "Tool", ItemStack.CODEC, registries, tool);
         }
         output.putFloat("Charge", core.charge());
-        writeSyncData(output);
+        writeClientData(output, registries);
     }
 
-    private void writeSyncData(CompoundTag output) {
+    @Override
+    protected void writeClientData(CompoundTag output, HolderLookup.Provider registries) {
         output.putBoolean("Digging", digging);
         if (digTarget != null) {
             output.putLong("DigTarget", digTarget.asLong());
@@ -257,17 +255,5 @@ public final class BlockEntityArcaneBore extends BlockEntity implements ArcaneBo
         core.setCharge(input.getFloat("Charge"));
         digging = input.getBoolean("Digging");
         digTarget = input.contains("DigTarget") ? BlockPos.of(input.getLong("DigTarget")) : null;
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        writeSyncData(nbt);
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

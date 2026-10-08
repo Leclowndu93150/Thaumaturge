@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.network;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
+import com.leclowndu93150.thaumaturge.content.research.decon.MenuDeconstructionTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,14 +20,10 @@ public record ServerboundDeconCollectPayload(BlockPos pos) implements CustomPack
 
     public static void handle(ServerboundDeconCollectPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player() instanceof ServerPlayer player)) {
-                return;
-            }
-            if (payload.pos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) > 64.0) {
-                return;
-            }
-            if (player.level().getBlockEntity(payload.pos()) instanceof BlockEntityDeconstructionTable table) {
-                table.collect(player);
+            BlockEntityDeconstructionTable table =
+                    BlockMenuGuard.target(context, payload.pos(), MenuDeconstructionTable.class);
+            if (table != null) {
+                table.collect((ServerPlayer) context.player());
             }
         });
     }

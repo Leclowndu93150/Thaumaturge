@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.device.BlockInlay;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
@@ -8,17 +9,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityPedestal extends BlockEntity implements Clearable {
+public class BlockEntityPedestal extends AbstractSyncedBlockEntity implements Clearable {
     private ItemStack item = ItemStack.EMPTY;
 
     public BlockEntityPedestal(BlockPos pos, BlockState state) {
@@ -56,30 +54,6 @@ public class BlockEntityPedestal extends BlockEntity implements Clearable {
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
         item = TTNbt.read(input, "Item", ItemStack.CODEC, registries).orElse(ItemStack.EMPTY);
-    }
-
-    protected final void syncToClient() {
-        if (level == null || level.isClientSide()) {
-            return;
-        }
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag output = new CompoundTag();
-            saveAdditional(output, registries);
-            nbt.merge(output);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

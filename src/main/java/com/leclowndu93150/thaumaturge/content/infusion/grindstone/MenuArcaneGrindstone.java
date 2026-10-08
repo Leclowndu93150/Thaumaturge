@@ -2,17 +2,17 @@ package com.leclowndu93150.thaumaturge.content.infusion.grindstone;
 
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
+import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.Slot;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public final class MenuArcaneGrindstone extends AbstractContainerMenu {
+public final class MenuArcaneGrindstone extends AbstractTTMenu {
     public static final int INPUT_SLOT = 0;
     public static final int ADDITIONAL_SLOT = 1;
     public static final int RESULT_SLOT = 2;
@@ -36,37 +36,25 @@ public final class MenuArcaneGrindstone extends AbstractContainerMenu {
     private static final int INVENTORY_X = 8;
     private static final int INVENTORY_Y = 84;
     private static final int HOTBAR_Y = 142;
-    private static final int SLOT_STRIDE = 18;
     private static final int XP_PER_LEVEL = 10;
     private static final int LEVEL_EVENT_GRINDSTONE_USE = 1042;
 
-    private final SimpleContainer inputs = new SimpleContainer(INPUT_COUNT);
+    private final InputContainer inputs = new InputContainer(this);
     private final Container result = new ResultContainer();
     private final ContainerLevelAccess access;
 
-    public MenuArcaneGrindstone(int containerId, Inventory inventory, FriendlyByteBuf extraData) {
+    public MenuArcaneGrindstone(int containerId, Inventory inventory, RegistryFriendlyByteBuf extraData) {
         this(containerId, inventory, ContainerLevelAccess.NULL);
     }
 
     public MenuArcaneGrindstone(int containerId, Inventory inventory, ContainerLevelAccess access) {
         super(TTMenus.ARCANE_GRINDSTONE.get(), containerId);
         this.access = access;
-        inputs.addListener(this::slotsChanged);
         addSlot(new InputSlot(inputs, INPUT_SLOT, INPUT_X, INPUT_Y));
         addSlot(new InputSlot(inputs, ADDITIONAL_SLOT, INPUT_X, ADDITIONAL_Y));
         addSlot(new ResultSlot(this, result, RESULT_X, RESULT_Y));
-        for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(
-                        inventory,
-                        column + row * 9 + 9,
-                        INVENTORY_X + column * SLOT_STRIDE,
-                        INVENTORY_Y + row * SLOT_STRIDE));
-            }
-        }
-        for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, INVENTORY_X + column * SLOT_STRIDE, HOTBAR_Y));
-        }
+        addInventoryExtendedSlots(inventory, INVENTORY_X, INVENTORY_Y);
+        addInventoryHotbarSlots(inventory, INVENTORY_X, HOTBAR_Y);
     }
 
     @Override
@@ -172,6 +160,21 @@ public final class MenuArcaneGrindstone extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(access, player, TTBlocks.ARCANE_GRINDSTONE.get());
+    }
+
+    private static final class InputContainer extends SimpleContainer {
+        private final MenuArcaneGrindstone menu;
+
+        private InputContainer(MenuArcaneGrindstone menu) {
+            super(INPUT_COUNT);
+            this.menu = menu;
+        }
+
+        @Override
+        public void setChanged() {
+            super.setChanged();
+            menu.slotsChanged(this);
+        }
     }
 
     private static final class InputSlot extends Slot {

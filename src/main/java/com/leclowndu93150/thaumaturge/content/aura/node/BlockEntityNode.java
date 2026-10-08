@@ -14,6 +14,7 @@ import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.entity.EntityBrainyZombie;
 import com.leclowndu93150.thaumaturge.content.particle.BoreDebrisParticleOptions;
@@ -46,9 +47,6 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -67,7 +65,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -77,7 +74,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityNode extends BlockEntity implements IAspectContainer {
+public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspectContainer {
+    private static final int HUNGRY_SCAN_INTERVAL = 10;
     private static final int REGEN_INTERVAL_NORMAL = 600;
     private static final int REGEN_INTERVAL_BRIGHT = 400;
     private static final int REGEN_INTERVAL_PALE = 900;
@@ -126,6 +124,8 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
     private static final ResourceLocation RESEARCH_NODE_PRESERVE = TTIds.rl("node_preserve");
     private static final int MAX_DECOMPOSE_DEPTH = 8;
 
+    private List<Entity> hungryTargets = List.of();
+    private long hungryScanAt;
     private NodeType nodeType = NodeType.NORMAL;
     private @Nullable NodeModifier nodeModifier;
     protected AspectList aspects = AspectList.EMPTY;
@@ -1027,9 +1027,12 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         }
         Vec3 center = Vec3.atCenterOf(pos);
         double itemPullRange = hungryBlockEatRange() + HUNGRY_ITEM_PULL_MARGIN;
-        List<Entity> targets = serverLevel.getEntitiesOfClass(
-                Entity.class, new AABB(pos).inflate(Math.max(itemPullRange, HUNGRY_PULL_RANGE)));
-        for (Entity target : targets) {
+        if (serverLevel.getGameTime() >= hungryScanAt) {
+            hungryScanAt = serverLevel.getGameTime() + HUNGRY_SCAN_INTERVAL;
+            hungryTargets = serverLevel.getEntitiesOfClass(
+                    Entity.class, new AABB(pos).inflate(Math.max(itemPullRange, HUNGRY_PULL_RANGE)));
+        }
+        for (Entity target : hungryTargets) {
             if (target instanceof Player player && (player.isCreative() || player.isSpectator())) {
                 continue;
             }
@@ -1324,19 +1327,5 @@ public class BlockEntityNode extends BlockEntity implements IAspectContainer {
         jarringTicks = input.getInt("Jarring");
         naturalTaintBootstrapPending = input.getBoolean("NaturalTaintBootstrap");
         regeneration = -1;
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        CompoundTag out = new CompoundTag();
-        saveAdditional(out, registries);
-        nbt.merge(out);
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

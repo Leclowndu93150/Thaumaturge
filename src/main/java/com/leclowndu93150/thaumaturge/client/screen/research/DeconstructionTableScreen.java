@@ -54,7 +54,7 @@ public final class DeconstructionTableScreen extends AbstractTTContainerScreen<M
         if (table == null) {
             return;
         }
-        int fill = BAR_MAX_H - table.breakTime() * BAR_MAX_H / BlockEntityDeconstructionTable.BREAK_TIME_TICKS;
+        int fill = BAR_MAX_H - menu.breakTime() * BAR_MAX_H / BlockEntityDeconstructionTable.BREAK_TIME_TICKS;
         fill = Math.max(0, Math.min(BAR_MAX_H, fill));
         if (fill > 0) {
             graphics.blit(

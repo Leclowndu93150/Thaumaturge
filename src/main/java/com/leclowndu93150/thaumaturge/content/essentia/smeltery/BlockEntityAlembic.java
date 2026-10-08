@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.*;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -17,16 +18,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityAlembic extends BlockEntity implements IEssentiaTransport, IAspectContainer {
+public class BlockEntityAlembic extends AbstractSyncedBlockEntity implements IEssentiaTransport, IAspectContainer {
     public static final int CAPACITY = 128;
     private static final Codec<ResourceKey<IAspect>> ASPECT_KEY_CODEC = LegacyIds.ASPECT_KEY_CODEC;
 
@@ -124,12 +122,6 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
 
             deep++;
         }
-    }
-
-    protected void syncToClient() {
-        if (level == null || level.isClientSide()) return;
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
 
     protected int doAddToContainer(ResourceKey<IAspect> incoming, int requested) {
@@ -261,22 +253,6 @@ public class BlockEntityAlembic extends BlockEntity implements IEssentiaTranspor
         if (aspectFilter != null) TTNbt.store(output, "AspectFilter", ASPECT_KEY_CODEC, registries, aspectFilter);
         output.putInt("Amount", amount);
         TTNbt.store(output, "Facing", Direction.CODEC, registries, facing);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag tagvalueoutput = new CompoundTag();
-            saveAdditional(tagvalueoutput, registries);
-            nbt.merge(tagvalueoutput);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

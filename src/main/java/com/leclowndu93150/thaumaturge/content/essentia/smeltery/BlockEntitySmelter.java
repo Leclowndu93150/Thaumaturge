@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -22,9 +23,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -37,7 +35,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -45,7 +42,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
+public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements MenuProvider {
     private static final int MAX_VIS = 256;
 
     public AspectList aspects = AspectList.EMPTY;
@@ -98,28 +95,6 @@ public class BlockEntitySmelter extends BlockEntity implements MenuProvider {
         this.smeltTime = input.getInt("SmeltTime");
         this.currentItemBurnTime = input.getInt("CurrentItemBurnTime");
         inventory.deserializeNBT(registries, input.getCompound("inventory"));
-    }
-
-    private void syncToClient() {
-        if (level == null || level.isClientSide()) return;
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag tagvalueoutput = new CompoundTag();
-            saveAdditional(tagvalueoutput, registries);
-            nbt.merge(tagvalueoutput);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia.thaumatorium;
 
+import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
+import com.leclowndu93150.thaumaturge.content.menu.BlockMenu;
 import com.leclowndu93150.thaumaturge.network.ClientboundThaumatoriumRecipesPayload;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
@@ -10,21 +12,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
-public final class MenuThaumatorium extends AbstractContainerMenu {
+public final class MenuThaumatorium extends AbstractTTMenu implements BlockMenu<BlockEntityThaumatorium> {
+    private static final int MACHINE_SLOTS = 1;
+    private static final double REACH_BUFFER = 4.0;
+
     public static final int CATALYST_X = 56;
     public static final int CATALYST_Y = 24;
     private static final int PLAYER_GRID_Y = 135;
     private static final int HOTBAR_Y = 193;
-    private static final int PLAYER_ROW_SLOTS = 9;
-    private static final int PLAYER_ROWS = 3;
 
     public final @Nullable BlockEntityThaumatorium blockEntity;
     private final Player player;
@@ -34,6 +35,11 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
 
     public MenuThaumatorium(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         this(containerId, playerInventory, clientBlockEntity(playerInventory, buf));
+    }
+
+    @Override
+    public @Nullable BlockEntityThaumatorium blockEntity() {
+        return blockEntity;
     }
 
     private static @Nullable BlockEntityThaumatorium clientBlockEntity(
@@ -52,18 +58,8 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
 
         addSlot(new SlotItemHandler(items, 0, CATALYST_X, CATALYST_Y));
 
-        for (int row = 0; row < PLAYER_ROWS; row++) {
-            for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-                addSlot(new Slot(
-                        playerInventory,
-                        col + row * PLAYER_ROW_SLOTS + PLAYER_ROW_SLOTS,
-                        8 + col * 18,
-                        PLAYER_GRID_Y + row * 18));
-            }
-        }
-        for (int col = 0; col < PLAYER_ROW_SLOTS; col++) {
-            addSlot(new Slot(playerInventory, col, 8 + col * 18, HOTBAR_Y));
-        }
+        addInventoryExtendedSlots(playerInventory, 8, PLAYER_GRID_Y);
+        addInventoryHotbarSlots(playerInventory, 8, HOTBAR_Y);
     }
 
     @Override
@@ -95,30 +91,13 @@ public final class MenuThaumatorium extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        Slot slot = slots.get(index);
-        if (!slot.hasItem()) {
-            return ItemStack.EMPTY;
-        }
-        ItemStack stack = slot.getItem();
-        ItemStack original = stack.copy();
-        if (index == 0) {
-            if (!moveItemStackTo(stack, 1, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            }
-        } else if (!moveItemStackTo(stack, 0, 1, false)) {
-            return ItemStack.EMPTY;
-        }
-        if (stack.isEmpty()) {
-            slot.setByPlayer(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
-        }
-        return original;
+        return quickMoveBetween(index, MACHINE_SLOTS, stack -> true);
     }
 
     @Override
     public boolean stillValid(Player player) {
-        return blockEntity == null
-                || blockEntity.getBlockPos().distToCenterSqr(player.getX(), player.getY(), player.getZ()) <= 64.0;
+        return blockEntity != null
+                && !blockEntity.isRemoved()
+                && player.canInteractWithBlock(blockEntity.getBlockPos(), REACH_BUFFER);
     }
 }

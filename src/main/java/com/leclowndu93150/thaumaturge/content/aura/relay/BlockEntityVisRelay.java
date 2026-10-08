@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.relay;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayCapabilities;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.Objects;
@@ -10,16 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityVisRelay extends BlockEntity {
+public final class BlockEntityVisRelay extends AbstractSyncedBlockEntity {
     public static final int LINK_RANGE = 8;
     public static final int HOP_CAP = 16;
 
@@ -223,15 +220,5 @@ public final class BlockEntityVisRelay extends BlockEntity {
         super.loadAdditional(input, registries);
         parentPos = TTNbt.read(input, "Parent", BlockPos.CODEC, registries).orElse(null);
         depth = input.getInt("Depth");
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

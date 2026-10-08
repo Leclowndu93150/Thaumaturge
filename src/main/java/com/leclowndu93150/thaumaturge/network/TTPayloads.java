@@ -70,11 +70,11 @@ public final class TTPayloads {
         registrar.playToServer(
                 ServerboundThaumatoriumTogglePayload.TYPE,
                 ServerboundThaumatoriumTogglePayload.STREAM_CODEC,
-                ServerboundThaumatoriumToggleHandler::handle);
+                ServerboundThaumatoriumTogglePayload::handle);
         registrar.playToServer(
                 ServerboundGolemPressPayload.TYPE,
                 ServerboundGolemPressPayload.STREAM_CODEC,
-                ServerboundGolemPressHandler::handle);
+                ServerboundGolemPressPayload::handle);
         registrar.playToServer(
                 ServerboundLogisticsRequestPayload.TYPE,
                 ServerboundLogisticsRequestPayload.STREAM_CODEC,
@@ -130,11 +130,11 @@ public final class TTPayloads {
         registrar.playToServer(
                 ServerboundClearResearchFlagsPayload.TYPE,
                 ServerboundClearResearchFlagsPayload.STREAM_CODEC,
-                ServerboundClearResearchFlagsHandler::handle);
+                ServerboundClearResearchFlagsPayload::handle);
         registrar.playToServer(
                 ServerboundUnlockResearchPayload.TYPE,
                 ServerboundUnlockResearchPayload.STREAM_CODEC,
-                ServerboundUnlockResearchHandler::handle);
+                ServerboundUnlockResearchPayload::handle);
         registrar.playToClient(
                 ClientboundSpawnParticlePayload.TYPE,
                 ClientboundSpawnParticlePayload.STREAM_CODEC,

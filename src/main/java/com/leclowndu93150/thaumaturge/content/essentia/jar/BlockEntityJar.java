@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaList;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaJar;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
@@ -20,17 +21,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, IAspectSource {
+public class BlockEntityJar extends AbstractSyncedBlockEntity implements IEssentiaTransport, IAspectSource {
     public static final int CAPACITY = IEssentiaJar.DEFAULT_CAPACITY;
 
     public int capacity() {
@@ -169,12 +166,6 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
         ResourceKey<IAspect> key = ta.unwrapKey().orElse(null);
         if (key == null) return;
         doAddToContainer(key, taken);
-    }
-
-    protected void syncToClient() {
-        if (level == null || level.isClientSide()) return;
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
 
     protected int doAddToContainer(ResourceKey<IAspect> incoming, int requested) {
@@ -317,22 +308,6 @@ public class BlockEntityJar extends BlockEntity implements IEssentiaTransport, I
         output.putInt("Amount", amount);
         TTNbt.store(output, "Facing", Direction.CODEC, registries, facing);
         output.putBoolean("Braced", braced);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag tagvalueoutput = new CompoundTag();
-            saveAdditional(tagvalueoutput, registries);
-            nbt.merge(tagvalueoutput);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override

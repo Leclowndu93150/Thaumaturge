@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuArcaneWorkbench extends AbstractContainerMenu {
@@ -176,13 +177,8 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
         resultContainer.setItem(0, result);
     }
 
-    @SuppressWarnings("unchecked")
     private Optional<RecipeHolder<CraftingRecipe>> findVanillaRecipe(ServerLevel level, CraftingInput input) {
-        return level.getRecipeManager().getRecipes().stream()
-                .filter(r -> r.value() instanceof CraftingRecipe && !(r.value() instanceof IArcaneRecipe))
-                .map(r -> (RecipeHolder<CraftingRecipe>) r)
-                .filter(r -> r.value().matches(input, level))
-                .findFirst();
+        return level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
     }
 
     @Override

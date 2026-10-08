@@ -31,11 +31,14 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     private static final int STATUS_ENERGIZED = 2;
     private static final int RECHECK_INTERVAL = 40;
     private static final int SYNC_INTERVAL = 10;
+    private static final int NOT_SYNCED = Integer.MIN_VALUE;
     private static final int BOLT_INTERVAL = 10;
     private static final float BOLT_WIDTH = 0.06F;
 
     private int count = -1;
     private int status = STATUS_IDLE;
+    private int syncedCount = NOT_SYNCED;
+    private int syncedStatus = NOT_SYNCED;
 
     public BlockEntityNodeTransducer(BlockPos pos, BlockState state) {
         super(TTBlockEntities.NODE_TRANSDUCER.get(), pos, state);
@@ -95,7 +98,9 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         if (count > CHARGE_TARGET) {
             count = CHARGE_TARGET;
         }
-        if (level.getGameTime() % SYNC_INTERVAL == 0) {
+        if (level.getGameTime() % SYNC_INTERVAL == 0 && (count != syncedCount || status != syncedStatus)) {
+            syncedCount = count;
+            syncedStatus = status;
             level.sendBlockUpdated(pos, getBlockState(), getBlockState(), 3);
         }
         if (level instanceof ServerLevel serverLevel

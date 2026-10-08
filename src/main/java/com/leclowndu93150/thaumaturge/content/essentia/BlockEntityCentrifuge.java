@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.essentia;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -14,17 +15,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityCentrifuge extends BlockEntity implements IEssentiaTransport {
+public final class BlockEntityCentrifuge extends AbstractSyncedBlockEntity implements IEssentiaTransport {
     private static final Codec<ResourceKey<IAspect>> ASPECT_KEY_CODEC = LegacyIds.ASPECT_KEY_CODEC;
     private static final int PROCESS_TICKS = 39;
     private static final int DRAW_INTERVAL = 5;
@@ -127,14 +124,6 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
         return level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(key);
     }
 
-    private void syncToClient() {
-        if (level == null || level.isClientSide()) {
-            return;
-        }
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
-    }
-
     @Override
     public boolean isConnectable(Direction face) {
         return face == Direction.UP || face == Direction.DOWN;
@@ -226,21 +215,5 @@ public final class BlockEntityCentrifuge extends BlockEntity implements IEssenti
         if (aspectOut != null) {
             TTNbt.store(output, "AspectOut", ASPECT_KEY_CODEC, registries, aspectOut);
         }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag output = new CompoundTag();
-            saveAdditional(output, registries);
-            nbt.merge(output);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

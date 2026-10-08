@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
+import com.leclowndu93150.thaumaturge.content.menu.AbstractTTMenu;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,18 +8,17 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-public final class MenuHandMirror extends AbstractContainerMenu {
+public final class MenuHandMirror extends AbstractTTMenu {
+    private static final int MACHINE_SLOTS = 1;
     private static final int INPUT_SLOT_X = 80;
     private static final int INPUT_SLOT_Y = 24;
     private static final int PLAYER_INV_X = 8;
     private static final int PLAYER_INV_Y = 84;
     private static final int HOTBAR_Y = 142;
-    private static final int SLOT_SIZE = 18;
 
     private final Player player;
     private final InputContainer input;
@@ -35,18 +35,8 @@ public final class MenuHandMirror extends AbstractContainerMenu {
         this.input = new InputContainer(this);
         this.mirrorHotbarSlot = inventory.selected;
         addSlot(new Slot(input, 0, INPUT_SLOT_X, INPUT_SLOT_Y));
-        for (int row = 0; row < 3; row++) {
-            for (int column = 0; column < 9; column++) {
-                addSlot(new Slot(
-                        inventory,
-                        column + row * 9 + 9,
-                        PLAYER_INV_X + column * SLOT_SIZE,
-                        PLAYER_INV_Y + row * SLOT_SIZE));
-            }
-        }
-        for (int column = 0; column < 9; column++) {
-            addSlot(new Slot(inventory, column, PLAYER_INV_X + column * SLOT_SIZE, HOTBAR_Y));
-        }
+        addInventoryExtendedSlots(inventory, PLAYER_INV_X, PLAYER_INV_Y);
+        addInventoryHotbarSlots(inventory, PLAYER_INV_X, HOTBAR_Y);
     }
 
     private ItemStack mirror() {
@@ -93,26 +83,11 @@ public final class MenuHandMirror extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player quickMovePlayer, int index) {
-        Slot slot = slots.get(index);
-        if (!slot.hasItem() || slot.getItem().getItem() instanceof ItemHandMirror) {
+    public ItemStack quickMoveStack(Player player, int index) {
+        if (slots.get(index).getItem().getItem() instanceof ItemHandMirror) {
             return ItemStack.EMPTY;
         }
-        ItemStack moved = slot.getItem();
-        ItemStack original = moved.copy();
-        if (index == 0) {
-            if (!moveItemStackTo(moved, 1, slots.size(), true)) {
-                return ItemStack.EMPTY;
-            }
-        } else if (!moveItemStackTo(moved, 0, 1, false)) {
-            return ItemStack.EMPTY;
-        }
-        if (moved.isEmpty()) {
-            slot.setByPlayer(ItemStack.EMPTY);
-        } else {
-            slot.setChanged();
-        }
-        return original;
+        return quickMoveBetween(index, MACHINE_SLOTS, stack -> true);
     }
 
     @Override

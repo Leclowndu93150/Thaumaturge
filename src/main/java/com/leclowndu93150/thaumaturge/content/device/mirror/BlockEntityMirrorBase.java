@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.device.mirror;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -8,9 +9,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public abstract class BlockEntityMirrorBase extends BlockEntity {
+public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
     private static final int RETRY_BASE_INTERVAL = 40;
     private static final int RETRY_MAX_INTERVAL = 600;
     private static final int RETRY_BACKOFF = 20;
@@ -48,6 +46,11 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
         return be instanceof BlockEntityMirrorBase mirror && isSameKind(mirror) ? mirror : null;
     }
 
+    private boolean isTargetLoaded() {
+        ServerLevel targetLevel = targetLevel();
+        return targetLevel != null && link != null && targetLevel.isLoaded(link.pos());
+    }
+
     protected @Nullable ServerLevel targetLevel() {
         if (level == null || level.isClientSide() || link == null || level.getServer() == null) {
             return null;
@@ -66,12 +69,12 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
         target.linked = true;
         target.link = GlobalPos.of(level.dimension(), worldPosition);
         target.onLinkRestored(this);
-        target.sync();
+        target.syncToClient();
         this.linked = true;
         onLinkRestored(target);
         setChanged();
         target.setChanged();
-        sync();
+        syncToClient();
     }
 
     protected void onLinkRestored(BlockEntityMirrorBase other) {}
@@ -86,7 +89,7 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
             target.linked = false;
             setChanged();
             target.setChanged();
-            target.sync();
+            target.syncToClient();
         }
     }
 
@@ -130,7 +133,7 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
         if (target == null) {
             linked = false;
             setChanged();
-            sync();
+            syncToClient();
             return false;
         }
         return !target.isLinkValid();
@@ -139,7 +142,7 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
     private void breakLink() {
         linked = false;
         setChanged();
-        sync();
+        syncToClient();
     }
 
     protected void addInstability(int amount) {
@@ -149,7 +152,7 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
 
     protected void tickLink() {
         checkInstability();
-        if (count++ % inc == 0) {
+        if (count++ % inc == 0 && isTargetLoaded()) {
             if (!isLinkValidSimple()) {
                 if (inc < RETRY_MAX_INTERVAL) {
                     inc += RETRY_BACKOFF;
@@ -172,12 +175,6 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
         }
         if (instability > 0 && count % INSTABILITY_DECAY_INTERVAL == 0) {
             instability--;
-        }
-    }
-
-    protected void sync() {
-        if (level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
 
@@ -231,21 +228,5 @@ public abstract class BlockEntityMirrorBase extends BlockEntity {
         if (linked) {
             invalidateLink();
         }
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag output = new CompoundTag();
-            saveAdditional(output, registries);
-            nbt.merge(output);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

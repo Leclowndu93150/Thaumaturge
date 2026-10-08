@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.infernalfurnace;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
@@ -14,9 +15,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,7 +29,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -41,7 +38,7 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 @EventBusSubscriber(modid = TTIds.MODID)
-public class BlockEntityInfernalFurnace extends BlockEntity {
+public class BlockEntityInfernalFurnace extends AbstractSyncedBlockEntity {
 
     private final ItemStackHandler inventory = new ItemStackHandler(32) {
         @Override
@@ -94,12 +91,6 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
 
     public ItemStackHandler inventory() {
         return inventory;
-    }
-
-    protected void syncToClient() {
-        if (level == null || level.isClientSide()) return;
-        BlockState current = getBlockState();
-        level.sendBlockUpdated(getBlockPos(), current, current, 3);
     }
 
     @Override
@@ -366,22 +357,6 @@ public class BlockEntityInfernalFurnace extends BlockEntity {
         Direction dir = getBlockState().getValue(BlockInfernalFurnace.FACING);
         this.facingX = dir.getStepX();
         this.facingZ = dir.getStepZ();
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag tagvalueoutput = new CompoundTag();
-            saveAdditional(tagvalueoutput, registries);
-            nbt.merge(tagvalueoutput);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private int getBellows() {

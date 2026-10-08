@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.device.patterncrafter;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
+import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.ArrayList;
@@ -11,9 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
@@ -22,12 +20,11 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.items.IItemHandler;
 
-public final class BlockEntityPatternCrafter extends BlockEntity {
+public final class BlockEntityPatternCrafter extends AbstractSyncedBlockEntity {
     public static final int PATTERN_COUNT = 10;
     private static final int WORK_INTERVAL = 20;
     private static final float VIS_DRAIN = 5.0F;
@@ -177,13 +174,6 @@ public final class BlockEntityPatternCrafter extends BlockEntity {
         return super.triggerEvent(event, param);
     }
 
-    void syncToClient() {
-        if (level != null && !level.isClientSide()) {
-            BlockState state = getBlockState();
-            level.sendBlockUpdated(getBlockPos(), state, state, 3);
-        }
-    }
-
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
@@ -196,22 +186,6 @@ public final class BlockEntityPatternCrafter extends BlockEntity {
         super.loadAdditional(input, registries);
         patternType = input.getByte("Type");
         power = input.getFloat("Power");
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag nbt = super.getUpdateTag(registries);
-        {
-            CompoundTag output = new CompoundTag();
-            saveAdditional(output, registries);
-            nbt.merge(output);
-        }
-        return nbt;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     private record CraftResult(ItemStack output, List<ItemStack> remainders) {}
