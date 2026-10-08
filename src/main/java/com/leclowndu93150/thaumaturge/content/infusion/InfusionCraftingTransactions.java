@@ -1,206 +1,111 @@
 package com.leclowndu93150.thaumaturge.content.infusion;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction;
+import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Failure;
+import com.leclowndu93150.thaumaturge.api.recipe.InfusionCraftingTransaction.Inspection;
 import com.leclowndu93150.thaumaturge.api.recipe.InfusionMatrixContext;
-import com.leclowndu93150.thaumaturge.api.recipe.ResearchGateStatus;
-import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jspecify.annotations.Nullable;
 
 public final class InfusionCraftingTransactions implements InfusionCraftingTransaction.Bindings {
 
     @Override
-    public InfusionCraftingTransaction.Inspection inspect(
+    public Inspection inspect(
             InfusionMatrixContext context, ServerPlayer player, ItemStack catalyst, List<ItemStack> components) {
-        InfusionCraftingTransaction.Failure invalid = validate(context, player);
-        if (invalid != InfusionCraftingTransaction.Failure.NONE) {
-            return InfusionCraftingTransaction.Inspection.failure(invalid);
+        Failure invalid = validate(context, player);
+        if (invalid != Failure.NONE) {
+            return Inspection.failure(invalid);
         }
-        return inspectValid(context, player, catalyst.copyWithCount(1), copyComponents(components));
+        BlockEntityInfusionMatrix matrix = matrix(context);
+        if (matrix == null) {
+            return Inspection.failure(Failure.MATRIX_UNAVAILABLE);
+        }
+        List<ItemStack> singles =
+                components.stream().map(stack -> stack.copyWithCount(1)).toList();
+        return inspect(matrix, context.level(), player, new InfusionInput(catalyst.copyWithCount(1), singles));
     }
 
     @Override
-    public InfusionCraftingTransaction.Failure start(
-            InfusionMatrixContext context, ServerPlayer player, ResourceKey<Recipe<?>> expectedRecipeId) {
-        InfusionCraftingTransaction.Failure invalid = validate(context, player);
-        if (invalid != InfusionCraftingTransaction.Failure.NONE) return invalid;
-        BlockEntityInfusionMatrix matrix = matrix(context);
-        if (matrix == null) return InfusionCraftingTransaction.Failure.MATRIX_UNAVAILABLE;
-        if (!matrix.isActive()) return InfusionCraftingTransaction.Failure.MATRIX_INACTIVE;
-        if (matrix.isCrafting()) return InfusionCraftingTransaction.Failure.MATRIX_BUSY;
-
-        MatrixEnvironment environment = matrix.environmentSnapshot(context.level());
-        ItemStack catalyst = pedestalItem(context, context.position().below(2));
-        List<ItemStack> components = new ArrayList<>();
-        for (BlockPos pedestal : environment.pedestals()) {
-            ItemStack stack = pedestalItem(context, pedestal);
-            if (!stack.isEmpty()) components.add(stack.copyWithCount(1));
+    public Failure start(InfusionMatrixContext context, ServerPlayer player, ResourceKey<Recipe<?>> expectedRecipeId) {
+        Failure invalid = validate(context, player);
+        if (invalid != Failure.NONE) {
+            return invalid;
         }
-        InfusionCraftingTransaction.Inspection inspection = inspectValid(context, player, catalyst, components);
-        if (!inspection.successful()) return inspection.failure();
+        BlockEntityInfusionMatrix matrix = matrix(context);
+        if (matrix == null) {
+            return Failure.MATRIX_UNAVAILABLE;
+        }
+        if (!matrix.isActive()) {
+            return Failure.MATRIX_INACTIVE;
+        }
+        if (matrix.isCrafting()) {
+            return Failure.MATRIX_BUSY;
+        }
+        Inspection inspection = inspect(matrix, context.level(), player, matrix.stagedInput(context.level()));
+        if (!inspection.successful()) {
+            return inspection.failure();
+        }
         if (!expectedRecipeId.equals(inspection.recipeId())) {
-            return InfusionCraftingTransaction.Failure.INGREDIENTS_CHANGED;
+            return Failure.INGREDIENTS_CHANGED;
         }
-        matrix.refreshSurroundings();
-        matrix.onRightClick(context.level(), player);
-        return matrix.isCrafting()
-                ? InfusionCraftingTransaction.Failure.NONE
-                : InfusionCraftingTransaction.Failure.NOT_STARTED;
+        return matrix.tryStartCraft(context.level(), player) ? Failure.NONE : Failure.NOT_STARTED;
     }
 
-    private static InfusionCraftingTransaction.Inspection inspectValid(
-            InfusionMatrixContext context, ServerPlayer player, ItemStack catalyst, List<ItemStack> components) {
-        BlockEntityInfusionMatrix matrix = matrix(context);
-        if (matrix == null || !MatrixEnvironment.validLocation(context.level(), context.position())) {
-            return InfusionCraftingTransaction.Inspection.failure(
-                    InfusionCraftingTransaction.Failure.MATRIX_UNAVAILABLE);
+    private static Inspection inspect(
+            BlockEntityInfusionMatrix matrix, ServerLevel level, ServerPlayer player, InfusionInput input) {
+        InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, player, input);
+        if (match == null) {
+            return Inspection.failure(Failure.NO_RECIPE);
         }
-        InfusionInput input = new InfusionInput(catalyst, components);
-        InfusionCraftingTransaction.Inspection locked = null;
-
-        RecipeHolder<InfusionRecipe> normal = context.level()
-                .getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.INFUSION.get(), input, context.level())
-                .orElse(null);
-        if (normal != null) {
-            InfusionRecipe recipe = normal.value();
-            InfusionCraftingTransaction.Inspection inspection = result(
-                    matrix.environmentSnapshot(context.level()),
-                    player,
-                    normal.id(),
-                    recipe,
-                    recipe.matchComponents(components),
-                    recipe.aspects(),
-                    recipe.instability(),
-                    projectedResult(recipe.assemble(input, context.level().registryAccess()), catalyst),
-                    true);
-            if (inspection.successful()) return inspection;
-            locked = inspection;
-        }
-
-        RecipeHolder<InfusionEnchantmentRecipe> enchantment = context.level()
-                .getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.INFUSION_ENCHANTMENT.get(), input, context.level())
-                .orElse(null);
-        if (enchantment != null) {
-            InfusionEnchantmentRecipe recipe = enchantment.value();
-            InfusionCraftingTransaction.Inspection inspection = result(
-                    matrix.environmentSnapshot(context.level()),
-                    player,
-                    enchantment.id(),
-                    recipe,
-                    recipe.matchComponents(components),
-                    recipe.scaledAspects(catalyst),
-                    recipe.instability(),
-                    projectedResult(recipe.assemble(input, context.level().registryAccess()), catalyst),
-                    false);
-            if (inspection.successful()) return inspection;
-            if (locked == null) locked = inspection;
-        }
-
-        RecipeHolder<InfusionRunicAugmentRecipe> runic = context.level()
-                .getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.RUNIC_AUGMENT.get(), input, context.level())
-                .orElse(null);
-        if (runic == null) {
-            return locked != null
-                    ? locked
-                    : InfusionCraftingTransaction.Inspection.failure(InfusionCraftingTransaction.Failure.NO_RECIPE);
-        }
-        InfusionRunicAugmentRecipe recipe = runic.value();
-        InfusionCraftingTransaction.Inspection inspection = result(
-                matrix.environmentSnapshot(context.level()),
-                player,
-                runic.id(),
-                recipe,
-                recipe.matchScaled(catalyst, components),
-                recipe.scaledAspects(catalyst),
-                recipe.scaledInstability(catalyst),
-                projectedResult(recipe.augmentedResult(catalyst), catalyst),
-                true);
-        return inspection.successful() || locked == null ? inspection : locked;
-    }
-
-    private static InfusionCraftingTransaction.Inspection result(
-            MatrixEnvironment environment,
-            ServerPlayer player,
-            ResourceLocation recipeId,
-            IInfusionRecipe recipe,
-            @Nullable List<ItemStack> matched,
-            AspectList aspects,
-            int instability,
-            ItemStack output,
-            boolean exactOutput) {
-        if (matched == null) {
-            return InfusionCraftingTransaction.Inspection.failure(InfusionCraftingTransaction.Failure.NO_RECIPE);
-        }
-        ResearchGateStatus research = recipe.gateStatus(player);
-        float multiplier = BlockEntityInfusionMatrix.effectiveCostMultiplier(environment);
-        AspectList required = BlockEntityInfusionMatrix.scaleByEnvironment(aspects, multiplier);
-        return new InfusionCraftingTransaction.Inspection(
-                research.permitsCrafting()
-                        ? InfusionCraftingTransaction.Failure.NONE
-                        : InfusionCraftingTransaction.Failure.RESEARCH_LOCKED,
-                ResourceKey.create(Registries.RECIPE, recipeId),
-                required,
-                instability,
-                research,
+        InfusionJobRecipe recipe = match.recipe();
+        ItemStack output = BlockEntityInfusionMatrix.preserveCatalystDamage(
+                recipe.assemble(input, level.registryAccess()), input.catalyst());
+        return new Inspection(
+                match.locked() ? Failure.RESEARCH_LOCKED : Failure.NONE,
+                ResourceKey.create(Registries.RECIPE, match.holder().id()),
+                matrix.projectedCost(level, recipe.jobEssentia(input)),
+                recipe.jobInstability(input),
+                recipe.gateStatus(player),
                 output,
-                remainders(matched),
-                exactOutput);
+                remainders(recipe.jobComponents(input)),
+                recipe.exactResult());
     }
 
-    private static InfusionCraftingTransaction.Failure validate(InfusionMatrixContext context, ServerPlayer player) {
+    private static Failure validate(InfusionMatrixContext context, ServerPlayer player) {
         if (!context.level().getServer().isSameThread()) {
-            return InfusionCraftingTransaction.Failure.NOT_SERVER_THREAD;
+            return Failure.NOT_SERVER_THREAD;
         }
-        if (context.level() != player.serverLevel() || !context.actingPlayer().equals(player.getUUID())) {
-            return InfusionCraftingTransaction.Failure.INVALID_CONTEXT;
+        if (context.level() != player.level() || !context.actingPlayer().equals(player.getUUID())) {
+            return Failure.INVALID_CONTEXT;
         }
-        return InfusionCraftingTransaction.Failure.NONE;
+        return Failure.NONE;
     }
 
     private static @Nullable BlockEntityInfusionMatrix matrix(InfusionMatrixContext context) {
+        if (!MatrixEnvironment.validLocation(context.level(), context.position())) {
+            return null;
+        }
         return context.level().getBlockEntity(context.position()) instanceof BlockEntityInfusionMatrix matrix
                 ? matrix
                 : null;
     }
 
-    private static ItemStack pedestalItem(InfusionMatrixContext context, BlockPos position) {
-        return context.level().getBlockEntity(position) instanceof BlockEntityPedestal pedestal
-                ? pedestal.getItem().copy()
-                : ItemStack.EMPTY;
-    }
-
-    private static List<ItemStack> copyComponents(List<ItemStack> components) {
-        return components.stream()
-                .filter(Objects::nonNull)
-                .map(stack -> stack.copyWithCount(1))
-                .toList();
-    }
-
-    private static ItemStack projectedResult(ItemStack result, ItemStack catalyst) {
-        return BlockEntityInfusionMatrix.preserveCatalystDamage(result, catalyst);
-    }
-
-    private static List<ItemStack> remainders(List<ItemStack> matched) {
-        return matched.stream()
-                .map(stack -> stack.getItem().hasCraftingRemainingItem(stack)
-                        ? stack.getItem().getCraftingRemainingItem(stack)
-                        : ItemStack.EMPTY)
-                .map(stack -> stack == null ? ItemStack.EMPTY : stack.copy())
-                .toList();
+    private static List<ItemStack> remainders(@Nullable List<ItemStack> consumed) {
+        List<ItemStack> remainders = new ArrayList<>();
+        if (consumed == null) {
+            return remainders;
+        }
+        for (ItemStack stack : consumed) {
+            ItemStack remainder = stack.getCraftingRemainingItem();
+            remainders.add(remainder == null ? ItemStack.EMPTY : remainder.copy());
+        }
+        return remainders;
     }
 }

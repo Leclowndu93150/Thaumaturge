@@ -10,10 +10,8 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.particle.BoreSparkleParticleOptions;
 import com.leclowndu93150.thaumaturge.content.particle.InfusionCrumbsParticleOptions;
-import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.text.DecimalFormat;
@@ -39,7 +37,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -59,7 +56,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     private static final float MIN_COST_MULT = 0.5F;
     private static final float ESSENTIA_STARVE_PENALTY = 0.25F;
     private static final int ESSENTIA_FX_RANGE_TICKS = 12;
-    private static final double GOGGLES_TEXT_Y_OFFSET = 1.50D;
+    private static final double GOGGLES_TEXT_Y_OFFSET = 1.5;
 
     private static final DecimalFormat STABILITY_FORMAT = new DecimalFormat("#######.##");
     private static final String STABILITY_LANG_PREFIX = "gui.thaumaturge.infusion.stability.";
@@ -118,7 +115,6 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         if (environment == null || checkSurroundings) {
             checkSurroundings = false;
             environment = MatrixEnvironment.survey(level, worldPosition);
-
             if (stabilityReplenish != environment.stabilityReplenish()) {
                 stabilityReplenish = environment.stabilityReplenish();
                 setChanged();
@@ -126,10 +122,6 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             }
         }
         return environment;
-    }
-
-    MatrixEnvironment environmentSnapshot(ServerLevel level) {
-        return environment != null && !checkSurroundings ? environment : MatrixEnvironment.survey(level, worldPosition);
     }
 
     private void tickServer(ServerLevel level) {
@@ -184,9 +176,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     public void onRightClick(ServerLevel level, Player player) {
         if (active && !isCrafting()) {
-            checkSurroundings = true;
-            essentiaSources.invalidate();
-            startCraft(level, player);
+            tryStartCraft(level, player);
         } else if (!active && MatrixEnvironment.validLocation(level, worldPosition)) {
             level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
             active = true;
@@ -195,18 +185,51 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         }
     }
 
-    private void startCraft(ServerLevel level, Player player) {
+    public boolean tryStartCraft(ServerLevel level, Player player) {
+        checkSurroundings = true;
+        essentiaSources.invalidate();
         if (!MatrixEnvironment.validLocation(level, worldPosition)) {
             active = false;
             setChanged();
             syncToClient();
-            return;
+            return false;
         }
         MatrixEnvironment env = environment(level);
-        ItemStack catalyst = pedestalItem(level, centralPedestal());
-        if (catalyst.isEmpty()) {
-            return;
+        InfusionInput input = stagedInput(level, env);
+        if (input.catalyst().isEmpty() || input.components().isEmpty()) {
+            return false;
         }
+        InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, player, input);
+        if (match == null || match.locked()) {
+            return false;
+        }
+        InfusionJobRecipe recipe = match.recipe();
+        job = new InfusionCraftJob(
+                recipe.jobComponents(input),
+                scaledCost(env, recipe.jobEssentia(input)),
+                recipe.jobResult(input, level.getRandom(), level.registryAccess()),
+                input.catalyst().copyWithCount(1),
+                recipe.jobInstability(input),
+                Optional.of(player.getUUID()));
+        level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        setChanged();
+        syncToClient();
+        return true;
+    }
+
+    InfusionInput stagedInput(ServerLevel level) {
+        return stagedInput(level, environmentSnapshot(level));
+    }
+
+    AspectList projectedCost(ServerLevel level, AspectList essentia) {
+        return scaledCost(environmentSnapshot(level), essentia);
+    }
+
+    private MatrixEnvironment environmentSnapshot(ServerLevel level) {
+        return environment != null && !checkSurroundings ? environment : MatrixEnvironment.survey(level, worldPosition);
+    }
+
+    private InfusionInput stagedInput(ServerLevel level, MatrixEnvironment env) {
         List<ItemStack> components = new ArrayList<>();
         for (BlockPos pedestalPos : env.pedestals()) {
             ItemStack stack = pedestalItem(level, pedestalPos);
@@ -214,80 +237,31 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
                 components.add(stack.copyWithCount(1));
             }
         }
-        if (components.isEmpty()) {
-            return;
-        }
-        InfusionInput input = new InfusionInput(catalyst, components);
-        float costMult = effectiveCostMultiplier(env);
-        Optional<RecipeHolder<InfusionRecipe>> match = level.getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.INFUSION.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
-        if (match.isPresent()) {
-            InfusionRecipe recipe = match.get().value();
-            job = new InfusionCraftJob(
-                    recipe.matchComponents(components),
-                    scaleByEnvironment(recipe.aspects(), costMult),
-                    recipe.assemble(input, level.registryAccess()),
-                    catalyst.copyWithCount(1),
-                    recipe.instability(),
-                    Optional.of(player.getUUID()));
-            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-            setChanged();
-            syncToClient();
-            return;
-        }
-        Optional<RecipeHolder<InfusionEnchantmentRecipe>> enchantMatch = level.getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.INFUSION_ENCHANTMENT.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
-        if (enchantMatch.isPresent()) {
-            InfusionEnchantmentRecipe recipe = enchantMatch.get().value();
-            job = new InfusionCraftJob(
-                    recipe.matchComponents(components),
-                    scaleByEnvironment(recipe.scaledAspects(catalyst), costMult),
-                    recipe.enchantedResult(catalyst, level.getRandom()),
-                    catalyst.copyWithCount(1),
-                    recipe.instability(),
-                    Optional.of(player.getUUID()));
-            level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-            setChanged();
-            syncToClient();
-            return;
-        }
-        Optional<RecipeHolder<InfusionRunicAugmentRecipe>> runicMatch = level.getRecipeManager()
-                .getRecipeFor(TTRecipeTypes.RUNIC_AUGMENT.get(), input, level)
-                .filter(holder -> ResearchManager.doesPassGate(
-                        player, holder.value().researchGate().orElse(null)));
-        if (runicMatch.isEmpty()) {
-            return;
-        }
-        InfusionRunicAugmentRecipe recipe = runicMatch.get().value();
-        job = new InfusionCraftJob(
-                recipe.matchScaled(catalyst, components),
-                scaleByEnvironment(recipe.scaledAspects(catalyst), costMult),
-                recipe.augmentedResult(catalyst),
-                catalyst.copyWithCount(1),
-                recipe.scaledInstability(catalyst),
-                Optional.of(player.getUUID()));
-        level.playSound(null, worldPosition, TTSounds.CRAFTSTART.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
-        setChanged();
-        syncToClient();
+        return new InfusionInput(pedestalItem(level, centralPedestal()), components);
     }
 
-    static float effectiveCostMultiplier(MatrixEnvironment environment) {
-        return Math.max(MIN_COST_MULT, environment.costMult());
-    }
-
-    static AspectList scaleByEnvironment(AspectList aspects, float costMult) {
+    private static AspectList scaledCost(MatrixEnvironment env, AspectList essentia) {
+        float costMult = Math.max(MIN_COST_MULT, env.costMult());
         AspectList scaled = AspectList.EMPTY;
-        for (AspectInstance instance : aspects.entries()) {
+        for (AspectInstance instance : essentia.entries()) {
             int amount = (int) (instance.amount() * costMult);
             if (amount > 0) {
                 scaled = scaled.add(instance.aspect(), amount);
             }
         }
         return scaled;
+    }
+
+    static ItemStack preserveCatalystDamage(ItemStack result, ItemStack catalyst) {
+        ItemStack worn = result.copy();
+        if (catalyst.isDamageableItem()
+                && catalyst.getDamageValue() > 0
+                && worn.isDamageableItem()
+                && worn.getDamageValue() == 0) {
+            float damageRatio = (float) catalyst.getDamageValue() / catalyst.getMaxDamage();
+            worn.setDamageValue((int) (worn.getMaxDamage() * damageRatio));
+        }
+        return worn;
     }
 
     private void craftCycle(ServerLevel level, MatrixEnvironment env, int countDelay) {
@@ -353,25 +327,22 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
 
     @Override
     public Vec3 readoutAnchor() {
-        return new Vec3(0.0D, GOGGLES_TEXT_Y_OFFSET, 0.0D);
+        return new Vec3(0.0, GOGGLES_TEXT_Y_OFFSET, 0.0);
     }
 
     @Override
     public List<Component> readout() {
         Component tier = Component.translatable(STABILITY_LANG_PREFIX + stabilityTierKey())
                 .withStyle(ChatFormatting.BOLD);
-        Component gain = Component.literal(STABILITY_FORMAT.format(stabilityReplenish) + " ")
-                .append(Component.translatable(STABILITY_LANG_PREFIX + "gain"))
+        Component gain = Component.translatable(
+                        STABILITY_LANG_PREFIX + "gain_amount", STABILITY_FORMAT.format(stabilityReplenish))
                 .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC);
         float lpc = lossPerCycle();
         if (lpc == 0.0F) {
             return List.of(tier, gain);
         }
-        Component loss = Component.translatable(STABILITY_LANG_PREFIX + "range")
-                .append(Component.literal(STABILITY_FORMAT.format(lpc) + " ")
-                        .append(Component.translatable(STABILITY_LANG_PREFIX + "loss"))
-                        .withStyle(ChatFormatting.ITALIC))
-                .withStyle(ChatFormatting.RED);
+        Component loss = Component.translatable(STABILITY_LANG_PREFIX + "loss_range", STABILITY_FORMAT.format(lpc))
+                .withStyle(ChatFormatting.RED, ChatFormatting.ITALIC);
         return List.of(tier, gain, loss);
     }
 
@@ -462,18 +433,6 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         level.playSound(null, worldPosition, TTSounds.WAND.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
         setChanged();
         syncToClient();
-    }
-
-    static ItemStack preserveCatalystDamage(ItemStack result, ItemStack catalyst) {
-        ItemStack preserved = result.copy();
-        if (catalyst.isDamageableItem()
-                && catalyst.getDamageValue() > 0
-                && preserved.isDamageableItem()
-                && preserved.getDamageValue() == 0) {
-            float damageRatio = (float) catalyst.getDamageValue() / catalyst.getMaxDamage();
-            preserved.setDamageValue((int) (preserved.getMaxDamage() * damageRatio));
-        }
-        return preserved;
     }
 
     private void awardCraft(ServerPlayer player, ItemStack result) {
@@ -605,9 +564,9 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
-        active = input.getBoolean("Active");
-        stability = input.getFloat("Stability");
-        stabilityReplenish = input.getFloat("Replenish");
+        active = (input.contains("Active") ? input.getBoolean("Active") : false);
+        stability = (input.contains("Stability") ? input.getFloat("Stability") : 0.0F);
+        stabilityReplenish = (input.contains("Replenish") ? input.getFloat("Replenish") : 0.0F);
         job = TTNbt.read(input, "Job", InfusionCraftJob.CODEC, registries).orElse(null);
     }
 }

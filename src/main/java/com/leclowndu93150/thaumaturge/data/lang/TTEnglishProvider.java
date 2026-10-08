@@ -1050,6 +1050,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.infusion.stability.gain", "gain / cycle");
         add("gui.thaumaturge.infusion.stability.range", "0 to ");
         add("gui.thaumaturge.infusion.stability.loss", "loss / cycle");
+        add("gui.thaumaturge.infusion.stability.gain_amount", "%s gain / cycle");
+        add("gui.thaumaturge.infusion.stability.loss_range", "0 to %s loss / cycle");
         add("entity.thaumaturge.causality_collapser", "Causality Collapser");
         add("item.thaumaturge.thaumium_sword", "Thaumium Sword");
         add("item.thaumaturge.thaumium_pickaxe", "Thaumium Pickaxe");

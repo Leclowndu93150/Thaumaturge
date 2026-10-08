@@ -47,6 +47,8 @@ public final class BlockJarVoid extends BlockJar {
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TTBlockEntities.JAR_VOID.get(), BlockEntityJarVoid::serverTick);
+        return level.isClientSide()
+                ? null
+                : createTickerHelper(type, TTBlockEntities.JAR_VOID.get(), BlockEntityJarVoid::serverTick);
     }
 }

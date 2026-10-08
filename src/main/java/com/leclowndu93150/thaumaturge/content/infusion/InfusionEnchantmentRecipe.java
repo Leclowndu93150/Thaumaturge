@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.items.InfusionEnchantment;
-import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.equipment.InfusionEnchantmentHelper;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
@@ -21,12 +20,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public final class InfusionEnchantmentRecipe implements Recipe<InfusionInput>, IInfusionRecipe {
+public final class InfusionEnchantmentRecipe implements InfusionJobRecipe {
     public static final int INSTABILITY = 4;
     private static final float OTHER_ENCHANT_COST_STEP = 0.33F;
     private static final int WARP_ROLL_BOUND = 10;
@@ -194,6 +192,21 @@ public final class InfusionEnchantmentRecipe implements Recipe<InfusionInput>, I
 
     @Override
     public boolean showNotification() {
+        return false;
+    }
+
+    @Override
+    public AspectList jobEssentia(InfusionInput input) {
+        return scaledAspects(input.catalyst());
+    }
+
+    @Override
+    public ItemStack jobResult(InfusionInput input, RandomSource random, HolderLookup.Provider registries) {
+        return enchantedResult(input.catalyst(), random);
+    }
+
+    @Override
+    public boolean exactResult() {
         return false;
     }
 }

@@ -3,8 +3,8 @@ package com.leclowndu93150.thaumaturge.content.research;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
+import com.leclowndu93150.thaumaturge.api.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.content.crucible.CrucibleEvent;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -60,9 +60,9 @@ public final class ResearchProgressionEvents {
     private ResearchProgressionEvents() {}
 
     @SubscribeEvent
-    public static void onCrucibleCraft(CrucibleEvent.CrucibleCraftedEvent event) {
+    public static void onCrucibleCraft(CrucibleEvent.Crafted event) {
         if (event.getPlayer() instanceof ServerPlayer player) {
-            recordCrafted(player, event.getCraftedStack());
+            recordCrafted(player, event.getResult());
         }
     }
 

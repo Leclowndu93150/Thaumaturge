@@ -225,7 +225,9 @@ public class BlockJar extends BaseEntityBlock implements ILabelable, IEssentiaSt
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
             Level level, BlockState blockState, BlockEntityType<T> type) {
-        return createTickerHelper(type, TTBlockEntities.JAR.get(), BlockEntityJar::serverTick);
+        return level.isClientSide()
+                ? null
+                : createTickerHelper(type, TTBlockEntities.JAR.get(), BlockEntityJar::serverTick);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.content.recipe.SimpleRecipeSerializer;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -22,12 +21,11 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
-public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, IInfusionRecipe {
+public final class InfusionRunicAugmentRecipe implements InfusionJobRecipe {
     public static final int BASE_INSTABILITY = 5;
     private static final int MAX_CHARGE = 120;
 
@@ -219,5 +217,20 @@ public final class InfusionRunicAugmentRecipe implements Recipe<InfusionInput>, 
     @Override
     public boolean showNotification() {
         return false;
+    }
+
+    @Override
+    public List<ItemStack> jobComponents(InfusionInput input) {
+        return matchScaled(input.catalyst(), input.components());
+    }
+
+    @Override
+    public AspectList jobEssentia(InfusionInput input) {
+        return scaledAspects(input.catalyst());
+    }
+
+    @Override
+    public int jobInstability(InfusionInput input) {
+        return scaledInstability(input.catalyst());
     }
 }
