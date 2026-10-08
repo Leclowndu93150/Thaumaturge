@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.spell.engine;
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFx;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
+import com.leclowndu93150.thaumaturge.compat.sable.SableCompat;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.network.effect.ClientboundSpellFxPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSpellFx;
@@ -42,14 +43,22 @@ final class SpellFxBatch implements SpellFx {
     @Override
     public void arc(Vec3 from, Vec3 to, int color, float width) {
         if (arcs++ < MAX_ARCS) {
-            Effects.arcBolt(level, from).to(to).color(color).width(width).send();
+            Effects.arcBolt(level, SableCompat.worldPosition(level, from))
+                    .to(SableCompat.worldPosition(level, to))
+                    .color(color)
+                    .width(width)
+                    .send();
         }
     }
 
     @Override
     public void beam(Vec3 from, Vec3 to, int color, int ticks) {
         if (arcs++ < MAX_ARCS) {
-            Effects.beamBore(level, from).to(to).color(color).age(ticks).send();
+            Effects.beamBore(level, SableCompat.worldPosition(level, from))
+                    .to(SableCompat.worldPosition(level, to))
+                    .color(color)
+                    .age(ticks)
+                    .send();
         }
     }
 
@@ -67,6 +76,7 @@ final class SpellFxBatch implements SpellFx {
         if (events.size() >= MAX_EVENTS) {
             return;
         }
+        at = SableCompat.worldPosition(level, at);
         if (anchor == null) {
             anchor = at;
         }

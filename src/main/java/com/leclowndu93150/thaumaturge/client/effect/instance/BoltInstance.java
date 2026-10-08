@@ -67,7 +67,10 @@ public final class BoltInstance implements IFXInstance {
     }
 
     public List<PathStep> computePath(float partialTick) {
-        int steps = Math.max(3, (int) this.length);
+        if (!Float.isFinite(this.length)) {
+            return List.of();
+        }
+        int steps = Mth.clamp((int) this.length, 3, 512);
         float amplitude = (this.age + partialTick) * AMPLITUDE_PER_TICK;
         float stride = this.length / steps;
         Random noise = new Random(this.seed);

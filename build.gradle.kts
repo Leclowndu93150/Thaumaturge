@@ -35,6 +35,7 @@ prism {
     modrinthMaven()
     maven("BlameJared", "https://maven.blamejared.com/")
     maven("IllusiveSoulworks", "https://maven.theillusivec4.top/")
+    maven("Sable", "https://maven.ryanhcode.dev/releases")
     maven("FTB", "https://maven.ftb.dev/releases")
 
     metadata {
@@ -56,6 +57,7 @@ prism {
             loaderVersion = prop("neo_version")
 
             dependencies {
+                compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-1.21.1:1.6.0")
                 implementation("maven.modrinth:lithostitched:1.8.0-neoforge-21.1")
 
                 compileOnly("mezz.jei:jei-$minecraftVersion-common-api:${prop("jei_version")}")

@@ -41,7 +41,10 @@ public final class BoltParticle extends TTParticle {
         this.delta = new Vec3(options.targetX() - x, options.targetY() - y, options.targetZ() - z);
         this.beadSize = options.width() * BEAD_SIZE_FACTOR;
         float boltLength = (float) (this.delta.length() * Math.PI);
-        this.steps = Math.max(2, (int) boltLength);
+        this.steps = Mth.clamp((int) boltLength, 2, 512);
+        if (!Float.isFinite(boltLength)) {
+            remove();
+        }
         this.seed = this.random.nextInt(SEED_BOUND);
         float phase = (float) (this.random.nextInt(50) * Math.PI);
         this.waveX = new float[this.steps + 1];
