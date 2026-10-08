@@ -147,10 +147,15 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
     @Override
     protected void init() {
         super.init();
-        aspectSearch =
-                new EditBox(font, leftPos + PALETTE_X, topPos + 23, PALETTE_W, 14, Component.translatable("tc.search"));
+        aspectSearch = new EditBox(
+                font,
+                leftPos + PALETTE_X,
+                topPos + 23,
+                PALETTE_W,
+                14,
+                Component.translatable("gui.thaumaturge.thaumonomicon.search"));
         aspectSearch.setMaxLength(32);
-        aspectSearch.setHint(Component.translatable("tc.search"));
+        aspectSearch.setHint(Component.translatable("gui.thaumaturge.thaumonomicon.search"));
         aspectSearch.setResponder(ignored -> page = 0);
         addRenderableWidget(aspectSearch);
     }
@@ -285,7 +290,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                     256,
                     256);
             if (inRect(mouseX, mouseY, leftPos + ARROW_PREV_X, topPos + ARROW_Y, ARROW_W, ARROW_H)) {
-                DeferredTooltip.set(Component.translatable("tc.table.page.prev"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.page_prev"), mouseX, mouseY);
             }
         }
         if (page < lastPage) {
@@ -300,7 +305,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                     256,
                     256);
             if (inRect(mouseX, mouseY, leftPos + ARROW_NEXT_X, topPos + ARROW_Y, ARROW_W, ARROW_H)) {
-                DeferredTooltip.set(Component.translatable("tc.table.page.next"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.page_next"), mouseX, mouseY);
             }
         }
         if (hovered != null && draggedAspect == null) {
@@ -345,17 +350,21 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                         256);
             }
             if (inRect(mouseX, mouseY, leftPos + COMBINE_X, topPos + COMBINE_Y, COMBINE_W, COMBINE_H)) {
-                DeferredTooltip.set(Component.translatable("tc.table.combine"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.combine"), mouseX, mouseY);
             }
         }
         if (inRect(mouseX, mouseY, leftPos + SELECT1_HIT_X, topPos + SELECT_HIT_Y, SELECT_SIZE, SELECT_SIZE)) {
             DeferredTooltip.set(
-                    select1 != null ? AspectComponents.name(select1) : Component.translatable("tc.table.select"),
+                    select1 != null
+                            ? AspectComponents.name(select1)
+                            : Component.translatable("gui.thaumaturge.research_table.select"),
                     mouseX,
                     mouseY);
         } else if (inRect(mouseX, mouseY, leftPos + SELECT2_HIT_X, topPos + SELECT_HIT_Y, SELECT_SIZE, SELECT_SIZE)) {
             DeferredTooltip.set(
-                    select2 != null ? AspectComponents.name(select2) : Component.translatable("tc.table.select"),
+                    select2 != null
+                            ? AspectComponents.name(select2)
+                            : Component.translatable("gui.thaumaturge.research_table.select"),
                     mouseX,
                     mouseY);
         }
@@ -397,13 +406,12 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                 256);
         if (inRect(mouseX, mouseY, leftPos + DUPE_X, topPos + DUPE_Y, DUPE_SIZE, DUPE_SIZE)) {
             List<Component> lines = new ArrayList<>();
-            lines.add(Component.translatable("tc.research.copy"));
+            lines.add(Component.translatable("gui.thaumaturge.research_table.copy"));
             AspectList cost = table.duplicationCost(minecraft.player, data);
             if (cost != null) {
                 for (AspectInstance instance : cost.entries()) {
-                    lines.add(AspectComponents.name(instance.aspect())
-                            .copy()
-                            .append(Component.literal(" x" + instance.amount())));
+                    lines.add(Component.translatable(
+                            "tooltip.thaumaturge.amount", AspectComponents.name(instance.aspect()), instance.amount()));
                 }
             }
             DeferredTooltip.set(lines, mouseX, mouseY);
@@ -416,7 +424,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
         }
         graphics.renderItem(new ItemStack(TTItems.THAUMONOMICON.get()), leftPos + HELPER_X, topPos + HELPER_Y);
         if (inRect(mouseX, mouseY, leftPos + HELPER_X, topPos + HELPER_Y, HELPER_SIZE, HELPER_SIZE)) {
-            DeferredTooltip.set(Component.translatable("tc.table.helper"), mouseX, mouseY);
+            DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.helper"), mouseX, mouseY);
         }
     }
 
@@ -458,7 +466,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
         int lastPage = Math.max(0, (compounds.size() - 1) / HELPER_ROWS);
         int center = leftPos + SHEET_X + SHEET_SIZE / 2;
         if (lastPage > 0) {
-            String label = (helperPage + 1) + "/" + (lastPage + 1);
+            Component label = Component.translatable("gui.thaumaturge.fraction", helperPage + 1, lastPage + 1);
             graphics.drawString(
                     font, label, center - font.width(label) / 2, topPos + HELPER_ARROW_Y, 0xFF3A2A1A, false);
         }
@@ -475,7 +483,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                     256,
                     256);
             if (inRect(mouseX, mouseY, x, topPos + HELPER_ARROW_Y, ARROW_W, ARROW_H)) {
-                DeferredTooltip.set(Component.translatable("tc.table.page.prev"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.page_prev"), mouseX, mouseY);
             }
         }
         if (helperPage < lastPage) {
@@ -491,7 +499,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                     256,
                     256);
             if (inRect(mouseX, mouseY, x, topPos + HELPER_ARROW_Y, ARROW_W, ARROW_H)) {
-                DeferredTooltip.set(Component.translatable("tc.table.page.next"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.page_next"), mouseX, mouseY);
             }
         }
     }
@@ -573,7 +581,8 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                             32,
                             ARGB32.color(128, 0x000000));
                     if (cell.hex().equals(hoveredHex)) {
-                        DeferredTooltip.set(Component.translatable("tc.aspect.unknown"), mouseX, mouseY);
+                        DeferredTooltip.set(
+                                Component.translatable("tooltip.thaumaturge.aspect.unknown"), mouseX, mouseY);
                     }
                 } else {
                     float alpha = 1.0F;
@@ -652,8 +661,8 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
     }
 
     private void drawInkWarning(GuiGraphics graphics) {
-        Component line0 = Component.translatable("tile.researchtable.noink.0");
-        Component line1 = Component.translatable("tile.researchtable.noink.1");
+        Component line0 = Component.translatable("gui.thaumaturge.research_table.no_ink.0");
+        Component line1 = Component.translatable("gui.thaumaturge.research_table.no_ink.1");
         int x = leftPos + SHEET_X + SHEET_SIZE / 2;
         int y = topPos + INK_WARN_Y;
         graphics.drawString(font, line0, x - font.width(line0) / 2, y - font.lineHeight, 0xFFFF5555, true);
@@ -670,7 +679,8 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                             topPos + MenuResearchTable.SCRIBE_TOOLS_Y,
                             16,
                             16)) {
-                DeferredTooltip.set(Component.translatable("tc.table.slot.tools"), mouseX, mouseY);
+                DeferredTooltip.set(
+                        Component.translatable("gui.thaumaturge.research_table.slot_tools"), mouseX, mouseY);
             } else if (menu.slots.get(1).getItem().isEmpty()
                     && inRect(
                             mouseX,
@@ -679,7 +689,7 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
                             topPos + MenuResearchTable.NOTE_Y,
                             16,
                             16)) {
-                DeferredTooltip.set(Component.translatable("tc.table.slot.note"), mouseX, mouseY);
+                DeferredTooltip.set(Component.translatable("gui.thaumaturge.research_table.slot_note"), mouseX, mouseY);
             }
         }
     }

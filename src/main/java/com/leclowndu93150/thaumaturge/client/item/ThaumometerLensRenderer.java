@@ -61,14 +61,17 @@ public final class ThaumometerLensRenderer {
         AspectList aspects = null;
         if (target instanceof BlockPos pos) {
             if (mc.level.getBlockEntity(pos) instanceof BlockEntityNode node) {
-                name = Component.translatable(node.isEnergized() ? "tc.node.name.energized" : "tc.node.name");
+                name = Component.translatable(
+                        node.isEnergized()
+                                ? "gui.thaumaturge.thaumometer.node_energized"
+                                : "gui.thaumaturge.thaumometer.node");
                 if (KnowledgeAccess.of(player).isResearchKnown(ScanNode.researchKey(mc.level, pos))) {
                     Component type = Component.translatable(
                             "nodetype.thaumaturge." + node.getNodeType().getSerializedName());
                     nodeLine = node.getNodeModifier() == null
                             ? type
                             : Component.translatable(
-                                    "tc.node.typemod",
+                                    "tooltip.thaumaturge.node.type_modifier",
                                     type,
                                     Component.translatable("nodemod.thaumaturge."
                                             + node.getNodeModifier().getSerializedName()));

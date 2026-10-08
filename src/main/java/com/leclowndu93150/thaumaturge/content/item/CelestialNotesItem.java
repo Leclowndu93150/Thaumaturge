@@ -47,8 +47,8 @@ public final class CelestialNotesItem extends Item {
                     AspectPools.grant(serverPlayer, holder, STUDY_POINTS);
                 }
             }
-            serverPlayer.sendSystemMessage(
-                    Component.translatable("tc.celestial.studied").withStyle(ChatFormatting.DARK_PURPLE));
+            serverPlayer.sendSystemMessage(Component.translatable("message.thaumaturge.celestial.studied")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }

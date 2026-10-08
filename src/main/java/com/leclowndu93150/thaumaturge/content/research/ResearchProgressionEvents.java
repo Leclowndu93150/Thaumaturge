@@ -103,7 +103,8 @@ public final class ResearchProgressionEvents {
             knowledge.addResearch(GOT_CRYSTALS);
             knowledge.markComplete(GOT_CRYSTALS);
             knowledge.sync(player);
-            player.sendSystemMessage(Component.translatable("got.crystals").withStyle(ChatFormatting.DARK_PURPLE));
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.discovery.crystals")
+                    .withStyle(ChatFormatting.DARK_PURPLE));
             if (ThaumaturgeCommonConfig.NO_SLEEP.get() && !knowledge.isResearchKnown(GOT_DREAM)) {
                 giveDreamJournal(player, knowledge);
             }
@@ -144,7 +145,8 @@ public final class ResearchProgressionEvents {
         if (!player.getInventory().add(book)) {
             player.drop(book, false);
         }
-        player.sendSystemMessage(Component.translatable("got.dream").withStyle(ChatFormatting.DARK_PURPLE));
+        player.sendSystemMessage(
+                Component.translatable("message.thaumaturge.discovery.dream").withStyle(ChatFormatting.DARK_PURPLE));
     }
 
     @SubscribeEvent
@@ -158,7 +160,7 @@ public final class ResearchProgressionEvents {
         pk.addResearch(F_ONFIRE);
         pk.markComplete(F_ONFIRE);
         pk.sync(player);
-        sendActionBar(player, "got.onfire");
+        sendActionBar(player, "message.thaumaturge.discovery.on_fire");
     }
 
     @SubscribeEvent
@@ -173,7 +175,7 @@ public final class ResearchProgressionEvents {
         pk.addResearch(research);
         pk.markComplete(research);
         pk.sync(player);
-        sendActionBar(player, "got.projectile");
+        sendActionBar(player, "message.thaumaturge.discovery.projectile");
     }
 
     private static @Nullable ResourceLocation projectileResearch(@Nullable Entity direct) {
@@ -196,20 +198,30 @@ public final class ResearchProgressionEvents {
                     player,
                     knowledge,
                     TTIds.rl("m_deepdown"),
-                    "got.deepdown",
+                    "message.thaumaturge.discovery.deep_down",
                     player.getY() < player.level().getMinBuildHeight() + DEEP_DOWN_DEPTH);
             milestone(
                     player,
                     knowledge,
                     TTIds.rl("m_uphigh"),
-                    "got.uphigh",
+                    "message.thaumaturge.discovery.up_high",
                     player.getY() > player.level().getMaxBuildHeight() * UP_HIGH_FRACTION);
         }
         if (player.tickCount % MILESTONE_CHECK_INTERVAL != 0) return;
         if (player.level().hasChunkAt(player.blockPosition())) {
             Holder<Biome> biome = player.level().getBiome(player.blockPosition());
-            milestone(player, knowledge, TTIds.rl("m_hellandback"), "got.hellandback", biome.is(BiomeTags.IS_NETHER));
-            milestone(player, knowledge, TTIds.rl("m_endoftheworld"), "got.endoftheworld", biome.is(BiomeTags.IS_END));
+            milestone(
+                    player,
+                    knowledge,
+                    TTIds.rl("m_hellandback"),
+                    "message.thaumaturge.discovery.hell_and_back",
+                    biome.is(BiomeTags.IS_NETHER));
+            milestone(
+                    player,
+                    knowledge,
+                    TTIds.rl("m_endoftheworld"),
+                    "message.thaumaturge.discovery.end_of_the_world",
+                    biome.is(BiomeTags.IS_END));
         }
         milestone(
                 player,

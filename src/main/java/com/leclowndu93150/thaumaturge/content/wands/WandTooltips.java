@@ -57,20 +57,16 @@ public final class WandTooltips {
             if (group.getKey() == basePct) {
                 continue;
             }
-            MutableComponent names = Component.empty();
-            List<ResourceKey<IAspect>> primals = group.getValue();
-            for (int i = 0; i < primals.size(); i++) {
-                if (i > 0) {
-                    names.append(Component.literal(", "));
-                }
-                names.append(primalName(registries, primals.get(i)));
+            MutableComponent names = null;
+            for (ResourceKey<IAspect> primal : group.getValue()) {
+                Component name = primalName(registries, primal);
+                names = names == null ? name.copy() : Component.translatable("tooltip.thaumaturge.list", names, name);
             }
-            names.append(Component.literal(" " + group.getKey() + "%"));
-            if (exceptions == null) {
-                exceptions = names;
-            } else {
-                exceptions.append(Component.literal("; ")).append(names);
-            }
+            MutableComponent entry =
+                    Component.translatable("tooltip.thaumaturge.wand.cost.group", names, group.getKey());
+            exceptions = exceptions == null
+                    ? entry
+                    : Component.translatable("tooltip.thaumaturge.wand.cost.groups", exceptions, entry);
         }
         if (exceptions == null) {
             return Component.translatable("tooltip.thaumaturge.wand.cost", basePct)

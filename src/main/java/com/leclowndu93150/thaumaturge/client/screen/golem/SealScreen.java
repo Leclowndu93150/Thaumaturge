@@ -95,7 +95,7 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                         topPos + middleY + yy - 8,
                         panel.ordinal(),
                         menu.panel() == panel,
-                        Component.translatable("button.category." + panel.ordinal()),
+                        Component.translatable("gui.thaumaturge.seal.category." + panel.ordinal()),
                         () -> selectCategory(index));
                 addRenderableWidget(button);
             }
@@ -107,7 +107,10 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                 leftPos + middleX + xx - 8,
                 topPos + middleY + yy - 8,
                 () -> seal.isRedstoneControlled() ? REDSTONE_U_ON : REDSTONE_U_OFF,
-                () -> Component.translatable(seal.isRedstoneControlled() ? "golem.prop.redon" : "golem.prop.redoff"),
+                () -> Component.translatable(
+                        seal.isRedstoneControlled()
+                                ? "gui.thaumaturge.seal.setting.redon"
+                                : "gui.thaumaturge.seal.setting.redoff"),
                 () -> {
                     seal.setRedstoneControlled(!seal.isRedstoneControlled());
                     sendButton(
@@ -144,7 +147,10 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                             leftPos + middleX - 32,
                             topPos + middleY,
                             () -> seal.isLocked() ? LOCK_U_LOCKED : LOCK_U_UNLOCKED,
-                            () -> Component.translatable(seal.isLocked() ? "golem.prop.lock" : "golem.prop.unlock"),
+                            () -> Component.translatable(
+                                    seal.isLocked()
+                                            ? "gui.thaumaturge.seal.setting.lock"
+                                            : "gui.thaumaturge.seal.setting.unlock"),
                             () -> {
                                 seal.setLocked(!seal.isLocked());
                                 sendButton(seal.isLocked() ? MenuSealBase.BUTTON_LOCK : MenuSealBase.BUTTON_UNLOCK);
@@ -161,7 +167,9 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                             topPos + middleY + (size - 1) / 3 * 24 - offsetY + 27,
                             () -> filter.isBlacklist() ? BLACKLIST_U : WHITELIST_U,
                             () -> Component.translatable(
-                                    filter.isBlacklist() ? "golem.prop.blacklist" : "golem.prop.whitelist"),
+                                    filter.isBlacklist()
+                                            ? "gui.thaumaturge.seal.setting.blacklist"
+                                            : "gui.thaumaturge.seal.setting.whitelist"),
                             () -> {
                                 filter.setBlacklist(!filter.isBlacklist());
                                 sendButton(
@@ -290,7 +298,8 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
         }
         drawCentered(
                 graphics,
-                Component.translatable("button.category." + menu.panel().ordinal())
+                Component.translatable(
+                                "gui.thaumaturge.seal.category." + menu.panel().ordinal())
                         .getString(),
                 leftPos + middleX,
                 topPos + middleY - 64,
@@ -327,17 +336,19 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                 if (mx >= middleX + 5 && mx <= middleX + 41 && my >= middleY + 3 && my <= middleY + 15) {
                     String label = menu.color() >= 1 && menu.color() <= 16
                             ? Component.translatable(
-                                            "golem.prop.color",
+                                            "gui.thaumaturge.seal.setting.color",
                                             Component.translatable("color.minecraft."
                                                     + DyeColor.byId(menu.color() - 1)
                                                             .getName()))
                                     .getString()
-                            : Component.translatable("golem.prop.colorall").getString();
+                            : Component.translatable("gui.thaumaturge.seal.setting.colorall")
+                                    .getString();
                     drawCentered(graphics, label, leftPos + middleX + 23, topPos + middleY + 17, WHITE);
                 }
                 drawCentered(
                         graphics,
-                        Component.translatable("golem.prop.priority").getString(),
+                        Component.translatable("gui.thaumaturge.seal.setting.priority")
+                                .getString(),
                         leftPos + middleX,
                         topPos + middleY - 28,
                         LABEL_BLUE);
@@ -348,7 +359,8 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
                         && minecraft.player.getUUID().equals(seal.owner())) {
                     drawCentered(
                             graphics,
-                            Component.translatable("golem.prop.owner").getString(),
+                            Component.translatable("gui.thaumaturge.seal.setting.owner")
+                                    .getString(),
                             leftPos + middleX,
                             topPos + middleY + 32,
                             LABEL_BLUE);
@@ -395,19 +407,19 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
             case AREA -> {
                 drawCentered(
                         graphics,
-                        Component.translatable("button.caption.y").getString(),
+                        Component.translatable("gui.thaumaturge.seal.caption.y").getString(),
                         leftPos + middleX,
                         topPos + middleY - 33,
                         LABEL_GREY);
                 drawCentered(
                         graphics,
-                        Component.translatable("button.caption.x").getString(),
+                        Component.translatable("gui.thaumaturge.seal.caption.x").getString(),
                         leftPos + middleX,
                         topPos + middleY - 9,
                         LABEL_GREY);
                 drawCentered(
                         graphics,
-                        Component.translatable("button.caption.z").getString(),
+                        Component.translatable("gui.thaumaturge.seal.caption.z").getString(),
                         leftPos + middleX,
                         topPos + middleY + 15,
                         LABEL_GREY);
@@ -420,13 +432,15 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
             case TAGS -> {
                 drawCentered(
                         graphics,
-                        Component.translatable("button.caption.required").getString(),
+                        Component.translatable("gui.thaumaturge.seal.caption.required")
+                                .getString(),
                         leftPos + middleX,
                         topPos + middleY - 26,
                         LABEL_GREY);
                 drawCentered(
                         graphics,
-                        Component.translatable("button.caption.forbidden").getString(),
+                        Component.translatable("gui.thaumaturge.seal.caption.forbidden")
+                                .getString(),
                         leftPos + middleX,
                         topPos + middleY + 6,
                         LABEL_GREY);
@@ -472,7 +486,7 @@ public final class SealScreen extends AbstractTTContainerScreen<MenuSealBase> {
             if (active) {
                 setTintColor(0xFFFFFFFF);
             }
-            setDescription(Component.translatable("button.category." + categoryIcon + ".desc"));
+            setDescription(Component.translatable("gui.thaumaturge.seal.category." + categoryIcon + ".desc"));
         }
     }
 

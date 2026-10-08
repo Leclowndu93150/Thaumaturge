@@ -17,10 +17,10 @@ import net.minecraft.network.chat.MutableComponent;
  * @since 1.0.0
  */
 public final class AspectComponents {
-    private static final String UNKNOWN_NAME_KEY = "tc.aspect.unknown";
-    private static final String UNKNOWN_SHORT_KEY = "tc.aspect.unknown.short";
-    private static final String UNKNOWN_DESCRIPTION_KEY = "tc.aspect.unknown.desc";
-    private static final String COMPOSITION_KEY = "tc.aspect.composition";
+    private static final String UNKNOWN_NAME_KEY = "tooltip.thaumaturge.aspect.unknown";
+    private static final String UNKNOWN_SHORT_KEY = "tooltip.thaumaturge.aspect.unknown.short";
+    private static final String UNKNOWN_DESCRIPTION_KEY = "tooltip.thaumaturge.aspect.unknown.desc";
+    private static final String COMPOSITION_KEY = "tooltip.thaumaturge.aspect.composition";
     private static final int COMPOUND_COMPONENTS = 2;
 
     private AspectComponents() {}

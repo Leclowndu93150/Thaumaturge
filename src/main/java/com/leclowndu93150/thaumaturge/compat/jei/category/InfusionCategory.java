@@ -170,7 +170,7 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
             double mouseX,
             double mouseY) {
         Font font = Minecraft.getInstance().font;
-        Component header = Component.translatable("recipe.type.infusion");
+        Component header = Component.translatable("gui.thaumaturge.recipe_type.infusion");
         BACKGROUND.draw(guiGraphics);
         guiGraphics.blit(TEXTURE, 57, 0, 40, 6, 32, 32, 512, 512);
         int level = Math.min(INSTABILITY_LEVEL_CAP, recipe.value().instability() / 2);

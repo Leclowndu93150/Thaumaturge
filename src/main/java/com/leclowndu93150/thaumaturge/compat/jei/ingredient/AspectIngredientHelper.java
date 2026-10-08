@@ -27,7 +27,7 @@ public final class AspectIngredientHelper implements IIngredientHelper<AspectIns
     @Override
     public String getDisplayName(AspectInstance ingredient) {
         if (!AspectKnowledgeAccess.isKnown(ingredient.aspect())) {
-            return Component.translatable("tc.aspect.unknown").getString();
+            return Component.translatable("tooltip.thaumaturge.aspect.unknown").getString();
         }
         return AspectComponents.name(ingredient.aspect()).getString();
     }

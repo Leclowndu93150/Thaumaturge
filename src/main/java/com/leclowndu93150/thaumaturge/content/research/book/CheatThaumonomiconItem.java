@@ -26,7 +26,7 @@ public final class CheatThaumonomiconItem extends ThaumonomiconItem {
         if (player instanceof ServerPlayer serverPlayer) {
             int granted = ResearchGrants.grantAll(serverPlayer);
             if (granted > 0) {
-                TTActionBar.sendPurple(player, "tc.thaumonomicon.cheat.granted", granted);
+                TTActionBar.sendPurple(player, "message.thaumaturge.thaumonomicon.cheat_granted", granted);
             }
             PacketDistributor.sendToPlayer(serverPlayer, ClientboundOpenThaumonomiconPayload.INSTANCE);
         }

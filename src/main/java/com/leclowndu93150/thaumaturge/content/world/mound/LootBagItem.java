@@ -32,7 +32,7 @@ public final class LootBagItem extends Item {
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltip, flag);
-        tooltip.add(Component.translatable("tc.lootbag"));
+        tooltip.add(Component.translatable("tooltip.thaumaturge.loot_bag.use"));
     }
 
     @Override

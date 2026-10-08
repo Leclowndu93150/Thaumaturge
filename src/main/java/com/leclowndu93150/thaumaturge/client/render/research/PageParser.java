@@ -26,7 +26,7 @@ public final class PageParser {
 
     private static final ResourceLocation KNOWLEDGETYPES_ID =
             ResourceLocation.fromNamespaceAndPath("thaumaturge", "knowledge_types");
-    private static final String ADDENDUM_TEXT_KEY = "tc.addendumtext";
+    private static final String ADDENDUM_TEXT_KEY = "gui.thaumaturge.thaumonomicon.addendum";
 
     private PageParser() {}
 

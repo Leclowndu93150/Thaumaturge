@@ -317,7 +317,7 @@ public final class MenuArcaneWorkbench extends AbstractContainerMenu {
                             > getCarried().getMaxStackSize()) return;
         }
         if (slotId == WAND_SLOT && getCarried().getItem() instanceof ItemWand wand && wand.isStaff(getCarried())) {
-            TTActionBar.sendPurple(player, "tc.workbench.staff");
+            TTActionBar.sendPurple(player, "message.thaumaturge.arcane_workbench.staff");
         }
         if (slotId == RESULT_SLOT && containerInput == ClickType.SWAP && craftsOnServer()) {
             swapCraft(button);

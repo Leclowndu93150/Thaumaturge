@@ -237,7 +237,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
                 SEARCH_BOX_Y,
                 SEARCH_BOX_WIDTH,
                 SEARCH_BOX_HEIGHT,
-                Component.translatable("tc.search"));
+                Component.translatable("gui.thaumaturge.thaumonomicon.search"));
         searchField.setBordered(true);
         searchField.setMaxLength(15);
         searchField.setTextColor(0xFFFFFFFF);
@@ -862,7 +862,7 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             if (SEARCH_RESULT_TEXT_Y_START + (q + 1) * SEARCH_RESULT_ROW_HEIGHT > screenY) {
                 graphics.drawString(
                         font,
-                        Component.translatable("tc.search.more"),
+                        Component.translatable("gui.thaumaturge.thaumonomicon.search_more"),
                         SEARCH_RESULT_HIT_LEFT_X,
                         SEARCH_RESULT_TEXT_Y_START + q * SEARCH_RESULT_ROW_HEIGHT + SEARCH_RESULT_OVERFLOW_Y_OFFSET,
                         SEARCH_OVERFLOW_COLOR,
@@ -1034,13 +1034,15 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             graphics.drawString(font, full, labelX, labelY, HOVER_LABEL_COLOR, false);
             int t = CATEGORY_LABEL_LINE_HEIGHT;
             if (hasNewResearch) {
-                String s = Component.translatable("tc.research.newresearch").getString();
+                String s = Component.translatable("tooltip.thaumaturge.research.new_research")
+                        .getString();
                 int sx = !flip ? x + CATEGORY_LABEL_GAP_X : screenX + CATEGORY_LABEL_FROM_RIGHT_OFFSET - font.width(s);
                 graphics.drawString(font, s, sx, labelY + t, HOVER_LABEL_COLOR, false);
                 t += CATEGORY_LABEL_LINE_HEIGHT;
             }
             if (hasNewPage) {
-                String s = Component.translatable("tc.research.newpage").getString();
+                String s = Component.translatable("tooltip.thaumaturge.research.new_page")
+                        .getString();
                 int sx = !flip ? x + CATEGORY_LABEL_GAP_X : screenX + CATEGORY_LABEL_FROM_RIGHT_OFFSET - font.width(s);
                 graphics.drawString(font, s, sx, labelY + t, HOVER_LABEL_COLOR, false);
             }
@@ -1100,7 +1102,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
         if (hover) {
             graphics.drawString(
                     font,
-                    Component.translatable("tc.search").getString(),
+                    Component.translatable("gui.thaumaturge.thaumonomicon.search")
+                            .getString(),
                     x + SEARCH_BUTTON_LABEL_X_OFFSET,
                     y + SEARCH_BUTTON_LABEL_Y_OFFSET,
                     HOVER_LABEL_COLOR,
@@ -1160,14 +1163,14 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
                 if (stage >= 0) {
                     MutableComponent stageLine = Component.literal("@@")
                             .append(Component.literal(ChatFormatting.AQUA
-                                    + Component.translatable("tc.research.stage")
+                                    + Component.translatable("tooltip.thaumaturge.research.stage")
                                             .getString() + " " + (stage + 1) + "/"
                                     + node.entry.stages().size() + ChatFormatting.RESET));
                     lines.add(stageLine);
                 } else {
                     MutableComponent begin = Component.literal("@@")
                             .append(Component.literal(ChatFormatting.GREEN
-                                    + Component.translatable("tc.research.begin")
+                                    + Component.translatable("tooltip.thaumaturge.research.not_begun")
                                             .getString()
                                     + ChatFormatting.RESET));
                     lines.add(begin);
@@ -1175,7 +1178,8 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             }
         } else {
             lines.add(Component.literal("@@" + ChatFormatting.RED
-                    + Component.translatable("tc.researchmissing").getString()));
+                    + Component.translatable("tooltip.thaumaturge.research.missing")
+                            .getString()));
             for (ResearchParent parent : node.entry.parents()) {
                 if (parent.isSatisfiedBy(knowledge)) continue;
                 String s = "?";
@@ -1191,10 +1195,11 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             }
         }
         if (knowledge.hasResearchFlag(node.id, ResearchFlag.RESEARCH)) {
-            lines.add(Component.literal("@@").append(Component.translatable("tc.research.newresearch")));
+            lines.add(Component.literal("@@")
+                    .append(Component.translatable("tooltip.thaumaturge.research.new_research")));
         }
         if (knowledge.hasResearchFlag(node.id, ResearchFlag.PAGE)) {
-            lines.add(Component.literal("@@").append(Component.translatable("tc.research.newpage")));
+            lines.add(Component.literal("@@").append(Component.translatable("tooltip.thaumaturge.research.new_page")));
         }
         if (minecraft.options.advancedItemTooltips) {
             lines.add(Component.literal(node.id.toString()).withStyle(ChatFormatting.DARK_GRAY));

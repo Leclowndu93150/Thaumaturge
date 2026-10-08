@@ -52,19 +52,26 @@ public final class ItemResonator extends Item {
             if (container != null) {
                 for (AspectInstance entry : container.getAspects().sortedByTag()) {
                     player.sendSystemMessage(Component.translatable(
-                            "tc.resonator1", String.valueOf(entry.amount()), AspectComponents.name(entry.aspect())));
+                            "message.thaumaturge.resonator.contents",
+                            String.valueOf(entry.amount()),
+                            AspectComponents.name(entry.aspect())));
                 }
             }
         } else if (transport.getEssentiaType(side) != null) {
             Holder<IAspect> type = transport.getEssentiaType(side);
             player.sendSystemMessage(Component.translatable(
-                    "tc.resonator1", String.valueOf(transport.getEssentiaAmount(side)), AspectComponents.name(type)));
+                    "message.thaumaturge.resonator.contents",
+                    String.valueOf(transport.getEssentiaAmount(side)),
+                    AspectComponents.name(type)));
         }
         Holder<IAspect> suction = transport.getSuctionType(side);
-        Component suctionName =
-                suction != null ? AspectComponents.name(suction) : Component.translatable("tc.resonator3");
-        player.sendSystemMessage(
-                Component.translatable("tc.resonator2", String.valueOf(transport.getSuctionAmount(side)), suctionName));
+        Component suctionName = suction != null
+                ? AspectComponents.name(suction)
+                : Component.translatable("message.thaumaturge.resonator.untyped");
+        player.sendSystemMessage(Component.translatable(
+                "message.thaumaturge.resonator.suction",
+                String.valueOf(transport.getSuctionAmount(side)),
+                suctionName));
         level.playSound(
                 null,
                 pos,
@@ -73,9 +80,10 @@ public final class ItemResonator extends Item {
                 SOUND_VOLUME,
                 SOUND_PITCH_BASE + level.getRandom().nextFloat() * 0.1F);
         if (tile instanceof BlockEntityCondenser condenser) {
-            player.sendSystemMessage(Component.translatable("tc.condenser1", String.valueOf(condenser.cost())));
             player.sendSystemMessage(Component.translatable(
-                    "tc.condenser2",
+                    "message.thaumaturge.resonator.condenser_cost", String.valueOf(condenser.cost())));
+            player.sendSystemMessage(Component.translatable(
+                    "message.thaumaturge.resonator.condenser_time",
                     String.valueOf(condenser.interval()),
                     String.valueOf(condenser.interval() / TICKS_PER_SECOND)));
         }

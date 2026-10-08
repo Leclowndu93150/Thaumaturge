@@ -50,7 +50,7 @@ public final class JarNodeItem extends BlockItem {
                 Component.translatable("nodetype.thaumaturge." + data.type().getSerializedName());
         Component line = data.modifier()
                 .<Component>map(modifier -> Component.translatable(
-                        "tc.node.typemod",
+                        "tooltip.thaumaturge.node.type_modifier",
                         type,
                         Component.translatable("nodemod.thaumaturge." + modifier.getSerializedName())))
                 .orElse(type);

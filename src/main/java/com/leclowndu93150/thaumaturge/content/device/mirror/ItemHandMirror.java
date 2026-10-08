@@ -48,7 +48,7 @@ public final class ItemHandMirror extends Item {
         if (level.getBlockEntity(pos) instanceof BlockEntityMirror) {
             stack.set(TTDataComponents.MIRROR_LINK.get(), GlobalPos.of(level.dimension(), pos));
             level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, 1.0F, 2.0F);
-            player.sendSystemMessage(Component.translatable("tc.handmirrorlinked"));
+            player.sendSystemMessage(Component.translatable("message.thaumaturge.hand_mirror.linked"));
         }
         return InteractionResult.SUCCESS;
     }
@@ -78,7 +78,7 @@ public final class ItemHandMirror extends Item {
                             SoundSource.PLAYERS,
                             1.0F,
                             0.8F);
-            serverPlayer.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
+            serverPlayer.sendSystemMessage(Component.translatable("message.thaumaturge.hand_mirror.missing"));
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
         serverPlayer.openMenu(new MenuProvider() {
@@ -128,7 +128,7 @@ public final class ItemHandMirror extends Item {
                         SoundSource.PLAYERS,
                         1.0F,
                         0.8F);
-        player.sendSystemMessage(Component.translatable("tc.handmirrorerror"));
+        player.sendSystemMessage(Component.translatable("message.thaumaturge.hand_mirror.missing"));
         return false;
     }
 
@@ -144,7 +144,7 @@ public final class ItemHandMirror extends Item {
         GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
         if (link != null) {
             tooltip.add(Component.translatable(
-                    "tc.handmirrorlinkedto.full",
+                    "tooltip.thaumaturge.mirror.linked_to",
                     link.pos().getX(),
                     link.pos().getY(),
                     link.pos().getZ(),

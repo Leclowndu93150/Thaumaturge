@@ -215,12 +215,16 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         List<IRecipeCategory<?>> categories = new ArrayList<>(2);
         categories.add(new ArcaneWorkbenchCategory(helpers.getGuiHelper()));
         categories.add(new CrucibleCategory(helpers.getGuiHelper()));
-        categories.add(
-                new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RECIPE_TYPE, "recipe.type.infusion"));
         categories.add(new InfusionCategory<>(
-                helpers.getGuiHelper(), InfusionCategory.ENCHANTMENT_RECIPE_TYPE, "recipe.type.infusion_enchantment"));
+                helpers.getGuiHelper(), InfusionCategory.RECIPE_TYPE, "gui.thaumaturge.recipe_type.infusion"));
         categories.add(new InfusionCategory<>(
-                helpers.getGuiHelper(), InfusionCategory.RUNIC_RECIPE_TYPE, "recipe.type.runic_augment"));
+                helpers.getGuiHelper(),
+                InfusionCategory.ENCHANTMENT_RECIPE_TYPE,
+                "gui.thaumaturge.recipe_type.infusion_enchantment"));
+        categories.add(new InfusionCategory<>(
+                helpers.getGuiHelper(),
+                InfusionCategory.RUNIC_RECIPE_TYPE,
+                "gui.thaumaturge.recipe_type.runic_augment"));
         categories.add(new DustTriggerCategory(helpers.getGuiHelper()));
         categories.add(new AspectCompositionCategory(helpers.getGuiHelper(), pickIconAspect()));
         categories.add(new AspectFromStacksCategory(helpers.getGuiHelper()));

@@ -84,7 +84,7 @@ public final class SalisMundusItem extends Item {
                     "Salis Mundus trigger {} blocked by research gate {}",
                     holder.id(),
                     trigger.researchGate().orElse(null));
-            TTActionBar.sendPurple(player, "tc.dust.noresearch");
+            TTActionBar.sendPurple(player, "message.thaumaturge.salis_mundus.no_research");
             return InteractionResult.PASS;
         }
         ItemStack result = trigger.assemble(input, level.registryAccess());

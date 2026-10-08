@@ -52,11 +52,11 @@ public final class NodeJarRitual {
             return true;
         }
         if (!KnowledgeAccess.of(player).isResearchKnown(RESEARCH_NODE_JAR)) {
-            TTActionBar.sendPurple(player, "tc.jar.noresearch");
+            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.no_research");
             return true;
         }
         if (!fitsStructure(level, nodePos)) {
-            TTActionBar.sendPurple(player, "tc.jar.structure");
+            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.structure");
             return true;
         }
         Map<ResourceKey<IAspect>, Integer> cost = new LinkedHashMap<>();
@@ -64,7 +64,7 @@ public final class NodeJarRitual {
             cost.put(primal, JAR_VIS_COST_PER_PRIMAL * WandEconomy.CENTIVIS_PER_VIS);
         }
         if (!WandVisHelper.consumeSpecificFromHotbar(player, cost, true)) {
-            TTActionBar.sendPurple(player, "tc.jar.vis", JAR_VIS_COST_PER_PRIMAL);
+            TTActionBar.sendPurple(player, "message.thaumaturge.node_jar.vis", JAR_VIS_COST_PER_PRIMAL);
             return true;
         }
         level.playSound(null, nodePos, TTSounds.WAND.get(), SoundSource.BLOCKS, 1.0F, 1.0F);

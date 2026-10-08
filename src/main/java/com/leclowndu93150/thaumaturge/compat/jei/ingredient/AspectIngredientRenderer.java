@@ -41,7 +41,8 @@ public final class AspectIngredientRenderer implements IIngredientRenderer<Aspec
         int color = value.color() | 0xFF000000;
         if (!AspectKnowledgeAccess.isKnown(ingredient)) {
             List<Component> lines = new ArrayList<>(1);
-            lines.add(Component.translatable("tc.aspect.unknown").withStyle(style -> style.withColor(color)));
+            lines.add(Component.translatable("tooltip.thaumaturge.aspect.unknown")
+                    .withStyle(style -> style.withColor(color)));
             return lines;
         }
         List<Component> lines = new ArrayList<>(2);

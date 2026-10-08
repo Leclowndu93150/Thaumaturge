@@ -76,7 +76,9 @@ public final class DeconstructionTableScreen extends AbstractTTContainerScreen<M
                     && mouseY >= topPos + RESULT_Y
                     && mouseY < topPos + RESULT_Y + RESULT_SIZE) {
                 DeferredTooltip.set(
-                        List.of(AspectComponents.name(result), Component.translatable("tc.decon.collect")),
+                        List.of(
+                                AspectComponents.name(result),
+                                Component.translatable("gui.thaumaturge.deconstruction_table.collect")),
                         mouseX,
                         mouseY);
             }

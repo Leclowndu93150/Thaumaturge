@@ -51,7 +51,8 @@ public class CrimsonBladeItem extends SwordItem {
     @Override
     public void appendHoverText(
             ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("enchantment.special.sapgreat").withStyle(ChatFormatting.GOLD));
+        tooltip.add(Component.translatable("tooltip.thaumaturge.crimson_blade.greater_sapping")
+                .withStyle(ChatFormatting.GOLD));
         super.appendHoverText(stack, context, tooltip, flag);
     }
 }

@@ -74,12 +74,12 @@ final class JadeComponents {
 
     static Component aspectName(String id, RegistryAccess registries) {
         ResourceLocation location = ResourceLocation.tryParse(id);
-        if (location == null) return Component.translatable("tc.aspect.unknown");
+        if (location == null) return Component.translatable("tooltip.thaumaturge.aspect.unknown");
         return registries
                 .lookupOrThrow(IAspect.REGISTRY_KEY)
                 .get(ResourceKey.create(IAspect.REGISTRY_KEY, location))
                 .<Component>map(AspectComponents::name)
-                .orElseGet(() -> Component.translatable("tc.aspect.unknown"));
+                .orElseGet(() -> Component.translatable("tooltip.thaumaturge.aspect.unknown"));
     }
 
     static Component direction(String name) {

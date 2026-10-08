@@ -63,10 +63,12 @@ public final class AspectContainerTooltipHandler {
                         .withStyle(style -> style.withColor(TextColor.fromRgb(0xB59ED9))));
         for (AspectInstance entry : aspects.sortedByAmount().reversed()) {
             Holder<IAspect> aspect = entry.aspect();
-            MutableComponent line = Component.literal("  ").append(AspectComponents.name(aspect));
-            if (AspectKnowledgeAccess.isKnown(aspect)) {
-                line.append(Component.literal(" x" + entry.amount()));
-            }
+            Component named = AspectKnowledgeAccess.isKnown(aspect)
+                    ? Component.translatable(
+                            "tooltip.thaumaturge.amount", AspectComponents.name(aspect), entry.amount())
+                    : AspectComponents.name(aspect);
+            MutableComponent line = Component.literal("  ").append(named);
+
             line.setStyle(Style.EMPTY.withColor(TextColor.fromRgb(aspect.value().color())));
             tooltip.add(2, line);
         }

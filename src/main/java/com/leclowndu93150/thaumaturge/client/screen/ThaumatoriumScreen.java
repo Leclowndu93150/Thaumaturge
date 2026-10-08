@@ -104,7 +104,8 @@ public final class ThaumatoriumScreen extends AbstractTTContainerScreen<MenuThau
         BlockEntityThaumatorium machine = menu.blockEntity;
         if (machine != null) {
             if (machine.maxRecipes() > 1) {
-                String text = machine.queue().size() + "/" + machine.maxRecipes();
+                Component text = Component.translatable(
+                        "gui.thaumaturge.fraction", machine.queue().size(), machine.maxRecipes());
                 graphics.pose().pushPose();
                 graphics.pose().translate(k + COUNT_X, l + COUNT_Y, 0.0F);
                 graphics.pose().scale(0.5F, 0.5F, 1.0F);

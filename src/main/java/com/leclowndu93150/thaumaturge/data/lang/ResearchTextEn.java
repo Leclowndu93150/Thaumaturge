@@ -1091,21 +1091,27 @@ public final class ResearchTextEn {
                 "research.thaumaturge.scanned/entity/thaumaturge/eldritch_crab.stage_0",
                 "Eldritch Crabs, or Helmed Crabs, are a most unusual and unnatural creature. I am convinced these creatures are the result of magical tinkering.<BR>A pair of powerful claws make them dangerous to face in combat, but it is how they use those claws that make them horrific. They leap at their foes heads in an attempt to decapitate them. If successful they are somehow able to burrow into the victims body and take control of what remains. Their abdomen looks much like a helmed head allowing them to disguise the true nature of the husk they now control.<BR>These husks are not much more powerful than a normal zombie so the reason why they do this eludes me - they are much more of a threat without their 'mount'. Possibly they were created as weapons of terror by some demented inventor?   ");
         add.accept(
-                "got.crystals",
+                "message.thaumaturge.discovery.crystals",
                 "Your fingers tingle strangely as you handle the crystal. What does that mean? Maybe some rest will inspire you.");
-        add.accept("got.dream", "You awaken from a strange dream. You quickly write it down before the memory fades. ");
+        add.accept(
+                "message.thaumaturge.discovery.dream",
+                "You awaken from a strange dream. You quickly write it down before the memory fades. ");
         add.accept("research.thaumaturge.m_deepdown.title", "Visit the lowest depths of the world.");
         add.accept("research.thaumaturge.m_uphigh.title", "Visit the highest peaks you can find.");
         add.accept("research.thaumaturge.m_finddesert.title", "Visit dry and barren wastes.");
         add.accept("research.thaumaturge.m_findocean.title", "Visit the endless, blue seas.");
-        add.accept("got.deepdown", "You have visited deep and dark depths and have learned much.");
-        add.accept("got.uphigh", "The world is spread out before you. Your perspective has been broadened.");
+        add.accept(
+                "message.thaumaturge.discovery.deep_down",
+                "You have visited deep and dark depths and have learned much.");
+        add.accept(
+                "message.thaumaturge.discovery.up_high",
+                "The world is spread out before you. Your perspective has been broadened.");
         add.accept("got.finddesert", "You have visited the scorching desert.");
         add.accept("got.findocean", "You have peered into the endless blue abyss.");
         add.accept("research.thaumaturge.f_golem.title", "Study an animated construct.");
         add.accept("research.thaumaturge.f_toomuchflux.title", "Let the the Flux build");
         add.accept("research.thaumaturge.f_voidseed.title", "Examine something native to the Void ");
-        add.accept("got.instability", "I should study infusion instability further.");
+        add.accept("message.thaumaturge.discovery.instability", "I should study infusion instability further.");
         add.accept("research.thaumaturge.m_walker.title", "Walk a lot.");
         add.accept("research.thaumaturge.m_runner.title", "Run a lot.");
         add.accept("research.thaumaturge.m_swimmer.title", "Swim a lot.");
@@ -1115,7 +1121,7 @@ public final class ResearchTextEn {
         add.accept("research.thaumaturge.f_arrow.title", "A normal projectile");
         add.accept("research.thaumaturge.f_fireball.title", "A firey projectile");
         add.accept("research.thaumaturge.f_spit.title", "A sticky projectile");
-        add.accept("got.projectile", "You learn some more about projectiles.");
+        add.accept("message.thaumaturge.discovery.projectile", "You learn some more about projectiles.");
         add.accept("research.thaumaturge.f_dispenser.title", "Examine something that can launch objects.");
         add.accept("research.thaumaturge.f_brain.title", "Examine something brainy.");
         add.accept("research.thaumaturge.f_matiron.title", "Examine iron");
@@ -1125,9 +1131,9 @@ public final class ResearchTextEn {
         add.accept("research.thaumaturge.f_matvoid.title", "Examine void metal ");
         add.accept("research.thaumaturge.f_spider.title", "Closely examine a climbing creature");
         add.accept("research.thaumaturge.f_fly.title", "Closely examine a flying creature.");
-        add.accept("got.onfire", "You have felt the touch of flame.");
-        add.accept("got.hellandback", "You have visited the Nether.");
-        add.accept("got.endoftheworld", "You have visited the End.");
+        add.accept("message.thaumaturge.discovery.on_fire", "You have felt the touch of flame.");
+        add.accept("message.thaumaturge.discovery.hell_and_back", "You have visited the Nether.");
+        add.accept("message.thaumaturge.discovery.end_of_the_world", "You have visited the End.");
         add.accept("research.thaumaturge.m_hellandback.title", "Visit a hellish place.");
         add.accept("research.thaumaturge.m_endoftheworld.title", "Find the end of everything.");
         add.accept("book.thaumaturge.start.title", "Strange Dreams");
@@ -1140,7 +1146,7 @@ public final class ResearchTextEn {
         add.accept(
                 "book.thaumaturge.start.3",
                 "\"I wonder, should I do what the dream showed?\n\nI have the impression the dust was going to reveal something wondrous, but dangerous.\"");
-        add.accept("tc.addaddendum", "§aAddendum added to %1$s§r");
+        add.accept("message.thaumaturge.research.addendum_added", "§aAddendum added to %1$s§r");
         add.accept("research.thaumaturge.gotdream.title", "Strange Dreams");
         add.accept("research.thaumaturge.gotthaumonomicon.title", "The Thaumonomicon");
     }

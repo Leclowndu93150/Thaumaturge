@@ -27,61 +27,62 @@ public final class TTTooltips {
     }
 
     public static Component categoryPercent(ResourceKey<IResearchCategory> key, int percent) {
-        return Component.translatable("tc.research_category.percent", CategoryComponents.name(key), percent);
+        return Component.translatable(
+                "tooltip.thaumaturge.research_category.percent", CategoryComponents.name(key), percent);
     }
 
     public static Component knowledgeLabel(KnowledgeType type, ResourceKey<IResearchCategory> category) {
         return Component.translatable(
-                "tc.knowledge.tooltip",
+                "tooltip.thaumaturge.knowledge.entry",
                 Component.translatable(type.translationKey()),
                 CategoryComponents.name(category));
     }
 
     public static Component need(String which) {
-        return Component.translatable("tc.need." + which);
+        return Component.translatable("gui.thaumaturge.thaumonomicon.need." + which);
     }
 
     public static Component cardUnknown() {
-        return Component.translatable("tc.card.unknown");
+        return Component.translatable("tooltip.thaumaturge.research.unknown_item");
     }
 
     public static Component noInkLine0() {
-        return Component.translatable("tile.researchtable.noink.0");
+        return Component.translatable("gui.thaumaturge.research_table.no_ink.0");
     }
 
     public static Component noInkLine1() {
-        return Component.translatable("tile.researchtable.noink.1");
+        return Component.translatable("gui.thaumaturge.research_table.no_ink.1");
     }
 
     public static Component noPaperLine0() {
-        return Component.translatable("tile.researchtable.nopaper.0");
+        return Component.translatable("gui.thaumaturge.research_table.no_paper.0");
     }
 
     public static Component returnLabel() {
-        return Component.translatable("recipe.return");
+        return Component.translatable("gui.thaumaturge.thaumonomicon.back");
     }
 
     public static Component beginResearch() {
-        return Component.translatable("tc.research.begin").withStyle(ChatFormatting.GREEN);
+        return Component.translatable("tooltip.thaumaturge.research.not_begun").withStyle(ChatFormatting.GREEN);
     }
 
     public static Component researchStage(int stage, int total) {
-        return Component.translatable("tc.research.stage")
+        return Component.translatable("tooltip.thaumaturge.research.stage")
                 .append(Component.literal(" "))
-                .append(Component.translatable("tc.research.stage.short", stage, total))
+                .append(Component.translatable("tooltip.thaumaturge.research.stage_short", stage, total))
                 .withStyle(ChatFormatting.AQUA);
     }
 
     public static Component researchMissing() {
-        return Component.translatable("tc.researchmissing").withStyle(ChatFormatting.RED);
+        return Component.translatable("tooltip.thaumaturge.research.missing").withStyle(ChatFormatting.RED);
     }
 
     public static Component researchNew() {
-        return Component.translatable("tc.research.newresearch");
+        return Component.translatable("tooltip.thaumaturge.research.new_research");
     }
 
     public static Component pageNew() {
-        return Component.translatable("tc.research.newpage");
+        return Component.translatable("tooltip.thaumaturge.research.new_page");
     }
 
     public static MutableComponent entryNameGold(Component name) {

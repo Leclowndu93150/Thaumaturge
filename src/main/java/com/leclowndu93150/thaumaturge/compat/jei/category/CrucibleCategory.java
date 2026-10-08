@@ -68,7 +68,7 @@ public final class CrucibleCategory implements IRecipeCategory<RecipeHolder<Cruc
 
     @Override
     public Component getTitle() {
-        return Component.translatable("recipe.type.crucible");
+        return Component.translatable("gui.thaumaturge.recipe_type.crucible");
     }
 
     @Override

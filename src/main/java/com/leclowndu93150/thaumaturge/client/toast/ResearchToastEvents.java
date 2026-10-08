@@ -46,7 +46,7 @@ public final class ResearchToastEvents {
                     .ifPresent(holder -> mc.getToasts()
                             .addToast(new ResearchToast(
                                     research,
-                                    Component.translatable("tc.research.complete"),
+                                    Component.translatable("gui.thaumaturge.research.complete"),
                                     Component.translatable(holder.value().nameKey()),
                                     EntryIconRenderer.resolveIcon(holder.value(), mc.player.tickCount))));
             knowledge.clearResearchFlag(research, ResearchFlag.POPUP);

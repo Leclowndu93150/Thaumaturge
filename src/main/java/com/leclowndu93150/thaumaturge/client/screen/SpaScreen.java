@@ -119,7 +119,7 @@ public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
                 && !resource.isEmpty()) {
             List<Component> lines = new ArrayList<>();
             lines.add(resource.getFluid().getFluidType().getDescription());
-            lines.add(Component.literal(amount + " mb"));
+            lines.add(Component.translatable("gui.thaumaturge.fluid_amount", amount));
             tooltipLines = lines;
         }
 

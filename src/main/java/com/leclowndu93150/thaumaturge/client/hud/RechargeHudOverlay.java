@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -116,7 +117,13 @@ public final class RechargeHudOverlay implements LayeredDraw.Layer {
         if (showAmount) {
             graphics.pose().pushPose();
             graphics.pose().mulPose(Axis.ZP.rotationDegrees(-90.0F));
-            graphics.drawString(mc.font, charge + " / " + max, AMOUNT_TEXT_X, AMOUNT_TEXT_Y, WHITE, false);
+            graphics.drawString(
+                    mc.font,
+                    Component.translatable("gui.thaumaturge.fraction", charge, max),
+                    AMOUNT_TEXT_X,
+                    AMOUNT_TEXT_Y,
+                    WHITE,
+                    false);
             graphics.pose().popPose();
         }
         graphics.pose().popPose();

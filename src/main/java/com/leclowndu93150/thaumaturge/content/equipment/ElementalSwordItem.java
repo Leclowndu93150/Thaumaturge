@@ -61,7 +61,10 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
             stack.set(TTDataComponents.WHIRLWIND_DISABLED.get(), disabled);
             if (!level.isClientSide()) {
                 TTActionBar.sendPurple(
-                        player, disabled ? "tc.elemental_sword.whirlwind_off" : "tc.elemental_sword.whirlwind_on");
+                        player,
+                        disabled
+                                ? "message.thaumaturge.elemental_sword.whirlwind_off"
+                                : "message.thaumaturge.elemental_sword.whirlwind_on");
                 level.playSound(
                         null,
                         player.getX(),

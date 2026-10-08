@@ -53,7 +53,7 @@ public final class ItemResearchNote extends Item {
                     0.66F,
                     1.0F);
             serverPlayer.sendSystemMessage(Component.translatable(
-                            "tc.researchnote.learned",
+                            "message.thaumaturge.research_note.learned",
                             ResearchNotes.entryName(serverPlayer.registryAccess(), data.entry()))
                     .withStyle(ChatFormatting.DARK_PURPLE));
             ResearchManager.advanceStage(serverPlayer, data.entry());
@@ -79,13 +79,16 @@ public final class ItemResearchNote extends Item {
         }
         if (context.registries() != null) {
             tooltip.add(Component.translatable(
-                            "tc.researchtheory", ResearchNotes.entryName(context.registries(), data.entry()))
+                            "tooltip.thaumaturge.research_note.theory",
+                            ResearchNotes.entryName(context.registries(), data.entry()))
                     .withStyle(ChatFormatting.DARK_PURPLE));
         }
         if (data.complete()) {
-            tooltip.add(Component.translatable("tc.researchnote.use").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.translatable("tooltip.thaumaturge.research_note.use")
+                    .withStyle(ChatFormatting.GOLD));
         } else {
-            tooltip.add(Component.translatable("tc.researchnote.table").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.thaumaturge.research_note.table")
+                    .withStyle(ChatFormatting.GRAY));
         }
     }
 

@@ -260,7 +260,7 @@ public final class RecipeDisplayWidget {
         int popupX = cx - costWidth / 2 + VIS_POPUP_OFFSET_X;
         int popupY = cy + VIS_POPUP_OFFSET_Y;
         if (mouseX >= popupX && mouseX < popupX + VIS_POPUP_W && mouseY >= popupY && mouseY < popupY + VIS_POPUP_H) {
-            return List.of(Component.translatable("wandtable.text1"));
+            return List.of(Component.translatable("gui.thaumaturge.recipe.vis_cost"));
         }
         return null;
     }
@@ -362,10 +362,10 @@ public final class RecipeDisplayWidget {
 
     private static @Nullable String labelKey(Kind kind) {
         return switch (kind) {
-            case WORKBENCH_SHAPED -> "recipe.type.workbench";
-            case WORKBENCH_SHAPELESS -> "recipe.type.workbenchshapeless";
-            case ARCANE_SHAPED -> "recipe.type.arcane";
-            case ARCANE_SHAPELESS -> "recipe.type.arcane.shapeless";
+            case WORKBENCH_SHAPED -> "gui.thaumaturge.recipe_type.workbench";
+            case WORKBENCH_SHAPELESS -> "gui.thaumaturge.recipe_type.workbench_shapeless";
+            case ARCANE_SHAPED -> "gui.thaumaturge.recipe_type.arcane";
+            case ARCANE_SHAPELESS -> "gui.thaumaturge.recipe_type.arcane_shapeless";
             case UNKNOWN -> null;
         };
     }
@@ -600,7 +600,7 @@ public final class RecipeDisplayWidget {
 
     private static void drawCruciblePage(GuiGraphics graphics, int cx, int cy, CrucibleRecipe display) {
         Font font = Minecraft.getInstance().font;
-        drawKindLabel(graphics, font, cx, cy, "recipe.type.crucible");
+        drawKindLabel(graphics, font, cx, cy, "gui.thaumaturge.recipe_type.crucible");
         graphics.pose().pushPose();
         graphics.pose().translate(cx, cy, 0);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
@@ -621,7 +621,7 @@ public final class RecipeDisplayWidget {
 
     private static void drawInfusionPage(GuiGraphics graphics, int cx, int cy, IInfusionRecipe display) {
         Font font = Minecraft.getInstance().font;
-        drawKindLabel(graphics, font, cx, cy, "recipe.type.infusion");
+        drawKindLabel(graphics, font, cx, cy, "gui.thaumaturge.recipe_type.infusion");
         graphics.pose().pushPose();
         graphics.pose().translate(cx, cy + INFUSION_PANEL_SHIFT_Y, 0);
         graphics.pose().scale(PANEL_SCALE, PANEL_SCALE, 1F);
@@ -646,7 +646,8 @@ public final class RecipeDisplayWidget {
             }
         }
         int inst = Math.min(INFUSION_INSTABILITY_MAX, display.instability() / 2);
-        Component text = Component.translatable("tc.inst").append(Component.translatable("tc.inst." + inst));
+        Component text = Component.translatable("gui.thaumaturge.recipe.instability")
+                .append(Component.translatable("gui.thaumaturge.recipe.instability." + inst));
         int offset = font.width(text);
         graphics.drawString(font, text, cx - offset / 2, cy + INFUSION_INSTABILITY_Y, LABEL_COLOR, false);
     }
@@ -659,7 +660,7 @@ public final class RecipeDisplayWidget {
             float rotation,
             int visibleLayer) {
         Font font = Minecraft.getInstance().font;
-        drawKindLabel(graphics, font, cx, cy, "recipe.type.construct");
+        drawKindLabel(graphics, font, cx, cy, "gui.thaumaturge.recipe_type.construct");
         drawSlotFrame(graphics, cx, cy);
         ItemStack result = display.result();
         if (!result.isEmpty()) {

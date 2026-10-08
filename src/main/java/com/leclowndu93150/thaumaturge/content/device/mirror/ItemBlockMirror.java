@@ -40,7 +40,7 @@ public final class ItemBlockMirror extends BlockItem {
         }
         if (level.getBlockEntity(pos) instanceof BlockEntityMirrorBase mirror) {
             if (mirror.isLinkValid()) {
-                player.sendSystemMessage(Component.translatable("tc.mirrorlinkedalready")
+                player.sendSystemMessage(Component.translatable("message.thaumaturge.mirror.already_linked")
                         .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
                 return InteractionResult.SUCCESS;
             }
@@ -64,7 +64,7 @@ public final class ItemBlockMirror extends BlockItem {
         GlobalPos link = stack.get(TTDataComponents.MIRROR_LINK.get());
         if (link != null) {
             tooltip.add(Component.translatable(
-                    "tc.handmirrorlinkedto.full",
+                    "tooltip.thaumaturge.mirror.linked_to",
                     link.pos().getX(),
                     link.pos().getY(),
                     link.pos().getZ(),

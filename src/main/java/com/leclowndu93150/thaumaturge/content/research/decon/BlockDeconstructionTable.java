@@ -70,8 +70,8 @@ public final class BlockDeconstructionTable extends BaseEntityBlock {
         if (!level.isClientSide()) {
             if (player instanceof ServerPlayer serverPlayer
                     && !KnowledgeAccess.of(serverPlayer).isResearchComplete(DECONSTRUCTOR_RESEARCH)) {
-                serverPlayer.connection.send(
-                        new ClientboundSetActionBarTextPacket(Component.translatable("tc.device.unknown")
+                serverPlayer.connection.send(new ClientboundSetActionBarTextPacket(
+                        Component.translatable("message.thaumaturge.device.not_understood")
                                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)));
                 return InteractionResult.SUCCESS;
             }
