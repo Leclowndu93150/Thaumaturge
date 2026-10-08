@@ -24,7 +24,7 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
 
     @Override
     public Result preview(ArcaneWorkbenchContext context, ServerPlayer player, IArcaneCraftingInput input) {
-        return run(context, player, input, null, true);
+        return run(context, player, input, null, true, null);
     }
 
     @Override
@@ -57,7 +57,16 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
             IArcaneCraftingInput input,
             IArcaneCraftingStore store,
             boolean simulate) {
-        return run(context, player, input, store, simulate);
+        return run(context, player, input, store, simulate, null);
+    }
+
+    static Result craftExpected(
+            ArcaneWorkbenchContext context,
+            ServerPlayer player,
+            IArcaneCraftingInput input,
+            IArcaneCraftingStore store,
+            ItemStack expected) {
+        return run(context, player, input, store, false, expected);
     }
 
     private static Result run(
@@ -65,7 +74,8 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
             ServerPlayer player,
             IArcaneCraftingInput input,
             @Nullable IArcaneCraftingStore store,
-            boolean simulate) {
+            boolean simulate,
+            @Nullable ItemStack expected) {
         Failure invalid = validate(context, player);
         if (invalid != Failure.NONE) {
             return Result.failure(invalid);
@@ -76,6 +86,9 @@ public final class ArcaneCraftingTransactions implements ArcaneCraftingTransacti
         }
         IArcaneRecipe recipe = match.holder().value();
         ItemStack output = recipe.assemble(input, context.level().registryAccess());
+        if (expected != null && !ItemStack.matches(output, expected)) {
+            return Result.failure(Failure.INGREDIENTS_CHANGED);
+        }
         List<ItemStack> remainders = remainders(recipe, input);
         BlockEntityArcaneWorkbench tile = placedWorkbench(context);
         if (tile != null) {

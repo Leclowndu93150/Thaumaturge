@@ -19,6 +19,8 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
     public static final int WAND_SLOT = CRAFTING_SLOTS + CRYSTAL_SLOTS;
     public static final int SIZE = WAND_SLOT + 1;
 
+    private boolean applyingCraft;
+
     private final List<Runnable> changeListeners = new ArrayList<>();
 
     public InventoryArcaneWorkbench() {
@@ -64,6 +66,7 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
 
     @Override
     public void setChanged() {
+        if (applyingCraft) return;
         super.setChanged();
         for (Runnable listener : changeListeners) {
             listener.run();
@@ -87,6 +90,22 @@ public class InventoryArcaneWorkbench extends SimpleContainer implements IArcane
             grid.add(getItem(i));
         }
         return CraftingInput.of(3, 3, grid);
+    }
+
+    public CraftingInput.Positioned asPositionedCraftInput() {
+        return CraftingInput.ofPositioned(3, 3, getItems().subList(0, CRAFTING_SLOTS));
+    }
+
+    void applyCraft(List<ItemStack> items) {
+        applyingCraft = true;
+        try {
+            for (int i = 0; i < SIZE; i++) {
+                setItem(i, items.get(i));
+            }
+        } finally {
+            applyingCraft = false;
+        }
+        setChanged();
     }
 
     public ArcaneCraftingInput asArcaneCraftInput() {
