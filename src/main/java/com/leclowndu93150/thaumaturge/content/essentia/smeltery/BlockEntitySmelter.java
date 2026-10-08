@@ -10,7 +10,6 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.essentia.BellowsHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.serialization.TTNbt;
 import java.util.ArrayList;
@@ -324,19 +323,16 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     }
 
     public int getSpeed() {
-        return 20 - (getSmelterType() == 1 ? 10 : 5);
+        return stats().smeltInterval();
     }
 
-    public int getSmelterType() {
-        if (getBlockState().is(TTBlocks.SMELTER_VOID)) return 2;
-        if (getBlockState().is(TTBlocks.SMELTER_THAUMIUM)) return 1;
-        return 0;
+    private SmelterStats stats() {
+        SmelterStats stats = getBlockState().getBlock().builtInRegistryHolder().getData(SmelterDataMaps.SMELTER_STATS);
+        return stats == null ? SmelterStats.DEFAULT : stats;
     }
 
     public float getEfficiency() {
-        if (getSmelterType() == 2) return 0.95F;
-        if (getSmelterType() == 1) return 0.9F;
-        return 0.8F;
+        return stats().efficiency();
     }
 
     public int getCookProgressScaled(int scale) {
