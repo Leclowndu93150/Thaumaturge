@@ -475,7 +475,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.girdle_fancy", "Fancy Belt");
         add("item.thaumaturge.amulet_vis", "Vis Stone");
         add("item.thaumaturge.amulet_vis_crafted", "Amulet of Vis");
-        add("item.thaumaturge.amulet_vis.text", "Recharges armor, baubles and hotbar items.");
+        add("item.thaumaturge.amulet_vis.text", "Recharges armor, baubles, hotbar and offhand items.");
         add("item.thaumaturge.charm_undying", "Charm of Undying");
         add("item.thaumaturge.cloud_ring", "Cloudstepper Ring");
         add("item.thaumaturge.curiosity_band", "Headband of Curiosity");

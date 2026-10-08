@@ -45,6 +45,11 @@ public final class AmuletVisItem extends Item {
         if (topUpWand(player)) {
             return;
         }
+        if (RechargeAccess.rechargeItem(player.level(), player.getOffhandItem(), player.blockPosition(), player, 1)
+                        > 0.0F
+                || topUpWand(player, player.getOffhandItem())) {
+            return;
+        }
         if (ModList.get().isLoaded(TTIds.CURIOS) && ThaumaturgeCuriosCompat.rechargeFirstCurio(player)) {
             return;
         }
@@ -60,29 +65,32 @@ public final class AmuletVisItem extends Item {
 
     private boolean topUpWand(Player player) {
         for (int slot = 0; slot < Inventory.getSelectionSize(); slot++) {
-            ItemStack candidate = player.getInventory().getItem(slot);
-            if (!(candidate.getItem() instanceof ItemWand)) {
-                continue;
-            }
-            int max = WandVisHelper.getMaxVis(candidate);
-            ResourceKey<IAspect> lowest = null;
-            int lowestAmount = Integer.MAX_VALUE;
-            for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
-                int amount = WandVisHelper.getVis(candidate, primal);
-                if (amount < max && amount < lowestAmount) {
-                    lowestAmount = amount;
-                    lowest = primal;
-                }
-            }
-            if (lowest == null) {
-                continue;
-            }
-            if (AuraHelper.drainVis(player.level(), player.blockPosition(), 1.0F, false) > 0.0F) {
-                WandVisHelper.addVis(candidate, lowest, 1, true);
+            if (topUpWand(player, player.getInventory().getItem(slot))) {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean topUpWand(Player player, ItemStack candidate) {
+        if (!(candidate.getItem() instanceof ItemWand)) {
+            return false;
+        }
+        int max = WandVisHelper.getMaxVis(candidate);
+        ResourceKey<IAspect> lowest = null;
+        int lowestAmount = Integer.MAX_VALUE;
+        for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
+            int amount = WandVisHelper.getVis(candidate, primal);
+            if (amount < max && amount < lowestAmount) {
+                lowestAmount = amount;
+                lowest = primal;
+            }
+        }
+        if (lowest == null || AuraHelper.drainVis(player.level(), player.blockPosition(), 1.0F, false) <= 0.0F) {
+            return false;
+        }
+        WandVisHelper.addVis(candidate, lowest, 1, true);
+        return true;
     }
 
     @Override

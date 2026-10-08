@@ -311,7 +311,7 @@ public final class ResearchTextEn {
                 "If I wish to recharge my vis storage items I currently need to return to the nearest recharge pedestal or carry one of them around. This is not always convenient however - I must find a portable way to recharge my items. ");
         add.accept(
                 "research.thaumaturge.vis_amulet.stage_1",
-                "I have crafted an amulet capable of channeling vis from the aura, allowing me to recharge items in the field while it is worn.<BR>The amulet will only recharge items located in your hotbar, baubles or armor slots (in that order). It will only recharge items that can normally be recharged in a recharge pedestal.");
+                "I have crafted an amulet capable of channeling vis from the aura, allowing me to recharge items in the field while it is worn.<BR>The amulet will only recharge items located in your hotbar, offhand, baubles or armor slots (in that order). It will only recharge items that can normally be recharged in a recharge pedestal.");
         add.accept("research.thaumaturge.workbench_charger.title", "Workbench Charger");
         add.accept(
                 "research.thaumaturge.workbench_charger.stage_0",
