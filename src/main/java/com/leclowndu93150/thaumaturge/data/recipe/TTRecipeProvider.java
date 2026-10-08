@@ -703,25 +703,21 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output, TTIds.MODID + ":amber_block_from_brick");
 
         arcaneShaped(new ItemStack(TTItems.PAVING_STONE_BARRIER.get(), 4), 50)
-                .aspect(TTAspects.IGNIS, 1)
-                .aspect(TTAspects.ORDO, 1)
                 .pattern("SAS")
                 .pattern("SBS")
                 .define('S', TTItems.STONE_ARCANE_BRICK)
-                .define('A', TTItems.CRYSTAL_IGNIS)
-                .define('B', TTItems.CRYSTAL_ORDO)
+                .define('A', crystal(TTAspects.IGNIS))
+                .define('B', crystal(TTAspects.ORDO))
                 .gate(artificeGate)
                 .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK))
                 .save(output);
 
         arcaneShaped(new ItemStack(TTItems.PAVING_STONE_TRAVEL.get(), 4), 50)
-                .aspect(TTAspects.AER, 1)
-                .aspect(TTAspects.TERRA, 1)
                 .pattern("SAS")
                 .pattern("SBS")
                 .define('S', TTItems.STONE_ARCANE_BRICK)
-                .define('A', TTItems.CRYSTAL_AER)
-                .define('B', TTItems.CRYSTAL_TERRA)
+                .define('A', crystal(TTAspects.AER))
+                .define('B', crystal(TTAspects.TERRA))
                 .gate(artificeGate)
                 .unlockedBy("has", has(TTItems.STONE_ARCANE_BRICK))
                 .save(output);
@@ -931,8 +927,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                                 TTItems.ELEMENTAL_AXE.get(),
                                 Map.of(InfusionEnchantment.COLLECTOR, 1, InfusionEnchantment.BURROWING, 1)),
                         Ingredient.of(TTItems.THAUMIUM_AXE.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AQUA.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AQUA.get()))
+                .component(crystal(TTAspects.AQUA))
+                .component(crystal(TTAspects.AQUA))
                 .component(Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TTItemTags.PLANKS_GREATWOOD))
                 .aspect(TTAspects.AQUA, 60)
@@ -948,8 +944,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                                 TTItems.ELEMENTAL_PICKAXE.get(),
                                 Map.of(InfusionEnchantment.REFINING, 1, InfusionEnchantment.SOUNDING, 2)),
                         Ingredient.of(TTItems.THAUMIUM_PICKAXE.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_IGNIS.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TTAspects.IGNIS))
+                .component(crystal(TTAspects.IGNIS))
                 .component(Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TTItemTags.PLANKS_GREATWOOD))
                 .aspect(TTAspects.IGNIS, 30)
@@ -964,8 +960,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         enchantedTool(TTItems.ELEMENTAL_SWORD.get(), Map.of(InfusionEnchantment.ARCING, 2)),
                         Ingredient.of(TTItems.THAUMIUM_SWORD.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
+                .component(crystal(TTAspects.AER))
+                .component(crystal(TTAspects.AER))
                 .component(Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TTItemTags.PLANKS_GREATWOOD))
                 .aspect(TTAspects.AER, 30)
@@ -980,8 +976,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.TOOLS,
                         enchantedTool(TTItems.ELEMENTAL_SHOVEL.get(), Map.of(InfusionEnchantment.DESTRUCTIVE, 1)),
                         Ingredient.of(TTItems.THAUMIUM_SHOVEL.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_TERRA.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TTAspects.TERRA))
+                .component(crystal(TTAspects.TERRA))
                 .component(Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TTItemTags.PLANKS_GREATWOOD))
                 .aspect(TTAspects.TERRA, 60)
@@ -995,8 +991,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.TOOLS,
                         new ItemStack(TTItems.ELEMENTAL_HOE.get()),
                         Ingredient.of(TTItems.THAUMIUM_HOE.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_ORDO.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_PERDITIO.get()))
+                .component(crystal(TTAspects.ORDO))
+                .component(crystal(TTAspects.PERDITIO))
                 .component(Ingredient.of(TTItemTags.NUGGETS_QUARTZ))
                 .component(Ingredient.of(TTItemTags.PLANKS_GREATWOOD))
                 .aspect(TTAspects.ORDO, 30)
@@ -1052,8 +1048,8 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.COMBAT,
                         new ItemStack(TTItems.TRAVELLER_BOOTS.get()),
                         Ingredient.of(Items.LEATHER_BOOTS))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
+                .component(crystal(TTAspects.AER))
+                .component(crystal(TTAspects.AER))
                 .component(Ingredient.of(TTItems.FABRIC.get()))
                 .component(Ingredient.of(TTItems.FABRIC.get()))
                 .component(Ingredient.of(Tags.Items.FEATHERS))
@@ -1090,7 +1086,7 @@ public final class TTRecipeProvider extends RecipeProvider {
     }
 
     private void buildThaumostaticHarnessRecipe() {
-        Ingredient airCrystal = Ingredient.of(TTItems.CRYSTAL_AER.get());
+        Ingredient airCrystal = crystal(TTAspects.AER);
         Ingredient greatwoodPlanks = Ingredient.of(TTItemTags.PLANKS_GREATWOOD);
         Ingredient gold = Ingredient.of(Tags.Items.INGOTS_GOLD);
         Ingredient iron = Ingredient.of(Tags.Items.INGOTS_IRON);
@@ -2641,10 +2637,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                         Ingredient.of(TTItems.LAMP_ARCANE.get()))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Items.BONE_MEAL))
-                .component(Ingredient.of(TTItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TTAspects.TERRA))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Items.BONE_MEAL))
-                .component(Ingredient.of(TTItems.CRYSTAL_TERRA.get()))
+                .component(crystal(TTAspects.TERRA))
                 .aspect(TTAspects.HERBA, 20)
                 .aspect(TTAspects.LUX, 15)
                 .aspect(TTAspects.VICTUS, 15)
@@ -2661,10 +2657,10 @@ public final class TTRecipeProvider extends RecipeProvider {
                         Ingredient.of(TTItems.LAMP_ARCANE.get()))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Tags.Items.CROPS_WHEAT))
-                .component(Ingredient.of(TTItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TTAspects.IGNIS))
                 .component(Ingredient.of(Tags.Items.INGOTS_GOLD))
                 .component(Ingredient.of(Tags.Items.CROPS_CARROT))
-                .component(Ingredient.of(TTItems.CRYSTAL_IGNIS.get()))
+                .component(crystal(TTAspects.IGNIS))
                 .aspect(TTAspects.BESTIA, 20)
                 .aspect(TTAspects.LUX, 15)
                 .aspect(TTAspects.VICTUS, 15)
@@ -3332,11 +3328,11 @@ public final class TTRecipeProvider extends RecipeProvider {
                         new ItemStack(TTItems.AMULET_VIS_CRAFTED.get()),
                         Ingredient.of(TTItems.AMULET_MUNDANE.get()))
                 .component(Ingredient.of(TTItems.VIS_RESONATOR.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_IGNIS.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AQUA.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_TERRA.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_ORDO.get()))
+                .component(crystal(TTAspects.AER))
+                .component(crystal(TTAspects.IGNIS))
+                .component(crystal(TTAspects.AQUA))
+                .component(crystal(TTAspects.TERRA))
+                .component(crystal(TTAspects.ORDO))
                 .aspect(TTAspects.AURAM, 50)
                 .aspect(TTAspects.POTENTIA, 100)
                 .aspect(TTAspects.VACUOS, 50)
@@ -3389,7 +3385,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .component(Ingredient.of(TTItems.TRIPLE_MEAT_TREAT.get()))
                 .component(crystal(TTAspects.DESIDERIUM))
                 .component(potion(Potions.STRONG_REGENERATION))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
+                .component(crystal(TTAspects.AER))
                 .aspect(TTAspects.DESIDERIUM, 80)
                 .aspect(TTAspects.AER, 80)
                 .instability(5)
@@ -3401,7 +3397,7 @@ public final class TTRecipeProvider extends RecipeProvider {
                         RecipeCategory.MISC,
                         new ItemStack(TTItems.CLOUD_RING.get()),
                         Ingredient.of(TTItems.RING_MUNDANE.get()))
-                .component(Ingredient.of(TTItems.CRYSTAL_AER.get()))
+                .component(crystal(TTAspects.AER))
                 .component(Ingredient.of(Tags.Items.FEATHERS))
                 .aspect(TTAspects.AER, 50)
                 .instability(1)
