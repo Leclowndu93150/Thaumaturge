@@ -41,8 +41,9 @@ public final class GuardianSpawner {
                 guardian.discard();
                 continue;
             }
-            guardian.setTarget(player);
-            level.addFreshEntity(guardian);
+            if (level.addFreshEntity(guardian)) {
+                guardian.setTarget(player);
+            }
             return;
         }
     }

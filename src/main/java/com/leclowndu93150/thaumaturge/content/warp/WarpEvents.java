@@ -283,12 +283,13 @@ public final class WarpEvents {
                     spider.discard();
                     continue;
                 }
-                spider.setTarget(player);
                 if (!real) {
                     spider.setViewer(player.getGameProfile().getName());
                     spider.setHarmless(true);
                 }
-                level.addFreshEntity(spider);
+                if (level.addFreshEntity(spider)) {
+                    spider.setTarget(player);
+                }
                 break;
             }
         }
