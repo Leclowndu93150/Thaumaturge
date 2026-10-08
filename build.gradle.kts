@@ -85,6 +85,9 @@ prism {
                     (options as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet")
                     isFailOnError = false
                 }
+                tasks.withType<Jar>().configureEach {
+                    from("LICENSE", "CREDITS.md")
+                }
                 tasks.withType<JavaCompile>().configureEach {
                     options.compilerArgs.addAll(listOf("-Xmaxerrs", "2000"))
                 }
