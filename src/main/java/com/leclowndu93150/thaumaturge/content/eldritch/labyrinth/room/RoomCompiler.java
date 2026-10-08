@@ -19,6 +19,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
@@ -60,7 +61,9 @@ public final class RoomCompiler {
         if (state.is(Blocks.STRUCTURE_BLOCK)) {
             return RoomVoxels.Kind.MARKER;
         }
-        return state.is(TTBlockTags.LABYRINTH_PASSABLE) ? RoomVoxels.Kind.PASSABLE : RoomVoxels.Kind.SOLID;
+        return state.is(TTBlockTags.LABYRINTH_PASSABLE) || state.getBlock() instanceof StairBlock
+                ? RoomVoxels.Kind.PASSABLE
+                : RoomVoxels.Kind.SOLID;
     }
 
     private static void parseMarker(
