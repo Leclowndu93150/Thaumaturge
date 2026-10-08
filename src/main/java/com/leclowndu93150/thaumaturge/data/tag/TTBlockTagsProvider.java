@@ -29,6 +29,10 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
+        tag(TTBlockTags.CONNECTED_ELDRITCH_STONE)
+                .add(TTBlocks.ELDRITCH_STONE.get())
+                .add(TTBlocks.ELDRITCH_STONE_INERT.get())
+                .add(TTBlocks.STAIRS_ELDRITCH.get());
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(TTBlocks.WALL_ARCANE_STONE.get())
                 .add(TTBlocks.WALL_ARCANE_BRICK.get())

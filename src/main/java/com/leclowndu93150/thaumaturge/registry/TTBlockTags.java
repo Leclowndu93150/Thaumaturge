@@ -55,6 +55,8 @@ public final class TTBlockTags {
     public static final TagKey<Block> SHIMMERLEAF_SOIL = key("shimmerleaf_soil");
     public static final TagKey<Block> VISHROOM_SOIL = key("vishroom_soil");
 
+    public static final TagKey<Block> CONNECTED_ELDRITCH_STONE = key("connected/eldritch_stone");
+
     private TTBlockTags() {}
 
     private static TagKey<Block> key(String path) {

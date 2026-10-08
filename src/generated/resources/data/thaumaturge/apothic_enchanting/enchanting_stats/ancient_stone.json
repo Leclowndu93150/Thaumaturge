@@ -8,7 +8,15 @@
     "thaumaturge:slab_ancient",
     "thaumaturge:stairs_ancient",
     "thaumaturge:pillar_ancient",
-    "thaumaturge:pedestal_ancient"
+    "thaumaturge:pedestal_ancient",
+    "thaumaturge:wall_ancient",
+    "thaumaturge:stairs_ancient_tile",
+    "thaumaturge:slab_ancient_tile",
+    "thaumaturge:wall_ancient_tile",
+    "thaumaturge:stairs_ancient_rock",
+    "thaumaturge:slab_ancient_rock",
+    "thaumaturge:wall_ancient_rock",
+    "thaumaturge:stone_ancient_pillar"
   ],
   "stats": {
     "arcana": 5.0,

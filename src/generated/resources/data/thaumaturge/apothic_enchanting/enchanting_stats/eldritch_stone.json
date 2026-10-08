@@ -8,7 +8,15 @@
     "thaumaturge:stairs_eldritch",
     "thaumaturge:eldritch_door",
     "thaumaturge:pillar_eldritch",
-    "thaumaturge:pedestal_eldritch"
+    "thaumaturge:pedestal_eldritch",
+    "thaumaturge:slab_eldritch_stone",
+    "thaumaturge:wall_eldritch_stone",
+    "thaumaturge:stairs_eldritch_tile",
+    "thaumaturge:wall_eldritch_tile",
+    "thaumaturge:stairs_eldritch_rock",
+    "thaumaturge:slab_eldritch_rock",
+    "thaumaturge:wall_eldritch_rock",
+    "thaumaturge:stone_eldritch_pillar"
   ],
   "stats": {
     "arcana": 10.0,

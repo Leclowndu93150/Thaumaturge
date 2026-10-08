@@ -5,6 +5,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedSheetModel;
+import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedStairsModel;
+import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedTexture;
+import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedTilesModel;
+import com.leclowndu93150.thaumaturge.client.model.connected.FrameKit;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
 import com.leclowndu93150.thaumaturge.content.decor.CandleHolderMaterial;
@@ -25,8 +30,11 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalBlockstateGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.CrystalItemModelGenerator;
 import com.leclowndu93150.thaumaturge.data.model.crystal.EssentiaCrystalModelGenerator;
+import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -132,6 +140,7 @@ public final class TTModelProvider implements DataProvider {
         };
         BlockModelGenerators blockModels = new BlockModelGenerators(blockStateOutput, modelOutput, item -> {});
         registerModels(blockModels);
+        connectedModels();
         PlainBlockModels.generate((id, json) -> models.putIfAbsent(id, json));
         autoBlockItems();
         List<CompletableFuture<?>> futures = new ArrayList<>();
@@ -2002,15 +2011,13 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private static JsonElement wardedGlassModel() {
-        JsonObject root = new JsonObject();
-        root.addProperty("loader", "thaumaturge:warded_glass");
-        root.addProperty("render_type", "minecraft:translucent");
-        JsonObject textures = new JsonObject();
-        textures.addProperty("particle", "thaumaturge:block/warded_glass");
-        for (int i = 1; i <= 47; i++) {
-            textures.addProperty("ctm_" + i, "thaumaturge:block/warded_glass_" + i);
-        }
-        root.add("textures", textures);
+        JsonObject root = ConnectedTilesModel.CODEC
+                .codec()
+                .encodeStart(JsonOps.INSTANCE, new ConnectedTilesModel(blockTexture("warded_glass")))
+                .getOrThrow()
+                .getAsJsonObject();
+        root.addProperty("loader", ConnectedTilesModel.TYPE.toString());
+        root.addProperty("parent", BLOCK_PARENT.toString());
         return root;
     }
 
@@ -2770,5 +2777,105 @@ public final class TTModelProvider implements DataProvider {
         }
         blockStateOutput.accept(state);
         delegateItem(block.asItem(), inventory);
+    }
+
+    private void connectedModels() {
+        ConnectedTexture top = connectedTexture("arcane_stone_1", true);
+        ConnectedTexture side = connectedTexture("arcane_stone_2", true);
+        ConnectedTexture front = connectedTexture("arcane_stone_3", true);
+        connected(
+                TTBlocks.STONE_ARCANE.get(),
+                ConnectedSheetModel.TYPE,
+                ConnectedSheetModel.CODEC,
+                new ConnectedSheetModel(
+                        Optional.empty(),
+                        Map.of(
+                                Direction.UP,
+                                top,
+                                Direction.DOWN,
+                                top,
+                                Direction.EAST,
+                                side,
+                                Direction.WEST,
+                                side,
+                                Direction.NORTH,
+                                front,
+                                Direction.SOUTH,
+                                front),
+                        Optional.empty()));
+        connectedCube(TTBlocks.STONE_ANCIENT_TILE.get(), "ancient_tile");
+        connectedCube(TTBlocks.STONE_ANCIENT_GLYPHED.get(), "ancient_glyph");
+        connectedCube(TTBlocks.PLANK_SILVERWOOD.get(), "plank_silverwood");
+        for (Block block : List.of(TTBlocks.ELDRITCH_STONE.get(), TTBlocks.ELDRITCH_STONE_INERT.get())) {
+            connected(
+                    block,
+                    ConnectedSheetModel.TYPE,
+                    ConnectedSheetModel.CODEC,
+                    ConnectedSheetModel.cube(
+                            connectedTexture("eldritch_stone", false),
+                            Optional.of(TTBlockTags.CONNECTED_ELDRITCH_STONE)));
+        }
+        for (Block block : List.of(TTBlocks.PAVING_STONE_TRAVEL.get(), TTBlocks.PAVING_STONE_BARRIER.get())) {
+            String name = BuiltInRegistries.BLOCK.getKey(block).getPath();
+            connected(
+                    block,
+                    ConnectedSheetModel.TYPE,
+                    ConnectedSheetModel.CODEC,
+                    new ConnectedSheetModel(
+                            Optional.of(ModelLocationUtils.getModelLocation(block)),
+                            Map.of(Direction.UP, connectedTexture(name, false)),
+                            Optional.empty()));
+        }
+        connected(
+                TTBlocks.STAIRS_ELDRITCH_TILE.get(),
+                ConnectedStairsModel.TYPE,
+                ConnectedStairsModel.CODEC,
+                new ConnectedStairsModel(
+                        FrameKit.uniform(blockTexture("eldritch_tile_side_kit"), 3),
+                        FrameKit.uniform(blockTexture("eldritch_tile_top_kit"), 3),
+                        FrameKit.uniform(blockTexture("eldritch_tile_top_kit"), 3),
+                        blockTexture("eldritch_stone_1"),
+                        Optional.empty()));
+        FrameKit stone = FrameKit.uniform(blockTexture("eldritch_stone_kit"), 1);
+        connected(
+                TTBlocks.STAIRS_ELDRITCH.get(),
+                ConnectedStairsModel.TYPE,
+                ConnectedStairsModel.CODEC,
+                new ConnectedStairsModel(
+                        stone,
+                        stone,
+                        stone,
+                        blockTexture("eldritch_stone"),
+                        Optional.of(TTBlockTags.CONNECTED_ELDRITCH_STONE)));
+    }
+
+    private void connectedCube(Block block, String name) {
+        connected(
+                block,
+                ConnectedSheetModel.TYPE,
+                ConnectedSheetModel.CODEC,
+                ConnectedSheetModel.cube(connectedTexture(name, false), Optional.empty()));
+    }
+
+    private static ConnectedTexture connectedTexture(String name, boolean framed) {
+        ResourceLocation texture = blockTexture(name);
+        return new ConnectedTexture(
+                texture,
+                texture.withSuffix("_ctm"),
+                framed ? Optional.of(texture.withSuffix("_framed")) : Optional.empty());
+    }
+
+    private <T> void connected(Block block, ResourceLocation type, MapCodec<T> codec, T spec) {
+        ResourceLocation model = ModelLocationUtils.getModelLocation(block).withSuffix("_connected");
+        modelOutput.accept(model, () -> {
+            JsonObject json = codec.codec()
+                    .encodeStart(JsonOps.INSTANCE, spec)
+                    .getOrThrow()
+                    .getAsJsonObject();
+            json.addProperty("loader", type.toString());
+            json.addProperty("parent", BLOCK_PARENT.toString());
+            return json;
+        });
+        blockStates.put(block, MultiVariantGenerator.multiVariant(block, v(model)));
     }
 }
