@@ -1,8 +1,0 @@
-{
-  "parent": "thaumaturge:block/table_wood",
-  "textures": {
-    "particle": "thaumaturge:block/table_stone_top",
-    "top": "thaumaturge:block/table_stone_top",
-    "side": "thaumaturge:block/table_stone_side"
-  }
-}

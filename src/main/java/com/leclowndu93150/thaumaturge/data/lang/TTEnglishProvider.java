@@ -22,9 +22,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("tooltip.thaumaturge.thaumostatic_harness.fuel", "%1$s x %2$s");
         add("key.thaumaturge.toggle_hover", "Activate Hover Harness");
         add("message.thaumaturge.hover_disrupted", "Something disrupts your ability to fly.");
-        add("block.thaumaturge.stone_eldritch_pillar", "Eldritch Pillar");
-        add("block.thaumaturge.stairs_eldritch_tile", "Eldritch Tile Stairs");
-        add("block.thaumaturge.stairs_eldritch_rock", "Eldritch Rock Stairs");
+
         add("entity.thaumaturge.hierophant_hammer", "Hierophant's Hammer");
         add("entity.thaumaturge.eldritch_hierophant", "The Eldritch Hierophant");
         add("entity.thaumaturge.hierophant_crescent", "Eldritch Crescent");
@@ -589,11 +587,30 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.stone_ancient_rock", "Ancient Rock");
         add("block.thaumaturge.stone_ancient_glyphed", "Glyphed Stone");
         add("block.thaumaturge.stone_ancient_doorway", "Ancient Barrier");
-        add("block.thaumaturge.stone_eldritch_tile", "Eldritch Stone");
+        add("block.thaumaturge.stone_eldritch_tile", "Eldritch Stone Tile");
         add("block.thaumaturge.stone_porous", "Porous Stone");
         add("block.thaumaturge.stairs_arcane", "Arcane Stone Stairs");
         add("block.thaumaturge.stairs_arcane_brick", "Arcane Brick Stairs");
         add("block.thaumaturge.stairs_ancient", "Ancient Stone Stairs");
+        add("block.thaumaturge.wall_arcane_stone", "Arcane Stone Wall");
+        add("block.thaumaturge.wall_arcane_brick", "Arcane Stone Brick Wall");
+        add("block.thaumaturge.stone_arcane_pillar", "Arcane Stone Pillar");
+        add("block.thaumaturge.wall_ancient", "Ancient Stone Wall");
+        add("block.thaumaturge.stairs_ancient_tile", "Ancient Stone Tile Stairs");
+        add("block.thaumaturge.slab_ancient_tile", "Ancient Stone Tile Slab");
+        add("block.thaumaturge.wall_ancient_tile", "Ancient Stone Tile Wall");
+        add("block.thaumaturge.stairs_ancient_rock", "Ancient Rock Stairs");
+        add("block.thaumaturge.slab_ancient_rock", "Ancient Rock Slab");
+        add("block.thaumaturge.wall_ancient_rock", "Ancient Rock Wall");
+        add("block.thaumaturge.stone_ancient_pillar", "Ancient Stone Pillar");
+        add("block.thaumaturge.slab_eldritch_stone", "Eldritch Stone Slab");
+        add("block.thaumaturge.wall_eldritch_stone", "Eldritch Stone Wall");
+        add("block.thaumaturge.stairs_eldritch_tile", "Eldritch Stone Tile Stairs");
+        add("block.thaumaturge.wall_eldritch_tile", "Eldritch Stone Tile Wall");
+        add("block.thaumaturge.stairs_eldritch_rock", "Eldritch Rock Stairs");
+        add("block.thaumaturge.slab_eldritch_rock", "Eldritch Rock Slab");
+        add("block.thaumaturge.wall_eldritch_rock", "Eldritch Rock Wall");
+        add("block.thaumaturge.stone_eldritch_pillar", "Eldritch Stone Pillar");
     }
 
     private void langDTrees() {
@@ -1483,7 +1500,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.slab_arcane_stone", "Arcane Stone Slab");
         add("block.thaumaturge.slab_arcane_brick", "Arcane Brick Slab");
         add("block.thaumaturge.slab_ancient", "Ancient Stone Slab");
-        add("block.thaumaturge.slab_eldritch", "Eldritch Stone Slab");
+        add("block.thaumaturge.slab_eldritch", "Eldritch Stone Tile Slab");
         add("block.thaumaturge.stairs_greatwood", "Greatwood Stairs");
         add("block.thaumaturge.stairs_silverwood", "Silverwood Stairs");
         add("block.thaumaturge.arcane_grindstone", "Arcane Grindstone");

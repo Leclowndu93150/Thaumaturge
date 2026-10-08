@@ -68,9 +68,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.world.level.block.state.properties.WallSide;
 
 public final class TTModelProvider implements DataProvider {
     private static final ResourceLocation DEEPSLATE_TEXTURE = ResourceLocation.withDefaultNamespace("block/deepslate");
@@ -130,6 +132,7 @@ public final class TTModelProvider implements DataProvider {
         };
         BlockModelGenerators blockModels = new BlockModelGenerators(blockStateOutput, modelOutput, item -> {});
         registerModels(blockModels);
+        PlainBlockModels.generate((id, json) -> models.putIfAbsent(id, json));
         autoBlockItems();
         List<CompletableFuture<?>> futures = new ArrayList<>();
         blockStates.forEach((block, generator) -> futures.add(DataProvider.saveStable(
@@ -1794,7 +1797,7 @@ public final class TTModelProvider implements DataProvider {
                 TTBlocks.SLAB_ARCANE_STONE.get(),
                 TTBlocks.STONE_ARCANE.get(),
                 blockTexture("arcane_stone_1"),
-                blockTexture("arcane_stone_2"),
+                blockTexture("arcane_stone_1"),
                 blockTexture("arcane_stone_3"));
         slab(
                 TTBlocks.SLAB_ARCANE_BRICK.get(),
@@ -1806,13 +1809,13 @@ public final class TTModelProvider implements DataProvider {
                 TTBlocks.SLAB_ANCIENT.get(),
                 TTBlocks.STONE_ANCIENT.get(),
                 blockTexture("ancient_stone_1"),
-                blockTexture("ancient_stone_2"),
+                blockTexture("ancient_stone_0"),
                 blockTexture("ancient_stone_3"));
         slab(
                 TTBlocks.SLAB_ELDRITCH.get(),
                 TTBlocks.STONE_ELDRITCH_TILE.get(),
                 blockTexture("eldritch_stone_1"),
-                blockTexture("eldritch_stone_2"),
+                blockTexture("eldritch_stone_1"),
                 blockTexture("eldritch_stone_3"));
         stairsFromTexture(TTBlocks.STAIRS_GREATWOOD.get(), blockTexture("plank_greatwood"));
         stairsFromTexture(TTBlocks.STAIRS_SILVERWOOD.get(), blockTexture("plank_silverwood"));
@@ -2324,10 +2327,14 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private void stairsFromTexture(Block block, ResourceLocation all) {
+        stairs(block, all, all, all);
+    }
+
+    private void stairs(Block block, ResourceLocation bottom, ResourceLocation top, ResourceLocation side) {
         TextureMapping mapping = new TextureMapping()
-                .put(TextureSlot.BOTTOM, all)
-                .put(TextureSlot.TOP, all)
-                .put(TextureSlot.SIDE, all);
+                .put(TextureSlot.BOTTOM, bottom)
+                .put(TextureSlot.TOP, top)
+                .put(TextureSlot.SIDE, side);
         ResourceLocation straight = ModelTemplates.STAIRS_STRAIGHT.create(block, mapping, modelOutput);
         ResourceLocation inner = ModelTemplates.STAIRS_INNER.create(block, mapping, modelOutput);
         ResourceLocation outer = ModelTemplates.STAIRS_OUTER.create(block, mapping, modelOutput);
@@ -2359,27 +2366,70 @@ public final class TTModelProvider implements DataProvider {
                 new TextureMapping().put(TextureSlot.ALL, blockTexture("eldritch_rock")),
                 modelOutput);
         simpleBlock(TTBlocks.ELDRITCH_NOTHING_DORMANT.get(), dormant);
-        stairsFromTexture(TTBlocks.STAIRS_ELDRITCH_TILE.get(), blockTexture("stone_eldritch_tile"));
-        stairsFromTexture(TTBlocks.STAIRS_ELDRITCH_ROCK.get(), blockTexture("eldritch_rock"));
-        Block pillar = TTBlocks.STONE_ELDRITCH_PILLAR.get();
-        ResourceLocation pillarModel = ModelTemplates.CUBE_COLUMN.create(
-                pillar,
-                new TextureMapping()
-                        .put(TextureSlot.SIDE, blockTexture("stone_eldritch_pillar_side"))
-                        .put(TextureSlot.END, blockTexture("eldritch_stone")),
-                modelOutput);
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(pillar, v(pillarModel))
-                .with(PropertyDispatch.property(BlockStateProperties.AXIS)
-                        .select(Direction.Axis.Y, Variant.variant())
-                        .select(
-                                Direction.Axis.Z,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.Axis.X,
-                                Variant.variant()
-                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
-                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
-        delegateItem(pillar.asItem(), pillarModel);
+        stairs(
+                TTBlocks.STAIRS_ANCIENT_TILE.get(),
+                blockTexture("ancient_tile"),
+                blockTexture("ancient_tile"),
+                blockTexture("ancient_tile"));
+        stairs(
+                TTBlocks.STAIRS_ANCIENT_ROCK.get(),
+                blockTexture("ancient_rock_stone_2"),
+                blockTexture("ancient_rock_stone_2"),
+                blockTexture("ancient_rock_stone_2"));
+        stairs(
+                TTBlocks.STAIRS_ELDRITCH_TILE.get(),
+                blockTexture("eldritch_stone_1"),
+                blockTexture("eldritch_stone_1"),
+                blockTexture("eldritch_stone_3"));
+        stairs(
+                TTBlocks.STAIRS_ELDRITCH_ROCK.get(),
+                blockTexture("eldritch_rock"),
+                blockTexture("eldritch_rock"),
+                blockTexture("eldritch_rock"));
+        wall(TTBlocks.WALL_ARCANE_STONE.get(), blockTexture("arcane_stone_3"));
+        wall(TTBlocks.WALL_ARCANE_BRICK.get(), blockTexture("arcane_brick_stone"));
+        wall(TTBlocks.WALL_ANCIENT.get(), blockTexture("ancient_stone_3"));
+        wall(TTBlocks.WALL_ANCIENT_TILE.get(), blockTexture("ancient_tile"));
+        wall(TTBlocks.WALL_ANCIENT_ROCK.get(), blockTexture("ancient_rock_stone_2"));
+        wall(TTBlocks.WALL_ELDRITCH_STONE.get(), blockTexture("eldritch_stone"));
+        wall(TTBlocks.WALL_ELDRITCH_TILE.get(), blockTexture("eldritch_stone_3"));
+        wall(TTBlocks.WALL_ELDRITCH_ROCK.get(), blockTexture("eldritch_rock"));
+        pillar(
+                TTBlocks.STONE_ARCANE_PILLAR.get(),
+                blockTexture("stone_arcane_pillar_side"),
+                blockTexture("arcane_stone_1"));
+        pillar(
+                TTBlocks.STONE_ANCIENT_PILLAR.get(),
+                blockTexture("stone_ancient_pillar_side"),
+                blockTexture("ancient_stone_0"));
+        pillar(
+                TTBlocks.STONE_ELDRITCH_PILLAR.get(),
+                blockTexture("stone_eldritch_pillar_side"),
+                blockTexture("eldritch_deco"));
+        slab(
+                TTBlocks.SLAB_ELDRITCH_STONE.get(),
+                TTBlocks.ELDRITCH_STONE.get(),
+                blockTexture("eldritch_stone"),
+                blockTexture("eldritch_stone"),
+                blockTexture("eldritch_stone"));
+        slab(
+                TTBlocks.SLAB_ELDRITCH_ROCK.get(),
+                TTBlocks.ELDRITCH_ROCK.get(),
+                blockTexture("eldritch_rock"),
+                blockTexture("eldritch_rock"),
+                blockTexture("eldritch_rock"));
+        slab(
+                TTBlocks.SLAB_ANCIENT_TILE.get(),
+                TTBlocks.STONE_ANCIENT_TILE.get(),
+                blockTexture("ancient_tile"),
+                blockTexture("ancient_tile"),
+                blockTexture("ancient_tile"));
+        slab(
+                TTBlocks.SLAB_ANCIENT_ROCK.get(),
+                TTBlocks.STONE_ANCIENT_ROCK.get(),
+                blockTexture("ancient_rock_stone_2"),
+                blockTexture("ancient_rock_stone_2"),
+                blockTexture("ancient_rock_stone_2"));
         cube(TTBlocks.OBSIDIAN_TILE.get(), "obsidian_tile");
         obsidianTotem();
         cube(TTBlocks.ELDRITCH_STONE.get(), "eldritch_stone");
@@ -2676,5 +2726,49 @@ public final class TTModelProvider implements DataProvider {
                 List.of(
                         new ItemOverride(PROPERTY_DAMAGE, noduleThreshold, nodule),
                         new ItemOverride(PROPERTY_DAMAGE, moteThreshold, mote)));
+    }
+
+    private void pillar(Block block, ResourceLocation side, ResourceLocation end) {
+        TextureMapping textures = TextureMapping.column(side, end);
+        ResourceLocation vertical = ModelTemplates.CUBE_COLUMN.create(block, textures, modelOutput);
+        ResourceLocation horizontal = ModelTemplates.CUBE_COLUMN_HORIZONTAL.create(block, textures, modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(block)
+                .with(PropertyDispatch.property(BlockStateProperties.AXIS)
+                        .select(Direction.Axis.Y, v(vertical))
+                        .select(
+                                Direction.Axis.Z,
+                                v(horizontal).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(
+                                Direction.Axis.X,
+                                v(horizontal)
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
+        delegateItem(block.asItem(), vertical);
+    }
+
+    private void wall(Block block, ResourceLocation texture) {
+        TextureMapping textures = new TextureMapping().put(TextureSlot.WALL, texture);
+        ResourceLocation post = ModelTemplates.WALL_POST.create(block, textures, modelOutput);
+        ResourceLocation low = ModelTemplates.WALL_LOW_SIDE.create(block, textures, modelOutput);
+        ResourceLocation tall = ModelTemplates.WALL_TALL_SIDE.create(block, textures, modelOutput);
+        ResourceLocation inventory = ModelTemplates.WALL_INVENTORY.create(block, textures, modelOutput);
+        MultiPartGenerator state = MultiPartGenerator.multiPart(block)
+                .with(Condition.condition().term(BlockStateProperties.UP, true), v(post));
+        List<EnumProperty<WallSide>> sides = List.of(
+                BlockStateProperties.NORTH_WALL,
+                BlockStateProperties.EAST_WALL,
+                BlockStateProperties.SOUTH_WALL,
+                BlockStateProperties.WEST_WALL);
+        VariantProperties.Rotation[] rotations = VariantProperties.Rotation.values();
+        for (int i = 0; i < sides.size(); i++) {
+            state.with(
+                    Condition.condition().term(sides.get(i), WallSide.LOW),
+                    v(low).with(VariantProperties.Y_ROT, rotations[i]).with(VariantProperties.UV_LOCK, true));
+            state.with(
+                    Condition.condition().term(sides.get(i), WallSide.TALL),
+                    v(tall).with(VariantProperties.Y_ROT, rotations[i]).with(VariantProperties.UV_LOCK, true));
+        }
+        blockStateOutput.accept(state);
+        delegateItem(block.asItem(), inventory);
     }
 }

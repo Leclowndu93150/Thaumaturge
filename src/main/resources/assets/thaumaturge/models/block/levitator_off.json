@@ -1,9 +1,0 @@
-{
-  "parent": "thaumaturge:block/levitator_on",
-  "textures": {
-    "particle": "thaumaturge:block/levitator_top_off",
-    "top": "thaumaturge:block/levitator_top_off",
-    "side": "thaumaturge:block/levitator_side_off",
-    "bottom": "thaumaturge:block/levitator_bottom"
-  }
-}

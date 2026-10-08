@@ -106,7 +106,15 @@ public final class EnchantingStatsProvider implements DataProvider {
                 TTBlocks.SLAB_ANCIENT,
                 TTBlocks.STAIRS_ANCIENT,
                 TTBlocks.PILLAR_ANCIENT,
-                TTBlocks.PEDESTAL_ANCIENT);
+                TTBlocks.PEDESTAL_ANCIENT,
+                TTBlocks.WALL_ANCIENT,
+                TTBlocks.STAIRS_ANCIENT_TILE,
+                TTBlocks.SLAB_ANCIENT_TILE,
+                TTBlocks.WALL_ANCIENT_TILE,
+                TTBlocks.STAIRS_ANCIENT_ROCK,
+                TTBlocks.SLAB_ANCIENT_ROCK,
+                TTBlocks.WALL_ANCIENT_ROCK,
+                TTBlocks.STONE_ANCIENT_PILLAR);
         add(
                 "eldritch_stone",
                 new EnchantingStats(90, 10, 5, 10, 0),
@@ -118,7 +126,15 @@ public final class EnchantingStatsProvider implements DataProvider {
                 TTBlocks.STAIRS_ELDRITCH,
                 TTBlocks.ELDRITCH_DOOR,
                 TTBlocks.PILLAR_ELDRITCH,
-                TTBlocks.PEDESTAL_ELDRITCH);
+                TTBlocks.PEDESTAL_ELDRITCH,
+                TTBlocks.SLAB_ELDRITCH_STONE,
+                TTBlocks.WALL_ELDRITCH_STONE,
+                TTBlocks.STAIRS_ELDRITCH_TILE,
+                TTBlocks.WALL_ELDRITCH_TILE,
+                TTBlocks.STAIRS_ELDRITCH_ROCK,
+                TTBlocks.SLAB_ELDRITCH_ROCK,
+                TTBlocks.WALL_ELDRITCH_ROCK,
+                TTBlocks.STONE_ELDRITCH_PILLAR);
         add("eldritch_crust_glowing", new EnchantingStats(95, 12, 5, 12, 1), TTBlocks.ELDRITCH_CRUST_GLOWING);
         add("eldritch_stone_inert", new EnchantingStats(40, 1, 0, 0, 0), TTBlocks.ELDRITCH_STONE_INERT);
         add("vis_battery", new EnchantingStats(85, 8, 0, 10, 0), TTBlocks.VIS_BATTERY);

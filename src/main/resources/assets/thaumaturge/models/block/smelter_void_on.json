@@ -1,6 +1,0 @@
-{
-  "parent": "thaumaturge:block/smelter_void_off",
-  "textures": {
-    "north": "thaumaturge:block/smelter_void_front_on"
-  }
-}

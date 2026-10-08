@@ -44,6 +44,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.BlockFamily;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -198,6 +199,24 @@ public final class TTRecipeProvider extends RecipeProvider {
 
         TTBlockFamilies.getAllFamilies()
                 .forEach(family -> generateRecipes(output, family, FeatureFlagSet.of(FeatureFlags.VANILLA)));
+
+        TTBlockFamilies.getAllFamilies()
+                .forEach(family -> family.getVariants().forEach((variant, block) -> {
+                    if (variant == BlockFamily.Variant.STAIRS
+                            || variant == BlockFamily.Variant.SLAB
+                            || variant == BlockFamily.Variant.WALL
+                            || variant == BlockFamily.Variant.POLISHED) {
+                        stonecutterResultFromBase(
+                                output,
+                                RecipeCategory.BUILDING_BLOCKS,
+                                block,
+                                family.getBaseBlock(),
+                                variant == BlockFamily.Variant.SLAB ? 2 : 1);
+                    }
+                }));
+        pillarRecipe(TTBlocks.STONE_ARCANE_PILLAR.get(), TTBlocks.STONE_ARCANE.get());
+        pillarRecipe(TTBlocks.STONE_ANCIENT_PILLAR.get(), TTBlocks.STONE_ANCIENT.get());
+        pillarRecipe(TTBlocks.STONE_ELDRITCH_PILLAR.get(), TTBlocks.ELDRITCH_STONE.get());
 
         planksFromLogs(output, TTItems.PLANK_GREATWOOD.get(), TTItemTags.GREATWOOD_LOGS, 4);
         planksFromLogs(output, TTItems.PLANK_SILVERWOOD.get(), TTItemTags.SILVERWOOD_LOGS, 4);
@@ -622,10 +641,6 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .group("wooden_pressure_plate")
                 .unlockedBy("has", has(TTItemTags.PLANKS_SILVERWOOD))
                 .save(output);
-        slabRecipe(TTBlocks.SLAB_ARCANE_STONE.get(), TTBlocks.STONE_ARCANE.get());
-        slabRecipe(TTBlocks.SLAB_ARCANE_BRICK.get(), TTBlocks.STONE_ARCANE_BRICK.get());
-        slabRecipe(TTBlocks.SLAB_ANCIENT.get(), TTBlocks.STONE_ANCIENT.get());
-        slabRecipe(TTBlocks.SLAB_ELDRITCH.get(), TTBlocks.STONE_ELDRITCH_TILE.get());
 
         ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, TTItems.TABLE_WOOD)
                 .pattern("SSS")
@@ -732,12 +747,14 @@ public final class TTRecipeProvider extends RecipeProvider {
                 .save(output);
     }
 
-    private void slabRecipe(Block result, Block base) {
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result, 6)
-                .pattern("KKK")
+    private void pillarRecipe(Block result, Block base) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, result, 2)
+                .pattern("K")
+                .pattern("K")
                 .define('K', base)
                 .unlockedBy("has", has(base))
                 .save(output);
+        stonecutterResultFromBase(output, RecipeCategory.BUILDING_BLOCKS, result, base, 1);
     }
 
     private void slabRecipe(Block result, TagKey<Item> base) {

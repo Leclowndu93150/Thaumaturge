@@ -286,6 +286,21 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.STAIRS_ARCANE.get());
         dropSelf(TTBlocks.STAIRS_ARCANE_BRICK.get());
         dropSelf(TTBlocks.STAIRS_ANCIENT.get());
+        dropSelf(TTBlocks.WALL_ARCANE_STONE.get());
+        dropSelf(TTBlocks.WALL_ARCANE_BRICK.get());
+        dropSelf(TTBlocks.STONE_ARCANE_PILLAR.get());
+        dropSelf(TTBlocks.WALL_ANCIENT.get());
+        dropSelf(TTBlocks.STAIRS_ANCIENT_TILE.get());
+        dropSelf(TTBlocks.WALL_ANCIENT_TILE.get());
+        dropSelf(TTBlocks.STAIRS_ANCIENT_ROCK.get());
+        dropSelf(TTBlocks.WALL_ANCIENT_ROCK.get());
+        dropSelf(TTBlocks.STONE_ANCIENT_PILLAR.get());
+        dropSelf(TTBlocks.WALL_ELDRITCH_STONE.get());
+        dropSelf(TTBlocks.STAIRS_ELDRITCH_TILE.get());
+        dropSelf(TTBlocks.WALL_ELDRITCH_TILE.get());
+        dropSelf(TTBlocks.STAIRS_ELDRITCH_ROCK.get());
+        dropSelf(TTBlocks.WALL_ELDRITCH_ROCK.get());
+        dropSelf(TTBlocks.STONE_ELDRITCH_PILLAR.get());
         add(TTBlocks.STONE_ANCIENT_ROCK.get(), noDrop());
         add(TTBlocks.STONE_ANCIENT_DOORWAY.get(), noDrop());
         dropSelf(TTBlocks.SAPLING_GREATWOOD.get());
@@ -417,6 +432,10 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         add(TTBlocks.SLAB_ARCANE_STONE.get(), this::createSlabItemTable);
         add(TTBlocks.SLAB_ARCANE_BRICK.get(), this::createSlabItemTable);
         add(TTBlocks.SLAB_ANCIENT.get(), this::createSlabItemTable);
+        add(TTBlocks.SLAB_ANCIENT_TILE.get(), this::createSlabItemTable);
+        add(TTBlocks.SLAB_ANCIENT_ROCK.get(), this::createSlabItemTable);
+        add(TTBlocks.SLAB_ELDRITCH_STONE.get(), this::createSlabItemTable);
+        add(TTBlocks.SLAB_ELDRITCH_ROCK.get(), this::createSlabItemTable);
         add(TTBlocks.SLAB_ELDRITCH.get(), this::createSlabItemTable);
         dropSelf(TTBlocks.STAIRS_GREATWOOD.get());
         dropSelf(TTBlocks.STAIRS_SILVERWOOD.get());
@@ -448,9 +467,6 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.ELDRITCH_CRUST.get());
         dropSelf(TTBlocks.ELDRITCH_CRUST_GLOWING.get());
         dropSelf(TTBlocks.STAIRS_ELDRITCH.get());
-        dropSelf(TTBlocks.STONE_ELDRITCH_PILLAR.get());
-        dropSelf(TTBlocks.STAIRS_ELDRITCH_TILE.get());
-        dropSelf(TTBlocks.STAIRS_ELDRITCH_ROCK.get());
 
         dropSelf(TTBlocks.ELDRITCH_PEDESTAL.get());
         add(TTBlocks.ELDRITCH_STONE_CRYSTAL.get(), createSingleItemTable(TTItems.CURIO_KNOWLEDGE.get()));

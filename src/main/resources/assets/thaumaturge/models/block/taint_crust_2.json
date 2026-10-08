@@ -1,6 +1,0 @@
-{
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "thaumaturge:block/taint_crust_2"
-    }
-}

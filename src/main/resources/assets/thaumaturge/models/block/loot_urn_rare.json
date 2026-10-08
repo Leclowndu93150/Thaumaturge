@@ -1,7 +1,0 @@
-{
-  "parent": "thaumaturge:block/loot_urn_common",
-  "textures": {
-    "side": "thaumaturge:block/loot_urn_side_2",
-    "particle": "thaumaturge:block/loot_urn_side_2"
-  }
-}

@@ -1,8 +1,0 @@
-{
-    "parent": "block/outer_stairs",
-    "textures": {
-        "bottom": "thaumaturge:block/arcane_brick_stone",
-        "top": "thaumaturge:block/arcane_brick_stone",
-        "side": "thaumaturge:block/arcane_brick_stone"
-    }
-}
