@@ -15,8 +15,12 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 
 public final class ScatteredFlowersDecorator extends TreeDecorator {
-    public static final MapCodec<ScatteredFlowersDecorator> CODEC = RecordCodecBuilder
-            .mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK.byNameCodec().fieldOf("flower").forGetter(decorator -> decorator.flower)).apply(instance, ScatteredFlowersDecorator::new));
+    public static final MapCodec<ScatteredFlowersDecorator> CODEC =
+            RecordCodecBuilder.mapCodec(instance -> instance.group(BuiltInRegistries.BLOCK
+                            .byNameCodec()
+                            .fieldOf("flower")
+                            .forGetter(decorator -> decorator.flower))
+                    .apply(instance, ScatteredFlowersDecorator::new));
 
     private static final int ATTEMPTS = 18;
     private static final int SPREAD = 8;
@@ -41,8 +45,14 @@ public final class ScatteredFlowersDecorator extends TreeDecorator {
         BlockPos foot = trunkFoot(context);
         RandomSource random = context.random();
         for (int attempt = 0; attempt < ATTEMPTS; attempt++) {
-            BlockPos spot = foot.offset(random.nextInt(SPREAD) - random.nextInt(SPREAD), random.nextInt(RISE) - random.nextInt(RISE), random.nextInt(SPREAD) - random.nextInt(SPREAD));
-            if (context.isAir(spot) && context.level().isStateAtPosition(spot.below(), state -> state.is(Blocks.GRASS_BLOCK) || state.is(BlockTags.SAND))) {
+            BlockPos spot = foot.offset(
+                    random.nextInt(SPREAD) - random.nextInt(SPREAD),
+                    random.nextInt(RISE) - random.nextInt(RISE),
+                    random.nextInt(SPREAD) - random.nextInt(SPREAD));
+            if (context.isAir(spot)
+                    && context.level()
+                            .isStateAtPosition(
+                                    spot.below(), state -> state.is(Blocks.GRASS_BLOCK) || state.is(BlockTags.SAND))) {
                 context.setBlock(spot, flower.defaultBlockState());
             }
         }
@@ -56,7 +66,10 @@ public final class ScatteredFlowersDecorator extends TreeDecorator {
             heights.merge(column, 1, Integer::sum);
             floors.merge(column, log.getY(), Math::min);
         }
-        BlockPos trunk = heights.entrySet().stream().max(Map.Entry.comparingByValue()).orElseThrow().getKey();
+        BlockPos trunk = heights.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElseThrow()
+                .getKey();
         return trunk.atY(floors.get(trunk));
     }
 }

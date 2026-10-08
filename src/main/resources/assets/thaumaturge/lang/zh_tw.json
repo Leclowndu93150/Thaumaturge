@@ -2168,5 +2168,11 @@
   "warp.thaumaturge.text.hunger.1": "平凡的食物無法滿足你。",
   "warp.thaumaturge.text.hunger.2": "你的飢餓感已開始消退。",
   "gui.thaumaturge.golem_logistics": "傀儡物流",
-  "jade.thaumaturge.essentia.combined": "源質：%s %s/%s"
+  "jade.thaumaturge.essentia.combined": "源質：%s %s/%s",
+  "gui.thaumaturge.scan.scanning": "掃描中",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "在物品上懸停以掃描",
+  "message.thaumaturge.scan.learned": "你獲取了某些新知。",
+  "message.thaumaturge.scan.nothing_new": "您一無所獲。",
+  "message.thaumaturge.celestial.already_studied": "你今天已經研究過這個了。",
+  "message.thaumaturge.celestial.cannot_note": "你無法為你的研究做筆記。"
 }

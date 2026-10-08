@@ -1913,5 +1913,11 @@
   "research.thaumaturge.warp.warn": "Mein Geist taumelt vom Wissen, das ich erlangt habe",
   "research.thaumaturge.workbench_charger.stage_0": "Ich stoße allmählich auf eine lästige Einschränkung bei der arkanen Werkbank. Sie kann Vis nur aus ihrer unmittelbaren Umgebung ziehen. Für die meisten Dinge, die ich bisher hergestellt habe, ist das ausreichend, doch ich sehe bereits eine Zeit voraus, in der ich etwas herstellen muss, das mehr Vis erfordert, als in der Nähe vorhanden ist.<BR>Ich muss einen Weg finden, die Reichweite der arkanen Werkbank zu erweitern. Je weiter sie Vis ziehen kann, desto mehr Vis wird für die Herstellung verfügbar sein.",
   "research.thaumaturge.workbench_charger.stage_1": "Ich habe eine spezielle Vorrichtung entworfen, die oben auf der Arkanen Werkbank und dem Fokusmanipulator platziert werden kann. Dieses Gerüst erlaubt es diesen Werkbänken, Vis nicht nur aus dem Chunk zu ziehen, in dem sie sich befinden, sondern auch aus den umliegenden 8 Chunks. Theoretisch erhöht dies das für die Herstellung verfügbare Vis um das Neunfache.<BR>Wird Vis aus der Aura gezogen, wird es grob auf alle 9 dieser Chunks aufgeteilt, was die Erschöpfung eines einzelnen Chunks verhindern sollte.",
-  "research.thaumaturge.workbench_charger.title": "Werkbank-Lader"
+  "research.thaumaturge.workbench_charger.title": "Werkbank-Lader",
+  "gui.thaumaturge.scan.scanning": "Scannen",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Taste gedrückt halten und mit dem Cursor über einen Gegenstand fahren, um ihn zu scannen",
+  "message.thaumaturge.scan.learned": "Du hast etwas Neues gelernt.",
+  "message.thaumaturge.scan.nothing_new": "Daraus lässt sich nichts Neues lernen.",
+  "message.thaumaturge.celestial.already_studied": "Das hast du heute bereits studiert.",
+  "message.thaumaturge.celestial.cannot_note": "Du kannst deine Studien nicht mehr notieren."
 }

@@ -1,12 +1,12 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
-import net.minecraft.world.level.LevelSimulatedReader;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
@@ -14,7 +14,8 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
 public final class LeafCellFoliagePlacer extends FoliagePlacer {
-    public static final MapCodec<LeafCellFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> foliagePlacerParts(instance).apply(instance, LeafCellFoliagePlacer::new));
+    public static final MapCodec<LeafCellFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(
+            instance -> foliagePlacerParts(instance).apply(instance, LeafCellFoliagePlacer::new));
 
     public LeafCellFoliagePlacer(IntProvider radius, IntProvider offset) {
         super(radius, offset);
@@ -26,7 +27,16 @@ public final class LeafCellFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader reader, FoliagePlacer.FoliageSetter foliageSetter, RandomSource random, TreeConfiguration config, int treeHeight, FoliagePlacer.FoliageAttachment foliageAttachment, int foliageHeight, int leafRadius, int offset) {
+    protected void createFoliage(
+            LevelSimulatedReader reader,
+            FoliagePlacer.FoliageSetter foliageSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            int treeHeight,
+            FoliagePlacer.FoliageAttachment foliageAttachment,
+            int foliageHeight,
+            int leafRadius,
+            int offset) {
         if (!(reader instanceof WorldGenLevel level)) {
             return;
         }
@@ -43,7 +53,8 @@ public final class LeafCellFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected boolean shouldSkipLocation(RandomSource random, int dx, int y, int dz, int currentRadius, boolean doubleTrunk) {
+    protected boolean shouldSkipLocation(
+            RandomSource random, int dx, int y, int dz, int currentRadius, boolean doubleTrunk) {
         return false;
     }
 }

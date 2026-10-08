@@ -1,84 +1,64 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
+import com.leclowndu93150.thaumaturge.api.research.scan.IScannable;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
-import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
+import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
-public final class ScanGeneric implements IScanThing {
+public final class ScanGeneric implements IScannable {
     @Override
-    public boolean checkThing(Player player, @Nullable Object target) {
-        return !aspectsOf(player, target).isEmpty();
+    public boolean matches(Player player, ScanTarget target) {
+        return !ScanningManager.aspectsOf(player, target).isEmpty();
     }
 
     @Override
-    public @Nullable Component scanFailure(Player player, @Nullable Object target) {
-        for (AspectInstance instance : aspectsOf(player, target).entries()) {
-            if (AspectPools.hasDiscoveredComponents(player, instance.aspect())) {
-                continue;
-            }
-            for (Holder<IAspect> component : instance.aspect().value().components()) {
-                if (!AspectPools.isDiscovered(player, component)) {
-                    return AspectPools.missingComponentMessage(player, component);
-                }
-            }
+    public @Nullable ResourceLocation research(Player player, ScanTarget target) {
+        Entity creature = target.creature();
+        if (creature != null) {
+            return ScanKeys.entity(creature.getType());
         }
-        return null;
-    }
-
-    @Override
-    public void onSuccess(Player player, @Nullable Object target) {
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return;
-        }
-        AspectList aspects = aspectsOf(player, target);
-        if (aspects.isEmpty()) {
-            return;
-        }
-        AspectPools.grantAll(serverPlayer, aspects);
-    }
-
-    @Override
-    public boolean canScanAfterResearchKnown(Player player, @Nullable Object target) {
-        for (AspectInstance instance : aspectsOf(player, target).entries()) {
-            if (!AspectPools.isDiscovered(player, instance.aspect())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public @Nullable ResourceLocation getResearchKey(Player player, @Nullable Object target) {
-        if (target instanceof Entity entity && !(target instanceof ItemEntity)) {
-            return ScanKeys.entity(entity.getType());
-        }
-        ItemStack stack = ScanningManager.getItemFromParms(player, target);
+        ItemStack stack = ScanningManager.stackOf(player, target);
         return stack.isEmpty() ? null : ScanKeys.item(stack.getItem());
     }
 
-    private static AspectList aspectsOf(Player player, @Nullable Object target) {
-        if (target == null) {
-            return AspectList.EMPTY;
+    @Override
+    public boolean rescannable(Player player, ScanTarget target) {
+        return aspects(player, target).anyMatch(aspect -> !AspectPools.isDiscovered(player, aspect));
+    }
+
+    @Override
+    public @Nullable Component refusal(Player player, ScanTarget target) {
+        return aspects(player, target)
+                .filter(aspect -> !AspectPools.hasDiscoveredComponents(player, aspect))
+                .flatMap(aspect -> aspect.value().components().stream())
+                .filter(component -> !AspectPools.isDiscovered(player, component))
+                .findFirst()
+                .map(component -> AspectPools.missingComponentMessage(player, component))
+                .orElse(null);
+    }
+
+    @Override
+    public void onScanned(Player player, ScanTarget target) {
+        AspectList aspects = ScanningManager.aspectsOf(player, target);
+        if (player instanceof ServerPlayer serverPlayer && !aspects.isEmpty()) {
+            AspectPools.grantAll(serverPlayer, aspects);
         }
-        if (target instanceof Entity entity && !(target instanceof ItemEntity)) {
-            return EntityAspects.of(entity);
-        }
-        ItemStack stack = ScanningManager.getItemFromParms(player, target);
-        return stack.isEmpty() ? AspectList.EMPTY : AspectIndexAccess.index().of(stack);
+    }
+
+    private static Stream<Holder<IAspect>> aspects(Player player, ScanTarget target) {
+        return ScanningManager.aspectsOf(player, target).entries().stream().map(AspectInstance::aspect);
     }
 }

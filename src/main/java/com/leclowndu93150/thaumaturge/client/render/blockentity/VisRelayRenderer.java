@@ -1,13 +1,12 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import net.minecraft.world.level.block.state.BlockState;
-import com.leclowndu93150.thaumaturge.content.aura.relay.BlockVisRelay;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.effect.rendertype.VisRelayBeamRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.ParticleTextures;
 import com.leclowndu93150.thaumaturge.client.render.aspect.StripUv;
 import com.leclowndu93150.thaumaturge.content.aura.relay.BlockEntityVisRelay;
+import com.leclowndu93150.thaumaturge.content.aura.relay.BlockVisRelay;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -18,6 +17,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -56,7 +56,9 @@ public final class VisRelayRenderer implements BlockEntityRenderer<BlockEntityVi
         }
         Vec3 own = BlockVisRelay.crystalPosition(relay.getBlockPos(), relay.getBlockState());
         BlockState parentState = relay.getLevel().getBlockState(parent);
-        Vec3 target = parentState.getBlock() instanceof BlockVisRelay ? BlockVisRelay.crystalPosition(parent, parentState) : Vec3.atCenterOf(parent);
+        Vec3 target = parentState.getBlock() instanceof BlockVisRelay
+                ? BlockVisRelay.crystalPosition(parent, parentState)
+                : Vec3.atCenterOf(parent);
         Vec3 start = target.subtract(own);
         long now = relay.getLevel().getGameTime();
         float sincePulse = now - relay.pulseStart() + partialTick;

@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.15": "배 속에서 갑자기 아주 기이한 꾸르륵 소리가 난다.",
   "warp.thaumaturge.text.16": "근처에서 희미한 주문 읊는 소리가 들려온다.",
   "warp.thaumaturge.text.hunger.1": "평범한 음식으로는 허기가 채워지지 않는다.",
-  "warp.thaumaturge.text.hunger.2": "허기가 서서히 가라앉기 시작한다."
+  "warp.thaumaturge.text.hunger.2": "허기가 서서히 가라앉기 시작한다.",
+  "gui.thaumaturge.scan.scanning": "스캔 중",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "커서에 들고 아이템 위에 올려 조사하기",
+  "message.thaumaturge.scan.learned": "새로운 것을 알게 되었다.",
+  "message.thaumaturge.scan.nothing_new": "이것에서 더 이상 새로 배울 것이 없다.",
+  "message.thaumaturge.celestial.already_studied": "오늘은 이미 그것을 연구했다.",
+  "message.thaumaturge.celestial.cannot_note": "연구 내용을 기록할 수 없다."
 }

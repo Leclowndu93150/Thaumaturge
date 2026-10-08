@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
-import net.minecraft.world.level.LevelSimulatedReader;
 import com.leclowndu93150.thaumaturge.content.aura.node.NodeGenerator;
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -16,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -27,9 +27,12 @@ import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacer;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 
 public final class SilverwoodTrunkPlacer extends TrunkPlacer {
-    public static final MapCodec<SilverwoodTrunkPlacer> CODEC = RecordCodecBuilder.mapCodec(instance -> trunkPlacerParts(instance)
-            .and(instance.group(Codec.BOOL.fieldOf("grow_nodes").forGetter(placer -> placer.growNodes), Codec.BOOL.fieldOf("keep_apart").forGetter(placer -> placer.keepApart)))
-            .apply(instance, SilverwoodTrunkPlacer::new));
+    public static final MapCodec<SilverwoodTrunkPlacer> CODEC =
+            RecordCodecBuilder.mapCodec(instance -> trunkPlacerParts(instance)
+                    .and(instance.group(
+                            Codec.BOOL.fieldOf("grow_nodes").forGetter(placer -> placer.growNodes),
+                            Codec.BOOL.fieldOf("keep_apart").forGetter(placer -> placer.keepApart)))
+                    .apply(instance, SilverwoodTrunkPlacer::new));
 
     private static final int CROWN_BELOW_TOP = 5;
     private static final int CROWN_ABOVE_TOP = 3;
@@ -55,7 +58,8 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
     private final boolean growNodes;
     private final boolean keepApart;
 
-    public SilverwoodTrunkPlacer(int baseHeight, int heightRandA, int heightRandB, boolean growNodes, boolean keepApart) {
+    public SilverwoodTrunkPlacer(
+            int baseHeight, int heightRandA, int heightRandB, boolean growNodes, boolean keepApart) {
         super(baseHeight, heightRandA, heightRandB);
         this.growNodes = growNodes;
         this.keepApart = keepApart;
@@ -78,12 +82,21 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
     }
 
     @Override
-    public List<FoliagePlacer.FoliageAttachment> placeTrunk(LevelSimulatedReader reader, BiConsumer<BlockPos, BlockState> trunkSetter, RandomSource random, int treeHeight, BlockPos origin, TreeConfiguration config) {
+    public List<FoliagePlacer.FoliageAttachment> placeTrunk(
+            LevelSimulatedReader reader,
+            BiConsumer<BlockPos, BlockState> trunkSetter,
+            RandomSource random,
+            int treeHeight,
+            BlockPos origin,
+            TreeConfiguration config) {
         if (!(reader instanceof WorldGenLevel level)) {
             return List.of();
         }
         Block log = config.trunkProvider.getState(random, origin).getBlock();
-        if (origin.getY() + treeHeight + 1 > level.getMaxBuildHeight() || !hasRoom(level, origin, treeHeight) || !level.getFluidState(origin).isEmpty() || !isSoil(level.getBlockState(origin.below()))) {
+        if (origin.getY() + treeHeight + 1 > level.getMaxBuildHeight()
+                || !hasRoom(level, origin, treeHeight)
+                || !level.getFluidState(origin).isEmpty()
+                || !isSoil(level.getBlockState(origin.below()))) {
             return List.of();
         }
         if (keepApart && (siblingNearby(level, origin, treeHeight, log) || canopyCrowded(level, origin, treeHeight))) {
@@ -129,7 +142,8 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
                     continue;
                 }
                 for (int dy = -APART_BELOW; dy <= height + APART_ABOVE; dy++) {
-                    if (level.getBlockState(probe.setWithOffset(origin, dx, dy, dz)).is(log)) {
+                    if (level.getBlockState(probe.setWithOffset(origin, dx, dy, dz))
+                            .is(log)) {
                         return true;
                     }
                 }
@@ -157,7 +171,8 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
         return false;
     }
 
-    private static List<FoliagePlacer.FoliageAttachment> sowCrown(WorldGenLevel level, RandomSource random, BlockPos origin, int height, BlockState leaves) {
+    private static List<FoliagePlacer.FoliageAttachment> sowCrown(
+            WorldGenLevel level, RandomSource random, BlockPos origin, int height, BlockState leaves) {
         List<FoliagePlacer.FoliageAttachment> cells = new ArrayList<>();
         int top = origin.getY() + height;
         int crownTop = top + CROWN_ABOVE_TOP + random.nextInt(CROWN_EXTRA_HEIGHT);
@@ -169,9 +184,13 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
                     double reachSq = (double) dx * dx + rise * rise + (double) dz * dz;
                     BlockPos cell = new BlockPos(origin.getX() + dx, y, origin.getZ() + dz);
                     BlockState present = level.getBlockState(cell);
-                    if (reachSq < CROWN_DENSITY_BASE + random.nextInt(CROWN_DENSITY_SPREAD) && !present.is(leaves.getBlock())) {
+                    if (reachSq < CROWN_DENSITY_BASE + random.nextInt(CROWN_DENSITY_SPREAD)
+                            && !present.is(leaves.getBlock())) {
                         if (present.is(BlockTags.LEAVES)) {
-                            level.setBlock(cell, TreeLeafUpdater.carryDistance(leaves, present), Block.UPDATE_ALL | Block.UPDATE_KNOWN_SHAPE);
+                            level.setBlock(
+                                    cell,
+                                    TreeLeafUpdater.carryDistance(leaves, present),
+                                    Block.UPDATE_ALL | Block.UPDATE_KNOWN_SHAPE);
                             cells.add(new FoliagePlacer.FoliageAttachment(cell, 0, false));
                         } else if (present.isAir() || present.canBeReplaced()) {
                             level.setBlock(cell, leaves, Block.UPDATE_ALL | Block.UPDATE_KNOWN_SHAPE);
@@ -184,7 +203,13 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
         return cells;
     }
 
-    private void raiseTrunk(WorldGenLevel level, BiConsumer<BlockPos, BlockState> trunkSetter, RandomSource random, TreeConfiguration config, BlockPos origin, int height) {
+    private void raiseTrunk(
+            WorldGenLevel level,
+            BiConsumer<BlockPos, BlockState> trunkSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            BlockPos origin,
+            int height) {
         int nodeOdds = Math.max(1, (int) (height * NODE_SPACING));
         boolean previousWasNode = false;
         for (int rise = 0; rise < height; rise++) {
@@ -194,8 +219,21 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
             }
             boolean nodeHere = growNodes && rise > 0 && !previousWasNode && random.nextInt(nodeOdds) == 0;
             if (nodeHere) {
-                trunkSetter.accept(core, TTBlocks.SILVERWOOD_NODE_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y));
-                NodeGenerator.createRandomNodeAt(level, core, random, true, false, false, NodeGenerator.DEFAULT_SPECIAL_RARITY, NodeGenerator.DEFAULT_BASE_AURA);
+                trunkSetter.accept(
+                        core,
+                        TTBlocks.SILVERWOOD_NODE_LOG
+                                .get()
+                                .defaultBlockState()
+                                .setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y));
+                NodeGenerator.createRandomNodeAt(
+                        level,
+                        core,
+                        random,
+                        true,
+                        false,
+                        false,
+                        NodeGenerator.DEFAULT_SPECIAL_RARITY,
+                        NodeGenerator.DEFAULT_BASE_AURA);
                 nodeOdds += height;
             } else {
                 log(level, trunkSetter, random, config, core, Direction.Axis.Y);
@@ -208,7 +246,12 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
         log(level, trunkSetter, random, config, origin.above(height), Direction.Axis.Y);
     }
 
-    private void spreadRoots(WorldGenLevel level, BiConsumer<BlockPos, BlockState> trunkSetter, RandomSource random, TreeConfiguration config, BlockPos origin) {
+    private void spreadRoots(
+            WorldGenLevel level,
+            BiConsumer<BlockPos, BlockState> trunkSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            BlockPos origin) {
         for (int[] diagonal : DIAGONALS) {
             log(level, trunkSetter, random, config, origin.offset(diagonal[0], 0, diagonal[1]), Direction.Axis.Y);
         }
@@ -225,7 +268,12 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
         }
     }
 
-    private void spreadBoughs(WorldGenLevel level, BiConsumer<BlockPos, BlockState> trunkSetter, RandomSource random, TreeConfiguration config, BlockPos fork) {
+    private void spreadBoughs(
+            WorldGenLevel level,
+            BiConsumer<BlockPos, BlockState> trunkSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            BlockPos fork) {
         for (int[] diagonal : DIAGONALS) {
             log(level, trunkSetter, random, config, fork.offset(diagonal[0], 0, diagonal[1]), Direction.Axis.Y);
         }
@@ -243,9 +291,16 @@ public final class SilverwoodTrunkPlacer extends TrunkPlacer {
         return state.isAir() || state.is(BlockTags.LEAVES) || state.canBeReplaced();
     }
 
-    private static void log(WorldGenLevel level, BiConsumer<BlockPos, BlockState> trunkSetter, RandomSource random, TreeConfiguration config, BlockPos pos, Direction.Axis axis) {
+    private static void log(
+            WorldGenLevel level,
+            BiConsumer<BlockPos, BlockState> trunkSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            BlockPos pos,
+            Direction.Axis axis) {
         if (isClearing(level.getBlockState(pos))) {
-            trunkSetter.accept(pos, config.trunkProvider.getState(random, pos).trySetValue(RotatedPillarBlock.AXIS, axis));
+            trunkSetter.accept(
+                    pos, config.trunkProvider.getState(random, pos).trySetValue(RotatedPillarBlock.AXIS, axis));
         }
     }
 }

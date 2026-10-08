@@ -1913,5 +1913,11 @@
   "research.thaumaturge.warp.warn": "Mon esprit chancelle sous le savoir que j'ai acquis",
   "research.thaumaturge.workbench_charger.stage_0": "Je commence à me heurter à une limitation agaçante de l'établi arcanique. Il ne peut puiser du vis que dans ses environs immédiats. Bien que cela convienne pour la plupart des choses que j'ai fabriquées jusqu'ici, je prévois bientôt un moment où je devrai fabriquer quelque chose nécessitant plus de vis qu'il n'y en a à proximité.<BR>Je dois trouver un moyen d'étendre la portée de l'établi arcanique. Plus sa portée pour puiser le vis est grande, plus il y aura de vis disponible pour la fabrication.",
   "research.thaumaturge.workbench_charger.stage_1": "J'ai conçu un dispositif spécial pouvant être posé au sommet de l'Établi arcanique et du Manipulateur de focus. Ce cadre permet à ces établis de puiser du vis non seulement dans le chunk où ils se trouvent, mais aussi dans les 8 chunks environnants. En théorie, cela multiplie par neuf le vis disponible pour la fabrication.<BR>Lorsque du vis est puisé dans l'aura, il sera réparti approximativement entre ces 9 chunks, ce qui devrait éviter l'épuisement d'un seul chunk.",
-  "research.thaumaturge.workbench_charger.title": "Chargeur d'établi"
+  "research.thaumaturge.workbench_charger.title": "Chargeur d'établi",
+  "gui.thaumaturge.scan.scanning": "Scan en cours",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Maintenez sur le curseur et survolez un objet pour le scanner",
+  "message.thaumaturge.scan.learned": "Vous avez appris quelque chose de nouveau.",
+  "message.thaumaturge.scan.nothing_new": "Rien de nouveau ne peut être appris de cela.",
+  "message.thaumaturge.celestial.already_studied": "Vous avez déjà étudié cela aujourd'hui.",
+  "message.thaumaturge.celestial.cannot_note": "Vous êtes incapable de noter vos observations."
 }

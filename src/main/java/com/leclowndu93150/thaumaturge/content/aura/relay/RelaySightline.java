@@ -12,7 +12,12 @@ final class RelaySightline {
     static boolean isClear(Level level, BlockPos from, BlockPos to) {
         Vec3 start = Vec3.atCenterOf(from);
         Vec3 end = Vec3.atCenterOf(to);
-        Boolean blocked = BlockGetter.traverseBlocks(start, end, level, (context, pos) -> blocks(context, pos, from, to, start, end) ? Boolean.TRUE : null, context -> Boolean.FALSE);
+        Boolean blocked = BlockGetter.traverseBlocks(
+                start,
+                end,
+                level,
+                (context, pos) -> blocks(context, pos, from, to, start, end) ? Boolean.TRUE : null,
+                context -> Boolean.FALSE);
         return !blocked;
     }
 

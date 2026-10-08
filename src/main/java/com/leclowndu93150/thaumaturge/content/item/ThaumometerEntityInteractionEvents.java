@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.item;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -40,7 +41,7 @@ public final class ThaumometerEntityInteractionEvents {
         }
 
         if (!player.level().isClientSide()) {
-            ThaumometerItem.beginScanAt(player, hand, target);
+            ThaumometerItem.beginScanAt(player, hand, ScanTarget.entity(target));
         }
         return true;
     }

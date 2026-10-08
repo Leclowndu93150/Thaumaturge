@@ -2165,5 +2165,11 @@
   "mob_trait.thaumaturge.leaping": "跃跃欲动的",
   "mob_trait.thaumaturge.taint_blast": "腐化爆裂的",
   "mob_trait.thaumaturge.taint_brood": "腐化孕育的",
-  "mob_trait.thaumaturge.taint_grazing": "腐化啃食的"
+  "mob_trait.thaumaturge.taint_grazing": "腐化啃食的",
+  "gui.thaumaturge.scan.scanning": "扫描中",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "在物品上悬停以扫描",
+  "message.thaumaturge.scan.learned": "您学到了一些东西。",
+  "message.thaumaturge.scan.nothing_new": "您一无所获。",
+  "message.thaumaturge.celestial.already_studied": "你今天已经做过同样的研究了。",
+  "message.thaumaturge.celestial.cannot_note": "你无法记录下你的研究笔记。"
 }

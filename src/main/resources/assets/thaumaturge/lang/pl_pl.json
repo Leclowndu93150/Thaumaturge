@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.8": "Z pewnością musi istnieć sposób, by powstrzymać te bóle głowy?",
   "warp.thaumaturge.text.9": "Nagle czujesz niechęć do niszczenia rzeczy.",
   "warp.thaumaturge.text.hunger.1": "Twojego głodu nie można zaspokoić zwykłym jedzeniem.",
-  "warp.thaumaturge.text.hunger.2": "Twój głód zaczyna zanikać."
+  "warp.thaumaturge.text.hunger.2": "Twój głód zaczyna zanikać.",
+  "gui.thaumaturge.scan.scanning": "Skanowanie",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Przytrzymaj na kursorze i najedź na przedmiot, by go zeskanować",
+  "message.thaumaturge.scan.learned": "Nauczyłeś się czegoś nowego.",
+  "message.thaumaturge.scan.nothing_new": "Nie można się z tego nauczyć niczego nowego.",
+  "message.thaumaturge.celestial.already_studied": "Zbadałeś to już dzisiaj.",
+  "message.thaumaturge.celestial.cannot_note": "Nie możesz sporządzić notatek ze swoich badań."
 }

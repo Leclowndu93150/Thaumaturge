@@ -1913,5 +1913,11 @@
   "research.thaumaturge.warp.warn": "得た知識に、頭がくらくらする",
   "research.thaumaturge.workbench_charger.stage_0": "アルケイン作業台の厄介な制限に、悩まされ始めている。すぐ周囲からしかVisを引き出せないのだ。これまでクラフトしてきたもののほとんどには問題ないが、まもなく、近くにある以上のVisを必要とする何かをクラフトしなければならない時が来るだろうと予見している。<BR>アルケイン作業台の届く範囲を広げる方法を見つける必要がある。Visを引き出せる範囲が広いほど、クラフトに使えるVisも多くなる。",
   "research.thaumaturge.workbench_charger.stage_1": "アルケイン作業台とフォーカス操作機の上に設置できる、特殊な装置を設計した。この骨組みにより、それらの作業台は自身のあるチャンクだけでなく、周囲の8チャンクからもVisを引き出せるようになる。理論上、これによりクラフトに使えるVisは9倍に増える。<BR>Auraから引き出される際、Visはおおよそこの9チャンクすべてに分散されるため、単一のチャンクが枯渇するのを防げるはずだ。",
-  "research.thaumaturge.workbench_charger.title": "作業台チャージャー"
+  "research.thaumaturge.workbench_charger.title": "作業台チャージャー",
+  "gui.thaumaturge.scan.scanning": "走査中",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "カーソル上で保持し、アイテムにカーソルを合わせて走査する",
+  "message.thaumaturge.scan.learned": "何か新しいことを学んだ。",
+  "message.thaumaturge.scan.nothing_new": "これからは何も新しく学べない。",
+  "message.thaumaturge.celestial.already_studied": "それは今日すでに研究した。",
+  "message.thaumaturge.celestial.cannot_note": "研究の記録を取ることができない。"
 }

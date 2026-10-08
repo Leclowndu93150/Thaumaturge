@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.api.research.scan;
 
+import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -8,14 +9,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 
 /**
- * Canonical research-key layout for knowledge gained by scanning. Scanned subjects are recorded
- * in the player's research list under stable identifiers in the {@code thaumaturge} namespace
- * with a {@code scanned/} path prefix.
+ * Canonical research-key layout for knowledge gained by scanning. Scanned subjects are recorded in
+ * the player's research list under stable identifiers in the {@code thaumaturge} namespace with a
+ * {@code scanned/} path prefix.
  *
  * @since 1.0.0
  */
 public final class ScanKeys {
-    private static final String NAMESPACE = "thaumaturge";
     private static final String PREFIX = "scanned/";
 
     private ScanKeys() {}
@@ -102,10 +102,10 @@ public final class ScanKeys {
      * @return {@code true} when the key is a celestial observation
      */
     public static boolean isCelestial(ResourceLocation research) {
-        return research.getNamespace().equals(NAMESPACE) && research.getPath().startsWith(PREFIX + "celestial/");
+        return research.getNamespace().equals(TTIds.MODID) && research.getPath().startsWith(PREFIX + "celestial/");
     }
 
     private static ResourceLocation key(String path) {
-        return ResourceLocation.fromNamespaceAndPath(NAMESPACE, PREFIX + path);
+        return TTIds.rl(PREFIX + path);
     }
 }

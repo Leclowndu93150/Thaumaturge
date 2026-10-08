@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 public final class TTTooltips {
     private static final String SCANNED_ASPECT_PREFIX = "scanned/aspect/";
@@ -147,5 +148,17 @@ public final class TTTooltips {
         CAN_UNLOCK,
         MISSING_PREREQ,
         COMPLETE
+    }
+
+    public static Component scanning(float progress) {
+        int dots = Mth.clamp((int) (progress * 3) + 1, 1, 3);
+        return Component.translatable("gui.thaumaturge.scan.scanning")
+                .append(".".repeat(dots))
+                .withStyle(ChatFormatting.GOLD);
+    }
+
+    public static Component inventoryScanHint() {
+        return Component.translatable("tooltip.thaumaturge.thaumometer.inventory_scan")
+                .withStyle(ChatFormatting.DARK_AQUA);
     }
 }

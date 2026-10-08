@@ -6,7 +6,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
-import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
+import com.leclowndu93150.thaumaturge.api.research.scan.IScannable;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedBlock;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import java.util.LinkedHashMap;
@@ -21,19 +23,19 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
-public final class ScanNode implements IScanThing {
+public final class ScanNode implements IScannable {
     private static final int MIN_POINTS = 4;
     private static final int POINTS_DIVISOR = 10;
     private static final int TYPE_BONUS = 4;
     private static final int TYPE_BONUS_SMALL = 2;
 
     @Override
-    public boolean checkThing(Player player, @Nullable Object target) {
+    public boolean matches(Player player, ScanTarget target) {
         return nodeAt(player, target) != null;
     }
 
     @Override
-    public @Nullable Component scanFailure(Player player, @Nullable Object target) {
+    public @Nullable Component refusal(Player player, ScanTarget target) {
         BlockEntityNode node = nodeAt(player, target);
         if (node == null) {
             return null;
@@ -44,7 +46,8 @@ public final class ScanNode implements IScanThing {
             }
             for (Holder<IAspect> component : instance.aspect().value().components()) {
                 if (!AspectPools.isDiscovered(player, component)) {
-                    return Component.translatable("tc.discoveryerror", AspectComponents.help(component));
+                    return Component.translatable(
+                            "message.thaumaturge.research.discovery_error", AspectComponents.help(component));
                 }
             }
         }
@@ -52,7 +55,7 @@ public final class ScanNode implements IScanThing {
     }
 
     @Override
-    public @Nullable ResourceLocation getResearchKey(Player player, @Nullable Object target) {
+    public @Nullable ResourceLocation research(Player player, ScanTarget target) {
         BlockEntityNode node = nodeAt(player, target);
         if (node == null) {
             return null;
@@ -65,7 +68,7 @@ public final class ScanNode implements IScanThing {
     }
 
     @Override
-    public void onSuccess(Player player, @Nullable Object target) {
+    public void onScanned(Player player, ScanTarget target) {
         BlockEntityNode node = nodeAt(player, target);
         if (node == null || !(player instanceof ServerPlayer serverPlayer)) {
             return;
@@ -73,8 +76,9 @@ public final class ScanNode implements IScanThing {
         AspectPools.grantAll(serverPlayer, scanAspects(player, node));
     }
 
-    private static @Nullable BlockEntityNode nodeAt(Player player, @Nullable Object target) {
-        if (target instanceof BlockPos pos && player.level().getBlockEntity(pos) instanceof BlockEntityNode node) {
+    private static @Nullable BlockEntityNode nodeAt(Player player, ScanTarget target) {
+        if (target instanceof ScannedBlock(BlockPos pos)
+                && player.level().getBlockEntity(pos) instanceof BlockEntityNode node) {
             return node;
         }
         return null;

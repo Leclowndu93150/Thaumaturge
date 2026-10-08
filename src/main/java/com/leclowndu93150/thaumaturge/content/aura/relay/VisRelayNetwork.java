@@ -1,21 +1,21 @@
 package com.leclowndu93150.thaumaturge.content.aura.relay;
 
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.core.SectionPos;
-import java.util.List;
-import java.util.ArrayList;
 import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityJarNode;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.jspecify.annotations.Nullable;
 
 public final class VisRelayNetwork implements VisRelayHelper.Bindings {
@@ -50,7 +50,8 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
         return clamp(source.source().drainCentivis(primal, amount, false), amount);
     }
 
-    public static int drainEverySourceNear(ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount) {
+    public static int drainEverySourceNear(
+            ServerLevel level, BlockPos consumerPos, ResourceKey<IAspect> primal, int amount) {
         if (amount <= 0) {
             return 0;
         }
@@ -88,7 +89,8 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
             if (node instanceof BlockEntityJarNode) {
                 continue;
             }
-            drained += drainNow(new LinkedRelaySource(node.getBlockPos(), node.relaySource()), primal, amount - drained);
+            drained +=
+                    drainNow(new LinkedRelaySource(node.getBlockPos(), node.relaySource()), primal, amount - drained);
         }
         return drained;
     }
@@ -112,7 +114,9 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
         }
         return best;
     }
-    private static <T extends BlockEntity> List<T> blockEntitiesNear(ServerLevel level, BlockPos center, Class<T> type) {
+
+    private static <T extends BlockEntity> List<T> blockEntitiesNear(
+            ServerLevel level, BlockPos center, Class<T> type) {
         List<T> found = new ArrayList<>();
         int minChunkX = SectionPos.blockToSectionCoord(center.getX() - CONSUMER_RANGE);
         int maxChunkX = SectionPos.blockToSectionCoord(center.getX() + CONSUMER_RANGE);
@@ -126,7 +130,10 @@ public final class VisRelayNetwork implements VisRelayHelper.Bindings {
                 }
                 for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
                     BlockPos pos = blockEntity.getBlockPos();
-                    if (type.isInstance(blockEntity) && !blockEntity.isRemoved() && Math.abs(pos.getX() - center.getX()) <= CONSUMER_RANGE && Math.abs(pos.getY() - center.getY()) <= CONSUMER_RANGE
+                    if (type.isInstance(blockEntity)
+                            && !blockEntity.isRemoved()
+                            && Math.abs(pos.getX() - center.getX()) <= CONSUMER_RANGE
+                            && Math.abs(pos.getY() - center.getY()) <= CONSUMER_RANGE
                             && Math.abs(pos.getZ() - center.getZ()) <= CONSUMER_RANGE) {
                         found.add(type.cast(blockEntity));
                     }

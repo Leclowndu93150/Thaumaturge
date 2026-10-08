@@ -17,6 +17,12 @@ public final class TTEnglishProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("message.thaumaturge.scan.nothing_new", "Nothing new can be learned from this.");
+        add("message.thaumaturge.scan.learned", "You have learned something new.");
+        add("message.thaumaturge.celestial.already_studied", "You have already studied that today.");
+        add("message.thaumaturge.celestial.cannot_note", "You are unable to take notes of your studies.");
+        add("gui.thaumaturge.scan.scanning", "Scanning");
+        add("tooltip.thaumaturge.thaumometer.inventory_scan", "Hold on the cursor and hover an item to scan it");
         add("itemGroup.thaumaturge", "Thaumaturge");
         add("treePack.thaumaturge.name", "Thaumaturge");
         addJade();

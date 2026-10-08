@@ -9,8 +9,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -33,7 +33,8 @@ public final class BlockVisRelay extends BaseEntityBlock {
     public static final MapCodec<BlockVisRelay> CODEC = simpleCodec(BlockVisRelay::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
 
-    private static final Map<Direction, VoxelShape> SHAPES = DeviceShapes.facingShapesFromUp(box(5.0, 0.0, 5.0, 11.0, 11.0, 11.0));
+    private static final Map<Direction, VoxelShape> SHAPES =
+            DeviceShapes.facingShapesFromUp(box(5.0, 0.0, 5.0, 11.0, 11.0, 11.0));
     private static final double CRYSTAL_OFFSET = 0.05;
 
     public BlockVisRelay(Properties properties) {
@@ -64,7 +65,13 @@ public final class BlockVisRelay extends BaseEntityBlock {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    protected BlockState updateShape(
+            BlockState state,
+            Direction direction,
+            BlockState neighborState,
+            LevelAccessor level,
+            BlockPos pos,
+            BlockPos neighborPos) {
         if (direction == state.getValue(FACING).getOpposite() && !state.canSurvive(level, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
@@ -83,7 +90,11 @@ public final class BlockVisRelay extends BaseEntityBlock {
 
     public static Vec3 crystalPosition(BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
-        return Vec3.atCenterOf(pos).add(facing.getStepX() * CRYSTAL_OFFSET, facing.getStepY() * CRYSTAL_OFFSET, facing.getStepZ() * CRYSTAL_OFFSET);
+        return Vec3.atCenterOf(pos)
+                .add(
+                        facing.getStepX() * CRYSTAL_OFFSET,
+                        facing.getStepY() * CRYSTAL_OFFSET,
+                        facing.getStepZ() * CRYSTAL_OFFSET);
     }
 
     @Override
@@ -102,7 +113,8 @@ public final class BlockVisRelay extends BaseEntityBlock {
     }
 
     @Override
-    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide()) {
             return null;
         }

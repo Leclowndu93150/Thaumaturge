@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.8": "Напевно, має бути спосіб зупинити цей головний біль?",
   "warp.thaumaturge.text.9": "Ти раптово відчуваєш небажання щось ламати.",
   "warp.thaumaturge.text.hunger.1": "Твій голод не можна вгамувати звичайною їжею.",
-  "warp.thaumaturge.text.hunger.2": "Твій голод починає згасати."
+  "warp.thaumaturge.text.hunger.2": "Твій голод починає згасати.",
+  "gui.thaumaturge.scan.scanning": "Сканування",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Затисни й наведи курсор на предмет, щоб просканувати його",
+  "message.thaumaturge.scan.learned": "Ти дізнався щось нове.",
+  "message.thaumaturge.scan.nothing_new": "З цього не можна дізнатися нічого нового.",
+  "message.thaumaturge.celestial.already_studied": "Ти вже вивчав це сьогодні.",
+  "message.thaumaturge.celestial.cannot_note": "Ти не можеш робити нотатки про свої дослідження."
 }

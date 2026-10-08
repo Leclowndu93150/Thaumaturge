@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.silverwood;
 
-import net.minecraft.world.level.WorldGenLevel;
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.MapCodec;
@@ -8,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
@@ -31,7 +31,11 @@ public final class DetachedLeafPruner extends TreeDecorator {
             return;
         }
         Set<BlockPos> leaves = new HashSet<>(context.leaves());
-        Set<BlockPos> unsettled = leaves.stream().filter(pos -> LeavesBlock.getOptionalDistanceAt(level.getBlockState(pos)).orElse(0) == UNSETTLED).collect(Collectors.toSet());
+        Set<BlockPos> unsettled = leaves.stream()
+                .filter(pos -> LeavesBlock.getOptionalDistanceAt(level.getBlockState(pos))
+                                .orElse(0)
+                        == UNSETTLED)
+                .collect(Collectors.toSet());
         TreeLeafUpdater.run(level, new HashSet<>(context.logs()), leaves, unsettled);
     }
 }

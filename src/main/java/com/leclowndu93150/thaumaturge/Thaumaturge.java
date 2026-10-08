@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge;
 
-import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.VisRelayHelper;
@@ -48,6 +47,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.*;
 import com.leclowndu93150.thaumaturge.registry.TTIngredientTypes;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;

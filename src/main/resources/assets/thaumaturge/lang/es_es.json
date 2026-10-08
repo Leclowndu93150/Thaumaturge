@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.15": "Mi estómago ha rugido repentinamente de una manera muy extraña.",
   "warp.thaumaturge.text.16": "Oigo cánticos débiles cerca.",
   "warp.thaumaturge.text.hunger.1": "Mi hambre no puede ser satisfecha con comida normal.",
-  "warp.thaumaturge.text.hunger.2": "Mi hambre comienza a menguar."
+  "warp.thaumaturge.text.hunger.2": "Mi hambre comienza a menguar.",
+  "gui.thaumaturge.scan.scanning": "Escaneando",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Mantén pulsado y pasa el cursor sobre un objeto para escanearlo",
+  "message.thaumaturge.scan.learned": "He aprendido algo nuevo.",
+  "message.thaumaturge.scan.nothing_new": "No hay nada nuevo que aprender de esto.",
+  "message.thaumaturge.celestial.already_studied": "Esto ya lo he aprendido hoy.",
+  "message.thaumaturge.celestial.cannot_note": "No puedo tomar apuntes durante ahora."
 }

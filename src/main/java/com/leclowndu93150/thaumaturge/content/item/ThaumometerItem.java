@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.item;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.TTResearchEntries;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.jspecify.annotations.Nullable;
 
 public final class ThaumometerItem extends Item {
     public static final double SCAN_ENTITY_MIN_RANGE = 1.0;
@@ -61,8 +61,8 @@ public final class ThaumometerItem extends Item {
         return beginScanAt(player, hand, resolveTarget(level, player));
     }
 
-    static InteractionResult beginScanAt(Player player, InteractionHand hand, @Nullable Object target) {
-        if (!ScanningManager.isThingStillScannable(player, target)) {
+    static InteractionResult beginScanAt(Player player, InteractionHand hand, ScanTarget target) {
+        if (!ScanningManager.isStillScannable(player, target)) {
             return InteractionResult.PASS;
         }
         player.startUsingItem(hand);
@@ -97,19 +97,20 @@ public final class ThaumometerItem extends Item {
         if (USE_DURATION_TICKS - remaining < SCAN_RELEASE_TOLERANCE_TICKS) {
             return;
         }
-        Object target = resolveTarget(level, player);
-        if (!ScanningManager.isThingStillScannable(player, target)) {
+        ScanTarget target = resolveTarget(level, player);
+        if (!ScanningManager.isStillScannable(player, target)) {
             return;
         }
-        ScanningManager.scanTheThing(player, target);
+        ScanningManager.scan(player, target);
         return;
     }
 
-    public static @Nullable Object resolveTarget(Level level, Player player) {
+    public static ScanTarget resolveTarget(Level level, Player player) {
         HitResult hitResult = ScanRaycastHelper.performRaycast(player, ClipContext.Fluid.SOURCE_ONLY);
-        return hitResult.getType() == HitResult.Type.BLOCK
-                ? ((BlockHitResult) hitResult).getBlockPos()
-                : hitResult instanceof EntityHitResult result ? result.getEntity() : null;
+        if (hitResult.getType() == HitResult.Type.BLOCK) {
+            return ScanTarget.block(((BlockHitResult) hitResult).getBlockPos());
+        }
+        return hitResult instanceof EntityHitResult result ? ScanTarget.entity(result.getEntity()) : ScanTarget.sky();
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectIndexAccess;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
@@ -107,7 +108,7 @@ public final class ThaumometerAspectOverlay {
                     Direction.UP);
             return;
         }
-        ItemStack pick = ScanningManager.getItemFromParms(mc.player, pos);
+        ItemStack pick = ScanningManager.stackOf(mc.player, ScanTarget.block(pos));
         if (pick.isEmpty()) {
             resetAnimation();
             return;

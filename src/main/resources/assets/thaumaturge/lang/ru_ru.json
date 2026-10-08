@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.8": "Должен же быть способ прекратить эти головные боли?",
   "warp.thaumaturge.text.9": "Внезапно у вас появляется нежелание что-либо ломать.",
   "warp.thaumaturge.text.hunger.1": "Ваш голод не может быть утолен обычной едой.",
-  "warp.thaumaturge.text.hunger.2": "Ваш голод начинает угасать."
+  "warp.thaumaturge.text.hunger.2": "Ваш голод начинает угасать.",
+  "gui.thaumaturge.scan.scanning": "Изучение",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Удерживайте курсором и наведите на предмет для изучения",
+  "message.thaumaturge.scan.learned": "Вы узнали что-то новое.",
+  "message.thaumaturge.scan.nothing_new": "Из этого нельзя извлечь ничего нового.",
+  "message.thaumaturge.celestial.already_studied": "Вы уже изучали это сегодня.",
+  "message.thaumaturge.celestial.cannot_note": "Вы не можете делать записи во время учебы."
 }

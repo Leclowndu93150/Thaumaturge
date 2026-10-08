@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
+
 import java.util.Objects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -11,10 +12,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+
+
 
 public final class ScanRaycastHelper {
-    private static final float ENTITY_BOX_PADDING = 1.0F;
 
     private ScanRaycastHelper() {}
 
@@ -37,21 +38,26 @@ public final class ScanRaycastHelper {
         Level level = ctx.level();
         Vec3 start = ctx.start();
         Vec3 direction = ctx.direction();
+        double blockReach = ctx.blockReach();
+        double entityReach = ctx.entityReach();
+        ClipContext.Fluid fluidFilter = ctx.fluidFilter();
+
+        if (level == null) return null;
 
         BlockHitResult blockResult = level.clip(new ClipContext(
-                start,
-                start.add(direction.scale(ctx.blockReach())),
-                ClipContext.Block.OUTLINE,
-                ctx.fluidFilter(),
-                ctx.entity()));
-        EntityHitResult entityResult = clipEntity(start, direction, ctx.entityReach(), ctx.entity());
+                start, start.add(direction.scale(blockReach)), ClipContext.Block.OUTLINE, fluidFilter, ctx.entity()));
+
+        EntityHitResult entityResult = clipEntity(level, start, direction, entityReach, ctx.entity());
 
         if (blockResult.getType() != HitResult.Type.MISS && entityResult != null) {
             double blockDistance = blockResult.getLocation().distanceToSqr(start);
             double entityDistance = entityResult.getLocation().distanceToSqr(start);
-            return blockDistance < entityDistance ? blockResult : entityResult;
-        }
-        if (blockResult.getType() != HitResult.Type.MISS) {
+            if (blockDistance < entityDistance) {
+                return blockResult;
+            } else {
+                return entityResult;
+            }
+        } else if (blockResult.getType() != HitResult.Type.MISS) {
             return blockResult;
         }
         return entityResult != null
@@ -62,20 +68,21 @@ public final class ScanRaycastHelper {
                         ctx.entity().blockPosition());
     }
 
-    private static @Nullable EntityHitResult clipEntity(Vec3 start, Vec3 direction, double entityReach, Entity entity) {
+    private static EntityHitResult clipEntity(
+            Level level, Vec3 start, Vec3 direction, double entityReach, Entity entity) {
         AABB box = entity.getBoundingBox()
                 .expandTowards(direction.scale(entityReach))
-                .inflate(ENTITY_BOX_PADDING, ENTITY_BOX_PADDING, ENTITY_BOX_PADDING);
+                .inflate(1.0F, 1.0F, 1.0F);
         return ProjectileUtil.getEntityHitResult(
                 entity,
                 start,
                 start.add(direction.scale(entityReach)),
                 box,
-                candidate -> !candidate.isSpectator(),
+                (e) -> !e.isSpectator(),
                 entityReach * entityReach);
     }
 
-    public record ScanRaycastContext(
+    public static record ScanRaycastContext(
             Level level,
             Vec3 start,
             Vec3 direction,
@@ -91,16 +98,81 @@ public final class ScanRaycastHelper {
             Objects.requireNonNull(entity, "entity cannot be null");
         }
 
+        public ScanRaycastContext withLevel(Level level) {
+            return new ScanRaycastContext(
+                    level,
+                    this.start,
+                    this.direction,
+                    this.blockReach,
+                    this.entityReach,
+                    this.fluidFilter,
+                    this.entity);
+        }
+
+        public ScanRaycastContext withStart(Vec3 start) {
+            return new ScanRaycastContext(
+                    this.level,
+                    start,
+                    this.direction,
+                    this.blockReach,
+                    this.entityReach,
+                    this.fluidFilter,
+                    this.entity);
+        }
+
+        public ScanRaycastContext withDirection(Vec3 direction) {
+            return new ScanRaycastContext(
+                    this.level,
+                    this.start,
+                    direction,
+                    this.blockReach,
+                    this.entityReach,
+                    this.fluidFilter,
+                    this.entity);
+        }
+
         public ScanRaycastContext withBlockReach(double blockReach) {
-            return new ScanRaycastContext(level, start, direction, blockReach, entityReach, fluidFilter, entity);
+            return new ScanRaycastContext(
+                    this.level,
+                    this.start,
+                    this.direction,
+                    blockReach,
+                    this.entityReach,
+                    this.fluidFilter,
+                    this.entity);
         }
 
         public ScanRaycastContext withEntityReach(double entityReach) {
-            return new ScanRaycastContext(level, start, direction, blockReach, entityReach, fluidFilter, entity);
+            return new ScanRaycastContext(
+                    this.level,
+                    this.start,
+                    this.direction,
+                    this.blockReach,
+                    entityReach,
+                    this.fluidFilter,
+                    this.entity);
         }
 
         public ScanRaycastContext withFluidFilter(ClipContext.Fluid fluidFilter) {
-            return new ScanRaycastContext(level, start, direction, blockReach, entityReach, fluidFilter, entity);
+            return new ScanRaycastContext(
+                    this.level,
+                    this.start,
+                    this.direction,
+                    this.blockReach,
+                    this.entityReach,
+                    fluidFilter,
+                    this.entity);
+        }
+
+        public ScanRaycastContext withEntity(Entity entity) {
+            return new ScanRaycastContext(
+                    this.level,
+                    this.start,
+                    this.direction,
+                    this.blockReach,
+                    this.entityReach,
+                    this.fluidFilter,
+                    entity);
         }
     }
 }

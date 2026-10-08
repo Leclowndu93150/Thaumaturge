@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
-import net.minecraft.world.level.LevelSimulatedReader;
 import com.leclowndu93150.thaumaturge.content.world.tree.TreeLeafUpdater;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
@@ -10,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
@@ -17,8 +17,10 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 
 public final class CrownFoliagePlacer extends FoliagePlacer {
-    public static final MapCodec<CrownFoliagePlacer> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> foliagePlacerParts(instance).and(Codec.BOOL.fieldOf("absorb_foreign_leaves").forGetter(placer -> placer.absorbForeignLeaves)).apply(instance, CrownFoliagePlacer::new));
+    public static final MapCodec<CrownFoliagePlacer> CODEC =
+            RecordCodecBuilder.mapCodec(instance -> foliagePlacerParts(instance)
+                    .and(Codec.BOOL.fieldOf("absorb_foreign_leaves").forGetter(placer -> placer.absorbForeignLeaves))
+                    .apply(instance, CrownFoliagePlacer::new));
 
     private static final int CLUSTER_LAYERS = 4;
     private static final float RIM_RADIUS = 2.0F;
@@ -39,7 +41,16 @@ public final class CrownFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(LevelSimulatedReader reader, FoliagePlacer.FoliageSetter foliageSetter, RandomSource random, TreeConfiguration config, int treeHeight, FoliagePlacer.FoliageAttachment foliageAttachment, int foliageHeight, int leafRadius, int offset) {
+    protected void createFoliage(
+            LevelSimulatedReader reader,
+            FoliagePlacer.FoliageSetter foliageSetter,
+            RandomSource random,
+            TreeConfiguration config,
+            int treeHeight,
+            FoliagePlacer.FoliageAttachment foliageAttachment,
+            int foliageHeight,
+            int leafRadius,
+            int offset) {
         if (!(reader instanceof WorldGenLevel level)) {
             return;
         }
@@ -51,7 +62,8 @@ public final class CrownFoliagePlacer extends FoliagePlacer {
             int span = (int) (radius + RADIUS_SLACK);
             for (int dx = -span; dx <= span; dx++) {
                 for (int dz = -span; dz <= span; dz++) {
-                    if (Math.pow(Math.abs(dx) + CELL_CENTER, 2.0) + Math.pow(Math.abs(dz) + CELL_CENTER, 2.0) <= radius * radius) {
+                    if (Math.pow(Math.abs(dx) + CELL_CENTER, 2.0) + Math.pow(Math.abs(dz) + CELL_CENTER, 2.0)
+                            <= radius * radius) {
                         cursor.setWithOffset(center, dx, layer, dz);
                         settleLeaf(level, foliageSetter, cursor, leaves);
                     }
@@ -60,7 +72,8 @@ public final class CrownFoliagePlacer extends FoliagePlacer {
         }
     }
 
-    private void settleLeaf(WorldGenLevel level, FoliagePlacer.FoliageSetter foliageSetter, BlockPos pos, BlockState leaves) {
+    private void settleLeaf(
+            WorldGenLevel level, FoliagePlacer.FoliageSetter foliageSetter, BlockPos pos, BlockState leaves) {
         BlockState present = level.getBlockState(pos);
         if (present.isAir()) {
             foliageSetter.set(pos, leaves);
@@ -75,7 +88,8 @@ public final class CrownFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected boolean shouldSkipLocation(RandomSource random, int dx, int y, int dz, int currentRadius, boolean doubleTrunk) {
+    protected boolean shouldSkipLocation(
+            RandomSource random, int dx, int y, int dz, int currentRadius, boolean doubleTrunk) {
         return false;
     }
 }

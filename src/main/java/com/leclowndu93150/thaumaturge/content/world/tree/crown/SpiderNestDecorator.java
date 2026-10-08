@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.world.tree.crown;
 
-import net.minecraft.world.level.WorldGenLevel;
 import com.leclowndu93150.thaumaturge.registry.TTTreePlacers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -13,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -21,10 +21,11 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 
 public final class SpiderNestDecorator extends TreeDecorator {
-    public static final MapCodec<SpiderNestDecorator> CODEC = RecordCodecBuilder
-            .mapCodec(instance -> instance.group(Codec.floatRange(0.0F, 1.0F).fieldOf("probability").forGetter(decorator -> decorator.probability),
+    public static final MapCodec<SpiderNestDecorator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    Codec.floatRange(0.0F, 1.0F).fieldOf("probability").forGetter(decorator -> decorator.probability),
                     BuiltInRegistries.BLOCK.byNameCodec().fieldOf("log").forGetter(decorator -> decorator.log),
-                    BuiltInRegistries.BLOCK.byNameCodec().fieldOf("leaves").forGetter(decorator -> decorator.leaves)).apply(instance, SpiderNestDecorator::new));
+                    BuiltInRegistries.BLOCK.byNameCodec().fieldOf("leaves").forGetter(decorator -> decorator.leaves))
+            .apply(instance, SpiderNestDecorator::new));
 
     private static final int WEB_ATTEMPTS = 50;
     private static final int WEB_SPREAD = 7;
@@ -55,7 +56,10 @@ public final class SpiderNestDecorator extends TreeDecorator {
             return;
         }
         int lowest = context.logs().getFirst().getY();
-        BlockPos foot = context.logs().stream().filter(pos -> pos.getY() == lowest).min(Comparator.comparingInt(Vec3i::getX).thenComparingInt(Vec3i::getZ)).orElseThrow();
+        BlockPos foot = context.logs().stream()
+                .filter(pos -> pos.getY() == lowest)
+                .min(Comparator.comparingInt(Vec3i::getX).thenComparingInt(Vec3i::getZ))
+                .orElseThrow();
         BlockPos spawnerPos = foot.below();
         context.setBlock(spawnerPos, Blocks.SPAWNER.defaultBlockState());
         if (!(level.getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawner)) {
@@ -63,7 +67,10 @@ public final class SpiderNestDecorator extends TreeDecorator {
         }
         spawner.setEntityId(EntityType.CAVE_SPIDER, random);
         for (int attempt = 0; attempt < WEB_ATTEMPTS; attempt++) {
-            BlockPos web = new BlockPos(foot.getX() - WEB_SPREAD + random.nextInt(WEB_SPREAD * 2), foot.getY() + random.nextInt(WEB_HEIGHT), foot.getZ() - WEB_SPREAD + random.nextInt(WEB_SPREAD * 2));
+            BlockPos web = new BlockPos(
+                    foot.getX() - WEB_SPREAD + random.nextInt(WEB_SPREAD * 2),
+                    foot.getY() + random.nextInt(WEB_HEIGHT),
+                    foot.getZ() - WEB_SPREAD + random.nextInt(WEB_SPREAD * 2));
             if (context.isAir(web) && clingsToTree(context, web)) {
                 context.setBlock(web, Blocks.COBWEB.defaultBlockState());
             }
@@ -75,7 +82,8 @@ public final class SpiderNestDecorator extends TreeDecorator {
 
     private boolean clingsToTree(TreeDecorator.Context context, BlockPos web) {
         for (Direction direction : Direction.values()) {
-            if (context.level().isStateAtPosition(web.relative(direction), state -> state.is(log) || state.is(leaves))) {
+            if (context.level()
+                    .isStateAtPosition(web.relative(direction), state -> state.is(log) || state.is(leaves))) {
                 return true;
             }
         }

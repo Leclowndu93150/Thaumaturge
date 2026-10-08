@@ -210,12 +210,37 @@ public final class TTModelProvider implements DataProvider {
         simpleFromExisting(TTBlocks.NODE_TRANSDUCER.get(), "node_transducer");
         blockStateOutput.accept(MultiVariantGenerator.multiVariant(TTBlocks.VIS_RELAY.get())
                 .with(PropertyDispatch.property(BlockStateProperties.FACING)
-                        .select(Direction.UP, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")))
-                        .select(Direction.DOWN, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-                        .select(Direction.NORTH, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-                        .select(Direction.SOUTH, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-                        .select(Direction.WEST, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-                        .select(Direction.EAST, Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
+                        .select(
+                                Direction.UP,
+                                Variant.variant().with(VariantProperties.MODEL, TTIds.rl("block/vis_relay")))
+                        .select(
+                                Direction.DOWN,
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL, TTIds.rl("block/vis_relay"))
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                        .select(
+                                Direction.NORTH,
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL, TTIds.rl("block/vis_relay"))
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(
+                                Direction.SOUTH,
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL, TTIds.rl("block/vis_relay"))
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                        .select(
+                                Direction.WEST,
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL, TTIds.rl("block/vis_relay"))
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                        .select(
+                                Direction.EAST,
+                                Variant.variant()
+                                        .with(VariantProperties.MODEL, TTIds.rl("block/vis_relay"))
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
         delegateItem(TTBlocks.VIS_RELAY.get().asItem(), TTIds.rl("block/vis_relay"));
         delegateItem(TTBlocks.NODE_STABILIZER.get().asItem(), TTIds.rl("item/node_stabilizer_base"));
         delegateItem(TTBlocks.NODE_STABILIZER_ADVANCED.get().asItem(), TTIds.rl("item/node_stabilizer_base"));

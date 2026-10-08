@@ -21,8 +21,7 @@ public final class TTTooltipRenderer {
     private TTTooltipRenderer() {}
 
     public static void render(GuiGraphics graphics, Font font, List<Component> lines, int x, int y) {
-        if (lines.isEmpty())
-            return;
+        if (lines.isEmpty()) return;
         List<ClientTooltipComponent> built = new ArrayList<>();
         for (Component line : lines) {
             if (line.getString().startsWith(HalfScaleTooltipLine.PREFIX)) {
@@ -35,20 +34,23 @@ public final class TTTooltipRenderer {
                 }
             }
         }
-        ((GuiGraphicsAccessor) graphics).thaumaturge$renderTooltipInternal(font, built, x, y, DefaultTooltipPositioner.INSTANCE);
+        ((GuiGraphicsAccessor) graphics)
+                .thaumaturge$renderTooltipInternal(font, built, x, y, DefaultTooltipPositioner.INSTANCE);
     }
 
     private static Component stripPrefix(Component line) {
         MutableComponent stripped = Component.empty();
         int[] toSkip = {HalfScaleTooltipLine.PREFIX.length()};
-        line.visit((style, text) -> {
-            int skip = Math.min(toSkip[0], text.length());
-            toSkip[0] -= skip;
-            if (skip < text.length()) {
-                stripped.append(Component.literal(text.substring(skip)).withStyle(style));
-            }
-            return Optional.empty();
-        }, Style.EMPTY);
+        line.visit(
+                (style, text) -> {
+                    int skip = Math.min(toSkip[0], text.length());
+                    toSkip[0] -= skip;
+                    if (skip < text.length()) {
+                        stripped.append(Component.literal(text.substring(skip)).withStyle(style));
+                    }
+                    return Optional.empty();
+                },
+                Style.EMPTY);
         return stripped;
     }
 }

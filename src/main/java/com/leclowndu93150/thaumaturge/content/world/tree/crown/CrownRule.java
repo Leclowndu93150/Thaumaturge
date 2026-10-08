@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public enum CrownRule implements StringRepresentable {
-    OPEN_AIR("open_air", false), REPLACEABLE("replaceable", true);
+    OPEN_AIR("open_air", false),
+    REPLACEABLE("replaceable", true);
 
     public static final Codec<CrownRule> CODEC = StringRepresentable.fromEnum(CrownRule::values);
 

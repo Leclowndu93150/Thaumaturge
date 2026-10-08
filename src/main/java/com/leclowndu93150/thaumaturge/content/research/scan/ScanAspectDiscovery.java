@@ -1,21 +1,18 @@
 package com.leclowndu93150.thaumaturge.content.research.scan;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
-import com.leclowndu93150.thaumaturge.api.research.scan.IScanThing;
+import com.leclowndu93150.thaumaturge.api.research.scan.IScannable;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedSky;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
 
-public final class ScanAspectDiscovery implements IScanThing {
+public final class ScanAspectDiscovery implements IScannable {
     private final ResourceKey<IAspect> aspect;
 
     public ScanAspectDiscovery(ResourceKey<IAspect> aspect) {
@@ -23,8 +20,8 @@ public final class ScanAspectDiscovery implements IScanThing {
     }
 
     @Override
-    public boolean checkThing(Player player, @Nullable Object target) {
-        if (target == null) {
+    public boolean matches(Player player, ScanTarget target) {
+        if (target instanceof ScannedSky) {
             return false;
         }
         Holder<IAspect> holder = player.registryAccess()
@@ -34,24 +31,12 @@ public final class ScanAspectDiscovery implements IScanThing {
         if (holder == null) {
             return false;
         }
-        AspectList aspects;
-        if (target instanceof Entity entity && !(target instanceof ItemEntity)) {
-            aspects = ScanningManager.entityAspects(entity);
-        } else {
-            ItemStack stack = ScanningManager.getItemFromParms(player, target);
-            if (stack.isEmpty()) {
-                return false;
-            }
-            aspects = ScanningManager.itemAspects(stack);
-        }
-        return aspects.amountOf(holder) > 0 && AspectPools.hasDiscoveredComponents(player, holder);
+        return ScanningManager.aspectsOf(player, target).amountOf(holder) > 0
+                && AspectPools.hasDiscoveredComponents(player, holder);
     }
 
     @Override
-    public void onSuccess(Player player, @Nullable Object target) {}
-
-    @Override
-    public ResourceLocation getResearchKey(Player player, @Nullable Object target) {
+    public ResourceLocation research(Player player, ScanTarget target) {
         return ScanKeys.aspect(aspect);
     }
 }

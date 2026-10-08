@@ -1913,5 +1913,11 @@
   "warp.thaumaturge.text.8": "Certamente deve haver uma forma de parar essas dores de cabeça?",
   "warp.thaumaturge.text.9": "Você subitamente sente relutância em quebrar coisas.",
   "warp.thaumaturge.text.hunger.1": "Sua fome não pode ser saciada com comida normal.",
-  "warp.thaumaturge.text.hunger.2": "Sua fome começa a desaparecer."
+  "warp.thaumaturge.text.hunger.2": "Sua fome começa a desaparecer.",
+  "gui.thaumaturge.scan.scanning": "Escaneando",
+  "tooltip.thaumaturge.thaumometer.inventory_scan": "Segure com o cursor sobre um item para escaneá-lo",
+  "message.thaumaturge.scan.learned": "Você aprendeu algo novo.",
+  "message.thaumaturge.scan.nothing_new": "Nada de novo pode ser aprendido com isto.",
+  "message.thaumaturge.celestial.already_studied": "Você já estudou isso hoje.",
+  "message.thaumaturge.celestial.cannot_note": "Você não consegue anotar seus estudos."
 }

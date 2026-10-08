@@ -159,7 +159,10 @@ public final class BlockEntityVisRelay extends BlockEntity {
                     cursor.setWithOffset(worldPosition, x, y, z);
                     if (level.getBlockEntity(cursor) instanceof BlockEntityVisRelay relay) {
                         double distance = cursor.distSqr(worldPosition);
-                        if (relay.isLinked() && relay.depth < HOP_CAP && (relay.depth < bestRelayDepth || (relay.depth == bestRelayDepth && distance < bestRelayDistance))
+                        if (relay.isLinked()
+                                && relay.depth < HOP_CAP
+                                && (relay.depth < bestRelayDepth
+                                        || (relay.depth == bestRelayDepth && distance < bestRelayDistance))
                                 && RelaySightline.isClear(level, worldPosition, cursor)) {
                             bestRelayDepth = relay.depth;
                             bestRelayDistance = distance;

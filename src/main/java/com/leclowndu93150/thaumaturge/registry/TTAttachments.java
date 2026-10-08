@@ -163,4 +163,7 @@ public final class TTAttachments {
     public static void register(IEventBus modBus) {
         ATTACHMENTS.register(modBus);
     }
+
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Long>> SLOT_SCAN_TIME =
+            register("slot_scan_time", () -> AttachmentType.builder(() -> 0L).build());
 }
