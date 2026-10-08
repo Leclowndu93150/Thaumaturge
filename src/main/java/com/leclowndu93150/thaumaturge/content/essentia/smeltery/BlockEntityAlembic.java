@@ -6,6 +6,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaStorage;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
+import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectEssentiaHost;
+import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectStorage;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -24,7 +26,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityAlembic extends AbstractSyncedBlockEntity implements IEssentiaTransport, IAspectContainer {
+public class BlockEntityAlembic extends AbstractSyncedBlockEntity
+        implements IEssentiaTransport, IAspectContainer, SingleAspectEssentiaHost {
     public static final int CAPACITY = 128;
     private static final Codec<ResourceKey<IAspect>> ASPECT_KEY_CODEC = LegacyIds.ASPECT_KEY_CODEC;
 
@@ -32,8 +35,7 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity implements IEs
     private @Nullable ResourceKey<IAspect> aspectFilter;
     private int amount;
     private int tickCount;
-    private long contentRevision;
-    private final IEssentiaStorage[] storageViews = new IEssentiaStorage[Direction.values().length];
+    private final SingleAspectStorage storage = new SingleAspectStorage(this);
     private Direction facing = Direction.DOWN;
 
     public BlockEntityAlembic(BlockPos pos, BlockState state) {
@@ -165,17 +167,11 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity implements IEs
     }
 
     public IEssentiaStorage storage(Direction side) {
-        int index = side.ordinal();
-        IEssentiaStorage view = storageViews[index];
-        if (view == null) {
-            view = new StorageView(side);
-            storageViews[index] = view;
-        }
-        return view;
+        return storage.view(side);
     }
 
     private void contentsChanged() {
-        contentRevision++;
+        storage.markChanged();
         setChanged();
         syncToClient();
     }
@@ -338,36 +334,25 @@ public class BlockEntityAlembic extends AbstractSyncedBlockEntity implements IEs
         return Objects.equals(this.aspect, aspect.getKey()) ? this.amount : 0;
     }
 
-    private final class StorageView implements IEssentiaStorage {
-        private final Direction side;
+    @Override
+    public int storageInsertLimit(int requested) {
+        return 0;
+    }
 
-        private StorageView(Direction side) {
-            this.side = side;
-        }
+    @Override
+    public void setStorageContents(@Nullable ResourceKey<IAspect> aspect, int amount) {
+        this.aspect = aspect;
+        this.amount = amount;
+    }
 
-        @Override
-        public AspectList contents() {
-            return getAspects();
-        }
+    @Override
+    public void onStorageCommitted() {
+        setChanged();
+        syncToClient();
+    }
 
-        @Override
-        public int insert(Holder<IAspect> aspect, int amount, boolean simulate) {
-            return 0;
-        }
-
-        @Override
-        public int extract(Holder<IAspect> aspect, int amount, boolean simulate) {
-            if (amount <= 0 || !canOutputTo(side) || !Objects.equals(BlockEntityAlembic.this.aspect, aspect.getKey())) {
-                return 0;
-            }
-            int extracted = Math.min(amount, BlockEntityAlembic.this.amount);
-            if (!simulate && extracted > 0 && !doTakeFromContainer(aspect.getKey(), extracted)) return 0;
-            return extracted;
-        }
-
-        @Override
-        public long contentRevision() {
-            return contentRevision;
-        }
+    @Override
+    public int capacity() {
+        return CAPACITY;
     }
 }

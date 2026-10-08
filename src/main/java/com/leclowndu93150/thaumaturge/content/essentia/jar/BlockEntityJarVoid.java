@@ -26,14 +26,28 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
             int capped = Math.min(newTotal, CAPACITY);
             super.doAddToContainer(incoming, capped - currentAmount);
             int overflow = newTotal - CAPACITY;
-            if (overflow > 0 && level != null && !level.isClientSide()) {
-                if (level.getRandom().nextInt(250) == 0) {
-                    AuraHelper.addFlux(level, getBlockPos(), 1.0F);
-                }
+            if (overflow > 0) {
+                leakOverflowFlux();
             }
             return 0;
         }
         return requested;
+    }
+
+    @Override
+    public int storageInsertLimit(int requested) {
+        return requested;
+    }
+
+    @Override
+    public void onStorageVoided(int voided) {
+        leakOverflowFlux();
+    }
+
+    private void leakOverflowFlux() {
+        if (level != null && !level.isClientSide() && level.getRandom().nextInt(250) == 0) {
+            AuraHelper.addFlux(level, getBlockPos(), 1.0F);
+        }
     }
 
     @Override
@@ -45,11 +59,6 @@ public final class BlockEntityJarVoid extends BlockEntityJar {
     @Override
     protected boolean shouldFillFromAbove() {
         return true;
-    }
-
-    @Override
-    protected int storageInsertLimit(Holder<IAspect> aspect, int requested) {
-        return requested;
     }
 
     @Override

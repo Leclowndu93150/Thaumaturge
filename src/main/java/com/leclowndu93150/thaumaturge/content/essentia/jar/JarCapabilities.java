@@ -4,7 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectCapabilities;
 import com.leclowndu93150.thaumaturge.api.essentia.EssentiaCapabilities;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
-import com.leclowndu93150.thaumaturge.content.essentia.item.SingleAspectItemStorage;
+import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectItemStorage;
 import com.leclowndu93150.thaumaturge.content.item.PhialItem;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;

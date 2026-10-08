@@ -1,4 +1,4 @@
-package com.leclowndu93150.thaumaturge.content.essentia.item;
+package com.leclowndu93150.thaumaturge.content.essentia.storage;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;

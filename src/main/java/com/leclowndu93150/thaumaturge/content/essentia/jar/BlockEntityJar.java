@@ -9,6 +9,8 @@ import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
+import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectEssentiaHost;
+import com.leclowndu93150.thaumaturge.content.essentia.storage.SingleAspectStorage;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
@@ -27,7 +29,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityJar extends AbstractSyncedBlockEntity implements IEssentiaTransport, IAspectSource {
+public class BlockEntityJar extends AbstractSyncedBlockEntity
+        implements IEssentiaTransport, IAspectSource, SingleAspectEssentiaHost {
     public static final int CAPACITY = IEssentiaJar.DEFAULT_CAPACITY;
 
     public int capacity() {
@@ -40,8 +43,7 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity implements IEssent
     private @Nullable ResourceKey<IAspect> aspectFilter;
     private int amount;
     private int tickCount;
-    private long contentRevision;
-    private final IEssentiaStorage[] storageViews = new IEssentiaStorage[Direction.values().length];
+    private final SingleAspectStorage storage = new SingleAspectStorage(this);
     private Direction facing = Direction.DOWN;
     private boolean braced;
 
@@ -209,23 +211,13 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity implements IEssent
     }
 
     public IEssentiaStorage storage(Direction side) {
-        int index = side.ordinal();
-        IEssentiaStorage view = storageViews[index];
-        if (view == null) {
-            view = new StorageView(side);
-            storageViews[index] = view;
-        }
-        return view;
+        return storage.view(side);
     }
 
     private void contentsChanged() {
-        contentRevision++;
+        storage.markChanged();
         setChanged();
         syncToClient();
-    }
-
-    protected int storageInsertLimit(Holder<IAspect> aspect, int requested) {
-        return Math.min(requested, capacity() - amount);
     }
 
     @Override
@@ -398,43 +390,20 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity implements IEssent
         return braced;
     }
 
-    private final class StorageView implements IEssentiaStorage {
-        private final Direction side;
+    @Override
+    public int storageInsertLimit(int requested) {
+        return Math.min(requested, capacity() - amount);
+    }
 
-        private StorageView(Direction side) {
-            this.side = side;
-        }
+    @Override
+    public void setStorageContents(@Nullable ResourceKey<IAspect> aspect, int amount) {
+        this.aspect = aspect;
+        this.amount = amount;
+    }
 
-        @Override
-        public AspectList contents() {
-            return getAspects();
-        }
-
-        @Override
-        public int insert(Holder<IAspect> aspect, int amount, boolean simulate) {
-            if (amount <= 0 || !canInputFrom(side) || !accepts(aspect)) return 0;
-            if (BlockEntityJar.this.amount > 0 && !Objects.equals(BlockEntityJar.this.aspect, aspect.getKey()))
-                return 0;
-            int accepted = storageInsertLimit(aspect, amount);
-            if (!simulate && accepted > 0) {
-                accepted -= doAddToContainer(aspect.getKey(), accepted);
-            }
-            return accepted;
-        }
-
-        @Override
-        public int extract(Holder<IAspect> aspect, int amount, boolean simulate) {
-            if (amount <= 0 || !canOutputTo(side) || !Objects.equals(BlockEntityJar.this.aspect, aspect.getKey())) {
-                return 0;
-            }
-            int extracted = Math.min(amount, BlockEntityJar.this.amount);
-            if (!simulate && extracted > 0 && !doTakeFromContainer(aspect.getKey(), extracted)) return 0;
-            return extracted;
-        }
-
-        @Override
-        public long contentRevision() {
-            return contentRevision;
-        }
+    @Override
+    public void onStorageCommitted() {
+        setChanged();
+        syncToClient();
     }
 }
