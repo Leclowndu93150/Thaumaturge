@@ -5,10 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedCornersModel;
 import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedSheetModel;
 import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedStairsModel;
 import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedTexture;
-import com.leclowndu93150.thaumaturge.client.model.connected.ConnectedTilesModel;
 import com.leclowndu93150.thaumaturge.client.model.connected.FrameKit;
 import com.leclowndu93150.thaumaturge.content.decor.BlockCandleHolder;
 import com.leclowndu93150.thaumaturge.content.decor.BlockObsidianTotem;
@@ -2011,12 +2011,14 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private static JsonElement wardedGlassModel() {
-        JsonObject root = ConnectedTilesModel.CODEC
+        JsonObject root = ConnectedCornersModel.CODEC
                 .codec()
-                .encodeStart(JsonOps.INSTANCE, new ConnectedTilesModel(blockTexture("warded_glass")))
+                .encodeStart(
+                        JsonOps.INSTANCE,
+                        new ConnectedCornersModel(TTIds.rl("block/ward"), blockTexture("warded_glass")))
                 .getOrThrow()
                 .getAsJsonObject();
-        root.addProperty("loader", ConnectedTilesModel.TYPE.toString());
+        root.addProperty("loader", ConnectedCornersModel.TYPE.toString());
         root.addProperty("parent", BLOCK_PARENT.toString());
         return root;
     }

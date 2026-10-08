@@ -6,31 +6,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 
 public final class SheetFaceQuads implements ConnectedFaceQuads {
-    private static final int CORNERS = 4;
-    private static final int TOP_LEFT_CORNER = 0;
-    private static final int TOP_RIGHT_CORNER = 1;
-    private static final int BOTTOM_LEFT_CORNER = 2;
-    private static final int BOTTOM_RIGHT_CORNER = 3;
-    private static final int STATES = 5;
-    private static final int UNCONNECTED = 0;
-    private static final int VERTICAL = 1;
-    private static final int HORIZONTAL = 2;
-    private static final int INNER_CORNER = 3;
-    private static final int SURROUNDED = 4;
     private static final float HALF = ConnectedQuadBaker.FACE_SIZE / 2.0F;
     private static final float SHEET_TILE = HALF;
     private static final float SHEET_QUARTER = SHEET_TILE / 2.0F;
     private static final int[] SHEET_COLUMN = {0, 1, 0, 1, 0};
     private static final int[] SHEET_ROW = {0, 0, 1, 1, 0};
-    private static final int[] CORNER_VERTICAL = {
-        FaceConnections.TOP, FaceConnections.TOP, FaceConnections.BOTTOM, FaceConnections.BOTTOM
-    };
-    private static final int[] CORNER_HORIZONTAL = {
-        FaceConnections.LEFT, FaceConnections.RIGHT, FaceConnections.LEFT, FaceConnections.RIGHT
-    };
-    private static final int[] CORNER_DIAGONAL = {
-        FaceConnections.TOP_LEFT, FaceConnections.TOP_RIGHT, FaceConnections.BOTTOM_LEFT, FaceConnections.BOTTOM_RIGHT
-    };
     private static final Direction[] FACES = Direction.values();
 
     private final BakedQuad[][] whole;
@@ -55,18 +35,18 @@ public final class SheetFaceQuads implements ConnectedFaceQuads {
             TextureAtlasSprite sheet = ConnectedQuadBaker.material(baker, spec.sheet());
             TextureAtlasSprite unconnected = ConnectedQuadBaker.material(baker, spec.unconnectedCorner());
             float inset = insets[face.ordinal()];
-            BakedQuad[] faceWhole = new BakedQuad[STATES];
-            BakedQuad[][] faceCorners = new BakedQuad[CORNERS][STATES];
-            for (int state = 0; state < STATES; state++) {
+            BakedQuad[] faceWhole = new BakedQuad[FaceCorners.STATES];
+            BakedQuad[][] faceCorners = new BakedQuad[FaceCorners.COUNT][FaceCorners.STATES];
+            for (int state = 0; state < FaceCorners.STATES; state++) {
                 faceWhole[state] = ConnectedQuadBaker.bakeWhole(
-                        baker, state == UNCONNECTED ? texture : sheet, face, inset, wholeUvs(state));
+                        baker, state == FaceCorners.UNCONNECTED ? texture : sheet, face, inset, wholeUvs(state));
 
-                for (int corner = 0; corner < CORNERS; corner++) {
-                    float minU = HALF * column(corner);
-                    float minV = HALF * row(corner);
+                for (int corner = 0; corner < FaceCorners.COUNT; corner++) {
+                    float minU = HALF * FaceCorners.column(corner);
+                    float minV = HALF * FaceCorners.row(corner);
                     faceCorners[corner][state] = ConnectedQuadBaker.bake(
                             baker,
-                            state == UNCONNECTED ? unconnected : sheet,
+                            state == FaceCorners.UNCONNECTED ? unconnected : sheet,
                             face,
                             inset,
                             minU,
@@ -90,19 +70,19 @@ public final class SheetFaceQuads implements ConnectedFaceQuads {
 
     @Override
     public void addFace(Direction face, int connections, ConnectedQuads.Builder builder) {
-        int topLeft = state(connections, TOP_LEFT_CORNER);
-        int topRight = state(connections, TOP_RIGHT_CORNER);
-        int bottomLeft = state(connections, BOTTOM_LEFT_CORNER);
-        int bottomRight = state(connections, BOTTOM_RIGHT_CORNER);
+        int topLeft = FaceCorners.state(connections, FaceCorners.TOP_LEFT);
+        int topRight = FaceCorners.state(connections, FaceCorners.TOP_RIGHT);
+        int bottomLeft = FaceCorners.state(connections, FaceCorners.BOTTOM_LEFT);
+        int bottomRight = FaceCorners.state(connections, FaceCorners.BOTTOM_RIGHT);
         if (topLeft == topRight && topLeft == bottomLeft && topLeft == bottomRight) {
             add(face, whole[face.ordinal()][topLeft], builder);
             return;
         }
         BakedQuad[][] faceCorners = corners[face.ordinal()];
-        add(face, faceCorners[TOP_LEFT_CORNER][topLeft], builder);
-        add(face, faceCorners[TOP_RIGHT_CORNER][topRight], builder);
-        add(face, faceCorners[BOTTOM_LEFT_CORNER][bottomLeft], builder);
-        add(face, faceCorners[BOTTOM_RIGHT_CORNER][bottomRight], builder);
+        add(face, faceCorners[FaceCorners.TOP_LEFT][topLeft], builder);
+        add(face, faceCorners[FaceCorners.TOP_RIGHT][topRight], builder);
+        add(face, faceCorners[FaceCorners.BOTTOM_LEFT][bottomLeft], builder);
+        add(face, faceCorners[FaceCorners.BOTTOM_RIGHT][bottomRight], builder);
     }
 
     private void add(Direction face, BakedQuad quad, ConnectedQuads.Builder builder) {
@@ -113,20 +93,8 @@ public final class SheetFaceQuads implements ConnectedFaceQuads {
         }
     }
 
-    private static int state(int connections, int corner) {
-        boolean vertical = FaceConnections.has(connections, CORNER_VERTICAL[corner]);
-        boolean horizontal = FaceConnections.has(connections, CORNER_HORIZONTAL[corner]);
-        if (vertical && horizontal) {
-            return FaceConnections.has(connections, CORNER_DIAGONAL[corner]) ? SURROUNDED : INNER_CORNER;
-        }
-        if (vertical) {
-            return VERTICAL;
-        }
-        return horizontal ? HORIZONTAL : UNCONNECTED;
-    }
-
     private static ConnectedQuadBaker.Uvs wholeUvs(int state) {
-        if (state == UNCONNECTED) {
+        if (state == FaceCorners.UNCONNECTED) {
             return new ConnectedQuadBaker.Uvs(0.0F, 0.0F, ConnectedQuadBaker.FACE_SIZE, ConnectedQuadBaker.FACE_SIZE);
         }
         float minU = SHEET_TILE * SHEET_COLUMN[state];
@@ -135,21 +103,13 @@ public final class SheetFaceQuads implements ConnectedFaceQuads {
     }
 
     private static ConnectedQuadBaker.Uvs cornerUvs(int state, int corner) {
-        if (state == UNCONNECTED) {
-            float minU = HALF * column(corner);
-            float minV = HALF * row(corner);
+        if (state == FaceCorners.UNCONNECTED) {
+            float minU = HALF * FaceCorners.column(corner);
+            float minV = HALF * FaceCorners.row(corner);
             return new ConnectedQuadBaker.Uvs(minU, minV, minU + HALF, minV + HALF);
         }
-        float minU = SHEET_TILE * SHEET_COLUMN[state] + SHEET_QUARTER * column(corner);
-        float minV = SHEET_TILE * SHEET_ROW[state] + SHEET_QUARTER * row(corner);
+        float minU = SHEET_TILE * SHEET_COLUMN[state] + SHEET_QUARTER * FaceCorners.column(corner);
+        float minV = SHEET_TILE * SHEET_ROW[state] + SHEET_QUARTER * FaceCorners.row(corner);
         return new ConnectedQuadBaker.Uvs(minU, minV, minU + SHEET_QUARTER, minV + SHEET_QUARTER);
-    }
-
-    private static int column(int corner) {
-        return corner & 1;
-    }
-
-    private static int row(int corner) {
-        return corner >> 1;
     }
 }

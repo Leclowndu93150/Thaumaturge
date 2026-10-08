@@ -13,7 +13,7 @@ public final class ConnectedModelRegistration {
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
         event.register(ConnectedSheetModel.TYPE, new ConnectedModelLoader<>(ConnectedSheetModel.CODEC));
-        event.register(ConnectedTilesModel.TYPE, new ConnectedModelLoader<>(ConnectedTilesModel.CODEC));
+        event.register(ConnectedCornersModel.TYPE, new ConnectedModelLoader<>(ConnectedCornersModel.CODEC));
         event.register(ConnectedStairsModel.TYPE, new ConnectedModelLoader<>(ConnectedStairsModel.CODEC));
     }
 }
