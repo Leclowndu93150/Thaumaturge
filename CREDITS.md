@@ -161,6 +161,26 @@ Drawn by **.talonos** (Discord) and donated under the MIT license (text below). 
 
 ## Sounds
 
+### Saereth replacement sounds (MIT)
+
+The following replacement sounds were created for Thaumaturge by **Saereth** using ElevenLabs Sound Effects. Saereth grants the MIT license (text below) to any rights they hold in these sounds. This grant does not override [ElevenLabs' Sound Effects Terms](https://elevenlabs.io/sound-effects-terms) or its [Prohibited Use Policy](https://elevenlabs.io/use-policy), including restrictions on licensing generated effects as standalone audio files.
+
+- `sounds/cameraticks.ogg`
+- `sounds/chant1.ogg`
+- `sounds/chant2.ogg`
+- `sounds/chant3.ogg`
+- `sounds/coins.ogg`
+- `sounds/crabclaw.ogg`
+- `sounds/craftfail.ogg`
+- `sounds/crystal.ogg`
+- `sounds/pump1.ogg`
+- `sounds/pump2.ogg`
+- `sounds/pump3.ogg`
+- `sounds/squeek1.ogg`
+- `sounds/squeek2.ogg`
+
+### Thaumcraft sourced sounds
+
 Thaumcraft built these sounds from third-party sound libraries and games. They are not Thaumcraft's own work. The sources come from the community "Classic Minecraft Mod Sound Sources" research sheet.
 
 | File | Source |
@@ -270,6 +290,32 @@ gui_golembuilder.png craft button anvil: https://github.com/SlimeKnights/Tinkers
 
 
 ## License texts
+
+### Saereth replacement sounds (MIT)
+
+```
+MIT License
+
+Copyright (c) 2026 Saereth
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ### Tinkers' Construct (MIT)
 
