@@ -28,11 +28,11 @@ import org.jspecify.annotations.Nullable;
 
 public final class ItemGolemBell extends Item implements ISealDisplayer {
     private static final double AIM_LENGTH = 5.0D;
-    private static final double AIM_STEP = 0.1D;
+    private static final double AIM_STEP = 0.05D;
+    private static final float CHIME_VOLUME = 0.5F;
+    private static final float CHIME_PITCH_SPREAD = 0.2F;
+    private static final float ZAP_VOLUME = 0.4F;
     private static final int AIM_SAMPLES = (int) Math.round(AIM_LENGTH / AIM_STEP);
-    private static final float CHIME_VOLUME = 0.6F;
-    private static final float CHIME_PITCH_SPREAD = 0.1F;
-    private static final float ZAP_VOLUME = 0.5F;
 
     public ItemGolemBell(Item.Properties properties) {
         super(properties);

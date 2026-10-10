@@ -23,9 +23,9 @@ public abstract class TaskGoal extends Goal {
     private static final int CLAIM_COOLDOWN_ASKS = 5;
     private static final int PAUSE_TICKS = 10;
     private static final int PATH_REFRESH_INTERVAL = 5;
-    private static final int UNSTICK_HORIZONTAL = 6;
-    private static final int UNSTICK_VERTICAL = 4;
     private static final double QUARTER_TURN = Math.PI / 2.0D;
+    private static final int UNSTICK_HORIZONTAL = 4;
+    private static final int UNSTICK_VERTICAL = 2;
 
     private enum Phase {
         IDLE, APPROACHING, WORKING, PAUSED, FINISHED

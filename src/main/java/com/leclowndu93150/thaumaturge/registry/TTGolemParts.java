@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.api.golems.parts.GolemPartModel;
 import com.leclowndu93150.thaumaturge.content.golem.parts.DartLauncherArms;
 import com.leclowndu93150.thaumaturge.content.golem.parts.FlyerLegWisps;
-import com.leclowndu93150.thaumaturge.content.golem.parts.GolemLegWheels;
+import com.leclowndu93150.thaumaturge.content.golem.parts.RollerLegDust;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.Registry;
@@ -106,7 +106,7 @@ public final class TTGolemParts {
 
     public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_ROLLER = LEGS.register("roller",
             () -> new GolemLeg(List.of(TTIds.rl("mind_clockwork")), partIcon("legs_roller"), new GolemPartModel(obj("golem_legs_wheel"), null, GolemPartModel.AttachPoint.BODY),
-                    List.of(GolemComponent.of(() -> new ItemStack(Items.BOWL, 2)), GolemComponent.of(() -> new ItemStack(Items.LEATHER)), GolemComponent.mechanism()), new GolemLegWheels(),
+                    List.of(GolemComponent.of(() -> new ItemStack(Items.BOWL, 2)), GolemComponent.of(() -> new ItemStack(Items.LEATHER)), GolemComponent.mechanism()), new RollerLegDust(),
                     List.of(TTGolemTraits.WHEELED)));
 
     public static final DeferredHolder<GolemLeg, GolemLeg> LEGS_CLIMBER = LEGS.register("climber", () -> new GolemLeg(List.of(TTIds.rl("golem_climber")), partIcon("legs_climber"),

@@ -13,10 +13,6 @@ import org.jspecify.annotations.Nullable;
 record ReplantSite(BlockPos pos, Direction face, ItemStack seed, boolean tilled, @Nullable Task task) {
     private static final long DEFAULT_POS = 0L;
     private static final byte DEFAULT_FACE = 0;
-    private static final String LEGACY_POS_KEY = "taskloc";
-    private static final String LEGACY_FACE_KEY = "taskface";
-    private static final String LEGACY_TILLED_KEY = "farmland";
-    private static final Codec<Long> LEGACY_POS_CODEC = Codec.either(Codec.LONG, BlockPos.CODEC).xmap(either -> either.map(packed -> packed, BlockPos::asLong), packed -> Either.left(packed));
 
     static final MapCodec<ReplantSite> CODEC = RecordCodecBuilder
             .mapCodec(instance -> instance
@@ -24,12 +20,6 @@ record ReplantSite(BlockPos pos, Direction face, ItemStack seed, boolean tilled,
                             Codec.BYTE.optionalFieldOf("face", DEFAULT_FACE).forGetter(site -> (byte) site.face().get3DDataValue()),
                             Codec.BOOL.optionalFieldOf("tilled", false).forGetter(ReplantSite::tilled), ItemStack.OPTIONAL_CODEC.optionalFieldOf("seed", ItemStack.EMPTY).forGetter(ReplantSite::seed))
                     .apply(instance, ReplantSite::restore));
-
-    static final MapCodec<ReplantSite> LEGACY_CODEC = RecordCodecBuilder.mapCodec(instance -> instance
-            .group(LEGACY_POS_CODEC.optionalFieldOf(LEGACY_POS_KEY, DEFAULT_POS).forGetter(site -> site.pos().asLong()),
-                    Codec.BYTE.optionalFieldOf(LEGACY_FACE_KEY, DEFAULT_FACE).forGetter(site -> (byte) site.face().get3DDataValue()),
-                    Codec.BOOL.optionalFieldOf(LEGACY_TILLED_KEY, false).forGetter(ReplantSite::tilled), ItemStack.OPTIONAL_CODEC.optionalFieldOf("seed", ItemStack.EMPTY).forGetter(ReplantSite::seed))
-            .apply(instance, ReplantSite::restore));
 
     private static ReplantSite restore(long pos, byte face, boolean tilled, ItemStack seed) {
         return new ReplantSite(BlockPos.of(pos), Direction.from3DDataValue(face), seed, tilled, null);

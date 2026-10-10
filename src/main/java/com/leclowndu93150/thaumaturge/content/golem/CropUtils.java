@@ -1,6 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.golem;
 
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CaveVinesBlock;
@@ -39,6 +41,16 @@ public final class CropUtils {
             return state.getValue(BlockStateProperties.BERRIES);
         }
         return false;
+    }
+
+    public static Optional<Direction> plantingSupport(BlockState state) {
+        if (state.getBlock() instanceof CocoaBlock) {
+            return Optional.of(state.getValue(CocoaBlock.FACING));
+        }
+        if (state.getBlock() instanceof CropBlock || state.getBlock() instanceof NetherWartBlock) {
+            return Optional.of(Direction.DOWN);
+        }
+        return Optional.empty();
     }
 
     public static ItemStack getSeed(Level level, BlockPos pos, BlockState state) {

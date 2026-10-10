@@ -5,33 +5,31 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper;
+import com.leclowndu93150.thaumaturge.api.items.InvHelper.InvFilter;
 import com.leclowndu93150.thaumaturge.content.casters.BlockBreakerEngine;
 import com.leclowndu93150.thaumaturge.server.TTFakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class BreakBehavior extends CellWorkBehavior {
-    public static final SealSetting SILK_TOUCH = new SealSetting("psilk", "gui.thaumaturge.seal.setting.silk", false);
+    public static final SealSetting SILK_TOUCH = new SealSetting("silk_touch", "gui.thaumaturge.seal.setting.silk", false).readingAlso("psilk");
 
-    private static final int STAGGER = 42;
+    private static final int STAGGER = 61;
     private static final float WORK_PER_HARDNESS = 10.0F;
-    private static final int CHIP_POWER = 21;
-    private static final int SILK_CHIP_POWER = 7;
-    private static final int CRACK_STAGES = 9;
-    private static final int FINAL_CRACK_STAGE = 10;
-    private static final float SOUND_VOLUME_BIAS = 0.7F;
-    private static final float SOUND_VOLUME_DIVISOR = 8.0F;
-    private static final float SOUND_PITCH_FACTOR = 0.5F;
-    private static final int BREAK_XP = 1;
+    private static final int STRIKE_POWER = 21;
+    private static final int SILK_STRIKE_POWER = 7;
     private static final int NO_FORTUNE = 0;
+    private static final int BREAK_XP = 1;
+    private static final float STRIKE_VOLUME = 0.25F;
+    private static final float STRIKE_PITCH = 0.5F;
+    private static final int CRACK_STAGES = 10;
+    private static final int CRACK_CLEARED = -1;
 
     public BreakBehavior() {
         super(STAGGER);
@@ -40,65 +38,69 @@ public final class BreakBehavior extends CellWorkBehavior {
     @Override
     protected boolean isWorkable(Level level, ISealEntity seal, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (state.isAir() || state.getDestroySpeed(level, pos) < 0.0F) {
+        if (state.isAir() || state.liquid() || state.getDestroySpeed(level, pos) < 0) {
             return false;
         }
-        ISealFilter filter = seal.filter().orElse(null);
-        return filter == null || passesFilter(filter, state);
-    }
-
-    private static boolean passesFilter(ISealFilter filter, BlockState state) {
-        Item blockItem = state.getBlock().asItem();
-        boolean blacklist = filter.isBlacklist();
-        for (ItemStack entry : filter.stacks()) {
-            if (entry.isEmpty()) {
-                continue;
-            }
-            boolean equal = blockItem != Items.AIR && entry.is(blockItem);
-            if (blacklist == equal) {
-                return false;
-            }
-        }
-        return true;
+        return passesFilter(level, seal, pos, state);
     }
 
     @Override
     protected void prepare(ServerLevel level, BlockPos pos, Task task) {
-        task.setData((int) (level.getBlockState(pos).getDestroySpeed(level, pos) * WORK_PER_HARDNESS));
+        task.setData(workFor(level, pos, level.getBlockState(pos)));
     }
 
     @Override
     public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
-        if (!stillMine(level, seal, task)) {
-            task.end();
-            return true;
-        }
         BlockPos pos = task.pos();
-        BlockState state = level.getBlockState(pos);
-        int breaker = golem.asEntity().getId();
+        if (!isWorkable(level, seal, pos)) {
+            return retire(task);
+        }
         golem.swingArm();
+        BlockState state = level.getBlockState(pos);
         boolean silk = seal.setting(SILK_TOUCH);
-        int chip = silk ? SILK_CHIP_POWER : CHIP_POWER;
-        if (task.data() > chip) {
-            chipAway(level, pos, state, task, chip, breaker);
+        int strike = silk ? SILK_STRIKE_POWER : STRIKE_POWER;
+        int crackId = golem.asEntity().getId();
+        if (task.data() > strike) {
+            task.setData(task.data() - strike);
+            keepAlive(task);
+            level.playSound(null, pos, state.getSoundType().getBreakSound(), SoundSource.BLOCKS, STRIKE_VOLUME, STRIKE_PITCH);
+            level.destroyBlockProgress(crackId, pos, crackStage(workFor(level, pos, state), task.data()));
             return false;
         }
-        level.destroyBlockProgress(breaker, pos, FINAL_CRACK_STAGE);
         BlockBreakerEngine.harvestBlock(level, TTFakePlayer.GOLEM.at(level, golem.asEntity()), pos, silk, NO_FORTUNE);
+        level.destroyBlockProgress(crackId, pos, CRACK_CLEARED);
         golem.addRankXp(BREAK_XP);
-        release(task);
-        task.end();
-        return true;
+        return retire(task);
     }
 
-    private static void chipAway(ServerLevel level, BlockPos pos, BlockState state, Task task, int chip, int breaker) {
-        keepAlive(task);
-        int remaining = task.data() - chip;
-        task.setData(remaining);
-        SoundType sound = state.getSoundType();
-        level.playSound(null, pos, sound.getBreakSound(), SoundSource.BLOCKS, (sound.getVolume() + SOUND_VOLUME_BIAS) / SOUND_VOLUME_DIVISOR, sound.getPitch() * SOUND_PITCH_FACTOR);
-        float total = state.getDestroySpeed(level, pos) * WORK_PER_HARDNESS;
-        int stage = Mth.clamp(Mth.floor(CRACK_STAGES * (1.0F - remaining / total)), 0, CRACK_STAGES);
-        level.destroyBlockProgress(breaker, pos, stage);
+    private static int workFor(Level level, BlockPos pos, BlockState state) {
+        return Mth.ceil(state.getDestroySpeed(level, pos) * WORK_PER_HARDNESS);
+    }
+
+    private static int crackStage(int total, int remaining) {
+        if (total <= 0) {
+            return 0;
+        }
+        float done = (float) (total - remaining) / total;
+        return Mth.clamp(Mth.floor(done * CRACK_STAGES), 0, CRACK_STAGES - 1);
+    }
+
+    private static boolean passesFilter(Level level, ISealEntity seal, BlockPos pos, BlockState state) {
+        ISealFilter filter = ItemMatchSettings.filterOf(seal);
+        if (filter.stacks().stream().allMatch(ItemStack::isEmpty)) {
+            return true;
+        }
+        ItemStack form = itemForm(level, pos, state);
+        if (form.isEmpty()) {
+            return filter.isBlacklist();
+        }
+        boolean exact = seal.setting(ItemMatchSettings.MATCH_DAMAGE);
+        InvFilter match = new InvFilter(!exact, !exact, false, false);
+        return InvHelper.matchesFilters(filter.stacks(), filter.isBlacklist(), form, match);
+    }
+
+    private static ItemStack itemForm(Level level, BlockPos pos, BlockState state) {
+        ItemStack picked = state.getCloneItemStack(level, pos, false);
+        return picked.isEmpty() ? new ItemStack(state.getBlock().asItem()) : picked;
     }
 }

@@ -5,16 +5,15 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper.FilterMatch;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper.InvFilter;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -25,119 +24,124 @@ import org.jspecify.annotations.Nullable;
 public final class StoreBehavior implements ISealBehavior {
     public static final SealSetting ONLY_EXISTING = new SealSetting("only_existing", "gui.thaumaturge.seal.setting.exist", false);
 
-    private static final int STAGGER = 50;
-    private static final int SCAN_PERIOD = 20;
-    private static final double LOOSE_ITEM_RANGE = 1.5;
-    private static final double CELL_CENTER = 0.5;
-    private static final double TOSS_HORIZONTAL_SCALE = 0.2;
-    private static final double TOSS_VERTICAL_SCALE = 0.5;
-    private static final int PUT_DOWN_XP = 1;
+    private static final int STAGGER = 47;
+    private static final int CHECK_PERIOD = 20;
+    private static final double LOOSE_RANGE = 1.5;
+    private static final double TOSS_SPREAD = 0.02;
+    private static final int STORE_XP = 1;
 
     private final SealClock clock = new SealClock(STAGGER);
-    private @Nullable Task pending;
+    private @Nullable Task standing;
 
     @Override
     public void tick(ServerLevel level, ISealEntity seal) {
-        if (clock.advance() % SCAN_PERIOD == 0) {
-            replenish(level, seal, null);
+        if (clock.advance() % CHECK_PERIOD == 0 && needsFreshTask(level)) {
+            post(level, seal);
         }
+    }
+
+    private boolean needsFreshTask(Level level) {
+        Task current = standing;
+        return current == null || current.isClaimed() || current.isEnded() || current.isCompleted() || !TaskBoard.of(level).isLive(current.id());
+    }
+
+    private void post(ServerLevel level, ISealEntity seal) {
+        Task task = Task.atBlock(seal.pos(), seal.pos().pos());
+        task.setPriority(seal.priority());
+        GolemHelper.addGolemTask(level, task);
+        standing = task;
     }
 
     @Override
     public void onTaskStarted(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
         if (!seal.isStoppedByRedstone(level)) {
-            replenish(level, seal, task);
+            post(level, seal);
         }
-    }
-
-    @Override
-    public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
-        FilterMatch match = carried(seal, golem);
-        ItemStack stack = match.stack();
-        if (stack.isEmpty()) {
-            return true;
-        }
-        BlockPos pos = seal.pos().pos();
-        Direction face = seal.pos().face();
-        InvFilter compare = ItemMatchSettings.of(seal);
-        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, pos, face);
-        int limit = limitOf(seal, match);
-        int present = container != null ? InvHelper.countTotalItemsIn(container, stack, compare) : InvHelper.countStackInWorld(level, pos, stack, LOOSE_ITEM_RANGE, compare);
-        int amount = limit > 0 ? Math.max(0, limit - present) : stack.getCount();
-        if (amount > 0) {
-            ItemStack released = golem.hands().release(stack.copyWithCount(amount));
-            if (!released.isEmpty()) {
-                putDown(level, golem, pos, face, container, released);
-                HandlingSound.play(golem, HandlingSound.LOW);
-                golem.addRankXp(PUT_DOWN_XP);
-                golem.swingArm();
-            }
-        }
-        return true;
     }
 
     @Override
     public boolean canPerform(ISealEntity seal, IGolemAPI golem, Task task) {
-        FilterMatch match = carried(seal, golem);
-        ItemStack stack = match.stack();
-        if (stack.isEmpty()) {
+        Load load = loadOf(seal, golem);
+        if (load == null) {
             return false;
         }
         Level level = golem.level();
-        BlockPos pos = seal.pos().pos();
-        Direction face = seal.pos().face();
-        int limit = limitOf(seal, match);
-        InvFilter compare = ItemMatchSettings.of(seal);
-        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, pos, face);
+        SealPos at = seal.pos();
+        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, at.pos(), at.face());
         if (container == null) {
-            return limit <= 0 || InvHelper.countStackInWorld(level, pos, stack, LOOSE_ITEM_RANGE, compare) < limit;
+            return load.limit() <= 0 || load.present(level, seal, null) < load.limit();
         }
-        if (!InvHelper.hasRoomForSome(level, pos, face, stack)) {
+        if (!InvHelper.hasRoomForSome(level, at.pos(), at.face(), load.stack().copyWithCount(1))) {
             return false;
         }
-        int present = InvHelper.countTotalItemsIn(container, stack, compare);
+        int present = load.present(level, seal, container);
         if (seal.setting(ONLY_EXISTING) && present <= 0) {
             return false;
         }
-        return limit <= 0 || present < limit;
+        return load.limit() <= 0 || present < load.limit();
     }
 
-    private void replenish(ServerLevel level, ISealEntity seal, @Nullable Task claimed) {
-        if (pending != null && !pending.equals(claimed) && isOpen(level, pending)) {
+    @Override
+    public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
+        Load load = loadOf(seal, golem);
+        if (load != null) {
+            unload(level, seal, golem, load);
+        }
+        task.end();
+        return true;
+    }
+
+    private static void unload(ServerLevel level, ISealEntity seal, IGolemAPI golem, Load load) {
+        SealPos at = seal.pos();
+        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, at.pos(), at.face());
+        int amount = load.limit() > 0 ? load.limit() - load.present(level, seal, container) : load.stack().getCount();
+        if (amount <= 0) {
             return;
         }
-        Task task = Task.atBlock(seal.pos(), seal.pos().pos());
-        task.setPriority(seal.priority());
-        GolemHelper.addGolemTask(level, task);
-        pending = task;
-    }
-
-    private static boolean isOpen(Level level, Task task) {
-        return TaskBoard.of(level).isLive(task.id()) && !task.isClaimed() && !task.isEnded() && !task.isCompleted();
-    }
-
-    private static FilterMatch carried(ISealEntity seal, IGolemAPI golem) {
-        ISealFilter filter = ItemMatchSettings.filterOf(seal);
-        return InvHelper.findFirstMatchFromFilterWithSize(filter.stacks(), filter.limits(), filter.isBlacklist(), golem.hands().contents(), ItemMatchSettings.of(seal));
-    }
-
-    private static int limitOf(ISealEntity seal, FilterMatch match) {
-        return ItemMatchSettings.filterOf(seal).usesLimits() ? match.sizeLimit() : 0;
-    }
-
-    private static void putDown(ServerLevel level, IGolemAPI golem, BlockPos pos, Direction face, @Nullable ResourceHandler<ItemResource> container, ItemStack released) {
-        if (container == null) {
-            BlockPos spot = pos.relative(face);
-            ItemEntity item = new ItemEntity(level, spot.getX() + CELL_CENTER, spot.getY() + CELL_CENTER, spot.getZ() + CELL_CENTER, released);
-            Vec3 motion = item.getDeltaMovement();
-            item.setDeltaMovement(motion.x * TOSS_HORIZONTAL_SCALE, motion.y * TOSS_VERTICAL_SCALE, motion.z * TOSS_HORIZONTAL_SCALE);
-            level.addFreshEntity(item);
+        ItemStack given = golem.hands().release(load.stack().copyWithCount(amount));
+        if (given.isEmpty()) {
             return;
         }
-        ItemStack refused = InvHelper.insertStack(container, released, false);
+        int placed = container == null ? drop(level, seal, given) : insert(level, golem, container, given);
+        if (placed > 0) {
+            HandlingSound.play(golem, HandlingSound.LOW);
+            golem.addRankXp(STORE_XP);
+            golem.swingArm();
+        }
+    }
+
+    private static int insert(ServerLevel level, IGolemAPI golem, ResourceHandler<ItemResource> container, ItemStack given) {
+        int offered = given.getCount();
+        ItemStack refused = InvHelper.insertStack(container, given, false);
         if (!refused.isEmpty()) {
-            ItemStack overflow = golem.hands().hold(refused);
-            InvHelper.dropItemAtEntity(level, overflow, golem.asEntity());
+            LooseItems.giveOrDrop(level, golem, refused);
+        }
+        return offered - refused.getCount();
+    }
+
+    private static int drop(ServerLevel level, ISealEntity seal, ItemStack given) {
+        RandomSource random = level.getRandom();
+        Vec3 toss = new Vec3(random.triangle(0.0, TOSS_SPREAD), 0.0, random.triangle(0.0, TOSS_SPREAD));
+        LooseItems.spawn(level, LooseItems.inFrontOf(seal.pos().pos(), seal.pos().face()), given, toss);
+        return given.getCount();
+    }
+
+    private static @Nullable Load loadOf(ISealEntity seal, IGolemAPI golem) {
+        ISealFilter filter = ItemMatchSettings.filterOf(seal);
+        FilterMatch match = InvHelper.findFirstMatchFromFilterWithSize(filter.stacks(), filter.limits(), filter.isBlacklist(), golem.hands().contents(), ItemMatchSettings.of(seal));
+        if (match.stack().isEmpty()) {
+            return null;
+        }
+        return new Load(match.stack(), filter.usesLimits() ? match.sizeLimit() : 0);
+    }
+
+    private record Load(ItemStack stack, int limit) {
+        int present(Level level, ISealEntity seal, @Nullable ResourceHandler<ItemResource> container) {
+            InvFilter match = ItemMatchSettings.of(seal);
+            if (container != null) {
+                return InvHelper.countTotalItemsIn(container, stack, match);
+            }
+            return InvHelper.countStackInWorld(level, seal.pos().pos(), stack, LOOSE_RANGE, match);
         }
     }
 }

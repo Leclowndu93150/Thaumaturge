@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import com.leclowndu93150.thaumaturge.content.golem.seals.behavior.ProvideBehavior;
 import com.leclowndu93150.thaumaturge.registry.TTMenus;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -27,16 +28,16 @@ import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jspecify.annotations.Nullable;
 
 public final class MenuGolemLogistics extends AbstractContainerMenu {
-    public static final int BUTTON_PAGE_DOWN = 0;
-    public static final int BUTTON_PAGE_UP = 1;
-    public static final int BUTTON_REFRESH = 22;
-    public static final int BUTTON_SET_PAGE = 100;
     public static final int COLUMNS = 9;
     public static final int ROWS = 9;
     public static final int SLOT_ORIGIN_X = 19;
     public static final int SLOT_ORIGIN_Y = 19;
     public static final int SLOT_STRIDE = 19;
     public static final int SEARCH_MAX_LENGTH = 10;
+    public static final int BUTTON_PAGE_UP = 0;
+    public static final int BUTTON_PAGE_DOWN = 1;
+    public static final int BUTTON_REFRESH = 2;
+    public static final int BUTTON_SET_PAGE = 16;
 
     private static final int SLOT_TOTAL = COLUMNS * ROWS;
     private static final int PROVISION_RANGE = 32;
@@ -146,21 +147,32 @@ public final class MenuGolemLogistics extends AbstractContainerMenu {
         if (!(player.level() instanceof ServerLevel level)) {
             return;
         }
-        if (!collected || level.getGameTime() - collectedAt >= COLLECT_INTERVAL_TICKS) {
+        long now = level.getGameTime();
+        if (!collected || now - collectedAt >= COLLECT_INTERVAL_TICKS) {
             stock = collect(level);
             collected = true;
-            collectedAt = level.getGameTime();
+            collectedAt = now;
         }
-        String needle = search.toLowerCase(Locale.ROOT);
-        List<ItemStack> matching = new ArrayList<>();
+        visible = matching(stock, search);
+        int lastRow = Math.max(0, Math.ceilDiv(visible.size(), COLUMNS) - ROWS);
+        lastPageSlot.set(lastRow);
+        showPage(Math.clamp(start(), 0, lastRow));
+    }
+
+    private static List<ItemStack> matching(List<ItemStack> stock, String search) {
+        String wanted = search.toLowerCase(Locale.ROOT);
+        List<ItemStack> kept = new ArrayList<>();
         for (ItemStack entry : stock) {
-            if (needle.isEmpty() || entry.getHoverName().getString().toLowerCase(Locale.ROOT).contains(needle)) {
-                matching.add(entry);
+            if (wanted.isEmpty() || displayName(entry).toLowerCase(Locale.ROOT).contains(wanted)) {
+                kept.add(entry.copy());
             }
         }
-        visible = matching;
-        lastPageSlot.set(Math.max(0, visible.size() / COLUMNS - (ROWS - 1)));
-        showPage(Math.min(start(), end()));
+        kept.sort(Comparator.comparing(MenuGolemLogistics::displayName, String.CASE_INSENSITIVE_ORDER));
+        return kept;
+    }
+
+    private static String displayName(ItemStack stack) {
+        return stack.getHoverName().getString();
     }
 
     private void showPage(int page) {

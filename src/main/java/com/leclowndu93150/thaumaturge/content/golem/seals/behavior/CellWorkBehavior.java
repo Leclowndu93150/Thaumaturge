@@ -34,6 +34,12 @@ abstract class CellWorkBehavior implements ISealBehavior {
         claims.forget(task);
     }
 
+    protected boolean retire(Task task) {
+        release(task);
+        task.end();
+        return true;
+    }
+
     protected static void keepAlive(Task task) {
         if (task.life() < STEP_GRACE) {
             task.setLife(STEP_GRACE);

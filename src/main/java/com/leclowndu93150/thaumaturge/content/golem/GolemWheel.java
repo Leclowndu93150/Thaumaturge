@@ -3,15 +3,16 @@ package com.leclowndu93150.thaumaturge.content.golem;
 import net.minecraft.util.Mth;
 
 final class GolemWheel {
-    private static final float WHEEL_CIRCUMFERENCE = 1.571F;
-    private static final float FULL_TURN = 360.0F;
-    private static final float QUARTER_TURN = 90.0F;
+    private static final double WHEEL_DIAMETER = 0.5D;
+    private static final double DEGREES_PER_BLOCK = 360.0D / (Math.PI * WHEEL_DIAMETER);
 
     private GolemWheel() {}
 
-    static float spun(float angle, double deltaX, double deltaZ, float bodyYaw) {
-        float turns = (float) Mth.length(deltaX, deltaZ) / WHEEL_CIRCUMFERENCE;
-        float heading = (float) (Mth.atan2(deltaZ, deltaX) * Mth.RAD_TO_DEG) - QUARTER_TURN;
-        return Mth.positiveModulo(angle + turns * (FULL_TURN - (bodyYaw - heading)), FULL_TURN);
+    static float spun(float rotation, double movedX, double movedZ, float facingDegrees) {
+        float facing = facingDegrees * Mth.DEG_TO_RAD;
+        double forwardX = -Mth.sin(facing);
+        double forwardZ = Mth.cos(facing);
+        double rolled = movedX * forwardX + movedZ * forwardZ;
+        return Mth.wrapDegrees(rotation + (float) (rolled * DEGREES_PER_BLOCK));
     }
 }

@@ -816,7 +816,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     static final class GolemFlyingMoveControl extends MoveControl {
-        private static final double ARRIVAL_DAMPING = 0.5D;
+        private static final double ARRIVAL_DAMPING = 0.2D;
 
         private final EntityThaumaturgeGolem golem;
 

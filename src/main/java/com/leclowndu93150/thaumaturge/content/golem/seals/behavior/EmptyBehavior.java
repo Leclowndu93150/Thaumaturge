@@ -5,79 +5,86 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemAPI;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealBehavior;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.ISealFilter;
+import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealSetting;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper.InvFilter;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-import org.jspecify.annotations.Nullable;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 public final class EmptyBehavior implements ISealBehavior {
     public static final SealSetting CYCLE = new SealSetting("cycle_whitelist", "gui.thaumaturge.seal.setting.cycle", false);
     public static final SealSetting LEAVE_ONE = new SealSetting("leave_one", "gui.thaumaturge.seal.setting.leave", false);
 
-    private static final int STAGGER = 30;
+    private static final int STAGGER = 43;
     private static final int SCAN_PERIOD = 20;
-    private static final int CLEANUP_PERIOD = 100;
+    private static final int PURGE_PERIOD = 100;
     private static final int TASK_LIFE = 5;
-    private static final int MINIMUM_REMAINING = 1;
 
     private final SealClock clock = new SealClock(STAGGER);
     private final TaskLedger<ItemStack> wanted = new TaskLedger<>();
-    private int turn;
+    private int cycleCursor;
 
     @Override
     public void tick(ServerLevel level, ISealEntity seal) {
-        boolean cleanupDue = clock.at(CLEANUP_PERIOD);
-        boolean scanDue = clock.at(SCAN_PERIOD);
-        clock.advance();
-        if (cleanupDue) {
+        int now = clock.advance();
+        if (now % PURGE_PERIOD == 0) {
             wanted.dropFinished(level);
         }
-        if (scanDue) {
-            requestNext(level, seal);
-        }
-    }
-
-    private void requestNext(ServerLevel level, ISealEntity seal) {
-        ResourceHandler<ItemResource> source = containerOf(level, seal);
-        if (source == null) {
+        if (now % SCAN_PERIOD != 0) {
             return;
         }
-        ItemStack target = firstWanted(seal, source);
-        if (target.isEmpty()) {
+        SealPos at = seal.pos();
+        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, at.pos(), at.face());
+        if (container == null) {
             return;
         }
-        post(level, seal, target);
-    }
-
-    private ItemStack firstWanted(ISealEntity seal, ResourceHandler<ItemResource> source) {
         ISealFilter filter = ItemMatchSettings.filterOf(seal);
-        List<ItemStack> pool = candidates(seal, filter);
-        return InvHelper.findFirstMatchFromFilter(pool, filter.isBlacklist(), source, ItemMatchSettings.of(seal), seal.setting(LEAVE_ONE));
+        ItemStack found = InvHelper.findFirstMatchFromFilter(scanGhosts(seal, filter), filter.isBlacklist(), container, ItemMatchSettings.of(seal), seal.setting(LEAVE_ONE));
+        if (found.isEmpty()) {
+            return;
+        }
+        Task task = Task.atBlock(at, at.pos());
+        task.setPriority(seal.priority());
+        task.setLife(TASK_LIFE);
+        GolemHelper.addGolemTask(level, task);
+        wanted.record(task, found.copy());
     }
 
-    private void post(ServerLevel level, ISealEntity seal, ItemStack target) {
-        Task errand = newErrand(seal);
-        GolemHelper.addGolemTask(level, errand);
-        wanted.record(errand, target);
+    private List<ItemStack> scanGhosts(ISealEntity seal, ISealFilter filter) {
+        if (!seal.setting(CYCLE) || filter.isBlacklist()) {
+            return filter.stacks();
+        }
+        List<ItemStack> filled = filter.stacks().stream().filter(ghost -> !ghost.isEmpty()).toList();
+        if (filled.isEmpty()) {
+            return filled;
+        }
+        return List.of(filled.get(Math.floorMod(cycleCursor, filled.size())));
     }
 
-    private static Task newErrand(ISealEntity seal) {
-        Task errand = Task.atBlock(seal.pos(), seal.pos().pos());
-        configure(errand, seal.priority());
-        return errand;
+    @Override
+    public boolean canPerform(ISealEntity seal, IGolemAPI golem, Task task) {
+        ItemStack remembered = wanted.get(task);
+        return remembered != null && golem.hands().room(remembered) > 0;
     }
 
-    private static void configure(Task errand, byte priority) {
-        errand.setPriority(priority);
-        errand.setLife(TASK_LIFE);
+    @Override
+    public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
+        ItemStack remembered = wanted.get(task);
+        if (remembered != null) {
+            takeOut(level, seal, golem, remembered);
+        }
+        wanted.forget(task);
+        cycleCursor++;
+        task.end();
+        return true;
     }
 
     @Override
@@ -85,86 +92,49 @@ public final class EmptyBehavior implements ISealBehavior {
         wanted.forget(task);
     }
 
-    @Override
-    public boolean canPerform(ISealEntity seal, IGolemAPI golem, Task task) {
-        return Optional.ofNullable(wanted.get(task)).filter(EmptyBehavior::isUsable).map(stack -> golem.hands().canTake(stack, true)).orElse(false);
-    }
-
-    @Override
-    public boolean completeTask(ServerLevel level, ISealEntity seal, IGolemAPI golem, Task task) {
-        turn++;
-        ItemStack stack = wanted.get(task);
-        wanted.forget(task);
-        if (isUsable(stack)) {
-            fetch(level, seal, golem, stack);
-        }
-        return true;
-    }
-
-    private static boolean isUsable(@Nullable ItemStack stack) {
-        if (stack == null) {
-            return false;
-        }
-        return !stack.isEmpty();
-    }
-
-    private void fetch(ServerLevel level, ISealEntity seal, IGolemAPI golem, ItemStack stack) {
-        ResourceHandler<ItemResource> source = containerOf(level, seal);
-        if (source == null) {
+    private static void takeOut(ServerLevel level, ISealEntity seal, IGolemAPI golem, ItemStack remembered) {
+        SealPos at = seal.pos();
+        ResourceHandler<ItemResource> container = InvHelper.getItemHandlerAt(level, at.pos(), at.face());
+        if (container == null) {
             return;
         }
-        ItemStack removed = withdraw(seal, golem, source, stack);
-        if (removed != null) {
-            hand(level, seal, golem, removed);
+        InvFilter match = ItemMatchSettings.of(seal);
+        int amount = Math.min(remembered.getCount(), golem.hands().room(remembered));
+        if (seal.setting(LEAVE_ONE)) {
+            amount = Math.min(amount, InvHelper.countTotalItemsIn(container, remembered, match) - 1);
+        }
+        if (amount <= 0) {
+            return;
+        }
+        List<ItemStack> taken = extract(container, remembered, match, amount);
+        if (taken.isEmpty()) {
+            return;
+        }
+        Vec3 front = LooseItems.inFrontOf(at.pos(), at.face());
+        for (ItemStack stack : taken) {
+            LooseItems.spawn(level, front, golem.hands().hold(stack), Vec3.ZERO);
         }
         HandlingSound.play(golem, HandlingSound.HIGH);
         golem.swingArm();
     }
 
-    private static void hand(ServerLevel level, ISealEntity seal, IGolemAPI golem, ItemStack removed) {
-        ItemStack overflow = golem.hands().hold(removed);
-        if (overflow.isEmpty()) {
-            return;
-        }
-        InvHelper.ejectStackAt(level, seal.pos().pos(), seal.pos().face(), overflow);
-    }
-
-    private static @Nullable ItemStack withdraw(ISealEntity seal, IGolemAPI golem, ResourceHandler<ItemResource> source, ItemStack stack) {
-        InvFilter match = ItemMatchSettings.of(seal);
-        int capacity = Math.min(golem.hands().room(stack), stack.getCount());
-        int amount = seal.setting(LEAVE_ONE) ? Math.min(capacity, InvHelper.countTotalItemsIn(source, stack, match) - MINIMUM_REMAINING) : capacity;
-        if (amount <= 0) {
-            return null;
-        }
-        return InvHelper.removeStackFrom(source, stack.copyWithCount(amount), match, false);
-    }
-
-    private List<ItemStack> candidates(ISealEntity seal, ISealFilter filter) {
-        List<ItemStack> all = filter.stacks();
-        boolean cycling = seal.setting(CYCLE) && !filter.isBlacklist();
-        if (!cycling) {
-            return all;
-        }
-        int live = 0;
-        for (ItemStack ghost : all) {
-            live += ghost.isEmpty() ? 0 : 1;
-        }
-        if (live == 0) {
-            return all;
-        }
-        int skip = Math.floorMod(turn, live);
-        for (ItemStack ghost : all) {
-            if (ghost.isEmpty()) {
-                continue;
+    private static List<ItemStack> extract(ResourceHandler<ItemResource> container, ItemStack remembered, InvFilter match, int amount) {
+        List<ItemStack> taken = new ArrayList<>();
+        int left = amount;
+        try (Transaction transaction = Transaction.openRoot()) {
+            for (int slot = 0; slot < container.size() && left > 0; slot++) {
+                ItemResource resource = container.getResource(slot);
+                if (resource.isEmpty() || !InvHelper.areItemStacksEqual(remembered, resource.toStack(), match)) {
+                    continue;
+                }
+                int pulled = container.extract(slot, resource, left, transaction);
+                left -= pulled;
+                for (int rest = pulled; rest > 0; rest -= resource.getMaxStackSize()) {
+                    taken.add(resource.toStack(Math.min(rest, resource.getMaxStackSize())));
+                }
             }
-            if (skip-- == 0) {
-                return Collections.singletonList(ghost);
-            }
+            transaction.commit();
         }
-        return all;
-    }
-
-    private static @Nullable ResourceHandler<ItemResource> containerOf(ServerLevel level, ISealEntity seal) {
-        return InvHelper.getItemHandlerAt(level, seal.pos().pos(), seal.pos().face());
+        return taken;
     }
 }
