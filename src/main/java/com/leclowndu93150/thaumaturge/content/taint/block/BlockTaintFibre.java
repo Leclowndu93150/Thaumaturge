@@ -9,18 +9,16 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.effect.FluxTaintExposure;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -32,64 +30,69 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
 
 public final class BlockTaintFibre extends Block implements ITaintBlock {
     public static final MapCodec<BlockTaintFibre> CODEC = simpleCodec(BlockTaintFibre::new);
-    private static final String GROWTH_PREFIX = "growth";
-    public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
-    public static final BooleanProperty EAST = BlockStateProperties.EAST;
-    public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
-    public static final BooleanProperty WEST = BlockStateProperties.WEST;
-    public static final BooleanProperty UP = BlockStateProperties.UP;
-    public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
-    public static final BooleanProperty GROWTH1 = growthFlag(1);
-    public static final BooleanProperty GROWTH2 = growthFlag(2);
-    public static final BooleanProperty GROWTH3 = growthFlag(3);
-    public static final BooleanProperty GROWTH4 = growthFlag(4);
 
-    private static final BooleanProperty[] ALL_FLAGS = Stream.concat(Stream.of(NORTH, EAST, SOUTH, WEST, UP, DOWN), Stream.of(GROWTH1, GROWTH2, GROWTH3, GROWTH4)).toArray(BooleanProperty[]::new);
-    private static final Direction[] DIRECTIONS = Direction.values();
+    public static final BooleanProperty NORTH = BooleanProperty.create("north");
+    public static final BooleanProperty EAST = BooleanProperty.create("east");
+    public static final BooleanProperty SOUTH = BooleanProperty.create("south");
+    public static final BooleanProperty WEST = BooleanProperty.create("west");
+    public static final BooleanProperty UP = BooleanProperty.create("up");
+    public static final BooleanProperty DOWN = BooleanProperty.create("down");
+    public static final BooleanProperty GROWTH1 = BooleanProperty.create("growth1");
+    public static final BooleanProperty GROWTH2 = BooleanProperty.create("growth2");
+    public static final BooleanProperty GROWTH3 = BooleanProperty.create("growth3");
+    public static final BooleanProperty GROWTH4 = BooleanProperty.create("growth4");
 
-    private static final int GROWTH_ROLL_RANGE = 50;
-    private static final int GROWTH1_ROLL_END = 4;
-    private static final int GROWTH2_ROLL_END = 6;
-    private static final int GROWTH3_ROLL = 6;
-    private static final int GROWTH4_MIN_ROLL = 48;
-    private static final int STEP_INFECTION_ONE_IN = 750;
-    private static final int GROWTH3_POLLUTION_BASE = 3;
-    private static final int GROWTH3_POLLUTION_RANGE = 3;
-    private static final float STALK_PRESSURE = 0.02F;
+    private static final BooleanProperty TUFT = GROWTH1;
+    private static final BooleanProperty STALK = GROWTH2;
+    private static final BooleanProperty BULB = GROWTH3;
+    private static final BooleanProperty HANGING = GROWTH4;
+    private static final BooleanProperty[] GROWTHS = {TUFT, STALK, BULB, HANGING};
 
-    private static final double SLAB_THICKNESS = 0.05;
-    private static final double[][] GROWTH3_BOXES = {{6.0, 5.0, 7.0, 8.0, 6.0, 9.0}, {5.0, 4.0, 5.0, 11.0, 5.0, 11.0}, {5.0, 1.0, 11.0, 11.0, 4.0, 12.0}, {5.0, 1.0, 4.0, 11.0, 4.0, 5.0},
-            {5.0, 0.0, 5.0, 11.0, 1.0, 11.0}, {4.0, 1.0, 5.0, 12.0, 4.0, 11.0}};
-    private static final VoxelShape GROWTH3_SHAPE = unionOfBoxes(GROWTH3_BOXES);
-    private static final Map<Direction, VoxelShape> SLABS = buildSlabs();
-    private static final Map<BooleanProperty, VoxelShape> GROWTH_SHAPES = buildGrowthShapes();
+    private static final int GROWTH_ROLL_RANGE = 100;
+    private static final int TUFT_PERCENT = 8;
+    private static final int STALK_PERCENT = 4;
+    private static final int BULB_PERCENT = 2;
+    private static final int HANGING_PERCENT = 4;
+    private static final int TUFT_UNDER = TUFT_PERCENT;
+    private static final int STALK_UNDER = TUFT_UNDER + STALK_PERCENT;
+    private static final int BULB_UNDER = STALK_UNDER + BULB_PERCENT;
+    private static final int HANGING_UNDER = BULB_UNDER + HANGING_PERCENT;
+
+    private static final double SHEET = 1.0;
+    private static final double FULL = 16.0;
+    private static final VoxelShape TUFT_SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 7.0, 14.0);
+    private static final VoxelShape STALK_SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 15.0, 13.0);
+    private static final VoxelShape BULB_SHAPE = Shapes.or(Block.box(4.0, 1.0, 5.0, 12.0, 4.0, 11.0), Block.box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0), Block.box(5.0, 1.0, 4.0, 11.0, 4.0, 12.0),
+            Block.box(6.0, 5.0, 7.0, 8.0, 6.0, 9.0));
+    private static final VoxelShape HANGING_SHAPE = Block.box(2.0, 3.0, 2.0, 14.0, 16.0, 14.0);
+    private static final Map<Direction, VoxelShape> SHEET_SHAPES = sheetShapes();
+
+    private static final int CONTACT_ONE_IN = 750;
+    private static final float RIPEN_PRESSURE = 0.02F;
+    private static final int BULB_MIN_FLUX = 3;
+    private static final int BULB_FLUX_SPREAD = 3;
 
     private final Function<BlockState, VoxelShape> shapes;
 
     public BlockTaintFibre(Properties properties) {
         super(properties);
-        BlockState initial = stateDefinition.any();
-        for (BooleanProperty flag : ALL_FLAGS) {
-            initial = initial.setValue(flag, false);
+        BlockState base = stateDefinition.any();
+        for (Direction direction : Direction.values()) {
+            base = base.setValue(propertyFor(direction), false);
         }
-        registerDefaultState(initial);
-        shapes = getShapeForEachState(BlockTaintFibre::buildShape);
-    }
-
-    public static BooleanProperty propertyFor(Direction direction) {
-        return switch (direction.getAxis()) {
-            case X -> direction == Direction.EAST ? EAST : WEST;
-            case Z -> direction == Direction.SOUTH ? SOUTH : NORTH;
-            case Y -> direction == Direction.UP ? UP : DOWN;
-        };
+        for (BooleanProperty growth : GROWTHS) {
+            base = base.setValue(growth, false);
+        }
+        registerDefaultState(base);
+        this.shapes = getShapeForEachState(BlockTaintFibre::outline);
     }
 
     @Override
@@ -99,7 +102,107 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ALL_FLAGS);
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, GROWTH1, GROWTH2, GROWTH3, GROWTH4);
+    }
+
+    public static BooleanProperty propertyFor(Direction direction) {
+        return switch (direction) {
+            case NORTH -> NORTH;
+            case EAST -> EAST;
+            case SOUTH -> SOUTH;
+            case WEST -> WEST;
+            case UP -> UP;
+            case DOWN -> DOWN;
+        };
+    }
+
+    public static BlockState stateForWorld(LevelReader level, BlockPos pos) {
+        BlockState state = TTBlocks.TAINT_FIBRE.get().defaultBlockState();
+        for (Direction direction : Direction.values()) {
+            state = state.setValue(propertyFor(direction), TaintHelper.facesSturdily(level, pos, direction));
+        }
+        BooleanProperty growth = growthAt(pos, state.getValue(DOWN), state.getValue(UP));
+        return growth == null ? state : state.setValue(growth, true);
+    }
+
+    public static boolean hasSolidAttachment(LevelReader level, BlockPos pos) {
+        return TaintHelper.hasSturdyNeighbour(level, pos);
+    }
+
+    public static boolean isOnlyAdjacentToTaint(LevelAccessor level, BlockPos pos) {
+        return TaintHelper.isRootless(level, pos);
+    }
+
+    public static boolean isHemmedByTaint(LevelAccessor level, BlockPos pos) {
+        int open = 0;
+        for (Direction direction : Direction.values()) {
+            if (!TaintHelper.isTaintBlock(level.getBlockState(pos.relative(direction))) && !TaintHelper.facesSturdily(level, pos, direction)) {
+                open++;
+            }
+        }
+        return TaintHelper.countAdjacentTaint(level, pos) > open;
+    }
+
+    public static boolean hasGrowth(BlockState state) {
+        for (BooleanProperty growth : GROWTHS) {
+            if (state.getValue(growth)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static @Nullable BooleanProperty growthAt(BlockPos pos, boolean floor, boolean ceiling) {
+        int roll = Math.floorMod(Mth.getSeed(pos), GROWTH_ROLL_RANGE);
+        if (roll < BULB_UNDER) {
+            if (!floor) {
+                return null;
+            }
+            return roll < TUFT_UNDER ? TUFT : roll < STALK_UNDER ? STALK : BULB;
+        }
+        return roll < HANGING_UNDER && ceiling ? HANGING : null;
+    }
+
+    private static boolean hasSheet(BlockState state) {
+        for (Direction direction : Direction.values()) {
+            if (state.getValue(propertyFor(direction))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Map<Direction, VoxelShape> sheetShapes() {
+        Map<Direction, VoxelShape> map = new EnumMap<>(Direction.class);
+        map.put(Direction.DOWN, Block.box(0.0, 0.0, 0.0, FULL, SHEET, FULL));
+        map.put(Direction.UP, Block.box(0.0, FULL - SHEET, 0.0, FULL, FULL, FULL));
+        map.put(Direction.NORTH, Block.box(0.0, 0.0, 0.0, FULL, FULL, SHEET));
+        map.put(Direction.SOUTH, Block.box(0.0, 0.0, FULL - SHEET, FULL, FULL, FULL));
+        map.put(Direction.WEST, Block.box(0.0, 0.0, 0.0, SHEET, FULL, FULL));
+        map.put(Direction.EAST, Block.box(FULL - SHEET, 0.0, 0.0, FULL, FULL, FULL));
+        return map;
+    }
+
+    private static VoxelShape outline(BlockState state) {
+        VoxelShape shape = Shapes.empty();
+        for (Direction direction : Direction.values()) {
+            if (state.getValue(propertyFor(direction))) {
+                shape = Shapes.or(shape, SHEET_SHAPES.get(direction));
+            }
+        }
+        if (state.getValue(TUFT)) {
+            shape = Shapes.or(shape, TUFT_SHAPE);
+        }
+        if (state.getValue(STALK)) {
+            shape = Shapes.or(shape, STALK_SHAPE);
+        }
+        if (state.getValue(BULB)) {
+            shape = Shapes.or(shape, BULB_SHAPE);
+        }
+        if (state.getValue(HANGING)) {
+            shape = Shapes.or(shape, HANGING_SHAPE);
+        }
+        return shape;
     }
 
     @Override
@@ -108,39 +211,19 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
-    }
-
-    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return stateForWorld(context.getLevel(), context.getClickedPos());
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
-        return hasSolidAttachment(level, pos) ? stateForWorld(level, pos) : Blocks.AIR.defaultBlockState();
-    }
-
-    public static BlockState stateForWorld(LevelReader level, BlockPos pos) {
-        BlockState state = TTBlocks.TAINT_FIBRE.get().defaultBlockState();
-        for (Direction direction : DIRECTIONS) {
-            state = state.setValue(propertyFor(direction), isAttachable(level, pos, direction));
-        }
-        int roll = RandomSource.create(Mth.getSeed(pos)).nextInt(GROWTH_ROLL_RANGE);
-        boolean grounded = state.getValue(DOWN);
-        boolean roofed = state.getValue(UP);
-        return state.setValue(GROWTH1, grounded && roll < GROWTH1_ROLL_END).setValue(GROWTH2, grounded && roll >= GROWTH1_ROLL_END && roll < GROWTH2_ROLL_END)
-                .setValue(GROWTH3, grounded && roll == GROWTH3_ROLL).setValue(GROWTH4, roofed && roll >= GROWTH4_MIN_ROLL);
-    }
-
-    public static boolean hasSolidAttachment(LevelReader level, BlockPos pos) {
-        return Arrays.stream(DIRECTIONS).anyMatch(direction -> isAttachable(level, pos, direction));
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return hasSolidAttachment(level, pos);
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return hasSolidAttachment(level, pos);
+    protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource random) {
+        BlockState reshaped = stateForWorld(level, pos);
+        return hasSheet(reshaped) ? reshaped : Blocks.AIR.defaultBlockState();
     }
 
     @Override
@@ -151,127 +234,53 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         TaintHelper.trySpreadTaintedBiome(level, pos, random);
-        if (shouldWither(state, level, pos)) {
+        if (withers(state, level, pos)) {
             decay(level, pos, state);
             return;
         }
-        boolean becameStalk = state.getValue(GROWTH3) && tryBecomeStalk(level, pos);
-        if (!becameStalk) {
-            TaintHelper.attemptFibreGrowth(level, pos, false);
+        if (state.getValue(BULB) && tryRipen(level, pos)) {
+            return;
         }
+        TaintHelper.attemptFibreGrowth(level, pos, false);
     }
 
-    private static boolean hasAnyGrowth(BlockState state) {
-        for (BooleanProperty growth : GROWTH_SHAPES.keySet()) {
-            if (state.getValue(growth)) {
-                return true;
-            }
+    private static boolean withers(BlockState state, ServerLevel level, BlockPos pos) {
+        if (!hasGrowth(state) && TaintHelper.isRootless(level, pos)) {
+            return true;
         }
-        return false;
+        return !TaintHelper.isEcologicallySustained(level, pos);
     }
 
-    private static boolean shouldWither(BlockState state, ServerLevel level, BlockPos pos) {
-        return (!hasAnyGrowth(state) && isOnlyAdjacentToTaint(level, pos)) || !TaintHelper.isEcologicallySustained(level, pos);
+    private static boolean tryRipen(ServerLevel level, BlockPos pos) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || TaintBlooms.isProtected(level, pos) || !TaintEcology.isTainted(level, pos)) {
+            return false;
+        }
+        BlockState stalk = TTBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
+        if (!stalk.canSurvive(level, pos)) {
+            return false;
+        }
+        level.setBlock(pos, stalk, Block.UPDATE_ALL);
+        TaintEcology.addPressure(level, pos, RIPEN_PRESSURE);
+        return true;
     }
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide() && state.getValue(GROWTH3)) {
-            AuraHelper.polluteAura(level, pos, GROWTH3_POLLUTION_BASE + level.getRandom().nextInt(GROWTH3_POLLUTION_RANGE), true);
+        if (!level.isClientSide() && state.getValue(BULB)) {
+            AuraHelper.polluteAura(level, pos, BULB_MIN_FLUX + level.getRandom().nextInt(BULB_FLUX_SPREAD), true);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    public void decay(Level level, BlockPos pos, BlockState state) {
-        level.removeBlock(pos, false);
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (pos.equals(entity.blockPosition())) {
+            FluxTaintExposure.onStep(level, entity, CONTACT_ONE_IN);
+        }
     }
 
     @Override
-    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        FluxTaintExposure.onStep(level, entity, STEP_INFECTION_ONE_IN);
-    }
-
-    public static boolean isOnlyAdjacentToTaint(LevelAccessor level, BlockPos pos) {
-        return Arrays.stream(DIRECTIONS).noneMatch(direction -> isSolidNonTaintNeighbour(level, pos, direction));
-    }
-
-    private static boolean isSolidNonTaintNeighbour(LevelAccessor level, BlockPos pos, Direction direction) {
-        BlockPos neighbour = pos.relative(direction);
-        BlockState neighbourState = level.getBlockState(neighbour);
-        boolean passable = neighbourState.isAir() || neighbourState.getBlock() instanceof ITaintBlock;
-        return !passable && neighbourState.isFaceSturdy(level, neighbour, direction.getOpposite());
-    }
-
-    public static boolean isHemmedByTaint(LevelAccessor level, BlockPos pos) {
-        return Arrays.stream(DIRECTIONS).allMatch(direction -> level.getBlockState(pos.relative(direction)).getBlock() instanceof ITaintBlock);
-    }
-
-    private static boolean isAttachable(LevelReader level, BlockPos pos, Direction direction) {
-        BlockPos neighbour = pos.relative(direction);
-        return level.getBlockState(neighbour).isFaceSturdy(level, neighbour, direction.getOpposite());
-    }
-
-    private static boolean tryBecomeStalk(ServerLevel level, BlockPos pos) {
-        BlockState stalk = TTBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
-        if (ThaumaturgeCommonConfig.WUSS_MODE.get() || TaintBlooms.isProtected(level, pos) || !TaintEcology.isTainted(level, pos) || !stalk.canSurvive(level, pos)) {
-            return false;
-        }
-        level.setBlock(pos, stalk, Block.UPDATE_ALL);
-        TaintEcology.addPressure(level, pos, STALK_PRESSURE);
-        return true;
-    }
-
-    private static VoxelShape buildShape(BlockState state) {
-        VoxelShape shape = Shapes.empty();
-        for (Direction direction : DIRECTIONS) {
-            if (state.getValue(propertyFor(direction))) {
-                shape = Shapes.or(shape, SLABS.get(direction));
-            }
-        }
-        for (Map.Entry<BooleanProperty, VoxelShape> growth : GROWTH_SHAPES.entrySet()) {
-            if (state.getValue(growth.getKey())) {
-                shape = Shapes.or(shape, growth.getValue());
-            }
-        }
-        return shape;
-    }
-
-    private static Map<Direction, VoxelShape> buildSlabs() {
-        Map<Direction, VoxelShape> slabs = new EnumMap<>(Direction.class);
-        for (Direction direction : DIRECTIONS) {
-            boolean positive = direction.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-            double from = positive ? 1.0 - SLAB_THICKNESS : 0.0;
-            double to = positive ? 1.0 : SLAB_THICKNESS;
-            Direction.Axis axis = direction.getAxis();
-            slabs.put(direction, Shapes.box(axis == Direction.Axis.X ? from : 0.0, axis == Direction.Axis.Y ? from : 0.0, axis == Direction.Axis.Z ? from : 0.0, axis == Direction.Axis.X ? to : 1.0,
-                    axis == Direction.Axis.Y ? to : 1.0, axis == Direction.Axis.Z ? to : 1.0));
-        }
-        return slabs;
-    }
-
-    private static Map<BooleanProperty, VoxelShape> buildGrowthShapes() {
-        Map<BooleanProperty, VoxelShape> shapes = new LinkedHashMap<>();
-        shapes.put(GROWTH1, growthColumn(0.1, 0.9, 0.0, 0.4));
-        shapes.put(GROWTH2, growthColumn(0.2, 0.8, 0.0, 1.0));
-        shapes.put(GROWTH3, GROWTH3_SHAPE);
-        shapes.put(GROWTH4, growthColumn(0.1, 0.9, 0.3, 1.0));
-        return shapes;
-    }
-
-    private static VoxelShape growthColumn(double horizontalMin, double horizontalMax, double bottom, double top) {
-        return Shapes.box(horizontalMin, bottom, horizontalMin, horizontalMax, top, horizontalMax);
-    }
-
-    private static BooleanProperty growthFlag(int index) {
-        return BooleanProperty.create(GROWTH_PREFIX + index);
-    }
-
-    private static VoxelShape unionOfBoxes(double[][] boxes) {
-        VoxelShape union = Shapes.empty();
-        for (double[] b : boxes) {
-            union = Shapes.or(union, Block.box(b[0], b[1], b[2], b[3], b[4], b[5]));
-        }
-        return union;
+    public void decay(Level level, BlockPos pos, BlockState state) {
+        level.removeBlock(pos, false);
     }
 }

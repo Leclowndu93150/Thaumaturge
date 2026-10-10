@@ -175,7 +175,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
             return 0;
         }
         if (!target.getFluidState().isEmpty()) {
-            return isOrdinaryLiquid(target) ? PhysicalFlux.MAX_QUANTA : 0;
+            return 0;
         }
         return target.canBeReplaced() ? PhysicalFlux.MAX_QUANTA : 0;
     }
@@ -257,24 +257,29 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier applier, boolean intersects) {
-        if (!(level instanceof ServerLevel server) || !(entity instanceof LivingEntity living) || isShielded(living)) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+        if (!(level instanceof ServerLevel server) || !(entity instanceof LivingEntity living) || !isContactCell(level, pos, living) || isShielded(living)) {
             return;
         }
-        RandomSource random = living.getRandom();
+        RandomSource random = server.getRandom();
         if (random.nextInt(CONTACT_ONE_IN) != 0) {
             return;
         }
         int amount = fluxAmount(state);
         living.addEffect(random.nextBoolean() ? visExhaust(amount) : nausea(amount));
-        server.setBlock(pos, amount > 1 ? gasBlockState(amount - 1) : Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
-        if (amount > 1) {
-            scheduleFluxTick(server, pos);
+        PhysicalFlux.reduce(server, pos, 1);
+    }
+
+    private static boolean isContactCell(Level level, BlockPos pos, LivingEntity living) {
+        BlockPos feet = living.blockPosition();
+        if (pos.equals(feet)) {
+            return true;
         }
+        return !level.getBlockState(feet).is(TTBlocks.FLUX_GAS) && pos.equals(BlockPos.containing(living.getEyePosition()));
     }
 
     private static boolean isShielded(LivingEntity living) {
-        return MobTraits.isTainted(living) || living.getType().builtInRegistryHolder().is(EntityTypeTags.UNDEAD) || FluxImmunityHelper.isImmune(living) || living.hasEffect(TTMobEffects.VIS_EXHAUST)
+        return MobTraits.isTainted(living) || living.is(EntityTypeTags.UNDEAD) || FluxImmunityHelper.isImmune(living) || living.hasEffect(TTMobEffects.VIS_EXHAUST)
                 || living.hasEffect(MobEffects.NAUSEA);
     }
 

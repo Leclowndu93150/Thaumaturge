@@ -25,18 +25,14 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     private static final float AURA_FLOOR_PER_QUANTUM = 0.5F;
     private static final float TAINT_WEIGHT_PER_QUANTUM = 1.0F;
     private static final int OUTBREAK_COST = 0;
-    private static final int FUME_ROLL_RANGE = 44;
-    private static final double FUME_HEIGHT_PER_STEP = 0.125;
-    private static final float FUME_RED = 1.0F;
-    private static final float FUME_GREEN = 0.0F;
-    private static final float FUME_BLUE = 0.5F;
-    private static final float FUME_COLOR_ALPHA = 1.0F;
-    private static final float FUME_ALPHA = 0.25F;
-    private static final float FUME_MIN_SCALE = 0.2F;
-    private static final float FUME_SCALE_SPREAD = 0.3F;
-    private static final int FUME_MIN_AGE = 2;
-    private static final int FUME_AGE_SPREAD = 3;
-    private static final float FUME_BUOYANCY = -0.01F;
+    private static final int BUBBLE_ROLL_RANGE = 48;
+    private static final int BUBBLE_COLOR = ARGB.color(0xD8, 0x3C, 0xE6);
+    private static final float BUBBLE_ALPHA = 0.45F;
+    private static final float BUBBLE_MIN_SCALE = 0.25F;
+    private static final float BUBBLE_SCALE_SPREAD = 0.3F;
+    private static final int BUBBLE_MIN_AGE = 18;
+    private static final int BUBBLE_AGE_SPREAD = 14;
+    private static final float BUBBLE_BUOYANCY = -0.008F;
 
     public BlockFluxGoo(FlowingFluid fluid, BlockBehaviour.Properties properties) {
         super(fluid, properties);
@@ -50,19 +46,6 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
     @Override
     protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
         return fluxAmount(state) <= REPLACEABLE_AMOUNT;
-    }
-
-    @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        int steps = fluxAmount(state) - 1;
-        if (random.nextInt(FUME_ROLL_RANGE) > steps) {
-            return;
-        }
-        int color = ARGB.colorFromFloat(FUME_COLOR_ALPHA, FUME_RED, FUME_GREEN, FUME_BLUE);
-        float scale = FUME_MIN_SCALE + random.nextFloat() * FUME_SCALE_SPREAD;
-        int age = FUME_MIN_AGE + random.nextInt(FUME_AGE_SPREAD);
-        level.addParticle(new BubbleParticleOptions(color, FUME_ALPHA, scale, age, FUME_BUOYANCY, false), pos.getX() + random.nextDouble(), pos.getY() + FUME_HEIGHT_PER_STEP * steps,
-                pos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
     }
 
     @Override
@@ -104,6 +87,19 @@ public final class BlockFluxGoo extends LiquidBlock implements PhysicalFluxBlock
         if (level instanceof ServerLevel serverLevel) {
             PhysicalFluxAuraFloor.observe(serverLevel, pos);
         }
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        FluidState fluid = state.getFluidState();
+        if (fluid.isEmpty() || random.nextInt(BUBBLE_ROLL_RANGE) >= fluxAmount(state)) {
+            return;
+        }
+        float scale = BUBBLE_MIN_SCALE + random.nextFloat() * BUBBLE_SCALE_SPREAD;
+        int age = BUBBLE_MIN_AGE + random.nextInt(BUBBLE_AGE_SPREAD);
+        BubbleParticleOptions bubble = new BubbleParticleOptions(BUBBLE_COLOR, BUBBLE_ALPHA, scale, age, BUBBLE_BUOYANCY, false);
+        level.addParticle(bubble, pos.getX() + random.nextDouble(), pos.getY() + fluid.getOwnHeight(), pos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0);
     }
 
     @Override

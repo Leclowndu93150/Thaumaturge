@@ -16,7 +16,7 @@ public final class FluxTaintExposure {
     private FluxTaintExposure() {}
 
     public static boolean isImmune(LivingEntity living) {
-        return MobTraits.has(living, MobTraits.TAINTED) || living.is(EntityTypeTags.UNDEAD);
+        return MobTraits.isTainted(living) || living.is(EntityTypeTags.UNDEAD);
     }
 
     public static void expose(LivingEntity living, int duration, boolean ambient, boolean particles) {
