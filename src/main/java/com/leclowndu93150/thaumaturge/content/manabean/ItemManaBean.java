@@ -31,8 +31,8 @@ import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.Nullable;
 
 public final class ItemManaBean extends Item {
-    private static final int INSTANT_EFFECT_AMPLIFIER = 2;
-    private static final double INSTANT_EFFECT_SCALE = 3.0;
+    private static final int INSTANT_EFFECT_AMPLIFIER = 0;
+    private static final double INSTANT_EFFECT_SCALE = 1.0;
     private static final int EFFECT_MIN_DURATION_TICKS = 160;
     private static final int EFFECT_DURATION_SPREAD_TICKS = 80;
     private static final int EFFECT_AMPLIFIER = 0;

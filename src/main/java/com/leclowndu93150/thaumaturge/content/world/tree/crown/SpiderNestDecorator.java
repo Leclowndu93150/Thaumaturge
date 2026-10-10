@@ -49,36 +49,36 @@ public final class SpiderNestDecorator extends TreeDecorator {
 
     @Override
     public void place(Context context) {
+        ObjectArrayList<BlockPos> logs = context.logs();
         RandomSource random = context.random();
-        if (context.logs().isEmpty() || random.nextFloat() >= probability) {
+        if (logs.isEmpty() || random.nextFloat() >= probability) {
             return;
         }
-        BlockPos foot = findFoot(context.logs());
-        BlockPos spawnerPos = foot.below();
+        BlockPos foot = findFoot(logs);
+        BlockPos base = context.checkBlock(foot, state -> state.is(log)) ? foot : foot.above();
+        BlockPos spawnerPos = base.below();
         context.setBlock(spawnerPos, Blocks.SPAWNER.defaultBlockState());
         if (context.level().getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawner) {
             spawner.setEntityId(EntityType.CAVE_SPIDER, random);
-            scatterWebs(context, foot, random);
-            placeLootChest(context, foot.below(CHEST_DEPTH), random);
         }
+        scatterWebs(context, base);
+        placeLootChest(context, base.below(CHEST_DEPTH));
     }
 
-    private static void placeLootChest(Context context, BlockPos chestPos, RandomSource random) {
-        context.setBlock(chestPos, Blocks.CHEST.defaultBlockState());
-        RandomizableContainer.setBlockEntityLootTable(context.level(), random, chestPos, BuiltInLootTables.SIMPLE_DUNGEON);
-    }
-
-    private void scatterWebs(Context context, BlockPos foot, RandomSource random) {
-        int remaining = WEB_DENSITY;
-        while (remaining-- > 0) {
-            int dx = rollHorizontal(random);
-            int dy = random.nextInt(WEB_BOX_HEIGHT + 1);
-            int dz = rollHorizontal(random);
-            BlockPos web = foot.offset(dx, dy, dz);
-            if (context.isAir(web) && touchesAnchor(context, web)) {
-                context.setBlock(web, Blocks.COBWEB.defaultBlockState());
+    private void scatterWebs(Context context, BlockPos base) {
+        RandomSource random = context.random();
+        BlockState web = Blocks.COBWEB.defaultBlockState();
+        for (int attempt = 0; attempt < WEB_DENSITY; attempt++) {
+            BlockPos spot = base.offset(rollHorizontal(random), random.nextInt(WEB_BOX_HEIGHT), rollHorizontal(random));
+            if (context.isAir(spot) && touchesAnchor(context, spot)) {
+                context.setBlock(spot, web);
             }
         }
+    }
+
+    private static void placeLootChest(Context context, BlockPos pos) {
+        context.setBlock(pos, Blocks.CHEST.defaultBlockState());
+        RandomizableContainer.setBlockEntityLootTable(context.level(), context.random(), pos, BuiltInLootTables.SIMPLE_DUNGEON);
     }
 
     private static int rollHorizontal(RandomSource random) {

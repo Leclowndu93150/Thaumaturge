@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -33,12 +35,11 @@ import org.jspecify.annotations.Nullable;
 public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     public static final int MAX_AGE = 7;
     private static final String ASPECT_KEY = "Aspect";
-    private static final int MIX_STAGE = 3;
-    private static final int WILD_HERBA_ROLL_BOUND = 8;
-    private static final int COMPOUND_ORDERED_PAIR_WEIGHT = 2;
-    private static final int COMPONENT_COUNT = 2;
-    private static final int COMPONENT_ORDERINGS = 2;
-    private static final int BASE_WEIGHT = 1;
+    private static final int BLEND_STAGE = 3;
+    private static final int HERBA_ONE_IN = 8;
+    private static final int MEMBER_WEIGHT = 1;
+    private static final int OFFSPRING_WEIGHT = 4;
+    private static final int PARENT_COUNT = 2;
 
     private @Nullable ResourceKey<IAspect> aspectKey;
 
@@ -64,35 +65,78 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
     }
 
     public void checkGrowth() {
-        if (level == null || level.isClientSide()) {
+        if (!(level instanceof ServerLevel server)) {
             return;
         }
-        BlockState current = level.getBlockState(worldPosition);
-        if (!current.is(TTBlocks.MANA_POD.get())) {
-            return;
-        }
-        int before = current.getValue(BlockManaPod.AGE);
-        int after = before < MAX_AGE ? before + 1 : before;
-        if (after > before) {
-            level.setBlock(worldPosition, current.setValue(BlockManaPod.AGE, after), Block.UPDATE_ALL);
-        }
-        if (after < MIX_STAGE) {
-            return;
-        }
-        if (after == MIX_STAGE) {
-            mixWithNeighbours(level);
-        }
-        if (aspectKey != null) {
-            return;
-        }
-        assignWildAspect(level.registryAccess(), level.getRandom());
-        syncToClient();
+        BlockState state = getBlockState();
+        int stage = Math.min(state.getValue(BlockManaPod.AGE) + 1, MAX_AGE);
+        server.setBlock(worldPosition, state.setValue(BlockManaPod.AGE, stage), Block.UPDATE_CLIENTS);
+        settleAspect(server, stage, server.getRandom());
     }
 
-    public void assignWildAspect(HolderLookup.Provider registries, RandomSource random) {
-        boolean herba = random.nextInt(WILD_HERBA_ROLL_BOUND) == 0;
-        aspectKey = herba ? TTAspects.HERBA : pickPrimal(registries, random);
-        setChanged();
+    public void settleAspect(LevelReader reader, int stage, RandomSource random) {
+        if (stage < BLEND_STAGE) {
+            return;
+        }
+        ResourceKey<IAspect> before = aspectKey;
+        if (stage == BLEND_STAGE) {
+            blendWithNeighbours(reader, random);
+        }
+        if (aspectKey == null) {
+            aspectKey = random.nextInt(HERBA_ONE_IN) == 0 ? TTAspects.HERBA : pickPrimal(reader.registryAccess(), random);
+        }
+        if (!Objects.equals(before, aspectKey)) {
+            setChangedAndSync();
+        }
+    }
+
+    private void blendWithNeighbours(LevelReader reader, RandomSource random) {
+        Set<ResourceKey<IAspect>> present = new LinkedHashSet<>();
+        if (aspectKey != null) {
+            present.add(aspectKey);
+        }
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            BlockPos neighbourPos = worldPosition.relative(side);
+            if (reader.getBlockState(neighbourPos).is(TTBlocks.MANA_POD) && reader.getBlockEntity(neighbourPos) instanceof BlockEntityManaPod neighbour && neighbour.aspectKey != null) {
+                present.add(neighbour.aspectKey);
+            }
+        }
+        if (present.size() == 1) {
+            if (aspectKey == null) {
+                aspectKey = present.iterator().next();
+            }
+            return;
+        }
+        if (present.isEmpty()) {
+            return;
+        }
+        Map<ResourceKey<IAspect>, Integer> weights = new LinkedHashMap<>();
+        present.forEach(key -> weights.put(key, MEMBER_WEIGHT));
+        reader.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().filter(holder -> bredFrom(holder.value(), present))
+                .forEach(holder -> weights.merge(holder.key(), OFFSPRING_WEIGHT, Integer::sum));
+        aspectKey = pickByWeight(weights, random);
+    }
+
+    private static boolean bredFrom(IAspect aspect, Set<ResourceKey<IAspect>> present) {
+        List<Holder<IAspect>> parents = aspect.components();
+        if (parents.size() != PARENT_COUNT) {
+            return false;
+        }
+        Optional<ResourceKey<IAspect>> first = parents.get(0).unwrapKey();
+        Optional<ResourceKey<IAspect>> second = parents.get(1).unwrapKey();
+        return first.isPresent() && second.isPresent() && !first.equals(second) && present.contains(first.get()) && present.contains(second.get());
+    }
+
+    private static ResourceKey<IAspect> pickByWeight(Map<ResourceKey<IAspect>, Integer> weights, RandomSource random) {
+        int total = weights.values().stream().mapToInt(Integer::intValue).sum();
+        int roll = random.nextInt(total);
+        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : weights.entrySet()) {
+            roll -= entry.getValue();
+            if (roll < 0) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalStateException("Weighted aspect draw ran past its pool");
     }
 
     private static ResourceKey<IAspect> pickPrimal(HolderLookup.Provider registries, RandomSource random) {
@@ -101,51 +145,6 @@ public final class BlockEntityManaPod extends AbstractSyncedBlockEntity {
             throw new IllegalStateException("Aspect registry contains no primal aspect");
         }
         return primals.get(random.nextInt(primals.size()));
-    }
-
-    private void mixWithNeighbours(Level level) {
-        Set<ResourceKey<IAspect>> pool = new LinkedHashSet<>();
-        pool.add(aspectKey);
-        Direction.Plane.HORIZONTAL.stream().map(side -> level.getBlockEntity(worldPosition.relative(side))).filter(BlockEntityManaPod.class::isInstance)
-                .map(neighbour -> ((BlockEntityManaPod) neighbour).aspectKey).forEach(pool::add);
-        pool.remove(null);
-        if (pool.size() > 1) {
-            setAspect(drawWeighted(level, pool));
-        } else if (aspectKey == null && !pool.isEmpty()) {
-            setAspect(pool.iterator().next());
-        }
-    }
-
-    private static boolean combinesPool(IAspect aspect, Set<ResourceKey<IAspect>> pool) {
-        List<Holder<IAspect>> parts = aspect.components();
-        if (parts.size() != COMPONENT_COUNT) {
-            return false;
-        }
-        ResourceKey<IAspect> first = parts.get(0).unwrapKey().orElse(null);
-        ResourceKey<IAspect> second = parts.get(1).unwrapKey().orElse(null);
-        return first != null && second != null && !first.equals(second) && pool.contains(first) && pool.contains(second);
-    }
-
-    private static ResourceKey<IAspect> drawWeighted(Level level, Set<ResourceKey<IAspect>> pool) {
-        Map<ResourceKey<IAspect>, Integer> weights = new LinkedHashMap<>();
-        pool.forEach(key -> weights.put(key, BASE_WEIGHT));
-        int compoundWeight = COMPOUND_ORDERED_PAIR_WEIGHT * COMPONENT_ORDERINGS;
-        level.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().filter(entry -> combinesPool(entry.value(), pool))
-                .forEach(entry -> weights.merge(entry.key(), compoundWeight, Integer::sum));
-        int total = 0;
-        for (int weight : weights.values()) {
-            total += weight;
-        }
-        int ticket = level.getRandom().nextInt(total);
-        ResourceKey<IAspect> chosen = null;
-        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : weights.entrySet()) {
-            chosen = entry.getKey();
-            ticket -= entry.getValue();
-            if (ticket < 0) {
-                break;
-            }
-        }
-        return chosen;
     }
 
     @Override
