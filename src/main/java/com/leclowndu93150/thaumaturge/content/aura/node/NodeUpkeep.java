@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -28,26 +29,25 @@ final class NodeUpkeep {
     private static final int HEAL_ODDS = 50;
     private static final float HEAL_FLUX_RATIO = 0.1F;
     private static final float HEAL_VIS_RATIO = 0.9F;
-    private static final int DISCHARGE_RANGE = 4;
-    private static final int DISCHARGE_INTERVAL_FAST = 1;
-    private static final int DISCHARGE_INTERVAL_PALE = 3;
-    private static final int DISCHARGE_INTERVAL_DEFAULT = 2;
-    private static final float ELEVATED_DIVISOR = 1.5F;
-    private static final int PALE_RECOVERY_ODDS = 100;
-    private static final int DONOR_BASE_LOSS_ODDS = 3;
-    private static final float ZAP_VOLUME = 0.1F;
-    private static final float ZAP_PITCH_BASE = 1.0F;
-    private static final float ZAP_PITCH_SPREAD = 0.2F;
-    private static final float DISCHARGE_BOLT_WIDTH = 0.3F;
-    private static final int DECAY_INTERVAL = 1200;
-    private static final int DECAY_REMOVAL_ODDS = 20;
-    private static final int DECAY_MODIFIER_ODDS = 5;
+    private static final int PULL_REACH = 4;
+    private static final int PALE_PULL_EVERY = 3;
+    private static final int STEADY_PULL_EVERY = 2;
+    private static final float GREEDY_GROWTH_DIVISOR = 1.5F;
+    private static final int PALE_CLEARS_ODDS = 100;
+    private static final int DONOR_SHRINK_ODDS = 3;
+    private static final float ZAP_LOUDNESS = 0.12F;
+    private static final float ZAP_LOW_PITCH = 1.0F;
+    private static final float ZAP_PITCH_RISE = 0.25F;
+    private static final float PULL_BOLT_WIDTH = 0.2F;
+    private static final int DECAY_EVERY = 1200;
+    private static final int DECAY_DROP_ODDS = 20;
+    private static final int DECAY_WORSEN_ODDS = 5;
     private static final int DECAY_FADE_ODDS = 5;
-    private static final int STABILITY_INTERVAL = 100;
-    private static final int UNSTABLE_BASIC_ODDS = 10000;
-    private static final int UNSTABLE_ADVANCED_ODDS = 5000;
-    private static final int FADING_BASIC_ODDS = 12500;
-    private static final int FADING_ADVANCED_ODDS = 6250;
+    private static final int STABILITY_EVERY = 100;
+    private static final int UNSTABLE_SETTLE_BASIC_ODDS = 10000;
+    private static final int UNSTABLE_SETTLE_ADVANCED_ODDS = 5000;
+    private static final int FADING_RECOVER_BASIC_ODDS = 12500;
+    private static final int FADING_RECOVER_ADVANCED_ODDS = 6250;
     private static final double BLOCK_CENTER = 0.5;
 
     private NodeUpkeep() {}
@@ -123,76 +123,100 @@ final class NodeUpkeep {
     }
 
     static void discharge(BlockEntityNode node, ServerLevel level, BlockPos pos, RandomSource random) {
-        NodeModifier modifier = node.trait();
-        if (!node.allowDischarge() || modifier == NodeModifier.FADING || node.lock == BlockEntityNode.LOCK_BASIC) {
+        if (!node.allowDischarge() || node.lock == BlockEntityNode.LOCK_BASIC || !pullDue(node, random)) {
             return;
         }
-        int interval = DISCHARGE_INTERVAL_DEFAULT;
-        if (modifier == NodeModifier.BRIGHT || node.kind() == NodeType.HUNGRY && modifier != null) {
-            interval = DISCHARGE_INTERVAL_FAST;
-        } else if (modifier == NodeModifier.PALE) {
-            interval = DISCHARGE_INTERVAL_PALE;
-        }
-        if (node.tickCounter % interval != 0 || modifier == NodeModifier.PALE && random.nextBoolean()) {
+        BlockPos spot = NodeRules.scatter(pos, PULL_REACH, random);
+        if (spot.equals(pos) || !level.hasChunkAt(spot) || !(level.getBlockEntity(spot) instanceof BlockEntityNode donor) || !canDonate(donor, node)) {
             return;
         }
-        BlockPos partnerPos = pos.offset(dischargeOffset(random), dischargeOffset(random), dischargeOffset(random));
-        if (partnerPos.equals(pos) || !level.hasChunkAt(partnerPos) || !(level.getBlockEntity(partnerPos) instanceof BlockEntityNode donor) || !donor.allowDischarge()
-                || donor.lock != BlockEntityNode.LOCK_NONE || donor.held.isEmpty() || donor.averageContent() >= node.averageContent()) {
-            return;
-        }
-        transfer(node, donor, random);
+        List<AspectInstance> offered = donor.held.entries();
+        Holder<IAspect> aspect = offered.get(random.nextInt(offered.size())).aspect();
+        donor.held = donor.held.reduce(aspect, 1);
+        absorb(node, donor, aspect, random);
+        donor.refillWait = donor.refillInterval() / 2;
+        donor.changed();
         if (donor.held.isEmpty() && !donor.isEnergized()) {
-            donor.collapse(level, partnerPos);
-        } else {
-            donor.refillWait = donor.refillInterval() / 2;
-            donor.changed();
+            donor.collapse(level, spot);
         }
-        level.playSound(null, partnerPos, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_VOLUME, ZAP_PITCH_BASE + random.nextFloat() * ZAP_PITCH_SPREAD);
-        Effects.boltStrike(level, Vec3.atCenterOf(partnerPos)).to(Vec3.atCenterOf(pos)).width(DISCHARGE_BOLT_WIDTH).send();
+        level.playSound(null, spot, TTSounds.ZAP.get(), SoundSource.BLOCKS, ZAP_LOUDNESS, ZAP_LOW_PITCH + random.nextFloat() * ZAP_PITCH_RISE);
+        Effects.boltStrike(level, Vec3.atCenterOf(spot)).to(Vec3.atCenterOf(pos)).width(PULL_BOLT_WIDTH).send();
         node.invalidateRefill();
     }
 
-    private static int dischargeOffset(RandomSource random) {
-        return random.nextInt(DISCHARGE_RANGE + 1) - random.nextInt(DISCHARGE_RANGE + 1);
+    private static boolean pullDue(BlockEntityNode node, RandomSource random) {
+        NodeModifier modifier = node.trait();
+        if (modifier == NodeModifier.FADING) {
+            return false;
+        }
+        if (modifier == NodeModifier.PALE) {
+            return node.tickCounter % PALE_PULL_EVERY == 0 && random.nextBoolean();
+        }
+        if (modifier == NodeModifier.BRIGHT || node.kind() == NodeType.HUNGRY) {
+            return true;
+        }
+        return node.tickCounter % STEADY_PULL_EVERY == 0;
     }
 
-    private static void transfer(BlockEntityNode receiver, BlockEntityNode donor, RandomSource random) {
-        List<AspectInstance> offered = donor.held.entries();
-        Holder<IAspect> aspect = offered.get(random.nextInt(offered.size())).aspect();
-        boolean fits = receiver.held.amountOf(aspect) < receiver.aspectsBase.amountOf(aspect);
-        donor.held = donor.held.remove(aspect, 1);
-        if (fits) {
-            receiver.held = receiver.held.add(aspect, 1);
+    private static boolean canDonate(BlockEntityNode donor, BlockEntityNode receiver) {
+        return donor.allowDischarge() && donor.lock == BlockEntityNode.LOCK_NONE && !donor.held.isEmpty() && donor.averageContent() < receiver.averageContent();
+    }
+
+    private static void absorb(BlockEntityNode node, BlockEntityNode donor, Holder<IAspect> aspect, RandomSource random) {
+        int capacity = node.aspectsBase.amountOf(aspect);
+        if (node.held.amountOf(aspect) < capacity) {
+            node.held = node.held.add(aspect, 1);
             return;
         }
-        boolean elevated = receiver.kind() == NodeType.HUNGRY || receiver.trait() == NodeModifier.BRIGHT;
-        int base = receiver.aspectsBase.amountOf(aspect);
-        int divisor = elevated ? 1 + (int) (base / ELEVATED_DIVISOR) : 1 + base;
-        if (random.nextInt(divisor) != 0) {
+        boolean greedy = node.kind() == NodeType.HUNGRY || node.trait() == NodeModifier.BRIGHT;
+        int odds = 1 + (greedy ? (int) (capacity / GREEDY_GROWTH_DIVISOR) : capacity);
+        if (random.nextInt(odds) != 0) {
             return;
         }
-        receiver.aspectsBase = receiver.aspectsBase.add(aspect, 1);
-        if (receiver.trait() == NodeModifier.PALE && random.nextInt(PALE_RECOVERY_ODDS) == 0) {
-            receiver.assignTrait(null);
+        node.aspectsBase = node.aspectsBase.add(aspect, 1);
+        if (node.trait() == NodeModifier.PALE && random.nextInt(PALE_CLEARS_ODDS) == 0) {
+            node.assignTrait(null);
         }
-        if (random.nextInt(DONOR_BASE_LOSS_ODDS) == 0) {
-            donor.aspectsBase = donor.aspectsBase.remove(aspect, 1);
+        if (random.nextInt(DONOR_SHRINK_ODDS) == 0) {
+            shrinkCapacity(donor, aspect);
         }
+    }
+
+    private static void shrinkCapacity(BlockEntityNode node, Holder<IAspect> aspect) {
+        node.aspectsBase = node.aspectsBase.remove(aspect, 1);
+        int capacity = node.aspectsBase.amountOf(aspect);
+        int stored = node.held.amountOf(aspect);
+        if (stored > capacity) {
+            node.held = capacity == 0 ? node.held.without(aspect) : node.held.remove(aspect, stored - capacity);
+        }
+        node.invalidateRefill();
     }
 
     static boolean decay(BlockEntityNode node, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (node.tickCounter % DECAY_INTERVAL != 0) {
+        if (node.tickCounter % DECAY_EVERY != 0) {
             return false;
         }
-        for (AspectInstance entry : node.aspectsBase.entries()) {
-            if (node.held.amountOf(entry.aspect()) > 0) {
+        boolean touched = false;
+        for (AspectInstance slot : node.aspectsBase.entries()) {
+            Holder<IAspect> aspect = slot.aspect();
+            if (node.held.amountOf(aspect) > 0) {
                 continue;
             }
-            decayAspect(node, entry, random);
-            node.invalidateRefill();
+            touched = true;
+            int remaining = slot.amount() - 1;
+            if (remaining > 0 && random.nextInt(DECAY_DROP_ODDS) != 0) {
+                node.aspectsBase = node.aspectsBase.remove(aspect, 1);
+                continue;
+            }
+            node.aspectsBase = node.aspectsBase.without(aspect);
+            node.held = node.held.without(aspect);
+            worsenAfterLoss(node, random);
             break;
         }
+        if (!touched) {
+            return false;
+        }
+        node.invalidateRefill();
         if (node.aspectsBase.isEmpty()) {
             node.removeDepleted(level, pos);
             return true;
@@ -200,50 +224,45 @@ final class NodeUpkeep {
         return false;
     }
 
-    private static void decayAspect(BlockEntityNode node, AspectInstance entry, RandomSource random) {
-        AspectList reduced = node.aspectsBase.remove(entry.aspect(), 1);
-        if (reduced.amountOf(entry.aspect()) > 0 && random.nextInt(DECAY_REMOVAL_ODDS) != 0) {
-            node.aspectsBase = reduced;
+    private static void worsenAfterLoss(BlockEntityNode node, RandomSource random) {
+        if (random.nextInt(DECAY_WORSEN_ODDS) != 0) {
             return;
         }
-        node.aspectsBase = node.aspectsBase.without(entry.aspect());
-        node.held = node.held.without(entry.aspect());
         NodeModifier modifier = node.trait();
-        if (random.nextInt(DECAY_MODIFIER_ODDS) == 0) {
-            if (modifier == NodeModifier.BRIGHT) {
-                modifier = null;
-            } else if (modifier == null) {
-                modifier = NodeModifier.PALE;
-            }
+        if (modifier == NodeModifier.BRIGHT) {
+            node.assignTrait(null);
+        } else if (modifier == null) {
+            node.assignTrait(NodeModifier.PALE);
         }
-        if (modifier == NodeModifier.PALE && random.nextInt(DECAY_FADE_ODDS) == 0) {
-            modifier = NodeModifier.FADING;
+        if (node.trait() == NodeModifier.PALE && random.nextInt(DECAY_FADE_ODDS) == 0) {
+            node.assignTrait(NodeModifier.FADING);
         }
-        node.assignTrait(modifier);
     }
 
     static void stability(BlockEntityNode node, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (node.tickCounter % STABILITY_INTERVAL != 0) {
+        if (node.tickCounter % STABILITY_EVERY != 0) {
             return;
         }
-        int lock = node.lock;
+        boolean advanced = node.lock == BlockEntityNode.LOCK_ADVANCED;
+        boolean locked = node.lock != BlockEntityNode.LOCK_NONE;
         if (node.kind() == NodeType.UNSTABLE) {
-            if (lock == BlockEntityNode.LOCK_NONE) {
-                if (random.nextBoolean()) {
-                    releaseOrb(node, level, pos, random);
-                }
-            } else if (random.nextBoolean() && random.nextInt(lock == BlockEntityNode.LOCK_ADVANCED ? UNSTABLE_ADVANCED_ODDS : UNSTABLE_BASIC_ODDS) == 0) {
+            if (!random.nextBoolean()) {
+                return;
+            }
+            if (!locked) {
+                shedPrimal(node, level, pos, random);
+            } else if (random.nextInt(advanced ? UNSTABLE_SETTLE_ADVANCED_ODDS : UNSTABLE_SETTLE_BASIC_ODDS) == 0) {
                 node.reclassify(NodeType.NORMAL);
                 node.invalidateRefill();
             }
+            return;
         }
-        if (node.trait() == NodeModifier.FADING && lock != BlockEntityNode.LOCK_NONE && random.nextInt(lock == BlockEntityNode.LOCK_ADVANCED ? FADING_ADVANCED_ODDS : FADING_BASIC_ODDS) == 0) {
+        if (locked && node.trait() == NodeModifier.FADING && random.nextInt(advanced ? FADING_RECOVER_ADVANCED_ODDS : FADING_RECOVER_BASIC_ODDS) == 0) {
             node.assignTrait(NodeModifier.PALE);
-            node.invalidateRefill();
         }
     }
 
-    private static void releaseOrb(BlockEntityNode node, ServerLevel level, BlockPos pos, RandomSource random) {
+    private static void shedPrimal(BlockEntityNode node, ServerLevel level, BlockPos pos, RandomSource random) {
         List<Holder<IAspect>> primals = new ArrayList<>();
         for (AspectInstance entry : node.held.entries()) {
             if (entry.aspect().value().isPrimal()) {
@@ -253,9 +272,13 @@ final class NodeUpkeep {
         if (primals.isEmpty()) {
             return;
         }
-        Holder<IAspect> chosen = primals.get(random.nextInt(primals.size()));
-        node.held = node.held.remove(chosen, 1);
-        level.addFreshEntity(new EntityAspectOrb(level, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, chosen.unwrapKey().orElseThrow(), 1));
-        node.invalidateRefill();
+        Holder<IAspect> shed = primals.get(random.nextInt(primals.size()));
+        ResourceKey<IAspect> key = shed.unwrapKey().orElse(null);
+        if (key == null) {
+            return;
+        }
+        node.held = node.held.reduce(shed, 1);
+        node.changed();
+        level.addFreshEntity(new EntityAspectOrb(level, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, key, 1));
     }
 }

@@ -27,6 +27,11 @@ public class BlockEntityJarNode extends BlockEntityNode {
     }
 
     @Override
+    protected boolean allowLock() {
+        return false;
+    }
+
+    @Override
     protected int feedingIntervalFactor() {
         return JARRED_FEED_FACTOR * super.feedingIntervalFactor();
     }

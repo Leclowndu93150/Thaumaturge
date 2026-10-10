@@ -26,14 +26,14 @@ import org.jspecify.annotations.Nullable;
 public final class BlockRechargePedestal extends BaseEntityBlock {
     public static final MapCodec<BlockRechargePedestal> CODEC = simpleCodec(BlockRechargePedestal::new);
 
+    private static final float POP_VOLUME = 0.25F;
+    private static final float TAKE_PITCH = 1.45F;
+    private static final float PLACE_PITCH = 1.7F;
+    private static final float PITCH_WOBBLE = 0.12F;
+
     private static final VoxelShape SHAPE = Shapes.or(box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0), box(2.0, 2.0, 2.0, 14.0, 4.0, 14.0), box(5.0, 4.0, 5.0, 11.0, 12.0, 11.0),
             box(4.0, 12.0, 4.0, 12.0, 14.0, 12.0), box(4.0, 14.0, 4.0, 6.0, 16.0, 6.0), box(4.0, 14.0, 10.0, 6.0, 16.0, 12.0), box(10.0, 14.0, 4.0, 12.0, 16.0, 6.0),
             box(10.0, 14.0, 10.0, 12.0, 16.0, 12.0), box(6.0, 14.0, 6.0, 10.0, 15.0, 10.0));
-    private static final float PICKUP_VOLUME = 0.2F;
-    private static final float PITCH_SPREAD = 0.7F;
-    private static final float PITCH_BASE = 1.0F;
-    private static final float PLACE_PITCH = 1.6F;
-    private static final float TAKE_PITCH = 1.5F;
 
     public BlockRechargePedestal(Properties properties) {
         super(properties);
@@ -61,43 +61,48 @@ public final class BlockRechargePedestal extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        return interact(level, pos, player, InteractionHand.MAIN_HAND);
+        return handleClick(level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        return interact(level, pos, player, hand);
+        return handleClick(level, pos, player, hand);
     }
 
-    private static InteractionResult interact(Level level, BlockPos pos, Player player, InteractionHand hand) {
+    private static InteractionResult handleClick(Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityRechargePedestal pedestal)) {
             return InteractionResult.PASS;
         }
         ItemStack resting = pedestal.getItem();
-        boolean placing = resting.isEmpty();
-        ItemStack held = player.getItemInHand(hand);
-        if (placing && !BlockEntityRechargePedestal.accepts(held)) {
+        ItemStack inHand = player.getItemInHand(hand);
+        boolean taking = !resting.isEmpty();
+        if (!taking && !BlockEntityRechargePedestal.accepts(inHand)) {
             return InteractionResult.PASS;
         }
-        if (!level.isClientSide()) {
-            if (placing) {
-                pedestal.setItem(held.copyWithCount(1));
-                held.consume(1, player);
-            } else {
-                ItemStack taken = resting.copy();
-                pedestal.setItem(ItemStack.EMPTY);
-                if (!player.getInventory().add(taken)) {
-                    player.drop(taken, false);
-                }
-            }
-            playPickupSound(level, pos, placing ? PLACE_PITCH : TAKE_PITCH);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+        if (taking) {
+            pedestal.setItem(ItemStack.EMPTY);
+            returnToPlayer(player, resting);
+        } else {
+            pedestal.setItem(inHand.copyWithCount(1));
+            inHand.consume(1, player);
+        }
+        playPop(level, pos, taking ? TAKE_PITCH : PLACE_PITCH);
+        return InteractionResult.SUCCESS_SERVER;
     }
 
-    private static void playPickupSound(Level level, BlockPos pos, float pitchFactor) {
+    private static void returnToPlayer(Player player, ItemStack stack) {
+        boolean stored = player.getInventory().add(stack);
+        if (!stored || !stack.isEmpty()) {
+            player.drop(stack, false);
+        }
+    }
+
+    private static void playPop(Level level, BlockPos pos, float pitch) {
         RandomSource random = level.getRandom();
-        float variation = (random.nextFloat() - random.nextFloat()) * PITCH_SPREAD + PITCH_BASE;
-        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, PICKUP_VOLUME, variation * pitchFactor);
+        float wobble = (random.nextFloat() - random.nextFloat()) * PITCH_WOBBLE;
+        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, POP_VOLUME, pitch + wobble);
     }
 }

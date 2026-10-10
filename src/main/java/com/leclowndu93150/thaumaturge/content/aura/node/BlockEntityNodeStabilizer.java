@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockEntityNodeStabilizer extends BlockEntity {
-    public static final int MAX_COUNT = 37;
+    public static final int MAX_COUNT = 36;
 
     public int count;
 
@@ -20,13 +20,14 @@ public class BlockEntityNodeStabilizer extends BlockEntity {
     }
 
     public void clientTick(Level level, BlockPos pos) {
-        boolean active = level.getBlockEntity(pos.above()) instanceof BlockEntityNode node && !(node instanceof BlockEntityJarNode) && !level.hasNeighborSignal(pos);
-        if (active) {
-            if (count < MAX_COUNT) {
-                count++;
-            }
+        if (isEngaged(level, pos)) {
+            count = Math.min(MAX_COUNT, count + 1);
         } else if (count > 0) {
             count--;
         }
+    }
+
+    private static boolean isEngaged(Level level, BlockPos pos) {
+        return !level.hasNeighborSignal(pos) && level.getBlockEntity(pos.above()) instanceof BlockEntityNode node && node.allowLock();
     }
 }

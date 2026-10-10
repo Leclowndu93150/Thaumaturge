@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -14,6 +15,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -45,9 +47,12 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
     private static final double UNDERSIDE_BOLT_HEIGHT = 0.1;
     private static final int STABILIZER_DEPTH = 2;
     private static final float CATASTROPHE_FLUX = 32.0F;
-    private static final float CATASTROPHE_POWER = 3.0F;
-    private static final int SPILL_ATTEMPTS = 50;
-    private static final int SPILL_RANGE = 7;
+    private static final float BLAST_STRENGTH = 3.0F;
+    private static final int FLUX_SCATTER_TRIES = 50;
+    private static final int FLUX_SCATTER_REACH = 7;
+    private static final float FLARE_SIZE = 0.8F;
+    private static final float FLARE_VOLUME = 1.0F;
+    private static final float FLARE_PITCH = 1.0F;
 
     private int count = UNSET_COUNT;
     private int status = STATUS_IDLE;
@@ -97,11 +102,13 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         if (node != null && status == STATUS_NODE && count >= CHARGE_TARGET && !node.isEnergized()) {
             node.setEnergized(true);
             status = STATUS_ENERGIZED;
+            flare(serverLevel, nodePos);
         }
         if (node != null && node.isEnergized() && count <= REVERT_THRESHOLD) {
             node.setEnergized(false);
             node.clearContained();
             status = STATUS_IDLE;
+            flare(serverLevel, nodePos);
         }
         if (count != previousCount || status != previousStatus) {
             setChanged();
@@ -115,6 +122,35 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         if (node != null && count > REVERT_THRESHOLD && count < CHARGE_TARGET && time % BOLT_INTERVAL == 0) {
             showBolts(serverLevel, pos, nodePos, stabilizerPresent, random);
         }
+    }
+
+    private static void catastrophe(ServerLevel level, BlockPos nodePos) {
+        if (level.getBlockEntity(nodePos) instanceof BlockEntityNode node) {
+            node.removeDepleted(level, nodePos);
+        }
+        Vec3 centre = Vec3.atCenterOf(nodePos);
+        level.explode(null, centre.x, centre.y, centre.z, BLAST_STRENGTH, false, Level.ExplosionInteraction.BLOCK);
+        RandomSource random = level.getRandom();
+        for (int attempt = 0; attempt < FLUX_SCATTER_TRIES; attempt++) {
+            BlockPos spot = NodeRules.scatter(nodePos, FLUX_SCATTER_REACH, random);
+            if (level.hasChunkAt(spot) && level.isEmptyBlock(spot)) {
+                fillWithFlux(level, spot, spot.getY() < nodePos.getY());
+            }
+        }
+        AuraHelper.addFlux(level, nodePos, CATASTROPHE_FLUX);
+    }
+
+    private static void fillWithFlux(ServerLevel level, BlockPos spot, boolean belowNode) {
+        if (belowNode) {
+            PhysicalFlux.placeGoo(level, spot, PhysicalFlux.MAX_QUANTA);
+        } else {
+            PhysicalFlux.placeGas(level, spot, PhysicalFlux.MAX_QUANTA);
+        }
+    }
+
+    private static void flare(ServerLevel level, BlockPos nodePos) {
+        Effects.burst(level, Vec3.atCenterOf(nodePos)).size(FLARE_SIZE).send();
+        level.playSound(null, nodePos, TTSounds.CRAFTFAIL.get(), SoundSource.BLOCKS, FLARE_VOLUME, FLARE_PITCH);
     }
 
     private void charge(@Nullable BlockEntityNode node, boolean powered, boolean stabilizerPresent, RandomSource random) {
@@ -158,29 +194,6 @@ public final class BlockEntityNodeTransducer extends BlockEntity {
         if (stabilizerPresent && random.nextBoolean()) {
             Effects.boltStrike(level, new Vec3(pos.getX() + BLOCK_CENTER, pos.getY() + UNDERSIDE_BOLT_HEIGHT, pos.getZ() + BLOCK_CENTER)).to(nodeCenter).width(BOLT_WIDTH).send();
         }
-    }
-
-    private static void catastrophe(ServerLevel level, BlockPos nodePos) {
-        RandomSource random = level.getRandom();
-        AuraHelper.polluteAura(level, nodePos, CATASTROPHE_FLUX, true);
-        level.removeBlock(nodePos, false);
-        Vec3 center = Vec3.atCenterOf(nodePos);
-        level.explode(null, center.x, center.y, center.z, CATASTROPHE_POWER, Level.ExplosionInteraction.NONE);
-        for (int attempt = 0; attempt < SPILL_ATTEMPTS; attempt++) {
-            BlockPos target = nodePos.offset(spillOffset(random), spillOffset(random), spillOffset(random));
-            if (!level.hasChunkAt(target)) {
-                continue;
-            }
-            if (target.getY() < nodePos.getY()) {
-                PhysicalFlux.placeGoo(level, target, PhysicalFlux.MAX_QUANTA);
-            } else {
-                PhysicalFlux.placeGas(level, target, PhysicalFlux.MAX_QUANTA);
-            }
-        }
-    }
-
-    private static int spillOffset(RandomSource random) {
-        return random.nextInt(SPILL_RANGE + 1) - random.nextInt(SPILL_RANGE + 1);
     }
 
     @Override

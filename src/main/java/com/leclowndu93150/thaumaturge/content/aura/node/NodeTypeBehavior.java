@@ -29,11 +29,11 @@ final class NodeTypeBehavior {
     private static final double GUARD_COUNT_HORIZONTAL = 10.0;
     private static final double GUARD_COUNT_VERTICAL = 6.0;
     private static final int GUARD_LIMIT = 4;
-    private static final double GUARD_SPAWN_RADIUS = 5.0;
-    private static final int GUARD_SPAWN_HEIGHT_SPREAD = 3;
-    private static final float FULL_TURN_DEGREES = 360.0F;
     private static final int SPAWNER_EFFECT_EVENT = 2004;
     private static final double BLOCK_CENTER = 0.5;
+    private static final double GUARD_PLACEMENT_REACH = 5.0;
+    private static final int GUARD_VERTICAL_REACH = 1;
+    private static final float WHOLE_TURN = 360.0F;
 
     private NodeTypeBehavior() {}
 
@@ -97,28 +97,31 @@ final class NodeTypeBehavior {
     }
 
     private static void spawnGuard(ServerLevel level, BlockPos pos, RandomSource random) {
-        if (level.getNearestPlayer(pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, GUARD_PLAYER_RANGE, false) == null) {
-            return;
-        }
-        AABB area = new AABB(pos).inflate(GUARD_COUNT_HORIZONTAL, GUARD_COUNT_VERTICAL, GUARD_COUNT_HORIZONTAL);
-        List<EntityBrainyZombie> guards = level.getEntities(TTEntities.BRAINY_ZOMBIE.get(), area, EntitySelector.ENTITY_STILL_ALIVE);
-        if (guards.size() > GUARD_LIMIT) {
+        double centreX = pos.getX() + BLOCK_CENTER;
+        double centreY = pos.getY() + BLOCK_CENTER;
+        double centreZ = pos.getZ() + BLOCK_CENTER;
+        if (!level.hasNearbyAlivePlayer(centreX, centreY, centreZ, GUARD_PLAYER_RANGE) || guardsNear(level, pos) >= GUARD_LIMIT) {
             return;
         }
         EntityBrainyZombie guard = TTEntities.BRAINY_ZOMBIE.get().create(level, EntitySpawnReason.EVENT);
         if (guard == null) {
             return;
         }
-        double x = pos.getX() + BLOCK_CENTER + (random.nextDouble() - random.nextDouble()) * GUARD_SPAWN_RADIUS;
-        double y = pos.getY() + random.nextInt(GUARD_SPAWN_HEIGHT_SPREAD) - 1;
-        double z = pos.getZ() + BLOCK_CENTER + (random.nextDouble() - random.nextDouble()) * GUARD_SPAWN_RADIUS;
-        guard.snapTo(x, y, z, random.nextFloat() * FULL_TURN_DEGREES, 0.0F);
+        double x = centreX + (random.nextDouble() * 2.0 - 1.0) * GUARD_PLACEMENT_REACH;
+        double z = centreZ + (random.nextDouble() * 2.0 - 1.0) * GUARD_PLACEMENT_REACH;
+        int y = pos.getY() + random.nextInt(GUARD_VERTICAL_REACH * 2 + 1) - GUARD_VERTICAL_REACH;
+        guard.snapTo(x, y, z, random.nextFloat() * WHOLE_TURN, 0.0F);
         if (!guard.checkSpawnRules(level, EntitySpawnReason.EVENT) || !guard.checkSpawnObstruction(level)) {
             guard.discard();
             return;
         }
         EventHooks.finalizeMobSpawn(guard, level, level.getCurrentDifficultyAt(guard.blockPosition()), EntitySpawnReason.EVENT, null);
         level.addFreshEntity(guard);
-        level.levelEvent(null, SPAWNER_EFFECT_EVENT, pos, 0);
+        level.levelEvent(SPAWNER_EFFECT_EVENT, pos, 0);
+    }
+
+    private static int guardsNear(ServerLevel level, BlockPos pos) {
+        AABB area = new AABB(pos).inflate(GUARD_COUNT_HORIZONTAL, GUARD_COUNT_VERTICAL, GUARD_COUNT_HORIZONTAL);
+        return level.getEntities(TTEntities.BRAINY_ZOMBIE.get(), area, EntitySelector.NO_SPECTATORS).size();
     }
 }

@@ -427,7 +427,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (!serverLevel.hasChunkAt(below) || !NodeBootstrap.columnsGenerated(serverLevel, pos)) {
             return;
         }
-        int next = lockBeneath(serverLevel, below);
+        int next = allowLock() ? lockBeneath(serverLevel, below) : LOCK_NONE;
         if (next == lock) {
             return;
         }
@@ -462,6 +462,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     protected boolean allowTypeBehavior() {
+        return true;
+    }
+
+    protected boolean allowLock() {
         return true;
     }
 
