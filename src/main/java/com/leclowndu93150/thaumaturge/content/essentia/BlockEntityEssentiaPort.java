@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.essentia;
 
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.content.infusion.EssentiaSources;
@@ -20,12 +21,15 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
     private static final int SOURCE_RANGE = 16;
     private static final int WORK_INTERVAL = 5;
     private static final int INTAKE_SUCTION = 128;
-    private static final int VISUAL_EXTENSION = 5;
     private static final int SINGLE_POINT = 1;
+    private static final int VISUAL_EXTENSION = 10;
+    private static final long SEARCH_BACKOFF_TICKS = 200L;
 
     private final boolean input;
     private final EssentiaSources sources;
     private int ticks;
+    private long resumeAt;
+    private boolean searchFailed;
 
     public BlockEntityEssentiaPort(BlockPos pos, BlockState state) {
         this(pos, state, state.getBlock() instanceof BlockEssentiaPort port && port.isInput());
@@ -38,42 +42,60 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEssentiaPort port) {
-        if (!(level instanceof ServerLevel server) || ++port.ticks % WORK_INTERVAL != 0) {
+        if (++port.ticks % WORK_INTERVAL != 0 || !(level instanceof ServerLevel server) || server.getGameTime() < port.resumeAt) {
             return;
         }
-        Direction tubeSide = port.tubeSide();
-        IEssentiaTransport tube = EssentiaFlowHandler.transport(level, pos.relative(tubeSide), tubeSide.getOpposite());
-        if (tube == null) {
+        Direction toTube = port.tubeSide();
+        Direction tubeFace = toTube.getOpposite();
+        IEssentiaTransport tube = EssentiaFlowHandler.transport(server, pos.relative(toTube), tubeFace);
+        if (tube == null || !tube.isConnectable(tubeFace)) {
             return;
         }
         if (port.input) {
-            port.pushIntoSources(server, tube, tubeSide.getOpposite());
+            port.pushIntoSources(server, tube, tubeFace);
         } else {
-            port.pullFromSources(server, tube, tubeSide.getOpposite());
+            port.pullFromSources(server, pos, tube, tubeFace);
         }
+        if (port.searchFailed) {
+            port.resumeAt = server.getGameTime() + SEARCH_BACKOFF_TICKS;
+        }
+        port.searchFailed = false;
     }
 
-    private void pushIntoSources(ServerLevel server, IEssentiaTransport tube, Direction touching) {
-        if (!tube.canOutputTo(touching) || tube.getSuctionAmount(touching) >= INTAKE_SUCTION || INTAKE_SUCTION < tube.getMinimumSuction()) {
-            return;
+    private boolean pushIntoSources(ServerLevel server, IEssentiaTransport tube, Direction tubeFace) {
+        if (!tube.canOutputTo(tubeFace) || tube.getEssentiaAmount(tubeFace) < SINGLE_POINT || tube.getSuctionAmount(tubeFace) >= INTAKE_SUCTION || tube.getMinimumSuction() > INTAKE_SUCTION) {
+            return false;
         }
-        Holder<IAspect> held = tube.getEssentiaType(touching);
-        if (held == null || tube.takeEssentia(held, SINGLE_POINT, touching, true) < SINGLE_POINT) {
-            return;
+        Holder<IAspect> aspect = tube.getEssentiaType(tubeFace);
+        if (aspect == null || tube.takeEssentia(aspect, SINGLE_POINT, tubeFace) != SINGLE_POINT) {
+            return false;
         }
-        if (sources.insert(server, held, VISUAL_EXTENSION)) {
-            tube.takeEssentia(held, SINGLE_POINT, touching);
+        if (sources.insert(server, aspect, VISUAL_EXTENSION)) {
+            return true;
         }
+        searchFailed = true;
+        if (tube.addEssentia(aspect, SINGLE_POINT, tubeFace) != SINGLE_POINT) {
+            AuraHelper.addFlux(server, worldPosition, SINGLE_POINT);
+        }
+        return false;
     }
 
-    private void pullFromSources(ServerLevel server, IEssentiaTransport tube, Direction touching) {
-        Holder<IAspect> wanted = tube.getSuctionType(touching);
-        if (!tube.canInputFrom(touching) || wanted == null || tube.getSuctionAmount(touching) <= 0 || !sources.drain(server, wanted, VISUAL_EXTENSION)) {
-            return;
+    private boolean pullFromSources(ServerLevel server, BlockPos pos, IEssentiaTransport tube, Direction tubeFace) {
+        Holder<IAspect> wanted = tube.getSuctionType(tubeFace);
+        if (wanted == null || !tube.canInputFrom(tubeFace) || tube.getSuctionAmount(tubeFace) <= 0 || tube.addEssentia(wanted, SINGLE_POINT, tubeFace, true) < SINGLE_POINT) {
+            return false;
         }
-        if (tube.addEssentia(wanted, SINGLE_POINT, touching) < SINGLE_POINT) {
-            sources.insert(server, wanted, VISUAL_EXTENSION);
+        if (!sources.drain(server, wanted, VISUAL_EXTENSION)) {
+            searchFailed = true;
+            return false;
         }
+        if (tube.addEssentia(wanted, SINGLE_POINT, tubeFace) == SINGLE_POINT) {
+            return true;
+        }
+        if (!sources.insert(server, wanted, VISUAL_EXTENSION)) {
+            AuraHelper.addFlux(server, pos, SINGLE_POINT);
+        }
+        return false;
     }
 
     private Direction tubeSide() {
@@ -122,6 +144,11 @@ public final class BlockEntityEssentiaPort extends BlockEntity implements IEssen
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
         return 0;
+    }
+
+    @Override
+    public int spaceFor(Holder<IAspect> aspect, Direction face) {
+        return input && touchesTube(face) ? SINGLE_POINT : 0;
     }
 
     @Override

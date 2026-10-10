@@ -76,9 +76,11 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
         setChangedAndSync();
     }
 
+    @Override
     public void tickClient(Level level, BlockPos pos, BlockState state) {
         spin.aim(allowFlow());
         spin.tick();
+        super.tickClient(level, pos, state);
     }
 
     @Override
@@ -108,6 +110,16 @@ public final class BlockEntityTubeValve extends BlockEntityTube {
             rank = SideRanking.UNACCEPTABLE;
         }
         return rank;
+    }
+
+    @Override
+    public boolean canInputFrom(Direction face) {
+        return allowFlow() && super.canInputFrom(face);
+    }
+
+    @Override
+    public boolean canOutputTo(Direction face) {
+        return allowFlow() && super.canOutputTo(face);
     }
 
     @Override

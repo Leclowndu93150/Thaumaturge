@@ -46,8 +46,11 @@ public class BlockTube extends BlockEssentiaTransport {
 
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        BlockEntityTicker<T> serverTicker = createTickerHelper(type, TTBlockEntities.TUBE.get(), BlockTube::tickTube);
-        return level.isClientSide() ? null : serverTicker;
+        return tubeTicker(level, type, TTBlockEntities.TUBE.get());
+    }
+
+    protected static <T extends BlockEntity, E extends BlockEntityTube> @Nullable BlockEntityTicker<T> tubeTicker(Level level, BlockEntityType<T> type, BlockEntityType<E> tubeType) {
+        return level.isClientSide() ? createTickerHelper(type, tubeType, BlockTube::animateTube) : createTickerHelper(type, tubeType, BlockTube::tickTube);
     }
 
     @Override
@@ -90,5 +93,9 @@ public class BlockTube extends BlockEssentiaTransport {
 
     private static void tickTube(Level level, BlockPos pos, BlockState state, BlockEntityTube tube) {
         tube.tickServer(level, pos, state);
+    }
+
+    private static void animateTube(Level level, BlockPos pos, BlockState state, BlockEntityTube tube) {
+        tube.tickClient(level, pos, state);
     }
 }

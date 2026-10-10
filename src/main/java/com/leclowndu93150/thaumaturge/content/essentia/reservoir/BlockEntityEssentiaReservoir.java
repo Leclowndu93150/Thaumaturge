@@ -3,9 +3,10 @@ package com.leclowndu93150.thaumaturge.content.essentia.reservoir;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspectSource;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.api.essentia.EssentiaAccess;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaTransport;
+import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -18,6 +19,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -29,22 +31,25 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public final class BlockEntityEssentiaReservoir extends BlockEntity implements IEssentiaTransport {
+public final class BlockEntityEssentiaReservoir extends BlockEntity implements IEssentiaTransport, IAspectSource {
     public static final int CAPACITY = 256;
 
     private static final String ESSENTIA_KEY = "Essentia";
     private static final int SUCTION = 24;
     private static final int PULL_INTERVAL = 5;
-    private static final int CREAK_BASE = 500;
     private static final float CREAK_VOLUME = 1.0F;
-    private static final float CREAK_PITCH_BASE = 1.4F;
-    private static final float CREAK_PITCH_SPREAD = 0.2F;
     private static final float FLUX_PER_ESSENTIA = 0.25F;
     private static final float MAX_RUPTURE_FLUX = 64.0F;
     private static final int ESSENTIA_PER_POCKET = 16;
     private static final float RUPTURE_EXPLOSION_RADIUS = 1.0F;
+    private static final int UNIT = 1;
+    private static final float CREAK_SPARSE_TICKS = 500.0F;
+    private static final float CREAK_FREQUENT_TICKS = 240.0F;
+    private static final float CREAK_PITCH_BASE = 1.4F;
+    private static final float CREAK_PITCH_SPREAD = 0.3F;
 
     private AspectList contents = AspectList.EMPTY;
+    private int ticks;
 
     public BlockEntityEssentiaReservoir(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ESSENTIA_RESERVOIR.get(), pos, state);
@@ -59,36 +64,40 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityEssentiaReservoir reservoir) {
-        int total = reservoir.getStoredAmount();
-        if (total > 0) {
-            RandomSource random = level.getRandom();
-            if (random.nextInt(CREAK_BASE - total) == 0) {
-                level.playSound(null, pos, TTSounds.CREAK.get(), SoundSource.BLOCKS, CREAK_VOLUME, CREAK_PITCH_BASE + random.nextFloat() * CREAK_PITCH_SPREAD);
-            }
-        }
-        if (total < CAPACITY && level.getGameTime() % PULL_INTERVAL == 0) {
-            reservoir.pullFromNeighbour(level, pos, state.getValue(BlockStateProperties.FACING));
+        reservoir.creak(level, pos);
+        if (++reservoir.ticks % PULL_INTERVAL == 0 && reservoir.getStoredAmount() < CAPACITY) {
+            reservoir.pullFromNeighbour(level, pos);
         }
     }
 
-    private void pullFromNeighbour(Level level, BlockPos pos, Direction facing) {
-        BlockPos neighbourPos = pos.relative(facing);
-        if (!level.hasChunkAt(neighbourPos)) {
+    private void creak(Level level, BlockPos pos) {
+        int stored = getStoredAmount();
+        if (stored <= 0) {
             return;
         }
-        Direction face = facing.getOpposite();
-        IEssentiaTransport source = EssentiaAccess.transport(level, neighbourPos, face);
-        if (source == null || !canYield(source, face)) {
-            return;
-        }
-        Holder<IAspect> type = source.getEssentiaType(face);
-        if (type != null && source.takeEssentia(type, 1, face) == 1) {
-            store(type, 1);
+        float fullness = Math.min(1.0F, stored / (float) CAPACITY);
+        int interval = Math.round(Mth.lerp(fullness, CREAK_SPARSE_TICKS, CREAK_FREQUENT_TICKS));
+        RandomSource random = level.getRandom();
+        if (random.nextInt(interval) == 0) {
+            level.playSound(null, pos, TTSounds.CREAK.get(), SoundSource.BLOCKS, CREAK_VOLUME, CREAK_PITCH_BASE + random.nextFloat() * CREAK_PITCH_SPREAD);
         }
     }
 
-    private static boolean canYield(IEssentiaTransport source, Direction face) {
-        return sourceCanOutput(source, face) && sourceHasStock(source, face) && withinSuctionWindow(source, face);
+    private void pullFromNeighbour(Level level, BlockPos pos) {
+        Direction face = facing();
+        Direction back = face.getOpposite();
+        IEssentiaTransport source = EssentiaFlowHandler.transport(level, pos.relative(face), back);
+        if (source == null || !source.isConnectable(back) || !sourceCanOutput(source, back) || !sourceHasStock(source, back) || !withinSuctionWindow(source, back)) {
+            return;
+        }
+        Holder<IAspect> offered = source.getEssentiaType(back);
+        if (offered != null && source.takeEssentia(offered, UNIT, back) == UNIT) {
+            store(offered, UNIT);
+        }
+    }
+
+    private static boolean withinSuctionWindow(IEssentiaTransport source, Direction face) {
+        return source.getSuctionAmount(face) < SUCTION && source.getMinimumSuction() <= SUCTION;
     }
 
     private static boolean sourceCanOutput(IEssentiaTransport source, Direction face) {
@@ -99,8 +108,73 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
         return source.getEssentiaAmount(face) > 0;
     }
 
-    private static boolean withinSuctionWindow(IEssentiaTransport source, Direction face) {
-        return source.getSuctionAmount(face) < SUCTION && source.getMinimumSuction() <= SUCTION;
+    private static AspectList keepWithinCapacity(AspectList loaded) {
+        if (loaded.totalAmount() <= CAPACITY) {
+            return loaded;
+        }
+        AspectList kept = AspectList.EMPTY;
+        int room = CAPACITY;
+        for (AspectInstance entry : loaded.entries()) {
+            int portion = Math.min(room, entry.amount());
+            if (portion > 0) {
+                kept = kept.add(entry.aspect(), portion);
+                room -= portion;
+            }
+        }
+        return kept;
+    }
+
+    private void rupture(ServerLevel server, BlockPos pos, int total) {
+        if (total < ESSENTIA_PER_POCKET) {
+            releaseFlux(server, pos, total);
+            return;
+        }
+        burst(server, pos, total);
+    }
+
+    private static void burst(ServerLevel server, BlockPos pos, int total) {
+        Vec3 center = Vec3.atCenterOf(pos);
+        server.explode(null, center.x, center.y, center.z, RUPTURE_EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
+        FluxPocketScatter.scatter(server, pos, total / ESSENTIA_PER_POCKET + 1);
+    }
+
+    @Override
+    public boolean accepts(Holder<IAspect> aspect) {
+        return getStoredAmount() < CAPACITY;
+    }
+
+    @Override
+    public AspectList getAspects() {
+        return contents;
+    }
+
+    @Override
+    public void setAspects(AspectList aspects) {
+        contents = keepWithinCapacity(aspects);
+        notifyChanged();
+    }
+
+    @Override
+    public int fill(Holder<IAspect> aspect, int amount) {
+        int accepted = Math.clamp(amount, 0, Math.max(0, CAPACITY - getStoredAmount()));
+        if (accepted > 0) {
+            store(aspect, accepted);
+        }
+        return amount - accepted;
+    }
+
+    @Override
+    public boolean drain(Holder<IAspect> aspect, int amount) {
+        if (amount <= 0 || contents.amountOf(aspect) < amount) {
+            return false;
+        }
+        withdraw(aspect, amount);
+        return true;
+    }
+
+    @Override
+    public boolean isBlocked() {
+        return false;
     }
 
     private void store(Holder<IAspect> aspect, int amount) {
@@ -220,30 +294,16 @@ public final class BlockEntityEssentiaReservoir extends BlockEntity implements I
         }
     }
 
-    private static void rupture(ServerLevel server, BlockPos pos, int total) {
-        releaseFlux(server, pos, total);
-        int pockets = total / ESSENTIA_PER_POCKET;
-        if (pockets > 0) {
-            burst(server, pos, pockets);
-        }
-    }
-
     private static void releaseFlux(ServerLevel server, BlockPos pos, int total) {
         float flux = Math.min(total * FLUX_PER_ESSENTIA, MAX_RUPTURE_FLUX);
         AuraHelper.polluteAura(server, pos, flux, true);
-    }
-
-    private static void burst(ServerLevel server, BlockPos pos, int pockets) {
-        Vec3 centre = Vec3.atCenterOf(pos);
-        server.explode(null, centre.x(), centre.y(), centre.z(), RUPTURE_EXPLOSION_RADIUS, Level.ExplosionInteraction.NONE);
-        ReservoirPockets.scatter(server, pos, pockets + 1);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         AspectList loaded = input.read(ESSENTIA_KEY, AspectList.CODEC).orElse(AspectList.EMPTY);
-        contents = loaded.totalAmount() > CAPACITY ? AspectList.EMPTY : loaded;
+        contents = keepWithinCapacity(loaded);
     }
 
     @Override

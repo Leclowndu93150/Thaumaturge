@@ -56,10 +56,10 @@ public class BlockJar extends BaseEntityBlock implements ILabelable, IEssentiaSt
         if (!(found instanceof BlockEntityJar jar)) {
             return false;
         }
-        ResourceKey<IAspect> label = LabelledVesselActions.aspectToLabel(stack, face, jar.aspectFilterKey(), jar.aspectKey(), jar.amount());
+        ResourceKey<IAspect> label = LabelledVesselActions.aspectToLabel(stack, jar.aspectFilterKey(), jar.aspectKey(), jar.amount());
         if (label != null) {
             jar.setAspectFilter(label);
-            jar.setFacing(face);
+            jar.setFacing(LabelledVesselActions.labelSideFacing(player));
             LabelledVesselActions.playLabelSound(level, pos);
         }
         return label != null;

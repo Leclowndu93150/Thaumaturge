@@ -58,8 +58,7 @@ public final class EssentiaFlowHandler {
             if (offeredType != null && (filter != null && !offeredType.is(filter) || held != null && !offeredType.equals(held))) {
                 continue;
             }
-            int reduced = offered - HOP_LOSS;
-            strongest = restrict ? reduced / RESTRICT_DIVISOR : reduced;
+            strongest = restrict ? offered / RESTRICT_DIVISOR : offered - HOP_LOSS;
             strongestType = offeredType != null ? offeredType : filterHolder;
         }
         if (strongest > 0) {

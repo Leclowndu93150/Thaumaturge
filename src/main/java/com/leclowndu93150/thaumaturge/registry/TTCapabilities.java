@@ -61,6 +61,7 @@ public final class TTCapabilities {
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.CENTRIFUGE.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.ESSENTIA_CRYSTALIZER.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.ESSENTIA_RESERVOIR.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
+        event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.ESSENTIA_RESERVOIR.get(), (be, side) -> be);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.FLUX_SCRUBBER.get(), (be, side) -> side == null || be.isConnectable(side) ? be : null);
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.POTION_SPRAYER.get(), (be, side) -> be);
         event.registerBlockEntity(Capabilities.Item.BLOCK, TTBlockEntities.HUNGRY_CHEST.get(), (be, side) -> VanillaContainerWrapper.of(be));

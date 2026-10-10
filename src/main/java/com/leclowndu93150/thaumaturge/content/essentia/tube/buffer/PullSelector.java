@@ -29,7 +29,7 @@ public final class PullSelector {
             }
             Direction back = side.getOpposite();
             IEssentiaTransport peer = EssentiaFlowHandler.transport(level, pos.relative(side), back);
-            if (peer == null) {
+            if (peer == null || !peer.isConnectable(back)) {
                 continue;
             }
             Holder<IAspect> offered = peer.getEssentiaType(back);

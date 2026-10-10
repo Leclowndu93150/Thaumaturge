@@ -25,7 +25,11 @@ public final class TubeEventClientHandler {
             BlockPos pos = payload.pos();
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof BlockEntityTube tube) {
+                boolean alreadyVenting = tube.ventingTicks() > 0;
                 tube.triggerVent(payload.color());
+                if (alreadyVenting) {
+                    return;
+                }
             }
             RandomSource random = level.getRandom();
             playSound(level, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.1F, 1.0F + random.nextFloat() * 0.1F);

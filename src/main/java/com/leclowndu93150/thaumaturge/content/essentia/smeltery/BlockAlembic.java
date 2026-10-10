@@ -132,7 +132,10 @@ public class BlockAlembic extends BaseEntityBlock implements ILabelable {
         if (!(player.level().getBlockEntity(pos) instanceof BlockEntityAlembic alembic)) {
             return false;
         }
-        ResourceKey<IAspect> chosen = LabelledVesselActions.aspectToLabel(stack, face, alembic.aspectFilterKey(), alembic.aspectKey(), alembic.amount());
+        if (face.getAxis().isVertical()) {
+            return false;
+        }
+        ResourceKey<IAspect> chosen = LabelledVesselActions.aspectToLabel(stack, alembic.aspectFilterKey(), alembic.aspectKey(), alembic.amount());
         if (chosen == null) {
             return false;
         }

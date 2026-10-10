@@ -16,6 +16,7 @@ import com.leclowndu93150.thaumaturge.content.essentia.tube.state.TubeCell;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.state.TubeSuction;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.vent.PressureClash;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
+import com.leclowndu93150.thaumaturge.content.particle.VentParticleOptions;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeCreakPayload;
 import com.leclowndu93150.thaumaturge.network.ClientboundTubeVentPayload;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -29,6 +30,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
@@ -58,8 +61,6 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
     private static final CadencePhase SUCTION_REFRESH = CadencePhase.every(2);
     private static final CadencePhase VENT_CHECK = CadencePhase.every(2);
     private static final CadencePhase EQUALISE = CadencePhase.every(5);
-    private static final int VENT_PAUSE_TICKS = 40 + 10;
-    private static final int DEFAULT_VENT_COLOR = 0xAAAAAA;
     private static final double BROADCAST_RADIUS = 32.0;
     private static final double BLOCK_CENTER = 0.5;
     private static final int MIN_TRANSFER = 1;
@@ -67,9 +68,16 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
     private static final int FALLBACK_FACING = 1;
     private static final byte OPEN_BYTE = 1;
     private static final byte CLOSED_BYTE = 0;
+    private static final int VENT_PAUSE_TICKS = 40;
+    private static final int VENT_JET_TICKS = 50;
+    private static final int DEFAULT_VENT_COLOR = 0xCDD2D6;
+    private static final float JET_PUFF_SCALE = 1.5F;
+    private static final int HEADING_BITS = 16;
+    private static final long HEADING_MASK = (1L << HEADING_BITS) - 1L;
+    private static final double HEADING_STEPS = HEADING_MASK + 1.0;
     private static final float TOOL_VOLUME = 0.5F;
-    private static final float TOOL_PITCH_BASE = 0.9F;
-    private static final float TOOL_PITCH_SPREAD = 0.2F;
+    private static final float TOOL_PITCH_BASE = 0.95F;
+    private static final float TOOL_PITCH_SPREAD = 0.15F;
 
     protected Direction flowSide = Direction.NORTH;
     protected final boolean[] sideOpen = new boolean[DIRECTIONS.length];
@@ -79,7 +87,9 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
     private TubeCell cell = TubeCell.EMPTY;
     private TubeSuction pull = TubeSuction.NONE;
     private int ventPauseLeft;
+    private int jetTicksLeft;
     private int ventTint = DEFAULT_VENT_COLOR;
+    private @Nullable Vec3 jetHeading;
 
     public BlockEntityTube(BlockPos pos, BlockState state) {
         this(TTBlockEntities.TUBE.get(), pos, state);
@@ -105,15 +115,48 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
         if (cadence.isDue(SUCTION_REFRESH)) {
             refreshSuction(level, pos);
         }
-        if (cadence.isDue(VENT_CHECK)) {
-            inspectPressure(level, pos);
-            if (ventPauseLeft > 0) {
-                return;
-            }
+        if (cadence.isDue(VENT_CHECK) && inspectPressure(level, pos)) {
+            return;
         }
-        if (cadence.isDue(EQUALISE) && pull.isPulling()) {
+        if (cadence.isDue(EQUALISE)) {
             EssentiaFlowHandler.equalizeWithNeighbours(level, pos, this, directionalEqualize());
         }
+    }
+
+    public void tickClient(Level level, BlockPos pos, BlockState state) {
+        if (jetTicksLeft <= 0) {
+            return;
+        }
+        jetTicksLeft--;
+        Vec3 heading = jetHeading(pos);
+        VentParticleOptions puff = new VentParticleOptions(heading.x, heading.y, heading.z, ventTint, JET_PUFF_SCALE, false);
+        level.addParticle(puff, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, 0.0, 0.0, 0.0);
+    }
+
+    private Vec3 jetHeading(BlockPos pos) {
+        if (jetHeading == null) {
+            long seed = Mth.getSeed(pos);
+            double yaw = (seed & HEADING_MASK) / HEADING_STEPS * Mth.TWO_PI;
+            double lift = ((seed >>> HEADING_BITS) & HEADING_MASK) / HEADING_STEPS * 2.0 - 1.0;
+            double spread = Math.sqrt(1.0 - lift * lift);
+            jetHeading = new Vec3(Math.cos(yaw) * spread, lift, Math.sin(yaw) * spread);
+        }
+        return jetHeading;
+    }
+
+    private boolean inspectPressure(Level level, BlockPos pos) {
+        Holder<IAspect> wanted = getSuctionType(null);
+        if (!PressureClash.assess(level, pos, this, getSuctionAmount(null), wanted).isClash()) {
+            return false;
+        }
+        ventPauseLeft = VENT_PAUSE_TICKS;
+        ventTint = wanted != null ? wanted.value().color() : DEFAULT_VENT_COLOR;
+        broadcastVent(level, pos, ventTint);
+        return true;
+    }
+
+    public void playToolSound(Level level, BlockPos pos) {
+        level.playSound(null, pos, TTSounds.TOOL.get(), SoundSource.BLOCKS, TOOL_VOLUME, TOOL_PITCH_BASE + level.getRandom().nextFloat() * TOOL_PITCH_SPREAD);
     }
 
     private void refreshSuction(Level level, BlockPos pos) {
@@ -125,23 +168,8 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
         }
     }
 
-    protected void inspectPressure(Level level, BlockPos pos) {
-        ResourceKey<IAspect> filter = suctionFilter();
-        Holder<IAspect> ownAspect = resolve(filter != null ? filter : pull.aspect());
-        if (PressureClash.assess(level, pos, this, pull.strength(), ownAspect).isClash()) {
-            startVenting(level, pos);
-        }
-    }
-
-    private void startVenting(Level level, BlockPos pos) {
-        Holder<IAspect> stored = resolve(pull.aspect());
-        int color = stored != null ? stored.value().color() : DEFAULT_VENT_COLOR;
-        triggerVent(color);
-        broadcastVent(level, pos, color);
-    }
-
     public void triggerVent(int color) {
-        ventPauseLeft = VENT_PAUSE_TICKS;
+        jetTicksLeft = VENT_JET_TICKS;
         ventTint = color;
     }
 
@@ -159,7 +187,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
     }
 
     public int ventingTicks() {
-        return ventPauseLeft;
+        return Math.max(ventPauseLeft, jetTicksLeft);
     }
 
     public int ventColor() {
@@ -283,12 +311,6 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
         }
     }
 
-    public void playToolSound(Level level, BlockPos pos) {
-        if (!level.isClientSide()) {
-            level.playSound(null, pos, TTSounds.TOOL.get(), SoundSource.BLOCKS, TOOL_VOLUME, TOOL_PITCH_BASE + level.getRandom().nextFloat() * TOOL_PITCH_SPREAD);
-        }
-    }
-
     @Override
     public boolean isConnectable(Direction face) {
         return face != null && isSideOpen(face);
@@ -340,7 +362,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
 
     @Override
     public int takeEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (amount < MIN_TRANSFER || face == null || !isSideOpen(face) || !cell.hasUnit() || !cell.holds(aspect)) {
+        if (amount < MIN_TRANSFER || face == null || !canOutputTo(face) || !cell.hasUnit() || !cell.holds(aspect)) {
             return 0;
         }
         cell = TubeCell.EMPTY;
@@ -350,7 +372,7 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
 
     @Override
     public int addEssentia(Holder<IAspect> aspect, int amount, Direction face) {
-        if (amount < MIN_TRANSFER || face == null || !isSideOpen(face) || cell.isOccupied()) {
+        if (amount < MIN_TRANSFER || face == null || !canInputFrom(face) || cell.isOccupied()) {
             return 0;
         }
         ResourceKey<IAspect> key = aspect.unwrapKey().orElse(null);
@@ -360,6 +382,11 @@ public class BlockEntityTube extends AbstractSyncedBlockEntity implements IEssen
         cell = TubeCell.holding(key);
         setChanged();
         return TubeCell.CAPACITY;
+    }
+
+    @Override
+    public int spaceFor(Holder<IAspect> aspect, Direction face) {
+        return face != null && canInputFrom(face) && !cell.isOccupied() ? TubeCell.CAPACITY : 0;
     }
 
     public @Nullable ResourceKey<IAspect> essentiaKey() {
