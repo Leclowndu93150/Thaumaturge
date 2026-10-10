@@ -1,5 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.api.entity.trait.MobTraits;
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -26,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -86,41 +89,35 @@ public final class EntityTaintCrawler extends Monster {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (this.tickCount % FIBRE_INTERVAL != 0 || !(this.level() instanceof ServerLevel server)) {
-            return;
+        if (this.level() instanceof ServerLevel server && this.isAlive() && this.tickCount % FIBRE_INTERVAL == 0) {
+            trailFibre(server);
         }
-        layFibreAtFeet(server);
     }
 
-    private void layFibreAtFeet(ServerLevel level) {
+    private void trailFibre(ServerLevel level) {
         BlockPos here = this.blockPosition();
-        if (here.equals(this.lastFibre) || !isFibreSpot(level, here)) {
+        if (here.equals(this.lastFibre) || ThaumaturgeCommonConfig.WUSS_MODE.get() || !canHoldFibre(level, here)) {
             return;
         }
-        level.setBlockAndUpdate(here, BlockTaintFibre.stateForWorld(level, here));
+        level.setBlock(here, BlockTaintFibre.stateForWorld(level, here), Block.UPDATE_ALL);
         this.lastFibre = here;
     }
 
-    private static boolean isFibreSpot(ServerLevel level, BlockPos pos) {
+    private static boolean canHoldFibre(ServerLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        if (!state.getFluidState().isEmpty() || state.is(TTBlocks.TAINT_FIBRE.get())) {
+        if (!state.getFluidState().isEmpty() || state.is(TTBlocks.TAINT_FIBRE) || !state.canBeReplaced()) {
             return false;
         }
-        if (!state.isAir() && !state.canBeReplaced()) {
-            return false;
-        }
-        return TaintHelper.hasSturdyNeighbour(level, pos) && !BlockTaintFibre.isOnlyAdjacentToTaint(level, pos);
+        return TaintHelper.hasSturdyNeighbour(level, pos) && !TaintHelper.isRootless(level, pos);
     }
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
-        if (!super.doHurtTarget(level, target)) {
-            return false;
+        boolean connected = super.doHurtTarget(level, target);
+        if (connected && target instanceof LivingEntity victim && !MobTraits.isTainted(victim) && this.random.nextFloat() < TAINT_CHANCE) {
+            victim.addEffect(createTaintEffect(), this);
         }
-        if (target instanceof LivingEntity victim && this.random.nextFloat() < TAINT_CHANCE) {
-            victim.addEffect(createTaintEffect());
-        }
-        return true;
+        return connected;
     }
 
     private static MobEffectInstance createTaintEffect() {

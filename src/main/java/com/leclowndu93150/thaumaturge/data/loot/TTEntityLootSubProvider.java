@@ -52,6 +52,7 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private static final float CRAB_PEARL_LOOTING_BONUS = 0.25F;
     private static final float CURIO_CHANCE = 0.0125F;
     private static final float CURIO_LOOTING_BONUS = 0.01F;
+    private static final float PRIME_SEED_EXTRA_CRYSTAL_CHANCE = 0.5F;
 
     public TTEntityLootSubProvider(HolderLookup.Provider registries) {
         super(FeatureFlags.REGISTRY.allFlags(), FeatureFlagSet.of(), registries);
@@ -97,6 +98,10 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                         .withPool(chancePool(TTBlocks.CRYSTAL_AER.get(), CONSTRUCT_RARE_CHANCE)).withPool(chancePool(TTBlocks.CRYSTAL_TERRA.get(), CONSTRUCT_RARE_CHANCE))
                         .withPool(chancePool(TTItems.MECHANISM_SIMPLE.get(), CONSTRUCT_COMMON_CHANCE)).withPool(chancePool(TTItems.PLATE_BRASS.get(), CONSTRUCT_COMMON_CHANCE))
                         .withPool(chancePool(TTBlocks.PLANK_GREATWOOD.get(), CONSTRUCT_COMMON_CHANCE)));
+        add(TTEntities.TAINT_SEED.get(), LootTable.lootTable().withPool(vitiumCrystalPool()));
+        add(TTEntities.TAINT_SEED_PRIME.get(),
+                LootTable.lootTable().withPool(vitiumCrystalPool()).withPool(vitiumCrystalPool().when(LootItemRandomChanceCondition.randomChance(PRIME_SEED_EXTRA_CRYSTAL_CHANCE)))
+                        .withPool(vitiumCrystalPool().when(LootItemRandomChanceCondition.randomChance(PRIME_SEED_EXTRA_CRYSTAL_CHANCE))));
         add(TTEntities.THAUMIC_SLIME.get(), LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(vitiumCrystal()).when(LootItemEntityPropertyCondition
                 .hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().subPredicate(SlimePredicate.sized(MinMaxBounds.Ints.atLeast(CRYSTAL_SLIME_MIN_SIZE)))))));
     }
@@ -120,6 +125,10 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private LootItem.Builder<?> vitiumCrystal() {
         Holder<IAspect> vitium = this.registries.lookupOrThrow(IAspect.REGISTRY_KEY).getOrThrow(TTAspects.VITIUM);
         return LootItem.lootTableItem(TTItems.ESSENTIA_CRYSTAL.get()).apply(SetComponentsFunction.setComponent(TTDataComponents.CRYSTAL_ASPECT.get(), new AspectInstance(vitium, 1)));
+    }
+
+    private LootPool.Builder vitiumCrystalPool() {
+        return LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(vitiumCrystal());
     }
 
     private LootPool.Builder curioPool(ItemLike curio) {
