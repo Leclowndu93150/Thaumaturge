@@ -44,11 +44,7 @@ public record ArchitectDelivery(double range) implements SpellBehavior, IArchite
     private static final String METHOD = "method";
     private static final int METHOD_FULL = 0;
     private static final int METHOD_SURFACE = 1;
-    private static final int DIM_ALL = 0;
-    private static final int DIM_FIRST = 1;
-    private static final int DIM_SECOND = 2;
-    private static final int DIM_THIRD = 3;
-    private static final int DIM_NONE = -1;
+    private static final Direction.Axis[] AXES = Direction.Axis.values();
 
     public static final MapCodec<ArchitectDelivery> CODEC = RecordCodecBuilder
             .mapCodec(i -> i.group(Codec.doubleRange(MIN_RANGE, MAX_RANGE).optionalFieldOf("range", DEFAULT_RANGE).forGetter(ArchitectDelivery::range)).apply(i, ArchitectDelivery::new));
@@ -100,31 +96,6 @@ public record ArchitectDelivery(double range) implements SpellBehavior, IArchite
         return stack.isEmpty() ? List.of() : blocks(level, pos, side, methodOf(stack, level), stack);
     }
 
-    @Override
-    public boolean showsAxis(ItemStack stack, Level level, Player player, Direction side, Direction.Axis axis) {
-        int slot = methodOf(stack, level) == METHOD_SURFACE ? surfaceSlot(new Plane(side.getAxis()), axis) : volumeSlot(axis);
-        return !stack.isEmpty() && slot != DIM_NONE && matchesDimension(CasterManager.areaMode(stack), slot);
-    }
-
-    private static boolean matchesDimension(int mode, int slot) {
-        return mode == DIM_ALL || mode == slot;
-    }
-
-    private static int volumeSlot(Direction.Axis axis) {
-        return switch (axis) {
-            case X -> DIM_FIRST;
-            case Z -> DIM_SECOND;
-            case Y -> DIM_THIRD;
-        };
-    }
-
-    private static int surfaceSlot(Plane plane, Direction.Axis axis) {
-        if (axis == plane.first()) {
-            return DIM_FIRST;
-        }
-        return axis == plane.second() ? DIM_SECOND : DIM_NONE;
-    }
-
     public static int methodOf(ItemStack stack, Level level) {
         if (!(stack.getItem() instanceof ICaster caster)) {
             return METHOD_FULL;
@@ -149,6 +120,57 @@ public record ArchitectDelivery(double range) implements SpellBehavior, IArchite
         return false;
     }
 
+    @Override
+    public boolean showsAxis(ItemStack stack, Level level, Player player, Direction side, Direction.Axis axis) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+        Extent selected = Extent.fromStored(CasterManager.areaMode(stack));
+        Extent arrow = methodOf(stack, level) == METHOD_SURFACE ? surfaceSlot(side, axis) : volumeSlot(axis);
+        return matchesDimension(selected, arrow);
+    }
+
+    private static Extent volumeSlot(Direction.Axis axis) {
+        return switch (axis) {
+            case X -> Extent.EAST_WEST;
+            case Y -> Extent.UP_DOWN;
+            case Z -> Extent.NORTH_SOUTH;
+        };
+    }
+
+    private static Extent surfaceSlot(Direction side, Direction.Axis axis) {
+        Plane plane = new Plane(side.getAxis());
+        if (axis == plane.first()) {
+            return Extent.EAST_WEST;
+        }
+        return axis == plane.second() ? Extent.NORTH_SOUTH : Extent.NONE;
+    }
+
+    private static boolean matchesDimension(Extent selected, Extent arrow) {
+        return arrow != Extent.NONE && (selected == Extent.ALL || selected == arrow);
+    }
+
+    private static int reachAlong(ItemStack stack, Direction.Axis axis) {
+        return switch (axis) {
+            case X -> CasterManager.reachX(stack);
+            case Y -> CasterManager.reachY(stack);
+            case Z -> CasterManager.reachZ(stack);
+        };
+    }
+
+    private static BlockPos cornerOf(BlockPos origin, Direction face, ItemStack stack, int sign) {
+        int[] shift = new int[AXES.length];
+        for (Direction.Axis axis : AXES) {
+            int reach = reachAlong(stack, axis);
+            if (axis == face.getAxis()) {
+                shift[axis.ordinal()] = sign > 0 ? -face.getAxisDirection().getStep() * 2 * reach : 0;
+            } else {
+                shift[axis.ordinal()] = sign * reach;
+            }
+        }
+        return origin.offset(shift[Direction.Axis.X.ordinal()], shift[Direction.Axis.Y.ordinal()], shift[Direction.Axis.Z.ordinal()]);
+    }
+
     private static List<BlockPos> blocks(Level level, BlockPos hit, Direction face, int method, ItemStack stack) {
         if (stack.isEmpty()) {
             return List.of();
@@ -168,10 +190,6 @@ public record ArchitectDelivery(double range) implements SpellBehavior, IArchite
             }
         }
         return found;
-    }
-
-    private static BlockPos cornerOf(BlockPos origin, Direction face, ItemStack stack, int sign) {
-        return origin.offset(CasterManager.reachX(stack) * (sign - face.getStepX()), CasterManager.reachY(stack) * (sign - face.getStepY()), CasterManager.reachZ(stack) * (sign - face.getStepZ()));
     }
 
     private static List<BlockPos> surface(Level level, BlockPos origin, Direction face, ItemStack stack) {
@@ -202,6 +220,25 @@ public record ArchitectDelivery(double range) implements SpellBehavior, IArchite
 
     private static boolean exposed(Level level, BlockPos pos) {
         return Direction.stream().anyMatch(direction -> !level.getBlockState(pos.relative(direction)).isSolidRender());
+    }
+
+    private enum Extent {
+        NONE(-1), ALL(0), EAST_WEST(1), NORTH_SOUTH(2), UP_DOWN(3);
+
+        private final int stored;
+
+        Extent(int stored) {
+            this.stored = stored;
+        }
+
+        static Extent fromStored(int code) {
+            for (Extent extent : values()) {
+                if (extent != NONE && extent.stored == code) {
+                    return extent;
+                }
+            }
+            return ALL;
+        }
     }
 
     private record Plane(Direction.Axis first, Direction.Axis second) {

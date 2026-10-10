@@ -26,25 +26,49 @@ import net.neoforged.neoforge.event.level.BlockDropsEvent;
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class WandChargingEvents {
     private static final int PLANT_ORB_MAX_BONUS = 2;
+    private static final int MAX_COMPONENT_DEPTH = 16;
+    private static final double HALF = 0.5;
 
     private WandChargingEvents() {}
 
     @SubscribeEvent
     public static void onLivingDrops(LivingDropsEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!(living.level() instanceof ServerLevel level) || !event.isRecentlyHit()) {
+        LivingEntity dead = event.getEntity();
+        if (!event.isRecentlyHit() || !(dead.level() instanceof ServerLevel level)) {
             return;
         }
-        AspectList aspects = EntityAspects.of(living);
+        AspectList aspects = EntityAspects.of(dead);
         if (aspects.isEmpty()) {
             return;
         }
-        Map<ResourceKey<IAspect>, Integer> primals = reduceToPrimals(aspects);
         RandomSource random = level.getRandom();
-        for (Map.Entry<ResourceKey<IAspect>, Integer> entry : primals.entrySet()) {
-            if (random.nextBoolean()) {
-                level.addFreshEntity(new EntityAspectOrb(level, living.getX(), living.getY(), living.getZ(), entry.getKey(), 1 + random.nextInt(entry.getValue())));
+        double y = dead.getY() + dead.getBbHeight() * HALF;
+        for (Map.Entry<ResourceKey<IAspect>, Integer> primal : reduceToPrimals(aspects).entrySet()) {
+            int total = primal.getValue();
+            if (total > 0 && random.nextBoolean()) {
+                level.addFreshEntity(new EntityAspectOrb(level, dead.getX(), y, dead.getZ(), primal.getKey(), 1 + random.nextInt(total)));
             }
+        }
+    }
+
+    public static Map<ResourceKey<IAspect>, Integer> reduceToPrimals(AspectList aspects) {
+        Map<ResourceKey<IAspect>, Integer> totals = new LinkedHashMap<>();
+        for (AspectInstance entry : aspects.entries()) {
+            splitInto(totals, entry.aspect(), entry.amount(), 0);
+        }
+        return totals;
+    }
+
+    private static void splitInto(Map<ResourceKey<IAspect>, Integer> totals, Holder<IAspect> aspect, int amount, int depth) {
+        if (aspect.value().isPrimal()) {
+            aspect.unwrapKey().ifPresent(key -> totals.merge(key, amount, Integer::sum));
+            return;
+        }
+        if (depth >= MAX_COMPONENT_DEPTH) {
+            return;
+        }
+        for (Holder<IAspect> part : aspect.value().components()) {
+            splitInto(totals, part, amount, depth + 1);
         }
     }
 
@@ -79,22 +103,4 @@ public final class WandChargingEvents {
         return null;
     }
 
-    public static Map<ResourceKey<IAspect>, Integer> reduceToPrimals(AspectList aspects) {
-        Map<ResourceKey<IAspect>, Integer> out = new LinkedHashMap<>();
-        for (AspectInstance instance : aspects.entries()) {
-            reduce(instance.aspect(), instance.amount(), out);
-        }
-        return out;
-    }
-
-    private static void reduce(Holder<IAspect> aspect, int amount, Map<ResourceKey<IAspect>, Integer> out) {
-        if (aspect.value().isPrimal()) {
-            ResourceKey<IAspect> key = aspect.unwrapKey().orElseThrow();
-            out.merge(key, amount, Integer::sum);
-        } else {
-            for (Holder<IAspect> component : aspect.value().components()) {
-                reduce(component, amount, out);
-            }
-        }
-    }
 }

@@ -20,7 +20,7 @@ public final class PortableHoles {
             return false;
         }
         BlockState state = level.getBlockState(pos);
-        return !state.isAir() && !state.canBeReplaced() && !state.hasBlockEntity() && !state.is(TTBlockTags.PORTABLE_HOLE_BLACKLIST) && !state.is(Blocks.BEDROCK) && !state.is(TTBlocks.HOLE.get())
+        return (state.isAir() || !state.canBeReplaced()) && !state.hasBlockEntity() && !state.is(TTBlockTags.PORTABLE_HOLE_BLACKLIST) && !state.is(Blocks.BEDROCK) && !state.is(TTBlocks.HOLE.get())
                 && state.getDestroySpeed(level, pos) != UNBREAKABLE;
     }
 

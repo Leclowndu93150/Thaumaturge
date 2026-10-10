@@ -26,10 +26,12 @@ import net.neoforged.neoforge.common.CommonHooks;
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class CloudRingClientHandler {
     private static final int MIN_AIRBORNE_TICKS = 2;
-    private static final int PUFF_COUNT = 8;
-    private static final double PUFF_HEIGHT = 0.5;
     private static final double HALF = 0.5;
-    private static final float SOUND_VOLUME = 0.1F;
+    private static final int PUFF_COUNT = 7;
+    private static final double PUFF_HEIGHT = 0.1;
+    private static final double PUFF_SPREAD = 0.06;
+    private static final double PUFF_SINK = 0.02;
+    private static final float SOUND_VOLUME = 0.12F;
     private static final float SOUND_PITCH_BASE = 1.0F;
     private static final float SOUND_PITCH_NOISE = 0.05F;
     private static final double JUMP_VELOCITY = 0.75;
@@ -72,32 +74,36 @@ public final class CloudRingClientHandler {
     }
 
     private static void performExtraJump(LocalPlayer player) {
-        Level level = player.level();
-        RandomSource random = level.getRandom();
-        double spread = player.getBbWidth();
-        for (int i = 0; i < PUFF_COUNT; i++) {
-            double x = player.getX() + (random.nextDouble() - HALF) * spread;
-            double z = player.getZ() + (random.nextDouble() - HALF) * spread;
-            level.addParticle(ParticleTypes.POOF, x, player.getY() + PUFF_HEIGHT, z, 0.0, 0.0, 0.0);
+        Vec3 motion = player.getDeltaMovement();
+        Vec3 launched = new Vec3(motion.x, launchSpeed(player), motion.z);
+        if (player.isSprinting()) {
+            float heading = player.getYRot() * Mth.DEG_TO_RAD;
+            launched = launched.add(-Mth.sin(heading) * SPRINT_IMPULSE, 0.0, Mth.cos(heading) * SPRINT_IMPULSE);
         }
+        player.setDeltaMovement(launched);
+        player.resetFallDistance();
+        CommonHooks.onLivingJump(player);
+        ClientPacketDistributor.sendToServer(new ServerboundCloudJumpPayload());
+        Level level = player.level();
+        RandomSource random = player.getRandom();
+        puff(level, player, random);
         float pitch = SOUND_PITCH_BASE + (float) random.nextGaussian() * SOUND_PITCH_NOISE;
         level.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, SOUND_VOLUME, pitch, false);
-        double vertical = JUMP_VELOCITY;
+    }
+
+    private static double launchSpeed(LocalPlayer player) {
         MobEffectInstance boost = player.getEffect(MobEffects.JUMP_BOOST);
-        if (boost != null) {
-            vertical += JUMP_BOOST_STEP * (boost.getAmplifier() + 1);
+        return boost == null ? JUMP_VELOCITY : JUMP_VELOCITY + JUMP_BOOST_STEP * (boost.getAmplifier() + 1);
+    }
+
+    private static void puff(Level level, LocalPlayer player, RandomSource random) {
+        double feet = player.getY() + PUFF_HEIGHT;
+        for (int i = 0; i < PUFF_COUNT; i++) {
+            double x = player.getX() + (random.nextDouble() - HALF) * player.getBbWidth();
+            double z = player.getZ() + (random.nextDouble() - HALF) * player.getBbWidth();
+            double vx = (random.nextDouble() - HALF) * PUFF_SPREAD;
+            double vz = (random.nextDouble() - HALF) * PUFF_SPREAD;
+            level.addParticle(ParticleTypes.CLOUD, x, feet, z, vx, -PUFF_SINK * random.nextDouble(), vz);
         }
-        Vec3 motion = player.getDeltaMovement();
-        double x = motion.x;
-        double z = motion.z;
-        if (player.isSprinting()) {
-            float yaw = player.getYRot() * Mth.DEG_TO_RAD;
-            x -= Mth.sin(yaw) * SPRINT_IMPULSE;
-            z += Mth.cos(yaw) * SPRINT_IMPULSE;
-        }
-        player.setDeltaMovement(x, vertical, z);
-        player.resetFallDistance();
-        ClientPacketDistributor.sendToServer(new ServerboundCloudJumpPayload());
-        CommonHooks.onLivingJump(player);
     }
 }

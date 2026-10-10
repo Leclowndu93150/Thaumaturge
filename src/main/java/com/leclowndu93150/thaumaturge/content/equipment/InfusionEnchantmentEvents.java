@@ -36,6 +36,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -79,16 +80,17 @@ public final class InfusionEnchantmentEvents {
     private static final float ARC_SOUND_PITCH_SPREAD = 0.2F;
     private static final double HALF = 2.0;
     private static final int SOUNDING_WEAR = 5;
-    private static final float SOUNDING_VOLUME = 0.2F;
-    private static final float SOUNDING_PITCH_BASE = 0.2F;
-    private static final float SOUNDING_PITCH_SPREAD = 0.2F;
+    private static final float SOUNDING_VOLUME = 0.4F;
+    private static final float SOUNDING_PITCH_BASE = 0.45F;
+    private static final float SOUNDING_PITCH_SPREAD = 0.1F;
     private static final double BLOCK_CENTER = 0.5;
     private static final int TOOL_WEAR = 1;
     private static final float EFFECTIVE_SPEED = 1.0F;
     private static final double REFINING_CHANCE_BASE = 1.0;
     private static final double REFINING_CHANCE_STEP = 0.125;
+    private static final double REFINING_ORE_WEIGHT = 1.0;
     private static final float REFINING_VOLUME = 0.2F;
-    private static final float REFINING_PITCH_BASE = 0.7F;
+    private static final float REFINING_PITCH_BASE = 0.75F;
     private static final float REFINING_PITCH_SPREAD = 0.2F;
     private static final int LAMPLIGHT_THRESHOLD = 10;
     private static final int LIGHT_FALLOFF = 1;
@@ -111,60 +113,6 @@ public final class InfusionEnchantmentEvents {
 
     public static void resetSession() {
         TARGETS.clear();
-    }
-
-    @SubscribeEvent
-    public static void onAttack(AttackEntityEvent event) {
-        Player attacker = event.getEntity();
-        if (!(attacker.level() instanceof ServerLevel level) || !(event.getTarget() instanceof LivingEntity target) || !target.isAlive()) {
-            return;
-        }
-        ItemStack weapon = attacker.getMainHandItem();
-        int arcing = cappedLevel(weapon, InfusionEnchantment.ARCING);
-        if (arcing < 1) {
-            return;
-        }
-        AABB area = target.getBoundingBox().inflate(ARC_HORIZONTAL_BASE + arcing, ARC_VERTICAL_BASE + arcing / HALF, ARC_HORIZONTAL_BASE + arcing);
-        List<Mob> victims = level.getEntitiesOfClass(Mob.class, area, mob -> isArcVictim(attacker, target, mob));
-        DamageSource source = level.damageSources().playerAttack(attacker);
-        float damage = (float) (ARC_DAMAGE_FRACTION * attacker.getAttributeValue(Attributes.ATTACK_DAMAGE));
-        float yaw = attacker.getYRot() * Mth.DEG_TO_RAD;
-        Vec3 origin = bodyCenter(target);
-        int hits = 0;
-        for (Mob victim : victims.subList(0, Math.min(arcing, victims.size()))) {
-            if (victim.hurtServer(level, source, damage)) {
-                EnchantmentHelper.doPostAttackEffectsWithItemSource(level, victim, source, weapon);
-                victim.push(-Mth.sin(yaw) * ARC_KNOCKBACK, ARC_LIFT, Mth.cos(yaw) * ARC_KNOCKBACK);
-                arcBolt(level, origin, bodyCenter(victim));
-                hits++;
-            }
-        }
-        if (hits > 0) {
-            level.playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), TTSounds.WIND.get(), SoundSource.PLAYERS, ARC_SOUND_VOLUME,
-                    ARC_SOUND_PITCH_BASE + level.getRandom().nextFloat() * ARC_SOUND_PITCH_SPREAD);
-            arcBolt(level, bodyCenter(attacker), origin);
-        }
-    }
-
-    @SubscribeEvent
-    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (!(event.getLevel() instanceof ServerLevel level)) {
-            return;
-        }
-        Player player = event.getEntity();
-        ItemStack stack = event.getItemStack();
-        int sounding = cappedLevel(stack, InfusionEnchantment.SOUNDING);
-        if (sounding < 1 || !player.isShiftKeyDown()) {
-            return;
-        }
-        BlockPos pos = event.getPos();
-        stack.hurtAndBreak(SOUNDING_WEAR, player, event.getHand().asEquipmentSlot());
-        level.playSound(null, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, TTSounds.WANDFAIL.get(), SoundSource.BLOCKS, SOUNDING_VOLUME,
-                SOUNDING_PITCH_BASE + level.getRandom().nextFloat() * SOUNDING_PITCH_SPREAD);
-        ServerPlayer viewer = player instanceof ServerPlayer asServer ? asServer : null;
-        if (viewer != null) {
-            SoundingScan.perform(level, viewer, pos, sounding);
-        }
     }
 
     @SubscribeEvent
@@ -202,6 +150,63 @@ public final class InfusionEnchantmentEvents {
         ItemStack held = player.getMainHandItem();
         BlockState hit = event.getLevel().getBlockState(event.getPos());
         return held.isCorrectToolForDrops(hit) && InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE);
+    }
+
+    @SubscribeEvent
+    public static void onAttack(AttackEntityEvent event) {
+        Player attacker = event.getEntity();
+        if (!(attacker.level() instanceof ServerLevel level) || !(event.getTarget() instanceof LivingEntity target) || !target.isAlive()) {
+            return;
+        }
+        int rank = cappedLevel(attacker.getMainHandItem(), InfusionEnchantment.ARCING);
+        if (rank < 1) {
+            return;
+        }
+        AABB reach = target.getBoundingBox().inflate(ARC_HORIZONTAL_BASE + rank, ARC_VERTICAL_BASE + rank / HALF, ARC_HORIZONTAL_BASE + rank);
+        List<Mob> victims = new ArrayList<>(level.getEntitiesOfClass(Mob.class, reach, mob -> isArcVictim(attacker, target, mob)));
+        victims.sort(Comparator.comparingDouble(mob -> mob.distanceToSqr(target)));
+        float damage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * ARC_DAMAGE_FRACTION);
+        Vec3 facing = horizontalFacing(attacker);
+        int struck = 0;
+        for (Mob victim : victims.subList(0, Math.min(rank, victims.size()))) {
+            DamageSource source = attacker.damageSources().playerAttack(attacker);
+            if (victim.hurtServer(level, source, damage)) {
+                EnchantmentHelper.doPostAttackEffects(level, victim, source);
+                victim.push(facing.x * ARC_KNOCKBACK, ARC_LIFT, facing.z * ARC_KNOCKBACK);
+                arcBolt(level, bodyCenter(target), bodyCenter(victim));
+                struck++;
+            }
+        }
+        if (struck > 0) {
+            float pitch = ARC_SOUND_PITCH_BASE + level.getRandom().nextFloat() * ARC_SOUND_PITCH_SPREAD;
+            level.playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), TTSounds.WIND.get(), SoundSource.PLAYERS, ARC_SOUND_VOLUME, pitch);
+            arcBolt(level, bodyCenter(attacker), bodyCenter(target));
+        }
+    }
+
+    private static Vec3 horizontalFacing(Entity entity) {
+        float radians = entity.getYRot() * Mth.DEG_TO_RAD;
+        return new Vec3(-Mth.sin(radians), 0.0, Mth.cos(radians));
+    }
+
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        Player player = event.getEntity();
+        ItemStack tool = event.getItemStack();
+        int rank = cappedLevel(tool, InfusionEnchantment.SOUNDING);
+        if (!player.isShiftKeyDown() || rank < 1) {
+            return;
+        }
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (!(event.getLevel() instanceof ServerLevel level) || !(player instanceof ServerPlayer viewer)) {
+            return;
+        }
+        BlockPos pos = event.getPos();
+        tool.hurtAndBreak(SOUNDING_WEAR, viewer, event.getHand().asEquipmentSlot());
+        float pitch = SOUNDING_PITCH_BASE + level.getRandom().nextFloat() * SOUNDING_PITCH_SPREAD;
+        level.playSound(null, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, SoundEvents.NOTE_BLOCK_BASEDRUM, SoundSource.BLOCKS, SOUNDING_VOLUME, pitch);
+        SoundingScan.perform(level, viewer, pos, rank);
     }
 
     @SubscribeEvent
@@ -276,21 +281,24 @@ public final class InfusionEnchantmentEvents {
     }
 
     private static void refine(ServerLevel level, BlockDropsEvent event, ItemStack tool) {
-        int refining = cappedLevel(tool, InfusionEnchantment.REFINING);
-        Item cluster = refining > 0 ? RefiningResults.clusterFor(event.getState()) : null;
-        if (cluster == null) {
+        int rank = cappedLevel(tool, InfusionEnchantment.REFINING);
+        if (rank < 1) {
             return;
         }
-        double chance = (REFINING_CHANCE_BASE + refining) * REFINING_CHANCE_STEP;
-        if (swapForClusters(level, event.getDrops(), cluster, chance) == 0) {
+        BlockState broken = event.getState();
+        Item cluster = RefiningResults.clusterFor(broken);
+        if (cluster == null || !(tool.isCorrectToolForDrops(broken) || isSilkTouch(level, tool))) {
             return;
         }
-        refineChime(level, event.getPos());
+        double chance = (REFINING_CHANCE_BASE + rank) * REFINING_CHANCE_STEP * REFINING_ORE_WEIGHT;
+        if (swapForClusters(level, event.getDrops(), cluster, chance) > 0) {
+            refineChime(level, event.getPos());
+        }
     }
 
     private static void refineChime(ServerLevel level, BlockPos pos) {
-        float pitch = REFINING_PITCH_SPREAD * level.getRandom().nextFloat() + REFINING_PITCH_BASE;
-        level.playSound(null, pos, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, REFINING_VOLUME, pitch);
+        float pitch = REFINING_PITCH_BASE + level.getRandom().nextFloat() * REFINING_PITCH_SPREAD;
+        level.playSound(null, pos.getX() + BLOCK_CENTER, pos.getY() + BLOCK_CENTER, pos.getZ() + BLOCK_CENTER, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.BLOCKS, REFINING_VOLUME, pitch);
     }
 
     private static int swapForClusters(ServerLevel level, Collection<ItemEntity> drops, Item cluster, double chance) {
@@ -399,15 +407,15 @@ public final class InfusionEnchantmentEvents {
         }
     }
 
-    private static void distil(ServerLevel level, LivingDropsEvent event, Player killer, boolean collector, int essence) {
-        LivingEntity dead = event.getEntity();
+    private static void distil(ServerLevel level, LivingDropsEvent event, Player killer, boolean collector, int rank) {
         RandomSource random = level.getRandom();
-        List<AspectInstance> remaining = new ArrayList<>(EntityAspects.of(dead).entries());
-        if (remaining.isEmpty() || random.nextInt(ESSENCE_ROLL_BOUND) >= essence) {
+        if (random.nextInt(ESSENCE_ROLL_BOUND) >= rank) {
             return;
         }
-        int made = 0;
-        while (made < essence && !remaining.isEmpty()) {
+        LivingEntity dead = event.getEntity();
+        List<AspectInstance> remaining = new ArrayList<>(EntityAspects.of(dead).entries());
+        int counted = 0;
+        while (counted < rank && !remaining.isEmpty()) {
             int index = random.nextInt(remaining.size());
             AspectInstance picked = remaining.get(index);
             event.getDrops().add(crystalDrop(level, dead, killer, collector, picked));
@@ -416,11 +424,9 @@ public final class InfusionEnchantmentEvents {
             } else {
                 remaining.remove(index);
             }
-            made++;
-            if (!remaining.isEmpty() && random.nextInt(essence) == 0) {
-                int skipped = ESSENCE_SKIP_MIN + random.nextInt(ESSENCE_SKIP_OPTIONS);
-                made += skipped;
-                discardRandom(random, remaining, skipped);
+            counted++;
+            if (random.nextInt(rank) == 0) {
+                counted += ESSENCE_SKIP_MIN + random.nextInt(ESSENCE_SKIP_OPTIONS);
             }
         }
     }

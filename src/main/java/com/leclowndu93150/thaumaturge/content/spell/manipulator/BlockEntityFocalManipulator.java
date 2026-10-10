@@ -68,21 +68,19 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     private static final double DROP_HEIGHT = 1.0;
     private static final float START_VOLUME = 1.0F;
     private static final float DONE_VOLUME = 1.0F;
-    private static final float ABORT_VOLUME = 0.33F;
     private static final float SOUND_PITCH = 1.0F;
-    private static final float SHIMMER_ALPHA = 0.8F;
-    private static final float SHIMMER_COLOR_ALPHA = 1.0F;
-    private static final float SHIMMER_RED_BASE = 0.5F;
-    private static final float SHIMMER_RED_RANGE = 0.4F;
-    private static final float SHIMMER_CHANNEL_BASE = 1.0F;
-    private static final float SHIMMER_CHANNEL_DROP = 0.4F;
-    private static final float SHIMMER_BASE_SCALE = 0.3F;
-    private static final float SHIMMER_SCALE_RANGE = 0.3F;
-    private static final int SHIMMER_BASE_AGE = 6;
-    private static final int SHIMMER_AGE_RANGE = 5;
+    private static final float ABORT_VOLUME = 0.5F;
     private static final int SHIMMER_DELAY = 0;
-    private static final double SHIMMER_HEIGHT = 1.4;
-    private static final double SHIMMER_SPREAD = 0.3;
+    private static final int SHIMMER_PER_TICK = 2;
+    private static final double SHIMMER_HEIGHT = 1.0;
+    private static final double SHIMMER_SPREAD = 0.18;
+    private static final double SHIMMER_DRIFT = 0.004;
+    private static final int SHIMMER_COLOR = ARGB.colorFromFloat(1.0F, 0.78F, 0.88F, 1.0F);
+    private static final float SHIMMER_ALPHA = 0.7F;
+    private static final float SHIMMER_SCALE_BASE = 0.08F;
+    private static final float SHIMMER_SCALE_RANGE = 0.06F;
+    private static final int SHIMMER_AGE_BASE = 6;
+    private static final int SHIMMER_AGE_RANGE = 8;
 
     private final FocusSlot items = new FocusSlot();
     private Spell draft = Spell.empty();
@@ -148,7 +146,8 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
         }
         SpellSummary summary = Spells.analyze(draft, tier.get(), world.registryAccess(), player);
         AspectList cost = FocusItems.aspects(summary, world.registryAccess());
-        if (!InscriptionCheck.of(player, true, false, summary, cost).ready() || NeoForge.EVENT_BUS.post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary)).isCanceled()) {
+        if (cost.isEmpty() || !InscriptionCheck.of(player, true, false, summary, cost).ready()
+                || NeoForge.EVENT_BUS.post(new SpellInscribeEvent(player, worldPosition, focus, draft, summary)).isCanceled()) {
             return false;
         }
         if (!player.getAbilities().instabuild) {
@@ -176,18 +175,19 @@ public final class BlockEntityFocalManipulator extends AbstractSyncedBlockEntity
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityFocalManipulator table) {
-        if (!table.inscribing()) {
+        if (!table.inscribing() || table.focusStack().isEmpty()) {
             return;
         }
         RandomSource random = level.getRandom();
-        int color = ARGB.colorFromFloat(SHIMMER_COLOR_ALPHA, SHIMMER_RED_BASE + SHIMMER_RED_RANGE * random.nextFloat(), SHIMMER_CHANNEL_BASE - SHIMMER_CHANNEL_DROP * random.nextFloat(),
-                SHIMMER_CHANNEL_BASE - SHIMMER_CHANNEL_DROP * random.nextFloat());
-        float scale = SHIMMER_BASE_SCALE + SHIMMER_SCALE_RANGE * random.nextFloat();
-        int age = SHIMMER_BASE_AGE + random.nextInt(SHIMMER_AGE_RANGE);
-        double x = pos.getX() + BLOCK_CENTRE + (random.nextDouble() - random.nextDouble()) * SHIMMER_SPREAD;
-        double y = pos.getY() + SHIMMER_HEIGHT + (random.nextDouble() - random.nextDouble()) * SHIMMER_SPREAD;
-        double z = pos.getZ() + BLOCK_CENTRE + (random.nextDouble() - random.nextDouble()) * SHIMMER_SPREAD;
-        level.addParticle(new ShieldSparkParticleOptions(color, SHIMMER_ALPHA, scale, age, SHIMMER_DELAY, true), x, y, z, 0.0, 0.0, 0.0);
+        for (int i = 0; i < SHIMMER_PER_TICK; i++) {
+            double x = pos.getX() + BLOCK_CENTRE + random.nextGaussian() * SHIMMER_SPREAD;
+            double y = pos.getY() + SHIMMER_HEIGHT + random.nextGaussian() * SHIMMER_SPREAD;
+            double z = pos.getZ() + BLOCK_CENTRE + random.nextGaussian() * SHIMMER_SPREAD;
+            float scale = SHIMMER_SCALE_BASE + random.nextFloat() * SHIMMER_SCALE_RANGE;
+            int age = SHIMMER_AGE_BASE + random.nextInt(SHIMMER_AGE_RANGE);
+            ShieldSparkParticleOptions spark = new ShieldSparkParticleOptions(SHIMMER_COLOR, SHIMMER_ALPHA, scale, age, SHIMMER_DELAY, true);
+            level.addParticle(spark, x, y, z, random.nextGaussian() * SHIMMER_DRIFT, random.nextGaussian() * SHIMMER_DRIFT, random.nextGaussian() * SHIMMER_DRIFT);
+        }
     }
 
     private void work(ServerLevel server, BlockPos pos) {

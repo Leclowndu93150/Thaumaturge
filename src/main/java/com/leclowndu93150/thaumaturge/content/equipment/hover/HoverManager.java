@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.equipment.hover;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.items.IHoverGear;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
+import com.leclowndu93150.thaumaturge.mixin.server.network.ServerGamePacketListenerImplAccessor;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.resources.Identifier;
@@ -26,10 +27,10 @@ public final class HoverManager {
     private static final float TOGGLE_VOLUME = 0.33F;
     private static final float TOGGLE_PITCH = 1.0F;
     private static final int HUM_INTERVAL_TICKS = 24;
-    private static final float HUM_VOLUME = 0.05F;
+    private static final float HUM_VOLUME = 0.04F;
     private static final float HUM_PITCH_BASE = 1.0F;
-    private static final float HUM_PITCH_SPREAD = 0.05F;
-    private static final float FALL_DECAY = 0.75F;
+    private static final float HUM_PITCH_SPREAD = 0.15F;
+    private static final double FALL_DECAY = 0.75;
     private static final int NO_COUNT = 0;
 
     private HoverManager() {}
@@ -53,6 +54,49 @@ public final class HoverManager {
         return !wornHoverGear(player).isEmpty();
     }
 
+    public static void tick(ServerPlayer player, ItemStack stack, IHoverGear gear) {
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
+        if (!isHovering(player)) {
+            player.fallDistance *= FALL_DECAY;
+            return;
+        }
+        player.resetFallDistance();
+        ((ServerGamePacketListenerImplAccessor) player.connection).setAboveGroundTickCount(0);
+        restoreFlightAttribute(player);
+        burnFuel(player, stack, gear);
+        if (gear.getHoverFuel(stack) <= 0) {
+            setHovering(player, false);
+            playToggleSound(player, TTSounds.HHOFF.get());
+            return;
+        }
+        if (player.tickCount % HUM_INTERVAL_TICKS == 0) {
+            float pitch = HUM_PITCH_BASE + (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * HUM_PITCH_SPREAD;
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.JACOBS.get(), SoundSource.PLAYERS, HUM_VOLUME, pitch);
+        }
+    }
+
+    private static void burnFuel(ServerPlayer player, ItemStack stack, IHoverGear gear) {
+        int elapsed = player.getData(TTAttachments.HOVER_CHARGE) + 1;
+        if (elapsed >= FUEL_INTERVAL_TICKS) {
+            gear.consumeHoverFuel(stack);
+            elapsed = NO_COUNT;
+        }
+        player.setData(TTAttachments.HOVER_CHARGE, elapsed);
+    }
+
+    private static void restoreFlightAttribute(ServerPlayer player) {
+        AttributeInstance flight = player.getAttribute(NeoForgeMod.CREATIVE_FLIGHT);
+        if (flight != null && !flight.hasModifier(FLIGHT_MODIFIER_ID)) {
+            applyFlight(player);
+        }
+    }
+
+    private static void playToggleSound(ServerPlayer player, SoundEvent sound) {
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, TOGGLE_VOLUME, TOGGLE_PITCH);
+    }
+
     public static void toggle(ServerPlayer player) {
         ItemStack gearStack = wornHoverGear(player);
         if (!(gearStack.getItem() instanceof IHoverGear gear)) {
@@ -72,39 +116,6 @@ public final class HoverManager {
             applyFlight(player);
         } else {
             releaseFlight(player);
-        }
-    }
-
-    public static void tick(ServerPlayer player, ItemStack stack, IHoverGear gear) {
-        if (player.isCreative() || player.isSpectator()) {
-            return;
-        }
-        if (!isHovering(player)) {
-            player.fallDistance *= FALL_DECAY;
-            return;
-        }
-        boolean hasFuel = gear.getHoverFuel(stack) > 0;
-        if (hasFuel) {
-            int elapsed = player.getData(TTAttachments.HOVER_CHARGE) + 1;
-            if (elapsed >= FUEL_INTERVAL_TICKS) {
-                elapsed = NO_COUNT;
-                gear.consumeHoverFuel(stack);
-                hasFuel = gear.getHoverFuel(stack) > 0;
-            }
-            player.setData(TTAttachments.HOVER_CHARGE, elapsed);
-        }
-        if (!hasFuel) {
-            player.setData(TTAttachments.HOVER_CHARGE, NO_COUNT);
-            setHovering(player, false);
-            playToggleSound(player, TTSounds.HHOFF.get());
-            player.fallDistance *= FALL_DECAY;
-            return;
-        }
-        player.fallDistance = 0.0;
-        applyFlight(player);
-        if (player.tickCount % HUM_INTERVAL_TICKS == 0) {
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), TTSounds.JACOBS.get(), SoundSource.PLAYERS, HUM_VOLUME,
-                    HUM_PITCH_BASE + player.getRandom().nextFloat() * HUM_PITCH_SPREAD);
         }
     }
 
@@ -130,9 +141,5 @@ public final class HoverManager {
             abilities.flying = false;
             player.onUpdateAbilities();
         }
-    }
-
-    private static void playToggleSound(ServerPlayer player, SoundEvent sound) {
-        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, TOGGLE_VOLUME, TOGGLE_PITCH);
     }
 }
