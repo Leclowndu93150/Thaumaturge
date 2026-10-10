@@ -55,15 +55,19 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
     private static final double SPEED_BOOST_FACTOR = 0.8;
     private static final float VITIUM_RETENTION_FACTOR = 0.66F;
     private static final int VENT_ODDS = 3;
-    private static final float VENT_SOUND_VOLUME = 0.25F;
-    private static final float VENT_SOUND_PITCH_BASE = 2.6F;
-    private static final float VENT_SOUND_PITCH_SPREAD = 0.8F;
-    private static final int VENT_PUFFS = 4;
-    private static final double VENT_PUFF_JITTER = 0.1;
-    private static final double VENT_PUFF_SPEED = 0.25;
-    private static final double VENT_PUFF_MOTION_JITTER = 0.1;
     private static final double VENT_FACE_OFFSET = 0.5;
-    private static final int VENT_COLOR = 11184810;
+    private static final double VENT_PIPE_SHIFT = 0.125;
+    private static final double VENT_MOUTH_HEIGHT = 1.0;
+    private static final float VENT_SOUND_VOLUME = 0.15F;
+    private static final float VENT_SOUND_PITCH_LOW = 1.8F;
+    private static final float VENT_SOUND_PITCH_RANGE = 0.2F;
+    private static final int VENT_PUFFS = 3;
+    private static final double VENT_PUFF_SPREAD = 0.06;
+    private static final double VENT_PUFF_LIFT = 1.0;
+    private static final double VENT_PUFF_OUTWARD = 0.35;
+    private static final double VENT_PUFF_SWAY = 0.25;
+    private static final float VENT_PUFF_SCALE = 0.5F;
+    private static final int VENT_COLOR = 0xC8C8CC;
     private static final String ASPECTS_KEY = "Aspects";
     private static final String BURN_TIME_KEY = "BurnTime";
     private static final String COOK_TIME_KEY = "CookTime";
@@ -118,11 +122,13 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
             fuelRemaining--;
             dirty = true;
         }
-        boolean canSmelt = canSmelt();
+        int smeltPoints = smeltablePoints();
+        boolean canSmelt = smeltPoints > 0;
         if (fuelRemaining == 0 && canSmelt && igniteFuel(server)) {
             dirty = true;
         }
         if (fuelRemaining > 0 && canSmelt) {
+            cookTarget = cookTimeFor(smeltPoints);
             cookElapsed++;
             dirty = true;
             if (cookElapsed >= cookTarget) {
@@ -146,6 +152,94 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         syncToClient();
     }
 
+    private int smeltablePoints() {
+        ItemStack input = stackIn(INPUT_SLOT);
+        if (input.isEmpty()) {
+            return 0;
+        }
+        int points = AspectIndexAccess.of(input).totalAmount();
+        return points <= MAX_ESSENTIA - vis ? points : 0;
+    }
+
+    private int cookTimeFor(int points) {
+        int counted = Math.max(bellows, 0);
+        double speedUp = 1.0 - counted * BELLOWS_COOK_REDUCTION;
+        return (int) (points * BASE_COOK_PER_ESSENTIA * speedUp);
+    }
+
+    private void smeltOne(ServerLevel server, BlockPos pos, BlockState state) {
+        ItemStack input = stackIn(INPUT_SLOT);
+        AspectList content = AspectIndexAccess.of(input);
+        if (content.isEmpty()) {
+            return;
+        }
+        Direction[] vents = sidesWith(state.getValue(BlockSmelter.FACING), false);
+        RandomSource random = server.getRandom();
+        float efficiency = essentiaYield();
+        AspectList kept = AspectList.EMPTY;
+        FateTally tally = new FateTally();
+        for (AspectInstance entry : content.entries()) {
+            float survival = entry.aspect().is(TTAspects.VITIUM) ? efficiency * VITIUM_RETENTION_FACTOR : efficiency;
+            int survivors = 0;
+            for (int point = 0; point < entry.amount(); point++) {
+                PointFate fate = rollFate(server, pos, vents, random, survival);
+                tally.record(fate);
+                if (fate == PointFate.KEPT) {
+                    survivors++;
+                }
+            }
+            if (survivors > 0) {
+                kept = kept.add(entry.aspect(), survivors);
+            }
+        }
+        essentiaStock = essentiaStock.add(kept);
+        vis = essentiaStock.totalAmount();
+        pollute(server, pos, tally.polluted);
+        input.shrink(1);
+        putStack(INPUT_SLOT, input);
+        syncToClient();
+    }
+
+    private PointFate rollFate(ServerLevel server, BlockPos pos, Direction[] vents, RandomSource random, float survival) {
+        if (random.nextFloat() < survival) {
+            return PointFate.KEPT;
+        }
+        return ventAbsorbs(server, pos, vents, random) ? PointFate.VENTED : PointFate.POLLUTED;
+    }
+
+    private static boolean ventAbsorbs(ServerLevel server, BlockPos pos, Direction[] vents, RandomSource random) {
+        for (Direction side : vents) {
+            if (random.nextInt(VENT_ODDS) == 0) {
+                emitVent(server, pos.relative(side), side, random);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void emitVent(ServerLevel server, BlockPos ventPos, Direction outward, RandomSource random) {
+        Vec3 mouth = Vec3.atCenterOf(ventPos).add(outward.getStepX() * -VENT_PIPE_SHIFT, VENT_MOUTH_HEIGHT - VENT_FACE_OFFSET, outward.getStepZ() * -VENT_PIPE_SHIFT);
+        playVentSound(server, mouth, VENT_SOUND_PITCH_LOW + random.nextFloat() * VENT_SOUND_PITCH_RANGE);
+        emitPuffs(server, mouth, outward, random);
+    }
+
+    private static void emitPuffs(ServerLevel server, Vec3 mouth, Direction outward, RandomSource random) {
+        for (int puff = 0; puff < VENT_PUFFS; puff++) {
+            emitPuff(server, mouth.add(jitterVector(random, VENT_PUFF_SPREAD)), outward, random);
+        }
+    }
+
+    private static void emitPuff(ServerLevel server, Vec3 at, Direction outward, RandomSource random) {
+        double mx = outward.getStepX() * VENT_PUFF_OUTWARD + jitter(random, VENT_PUFF_SWAY);
+        double mz = outward.getStepZ() * VENT_PUFF_OUTWARD + jitter(random, VENT_PUFF_SWAY);
+        Effects.vent(server, at).motion(mx, VENT_PUFF_LIFT, mz).color(VENT_COLOR).scale(VENT_PUFF_SCALE).send();
+    }
+
+    private int handOverInterval() {
+        int interval = stats().smeltInterval();
+        return speedBoost ? Math.max(1, (int) (interval * SPEED_BOOST_FACTOR)) : interval;
+    }
+
     private ItemStack stackIn(int slot) {
         return items.getResource(slot).toStack(items.getAmountAsInt(slot));
     }
@@ -156,21 +250,6 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         } else {
             items.set(slot, ItemResource.of(stack), stack.getCount());
         }
-    }
-
-    private boolean canSmelt() {
-        ItemStack input = stackIn(INPUT_SLOT);
-        if (input.isEmpty()) {
-            return false;
-        }
-        int total = AspectIndexAccess.of(input).totalAmount();
-        int headroom = MAX_ESSENTIA - vis;
-        if (total <= 0 || total > headroom) {
-            return false;
-        }
-        double bellowsFactor = 1.0 - BELLOWS_COOK_REDUCTION * Math.max(bellows, 0);
-        cookTarget = Math.max(1, (int) (total * BASE_COOK_PER_ESSENTIA * bellowsFactor));
-        return true;
     }
 
     private boolean igniteFuel(Level level) {
@@ -190,40 +269,10 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         return true;
     }
 
-    private void smeltOne(ServerLevel server, BlockPos pos, BlockState state) {
-        ItemStack input = stackIn(INPUT_SLOT);
-        RandomSource random = server.getRandom();
-        float yield = essentiaYield();
-        Direction[] vents = sidesWith(state.getValue(BlockSmelter.FACING), false);
-        FateTally tally = new FateTally();
-        for (AspectInstance entry : AspectIndexAccess.of(input).entries()) {
-            float chance = entry.aspect().is(TTAspects.VITIUM) ? yield * VITIUM_RETENTION_FACTOR : yield;
-            int keptBefore = tally.kept;
-            for (int remaining = entry.amount(); remaining > 0; remaining--) {
-                tally.record(rollFate(server, pos, vents, random, yield, chance));
-            }
-            int keptNow = tally.kept - keptBefore;
-            if (keptNow > 0) {
-                essentiaStock = essentiaStock.add(entry.aspect(), keptNow);
-            }
-        }
-        input.shrink(1);
-        putStack(INPUT_SLOT, input);
-        vis = essentiaStock.totalAmount();
-        pollute(server, pos, tally.polluted);
-    }
-
     private static void pollute(ServerLevel server, BlockPos pos, int points) {
         if (points > 0) {
             AuraHelper.polluteAura(server, pos, points, true);
         }
-    }
-
-    private PointFate rollFate(ServerLevel server, BlockPos pos, Direction[] vents, RandomSource random, float yield, float chance) {
-        if (yield >= 1.0F || random.nextFloat() < chance) {
-            return PointFate.KEPT;
-        }
-        return ventAbsorbs(server, pos, vents, random) ? PointFate.VENTED : PointFate.POLLUTED;
     }
 
     private Direction[] sidesWith(Direction facing, boolean aux) {
@@ -247,40 +296,8 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
         return neighbour.getBlock() instanceof BlockSmelterVent && neighbour.getValue(BlockSmelterVent.FACING) == side.getOpposite();
     }
 
-    private boolean ventAbsorbs(ServerLevel server, BlockPos pos, Direction[] vents, RandomSource random) {
-        for (Direction side : vents) {
-            if (random.nextInt(VENT_ODDS) == 0) {
-                emitVent(server, pos, side, random);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void emitVent(ServerLevel server, BlockPos pos, Direction side, RandomSource random) {
-        float pitch = VENT_SOUND_PITCH_BASE + (random.nextFloat() - random.nextFloat()) * VENT_SOUND_PITCH_SPREAD;
-        Vec3 outward = new Vec3(side.getStepX(), 0.0, side.getStepZ());
-        Vec3 centre = Vec3.atCenterOf(pos);
-        playVentSound(server, centre.add(outward), pitch);
-        emitPuffs(server, centre, outward, random);
-    }
-
     private static void playVentSound(ServerLevel server, Vec3 at, float pitch) {
         server.playSound(null, at.x, at.y, at.z, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, VENT_SOUND_VOLUME, pitch);
-    }
-
-    private static void emitPuffs(ServerLevel server, Vec3 centre, Vec3 outward, RandomSource random) {
-        Vec3 mouth = centre.add(outward.scale(VENT_FACE_OFFSET));
-        Vec3 base = new Vec3(outward.x * VENT_PUFF_SPEED, 0.0, outward.z * VENT_PUFF_SPEED);
-        for (int puff = 0; puff < VENT_PUFFS; puff++) {
-            emitPuff(server, mouth, base, random);
-        }
-    }
-
-    private static void emitPuff(ServerLevel server, Vec3 mouth, Vec3 base, RandomSource random) {
-        Vec3 offset = jitterVector(random, VENT_PUFF_JITTER);
-        Vec3 motion = base.add(jitterVector(random, VENT_PUFF_MOTION_JITTER));
-        Effects.vent(server, mouth.add(offset)).motion(motion.x, motion.y, motion.z).color(VENT_COLOR).send();
     }
 
     private static Vec3 jitterVector(RandomSource random, double range) {
@@ -304,11 +321,6 @@ public class BlockEntitySmelter extends AbstractSyncedBlockEntity implements Men
             moved = feedColumn(server, pos.relative(auxSides[index])) || moved;
         }
         return moved;
-    }
-
-    private int handOverInterval() {
-        int interval = ventInterval();
-        return speedBoost ? Math.max(1, (int) (interval * SPEED_BOOST_FACTOR)) : interval;
     }
 
     private boolean feedColumn(ServerLevel server, BlockPos start) {

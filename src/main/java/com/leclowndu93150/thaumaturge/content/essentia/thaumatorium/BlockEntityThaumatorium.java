@@ -5,21 +5,24 @@ import com.leclowndu93150.thaumaturge.api.aspect.Aspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.items.InvHelper;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
+import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.AdjacentEssentiaDraw;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.BrainBoxScanner;
-import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.CompletionEffect;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.CraftSelection;
-import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.NeighbourPuller;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.RecipeQueue;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.RequirementTracker;
 import com.leclowndu93150.thaumaturge.content.essentia.thaumatorium.work.ThaumatoriumScheduler;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyIds;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.crucible.CrucibleRecipeInput;
+import com.leclowndu93150.thaumaturge.content.research.ResearchProgressionEvents;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -27,6 +30,10 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -48,12 +55,16 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
     private static final int CATALYST_SLOT = 0;
     private static final int HEAT_DEPTH = 2;
     private static final int CATALYST_COST = 1;
+    private static final float HISS_VOLUME = 0.3F;
+    private static final float HISS_PITCH_LOW = 1.7F;
+    private static final float HISS_PITCH_RANGE = 0.25F;
 
     private final CatalystHandler catalyst = new CatalystHandler();
     private final RecipeQueue queue = new RecipeQueue();
     private final RequirementTracker requirements = new RequirementTracker();
     private final CraftSelection selection = new CraftSelection();
-    private final NeighbourPuller puller = new NeighbourPuller();
+    private final AdjacentEssentiaDraw draw = new AdjacentEssentiaDraw();
+    private final Map<Identifier, UUID> crafters = new HashMap<>();
     private final BrainBoxScanner brainBoxes = new BrainBoxScanner();
     private final ThaumatoriumScheduler scheduler = new ThaumatoriumScheduler();
     private boolean heated;
@@ -88,6 +99,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     public void toggleRecipe(ServerLevel level, Player player, Identifier recipeId) {
         if (queue.remove(recipeId)) {
+            crafters.remove(recipeId);
             resetSelection();
             setChangedAndSync();
             return;
@@ -97,6 +109,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
             return;
         }
         queue.add(recipeId);
+        crafters.put(recipeId, player.getUUID());
         resetSelection();
         setChangedAndSync();
     }
@@ -132,112 +145,130 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
 
     private void tick(ServerLevel level, BlockPos pos) {
         scheduler.advance();
-        boolean refreshNow = scheduler.refreshDue();
-        boolean workNow = scheduler.workDue();
-        if (refreshNow) {
+        if (scheduler.refreshDue()) {
             refresh(level, pos);
         }
-        if (workNow && canWork(level, pos)) {
-            work(level, pos);
+        if (!scheduler.workDue()) {
+            return;
         }
-    }
-
-    private boolean canWork(ServerLevel level, BlockPos pos) {
-        return heated && !queue.isEmpty() && !isPowered(level, pos);
+        if (canWork(level, pos)) {
+            work(level, pos);
+        } else {
+            selection.request(null);
+        }
     }
 
     private void refresh(ServerLevel level, BlockPos pos) {
         heated = level.getBlockState(pos.below(HEAT_DEPTH)).is(TTBlockTags.CRUCIBLE_HEAT_SOURCES);
-        int target = RecipeQueue.capacityFor(brainBoxes.count(level, pos, front()));
-        if (target != queue.capacity()) {
-            boolean trimmed = queue.resize(target);
-            if (trimmed) {
-                resetSelection();
-            }
-            setChangedAndSync();
+        int capacity = RecipeQueue.capacityFor(brainBoxes.count(level, pos, front()));
+        if (capacity == queue.capacity()) {
+            return;
         }
-    }
-
-    private static boolean isPowered(ServerLevel level, BlockPos pos) {
-        return level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(pos.below());
+        if (queue.resize(capacity)) {
+            crafters.keySet().retainAll(queue.ids());
+            resetSelection();
+        }
+        setChangedAndSync();
     }
 
     private void work(ServerLevel level, BlockPos pos) {
-        ItemStack held = catalystStack();
-        if (held.isEmpty()) {
+        ItemStack inSlot = catalystStack();
+        if (inSlot.isEmpty()) {
             selection.request(null);
             return;
         }
-        CrucibleRecipe active = selectRecipe(level, held);
-        if (active == null) {
+        CrucibleRecipe recipe = selectRecipe(level, inSlot);
+        if (recipe == null) {
             return;
         }
         Holder<IAspect> missing = requirements.firstUnmet();
         if (missing == null) {
             selection.request(null);
-            complete(level, pos, active, held);
+            complete(level, pos, recipe, inSlot);
             return;
         }
         selection.request(missing.unwrapKey().orElse(null));
         pullUnit(level, pos, missing);
     }
 
-    private @Nullable CrucibleRecipe selectRecipe(ServerLevel level, ItemStack held) {
-        CrucibleRecipe kept = keptSelection(level, held);
-        if (kept != null) {
-            return kept;
-        }
-        selection.choose(null);
-        requirements.clearPlan();
-        return adoptFirstFit(level, held);
+    private @Nullable CrucibleRecipe selectRecipe(ServerLevel level, ItemStack inSlot) {
+        CrucibleRecipe kept = keptSelection(level, inSlot);
+        return kept != null ? kept : adoptFirstFit(level, inSlot);
     }
 
-    private @Nullable CrucibleRecipe keptSelection(ServerLevel level, ItemStack held) {
-        Identifier selected = selection.recipe();
-        if (selected == null || !queue.ids().contains(selected)) {
+    private @Nullable CrucibleRecipe keptSelection(ServerLevel level, ItemStack inSlot) {
+        Identifier current = selection.recipe();
+        if (current == null || !queue.ids().contains(current)) {
             return null;
         }
-        CrucibleRecipe existing = recipe(level, selected);
-        return existing != null && existing.catalyst().test(held) ? existing : null;
+        CrucibleRecipe recipe = recipe(level, current);
+        return recipe != null && recipe.catalyst().test(inSlot) ? recipe : null;
     }
 
-    private @Nullable CrucibleRecipe adoptFirstFit(ServerLevel level, ItemStack held) {
-        for (Identifier queued : queue.ids()) {
-            CrucibleRecipe option = recipe(level, queued);
-            if (option == null || !option.catalyst().test(held)) {
-                continue;
+    private @Nullable CrucibleRecipe adoptFirstFit(ServerLevel level, ItemStack inSlot) {
+        for (Identifier candidate : queue.ids()) {
+            CrucibleRecipe recipe = recipe(level, candidate);
+            if (recipe != null && recipe.catalyst().test(inSlot)) {
+                selection.choose(candidate);
+                requirements.planFor(recipe);
+                return recipe;
             }
-            selection.choose(queued);
-            requirements.planFor(option);
-            return option;
         }
+        resetSelection();
         return null;
     }
 
+    private void complete(ServerLevel level, BlockPos pos, CrucibleRecipe recipe, ItemStack inSlot) {
+        CrucibleRecipeInput check = new CrucibleRecipeInput(inSlot, requirements.received());
+        if (!recipe.matches(check, level)) {
+            return;
+        }
+        ItemStack result = recipe.assemble(check);
+        useCatalyst(inSlot);
+        requirements.clearReceived();
+        credit(level, result);
+        InvHelper.ejectStackAt(level, pos, front(), result);
+        float pitch = HISS_PITCH_LOW + level.getRandom().nextFloat() * HISS_PITCH_RANGE;
+        level.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, HISS_VOLUME, pitch);
+        setChangedAndSync();
+    }
+
+    private void useCatalyst(ItemStack inSlot) {
+        int left = inSlot.getCount() - CATALYST_COST;
+        if (left <= NOTHING) {
+            catalyst.set(CATALYST_SLOT, ItemResource.EMPTY, NOTHING);
+        } else {
+            catalyst.set(CATALYST_SLOT, ItemResource.of(inSlot), left);
+        }
+    }
+
+    private void credit(ServerLevel level, ItemStack result) {
+        Identifier current = selection.recipe();
+        UUID crafterId = current == null ? null : crafters.get(current);
+        ServerPlayer crafter = crafterId == null ? null : level.getServer().getPlayerList().getPlayer(crafterId);
+        if (crafter == null || result.isEmpty()) {
+            return;
+        }
+        crafter.awardStat(Stats.ITEM_CRAFTED.get(result.getItem()), result.getCount());
+        ResearchProgressionEvents.recordCrafted(crafter, result);
+    }
+
+    private boolean canWork(ServerLevel level, BlockPos pos) {
+        return heated && !queue.isEmpty() && !isPowered(level, pos);
+    }
+
+    private static boolean isPowered(ServerLevel level, BlockPos pos) {
+        return level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above()) || level.hasNeighborSignal(pos.below());
+    }
+
     private void pullUnit(ServerLevel level, BlockPos pos, Holder<IAspect> aspect) {
-        int drawn = puller.pull(level, pos, front(), aspect);
+        int drawn = draw.drawOne(level, pos, front(), aspect);
         if (drawn <= NOTHING) {
             return;
         }
         if (requirements.accept(aspect, drawn) > NOTHING) {
             setChangedAndSync();
         }
-    }
-
-    private void complete(ServerLevel level, BlockPos pos, CrucibleRecipe recipe, ItemStack held) {
-        CrucibleRecipeInput input = new CrucibleRecipeInput(held, requirements.received());
-        if (!recipe.matches(input, level) || held.getCount() < CATALYST_COST) {
-            return;
-        }
-        ItemStack result = recipe.assemble(input);
-        catalyst.set(CATALYST_SLOT, catalyst.getResource(CATALYST_SLOT), held.getCount() - CATALYST_COST);
-        requirements.clearReceived();
-        resetSelection();
-        if (!result.isEmpty()) {
-            InvHelper.ejectStackAt(level, pos, front(), result);
-        }
-        CompletionEffect.DEFAULT.play(level, pos);
-        setChangedAndSync();
     }
 
     private void resetSelection() {
@@ -287,7 +318,7 @@ public final class BlockEntityThaumatorium extends AbstractSyncedBlockEntity imp
         if (selection.requested() == null) {
             return NOTHING;
         }
-        return NeighbourPuller.PULL_SUCTION;
+        return AdjacentEssentiaDraw.DRAW_SUCTION;
     }
 
     @Override

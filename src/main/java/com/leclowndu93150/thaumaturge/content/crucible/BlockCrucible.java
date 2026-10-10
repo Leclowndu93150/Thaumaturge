@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -29,7 +30,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -50,11 +50,19 @@ public class BlockCrucible extends BaseEntityBlock {
 
     private static final List<InsideBlockEffectType> CONTACT_EFFECTS = List.of(InsideBlockEffectType.EXTINGUISH, InsideBlockEffectType.CLEAR_FREEZE);
     private static final int TANK_SLOT = 0;
-    private static final int ANALOG_STEPS = 14;
-    private static final int CONTACT_INTERVAL = 10;
-    private static final float CONTACT_VOLUME = 0.4F;
-    private static final float CONTACT_PITCH_BASE = 2.0F;
-    private static final float CONTACT_PITCH_SPREAD = 0.4F;
+    private static final int SCALD_INTERVAL = 10;
+    private static final float SCALD_DAMAGE = 1.0F;
+    private static final float HISS_VOLUME = 0.4F;
+    private static final float HISS_PITCH = 1.7F;
+    private static final float HISS_PITCH_JITTER = 0.3F;
+    private static final int SIGNAL_STEPS = 14;
+    private static final int MAX_SIGNAL = 15;
+    private static final int AMBIENT_POP_ODDS = 8;
+    private static final double AMBIENT_POP_HEIGHT = 0.7;
+    private static final float AMBIENT_POP_VOLUME = 0.15F;
+    private static final float AMBIENT_POP_PITCH = 0.8F;
+    private static final float AMBIENT_POP_PITCH_JITTER = 0.3F;
+    private static final double BLOCK_CENTER = 0.5;
 
     public BlockCrucible(Properties properties) {
         super(properties);
@@ -149,22 +157,37 @@ public class BlockCrucible extends BaseEntityBlock {
     }
 
     private static void applyContact(ServerLevel level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, BlockEntityCrucible crucible) {
-        if (entity instanceof ItemEntity itemEntity && !(entity instanceof EntitySpecialItem)) {
-            crucible.absorbThrown(itemEntity);
-        } else if (entity instanceof LivingEntity living && entity.tickCount % CONTACT_INTERVAL == 0) {
-            scald(level, pos, living, effectApplier);
+        if (entity instanceof ItemEntity item) {
+            if (!(item instanceof EntitySpecialItem) && item.isAlive()) {
+                crucible.absorbThrown(item);
+            }
+            return;
+        }
+        if (entity instanceof LivingEntity creature) {
+            CONTACT_EFFECTS.forEach(effectApplier::apply);
+            if (creature.tickCount % SCALD_INTERVAL == 0) {
+                scaldCreature(level, pos, creature);
+            }
         }
     }
 
-    private static void scald(ServerLevel level, BlockPos pos, LivingEntity living, InsideBlockEffectApplier effectApplier) {
-        if (living.isInvulnerableTo(level, level.damageSources().lava())) {
+    private static void scaldCreature(ServerLevel level, BlockPos pos, LivingEntity creature) {
+        if (creature.hurtServer(level, level.damageSources().inFire(), SCALD_DAMAGE)) {
+            float pitch = HISS_PITCH + level.getRandom().nextFloat() * HISS_PITCH_JITTER;
+            level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, HISS_VOLUME, pitch);
+        }
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (random.nextInt(AMBIENT_POP_ODDS) != 0) {
             return;
         }
-        living.lavaHurt();
-        CONTACT_EFFECTS.forEach(effectApplier::apply);
-        Vec3 center = Vec3.atCenterOf(pos);
-        float pitch = CONTACT_PITCH_BASE + level.getRandom().nextFloat() * CONTACT_PITCH_SPREAD;
-        level.playSound(null, center.x, center.y, center.z, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, CONTACT_VOLUME, pitch);
+        BlockEntityCrucible crucible = crucibleAt(level, pos);
+        if (crucible != null && crucible.isBoiling()) {
+            float pitch = AMBIENT_POP_PITCH + random.nextFloat() * AMBIENT_POP_PITCH_JITTER;
+            level.playLocalSound(pos.getX() + BLOCK_CENTER, pos.getY() + AMBIENT_POP_HEIGHT, pos.getZ() + BLOCK_CENTER, SoundEvents.LAVA_POP, SoundSource.BLOCKS, AMBIENT_POP_VOLUME, pitch, false);
+        }
     }
 
     @Override
@@ -184,6 +207,8 @@ public class BlockCrucible extends BaseEntityBlock {
         if (total <= 0) {
             return 0;
         }
-        return Mth.floor((float) total / BlockEntityCrucible.MAX_ASPECT * ANALOG_STEPS) + 1;
+        int filled = Mth.floor((float) total / BlockEntityCrucible.MAX_ASPECT * SIGNAL_STEPS);
+        return Math.min(MAX_SIGNAL, filled + 1);
     }
+
 }
