@@ -75,6 +75,7 @@ public final class TTCapabilities {
         event.registerBlockEntity(EssentiaCapabilities.TRANSPORT, TTBlockEntities.THAUMATORIUM_TOP.get(), (be, side) -> be);
         event.registerBlockEntity(Capabilities.Item.BLOCK, TTBlockEntities.THAUMATORIUM.get(), (be, side) -> be.catalyst());
         event.registerBlockEntity(AspectCapabilities.CONTAINER, TTBlockEntities.MIRROR_ESSENTIA.get(), (be, side) -> be);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, TTBlockEntities.MIRROR.get(), (be, side) -> be.inbox());
     }
 
     private static void essentiaTransport(RegisterCapabilitiesEvent event) {

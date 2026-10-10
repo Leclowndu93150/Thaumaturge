@@ -521,7 +521,7 @@ public final class TTBlocks {
     public static final DeferredBlock<Block> MATRIX_COST = BLOCKS.registerBlock("matrix_cost", Block::new, TTBlocks::stoneProps);
 
     public static final DeferredBlock<BlockVisBattery> VIS_BATTERY = BLOCKS.registerBlock("vis_battery", BlockVisBattery::new,
-            props -> props.mapColor(MapColor.STONE).strength(0.5F).sound(SoundType.STONE).randomTicks().lightLevel(state -> state.getValue(BlockVisBattery.CHARGE)));
+            props -> props.mapColor(MapColor.STONE).strength(0.5F).sound(SoundType.GLASS).randomTicks().lightLevel(state -> state.getValue(BlockVisBattery.CHARGE)));
 
     public static final DeferredBlock<BlockDioptra> DIOPTRA = BLOCKS.registerBlock("dioptra", BlockDioptra::new,
             props -> props.mapColor(MapColor.STONE).strength(2.0F, 10.0F).sound(SoundType.STONE).noOcclusion());

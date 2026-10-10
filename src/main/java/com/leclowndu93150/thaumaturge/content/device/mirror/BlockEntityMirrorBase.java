@@ -236,7 +236,7 @@ public abstract class BlockEntityMirrorBase extends AbstractSyncedBlockEntity {
         link = stored;
     }
 
-    private boolean partnerAvailable() {
+    protected boolean partnerAvailable() {
         GlobalPos destination = link;
         ServerLevel destinationLevel = targetLevel();
         return destination != null && destinationLevel != null && destinationLevel.hasChunkAt(destination.pos());

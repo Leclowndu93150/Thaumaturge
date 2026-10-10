@@ -56,13 +56,7 @@ public final class BlockEntityArcaneBore extends AbstractSyncedBlockEntity imple
     public static void clientTick(Level level, BlockPos pos, BlockState state, BlockEntityArcaneBore bore) {
         bore.prevYaw = bore.yaw;
         bore.prevPitch = bore.pitch;
-        BlockPos target = bore.digTarget;
-        if (target != null) {
-            bore.aimBore(target.getX() + 0.5, target.getY(), target.getZ() + 0.5, ArcaneBoreCore.IDLE_YAW_STEP, ArcaneBoreCore.DIG_PITCH_STEP);
-            return;
-        }
-        Direction facing = bore.boreFacing();
-        bore.aimBore(pos.getX() + 0.5 + facing.getStepX(), pos.getY() + facing.getStepY(), pos.getZ() + 0.5 + facing.getStepZ(), ArcaneBoreCore.IDLE_YAW_STEP, ArcaneBoreCore.IDLE_PITCH_STEP);
+        ArcaneBoreCore.aim(bore, bore.digging ? bore.digTarget : null);
     }
 
     public float renderYaw(float partialTicks) {

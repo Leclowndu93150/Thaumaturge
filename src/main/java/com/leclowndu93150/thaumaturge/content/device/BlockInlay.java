@@ -133,7 +133,7 @@ public final class BlockInlay extends Block implements IInfusionStabiliser {
         if (!(level.getBlockState(pos).getBlock() instanceof BlockStabilizer)) {
             return 0;
         }
-        return level.getBlockEntity(pos) instanceof BlockEntityStabilizer stabilizer ? Math.max(0, stabilizer.getEnergy()) : 0;
+        return level.getBlockEntity(pos) instanceof BlockEntityStabilizer stabilizer ? Math.max(0, stabilizer.charge()) : 0;
     }
 
     public static void updateNetwork(Level level, BlockPos origin) {

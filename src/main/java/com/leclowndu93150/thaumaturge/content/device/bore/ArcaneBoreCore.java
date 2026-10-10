@@ -18,6 +18,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Block;
@@ -36,15 +38,17 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import org.jspecify.annotations.Nullable;
 
 public final class ArcaneBoreCore {
     public static final float MAX_CHARGE = 10.0F;
-    public static final float IDLE_YAW_STEP = 10.0F;
-    public static final float IDLE_PITCH_STEP = 33.0F;
-    public static final float DIG_PITCH_STEP = 90.0F;
+    public static final float IDLE_YAW_STEP = 8.0F;
+    public static final float IDLE_PITCH_STEP = 6.0F;
+    public static final float DIG_PITCH_STEP = 24.0F;
 
     private static final int LEVEL_EVENT_BLOCK_BREAK = 2001;
     private static final int RECHARGE_INTERVAL = 10;
@@ -75,6 +79,7 @@ public final class ArcaneBoreCore {
     private static final int LIGHT_PHASE_RIGHT = 0;
     private static final int LIGHT_PHASE_LEFT = 2;
     private static final Direction[] DIRECTIONS = Direction.values();
+    private static final Direction[] SIDES = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
     private float charge;
     private @Nullable BlockPos target;
@@ -98,63 +103,149 @@ public final class ArcaneBoreCore {
     }
 
     public void serverTick(ArcaneBoreHost host, ServerLevel level, int tickCount) {
-        recharge(host, level, tickCount);
-        ItemStack tool = host.boreTool();
-        if (!host.boreActive() || !ArcaneBoreTool.valid(tool)) {
-            target = null;
-            host.setBoreDigging(false);
-            aimIdle(host);
-            return;
+        if (tickCount % RECHARGE_INTERVAL == 0) {
+            recharge(host, level);
         }
-        if (charge < DIG_COST) {
+        ItemStack tool = host.boreTool();
+        if (!host.boreActive() || !host.boreValid() || !ArcaneBoreTool.valid(tool)) {
+            target = null;
+            delay = 0;
+            host.setBoreDigging(false);
+            aim(host, null);
             return;
         }
         if (target == null) {
-            findTarget(host, level, tool);
+            if (charge >= DIG_COST) {
+                findTarget(host, level, tool);
+            }
+        } else if (--delay <= 0) {
+            dig(host, level, tool, tickCount);
         }
-        BlockPos aimed = target;
-        if (aimed == null) {
-            aimIdle(host);
+        host.setBoreDigging(target != null);
+        aim(host, target);
+    }
+
+    public static void aim(ArcaneBoreHost host, @Nullable BlockPos digTarget) {
+        if (digTarget != null) {
+            host.aimBore(digTarget.getX() + TARGET_CENTER, digTarget.getY() + TARGET_CENTER, digTarget.getZ() + TARGET_CENTER, IDLE_YAW_STEP, DIG_PITCH_STEP);
             return;
         }
-        host.aimBore(aimed.getX() + TARGET_CENTER, aimed.getY(), aimed.getZ() + TARGET_CENTER, IDLE_YAW_STEP, DIG_PITCH_STEP);
-        if (--delay <= 0) {
-            dig(host, level, tool, aimed, tickCount);
-        }
+        aimIdle(host);
     }
 
-    private void recharge(ArcaneBoreHost host, ServerLevel level, int tickCount) {
-        boolean due = tickCount % RECHARGE_INTERVAL == 0;
-        if (due && charge < MAX_CHARGE) {
-            charge += AuraHelper.drainVis(level, host.borePos(), MAX_CHARGE, false);
-        }
-    }
-
-    private void aimIdle(ArcaneBoreHost host) {
+    private static void aimIdle(ArcaneBoreHost host) {
         Direction facing = host.boreFacing();
-        Vec3 position = host.borePosition();
-        if (host.boreActive()) {
-            Vec3 eye = host.boreEye();
-            host.aimBore(eye.x + facing.getStepX() * ACTIVE_AIM_DISTANCE, eye.y + facing.getStepY() * ACTIVE_AIM_DISTANCE, eye.z + facing.getStepZ() * ACTIVE_AIM_DISTANCE, IDLE_YAW_STEP,
-                    IDLE_PITCH_STEP);
-        } else {
-            host.aimBore(position.x + facing.getStepX() * INACTIVE_AIM_DISTANCE, position.y, position.z + facing.getStepZ() * INACTIVE_AIM_DISTANCE, IDLE_YAW_STEP, IDLE_PITCH_STEP);
+        int distance = host.boreActive() ? ACTIVE_AIM_DISTANCE : INACTIVE_AIM_DISTANCE;
+        Vec3 point = host.boreEye().add(facing.getStepX() * (double) distance, facing.getStepY() * (double) distance, facing.getStepZ() * (double) distance);
+        host.aimBore(point.x, point.y, point.z, IDLE_YAW_STEP, IDLE_PITCH_STEP);
+    }
+
+    private void recharge(ArcaneBoreHost host, ServerLevel level) {
+        float missing = MAX_CHARGE - charge;
+        if (missing <= 0.0F) {
+            return;
         }
+        charge += AuraHelper.drainVis(level, host.borePos(), missing, false);
     }
 
     private void findTarget(ArcaneBoreHost host, ServerLevel level, ItemStack tool) {
         BlockPos candidate = probe(host, level, tool);
-        if (candidate == null) {
-            host.setBoreDigging(false);
+        if (candidate == null || !canSee(host, level, candidate)) {
             return;
         }
         BlockState state = level.getBlockState(candidate);
         int speed = ArcaneBoreTool.digSpeed(level, tool, state);
-        int hardnessDelay = (int) (HARDNESS_DELAY_FACTOR * state.getDestroySpeed(level, candidate)) - SPEED_DELAY_FACTOR * speed;
-        delay = Math.max(MIN_DELAY, Math.max(BASE_DELAY - speed, hardnessDelay));
+        float hardness = state.getDestroySpeed(level, candidate);
+        delay = Math.max(MIN_DELAY, Math.max(BASE_DELAY - speed, Mth.floor(HARDNESS_DELAY_FACTOR * hardness) - SPEED_DELAY_FACTOR * speed));
         target = candidate;
-        host.setBoreDigging(true);
         host.showBoreDig(level, candidate, delay);
+    }
+
+    private static boolean canSee(ArcaneBoreHost host, ServerLevel level, BlockPos candidate) {
+        Vec3 eye = host.boreEye();
+        Vec3 aim = Vec3.atCenterOf(candidate);
+        BlockPos own = host.borePos();
+        CollisionContext context = host.boreCollisionContext();
+        Boolean visible = BlockGetter.traverseBlocks(eye, aim, level, (getter, cell) -> obstructs(getter, cell, own, candidate, eye, aim, context) ? Boolean.FALSE : null, getter -> Boolean.TRUE);
+        return visible;
+    }
+
+    private static boolean obstructs(BlockGetter getter, BlockPos cell, BlockPos own, BlockPos candidate, Vec3 from, Vec3 to, CollisionContext context) {
+        if (cell.equals(own) || cell.equals(candidate)) {
+            return false;
+        }
+        VoxelShape shape = getter.getBlockState(cell).getCollisionShape(getter, cell, context);
+        return !shape.isEmpty() && shape.clip(from, to, cell) != null;
+    }
+
+    private void dig(ArcaneBoreHost host, ServerLevel level, ItemStack tool, int tickCount) {
+        BlockPos pos = target;
+        target = null;
+        if (pos == null || !level.hasChunkAt(pos)) {
+            return;
+        }
+        BlockState state = level.getBlockState(pos);
+        if (state.isAir()) {
+            return;
+        }
+        AABB area = dropArea(pos);
+        Set<ItemEntity> preexisting = new HashSet<>(level.getEntitiesOfClass(ItemEntity.class, area));
+        if (!breakAsPlayer(host, level, tool, pos)) {
+            return;
+        }
+        List<ItemStack> drops = collectDrops(level, area, preexisting);
+        refine(drops, state, tool, level, host.boreRandom());
+        drops.forEach(drop -> deliver(host, level, drop));
+        charge = Math.max(0.0F, charge - DIG_COST);
+        wear(host);
+        playSound(host, tickCount);
+        lightTunnel(host, level, tool);
+    }
+
+    private void wear(ArcaneBoreHost host) {
+        if (++wear >= WEAR_INTERVAL) {
+            wear = 0;
+            host.hurtBoreTool();
+        }
+    }
+
+    private void playSound(ArcaneBoreHost host, int tickCount) {
+        if (tickCount < nextSoundTick) {
+            return;
+        }
+        RandomSource random = host.boreRandom();
+        host.playBoreSound(TTSounds.RUMBLE.get(), SOUND_VOLUME, SOUND_PITCH_MIN + random.nextFloat() * SOUND_PITCH_SPREAD);
+        nextSoundTick = tickCount + SOUND_SPACING + random.nextInt(SOUND_JITTER_RANGE);
+    }
+
+    private static void lightTunnel(ArcaneBoreHost host, ServerLevel level, ItemStack tool) {
+        if (!hasLitArcaneLamp(level, host.borePos())) {
+            return;
+        }
+        BlockPos spot = pickGlimmerSpot(host, tool);
+        if (level.hasChunkAt(spot) && level.getBlockState(spot).isAir() && level.getBrightness(LightLayer.BLOCK, spot) < FULL_LIGHT) {
+            level.setBlock(spot, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+    }
+
+    private static BlockPos pickGlimmerSpot(ArcaneBoreHost host, ItemStack tool) {
+        Direction facing = host.boreFacing();
+        int depth = ArcaneBoreTool.digDepth(tool);
+        int distance = LIGHT_PHASE_SPAN * host.boreRandom().nextInt(depth / LIGHT_PHASE_SPAN + 1);
+        BlockPos spot = host.borePos().relative(facing, 1 + distance);
+        int shift = Math.min(LIGHT_MAX_SPREAD, ArcaneBoreTool.digRadius(tool));
+        Direction side = facing.getAxis() == Direction.Axis.Y ? Direction.EAST : facing.getClockWise();
+        int phase = distance / LIGHT_PHASE_SPAN % LIGHT_PHASES;
+        if (phase == LIGHT_PHASE_RIGHT) {
+            return spot.relative(side, shift);
+        }
+        if (phase == LIGHT_PHASE_LEFT) {
+            return spot.relative(side.getOpposite(), shift);
+        }
+        if (phase == LIGHT_PHASE_LOWERED && facing.getAxis() != Direction.Axis.Y) {
+            return spot.below(LIGHT_LOWERING);
+        }
+        return spot;
     }
 
     private @Nullable BlockPos probe(ArcaneBoreHost host, ServerLevel level, ItemStack tool) {
@@ -215,29 +306,6 @@ public final class ArcaneBoreCore {
             case Y -> front.add(first, 0.0, second);
             case Z -> front.add(first, second, 0.0);
         };
-    }
-
-    private void dig(ArcaneBoreHost host, ServerLevel level, ItemStack tool, BlockPos pos, int tickCount) {
-        target = null;
-        delay = 0;
-        BlockState broken = level.getBlockState(pos);
-        if (broken.isAir()) {
-            return;
-        }
-        AABB area = dropArea(pos);
-        Set<ItemEntity> preexisting = new HashSet<>(level.getEntitiesOfClass(ItemEntity.class, area));
-        if (!breakAsPlayer(host, level, tool, pos)) {
-            return;
-        }
-        List<ItemStack> drops = collectDrops(level, area, preexisting);
-        refine(drops, broken, tool, level, host.boreRandom());
-        for (ItemStack drop : drops) {
-            deliver(host, level, drop);
-        }
-        charge -= DIG_COST;
-        wear(host);
-        lightTunnel(host, level, tool);
-        playSound(host, tickCount);
     }
 
     private boolean breakAsPlayer(ArcaneBoreHost host, ServerLevel level, ItemStack tool, BlockPos pos) {
@@ -309,49 +377,8 @@ public final class ArcaneBoreCore {
         }
     }
 
-    private void wear(ArcaneBoreHost host) {
-        if (!host.boreTool().isEmpty() && ++wear >= WEAR_INTERVAL) {
-            wear = 0;
-            host.hurtBoreTool();
-        }
-    }
-
-    private void playSound(ArcaneBoreHost host, int tickCount) {
-        if (tickCount < nextSoundTick) {
-            return;
-        }
-        RandomSource random = host.boreRandom();
-        host.playBoreSound(TTSounds.RUMBLE.get(), SOUND_VOLUME, SOUND_PITCH_MIN + random.nextFloat() * SOUND_PITCH_SPREAD);
-        nextSoundTick = tickCount + SOUND_SPACING + random.nextInt(SOUND_JITTER_RANGE);
-    }
-
-    private void lightTunnel(ArcaneBoreHost host, ServerLevel level, ItemStack tool) {
-        if (!hasLitArcaneLamp(level, host.borePos())) {
-            return;
-        }
-        BlockPos anchor = pickGlimmerSpot(host, tool);
-        if (!level.hasChunkAt(anchor)) {
-            return;
-        }
-        boolean dark = level.getBrightness(LightLayer.BLOCK, anchor) < FULL_LIGHT;
-        if (dark && level.getBlockState(anchor).isAir()) {
-            level.setBlock(anchor, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
-        }
-    }
-
-    private BlockPos pickGlimmerSpot(ArcaneBoreHost host, ItemStack tool) {
-        Direction facing = host.boreFacing();
-        int distance = LIGHT_PHASE_SPAN * host.boreRandom().nextInt(Math.max(1, ArcaneBoreTool.digDepth(tool) / LIGHT_PHASE_SPAN));
-        int phase = (distance / LIGHT_PHASE_SPAN) % LIGHT_PHASES;
-        int spread = Math.min(LIGHT_MAX_SPREAD, ArcaneBoreTool.digRadius(tool));
-        int sideways = phase == LIGHT_PHASE_RIGHT ? spread : phase == LIGHT_PHASE_LEFT ? -spread : 0;
-        BlockPos spot = host.borePos().relative(facing, 1 + distance);
-        spot = facing.getStepX() != 0 ? spot.offset(0, 0, sideways) : spot.offset(sideways, 0, 0);
-        return phase == LIGHT_PHASE_LOWERED && !facing.getAxis().isVertical() ? spot.below(LIGHT_LOWERING) : spot;
-    }
-
     private static boolean hasLitArcaneLamp(ServerLevel level, BlockPos origin) {
-        return Arrays.stream(DIRECTIONS).map(origin::relative).filter(level::hasChunkAt).anyMatch(pos -> isLitArcaneLamp(level, pos));
+        return Arrays.stream(SIDES).map(origin::relative).filter(level::hasChunkAt).anyMatch(pos -> isLitArcaneLamp(level, pos));
     }
 
     private static boolean isLitArcaneLamp(ServerLevel level, BlockPos pos) {

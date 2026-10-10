@@ -4,10 +4,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntake;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaIntakeHost;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
@@ -23,6 +20,7 @@ import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityLampFertility extends BlockEntity implements EssentiaIntakeHost {
     private static final int INTAKE_SUCTION = 128;
+    private static final int SUCTION_PER_CHARGE = 10;
     private static final int INTAKE_INTERVAL = 5;
     private static final int MAX_CHARGES = 10;
     private static final int MIN_RUNNING_CHARGES = 2;
@@ -45,10 +43,10 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
         boolean running = !level.hasNeighborSignal(pos) && lamp.charges >= MIN_RUNNING_CHARGES;
         BlockLamp.showLit(level, pos, state, running);
         if (!running) {
+            lamp.runningTicks = 0;
             return;
         }
-        int tick = lamp.runningTicks++;
-        if (tick % PAIRING_INTERVAL == 0) {
+        if (lamp.runningTicks++ % PAIRING_INTERVAL == 0) {
             lamp.pairAnimals(level, pos);
         }
     }
@@ -62,9 +60,11 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
     }
 
     private void pairAnimals(Level level, BlockPos pos) {
+        if (charges < PAIRING_COST) {
+            return;
+        }
         List<Animal> nearby = level.getEntitiesOfClass(Animal.class, new AABB(pos).inflate(PAIRING_RANGE));
-        Map<EntityType<?>, Long> population = nearby.stream().collect(Collectors.groupingBy(Animal::getType, Collectors.counting()));
-        Couple couple = findCouple(nearby, population);
+        Couple couple = findCouple(nearby);
         if (couple == null) {
             return;
         }
@@ -74,20 +74,25 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
         setChanged();
     }
 
-    private static @Nullable Couple findCouple(List<Animal> nearby, Map<EntityType<?>, Long> population) {
-        Map<EntityType<?>, Animal> firstOfType = new HashMap<>();
-        for (Animal animal : nearby) {
-            EntityType<?> type = animal.getType();
-            boolean eligible = animal.getAge() == 0 && !animal.isInLove() && population.get(type) < GROUP_LIMIT;
-            if (!eligible) {
+    private static @Nullable Couple findCouple(List<Animal> nearby) {
+        for (Animal candidate : nearby) {
+            if (!isEligible(candidate)) {
                 continue;
             }
-            Animal earlier = firstOfType.putIfAbsent(type, animal);
-            if (earlier != null) {
-                return new Couple(earlier, animal);
+            EntityType<?> kind = candidate.getType();
+            if (nearby.stream().filter(other -> other.getType() == kind).count() >= GROUP_LIMIT) {
+                continue;
+            }
+            Animal partner = nearby.stream().filter(other -> other != candidate && other.getType() == kind && isEligible(other)).findFirst().orElse(null);
+            if (partner != null) {
+                return new Couple(candidate, partner);
             }
         }
         return null;
+    }
+
+    private static boolean isEligible(Animal animal) {
+        return animal.isAlive() && animal.getAge() == 0 && animal.canFallInLove();
     }
 
     private record Couple(Animal first, Animal second) {
@@ -105,6 +110,11 @@ public final class BlockEntityLampFertility extends BlockEntity implements Essen
     @Override
     public boolean wantsEssentia() {
         return charges < MAX_CHARGES;
+    }
+
+    @Override
+    public int intakeSuction(int baseSuction) {
+        return baseSuction - SUCTION_PER_CHARGE * charges;
     }
 
     @Override

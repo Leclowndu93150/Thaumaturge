@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEnt
 import com.leclowndu93150.thaumaturge.content.effect.EffectDispatch;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.fluid.FluidStacksResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     public static final int CAPACITY = 1000;
@@ -40,9 +42,9 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     private static final int PROBE_LAYER_AREA = PROBE_SIDE * PROBE_SIDE;
     private static final int CELL_COUNT = PROBE_LAYERS * PROBE_LAYER_AREA;
     private static final int OWN_CELL = (PROBE_LAYERS / 2) * PROBE_LAYER_AREA + (PROBE_SIDE / 2) * PROBE_SIDE + PROBE_SIDE / 2;
-    private static final int FIRST_CELL = 1;
+    private static final int FIRST_CELL = 0;
     private static final int FIRST_CAULDRON_LEVEL = 1;
-    private static final int STREAM_COLOR = 0x286FF6;
+    private static final int STREAM_COLOR = 0x4AB8FF;
     private static final int STREAM_TYPE = 0;
     private static final int STREAM_COUNT = 4;
     private static final float STREAM_SCALE = 0.1F;
@@ -93,36 +95,6 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         return FluidResource.of(Fluids.WATER);
     }
 
-    private void probe(ServerLevel level) {
-        int cell = probeCursor;
-        probeCursor = (probeCursor + 1) % CELL_COUNT;
-        if (probeCursor == OWN_CELL) {
-            probeCursor = (probeCursor + 1) % CELL_COUNT;
-        }
-        BlockPos pos = positionOf(cell);
-        if (level.hasChunkAt(pos) && !targets.contains(pos) && acceptsWater(level, pos)) {
-            targets.add(pos);
-            setChanged();
-        }
-    }
-
-    private BlockPos positionOf(int cell) {
-        int layer = cell / PROBE_LAYER_AREA;
-        int column = cell % PROBE_LAYER_AREA / PROBE_SIDE;
-        int row = cell % PROBE_SIDE;
-        return worldPosition.offset(column - PROBE_REACH, layer - PROBE_LAYERS / 2, row - PROBE_REACH);
-    }
-
-    private int cellOf(BlockPos pos) {
-        int dx = pos.getX() - worldPosition.getX();
-        int dy = pos.getY() - worldPosition.getY();
-        int dz = pos.getZ() - worldPosition.getZ();
-        if (Math.abs(dx) > PROBE_REACH || Math.abs(dz) > PROBE_REACH || Math.abs(dy) > PROBE_LAYERS / 2) {
-            return -1;
-        }
-        return (dy + PROBE_LAYERS / 2) * PROBE_LAYER_AREA + (dx + PROBE_REACH) * PROBE_SIDE + dz + PROBE_REACH;
-    }
-
     private static boolean isCauldron(BlockState state) {
         return state.is(Blocks.CAULDRON) || state.is(Blocks.WATER_CAULDRON);
     }
@@ -131,28 +103,54 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         return isCauldron(level.getBlockState(pos)) || level.getCapability(Capabilities.Fluid.BLOCK, pos, Direction.UP) != null;
     }
 
+    private void probe(ServerLevel level) {
+        int cell = probeCursor;
+        probeCursor = (probeCursor + 1) % CELL_COUNT;
+        if (cell == OWN_CELL) {
+            return;
+        }
+        BlockPos candidate = positionOf(cell);
+        if (targets.contains(candidate) || !level.hasChunkAt(candidate) || !acceptsWater(level, candidate)) {
+            return;
+        }
+        targets.add(candidate);
+        setChanged();
+    }
+
+    private BlockPos positionOf(int cell) {
+        int layer = cell / PROBE_LAYER_AREA;
+        int row = cell % PROBE_LAYER_AREA / PROBE_SIDE;
+        int column = cell % PROBE_SIDE;
+        return worldPosition.offset(column - PROBE_REACH, layer - PROBE_LAYERS / 2, row - PROBE_REACH);
+    }
+
+    private int cellOf(BlockPos target) {
+        int column = target.getX() - worldPosition.getX() + PROBE_REACH;
+        int layer = target.getY() - worldPosition.getY() + PROBE_LAYERS / 2;
+        int row = target.getZ() - worldPosition.getZ() + PROBE_REACH;
+        return layer * PROBE_LAYER_AREA + row * PROBE_SIDE + column;
+    }
+
     private void distribute(ServerLevel level) {
-        int index = 0;
-        while (index < targets.size() && waterAmount() >= PUSH_AMOUNT) {
-            BlockPos target = targets.get(index);
+        Iterator<BlockPos> walk = targets.iterator();
+        while (walk.hasNext() && waterAmount() >= PUSH_AMOUNT) {
+            BlockPos target = walk.next();
             if (!level.hasChunkAt(target)) {
-                index++;
                 continue;
             }
             BlockState state = level.getBlockState(target);
             if (isCauldron(state)) {
                 if (waterAmount() < CAULDRON_COST) {
-                    targets.remove(index);
+                    walk.remove();
                     setChanged();
-                    continue;
+                } else {
+                    fillCauldron(level, target, state);
                 }
-                fillCauldron(level, target, state);
-                index++;
                 continue;
             }
             ResourceHandler<FluidResource> receiver = level.getCapability(Capabilities.Fluid.BLOCK, target, Direction.UP);
             if (receiver == null) {
-                targets.remove(index);
+                walk.remove();
                 setChanged();
                 continue;
             }
@@ -160,7 +158,19 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
                 pour(level, target);
                 return;
             }
-            index++;
+        }
+    }
+
+    private void refill(ServerLevel level, BlockPos pos) {
+        int stored = waterAmount();
+        if (stored >= CAPACITY) {
+            return;
+        }
+        float request = Math.min(MAX_VIS_PER_REFILL, (CAPACITY - stored) / (float) CAPACITY);
+        float received = AuraHelper.drainVis(level, pos, request, false);
+        int gained = Math.min(CAPACITY - stored, Math.round(received * CAPACITY));
+        if (gained > 0) {
+            tank.set(TANK_SLOT, water(), stored + gained);
         }
     }
 
@@ -191,29 +201,10 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     }
 
     private void pour(ServerLevel level, BlockPos target) {
-        Vec3 from = new Vec3(worldPosition.getX() + BLOCK_CENTER, worldPosition.getY() + SOURCE_HEIGHT, worldPosition.getZ() + BLOCK_CENTER);
-        EffectDispatch.spawnEssentiaStream(level, from, Vec3.atCenterOf(target), STREAM_COLOR, STREAM_TYPE, STREAM_COUNT, STREAM_SCALE, STREAM_EXTEND, STREAM_LIFT);
-        level.sendParticles(ParticleTypes.SPLASH, target.getX() + BLOCK_CENTER, target.getY() + 1.0, target.getZ() + BLOCK_CENTER, SPLASH_COUNT, SPLASH_SPREAD_HORIZONTAL, SPLASH_SPREAD_VERTICAL,
-                SPLASH_SPREAD_HORIZONTAL, 0.0);
-    }
-
-    private void refill(ServerLevel level, BlockPos pos) {
-        int stored = waterAmount();
-        if (stored >= CAPACITY) {
-            return;
-        }
-        float request = Math.min(MAX_VIS_PER_REFILL, (CAPACITY - stored) / (float) CAPACITY);
-        if (request <= 0.0F) {
-            return;
-        }
-        int gained = (int) (CAPACITY * AuraHelper.drainVis(level, pos, request, false));
-        if (gained <= 0) {
-            return;
-        }
-        try (Transaction transaction = Transaction.openRoot()) {
-            tank.insert(water(), gained, transaction);
-            transaction.commit();
-        }
+        Vec3 mouth = new Vec3(worldPosition.getX() + BLOCK_CENTER, worldPosition.getY() + SOURCE_HEIGHT, worldPosition.getZ() + BLOCK_CENTER);
+        Vec3 inlet = new Vec3(target.getX() + BLOCK_CENTER, target.getY() + 1.0, target.getZ() + BLOCK_CENTER);
+        EffectDispatch.spawnEssentiaStream(level, mouth, inlet, STREAM_COLOR, STREAM_TYPE, STREAM_COUNT, STREAM_SCALE, STREAM_EXTEND, STREAM_LIFT);
+        level.sendParticles(ParticleTypes.SPLASH, inlet.x, inlet.y, inlet.z, SPLASH_COUNT, SPLASH_SPREAD_HORIZONTAL, SPLASH_SPREAD_VERTICAL, SPLASH_SPREAD_HORIZONTAL, 0.0);
     }
 
     @Override
@@ -238,7 +229,10 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
     private void loadTargets(int[] cells) {
         for (int cell : cells) {
             if (cell >= 0 && cell < CELL_COUNT && cell != OWN_CELL) {
-                targets.add(positionOf(cell));
+                BlockPos restored = positionOf(cell);
+                if (!targets.contains(restored)) {
+                    targets.add(restored);
+                }
             }
         }
     }
@@ -251,6 +245,11 @@ public final class BlockEntityEverfullUrn extends AbstractSyncedBlockEntity {
         @Override
         public boolean isValid(int index, FluidResource resource) {
             return resource.getFluid() == Fluids.WATER;
+        }
+
+        @Override
+        public int insert(int index, FluidResource resource, int amount, TransactionContext transaction) {
+            return 0;
         }
 
         @Override

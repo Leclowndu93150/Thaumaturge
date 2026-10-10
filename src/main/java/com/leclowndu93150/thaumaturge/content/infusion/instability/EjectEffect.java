@@ -84,7 +84,7 @@ public record EjectEffect(boolean consume, EjectAftermath aftermath, IntProvider
         if (!(found instanceof BlockEntityStabilizer stabilizer)) {
             return false;
         }
-        return stabilizer.mitigate(mitigation.sample(context.random()));
+        return stabilizer.spendForShield(mitigation.sample(context.random()));
     }
 
     private void strike(InstabilityContext context, BlockEntityPedestal pedestal) {

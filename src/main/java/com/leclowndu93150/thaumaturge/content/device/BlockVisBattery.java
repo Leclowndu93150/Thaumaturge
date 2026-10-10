@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.redstone.Orientation;
 import org.jspecify.annotations.Nullable;
 
@@ -57,13 +58,6 @@ public final class BlockVisBattery extends Block {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
-        if (!level.isClientSide() && level.hasNeighborSignal(pos)) {
-            level.scheduleTick(pos, this, WAKE_DELAY);
-        }
-    }
-
-    @Override
     protected boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
@@ -73,11 +67,20 @@ public final class BlockVisBattery extends Block {
         return state.getValue(CHARGE);
     }
 
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, block, orientation, movedByPiston);
+        if (level instanceof ServerLevel server && server.hasNeighborSignal(pos) && state.getValue(CHARGE) > 0) {
+            server.getBlockTicks().clearArea(new BoundingBox(pos));
+            server.scheduleTick(pos, this, WAKE_DELAY);
+        }
+    }
+
     private void evaluate(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         int charge = state.getValue(CHARGE);
-        Transition next = level.hasNeighborSignal(pos) ? whilePowered(charge) : whileIdle(random, charge, level, pos);
-        if (next != null) {
-            settle(next, level, pos, state);
+        Transition transition = level.hasNeighborSignal(pos) ? whilePowered(charge) : whileIdle(level, pos, charge, random);
+        if (transition != null) {
+            settle(state, level, pos, transition);
         }
     }
 
@@ -85,11 +88,15 @@ public final class BlockVisBattery extends Block {
         return charge > 0 ? new Transition(charge - 1, true, POWERED_DELAY) : null;
     }
 
-    private static @Nullable Transition whileIdle(RandomSource random, int charge, ServerLevel level, BlockPos pos) {
+    private static @Nullable Transition whileIdle(ServerLevel level, BlockPos pos, int charge, RandomSource random) {
         float vis = AuraHelper.getVis(level, pos);
-        float base = AuraHelper.getAuraBase(level, pos);
-        boolean absorbable = charge < MAX_CHARGE && vis > base * CHARGE_BAND && vis > MIN_CHARGE_VIS;
-        if (absorbable && AuraHelper.drainVis(level, pos, VIS_STEP, false) > 0.0F) {
+        int base = AuraHelper.getAuraBase(level, pos);
+        if (charge < MAX_CHARGE && vis > base * CHARGE_BAND && vis > MIN_CHARGE_VIS) {
+            float drained = AuraHelper.drainVis(level, pos, VIS_STEP, false);
+            if (drained < VIS_STEP) {
+                AuraHelper.addVis(level, pos, drained);
+                return null;
+            }
             return new Transition(charge + 1, false, jitter(random, CHARGE_DELAY_MIN, CHARGE_DELAY_SPREAD));
         }
         if (charge > 0 && vis < base * RELEASE_BAND) {
@@ -98,16 +105,16 @@ public final class BlockVisBattery extends Block {
         return null;
     }
 
-    private static int jitter(RandomSource random, int min, int spread) {
-        return min + random.nextInt(spread);
-    }
-
-    private void settle(Transition next, ServerLevel level, BlockPos pos, BlockState state) {
-        if (next.emitsVis()) {
+    private void settle(BlockState state, ServerLevel level, BlockPos pos, Transition transition) {
+        if (transition.emitsVis()) {
             AuraHelper.addVis(level, pos, VIS_STEP);
         }
-        level.setBlock(pos, state.setValue(CHARGE, next.charge()), Block.UPDATE_ALL);
-        level.scheduleTick(pos, this, next.delay());
+        level.setBlock(pos, state.setValue(CHARGE, transition.charge()), Block.UPDATE_ALL);
+        level.scheduleTick(pos, this, transition.delay());
+    }
+
+    private static int jitter(RandomSource random, int min, int spread) {
+        return min + random.nextInt(spread);
     }
 
     private record Transition(int charge, boolean emitsVis, int delay) {

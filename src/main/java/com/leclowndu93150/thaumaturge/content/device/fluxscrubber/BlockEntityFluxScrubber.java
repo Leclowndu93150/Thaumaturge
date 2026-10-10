@@ -45,10 +45,10 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private static final int SCAN_RADIUS_SQUARED = SCAN_RADIUS * SCAN_RADIUS;
     private static final int CELL_BUDGET = 16;
     private static final int REMOVAL_AMOUNT = 1;
-    private static final float SPARKLE_RED = 0xDD / 255.0F;
-    private static final float SPARKLE_GREEN = 0.0F;
-    private static final float SPARKLE_BLUE = 1.0F;
-    private static final float SPARKLE_SCALE = 0.8F;
+    private static final float SPARKLE_RED = 0.62F;
+    private static final float SPARKLE_GREEN = 0.3F;
+    private static final float SPARKLE_BLUE = 0.88F;
+    private static final float SPARKLE_SCALE = 0.7F;
 
     private int essentia;
     private int charges;
@@ -206,13 +206,51 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
     private void work(ServerLevel level, BlockPos pos) {
         if (power < WORK_POWER) {
             refill(level, pos);
-        } else {
+        }
+        if (power >= WORK_POWER) {
             scan(level, pos);
         }
+    }
+
+    private void scan(ServerLevel level, BlockPos pos) {
+        RandomSource random = level.getRandom();
+        for (int checked = 0; checked < CELL_BUDGET; checked++) {
+            if (scanIndex >= SCAN_CELLS) {
+                reseed(random);
+            }
+            int cell = (int) ((scanOffset + (long) scanIndex * scanStep) % SCAN_CELLS);
+            scanIndex++;
+            int dx = cell / (SCAN_SIDE * SCAN_SIDE) - SCAN_RADIUS;
+            int dy = cell / SCAN_SIDE % SCAN_SIDE - SCAN_RADIUS;
+            int dz = cell % SCAN_SIDE - SCAN_RADIUS;
+            if (dx * dx + dy * dy + dz * dz >= SCAN_RADIUS_SQUARED) {
+                continue;
+            }
+            cursor.setWithOffset(pos, dx, dy, dz);
+            if (!level.hasChunkAt(cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
+                continue;
+            }
+            if (PhysicalFlux.reduce(level, cursor, REMOVAL_AMOUNT) > 0) {
+                power -= WORK_POWER;
+                charges++;
+                Effects.simpleSparkle(level, Vec3.atCenterOf(cursor)).color(SPARKLE_RED, SPARKLE_GREEN, SPARKLE_BLUE).scale(SPARKLE_SCALE).send();
+                roll(random);
+                setChangedAndSend();
+                return;
+            }
+        }
+    }
+
+    private void roll(RandomSource random) {
         int perRoll = ThaumaturgeCommonConfig.FLUX_SCRUBBER_CHARGES_PER_ROLL.get();
+        double chance = ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_CHANCE.get();
+        int yield = ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_PER_ROLL.get();
+        int capacity = essentiaCapacity();
         while (charges >= perRoll) {
             charges -= perRoll;
-            roll(level.getRandom());
+            if (random.nextDouble() < chance) {
+                essentia = Math.min(capacity, essentia + yield);
+            }
         }
     }
 
@@ -230,45 +268,6 @@ public final class BlockEntityFluxScrubber extends BlockEntity implements IEssen
             setChanged();
         } else {
             refillWait = RETRY_DELAY;
-        }
-    }
-
-    private void roll(RandomSource random) {
-        int capacity = essentiaCapacity();
-        if (essentia < capacity && random.nextDouble() < ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_CHANCE.get()) {
-            essentia = Math.min(capacity, essentia + ThaumaturgeCommonConfig.FLUX_SCRUBBER_ESSENTIA_PER_ROLL.get());
-            setChangedAndSend();
-        } else {
-            setChanged();
-        }
-    }
-
-    private void scan(ServerLevel level, BlockPos pos) {
-        if (scanIndex >= SCAN_CELLS) {
-            reseed(level.getRandom());
-        }
-        for (int budget = 0; budget < CELL_BUDGET && scanIndex < SCAN_CELLS; budget++) {
-            int cell = (int) ((scanOffset + (long) scanIndex * scanStep) % SCAN_CELLS);
-            scanIndex++;
-            int dx = cell % SCAN_SIDE - SCAN_RADIUS;
-            int rest = cell / SCAN_SIDE;
-            int dz = rest % SCAN_SIDE - SCAN_RADIUS;
-            int dy = rest / SCAN_SIDE - SCAN_RADIUS;
-            if (dx * dx + dy * dy + dz * dz >= SCAN_RADIUS_SQUARED) {
-                continue;
-            }
-            cursor.setWithOffset(pos, dx, dy, dz);
-            if (!level.hasChunkAt(cursor) || !PhysicalFlux.isScrubbable(level.getBlockState(cursor))) {
-                continue;
-            }
-            BlockPos target = cursor.immutable();
-            if (PhysicalFlux.reduce(level, target, REMOVAL_AMOUNT) == REMOVAL_AMOUNT) {
-                power -= WORK_POWER;
-                charges++;
-                setChanged();
-                Effects.simpleSparkle(level, Vec3.atCenterOf(target)).color(SPARKLE_RED, SPARKLE_GREEN, SPARKLE_BLUE).scale(SPARKLE_SCALE).send();
-                return;
-            }
         }
     }
 

@@ -23,7 +23,6 @@ public final class BlockDioptra extends BaseEntityBlock {
     public static final MapCodec<BlockDioptra> CODEC = simpleCodec(BlockDioptra::new);
 
     private static final int CENTER_INDEX = BlockEntityDioptra.GRID_SIZE * (BlockEntityDioptra.GRID_SIZE / 2) + BlockEntityDioptra.GRID_SIZE / 2;
-    private static final float SAMPLE_MAX = 64.0F;
     private static final float SIGNAL_SPAN = 14.0F;
 
     public BlockDioptra(BlockBehaviour.Properties properties) {
@@ -62,7 +61,7 @@ public final class BlockDioptra extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof BlockEntityDioptra dioptra)) {
             return 0;
         }
-        float ratio = dioptra.gridValue(CENTER_INDEX) / SAMPLE_MAX;
+        float ratio = dioptra.gridValue(CENTER_INDEX) / (float) BlockEntityDioptra.STEPS;
         return ratio > 0.0F ? (int) (ratio * SIGNAL_SPAN) + 1 : 0;
     }
 

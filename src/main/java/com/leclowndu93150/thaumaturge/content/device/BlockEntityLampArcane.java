@@ -31,19 +31,28 @@ public final class BlockEntityLampArcane extends BlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlockEntityLampArcane lamp) {
-        boolean lit = state.getValue(BlockStateProperties.ENABLED);
-        if (level.hasNeighborSignal(pos)) {
-            if (lit) {
-                BlockLamp.showLit(level, pos, state, false);
+        boolean lit = !level.hasNeighborSignal(pos);
+        boolean wasLit = state.getValue(BlockStateProperties.ENABLED);
+        BlockLamp.showLit(level, pos, state, lit);
+        if (!lit) {
+            if (wasLit) {
                 lamp.removeLights();
             }
             return;
         }
-        if (!lit) {
-            BlockLamp.showLit(level, pos, state, true);
-        }
         if (level.getGameTime() % PLACE_INTERVAL == 0) {
-            lamp.tryPlaceGlimmer(level, pos);
+            lamp.tryPlaceGlimmer(level, pos, level.getRandom());
+        }
+    }
+
+    private void tryPlaceGlimmer(Level level, BlockPos origin, RandomSource random) {
+        target.set(origin.getX() + spread(random), origin.getY() + spread(random), origin.getZ() + spread(random));
+        if (!level.hasChunkAt(target)) {
+            return;
+        }
+        adjustHeight(level);
+        if (isFreeDarkCell(level) && hasClearLine(level, origin, target)) {
+            level.setBlock(target, TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -51,26 +60,10 @@ public final class BlockEntityLampArcane extends BlockEntity {
         return random.nextInt(OFFSET_SPAN) - random.nextInt(OFFSET_SPAN);
     }
 
-    private void tryPlaceGlimmer(Level level, BlockPos origin) {
-        RandomSource random = level.getRandom();
-        int x = origin.getX() + spread(random);
-        int y = origin.getY() + spread(random);
-        int z = origin.getZ() + spread(random);
-        target.set(x, y, z);
-        if (!level.hasChunkAt(target)) {
-            return;
-        }
-        target.setY(adjustHeight(level, y));
-        if (!isFreeDarkCell(level) || !hasClearLine(level, origin, target)) {
-            return;
-        }
-        level.setBlock(target.immutable(), TTBlocks.EFFECT_GLIMMER.get().defaultBlockState(), Block.UPDATE_ALL);
-    }
-
-    private int adjustHeight(Level level, int wanted) {
-        int surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, target).getY();
-        int lowered = Math.min(wanted, surface + SURFACE_CEILING);
-        return Math.max(level.getMinY() + FLOOR_MARGIN, lowered);
+    private void adjustHeight(Level level) {
+        int ceiling = level.getHeight(Heightmap.Types.MOTION_BLOCKING, target.getX(), target.getZ()) + SURFACE_CEILING;
+        int floor = level.getMinY() + FLOOR_MARGIN;
+        target.setY(Math.max(floor, Math.min(ceiling, target.getY())));
     }
 
     private boolean isFreeDarkCell(Level level) {
@@ -93,19 +86,24 @@ public final class BlockEntityLampArcane extends BlockEntity {
         return !shape.isEmpty() && shape.clip(from, to, cell) != null;
     }
 
-    public void removeLights() {
+    private void removeLights() {
         if (level == null || level.isClientSide()) {
             return;
         }
-        Block glimmer = TTBlocks.EFFECT_GLIMMER.get();
-        BlockState air = Blocks.AIR.defaultBlockState();
-        BlockPos low = worldPosition.offset(-LIGHT_RADIUS, -LIGHT_RADIUS, -LIGHT_RADIUS);
-        BlockPos high = worldPosition.offset(LIGHT_RADIUS, LIGHT_RADIUS, LIGHT_RADIUS);
-        for (BlockPos cell : BlockPos.betweenClosed(low, high)) {
-            if (!level.hasChunkAt(cell) || !level.getBlockState(cell).is(glimmer)) {
-                continue;
+        BlockPos origin = worldPosition;
+        for (int dx = -LIGHT_RADIUS; dx <= LIGHT_RADIUS; dx++) {
+            for (int dz = -LIGHT_RADIUS; dz <= LIGHT_RADIUS; dz++) {
+                target.set(origin.getX() + dx, origin.getY(), origin.getZ() + dz);
+                if (!level.hasChunkAt(target)) {
+                    continue;
+                }
+                for (int dy = -LIGHT_RADIUS; dy <= LIGHT_RADIUS; dy++) {
+                    target.setY(origin.getY() + dy);
+                    if (level.getBlockState(target).is(TTBlocks.EFFECT_GLIMMER.get())) {
+                        level.setBlock(target, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                    }
+                }
             }
-            level.setBlock(cell.immutable(), air, Block.UPDATE_ALL);
         }
     }
 

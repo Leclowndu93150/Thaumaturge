@@ -68,7 +68,7 @@ public final class EssentiaIntake implements IEssentiaTransport {
 
     @Override
     public int getSuctionAmount(Direction face) {
-        return isConnectable(face) && host.wantsEssentia() ? suction : 0;
+        return isConnectable(face) && host.wantsEssentia() ? host.intakeSuction(suction) : 0;
     }
 
     @Override
