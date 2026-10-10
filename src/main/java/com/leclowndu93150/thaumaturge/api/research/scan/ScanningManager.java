@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +17,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -199,7 +202,8 @@ public final class ScanningManager {
         if (BINDING.get().hidesItemForm(state)) {
             return ItemStack.EMPTY;
         }
-        ItemStack stack = state.getCloneItemStack(null, player.level(), pos, player);
+        BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        ItemStack stack = state.getCloneItemStack(hit, player.level(), pos, player);
         FluidState fluid = state.getFluidState();
         return stack.isEmpty() && !fluid.isEmpty()
                 ? new ItemStack(fluid.getType().getBucket())
