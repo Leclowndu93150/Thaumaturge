@@ -10,11 +10,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Iris blocks unrecognised vanilla/core ShaderInstances by default while a shader pack is active. Thaumaturge's rift
- * and occluding-effect shaders are intentional core shaders whose fragment programs are part of the effect itself, so
+ * Iris blocks unrecognised vanilla/core ShaderInstances by default while a shader pack is active. Thaumaturge's rift,
+ * occluding-effect and flat (1.21.1 specific) shaders are intentional core shaders whose programs are part of the effect itself, so
  * replacing them with a generic shader changes the effect rather than merely routing it through the shader pack.
  *
- * <p>Apply after Iris's ShaderInstance mixin (lower priority) and opt in only those two registered shader instances.
+ * <p>Apply after Iris's ShaderInstance mixin (lower priority) and opt in only those registered shader instances.
  * Shadow rendering stays skipped exactly as Iris expects for unknown shaders.</p>
  */
 @Mixin(value = ShaderInstance.class, priority = 900)

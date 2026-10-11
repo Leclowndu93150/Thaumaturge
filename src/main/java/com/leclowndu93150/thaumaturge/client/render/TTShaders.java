@@ -15,6 +15,7 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 public final class TTShaders {
     private static ShaderInstance ender;
     private static ShaderInstance occludingEffect;
+    private static ShaderInstance entityFlat;
     private static ShaderInstance fx;
     private static ShaderInstance fxAlphaTest;
     private static ShaderInstance portal;
@@ -31,12 +32,16 @@ public final class TTShaders {
         return occludingEffect;
     }
 
+    public static ShaderInstance entityFlat() {
+        return entityFlat;
+    }
+
     /**
-     * Core effect shaders that must keep their Thaumaturge fragment program under Iris. Iris normally blocks unknown
-     * core shaders while a shader pack is active; the Iris compatibility mixin selectively opts these two back in.
+     * Core effect shaders that must keep their Thaumaturge programs under Iris. Iris normally blocks unknown
+     * core shaders while a shader pack is active; the Iris compatibility mixin selectively opts these back in.
      */
     public static boolean isIrisAllowedCustomEffectShader(ShaderInstance shader) {
-        return shader != null && (shader == ender || shader == occludingEffect);
+        return shader != null && (shader == ender || shader == occludingEffect || shader == entityFlat);
     }
 
     public static ShaderInstance fx() {
@@ -75,6 +80,10 @@ public final class TTShaders {
                 new ShaderInstance(
                         event.getResourceProvider(), TTIds.rl("tt_occluding_effect"), DefaultVertexFormat.NEW_ENTITY),
                 shader -> occludingEffect = shader);
+        event.registerShader(
+                new ShaderInstance(
+                        event.getResourceProvider(), TTIds.rl("tt_entity_flat"), DefaultVertexFormat.NEW_ENTITY),
+                shader -> entityFlat = shader);
         event.registerShader(
                 new ShaderInstance(
                         event.getResourceProvider(), TTIds.rl("tt_portal"), DefaultVertexFormat.POSITION_TEX),

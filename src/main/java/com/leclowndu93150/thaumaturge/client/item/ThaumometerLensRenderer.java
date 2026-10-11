@@ -6,6 +6,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanKeys;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanTarget;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedBlock;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedEntity;
+import com.leclowndu93150.thaumaturge.api.research.scan.ScannedSky;
 import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.TTFlatRenderTypes;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
@@ -52,14 +55,14 @@ public final class ThaumometerLensRenderer {
         if (mc.level == null) {
             return;
         }
-        Object target = ThaumometerItem.resolveTarget(mc.level, player);
-        if (target == null) {
+        ScanTarget target = ThaumometerItem.resolveTarget(mc.level, player);
+        if (target instanceof ScannedSky) {
             return;
         }
         Component name = null;
         Component nodeLine = null;
         AspectList aspects = null;
-        if (target instanceof BlockPos pos) {
+        if (target instanceof ScannedBlock(BlockPos pos)) {
             if (mc.level.getBlockEntity(pos) instanceof BlockEntityNode node) {
                 name = Component.translatable(
                         node.isEnergized()
@@ -79,7 +82,7 @@ public final class ThaumometerLensRenderer {
                 }
             } else {
                 BlockState state = mc.level.getBlockState(pos);
-                ItemStack pick = ScanningManager.stackOf(player, ScanTarget.block(pos));
+                ItemStack pick = ScanningManager.stackOf(player, target);
                 name = state.getFluidState().isEmpty() && !pick.isEmpty()
                         ? pick.getHoverName()
                         : state.getBlock().getName();
@@ -87,16 +90,18 @@ public final class ThaumometerLensRenderer {
                     aspects = AspectIndexAccess.index().of(pick);
                 }
             }
-        } else if (target instanceof ItemEntity itemEntity) {
-            ItemStack stack = itemEntity.getItem();
-            name = stack.getHoverName();
-            if (KnowledgeAccess.of(player).isResearchKnown(ScanKeys.item(stack.getItem()))) {
-                aspects = AspectIndexAccess.index().of(stack);
-            }
-        } else if (target instanceof Entity entity) {
-            name = entity.getName();
-            if (KnowledgeAccess.of(player).isResearchKnown(ScanKeys.entity(entity.getType()))) {
-                aspects = EntityAspects.of(entity);
+        } else if (target instanceof ScannedEntity(Entity entity)) {
+            if (entity instanceof ItemEntity itemEntity) {
+                ItemStack stack = itemEntity.getItem();
+                name = stack.getHoverName();
+                if (KnowledgeAccess.of(player).isResearchKnown(ScanKeys.item(stack.getItem()))) {
+                    aspects = AspectIndexAccess.index().of(stack);
+                }
+            } else {
+                name = entity.getName();
+                if (KnowledgeAccess.of(player).isResearchKnown(ScanKeys.entity(entity.getType()))) {
+                    aspects = EntityAspects.of(entity);
+                }
             }
         }
         if (name == null) {

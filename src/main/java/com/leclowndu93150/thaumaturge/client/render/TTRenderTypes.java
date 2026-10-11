@@ -37,6 +37,8 @@ public final class TTRenderTypes {
             new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
     private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =
             new RenderStateShard.ShaderStateShard(TTShaders::occludingEffect);
+    private static final RenderStateShard.ShaderStateShard ENTITY_FLAT_SHADER =
+            new RenderStateShard.ShaderStateShard(TTShaders::entityFlat);
     private static final RenderStateShard.OverlayStateShard OVERLAY = new RenderStateShard.OverlayStateShard(true);
     private static final RenderStateShard.LayeringStateShard FX_ALPHA_TEST = new RenderStateShard.LayeringStateShard(
             "tt_fx_alpha_test",
@@ -378,12 +380,11 @@ public final class TTRenderTypes {
             RenderStateShard.WriteMaskStateShard writeMask,
             boolean sort) {
         RenderType.CompositeState.CompositeStateBuilder builder = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setShaderState(ENTITY_FLAT_SHADER)
                 .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                 .setDepthTestState(depthTest)
                 .setWriteMaskState(writeMask)
-                .setCullState(RenderStateShard.NO_CULL)
-                .setOverlayState(OVERLAY);
+                .setCullState(RenderStateShard.NO_CULL);
         if (transparency != null) {
             builder.setTransparencyState(transparency);
         }
