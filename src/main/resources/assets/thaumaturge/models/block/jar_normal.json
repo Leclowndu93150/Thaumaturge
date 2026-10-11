@@ -1,6 +1,7 @@
 {
   "credit": "Geometry and display transforms from ArcanaEx by l-Luna (CC0 1.0), https://github.com/l-Luna/ArcanaEx",
   "ambientocclusion": false,
+  "render_type": "minecraft:translucent",
   "textures": {
     "side": "thaumaturge:block/jar_side",
     "bottom": "thaumaturge:block/jar_bottom",
