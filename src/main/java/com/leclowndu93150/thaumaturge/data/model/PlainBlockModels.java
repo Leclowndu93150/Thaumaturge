@@ -414,17 +414,17 @@ final class PlainBlockModels {
                         TTIds.rl("block/taint_geyser_top"),
                         "bottom",
                         TTIds.rl("block/taint_log_top")));
-        model(
+        cutoutModel(
                 output,
                 "taint_growth_1",
                 Optional.of(ResourceLocation.withDefaultNamespace("block/cross")),
                 Map.of("cross", TTIds.rl("block/taint_growth_1")));
-        model(
+        cutoutModel(
                 output,
                 "taint_growth_2",
                 Optional.of(ResourceLocation.withDefaultNamespace("block/cross")),
                 Map.of("cross", TTIds.rl("block/taint_growth_2")));
-        model(
+        cutoutModel(
                 output,
                 "taint_growth_4",
                 Optional.of(ResourceLocation.withDefaultNamespace("block/cross")),
@@ -520,9 +520,32 @@ final class PlainBlockModels {
             String name,
             Optional<ResourceLocation> parent,
             Map<String, ResourceLocation> textures) {
+        model(output, name, parent, textures, Optional.empty());
+    }
+
+    private static void cutoutModel(
+            BiConsumer<ResourceLocation, Supplier<JsonElement>> output,
+            String name,
+            Optional<ResourceLocation> parent,
+            Map<String, ResourceLocation> textures) {
+        model(
+                output,
+                name,
+                parent,
+                textures,
+                Optional.of(ResourceLocation.withDefaultNamespace("cutout")));
+    }
+
+    private static void model(
+            BiConsumer<ResourceLocation, Supplier<JsonElement>> output,
+            String name,
+            Optional<ResourceLocation> parent,
+            Map<String, ResourceLocation> textures,
+            Optional<ResourceLocation> renderType) {
         output.accept(TTIds.rl("block/" + name), () -> {
             JsonObject json = new JsonObject();
             parent.ifPresent(id -> json.addProperty("parent", id.toString()));
+            renderType.ifPresent(id -> json.addProperty("render_type", id.toString()));
             JsonObject textureJson = new JsonObject();
             textures.forEach((key, id) -> textureJson.addProperty(key, id.toString()));
             json.add("textures", textureJson);
