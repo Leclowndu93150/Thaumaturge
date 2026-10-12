@@ -1,10 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.screen.research.detail.insert;
 
-import com.leclowndu93150.thaumaturge.api.aspect.AspectComponents;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectKnowledgeAccess;
-import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
-import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.aspect.*;
 import com.leclowndu93150.thaumaturge.client.screen.research.detail.DetailFrame;
 import com.leclowndu93150.thaumaturge.client.screen.research.detail.EntryDetailModel;
 import com.leclowndu93150.thaumaturge.client.screen.research.detail.Rect;
@@ -13,14 +9,18 @@ import com.leclowndu93150.thaumaturge.client.screen.research.detail.draw.AspectT
 import com.leclowndu93150.thaumaturge.client.screen.research.detail.draw.BookBlit;
 import com.leclowndu93150.thaumaturge.client.screen.research.detail.draw.BookSprites;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
-import java.util.List;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
 
 public final class AspectInsertRenderer {
     public static final int ROWS_PER_PAGE = 5;
@@ -54,6 +54,8 @@ public final class AspectInsertRenderer {
     private static final int PAGER_RIGHT_X = 144;
     private static final int PAGER_Y = 208;
     private static final int COMPONENT_COUNT = 2;
+    private static final int ITEMS_PER_ROW = 8;
+    private static final int ITEM_SIZE = 18;
 
     private AspectInsertRenderer() {}
 
@@ -94,8 +96,14 @@ public final class AspectInsertRenderer {
         int firstIndex = Math.min(pageIndex * ROWS_PER_PAGE, ordered.size());
         int endIndex = Math.min(firstIndex + ROWS_PER_PAGE, ordered.size());
         List<AspectInstance> pageRows = ordered.subList(firstIndex, endIndex);
+        Holder<IAspect> hoveredAspect = null;
         for (int row = 0; row < pageRows.size(); row++) {
-            drawRow(graphics, frame, pageRows.get(row).aspect(), originX, originY + row * ROW_STRIDE, mouseX, mouseY);
+            Holder<IAspect> aspect = pageRows.get(row).aspect();
+            int rowY = originY + row * ROW_STRIDE;
+            drawRow(graphics, frame, aspect, originX, rowY, mouseX, mouseY);
+            if (hoveredAspect == null && AspectKnowledgeAccess.isKnown(aspect) && Rect.inside(originX, rowY, ROW_HOVER_SIZE, ROW_HOVER_SIZE, mouseX, mouseY)) {
+                hoveredAspect = aspect;
+            }
         }
         int totalPages = pagesFor(listed.size());
         float swell = ArrowBob.swell(frame.player());
@@ -104,6 +112,10 @@ public final class AspectInsertRenderer {
         }
         if (pageIndex < totalPages - 1) {
             BookBlit.swellingSprite(graphics, originX + PAGER_RIGHT_X, originY + PAGER_Y, BookSprites.ARROW_RIGHT_U, BookSprites.ARROW_V, BookSprites.ARROW_WIDTH, BookSprites.ARROW_HEIGHT, swell);
+        }
+
+        if (hoveredAspect != null) {
+            drawHoverItems(graphics, frame.font(), hoveredAspect, mouseX, mouseY);
         }
     }
 
@@ -168,5 +180,27 @@ public final class AspectInsertRenderer {
         graphics.pose().scale(NAME_SCALE, NAME_SCALE);
         graphics.text(font, name, -font.width(name) / 2, 0, NAME_COLOR, false);
         graphics.pose().popMatrix();
+    }
+
+    private static void drawHoverItems(GuiGraphicsExtractor graphics, Font font, Holder<IAspect> aspect, int mouseX, int mouseY) {
+        Map<Item, Integer> amountByItem = AspectAmountForItemHelper.aspectAmountByItem(aspect);
+        if (amountByItem.isEmpty())
+            return;
+
+        int startX = mouseX + 12;
+        int startY = mouseY - 4;
+        int i = 0;
+        for (Map.Entry<Item, Integer> entry : amountByItem.entrySet()) {
+            int x = startX + (i % ITEMS_PER_ROW) * ITEM_SIZE;
+            int y = startY + (i / ITEMS_PER_ROW) * ITEM_SIZE;
+
+            ItemStack stack = new ItemStack(entry.getKey(), entry.getValue());
+            graphics.fakeItem(stack, x, y);
+            if (entry.getValue() > 1) {
+                String amount = String.valueOf(entry.getValue());
+                graphics.text(font, amount, x + 17 - font.width(amount), y + 9, -1, true);
+            }
+            i++;
+        }
     }
 }
