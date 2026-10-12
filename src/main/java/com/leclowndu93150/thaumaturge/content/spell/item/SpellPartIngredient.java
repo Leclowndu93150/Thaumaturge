@@ -85,9 +85,7 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
 
     @Override
     public @NonNull SlotDisplay display() {
-        List<SlotDisplay> stacks = displayStacks().stream()
-                .map(stack -> (SlotDisplay) new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(stack)))
-                .toList();
+        List<SlotDisplay> stacks = displayStacks().stream().map(stack -> (SlotDisplay) new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(stack))).toList();
         return new SlotDisplay.Composite(stacks);
     }
 }
