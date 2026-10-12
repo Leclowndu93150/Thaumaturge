@@ -20,9 +20,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.common.crafting.IngredientType;
+import org.jspecify.annotations.NonNull;
 
 public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements ICustomIngredient {
     public static final MapCodec<SpellPartIngredient> CODEC = RecordCodecBuilder
@@ -78,5 +81,13 @@ public record SpellPartIngredient(Set<ResourceKey<SpellPart>> parts) implements 
             Spells.setSpell(stack, sample);
             return stack;
         }).toList();
+    }
+
+    @Override
+    public @NonNull SlotDisplay display() {
+        List<SlotDisplay> stacks = displayStacks().stream()
+                .map(stack -> (SlotDisplay) new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(stack)))
+                .toList();
+        return new SlotDisplay.Composite(stacks);
     }
 }
