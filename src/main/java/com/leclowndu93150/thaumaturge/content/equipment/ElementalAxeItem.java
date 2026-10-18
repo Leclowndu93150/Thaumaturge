@@ -7,19 +7,20 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public final class ElementalAxeItem extends Item implements IChanneledItem {
+public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     private static final int USE_DURATION_TICKS = 72000;
     private static final double MAGNET_RANGE = 10.0;
     private static final double HALF = 2.0;
 
-    public ElementalAxeItem(Properties properties) {
-        super(properties);
+    public ElementalAxeItem(ToolMaterial material, float attackDamageBaseline, float attackSpeedBaseline, Properties properties) {
+        super(material, attackDamageBaseline, attackSpeedBaseline, properties);
     }
 
     @Override
