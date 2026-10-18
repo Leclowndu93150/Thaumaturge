@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTItemTags;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.concurrent.CompletableFuture;
@@ -93,10 +94,12 @@ public final class TTItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(TTItemTags.SCAN_IRON).addTags(Tags.Items.ORES_IRON, Tags.Items.INGOTS_IRON, Tags.Items.STORAGE_BLOCKS_IRON);
 
         copy(TTBlockTags.STORAGE_BLOCKS_AMBER, TTItemTags.STORAGE_BLOCKS_AMBER);
+        copy(TTBlockTags.STORAGE_BLOCKS_FLESH, TTItemTags.STORAGE_BLOCKS_FLESH);
+        copy(TTBlockTags.STORAGE_BLOCKS_TALLOW, TTItemTags.STORAGE_BLOCKS_TALLOW);
         copy(TTBlockTags.STORAGE_BLOCKS_BRASS, TTItemTags.STORAGE_BLOCKS_BRASS);
         copy(TTBlockTags.STORAGE_BLOCKS_THAUMIUM, TTItemTags.STORAGE_BLOCKS_THAUMIUM);
         copy(TTBlockTags.STORAGE_BLOCKS_VOID_METAL, TTItemTags.STORAGE_BLOCKS_VOID_METAL);
-        tag(Tags.Items.STORAGE_BLOCKS).addTags(TTItemTags.STORAGE_BLOCKS_AMBER, TTItemTags.STORAGE_BLOCKS_BRASS, TTItemTags.STORAGE_BLOCKS_THAUMIUM, TTItemTags.STORAGE_BLOCKS_VOID_METAL);
+        tag(Tags.Items.STORAGE_BLOCKS).addTags(TTItemTags.STORAGE_BLOCKS_AMBER, TTItemTags.STORAGE_BLOCKS_BRASS, TTItemTags.STORAGE_BLOCKS_THAUMIUM, TTItemTags.STORAGE_BLOCKS_VOID_METAL, TTItemTags.STORAGE_BLOCKS_FLESH, TTItemTags.STORAGE_BLOCKS_TALLOW);
 
         tag(TTItemTags.INGOTS_BRASS).add(TTItems.INGOT_BRASS.get());
         tag(TTItemTags.INGOTS_THAUMIUM).add(TTItems.INGOT_THAUMIUM.get());

@@ -70,6 +70,8 @@ public final class TTItemTags {
     public static final TagKey<Item> STORAGE_BLOCKS_THAUMIUM = common("storage_blocks/thaumium");
     public static final TagKey<Item> STORAGE_BLOCKS_VOID_METAL = common("storage_blocks/void_metal");
     public static final TagKey<Item> STORAGE_BLOCKS_AMBER = common("storage_blocks/amber");
+    public static final TagKey<Item> STORAGE_BLOCKS_FLESH = common("storage_blocks/flesh");
+    public static final TagKey<Item> STORAGE_BLOCKS_TALLOW = common("storage_blocks/tallow");
 
     public static final TagKey<Item> ARMORS_HELMETS = common("armors/helmets");
     public static final TagKey<Item> ARMORS_CHESTPLATES = common("armors/chestplates");
