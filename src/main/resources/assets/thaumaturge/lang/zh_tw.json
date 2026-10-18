@@ -2025,7 +2025,7 @@
   "research.thaumaturge.plants.addendum_0": "§o長老之木§r<IMG>thaumaturge:textures/research/research4.png:128:128:128:128:.6</IMG>這些高大雄偉的樹木散佈於鄉野各處。<BR>它們的木材能吸收驚人的魔力量，因而成爲製作魔法裝置時的熱門材料。",
   "research.thaumaturge.plants.addendum_1": "§o銀樹§r<IMG>thaumaturge:textures/research/research4.png:0:128:128:128:.6</IMG>這些稀有而神奇的樹木堪稱奇景。它們的葉片閃爍着魔法能量，其蒼白柔軟的木材因淨化特性而備受珍視。<BR>這種樹的神奇本性在於，若任其自然生長，它們會緩慢補充周圍的靈氣——僅憑這一特性，銀樹樹苗便已是難得的珍寶。",
   "research.thaumaturge.plants.addendum_2": "§o烈焰草§r<IMG>thaumaturge:textures/research/research5.png:0:0:128:128:.6</IMG>只在最炎熱的氣候中被發現，這些植物燃燒着元素之火。可以採收並研磨，製成類似烈焰粉的細粉。",
-  "research.thaumaturge.plants.addendum_3": "§o微光草§r<IMG>thaumaturge:textures/research/research4.png:128:0:128:128:.6</IMG>這些神祕的發光花朵只生長在銀樹的陰影下。可以採收並搗碎，用以產出水銀。",
+  "research.thaumaturge.plants.addendum_3": "§o水銀花§r<IMG>thaumaturge:textures/research/research4.png:128:0:128:128:.6</IMG>這些神祕的發光花朵只生長在銀樹的陰影下。可以採收並搗碎，用以產出水銀。",
   "research.thaumaturge.plants.addendum_4": "§o纖毛菇§r<IMG>thaumaturge:textures/research/research5.png:0:128:128:128:.6</IMG>這種奇異的發光蘑菇只在魔法森林中被發現。<BR>它們具有致幻性，因此必須小心，不可靠得太近。",
   "research.thaumaturge.plants.addendum_5": "§o魔力莢§r<IMG>thaumaturge:textures/research/research_manapod.png:0:0:128:128:.6</IMG>魔力莢是一種奇特的小東西，懸掛在魔法森林中原木的底面。每個魔力莢只帶有一種要素，成熟得很慢，越長越亮。成熟的魔力莢採摘時會給出一到兩顆魔豆。<BR>並排成熟的魔力莢會互相影響。一個魔力莢若長在兩個要素可組合成某種複合要素的魔力莢旁邊，就很可能帶上那種複合要素，所以只要有耐心，我就能培育出帶有想要要素的魔力莢。",
   "research.thaumaturge.plants.addendum_6": "魔豆可以吃，不過我不會拿它來當正餐。每顆魔豆都會引起短暫且難以預料的效果：有時有益，有時有害，偶爾還會非常有害。吃下魔豆時，偶爾也能讓我對它所帶的要素有所領悟。<BR>想種植更多，可以在魔法生態域中把魔豆種在原木的底面，只要它下方是空氣即可。",

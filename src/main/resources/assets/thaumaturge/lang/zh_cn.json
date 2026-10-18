@@ -2025,7 +2025,7 @@
   "research.thaumaturge.plants.addendum_0": "§o宏伟之木§r<IMG>thaumaturge:textures/research/research4.png:128:128:128:128:.6</IMG>这些高大雄伟的树木散布于乡野各处。<BR>它们的木材能吸收惊人的魔力量，因而成为制作魔法装置时的热门材料。",
   "research.thaumaturge.plants.addendum_1": "§o银树§r<IMG>thaumaturge:textures/research/research4.png:0:128:128:128:.6</IMG>这些稀有而神奇的树木堪称奇景。它们的叶片闪烁着魔法能量，其苍白柔软的木材因净化特性而备受珍视。<BR>这种树的神奇本性在于，若任其自然生长，它们会缓慢补充周围的灵气——仅凭这一特性，银树树苗便已是难得的珍宝。",
   "research.thaumaturge.plants.addendum_2": "§o烈焰草§r<IMG>thaumaturge:textures/research/research5.png:0:0:128:128:.6</IMG>只在最炎热的气候中被发现，这些植物燃烧着元素之火。可以采收并研磨，制成类似烈焰粉的细粉。",
-  "research.thaumaturge.plants.addendum_3": "§o微光草§r<IMG>thaumaturge:textures/research/research4.png:128:0:128:128:.6</IMG>这些神秘的发光花朵只生长在银树的阴影下。可以采收并捣碎，用以产出水银。",
+  "research.thaumaturge.plants.addendum_3": "§o水银花§r<IMG>thaumaturge:textures/research/research4.png:128:0:128:128:.6</IMG>这些神秘的发光花朵只生长在银树的阴影下。可以采收并捣碎，用以产出水银。",
   "research.thaumaturge.plants.addendum_4": "§o纤毛菇§r<IMG>thaumaturge:textures/research/research5.png:0:128:128:128:.6</IMG>这种奇异的发光蘑菇只在魔法森林中被发现。<BR>它们具有致幻性，因此必须小心，不可靠得太近。",
   "research.thaumaturge.plants.addendum_5": "§o魔力荚§r<IMG>thaumaturge:textures/research/research_manapod.png:0:0:128:128:.6</IMG>魔力荚是一种奇特的小东西，悬挂在魔法森林里原木的底面。每个荚只携带一种要素，成熟得很慢，生长时会越来越亮。采摘成熟的荚会得到一到两颗魔豆。<BR>并排成熟的荚会相互影响。如果一个荚旁边的两个荚的要素可以组合成某种复合要素，那么这个荚很可能会带上该复合要素，所以只要有耐心，我就能培育出带有想要要素的荚。",
   "research.thaumaturge.plants.addendum_6": "魔豆可以吃，不过我可不会拿它当饭吃。每颗豆子都会引发一个短暂且难以预料的效果：有时有益，有时有害，偶尔还会非常有害。时不时地，吃下一颗也会让我对它所携带的要素有所领悟。<BR>想要种出更多，我可以把豆子种在魔法生物群系中原木的底面，只要它下方是空气即可。",
