@@ -40,9 +40,9 @@ public final class BlockPavingStone extends BaseEntityBlock {
     private static final double RUNE_CENTER = 0.5;
     private static final double RUNE_HEIGHT = 1.05;
     private static final RuneStyle POWERED_STYLE = new RuneStyle(0.3F, 0.4F, 0.2F, 0.25F, 0.85F, 0.15F, 2, 8, -0.06F);
-    private static final RuneStyle ACTIVE_STYLE = new RuneStyle(0.85F, 0.15F, 0.0F, 0.2F, 0.0F, 0.15F, 4, 8, -0.06F);
-    private static final RuneStyle WARNING_STYLE = new RuneStyle(0.8F, 0.2F, 0.2F, 0.3F, 0.6F, 0.4F, 1, 10, 0.0F);
-    private static final double WARNING_RANGE = 1.0;
+    private static final RuneStyle ACTIVE_STYLE = new RuneStyle(0.8F, 0.2F, 0.2F, 0.3F, 0.6F, 0.4F, 4, 8, -0.06F);
+    private static final RuneStyle WARNING_STYLE = new RuneStyle(0.85F, 0.15F, 0.0F, 0.2F, 0.0F, 0.15F, 1, 10, 0.0F);
+    private static final double NEARBY_RANGE = 1.0;
     private static final double WARNING_MIN_SPREAD = 0.75;
 
     private final boolean barrier;
@@ -100,15 +100,15 @@ public final class BlockPavingStone extends BaseEntityBlock {
             spawnRunes(level, pos, random, POWERED_STYLE);
             return;
         }
-        BlockState barrierState = TTBlocks.BARRIER.get().defaultBlockState();
-        if (level.getBlockState(pos.above(1)) == barrierState || level.getBlockState(pos.above(2)) == barrierState) {
-            spawnRunes(level, pos, random, ACTIVE_STYLE);
-            return;
-        }
-        AABB nearby = new AABB(pos).inflate(WARNING_RANGE);
+        AABB nearby = new AABB(pos).inflate(NEARBY_RANGE);
         List<LivingEntity> intruders = level.getEntitiesOfClass(
                 LivingEntity.class, nearby, candidate -> !(candidate instanceof Player) && candidate.isAlive());
         if (intruders.isEmpty()) {
+            return;
+        }
+        BlockState barrierState = TTBlocks.BARRIER.get().defaultBlockState();
+        if (level.getBlockState(pos.above(1)) == barrierState || level.getBlockState(pos.above(2)) == barrierState) {
+            spawnRunes(level, pos, random, ACTIVE_STYLE);
             return;
         }
         LivingEntity intruder = intruders.get(random.nextInt(intruders.size()));
