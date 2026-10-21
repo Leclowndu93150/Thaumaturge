@@ -82,6 +82,8 @@ final class ConfigLangEn {
             Map.entry("spells.maxBlocksPerTick", "Blocks per Cast per Tick"),
             Map.entry("spells.maxNodesPerRun", "Nodes per Cast Step"),
             Map.entry("spells.maxDelayedPerLevel", "Delayed Spells per Level"),
+            Map.entry("seasonal", "Seasonal"),
+            Map.entry("seasonal.aprilFools", "April Fools"),
             Map.entry("labyrinth", "Outer Lands Labyrinth"),
             Map.entry("labyrinth.generation", "Generation"),
             Map.entry("labyrinth.generation.sizeScale", "Maze Size Multiplier"),

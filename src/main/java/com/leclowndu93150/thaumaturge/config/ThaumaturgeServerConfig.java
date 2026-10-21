@@ -7,12 +7,11 @@ public final class ThaumaturgeServerConfig {
     public static final ModConfigSpec SPEC;
 
     public static final ModConfigSpec.BooleanValue INFERNAL_FURNACE_TURN_TO_BLAZE;
-
+    public static final ModConfigSpec.BooleanValue APRIL_FOOLS;
     public static final ModConfigSpec.IntValue SPELL_MAX_ENTITIES_PER_TICK;
     public static final ModConfigSpec.IntValue SPELL_MAX_BLOCKS_PER_TICK;
     public static final ModConfigSpec.IntValue SPELL_MAX_NODES_PER_RUN;
     public static final ModConfigSpec.IntValue SPELL_MAX_DELAYED_PER_LEVEL;
-
     public static final LabyrinthConfig LABYRINTH;
 
     static {
@@ -34,6 +33,11 @@ public final class ThaumaturgeServerConfig {
                 .defineInRange("maxNodesPerRun", 256, 16, 4096);
         SPELL_MAX_DELAYED_PER_LEVEL = builder.comment("How many delayed spell continuations a level holds at once.")
                 .defineInRange("maxDelayedPerLevel", 256, 16, 4096);
+        builder.pop();
+        builder.push("seasonal");
+        APRIL_FOOLS = builder.comment(
+                        "Whether idle cultists occasionally relieve themselves of a harmless illusory mind spider on April 1st.")
+                .define("aprilFools", true);
         builder.pop();
         LABYRINTH = new LabyrinthConfig(builder);
         SPEC = builder.build();

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.ai.AltarFocusGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
+import com.leclowndu93150.thaumaturge.content.entity.ai.CultistSquatGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
@@ -70,6 +71,7 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, false));
         this.goalSelector.addGoal(5, new OpenDoorGoal(this, true));
         this.goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 0.8));
+        this.goalSelector.addGoal(6, new CultistSquatGoal(this));
         this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.8));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
