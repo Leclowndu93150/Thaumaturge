@@ -2,30 +2,24 @@ package com.leclowndu93150.thaumaturge.content.equipment;
 
 import com.leclowndu93150.thaumaturge.api.items.IChanneledItem;
 import com.leclowndu93150.thaumaturge.client.effect.ClientEffects;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public final class ElementalAxeItem extends Item implements IChanneledItem {
+public final class ElementalAxeItem extends AxeItem implements IChanneledItem {
     private static final int USE_DURATION_TICKS = 72000;
     private static final double MAGNET_RANGE = 10.0;
 
     public ElementalAxeItem(Properties properties) {
-        super(properties
-                .durability(TTMaterials.TOOL_ELEMENTAL.getUses())
-                .component(
-                        DataComponents.TOOL,
-                        TTMaterials.TOOL_ELEMENTAL.createToolProperties(BlockTags.MINEABLE_WITH_AXE)));
+        super(TTMaterials.TOOL_ELEMENTAL, properties);
     }
 
     @Override
