@@ -9,6 +9,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeGeometry;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazePlan;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.LabyrinthDefinition;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.StairMirrorProcessor;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.StripMarkersProcessor;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.CompiledRoom;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.RoomTransform;
@@ -96,6 +97,7 @@ public final class RoomStamper {
                 .setIgnoreEntities(true)
                 .setRandom(roomRandom);
         settings.addProcessor(StripMarkersProcessor.INSTANCE);
+        settings.addProcessor(StairMirrorProcessor.INSTANCE);
         Optional<Holder.Reference<RoomType>> type =
                 registries.lookupOrThrow(RoomType.REGISTRY_KEY).get(room.type());
         type.flatMap(holder -> holder.value().processors()).ifPresent(list -> addAll(settings, list));

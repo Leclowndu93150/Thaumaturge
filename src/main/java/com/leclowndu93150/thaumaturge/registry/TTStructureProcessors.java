@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.registry;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.ClusteredReplaceProcessor;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.ExposedSurfaceProcessor;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.StairMirrorProcessor;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.processor.StripMarkersProcessor;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
@@ -20,6 +21,8 @@ public final class TTStructureProcessors {
             EXPOSED_SURFACE = PROCESSORS.register("exposed_surface", () -> () -> ExposedSurfaceProcessor.CODEC);
     public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<ClusteredReplaceProcessor>>
             CLUSTERED_REPLACE = PROCESSORS.register("clustered_replace", () -> () -> ClusteredReplaceProcessor.CODEC);
+    public static final DeferredHolder<StructureProcessorType<?>, StructureProcessorType<StairMirrorProcessor>>
+            STAIR_MIRROR = PROCESSORS.register("stair_mirror", () -> () -> StairMirrorProcessor.CODEC);
 
     private TTStructureProcessors() {}
 
