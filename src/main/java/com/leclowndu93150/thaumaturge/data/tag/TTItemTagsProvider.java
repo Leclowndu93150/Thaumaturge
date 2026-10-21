@@ -286,6 +286,7 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.SHOVELS)
                 .add(TTItems.THAUMIUM_SHOVEL.get(), TTItems.VOID_SHOVEL.get(), TTItems.ELEMENTAL_SHOVEL.get());
         tag(ItemTags.HOES).add(TTItems.THAUMIUM_HOE.get(), TTItems.VOID_HOE.get(), TTItems.ELEMENTAL_HOE.get());
+        tag(TTItemTags.TAINT_HOES).add(TTItems.THAUMIUM_HOE.get(), TTItems.VOID_HOE.get(), TTItems.ELEMENTAL_HOE.get());
 
         tag(ItemTags.HEAD_ARMOR)
                 .add(

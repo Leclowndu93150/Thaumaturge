@@ -354,8 +354,8 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.TAINT_GEYSER.get());
         dropSelf(TTBlocks.TAINT_LOG.get());
         dropSelf(TTBlocks.TAINT_FEATURE.get());
-        add(TTBlocks.TAINT_FIBRE.get(), noDrop());
-        add(TTBlocks.TAINT_SPORE_STALK.get(), noDrop());
+        add(TTBlocks.TAINT_FIBRE.get(), createSilkTouchOnlyTable(TTBlocks.TAINT_FIBRE.get()));
+        add(TTBlocks.TAINT_SPORE_STALK.get(), createSilkTouchOnlyTable(TTBlocks.TAINT_SPORE_STALK.get()));
     }
 
     private LootTable.Builder createLeavesDrops(Block leaves, Block sapling) {

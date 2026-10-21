@@ -81,6 +81,7 @@ public final class TTItemTags {
     public static final TagKey<Item> ARMORS_BOOTS = common("armors/boots");
 
     public static final TagKey<Item> SCRIBING_TOOLS = key("scribing_tools");
+    public static final TagKey<Item> TAINT_HOES = key("taint_hoes");
 
     private TTItemTags() {}
 

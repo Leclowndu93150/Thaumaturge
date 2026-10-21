@@ -397,6 +397,15 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .addTag(BlockTags.CORAL_BLOCKS)
                 .addTag(BlockTags.PLANKS);
         tag(TTBlockTags.TAINT_CONVERSION_IMMUNE);
+        tag(TTBlockTags.TAINT_BLOCKS)
+                .add(TTBlocks.TAINT_ROCK.get())
+                .add(TTBlocks.TAINT_SOIL.get())
+                .add(TTBlocks.TAINT_CRUST.get())
+                .add(TTBlocks.TAINT_GEYSER.get())
+                .add(TTBlocks.TAINT_LOG.get())
+                .add(TTBlocks.TAINT_FEATURE.get())
+                .add(TTBlocks.TAINT_FIBRE.get())
+                .add(TTBlocks.TAINT_SPORE_STALK.get());
 
         tag(TTBlockTags.CRUCIBLE_HEAT_SOURCES)
                 .add(Blocks.LAVA)
