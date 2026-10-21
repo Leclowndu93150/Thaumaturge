@@ -58,6 +58,11 @@ public final class TTBlockTags {
 
     public static final TagKey<Block> CONNECTED_ELDRITCH_STONE = key("connected/eldritch_stone");
 
+    public static final TagKey<Block> DT_BRANCHES_THAT_BURN = dynamicTrees("branches_that_burn");
+    public static final TagKey<Block> DT_STRIPPED_BRANCHES_THAT_BURN = dynamicTrees("stripped_branches_that_burn");
+    public static final TagKey<Block> DT_LEAVES = dynamicTrees("leaves");
+    public static final TagKey<Block> DT_SAPLINGS = dynamicTrees("saplings");
+
     private TTBlockTags() {}
 
     private static TagKey<Block> key(String path) {
@@ -66,5 +71,9 @@ public final class TTBlockTags {
 
     private static TagKey<Block> common(String path) {
         return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", path));
+    }
+
+    private static TagKey<Block> dynamicTrees(String path) {
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(TTIds.DYNAMIC_TREES, path));
     }
 }

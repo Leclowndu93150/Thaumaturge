@@ -20,6 +20,26 @@ public final class TTIds {
     public static final String IRIS = "iris";
     public static final String DYNAMIC_TREES = "dynamictrees";
     public static final ResourceLocation DYNAMIC_TREES_RESOURCE_PACK = rl("resourcepacks/dynamictrees");
+    public static final ResourceLocation DT_SILVERWOOD_BRANCH =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "silverwood_branch");
+    public static final ResourceLocation DT_GREATWOOD_BRANCH =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "greatwood_branch");
+    public static final ResourceLocation DT_STRIPPED_SILVERWOOD_BRANCH =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "stripped_silverwood_branch");
+    public static final ResourceLocation DT_STRIPPED_GREATWOOD_BRANCH =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "stripped_greatwood_branch");
+    public static final ResourceLocation DT_SILVERWOOD_LEAVES =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "silverwood_leaves");
+    public static final ResourceLocation DT_GREATWOOD_LEAVES =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "greatwood_leaves");
+    public static final ResourceLocation DT_SILVERWOOD_SAPLING =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "silverwood_sapling");
+    public static final ResourceLocation DT_GREATWOOD_SAPLING =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "greatwood_sapling");
+    public static final ResourceLocation DT_SILVERWOOD_SEED =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "silverwood_seed");
+    public static final ResourceLocation DT_GREATWOOD_SEED =
+            ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "greatwood_seed");
 
     private TTIds() {}
 

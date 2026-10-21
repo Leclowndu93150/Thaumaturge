@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -98,6 +99,18 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                 .add(TTBlocks.GRASS_AMBIENT.get());
 
         tag(BlockTags.DIRT).add(TTBlocks.GRASS_AMBIENT.get());
+        tag(TTBlockTags.DT_BRANCHES_THAT_BURN)
+                .add(TagEntry.optionalElement(TTIds.DT_SILVERWOOD_BRANCH))
+                .add(TagEntry.optionalElement(TTIds.DT_GREATWOOD_BRANCH));
+        tag(TTBlockTags.DT_STRIPPED_BRANCHES_THAT_BURN)
+                .add(TagEntry.optionalElement(TTIds.DT_STRIPPED_SILVERWOOD_BRANCH))
+                .add(TagEntry.optionalElement(TTIds.DT_STRIPPED_GREATWOOD_BRANCH));
+        tag(TTBlockTags.DT_LEAVES)
+                .add(TagEntry.optionalElement(TTIds.DT_SILVERWOOD_LEAVES))
+                .add(TagEntry.optionalElement(TTIds.DT_GREATWOOD_LEAVES));
+        tag(TTBlockTags.DT_SAPLINGS)
+                .add(TagEntry.optionalElement(TTIds.DT_SILVERWOOD_SAPLING))
+                .add(TagEntry.optionalElement(TTIds.DT_GREATWOOD_SAPLING));
         tag(TTBlockTags.MAGICAL_CAVE_GROUND_REPLACEABLE)
                 .addTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addTag(BlockTags.DIRT)
