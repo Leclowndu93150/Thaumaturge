@@ -167,6 +167,9 @@ public final class BlockNode extends Block implements EntityBlock {
         if (level instanceof ServerLevel serverLevel && !state.is(newState.getBlock())) {
             NodeLocationIndex.get(serverLevel).remove(pos);
             TaintOrigins.unregister(serverLevel, pos);
+            if (serverLevel.getBlockEntity(pos) instanceof BlockEntityNode node) {
+                NodeBiomeSpread.revertPainted(serverLevel, pos, node.getNodeType());
+            }
         }
     }
 }

@@ -1,12 +1,16 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
+import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.QuartPos;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 final class NodeBiomeSpread {
     private static final int SPREAD_INTERVAL = 50;
@@ -28,6 +32,31 @@ final class NodeBiomeSpread {
             case DARK -> eerie(level, sample(pos, DARK_RANGE, random));
             case PURE -> purify(level, pos, sample(pos, PURE_RANGE, random));
             case NORMAL, UNSTABLE, HUNGRY, TAINTED -> {}
+        }
+    }
+
+    static void revertPainted(ServerLevel level, BlockPos pos, NodeType type) {
+        switch (type) {
+            case DARK -> revertArea(level, pos, DARK_RANGE, TTBiomes.EERIE);
+            case PURE -> revertArea(level, pos, PURE_RANGE, TTBiomes.MAGICAL_FOREST);
+            case NORMAL, UNSTABLE, HUNGRY, TAINTED -> {}
+        }
+    }
+
+    private static void revertArea(ServerLevel level, BlockPos origin, int range, ResourceKey<Biome> painted) {
+        int reach = range - 1;
+        BlockPos.MutableBlockPos column = new BlockPos.MutableBlockPos();
+        for (int quartX = QuartPos.fromBlock(origin.getX() - reach);
+                quartX <= QuartPos.fromBlock(origin.getX() + reach);
+                quartX++) {
+            for (int quartZ = QuartPos.fromBlock(origin.getZ() - reach);
+                    quartZ <= QuartPos.fromBlock(origin.getZ() + reach);
+                    quartZ++) {
+                column.set(QuartPos.toBlock(quartX), origin.getY(), QuartPos.toBlock(quartZ));
+                if (level.hasChunkAt(column)) {
+                    TaintBiomeManager.revertColumn(level, column, painted);
+                }
+            }
         }
     }
 

@@ -127,7 +127,11 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void setNodeType(NodeType type) {
+        NodeType previous = this.nodeType;
         this.nodeType = type;
+        if (previous != type && level instanceof ServerLevel serverLevel) {
+            NodeBiomeSpread.revertPainted(serverLevel, worldPosition, previous);
+        }
         if (type != NodeType.TAINTED) {
             taintReserve = 0.0F;
             taintPurifyTicks = 0;

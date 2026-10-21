@@ -130,6 +130,28 @@ public final class TaintBiomeManager {
         return true;
     }
 
+    public static boolean revertColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> painted) {
+        LevelChunk chunk = loadedChunk(level, pos);
+        if (chunk == null || !level.getBiome(pos).is(painted)) {
+            return false;
+        }
+        int quartX = QuartPos.fromBlock(pos.getX());
+        int quartZ = QuartPos.fromBlock(pos.getZ());
+        BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
+        Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
+        if (source.getNoiseBiome(quartX, QuartPos.fromBlock(pos.getY()), quartZ, sampler)
+                .is(painted)) {
+            return false;
+        }
+        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
+        rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, ignored) -> {
+            Holder<Biome> current = snapshot.get(x, y, z);
+            return current.is(painted) ? source.getNoiseBiome(x, y, z, sampler) : current;
+        });
+        setChanged(chunk, quartX, quartZ, false);
+        return true;
+    }
+
     private static boolean isTaintedBiome(Holder<Biome> biome) {
         return biome.is(TTBiomeTags.IS_TAINTED);
     }
