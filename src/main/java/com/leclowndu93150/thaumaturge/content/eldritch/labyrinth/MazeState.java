@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public final class MazeState {
     public static final Codec<MazeState> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -95,6 +96,10 @@ public final class MazeState {
 
     public PostLedger posts() {
         return posts;
+    }
+
+    public boolean tracks(UUID entity) {
+        return encounter.binds(entity) || posts.isGuard(entity);
     }
 
     public void setPhase(LabyrinthPhase phase, long gameTime) {

@@ -122,6 +122,7 @@ final class AltarRituals {
         }
         altar.setRitual(Optional.empty());
         altar.setEyes(0);
+        altar.link().ifPresent(previous -> LabyrinthService.unlink(level.getServer(), previous));
         altar.setLink(Optional.of(record.get().plan().id()));
         EldritchPlacement.place(
                         level,

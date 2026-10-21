@@ -945,6 +945,12 @@ public final class TTEnglishProvider extends LanguageProvider {
                 "Encounter %s (forced %s): %s bound, %s defeated, scaled for %s; boss hall %s to %s");
         add("commands.thaumaturge.labyrinth.retire.success", "Retired labyrinth %s");
         add("commands.thaumaturge.labyrinth.restamp.success", "Queued %s loaded chunks of labyrinth %s for rebuilding");
+        add(
+                "commands.thaumaturge.labyrinth.regenerate.success",
+                "Rebuilt labyrinth %s with a new layout, generation %s");
+        add(
+                "commands.thaumaturge.labyrinth.regenerate.failed",
+                "The labyrinth could not be rebuilt. Check the server log.");
         add("commands.thaumaturge.labyrinth.portal.success", "Opened a portal into labyrinth %s at %s");
         add("commands.thaumaturge.labyrinth.phase.success", "Labyrinth %s is now %s");
         add("commands.thaumaturge.labyrinth.phase.unknown", "Unknown phase %s");

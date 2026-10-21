@@ -21,7 +21,14 @@ public final class LayoutPlanner {
     private LayoutPlanner() {}
 
     public static LayoutResult plan(LayoutContext context) {
-        int size = size(context);
+        return plan(
+                context,
+                Math.round(context.definition().size().sample(context.random())
+                        * context.tuning().sizeScale()));
+    }
+
+    public static LayoutResult plan(LayoutContext context, int requestedSize) {
+        int size = normalize(requestedSize);
         try {
             return run(FULL, size, context, false);
         } catch (RuntimeException e) {
@@ -38,10 +45,8 @@ public final class LayoutPlanner {
         return LayoutResult.of(work, minimal);
     }
 
-    private static int size(LayoutContext context) {
-        int rolled = Math.round(context.definition().size().sample(context.random())
-                * context.tuning().sizeScale());
-        int clamped = Math.clamp(rolled, MIN_SIZE, MAX_SIZE);
+    private static int normalize(int requested) {
+        int clamped = Math.clamp(requested, MIN_SIZE, MAX_SIZE);
         return (clamped & 1) == 0 ? clamped - 1 : clamped;
     }
 }

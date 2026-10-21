@@ -69,6 +69,11 @@ public final class LabyrinthData extends SavedData {
         setDirty();
     }
 
+    public void replace(MazeRecord record) {
+        mazes.put(record.plan().id().value(), record);
+        setDirty();
+    }
+
     public boolean remove(MazeId id) {
         boolean removed = mazes.remove(id.value()) != null;
         if (removed) {

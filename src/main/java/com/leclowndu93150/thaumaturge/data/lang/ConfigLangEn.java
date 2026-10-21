@@ -93,6 +93,7 @@ final class ConfigLangEn {
             Map.entry("labyrinth.generation.defaultDefinition", "Default Labyrinth"),
             Map.entry("labyrinth.lifecycle", "Lifecycle"),
             Map.entry("labyrinth.lifecycle.maxActiveMazes", "Maximum Active Mazes"),
+            Map.entry("labyrinth.lifecycle.regenerateConqueredAfterTicks", "Regenerate Conquered Mazes After"),
             Map.entry("labyrinth.lifecycle.retireConqueredAfterDays", "Retire Conquered Mazes After Days"),
             Map.entry("labyrinth.lifecycle.retireAbandonedAfterDays", "Retire Abandoned Mazes After Days"),
             Map.entry("labyrinth.lifecycle.repairChunksPerTick", "Chunk Repairs per Tick"),

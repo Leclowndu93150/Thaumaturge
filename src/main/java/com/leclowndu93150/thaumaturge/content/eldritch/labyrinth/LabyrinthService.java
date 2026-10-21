@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.eldritch.labyrinth;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
+import com.leclowndu93150.thaumaturge.api.labyrinth.LabyrinthPhase;
 import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
@@ -12,8 +13,9 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.layout.LayoutPl
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.layout.LayoutResult;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.SocketProfile;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.OuterLandsChunkGenerator;
-import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.RoomStamper;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -25,7 +27,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -43,10 +48,13 @@ public final class LabyrinthService {
     }
 
     public static void publish(ServerLevel outer) {
-        runtime(outer)
-                .ifPresent(runtime -> runtime.publish(LabyrinthData.get(outer).records().stream()
-                        .map(MazeRecord::plan)
-                        .toList()));
+        runtime(outer).ifPresent(runtime -> publish(outer, runtime));
+    }
+
+    private static void publish(ServerLevel outer, LabyrinthRuntime runtime) {
+        runtime.publish(LabyrinthData.get(outer).records().stream()
+                .map(MazeRecord::plan)
+                .toList());
     }
 
     public static Optional<MazeRecord> find(ServerLevel level, BlockPos pos) {
@@ -101,6 +109,18 @@ public final class LabyrinthService {
         return removed;
     }
 
+    public static void unlink(MinecraftServer server, MazeId id) {
+        outer(server).ifPresent(outer -> {
+            LabyrinthData data = LabyrinthData.get(outer);
+            data.get(id)
+                    .filter(record -> record.state().phase() == LabyrinthPhase.CONQUERED)
+                    .ifPresent(record -> {
+                        record.state().setPhase(LabyrinthPhase.RETIRED, outer.getGameTime());
+                        data.setDirty();
+                    });
+        });
+    }
+
     public static int requeue(ServerLevel outer, MazePlan plan, BoundingBox area) {
         Optional<LabyrinthRuntime> runtime = runtime(outer);
         if (runtime.isEmpty()) {
@@ -117,7 +137,7 @@ public final class LabyrinthService {
                     if (owner == null || !owner.id().equals(plan.id())) {
                         return false;
                     }
-                    chunk.setData(TTAttachments.LABYRINTH_STAMP, -1);
+                    RoomStamper.unstamp(chunk);
                     runtime.get().queueRepair(chunk.getPos().x, chunk.getPos().z);
                     return true;
                 });
@@ -163,7 +183,8 @@ public final class LabyrinthService {
         Optional<LabyrinthRuntime> runtime = outer.flatMap(LabyrinthService::runtime);
         if (outer.isEmpty() || runtime.isEmpty()) {
             Thaumaturge.LOGGER.error(
-                    "Cannot open a labyrinth: the Outer Lands dimension is missing or does not use the labyrinth generator");
+                    "Cannot open a labyrinth: the Outer Lands dimension is missing or does not use the labyrinth"
+                            + " generator");
             return Optional.empty();
         }
         LabyrinthData data = LabyrinthData.get(outer.get());
@@ -179,59 +200,132 @@ public final class LabyrinthService {
                             .orElse(ThaumaturgeServerConfig.LABYRINTH.defaultDefinition.get()));
             return Optional.empty();
         }
+        Optional<MazeRecord> record = build(
+                outer.get(),
+                runtime.get(),
+                definition.get(),
+                new MazeSlot(data.nextId(), 0, MazeRegions.origin(data.nextRegion()), origin),
+                OptionalInt.empty());
+        record.ifPresent(built -> {
+            data.commit(built);
+            publish(outer.get());
+            queueLoadedChunks(
+                    outer.get(),
+                    runtime.get(),
+                    built.plan().geometry(),
+                    built.plan().geometry());
+        });
+        return record;
+    }
+
+    public static Optional<MazeRecord> regenerate(ServerLevel outer, MazeRecord consumed) {
+        return runtime(outer).flatMap(runtime -> regenerate(outer, runtime, consumed));
+    }
+
+    static Optional<MazeRecord> regenerate(ServerLevel outer, LabyrinthRuntime runtime, MazeRecord consumed) {
+        MazePlan previous = consumed.plan();
+        Optional<Holder.Reference<LabyrinthDefinition>> definition = outer.getServer()
+                .registryAccess()
+                .lookupOrThrow(LabyrinthDefinition.REGISTRY_KEY)
+                .get(previous.definition());
+        if (definition.isEmpty()) {
+            Thaumaturge.LOGGER.error(
+                    "Cannot regenerate labyrinth {}: its definition {} no longer exists",
+                    previous.id().value(),
+                    previous.definition().location());
+            return Optional.empty();
+        }
+        MazeSlot slot = new MazeSlot(
+                previous.id(), previous.generation() + 1, previous.geometry().origin(), previous.origin());
+        Optional<MazeRecord> record = build(
+                outer,
+                runtime,
+                definition.get(),
+                slot,
+                OptionalInt.of(previous.geometry().width()));
+        record.ifPresent(built -> {
+            runtime.encounters().forget(previous.id().value());
+            LabyrinthData.get(outer).replace(built);
+            publish(outer, runtime);
+            queueLoadedChunks(outer, runtime, previous.geometry(), built.plan().geometry());
+        });
+        return record;
+    }
+
+    public static boolean refresh(ServerLevel outer, ChunkAccess chunk, MazeRecord record) {
+        return runtime(outer)
+                .map(runtime -> refresh(outer, chunk, record, runtime))
+                .orElse(false);
+    }
+
+    static boolean refresh(ServerLevel outer, ChunkAccess chunk, MazeRecord record, LabyrinthRuntime runtime) {
+        return RoomStamper.ensureStamped(outer, chunk, record.plan(), runtime, entity -> keeps(record, entity));
+    }
+
+    private static boolean keeps(MazeRecord record, Entity entity) {
+        return entity.getSelfAndPassengers().anyMatch(Player.class::isInstance)
+                || record.state().tracks(entity.getUUID());
+    }
+
+    private static Optional<MazeRecord> build(
+            ServerLevel outer,
+            LabyrinthRuntime runtime,
+            Holder.Reference<LabyrinthDefinition> definition,
+            MazeSlot slot,
+            OptionalInt size) {
+        MinecraftServer server = outer.getServer();
         LabyrinthTuning tuning = LabyrinthTuning.fromConfig();
-        MazeId id = data.nextId();
-        ChunkPos chunk = MazeRegions.origin(data.nextRegion());
-        RandomSource random = layoutRandom(outer.get(), chunk, id);
+        RandomSource random = layoutRandom(outer, slot.region(), slot.id(), slot.generation());
+        LayoutContext context = new LayoutContext(definition.value(), tuning, roomFilter(server, runtime), random);
         LayoutResult layout;
         try {
-            layout = LayoutPlanner.plan(
-                    new LayoutContext(definition.get().value(), tuning, roomFilter(server, runtime.get()), random));
+            layout = size.isPresent() ? LayoutPlanner.plan(context, size.getAsInt()) : LayoutPlanner.plan(context);
         } catch (RuntimeException e) {
             Thaumaturge.LOGGER.error(
                     "Labyrinth definition {} could not be laid out",
-                    definition.get().key().location(),
+                    definition.key().location(),
                     e);
             return Optional.empty();
         }
         MazeGeometry geometry = new MazeGeometry(
-                chunk,
+                slot.region(),
                 layout.width(),
                 layout.depth(),
-                runtime.get().band().baseY(),
+                runtime.band().baseY(),
                 SocketProfile.HEIGHT,
-                runtime.get().band().floorY());
+                runtime.band().floorY());
         MazeAssembler.Assembly assembly = MazeAssembler.assemble(
-                id,
-                origin,
+                slot.id(),
+                slot.generation(),
+                slot.origin(),
                 geometry,
                 random.nextLong(),
-                definition.get().key(),
+                definition.key(),
                 tuning,
                 layout,
-                template ->
-                        runtime.get().templates().get(server.getStructureManager(), server.registryAccess(), template));
-        MazeRecord record =
-                new MazeRecord(assembly.plan(), MazeState.fresh(outer.get().getGameTime(), assembly.triggers()));
-        data.commit(record);
-        publish(outer.get());
-        queueLoadedChunks(outer.get(), runtime.get(), geometry);
-        return Optional.of(record);
+                template -> runtime.templates().get(server.getStructureManager(), server.registryAccess(), template));
+        return Optional.of(new MazeRecord(assembly.plan(), MazeState.fresh(outer.getGameTime(), assembly.triggers())));
     }
 
-    private static void queueLoadedChunks(ServerLevel outer, LabyrinthRuntime runtime, MazeGeometry geometry) {
-        ChunkPos origin = geometry.origin();
-        forLoadedChunks(
-                outer, origin.x, origin.z, origin.x + geometry.width() - 1, origin.z + geometry.depth() - 1, chunk -> {
-                    runtime.queueRepair(chunk.getPos().x, chunk.getPos().z);
-                    return true;
-                });
+    private static void queueLoadedChunks(
+            ServerLevel outer, LabyrinthRuntime runtime, MazeGeometry first, MazeGeometry second) {
+        ChunkPos origin = first.origin();
+        int width = Math.max(first.width(), second.width());
+        int depth = Math.max(first.depth(), second.depth());
+        forLoadedChunks(outer, origin.x, origin.z, origin.x + width - 1, origin.z + depth - 1, chunk -> {
+            runtime.queueRepair(chunk.getPos().x, chunk.getPos().z);
+            return true;
+        });
     }
 
-    public static RandomSource layoutRandom(ServerLevel outer, ChunkPos chunk, MazeId id) {
+    public static RandomSource layoutRandom(ServerLevel outer, ChunkPos chunk, MazeId id, int generation) {
         return outer.getChunkSource()
                 .randomState()
                 .getOrCreateRandomFactory(TTIds.LABYRINTH_LAYOUT_RANDOM)
-                .at(chunk.x, id.value(), chunk.z);
+                .at(chunk.x, id.value(), chunk.z)
+                .forkPositional()
+                .at(0, generation, 0);
     }
+
+    private record MazeSlot(MazeId id, int generation, ChunkPos region, GlobalPos origin) {}
 }

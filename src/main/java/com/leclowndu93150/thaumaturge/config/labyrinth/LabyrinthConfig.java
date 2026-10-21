@@ -14,6 +14,7 @@ public final class LabyrinthConfig {
     public final ModConfigSpec.ConfigValue<String> defaultDefinition;
 
     public final ModConfigSpec.IntValue maxActiveMazes;
+    public final ModConfigSpec.IntValue regenerateConqueredAfterTicks;
     public final ModConfigSpec.IntValue retireConqueredAfterDays;
     public final ModConfigSpec.IntValue retireAbandonedAfterDays;
     public final ModConfigSpec.IntValue repairChunksPerTick;
@@ -99,8 +100,13 @@ public final class LabyrinthConfig {
         maxActiveMazes = builder.comment(
                         "Maximum number of mazes kept at once. Rituals are refused, and their eyes returned, while the limit is reached.")
                 .defineInRange("maxActiveMazes", 128, 1, 4096);
+        regenerateConqueredAfterTicks = builder.comment(
+                        "Ticks a conquered maze must stand empty before it is rebuilt in place with a new layout and a"
+                                + " fresh boss, so the same portal can be run again. -1 disables regeneration.")
+                .defineInRange("regenerateConqueredAfterTicks", 6000, -1, 1728000);
         retireConqueredAfterDays = builder.comment(
-                        "In-game days after which a conquered maze with nobody inside is dropped. -1 keeps them.")
+                        "In-game days after which a conquered maze that has not been regenerated, with nobody inside,"
+                                + " is dropped. -1 keeps them.")
                 .defineInRange("retireConqueredAfterDays", 3, -1, 3650);
         retireAbandonedAfterDays = builder.comment(
                         "In-game days without a visit after which an unconquered maze with nobody inside is dropped. -1 keeps them.")

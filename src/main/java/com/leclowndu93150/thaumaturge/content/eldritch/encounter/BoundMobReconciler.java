@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import java.util.Optional;
-import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,12 +26,8 @@ public final class BoundMobReconciler {
         }
         Optional<MazeRecord> record =
                 LabyrinthService.byId(level.getServer(), binding.get().mazeId());
-        if (record.isEmpty() || !tracked(record.get(), entity.getUUID())) {
+        if (record.isEmpty() || !record.get().state().tracks(entity.getUUID())) {
             event.setCanceled(true);
         }
-    }
-
-    private static boolean tracked(MazeRecord record, UUID uuid) {
-        return record.state().encounter().binds(uuid) || record.state().posts().isGuard(uuid);
     }
 }

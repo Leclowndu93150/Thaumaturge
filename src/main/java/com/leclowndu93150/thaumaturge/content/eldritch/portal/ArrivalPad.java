@@ -5,17 +5,17 @@ import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthService;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazePlan;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
-import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.RoomStamper;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
 
 public final class ArrivalPad {
@@ -41,10 +41,18 @@ public final class ArrivalPad {
         return new Arrival(Vec3.atBottomCenterOf(spot), yaw);
     }
 
+    public static void rescue(ServerLevel outer, MazeRecord record, ServerPlayer player) {
+        BlockPos feet = player.blockPosition();
+        if (SafeSpot.clear(outer, feet) && SafeSpot.clear(outer, feet.above())) {
+            return;
+        }
+        Arrival arrival = prepare(outer, record);
+        player.changeDimension(new DimensionTransition(
+                outer, arrival.pos(), Vec3.ZERO, arrival.yaw(), 0.0F, DimensionTransition.DO_NOTHING));
+    }
+
     private static void ensureStamped(ServerLevel outer, MazeRecord record, BlockPos anchor) {
-        LevelChunk chunk = outer.getChunkAt(anchor);
-        LabyrinthService.runtime(outer)
-                .ifPresent(runtime -> RoomStamper.ensureStamped(outer, chunk, record.plan(), runtime));
+        LabyrinthService.refresh(outer, outer.getChunkAt(anchor), record);
     }
 
     private static BlockPos repair(ServerLevel outer, MazeRecord record, BlockPos anchor) {

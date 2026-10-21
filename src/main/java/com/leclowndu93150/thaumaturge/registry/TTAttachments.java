@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.content.aura.AuraData;
 import com.leclowndu93150.thaumaturge.content.aura.pressure.FluxPressureState;
 import com.leclowndu93150.thaumaturge.content.casters.BlockWorkQueues;
 import com.leclowndu93150.thaumaturge.content.eldritch.encounter.LabyrinthBinding;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.MazeStamp;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.TransitState;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitRuntime;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitState;
@@ -79,10 +80,10 @@ public final class TTAttachments {
                             .serialize(DustTriggerSwapQueue.CODEC.codec())
                             .build());
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LABYRINTH_STAMP = register(
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<MazeStamp>> LABYRINTH_STAMP = register(
             "labyrinth_stamp",
-            () -> AttachmentType.builder(() -> -1)
-                    .serialize(Codec.INT.fieldOf("maze").codec(), value -> value >= 0)
+            () -> AttachmentType.builder(() -> MazeStamp.NONE)
+                    .serialize(MazeStamp.CODEC.codec(), MazeStamp::present)
                     .build());
 
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<BlockPos>> OBELISK_SITE_MEMBER = register(

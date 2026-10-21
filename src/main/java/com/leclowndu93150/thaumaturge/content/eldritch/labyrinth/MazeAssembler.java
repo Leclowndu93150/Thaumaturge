@@ -31,6 +31,7 @@ final class MazeAssembler {
 
     static Assembly assemble(
             MazeId id,
+            int generation,
             GlobalPos origin,
             MazeGeometry geometry,
             long seed,
@@ -92,6 +93,7 @@ final class MazeAssembler {
                 new MazeLandmarks(Map.copyOf(points), List.copyOf(barriers), List.copyOf(glyphs), hall);
         MazePlan plan = new MazePlan(
                 id,
+                generation,
                 origin,
                 geometry,
                 seed,

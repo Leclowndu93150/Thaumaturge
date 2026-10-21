@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.api.labyrinth.MazeId;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.world.RoomStamper;
+import com.leclowndu93150.thaumaturge.content.eldritch.portal.ArrivalPad;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class LabyrinthTicker {
     private static final int SWEEP_INTERVAL = 6000;
+    private static final int MAX_REPAIR_POLLS = 64;
 
     private LabyrinthTicker() {}
 
@@ -117,7 +119,8 @@ public final class LabyrinthTicker {
     private static void repair(ServerLevel level, LabyrinthRuntime runtime) {
         int budget = ThaumaturgeServerConfig.LABYRINTH.repairChunksPerTick.get();
         List<Long> notReady = new ArrayList<>();
-        for (int i = 0; i < budget; i++) {
+        int rebuilt = 0;
+        for (int polled = 0; polled < MAX_REPAIR_POLLS && rebuilt < budget; polled++) {
             Long key = runtime.nextRepair();
             if (key == null) {
                 break;
@@ -125,16 +128,30 @@ public final class LabyrinthTicker {
             ChunkPos pos = new ChunkPos(key);
             MazePlan plan = runtime.index().planAt(pos.x, pos.z, 0);
             LevelChunk chunk = level.getChunkSource().getChunkNow(pos.x, pos.z);
-            if (plan != null && chunk == null) {
+            if (plan != null && (chunk == null || RoomStamper.isStale(chunk, plan) && !level.areEntitiesLoaded(key))) {
                 notReady.add(key);
                 continue;
             }
-            if (plan != null) {
-                RoomStamper.ensureStamped(level, chunk, plan, runtime);
+            if (plan != null && rebuild(level, runtime, chunk, plan)) {
+                rebuilt++;
             }
             runtime.repairDone(key);
         }
         notReady.forEach(runtime::retryRepair);
+    }
+
+    private static boolean rebuild(ServerLevel level, LabyrinthRuntime runtime, LevelChunk chunk, MazePlan plan) {
+        Optional<MazeRecord> record = LabyrinthData.get(level).get(plan.id());
+        if (record.isEmpty() || !LabyrinthService.refresh(level, chunk, record.get(), runtime)) {
+            return false;
+        }
+        ChunkPos pos = chunk.getPos();
+        for (ServerPlayer player : List.copyOf(level.players())) {
+            if (new ChunkPos(player.blockPosition()).equals(pos)) {
+                ArrivalPad.rescue(level, record.get(), player);
+            }
+        }
+        return true;
     }
 
     private static void fireTriggers(ServerLevel level) {
@@ -155,7 +172,10 @@ public final class LabyrinthTicker {
             while (pending.hasNext()) {
                 PendingTrigger trigger = pending.next();
                 double radius = trigger.radius();
-                if (player.blockPosition().distSqr(trigger.pos()) > radius * radius || !level.isLoaded(trigger.pos())) {
+                if (player.blockPosition().distSqr(trigger.pos()) > radius * radius
+                        || !level.isLoaded(trigger.pos())
+                        || !RoomStamper.isStamped(
+                                level.getChunkAt(trigger.pos()), record.get().plan())) {
                     continue;
                 }
                 TriggerContext context =

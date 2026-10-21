@@ -10,7 +10,8 @@ import net.minecraft.util.StringRepresentable;
  * <li>{@link #SEALED}: the boss door is closed and waits for a bound tablet.</li>
  * <li>{@link #CHARGING}: a tablet sits in the lock and the arena is being prepared.</li>
  * <li>{@link #ACTIVE}: the door is open and the encounter is running.</li>
- * <li>{@link #CONQUERED}: the encounter is beaten; rewards and the exit rift are available.</li>
+ * <li>{@link #CONQUERED}: the encounter is beaten; rewards and the exit rift are available. Once nobody has been inside for the configured delay, the maze is rebuilt in
+ * place with a new layout and returns to {@link #SEALED}.</li>
  * <li>{@link #RETIRED}: the maze is no longer linked to any altar and is about to be dropped.</li>
  * </ul>
  *

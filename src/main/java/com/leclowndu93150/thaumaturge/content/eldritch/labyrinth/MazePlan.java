@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record MazePlan(
         MazeId id,
+        int generation,
         GlobalPos origin,
         MazeGeometry geometry,
         long seed,
@@ -33,6 +34,7 @@ public record MazePlan(
     private static final Codec<int[]> INTS = Codec.INT_STREAM.xmap(IntStream::toArray, Arrays::stream);
     public static final Codec<MazePlan> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     MazeId.CODEC.fieldOf("id").forGetter(MazePlan::id),
+                    Codec.INT.optionalFieldOf("generation", 0).forGetter(MazePlan::generation),
                     GlobalPos.CODEC.fieldOf("origin").forGetter(MazePlan::origin),
                     MazeGeometry.CODEC.fieldOf("geometry").forGetter(MazePlan::geometry),
                     Codec.LONG.fieldOf("seed").forGetter(MazePlan::seed),
@@ -52,6 +54,10 @@ public record MazePlan(
                     INTS.fieldOf("cells").forGetter(MazePlan::cells),
                     MazeLandmarks.CODEC.fieldOf("landmarks").forGetter(MazePlan::landmarks))
             .apply(instance, MazePlan::new));
+
+    public int stampSalt() {
+        return id.value() ^ Integer.reverse(generation);
+    }
 
     public int cell(int cellX, int cellZ) {
         return cells[geometry.index(cellX, cellZ)];
