@@ -6,17 +6,34 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.LabyrinthServic
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.MazeRecord;
 import com.leclowndu93150.thaumaturge.content.misc.TTActionBar;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTItems;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 final class LockActivation {
     private LockActivation() {}
 
-    static void use(ServerLevel level, BlockPos pos, Player player, ItemStack stack) {
+    static boolean isKey(ItemStack stack) {
+        return stack.is(TTItems.RUNED_TABLET.get());
+    }
+
+    static ItemInteractionResult insert(ItemStack stack, Level level, BlockPos lock, Player player) {
+        if (!isKey(stack)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (level instanceof ServerLevel serverLevel) {
+            use(serverLevel, lock, player, stack);
+        }
+        return ItemInteractionResult.SUCCESS;
+    }
+
+    private static void use(ServerLevel level, BlockPos pos, Player player, ItemStack stack) {
         Optional<MazeRecord> record = resolve(level, pos);
         if (record.isEmpty()) {
             TTActionBar.sendPurple(player, "gui.thaumaturge.labyrinth.unavailable");

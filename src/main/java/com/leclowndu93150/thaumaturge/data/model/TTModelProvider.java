@@ -2641,32 +2641,19 @@ public final class TTModelProvider implements DataProvider {
     }
 
     private void eldritchLock() {
-        ResourceLocation model = ModelTemplates.CUBE_ORIENTABLE.create(
-                TTBlocks.ELDRITCH_LOCK.get(),
+        Block lock = TTBlocks.ELDRITCH_LOCK.get();
+        ResourceLocation model = ModelTemplates.CUBE_ALL.create(
+                lock, new TextureMapping().put(TextureSlot.ALL, blockTexture("eldritch_door")), modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(lock, v(model)));
+        ResourceLocation item = ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(
+                lock,
+                "_item",
                 new TextureMapping()
                         .put(TextureSlot.FRONT, blockTexture("eldritch_lock_face"))
                         .put(TextureSlot.SIDE, blockTexture("eldritch_lock_side"))
                         .put(TextureSlot.TOP, blockTexture("eldritch_lock_side")),
                 modelOutput);
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(TTBlocks.ELDRITCH_LOCK.get(), v(model))
-                .with(PropertyDispatch.property(BlockStateProperties.FACING)
-                        .select(
-                                Direction.DOWN,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
-                        .select(
-                                Direction.UP,
-                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
-                        .select(Direction.NORTH, Variant.variant())
-                        .select(
-                                Direction.SOUTH,
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
-                        .select(
-                                Direction.WEST,
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-                        .select(
-                                Direction.EAST,
-                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
-        delegateItem(TTBlocks.ELDRITCH_LOCK.get().asItem(), model);
+        delegateItem(lock.asItem(), item);
     }
 
     private static final int INSET_DEPTH = 2;

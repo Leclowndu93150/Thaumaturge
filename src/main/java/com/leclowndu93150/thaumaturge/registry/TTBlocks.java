@@ -55,6 +55,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchNothin
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchObelisk;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchPillar;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchTrap;
+import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEldritchDoor;
 import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.BlockEldritchPortal;
 import com.leclowndu93150.thaumaturge.content.eldritch.reliquary.BlockEldritchReliquary;
@@ -1895,9 +1896,9 @@ public final class TTBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops());
 
-    public static final DeferredBlock<Block> ELDRITCH_DOOR = BLOCKS.registerBlock(
+    public static final DeferredBlock<BlockEldritchDoor> ELDRITCH_DOOR = BLOCKS.registerBlock(
             "eldritch_door",
-            Block::new,
+            BlockEldritchDoor::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
                     .strength(-1.0F, Float.MAX_VALUE)
