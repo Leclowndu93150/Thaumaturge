@@ -12,6 +12,12 @@ final class HubRooms {
     private static final float URN_LOOT = 0.5F;
     private static final float SHRINE_LOOT = 0.8F;
     private static final float TEE_LOOT = 0.6F;
+    private static final float CORNER_LOOT = 0.35F;
+    private static final float GUARD_LOOT = 0.6F;
+    private static final float VENT_CHANCE = 0.2F;
+    private static final float TRAP_CHANCE = 0.15F;
+    private static final float GUARDED_TRAP_CHANCE = 0.4F;
+    private static final int[][] GUARDROOM_PILLARS = {{5, 5}, {10, 5}};
     private static final int[][] CORNER_PILLARS = {{4, 4}, {11, 4}, {4, 11}, {11, 11}};
     private static final int[][] DEAD_END_URNS = {{5, 10}, {10, 10}, {7, 12}};
 
@@ -22,6 +28,7 @@ final class HubRooms {
                 junction("tee/hall", HubRooms::teeHall, Junction.TEE, 3),
                 junction("tee/pillared", HubRooms::teePillared, Junction.TEE, 3),
                 junction("tee/shrine", HubRooms::teeShrine, Junction.TEE, 2),
+                junction("tee/guardroom", HubRooms::guardroom, Junction.TEE, 2),
                 junction("cross/rotunda", HubRooms::rotunda, Junction.CROSS, 2),
                 junction("cross/pit", HubRooms::pit, Junction.CROSS, 1),
                 junction("cross/gallery", HubRooms::gallery, Junction.CROSS, 2),
@@ -53,12 +60,33 @@ final class HubRooms {
         canvas.carve(RoomShape.box(2, F + 1, 3, 13, F + 6, 12));
         canvas.carve(RoomShape.dome(RoomKit.MID, F + 6, RoomKit.MID, 6.0, 3.0, 5.0));
         canvas.fill(RoomShape.box(4, F, 5, 11, F, 10), LabyrinthBlocks.tile());
+        RoomKit.floorLoot(canvas, 2, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorLoot(canvas, 13, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.wallVent(canvas, 1, 3, VENT_CHANCE);
+        RoomKit.floorTrap(canvas, 9, 11, TRAP_CHANCE);
     }
 
     static void teePillared(RoomCanvas canvas) {
         Junction.TEE.carve(canvas);
         canvas.carve(RoomShape.box(3, F + 1, 3, 12, F + 6, 12));
         RoomKit.columns(canvas, CORNER_PILLARS, F + 1, F + 6);
+        RoomKit.floorLoot(canvas, 3, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorLoot(canvas, 12, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorVent(canvas, 7, 11, VENT_CHANCE);
+        RoomKit.floorTrap(canvas, 8, 6, TRAP_CHANCE);
+    }
+
+    static void guardroom(RoomCanvas canvas) {
+        Junction.TEE.carve(canvas);
+        canvas.carve(RoomShape.box(3, F + 1, 3, 12, F + 5, 12));
+        RoomKit.columns(canvas, GUARDROOM_PILLARS, F + 1, F + 5);
+        canvas.fill(RoomShape.box(6, F, 6, 9, F, 9), LabyrinthBlocks.obsidianTile());
+        RoomKit.post(canvas, 7, 8);
+        RoomKit.floorLoot(canvas, 3, 12, RoomKit.crates(GUARD_LOOT));
+        RoomKit.floorLoot(canvas, 12, 12, RoomKit.crates(GUARD_LOOT));
+        RoomKit.plinth(canvas, 7, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.glyph(canvas, 2, F + 3, 4, Direction.EAST);
+        RoomKit.glyph(canvas, 13, F + 3, 4, Direction.WEST);
     }
 
     static void teeShrine(RoomCanvas canvas) {
@@ -66,7 +94,10 @@ final class HubRooms {
         canvas.carve(RoomShape.box(6, F + 1, 11, 9, F + 4, 13));
         canvas.fill(RoomShape.box(6, F, 11, 9, F, 13), LabyrinthBlocks.obsidianTile());
         canvas.marker(7, F + 1, 12, RoomKit.urns(TEE_LOOT));
+        RoomKit.floorLoot(canvas, 8, 12, RoomKit.urns(CORNER_LOOT));
         RoomKit.glyph(canvas, 7, F + 3, 14, Direction.NORTH);
+        RoomKit.wallVent(canvas, 5, 12, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 10, 12, VENT_CHANCE);
     }
 
     static void rotunda(RoomCanvas canvas) {
@@ -75,6 +106,10 @@ final class HubRooms {
         canvas.carve(RoomShape.dome(RoomKit.MID, F + 7, RoomKit.MID, 6.0, 4.0, 6.0));
         RoomKit.footedColumn(canvas, 7, 7, 8, 8, F + 1, F + 12);
         canvas.fill(RoomShape.annulus(RoomKit.MID, RoomKit.MID, 6.0, 5.0, F, F), LabyrinthBlocks.obsidianTile());
+        RoomKit.post(canvas, 8, 3);
+        RoomKit.plinth(canvas, 4, 4, RoomKit.urns(CORNER_LOOT));
+        RoomKit.plinth(canvas, 11, 11, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorVent(canvas, 4, 11, VENT_CHANCE);
     }
 
     static void pit(RoomCanvas canvas) {
@@ -84,6 +119,9 @@ final class HubRooms {
         canvas.fill(RoomShape.box(6, F - 1, 6, 9, F - 1, 9), LabyrinthBlocks.starfield());
         canvas.fill(RoomShape.box(5, F, 5, 10, F, 5), LabyrinthBlocks.obsidianTile());
         canvas.fill(RoomShape.box(5, F, 10, 10, F, 10), LabyrinthBlocks.obsidianTile());
+        RoomKit.floorLoot(canvas, 4, 4, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorVent(canvas, 4, 7, VENT_CHANCE);
+        RoomKit.floorVent(canvas, 11, 8, VENT_CHANCE);
     }
 
     static void gallery(RoomCanvas canvas) {
@@ -93,6 +131,10 @@ final class HubRooms {
         canvas.fill(RoomShape.box(5, F, 5, 10, F, 10), LabyrinthBlocks.tile());
         RoomKit.glyph(canvas, 1, F + 3, 3, Direction.EAST);
         RoomKit.glyph(canvas, 14, F + 3, 12, Direction.WEST);
+        RoomKit.post(canvas, 8, 8);
+        RoomKit.floorLoot(canvas, 2, 2, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorLoot(canvas, 13, 13, RoomKit.urns(CORNER_LOOT));
+        RoomKit.wallVent(canvas, 1, 12, VENT_CHANCE);
     }
 
     static void urns(RoomCanvas canvas) {
@@ -102,6 +144,8 @@ final class HubRooms {
         for (int[] urn : DEAD_END_URNS) {
             canvas.marker(urn[0], F + 1, urn[1], RoomKit.urns(URN_LOOT));
         }
+        RoomKit.floorVent(canvas, 8, 7, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 3, 9, VENT_CHANCE);
     }
 
     static void shrine(RoomCanvas canvas) {
@@ -111,6 +155,9 @@ final class HubRooms {
         canvas.marker(7, F + 2, 11, RoomKit.crates(SHRINE_LOOT));
         RoomKit.glyph(canvas, 7, F + 4, 13, Direction.NORTH);
         RoomKit.glyph(canvas, 8, F + 4, 13, Direction.NORTH);
+        RoomKit.floorLoot(canvas, 4, 12, RoomKit.urns(CORNER_LOOT));
+        RoomKit.floorTrap(canvas, 7, 8, GUARDED_TRAP_CHANCE);
+        RoomKit.wallVent(canvas, 3, 7, VENT_CHANCE);
     }
 
     static void collapsed(RoomCanvas canvas) {
@@ -122,5 +169,6 @@ final class HubRooms {
         canvas.fill(RoomShape.box(4, F + 2, 11, 11, F + 2, 11), LabyrinthBlocks.rockStairs(Direction.SOUTH));
         canvas.fill(RoomShape.box(5, F + 3, 13, 10, F + 3, 13), LabyrinthBlocks.rockStairs(Direction.SOUTH));
         canvas.marker(7, F + 3, 12, RoomKit.urns(URN_LOOT));
+        RoomKit.floorVent(canvas, 6, 7, VENT_CHANCE);
     }
 }

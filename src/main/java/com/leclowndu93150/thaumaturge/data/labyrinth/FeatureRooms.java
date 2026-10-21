@@ -3,7 +3,6 @@ package com.leclowndu93150.thaumaturge.data.labyrinth;
 import static com.leclowndu93150.thaumaturge.data.labyrinth.RoomCanvas.F;
 
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.definition.RoomType;
-import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.GuardianPostMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.ReliquaryMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.SpawnerMarker;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -22,7 +21,10 @@ final class FeatureRooms {
     private static final float SPIDER_LOOT = 0.5F;
     private static final float WEB_CHANCE = 0.75F;
     private static final float LIBRARY_LOOT = 0.4F;
+    private static final float NEST_VENT = 1.0F;
+    private static final float NEST_WALL_VENT = 0.6F;
     private static final int[][] CRAB_SPAWNERS = {{5, 10}, {10, 10}};
+    private static final int[][] CRAB_WALL_VENTS = {{2, 9}, {13, 9}, {8, 14}};
     private static final int[][] GUARDIAN_PILLARS = {{5, 7}, {10, 7}};
     private static final int[][] SPIDER_WEBS = {{4, 8}, {11, 8}, {6, 12}, {9, 13}, {7, 6}};
 
@@ -56,11 +58,10 @@ final class FeatureRooms {
         canvas.carve(RoomShape.dome(RoomKit.MID, F + 5, NEST_DEPTH, 5.0, 2.5, 5.0));
         canvas.fill(RoomShape.box(6, F, 8, 9, F, 11), LabyrinthBlocks.glowingCrust());
         for (int[] spawner : CRAB_SPAWNERS) {
-            canvas.marker(
-                    spawner[0],
-                    F,
-                    spawner[1],
-                    RoomKit.embedded(LabyrinthBlocks.crabSpawner(), 1.0F, LabyrinthBlocks.rock()));
+            RoomKit.floorVent(canvas, spawner[0], spawner[1], NEST_VENT);
+        }
+        for (int[] vent : CRAB_WALL_VENTS) {
+            RoomKit.wallVent(canvas, vent[0], vent[1], NEST_WALL_VENT);
         }
         canvas.marker(7, F + 1, 13, RoomKit.crates(NEST_LOOT));
     }
@@ -69,7 +70,7 @@ final class FeatureRooms {
         RoomKit.entrance(canvas, 5);
         canvas.carve(RoomShape.box(3, F + 1, 5, 12, F + 6, 13));
         RoomKit.columns(canvas, GUARDIAN_PILLARS, F + 1, F + 6);
-        canvas.marker(7, F + 1, 9, new GuardianPostMarker(Optional.empty(), Optional.empty()));
+        RoomKit.post(canvas, 7, 9);
         canvas.marker(4, F + 1, 12, RoomKit.crates(NEST_LOOT));
         canvas.marker(11, F + 1, 12, RoomKit.crates(NEST_LOOT));
     }

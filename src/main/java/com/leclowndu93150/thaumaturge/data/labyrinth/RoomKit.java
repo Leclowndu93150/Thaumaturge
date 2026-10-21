@@ -7,6 +7,7 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.BlockMar
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.GlyphMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.GuardianPostMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.LootMarker;
+import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.RoomVoxels;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.Optional;
 import net.minecraft.core.Direction;
@@ -22,6 +23,9 @@ final class RoomKit {
     private static final int COMMON_WEIGHT = 6;
     private static final int UNCOMMON_WEIGHT = 3;
     private static final int RARE_WEIGHT = 1;
+    private static final int WALL_VENT_RISE = 2;
+    private static final int NICHE_HEIGHT = 2;
+    private static final int PLINTH_RISE = 2;
 
     private RoomKit() {}
 
@@ -56,6 +60,87 @@ final class RoomKit {
     static BlockMarker scatter(BlockState state, float chance) {
         return new BlockMarker(
                 SimpleWeightedRandomList.single(state), chance, true, Optional.empty(), Optional.empty());
+    }
+
+    static void floorVent(RoomCanvas canvas, int x, int z, float chance) {
+        requireOpen(canvas, x, RoomCanvas.F + 1, z);
+        canvas.marker(x, RoomCanvas.F, z, vent(Direction.UP, chance, surface(canvas, x, RoomCanvas.F, z)));
+    }
+
+    static void wallVent(RoomCanvas canvas, int x, int z, float chance) {
+        int y = RoomCanvas.F + WALL_VENT_RISE;
+        canvas.marker(x, y, z, vent(openSide(canvas, x, y, z), chance, surface(canvas, x, y, z)));
+    }
+
+    static void floorTrap(RoomCanvas canvas, int x, int z, float chance) {
+        requireOpen(canvas, x, RoomCanvas.F + 1, z);
+        canvas.marker(
+                x, RoomCanvas.F, z, embedded(LabyrinthBlocks.trap(), chance, surface(canvas, x, RoomCanvas.F, z)));
+    }
+
+    private static BlockMarker vent(Direction facing, float chance, BlockState otherwise) {
+        return new BlockMarker(
+                SimpleWeightedRandomList.single(LabyrinthBlocks.crabSpawner()),
+                chance,
+                true,
+                Optional.of(facing),
+                Optional.of(otherwise));
+    }
+
+    private static BlockState surface(RoomCanvas canvas, int x, int y, int z) {
+        if (canvas.kind(x, y, z).open()) {
+            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " needs a solid surface");
+        }
+        BlockState current = canvas.get(x, y, z);
+        return current == null ? LabyrinthBlocks.stone() : current;
+    }
+
+    static void niche(RoomCanvas canvas, int x, int z, LootMarker loot) {
+        openSide(canvas, x, RoomCanvas.F + 1, z);
+        canvas.carve(RoomShape.box(x, RoomCanvas.F + 1, z, x, RoomCanvas.F + NICHE_HEIGHT, z));
+        canvas.marker(x, RoomCanvas.F + 1, z, loot);
+    }
+
+    static void floorLoot(RoomCanvas canvas, int x, int z, LootMarker loot) {
+        requireOpen(canvas, x, RoomCanvas.F + 1, z);
+        canvas.marker(x, RoomCanvas.F + 1, z, loot);
+    }
+
+    static void plinth(RoomCanvas canvas, int x, int z, LootMarker loot) {
+        requireOpen(canvas, x, RoomCanvas.F + PLINTH_RISE, z);
+        canvas.set(x, RoomCanvas.F + 1, z, LabyrinthBlocks.pedestal());
+        canvas.marker(x, RoomCanvas.F + PLINTH_RISE, z, loot);
+    }
+
+    static void post(RoomCanvas canvas, int x, int z) {
+        requireOpen(canvas, x, RoomCanvas.F + 1, z);
+        canvas.marker(x, RoomCanvas.F + 1, z, new GuardianPostMarker(Optional.empty(), Optional.empty()));
+    }
+
+    private static void requireOpen(RoomCanvas canvas, int x, int y, int z) {
+        if (canvas.kind(x, y, z) != RoomVoxels.Kind.AIR) {
+            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " needs open air");
+        }
+    }
+
+    private static Direction openSide(RoomCanvas canvas, int x, int y, int z) {
+        if (canvas.kind(x, y, z).open()) {
+            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " is not inside a wall");
+        }
+        Direction found = null;
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            if (canvas.kind(x + side.getStepX(), y, z + side.getStepZ()) == RoomVoxels.Kind.AIR) {
+                if (found != null) {
+                    throw new IllegalArgumentException(
+                            "Room dressing at " + x + "," + y + "," + z + " faces more than one opening");
+                }
+                found = side;
+            }
+        }
+        if (found == null) {
+            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " faces no opening");
+        }
+        return found;
     }
 
     static GuardianPostMarker keyWard() {

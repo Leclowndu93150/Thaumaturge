@@ -76,6 +76,10 @@ public final class LabyrinthBlocks {
         return TTBlocks.ELDRITCH_CRAB_SPAWNER.get().defaultBlockState();
     }
 
+    static BlockState pedestal() {
+        return TTBlocks.ELDRITCH_PEDESTAL.get().defaultBlockState();
+    }
+
     static BlockState capstone() {
         return TTBlocks.ELDRITCH_CAPSTONE.get().defaultBlockState();
     }

@@ -9,6 +9,12 @@ import net.minecraft.core.Direction;
 
 final class CorridorRooms {
     private static final int DEAD_END_DEPTH = 9;
+    private static final float NICHE_LOOT = 0.25F;
+    private static final float END_LOOT = 0.5F;
+    private static final float VENT_CHANCE = 0.1F;
+    private static final float END_VENT_CHANCE = 0.25F;
+    private static final float TRAP_CHANCE = 0.1F;
+    private static final float WEB_CHANCE = 0.3F;
 
     private CorridorRooms() {}
 
@@ -19,7 +25,7 @@ final class CorridorRooms {
                                 .entrance(),
                         4),
                 fallback(
-                        RoomRecipe.builder("corridor/straight", Junction.STRAIGHT::carve)
+                        RoomRecipe.builder("corridor/straight", CorridorRooms::straight)
                                 .junction(Junction.STRAIGHT),
                         10),
                 fallback(
@@ -42,22 +48,49 @@ final class CorridorRooms {
         canvas.carve(RoomShape.cylinder(RoomKit.MID, 9.0, 3.0, F + 1, F + 5));
         canvas.carve(RoomShape.cylinder(RoomKit.MID, 9.0, 2.0, F + 6, F + 6));
         RoomKit.glyph(canvas, 8, F + 3, 12, Direction.NORTH);
+        RoomKit.floorLoot(canvas, 8, 11, RoomKit.urns(END_LOOT));
+        RoomKit.floorVent(canvas, 7, 8, END_VENT_CHANCE);
+        RoomKit.wallVent(canvas, 4, 9, VENT_CHANCE);
+    }
+
+    static void straight(RoomCanvas canvas) {
+        Junction.STRAIGHT.carve(canvas);
+        RoomKit.niche(canvas, 11, 4, RoomKit.urns(NICHE_LOOT));
+        RoomKit.niche(canvas, 4, 11, RoomKit.urns(NICHE_LOOT));
+        RoomKit.floorVent(canvas, 7, 8, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 4, 6, VENT_CHANCE);
+        RoomKit.floorTrap(canvas, 8, 13, TRAP_CHANCE);
+        canvas.marker(6, F + 5, 2, RoomKit.scatter(LabyrinthBlocks.web(), WEB_CHANCE));
     }
 
     static void bend(RoomCanvas canvas) {
         Junction.BEND.carve(canvas);
         canvas.carve(RoomShape.cylinder(RoomKit.MID, RoomKit.MID, 3.5, F + 1, F + 5));
+        RoomKit.niche(canvas, 4, 8, RoomKit.urns(NICHE_LOOT));
+        RoomKit.niche(canvas, 12, 11, RoomKit.urns(NICHE_LOOT));
+        RoomKit.floorVent(canvas, 7, 7, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 8, 11, VENT_CHANCE);
+        canvas.marker(9, F + 5, 9, RoomKit.scatter(LabyrinthBlocks.web(), WEB_CHANCE));
     }
 
     static void tee(RoomCanvas canvas) {
         Junction.TEE.carve(canvas);
         canvas.carve(RoomShape.box(
                 SocketProfile.MIN_U, F + 1, SocketProfile.MIN_U, SocketProfile.MAX_U, F + 6, SocketProfile.MAX_U));
+        RoomKit.niche(canvas, 8, 11, RoomKit.urns(NICHE_LOOT));
+        RoomKit.niche(canvas, 13, 4, RoomKit.urns(NICHE_LOOT));
+        RoomKit.floorVent(canvas, 7, 7, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 2, 4, VENT_CHANCE);
+        RoomKit.floorTrap(canvas, 12, 7, TRAP_CHANCE);
     }
 
     static void cross(RoomCanvas canvas) {
         Junction.CROSS.carve(canvas);
         canvas.carve(RoomShape.octagon(RoomKit.MID, RoomKit.MID, 4.0, 2.0, F + 1, F + 7));
         canvas.fill(RoomShape.octagon(RoomKit.MID, RoomKit.MID, 4.0, 2.0, F, F), LabyrinthBlocks.tile());
+        RoomKit.niche(canvas, 2, 4, RoomKit.urns(NICHE_LOOT));
+        RoomKit.niche(canvas, 13, 11, RoomKit.urns(NICHE_LOOT));
+        RoomKit.wallVent(canvas, 4, 2, VENT_CHANCE);
+        RoomKit.wallVent(canvas, 11, 13, VENT_CHANCE);
     }
 }
