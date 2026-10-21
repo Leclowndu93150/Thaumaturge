@@ -13,6 +13,7 @@ public final class AspectDataMapRegistration {
     @SubscribeEvent
     public static void onRegister(RegisterDataMapTypesEvent event) {
         event.register(AspectDataMaps.BASE_ASPECTS);
+        event.register(AspectDataMaps.ASPECT_SUPPLEMENTS);
         event.register(AspectDataMaps.ENTITY_ASPECTS);
     }
 }

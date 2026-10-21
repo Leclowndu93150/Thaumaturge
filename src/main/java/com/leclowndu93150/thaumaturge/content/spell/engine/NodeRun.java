@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.content.spell.engine;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.cast.CastContext;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellState;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
@@ -63,6 +64,16 @@ final class NodeRun implements CastContext {
     }
 
     @Override
+    public Optional<CastAuthority> authority() {
+        return run.authority();
+    }
+
+    @Override
+    public boolean permits(SpellTarget target) {
+        return run.authority().map(authority -> CastAuthorities.valid(level(), authority, target.position(), target.entity().orElse(null))).orElse(true);
+    }
+
+    @Override
     public SpellNode node() {
         return node;
     }
@@ -119,6 +130,16 @@ final class NodeRun implements CastContext {
 
     @Override
     public boolean isAlly(Entity entity) {
+        if (run.authority().isPresent()) {
+            CastAuthority authority = run.authority().get();
+            if (entity.getUUID().equals(authority.ownerId())) {
+                return true;
+            }
+            var owner = level().getServer().getPlayerList().getPlayer(authority.ownerId());
+            if (owner != null) {
+                return SpellTargeting.isAlly(owner, entity);
+            }
+        }
         return SpellTargeting.isAlly(run.caster(), entity);
     }
 
@@ -161,6 +182,13 @@ final class NodeRun implements CastContext {
 
     @Override
     public SpellContinuation continuation(SpellState next) {
+        if (run.authority().isPresent()) {
+            Optional<UUID> token = CastAuthorities.issue(level(), run.authority().get());
+            if (token.isEmpty()) {
+                return new SpellContinuation(List.of(), next, run.casterId(), run.castId());
+            }
+            return new SpellContinuation(node.children(), next, run.casterId(), run.castId(), run.authority(), token, 0);
+        }
         return new SpellContinuation(node.children(), next, run.casterId(), run.castId());
     }
 }

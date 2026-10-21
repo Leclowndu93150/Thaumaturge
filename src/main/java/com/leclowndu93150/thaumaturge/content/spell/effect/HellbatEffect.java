@@ -73,7 +73,8 @@ public final class HellbatEffect extends AbstractEffectBehavior {
             }
             fireBat.snapTo(at.x + (random.nextFloat() - random.nextFloat()) * SPREAD, at.y + HOVER + random.nextFloat() * SPREAD, at.z + (random.nextFloat() - random.nextFloat()) * SPREAD,
                     random.nextFloat() * 360.0F, 0.0F);
-            if (level.noCollision(fireBat)) {
+            if (level.noCollision(fireBat) && ctx.permits(target.moved(fireBat.position(), target.direction()))
+                    && (ctx.authority().isEmpty() || fireBat.authorizeSummon(level, ctx.authority().orElseThrow()))) {
                 fireBat.summon(caster, quarry, bonus);
                 spawned |= level.addFreshEntity(fireBat);
             }

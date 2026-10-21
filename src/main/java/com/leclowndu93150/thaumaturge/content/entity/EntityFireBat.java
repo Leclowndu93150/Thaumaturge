@@ -2,6 +2,10 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.ai.FireBatAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.FlyingWanderGoal;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
+import com.leclowndu93150.thaumaturge.content.spell.engine.CastAuthorities;
+import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -71,6 +75,11 @@ public final class EntityFireBat extends Monster {
     public int damBonus;
 
     private int lifetime;
+    private @Nullable CastAuthority castAuthority;
+    private @Nullable UUID authorityToken;
+    private long authoritySequence;
+    private long nextAuthorizedStrike;
+    private boolean requiresAuthority;
 
     public EntityFireBat(EntityType<? extends EntityFireBat> type, Level level) {
         super(type, level);
@@ -105,6 +114,30 @@ public final class EntityFireBat extends Monster {
         return this.lifetime > 0;
     }
 
+    public boolean authorizeSummon(ServerLevel level, CastAuthority authority) {
+        requiresAuthority = true;
+        castAuthority = authority;
+        authorityToken = CastAuthorities.issue(level, authority).orElse(null);
+        return authorityToken != null;
+    }
+
+    public boolean hasCastAuthority() {
+        return requiresAuthority;
+    }
+
+    @Override
+    public boolean doHurtTarget(ServerLevel level, Entity target) {
+        if (requiresAuthority) {
+            if (castAuthority == null || authorityToken == null || authoritySequence == Long.MAX_VALUE || level.getGameTime() < nextAuthorizedStrike
+                    || !CastAuthorities.valid(level, castAuthority, target.position(), target) || !CastAuthorities.claim(level, castAuthority, authorityToken, authoritySequence)) {
+                return false;
+            }
+            authoritySequence++;
+            nextAuthorizedStrike = level.getGameTime() + 40;
+        }
+        return super.doHurtTarget(level, target);
+    }
+
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(ATTACK_PRIORITY, new FireBatAttackGoal(this));
@@ -130,6 +163,13 @@ public final class EntityFireBat extends Monster {
 
     @Override
     public void tick() {
+        if (requiresAuthority && level() instanceof ServerLevel level) {
+            if (castAuthority == null || authorityToken == null || !CastAuthorities.valid(level, castAuthority, position(), null)) {
+                discard();
+                return;
+            }
+            owner = level.getEntity(castAuthority.sourceId()) instanceof LivingEntity source ? source : null;
+        }
         super.tick();
         steadyBody();
         updateAnimations();
@@ -240,6 +280,11 @@ public final class EntityFireBat extends Monster {
         output.putInt(LIFETIME_KEY, this.lifetime);
         output.putByte(DAMAGE_BONUS_KEY, (byte) this.damBonus);
         output.putBoolean(HANG_KEY, this.isHanging());
+        output.putBoolean("requires_authority", requiresAuthority);
+        output.storeNullable("cast_authority", CastAuthority.CODEC, castAuthority);
+        output.storeNullable("authority_token", UUIDUtil.CODEC, authorityToken);
+        output.putLong("authority_sequence", authoritySequence);
+        output.putLong("next_authorized_strike", nextAuthorizedStrike);
     }
 
     @Override
@@ -248,6 +293,11 @@ public final class EntityFireBat extends Monster {
         this.lifetime = input.getIntOr(LIFETIME_KEY, 0);
         this.damBonus = input.getByteOr(DAMAGE_BONUS_KEY, (byte) 0);
         this.setHanging(input.getBooleanOr(HANG_KEY, false));
+        requiresAuthority = input.getBooleanOr("requires_authority", false);
+        castAuthority = input.read("cast_authority", CastAuthority.CODEC).orElse(null);
+        authorityToken = input.read("authority_token", UUIDUtil.CODEC).orElse(null);
+        authoritySequence = input.getLongOr("authority_sequence", 0);
+        nextAuthorizedStrike = input.getLongOr("next_authorized_strike", 0);
     }
 
     @Override

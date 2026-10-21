@@ -85,7 +85,7 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
         if (bat == null) {
             return;
         }
-        bat.charge.arm(payload);
+        bat.charge.arm(level, payload);
         bat.owner = EntityReference.of(owner);
         bat.allies = allies;
         Vec3 at = origin.position();
@@ -143,6 +143,8 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
     protected void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         output.putBoolean(ALLIES_KEY, allies);
+        output.putInt("age", tickCount);
+        output.putInt("strike_ready_at", strikeReadyAt);
         EntityReference.store(owner, output, OWNER_KEY);
         charge.save(output);
     }
@@ -151,6 +153,8 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
         allies = input.getBooleanOr(ALLIES_KEY, false);
+        tickCount = input.getIntOr("age", 0);
+        strikeReadyAt = input.getIntOr("strike_ready_at", 0);
         owner = EntityReference.read(input, OWNER_KEY);
         charge.load(input);
     }
@@ -204,7 +208,7 @@ public final class SpellBat extends Monster implements TraceableEntity, IEntityW
     }
 
     private boolean shouldExpire() {
-        return level().getDifficulty() == Difficulty.PEACEFUL || tickCount > MAX_AGE || charge.isSpent() || getOwner() == null;
+        return level().getDifficulty() == Difficulty.PEACEFUL || tickCount > MAX_AGE || charge.isSpent() || getOwner() == null || level() instanceof ServerLevel server && !charge.valid(server);
     }
 
     @Override

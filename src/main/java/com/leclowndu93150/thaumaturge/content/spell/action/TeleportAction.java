@@ -8,6 +8,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -42,6 +44,19 @@ public record TeleportAction(float base, float perPower) implements SpellAction 
             double tx = x + Mth.nextDouble(random, -range, range);
             double ty = Mth.clamp(y + (random.nextInt((int) range * 2 + 1) - range), living.level().getMinY(), living.level().getMaxY());
             double tz = z + Mth.nextDouble(random, -range, range);
+            if (ctx.cast().authority().isPresent()) {
+                BlockPos ground = BlockPos.containing(tx, ty, tz);
+                if (!ctx.cast().level().hasChunkAt(ground)) {
+                    continue;
+                }
+                while (ground.getY() > living.level().getMinY() && !ctx.cast().level().getBlockState(ground.below()).blocksMotion()) {
+                    ground = ground.below();
+                }
+                ty = ground.getY();
+                if (!ctx.cast().permits(ctx.target().moved(new Vec3(tx, ty, tz), ctx.target().direction()))) {
+                    continue;
+                }
+            }
             if (living.randomTeleport(tx, ty, tz, true)) {
                 ctx.cast().level().playSound(null, x, y, z, SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
                 return;

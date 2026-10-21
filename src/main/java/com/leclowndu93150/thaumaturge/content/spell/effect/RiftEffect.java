@@ -33,7 +33,7 @@ public final class RiftEffect extends AbstractEffectBehavior {
 
     private static boolean mayOpenRing(CastContext ctx, BlockPos centre, Direction.Axis axis) {
         for (BlockPos pos : BlockPos.betweenClosed(ringCorner(centre, axis, -1), ringCorner(centre, axis, 1))) {
-            if (PortableHoles.canOpen(ctx.level(), pos) && !SpellBlockAccess.mayBreak(ctx, pos)) {
+            if (!SpellBlockAccess.mayAffect(ctx, pos) || PortableHoles.canOpen(ctx.level(), pos) && !SpellBlockAccess.mayBreak(ctx, pos)) {
                 return false;
             }
         }
@@ -46,7 +46,7 @@ public final class RiftEffect extends AbstractEffectBehavior {
 
     @Override
     protected void apply(CastContext ctx, SpellTarget target, float power, int index) {
-        if (target.block().isEmpty()) {
+        if (ctx.authority().isPresent() || target.block().isEmpty()) {
             return;
         }
         ServerLevel level = ctx.level();
@@ -56,7 +56,7 @@ public final class RiftEffect extends AbstractEffectBehavior {
         int ticks = Math.round(ctx.setting(DURATION) * TICKS_PER_SECOND * ctx.state().get(SpellStats.DURATION));
         int depth = 0;
         BlockPos cursor = hit.getBlockPos();
-        while (depth < reach && PortableHoles.canOpen(level, cursor) && mayOpenRing(ctx, cursor, face.getAxis())) {
+        while (depth < reach && SpellBlockAccess.mayAffect(ctx, cursor) && PortableHoles.canOpen(level, cursor) && mayOpenRing(ctx, cursor, face.getAxis())) {
             depth++;
             cursor = cursor.relative(face.getOpposite());
         }

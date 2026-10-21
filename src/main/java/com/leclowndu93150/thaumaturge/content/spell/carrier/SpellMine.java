@@ -4,7 +4,9 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import java.util.List;
+import java.util.UUID;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -31,6 +33,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     private static final float NO_DIVERGENCE = 0.0F;
     private static final double MINE_GRAVITY = 0.01;
     private static final int MAX_AGE = 1200;
+    private static final int MAX_VICTIMS = 4096;
     private static final int ARM_DELAY = 40;
     private static final int SCAN_INTERVAL = 5;
     private static final double TRIGGER_RANGE = 1.0;
@@ -43,7 +46,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     private final CarrierCharge charge = new CarrierCharge();
     private boolean allies;
     private int armedAt;
-    private @Nullable List<LivingEntity> victims;
+    private @Nullable List<UUID> victims;
     private int nextVictim;
 
     public SpellMine(EntityType<? extends SpellMine> type, Level level) {
@@ -54,7 +57,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
         SpellMine mine = new SpellMine(TTEntities.FOCUS_MINE.get(), level);
         mine.setOwner(owner);
         mine.allies = allies;
-        mine.charge.arm(payload);
+        mine.charge.arm(level, payload);
         mine.setPos(origin.position());
         Vec3 aim = origin.direction();
         mine.shoot(aim.x, aim.y, aim.z, THROW_SPEED, NO_DIVERGENCE);
@@ -95,6 +98,10 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
         ValueOutput trap = output.child(TRAP_KEY);
         trap.putBoolean(ARMED_KEY, armed());
         trap.putBoolean(ALLIES_KEY, allies);
+        trap.putInt("age", tickCount);
+        trap.putInt("armed_at", armedAt);
+        trap.putInt("next_victim", nextVictim);
+        trap.storeNullable("victims", UUIDUtil.CODEC.listOf(0, MAX_VICTIMS), victims);
         charge.save(output);
     }
 
@@ -105,7 +112,10 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
         ValueInput trap = input.childOrEmpty(TRAP_KEY);
         allies = trap.getBooleanOr(ALLIES_KEY, false);
         entityData.set(ARMED, trap.getBooleanOr(ARMED_KEY, false));
-        armedAt = -ARM_DELAY;
+        tickCount = trap.getIntOr("age", 0);
+        armedAt = trap.getIntOr("armed_at", -ARM_DELAY);
+        victims = trap.read("victims", UUIDUtil.CODEC.listOf(0, MAX_VICTIMS)).orElse(null);
+        nextVictim = Math.clamp(trap.getIntOr("next_victim", 0), 0, victims == null ? 0 : victims.size());
     }
 
     @Override
@@ -161,7 +171,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     }
 
     private void serverTick(ServerLevel server) {
-        if (!(getOwner() instanceof LivingEntity master) || tickCount > MAX_AGE || charge.isSpent()) {
+        if (!(getOwner() instanceof LivingEntity master) || tickCount > MAX_AGE || !charge.valid(server)) {
             discard();
             return;
         }
@@ -179,15 +189,14 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     private void gather(ServerLevel server, LivingEntity master) {
         List<LivingEntity> found = SpellTargeting.livingWithin(server, position(), TRIGGER_RANGE, candidate -> SpellTargeting.isAlly(master, candidate) == allies);
         if (!found.isEmpty()) {
-            victims = found;
+            victims = found.stream().limit(MAX_VICTIMS).map(LivingEntity::getUUID).toList();
             nextVictim = 0;
         }
     }
 
-    private @Nullable LivingEntity nextLiving() {
+    private @Nullable LivingEntity nextLiving(ServerLevel level) {
         while (nextVictim < victims.size()) {
-            LivingEntity candidate = victims.get(nextVictim++);
-            if (candidate.isAlive()) {
+            if (level.getEntity(victims.get(nextVictim++)) instanceof LivingEntity candidate && candidate.isAlive()) {
                 return candidate;
             }
         }
@@ -195,7 +204,7 @@ public final class SpellMine extends ThrowableProjectile implements IEntityWithC
     }
 
     private void releaseNext(ServerLevel server) {
-        LivingEntity victim = nextLiving();
+        LivingEntity victim = nextLiving(server);
         if (victim != null) {
             Vec3 heading = victim.getBoundingBox().getCenter().subtract(position());
             charge.resume(server, List.of(SpellTarget.entity(victim, heading)));

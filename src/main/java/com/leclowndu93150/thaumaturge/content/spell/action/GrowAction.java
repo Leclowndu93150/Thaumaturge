@@ -25,7 +25,7 @@ public record GrowAction(float base, float perPower) implements SpellAction {
 
     @Override
     public void apply(ActionContext ctx) {
-        if (ctx.target().block().isEmpty()) {
+        if (ctx.cast().authority().isPresent() || ctx.target().block().isEmpty()) {
             return;
         }
         ServerLevel level = ctx.cast().level();

@@ -2,14 +2,11 @@ package com.leclowndu93150.thaumaturge.content.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.GolemHelper;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
-import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
-import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -51,10 +48,10 @@ public final class ItemSealPlacer extends Item implements ISealDisplayer {
         if (type.isEmpty() || !type.get().placement().allows(level, pos, face)) {
             return InteractionResult.FAIL;
         }
-        if (level instanceof ServerLevel serverLevel && SealHandler.place(serverLevel, new SealPos(pos, face), sealKey, type.get(), player) && !player.hasInfiniteMaterials()) {
-            stack.shrink(1);
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
-        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
+        return stack == context.getItemInHand() && GolemHelper.tryPlaceSeal(context, sealKey) ? InteractionResult.SUCCESS_SERVER : InteractionResult.FAIL;
     }
 
     @Override

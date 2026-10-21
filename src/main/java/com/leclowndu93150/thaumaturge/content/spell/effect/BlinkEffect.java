@@ -59,6 +59,9 @@ public final class BlinkEffect extends AbstractEffectBehavior {
         ServerLevel level = ctx.level();
         for (int lift = 0; lift < HEADROOM_TRIES; lift++) {
             Vec3 spot = landing.add(0.0, lift, 0.0);
+            if (!ctx.permits(target.moved(spot, target.direction()))) {
+                continue;
+            }
             AABB box = caster.getDimensions(caster.getPose()).makeBoundingBox(spot);
             if (level.noCollision(caster, box)) {
                 Vec3 from = caster.position();

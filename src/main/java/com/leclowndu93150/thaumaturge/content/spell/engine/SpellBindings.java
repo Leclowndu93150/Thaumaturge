@@ -5,10 +5,13 @@ import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellAuthorities;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,13 +46,18 @@ public final class SpellBindings implements Spells.Bindings {
 
     @Override
     public void cast(LivingEntity caster, ItemStack focus, Spell spell, List<SpellTarget> origin, float power) {
-        if (!(caster.level() instanceof ServerLevel)) {
+        if (!(caster.level() instanceof ServerLevel level) || !level.getServer().isSameThread() || caster instanceof SpellAuthorities.Source) {
             return;
         }
         SpellCastEvent.Pre pre = SpellEngine.firePre(caster, focus, spell, power, 0.0F);
         if (!pre.isCanceled()) {
             SpellEngine.execute(caster, focus, spell, origin, pre.power());
         }
+    }
+
+    @Override
+    public boolean castAuthorized(LivingEntity source, ItemStack focus, Spell spell, List<SpellTarget> origin, float power, CastAuthority authority, BooleanSupplier payment) {
+        return SpellEngine.executeAuthorized(source, focus, spell, origin, power, authority, payment);
     }
 
     @Override

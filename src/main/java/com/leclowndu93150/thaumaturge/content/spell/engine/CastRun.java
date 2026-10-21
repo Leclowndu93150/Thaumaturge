@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.engine;
 
 import com.leclowndu93150.thaumaturge.api.spell.cast.TouchBudget;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,7 @@ final class CastRun {
     private final ServerLevel level;
     private final UUID castId;
     private final Optional<UUID> casterId;
+    private final Optional<CastAuthority> authority;
     private final TouchBudget budget;
     private final SpellFxBatch fx;
     private final int nodeLimit;
@@ -19,9 +21,14 @@ final class CastRun {
     private int nodes;
 
     CastRun(ServerLevel level, UUID castId, Optional<UUID> casterId, @Nullable LivingEntity caster) {
+        this(level, castId, casterId, caster, Optional.empty());
+    }
+
+    CastRun(ServerLevel level, UUID castId, Optional<UUID> casterId, @Nullable LivingEntity caster, Optional<CastAuthority> authority) {
         this.level = level;
         this.castId = castId;
         this.casterId = casterId;
+        this.authority = authority;
         this.caster = caster;
         this.budget = CastBudgets.of(level, castId);
         this.fx = new SpellFxBatch(level);
@@ -38,6 +45,10 @@ final class CastRun {
 
     Optional<UUID> casterId() {
         return casterId;
+    }
+
+    Optional<CastAuthority> authority() {
+        return authority;
     }
 
     @Nullable

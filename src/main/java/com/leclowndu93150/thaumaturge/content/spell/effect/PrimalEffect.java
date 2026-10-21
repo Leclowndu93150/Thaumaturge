@@ -66,9 +66,11 @@ public final class PrimalEffect extends AbstractEffectBehavior {
         Effects.bamf(level, at).withSound().fancy().send();
         ctx.fx().impact(ctx.part().fx(), at, ctx.color());
         target.entity().ifPresent(entity -> entity.hurtServer(level, level.damageSources().indirectMagic(entity, ctx.caster()), (damage + ctx.setting(POWER)) * power));
-        level.explode(ctx.caster(), at.x, at.y, at.z, explosion, Level.ExplosionInteraction.MOB);
-        if (ctx.random().nextFloat() < chaosChance) {
-            unleash(level, BlockPos.containing(at), ctx);
+        if (ctx.authority().isEmpty()) {
+            level.explode(ctx.caster(), at.x, at.y, at.z, explosion, Level.ExplosionInteraction.MOB);
+            if (ctx.random().nextFloat() < chaosChance) {
+                unleash(level, BlockPos.containing(at), ctx);
+            }
         }
     }
 

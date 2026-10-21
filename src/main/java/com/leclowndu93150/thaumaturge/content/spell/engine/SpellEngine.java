@@ -5,17 +5,21 @@ import com.leclowndu93150.thaumaturge.api.spell.Spell;
 import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.Spells;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellAuthorities;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellState;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellCastEvent;
 import com.leclowndu93150.thaumaturge.api.spell.event.SpellNodeEvent;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPartKind;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -37,7 +41,7 @@ public final class SpellEngine {
     }
 
     public static void execute(LivingEntity caster, ItemStack focus, Spell spell, List<SpellTarget> origin, float power) {
-        if (!(caster.level() instanceof ServerLevel level)) {
+        if (!(caster.level() instanceof ServerLevel level) || !level.getServer().isSameThread() || caster instanceof SpellAuthorities.Source) {
             return;
         }
         CastRun run = new CastRun(level, UUID.randomUUID(), Optional.of(caster.getUUID()), caster);
@@ -47,19 +51,45 @@ public final class SpellEngine {
         NeoForge.EVENT_BUS.post(new SpellCastEvent.Post(caster, focus, spell));
     }
 
-    public static void resume(ServerLevel level, SpellContinuation continuation, List<SpellTarget> targets) {
-        if (continuation.isEmpty() || targets.isEmpty()) {
-            return;
+    public static boolean executeAuthorized(LivingEntity source, ItemStack focus, Spell spell, List<SpellTarget> origin, float power, CastAuthority authority, BooleanSupplier payment) {
+        if (!(source.level() instanceof ServerLevel level) || !level.getServer().isSameThread() || origin.isEmpty() || !Float.isFinite(power) || power < 0
+                || !source.getUUID().equals(authority.sourceId()) || !CastAuthorities.canBegin(source, authority)) {
+            return false;
         }
-        CastRun run = new CastRun(level, continuation.castId(), continuation.caster(), null);
+        SpellCastEvent.Pre pre = NeoForge.EVENT_BUS.post(new SpellCastEvent.Pre(source, focus, spell, power, 0, Optional.of(authority)));
+        if (pre.isCanceled() || !Float.isFinite(pre.power()) || !CastAuthorities.begin(source, authority, payment)) {
+            return false;
+        }
+        CastRun run = new CastRun(level, authority.castId(), Optional.of(source.getUUID()), source, Optional.of(authority));
+        playCastSounds(level, source, spell);
+        runNode(run, spell.root(), origin, SpellState.DEFAULT.with(SpellStats.POWER, pre.power()));
+        run.finish();
+        NeoForge.EVENT_BUS.post(new SpellCastEvent.Post(source, focus, spell, Optional.of(authority)));
+        return true;
+    }
+
+    public static boolean resume(ServerLevel level, SpellContinuation continuation, List<SpellTarget> targets) {
+        if (!level.getServer().isSameThread() || continuation.isEmpty() || targets.isEmpty()) {
+            return false;
+        }
+        LivingEntity caster = continuation.caster().map(level::getEntity).filter(LivingEntity.class::isInstance).map(LivingEntity.class::cast).orElse(null);
+        if (continuation.authority().isPresent()) {
+            if (continuation.token().isEmpty() || !CastAuthorities.claim(level, continuation.authority().get(), continuation.token().get(), continuation.sequence())) {
+                return false;
+            }
+        } else if (caster == null && continuation.legacy() || caster instanceof SpellAuthorities.Source) {
+            return false;
+        }
+        CastRun run = new CastRun(level, continuation.castId(), continuation.caster(), caster, continuation.authority());
         for (SpellNode node : continuation.nodes()) {
             runNode(run, node, targets, continuation.state());
         }
         run.finish();
+        return true;
     }
 
     static void runNode(CastRun run, SpellNode node, List<SpellTarget> targets, SpellState state) {
-        if (!run.admitNode()) {
+        if (!run.admitNode() || run.authority().isPresent() && !CastAuthorities.valid(run.level(), run.authority().get())) {
             return;
         }
         ServerLevel level = run.level();
@@ -75,7 +105,13 @@ public final class SpellEngine {
         if (event.isCanceled()) {
             return;
         }
-        part.behavior().execute(ctx, event.targets());
+        List<SpellTarget> permitted = run.authority().isEmpty()
+                ? event.targets()
+                : event.targets().stream().filter(target -> part.kind() == SpellPartKind.EFFECT ? ctx.permits(target) : CastAuthorities.valid(level, run.authority().get(), target.position(), null))
+                        .toList();
+        if (run.authority().isEmpty() || !permitted.isEmpty()) {
+            part.behavior().execute(ctx, permitted);
+        }
     }
 
     private static void playCastSounds(ServerLevel level, LivingEntity caster, Spell spell) {

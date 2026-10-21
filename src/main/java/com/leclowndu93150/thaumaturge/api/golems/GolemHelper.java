@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
@@ -55,6 +56,21 @@ public final class GolemHelper {
      */
     public static ItemStack getSealStack(Identifier id) {
         return sealType(id).map(type -> new ItemStack(type.placer())).orElse(ItemStack.EMPTY);
+    }
+
+    /**
+     * Places a registered seal on the context's clicked face and consumes one item from its actual
+     * player hand, except in creative mode. The context stack must be that same hand stack.
+     * Checks ownership context, reach, loaded chunks, permissions, research and the type's placer
+     * predicate before committing. Rejected attempts leave placement and payment unchanged.
+     * No offline or remote delegation is supported. Must run on the server thread.
+     *
+     * @param context the player's use context, including the real hand slot
+     * @param typeId the registered type to place
+     * @return whether one seal was placed
+     */
+    public static boolean tryPlaceSeal(UseOnContext context, Identifier typeId) {
+        return bound().tryPlaceSeal(context, typeId);
     }
 
     /**
@@ -171,6 +187,11 @@ public final class GolemHelper {
      * @since 1.0.0
      */
     public interface Bindings {
+        /** Performs validated server-side placement and hand-slot payment. */
+        default boolean tryPlaceSeal(UseOnContext context, Identifier typeId) {
+            return false;
+        }
+
         /**
          * @param id a seal type id
          * @return the seal type, or empty

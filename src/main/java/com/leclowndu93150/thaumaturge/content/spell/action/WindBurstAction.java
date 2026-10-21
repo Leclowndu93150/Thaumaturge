@@ -29,6 +29,9 @@ public record WindBurstAction(float base, float perPower, float max) implements 
 
     @Override
     public void apply(ActionContext ctx) {
+        if (ctx.cast().authority().isPresent()) {
+            return;
+        }
         ServerLevel level = ctx.cast().level();
         Vec3 at = ctx.target().position();
         float radius = Math.min(max, ActionTargets.magnitude(base, perPower, ctx) + ctx.radius());

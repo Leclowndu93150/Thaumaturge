@@ -7,15 +7,22 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealType;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
+import com.leclowndu93150.thaumaturge.content.golem.seals.SealPlacementService;
 import com.leclowndu93150.thaumaturge.content.golem.tasks.TaskBoard;
 import com.leclowndu93150.thaumaturge.registry.TTSeals;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.item.context.UseOnContext;
 import org.jspecify.annotations.Nullable;
 
 public final class GolemBindings implements GolemHelper.Bindings {
+    @Override
+    public boolean tryPlaceSeal(UseOnContext context, Identifier typeId) {
+        return SealPlacementService.place(context, typeId);
+    }
+
     @Override
     public Optional<SealType> sealType(Identifier id) {
         return TTSeals.registry().getOptional(id);

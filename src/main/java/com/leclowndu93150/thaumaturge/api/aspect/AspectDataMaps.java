@@ -23,8 +23,24 @@ import net.neoforged.neoforge.registries.datamaps.DataMapType;
  * @since 1.0.0
  */
 public final class AspectDataMaps {
-    /** Item-to-aspect base assignments, keyed {@code thaumaturge:base_aspects}. */
+    /**
+     * Item-to-aspect base assignments, keyed {@code thaumaturge:base_aspects}.
+     * An explicit empty list is terminal: it suppresses derivation, equipment bonuses and supplements.
+     * Nonempty assignments also suppress recipe derivation and supplements, while retaining equipment bonuses.
+     */
     public static final DataMapType<Item, AspectList> BASE_ASPECTS = DataMapType.builder(TTIds.rl("base_aspects"), Registries.ITEM, AspectList.CODEC).synced(AspectList.CODEC, false).build();
+
+    /**
+     * Additions to recipe-derived compositions, keyed {@code thaumaturge:aspect_supplements}.
+     * Register entries through a data-map provider or
+     * {@code data/thaumaturge/data_maps/item/aspect_supplements.json}. Each value is an object
+     * mapping aspect identifiers to amounts. Native data-map tag specificity and resource-pack
+     * precedence resolve competing assignments; entries replace rather than accumulate across
+     * packs. There is no separate provider priority. The resolved value is applied once per build,
+     * in aspect identifier order, and is never reapplied by index lookups.
+     */
+    public static final DataMapType<Item, AspectSupplement> ASPECT_SUPPLEMENTS = DataMapType.builder(TTIds.rl("aspect_supplements"), Registries.ITEM, AspectSupplement.CODEC)
+            .synced(AspectSupplement.CODEC, false).build();
 
     /** Entity-to-aspect assignments, keyed {@code thaumaturge:entity_aspects}. */
     public static final DataMapType<EntityType<?>, AspectList> ENTITY_ASPECTS = DataMapType.builder(TTIds.rl("entity_aspects"), Registries.ENTITY_TYPE, AspectList.CODEC)

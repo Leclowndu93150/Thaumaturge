@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectDataMaps;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.AspectSupplement;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +28,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public record AspectIndexFingerprint(String digest, Map<String, String> sections) {
-    private static final int FORMAT_VERSION = 5;
+    private static final int FORMAT_VERSION = 6;
     private static final String ITEMS = "items";
     private static final String BASE_ASPECTS = "base_aspects";
     private static final String RECIPES_PREFIX = "recipes/";
@@ -41,7 +43,7 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
         List<String> base = lines.computeIfAbsent(BASE_ASPECTS, key -> new ArrayList<>());
         for (Item item : BuiltInRegistries.ITEM) {
             AspectList declared = item.builtInRegistryHolder().getData(AspectDataMaps.BASE_ASPECTS);
-            if (declared == null || declared.isEmpty()) {
+            if (declared == null) {
                 continue;
             }
             List<String> parts = new ArrayList<>(declared.entries().size());
@@ -50,6 +52,15 @@ public record AspectIndexFingerprint(String digest, Map<String, String> sections
             }
             Collections.sort(parts);
             base.add(BuiltInRegistries.ITEM.getKey(item) + ":" + String.join(",", parts));
+        }
+        List<String> supplements = lines.computeIfAbsent("aspect_supplements", key -> new ArrayList<>());
+        List<String> aspects = lines.computeIfAbsent("aspect_registry", key -> new ArrayList<>());
+        server.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).listElements().forEach(holder -> aspects.add(holder.key().identifier().toString()));
+        for (Item item : BuiltInRegistries.ITEM) {
+            AspectSupplement supplement = item.builtInRegistryHolder().getData(AspectDataMaps.ASPECT_SUPPLEMENTS);
+            if (supplement != null) {
+                supplements.add(BuiltInRegistries.ITEM.getKey(item) + ":" + supplement.amounts());
+            }
         }
         RegistryOps<JsonElement> ops = server.registryAccess().createSerializationContext(JsonOps.INSTANCE);
         int unencodable = 0;

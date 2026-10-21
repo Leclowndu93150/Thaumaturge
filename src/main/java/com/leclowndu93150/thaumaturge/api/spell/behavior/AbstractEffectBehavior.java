@@ -27,11 +27,11 @@ public abstract class AbstractEffectBehavior implements SpellBehavior {
     public final void execute(CastContext ctx, List<SpellTarget> incoming) {
         int index = 0;
         for (SpellTarget target : widen(ctx, incoming)) {
-            if (!admit(ctx, target)) {
+            if (!ctx.permits(target) || !admit(ctx, target)) {
                 continue;
             }
             SpellEffectEvent event = NeoForge.EVENT_BUS.post(new SpellEffectEvent(ctx, target, ctx.power()));
-            if (!event.isCanceled()) {
+            if (!event.isCanceled() && ctx.permits(target)) {
                 apply(ctx, target, event.power(), index++);
             }
         }

@@ -28,13 +28,13 @@ public abstract class AbstractSpellCarrier extends Entity implements TraceableEn
     }
 
     protected final void bind(LivingEntity caster, CarrierPayload payload, int ticks) {
-        charge.arm(payload);
+        charge.arm((ServerLevel) caster.level(), payload);
         owner = EntityReference.of(caster);
         lifetime = ticks;
     }
 
     protected final boolean expired() {
-        return tickCount > lifetime || getOwner() == null || charge.isSpent();
+        return tickCount > lifetime || getOwner() == null || charge.isSpent() || level() instanceof ServerLevel server && !charge.valid(server);
     }
 
     protected void saveCarrierData(ValueOutput output) {}

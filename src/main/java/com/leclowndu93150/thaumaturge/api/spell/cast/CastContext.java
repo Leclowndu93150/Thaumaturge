@@ -55,6 +55,16 @@ public interface CastContext {
      */
     UUID castId();
 
+    /** The verified machine authority, retained when the casting entity is unavailable. */
+    default Optional<CastAuthority> authority() {
+        return Optional.empty();
+    }
+
+    /** Checks current authority and protection scope before applying an effect to a target. */
+    default boolean permits(SpellTarget target) {
+        return authority().isEmpty();
+    }
+
     /**
      * The node being run.
      *

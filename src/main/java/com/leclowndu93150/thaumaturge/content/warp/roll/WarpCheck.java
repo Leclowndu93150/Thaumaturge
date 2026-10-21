@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.warp.roll;
 
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
+import com.leclowndu93150.thaumaturge.api.warp.WarpStrengthEvent;
 import com.leclowndu93150.thaumaturge.content.equipment.FortressArmorItem;
 import com.leclowndu93150.thaumaturge.content.warp.PlayerWarpState;
 import com.leclowndu93150.thaumaturge.content.warp.WarpGear;
@@ -12,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.NeoForge;
 
 public final class WarpCheck {
     private static final int DECAY_PER_CHECK = 1;
@@ -23,16 +25,22 @@ public final class WarpCheck {
     private WarpCheck() {}
 
     public static void run(ServerPlayer player) {
+        if (!player.level().getServer().isSameThread()) {
+            throw new IllegalStateException("Warp checks require the server thread");
+        }
+        if (!player.isAlive() || player.isRemoved()) {
+            return;
+        }
         WarpReading reading = decayAndRead(player);
         RandomSource random = player.getRandom();
         if (!fires(reading, random)) {
             return;
         }
-        int strength = strength(player, reading, random);
+        WarpStrengthEvent strength = NeoForge.EVENT_BUS.post(new WarpStrengthEvent(player, strength(player, reading, random)));
         PacketDistributor.sendToPlayer(player, ClientboundWarpFXPayload.heartbeat());
         WarpLedger.state(player).setCounter(reading.counterAfterEvent());
         player.syncData(TTAttachments.WARP);
-        unleash(player, reading, random, strength);
+        unleash(player, reading, random, strength.strength());
         WarpMilestones.reach(player, reading.actual());
     }
 

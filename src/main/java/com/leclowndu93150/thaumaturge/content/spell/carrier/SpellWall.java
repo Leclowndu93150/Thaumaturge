@@ -2,10 +2,14 @@ package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,8 +33,14 @@ public final class SpellWall extends AbstractSpellCarrier {
     private static final int SHIMMER_PER_CELL = 1;
     private static final int DEFAULT_WIDTH = 3;
     private static final double SHIMMER_RISE = 0.01;
+    private static final int MAX_COOLDOWNS = 4096;
 
-    private final Map<Integer, Long> cooldowns = new HashMap<>();
+    private final Map<UUID, Long> cooldowns = new HashMap<>();
+
+    private record EntityCooldown(UUID target, long until) {
+        private static final Codec<EntityCooldown> CODEC = RecordCodecBuilder.create(instance -> instance
+                .group(UUIDUtil.CODEC.fieldOf("target").forGetter(EntityCooldown::target), Codec.LONG.fieldOf("until").forGetter(EntityCooldown::until)).apply(instance, EntityCooldown::new));
+    }
 
     public SpellWall(EntityType<? extends SpellWall> type, Level level) {
         super(type, level);
@@ -56,12 +66,22 @@ public final class SpellWall extends AbstractSpellCarrier {
     protected void saveCarrierData(ValueOutput output) {
         output.putInt("width", entityData.get(WIDTH));
         output.putFloat("facing", entityData.get(FACING));
+        long now = level().getGameTime();
+        output.store("entity_cooldowns", EntityCooldown.CODEC.listOf(0, MAX_COOLDOWNS),
+                cooldowns.entrySet().stream().filter(entry -> entry.getValue() > now).map(entry -> new EntityCooldown(entry.getKey(), entry.getValue())).toList());
     }
 
     @Override
     protected void loadCarrierData(ValueInput input) {
         entityData.set(WIDTH, input.getIntOr("width", DEFAULT_WIDTH));
         entityData.set(FACING, input.getFloatOr("facing", 0.0F));
+        cooldowns.clear();
+        long now = level().getGameTime();
+        for (EntityCooldown cooldown : input.read("entity_cooldowns", EntityCooldown.CODEC.listOf(0, MAX_COOLDOWNS)).orElse(List.of())) {
+            if (cooldown.until() > now) {
+                cooldowns.merge(cooldown.target(), Math.min(cooldown.until(), now + REHIT_COOLDOWN), Math::max);
+            }
+        }
     }
 
     @Override
@@ -104,8 +124,8 @@ public final class SpellWall extends AbstractSpellCarrier {
         for (Vec3 cell : cells()) {
             AABB box = new AABB(cell.x - THICKNESS, cell.y, cell.z - THICKNESS, cell.x + THICKNESS, cell.y + HEIGHT, cell.z + THICKNESS);
             for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, box, Entity::isAlive)) {
-                if (!cooldowns.containsKey(living.getId())) {
-                    cooldowns.put(living.getId(), now + REHIT_COOLDOWN);
+                if (cooldowns.size() < MAX_COOLDOWNS && !cooldowns.containsKey(living.getUUID())) {
+                    cooldowns.put(living.getUUID(), now + REHIT_COOLDOWN);
                     targets.add(SpellTarget.entity(living, normal));
                 }
             }

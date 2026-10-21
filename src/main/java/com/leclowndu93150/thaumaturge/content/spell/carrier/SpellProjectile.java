@@ -5,11 +5,14 @@ import com.leclowndu93150.thaumaturge.api.spell.cast.SpellStats;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
@@ -50,7 +53,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     private static final double TRAIL_SPREAD = 0.02;
 
     private final CarrierCharge charge = new CarrierCharge();
-    private final IntOpenHashSet pierced = new IntOpenHashSet();
+    private final Set<UUID> pierced = new HashSet<>();
     private double gravity;
     private float splash;
     private boolean homing;
@@ -65,7 +68,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
     public static void launch(ServerLevel level, LivingEntity owner, CarrierPayload payload, SpellTarget origin, float speed, double gravity, float splash) {
         SpellProjectile projectile = new SpellProjectile(TTEntities.FOCUS_PROJECTILE.get(), level);
         SpellState state = payload.continuation().state();
-        projectile.charge.arm(payload);
+        projectile.charge.arm(level, payload);
         projectile.setOwner(owner);
         projectile.gravity = gravity;
         projectile.splash = splash;
@@ -111,6 +114,8 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         output.putBoolean(HOMING_KEY, homing);
         output.putFloat(SPLASH_KEY, splash);
         output.putDouble(GRAVITY_KEY, gravity);
+        output.putInt("age", tickCount);
+        output.store("pierced", UUIDUtil.CODEC.listOf(0, MAX_AGE), List.copyOf(pierced));
         charge.save(output);
     }
 
@@ -122,13 +127,16 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         homing = input.getBooleanOr(HOMING_KEY, false);
         splash = input.getFloatOr(SPLASH_KEY, 0.0F);
         gravity = input.getDoubleOr(GRAVITY_KEY, 0.0);
+        tickCount = input.getIntOr("age", 0);
+        pierced.clear();
+        pierced.addAll(input.read("pierced", UUIDUtil.CODEC.listOf(0, MAX_AGE)).orElse(List.of()));
         charge.load(input);
     }
 
     @Override
     public void tick() {
         if (level() instanceof ServerLevel server) {
-            if (!(getOwner() instanceof LivingEntity master) || tickCount > MAX_AGE || charge.isSpent()) {
+            if (!(getOwner() instanceof LivingEntity master) || tickCount > MAX_AGE || !charge.valid(server)) {
                 discard();
                 return;
             }
@@ -151,7 +159,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
 
     @Override
     protected boolean canHitEntity(Entity entity) {
-        return super.canHitEntity(entity) && !pierced.contains(entity.getId());
+        return super.canHitEntity(entity) && !pierced.contains(entity.getUUID());
     }
 
     @Override
@@ -167,7 +175,7 @@ public final class SpellProjectile extends ThrowableProjectile implements IEntit
         Entity struck = result instanceof EntityHitResult entityHit ? entityHit.getEntity() : null;
         if (struck != null && pierce > 0) {
             pierce--;
-            pierced.add(struck.getId());
+            pierced.add(struck.getUUID());
             charge.resume(server, List.of(SpellTarget.entity(struck, heading)));
             return;
         }

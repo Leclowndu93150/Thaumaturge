@@ -63,6 +63,22 @@ public final class AuraManager {
         return Pool.FLUX.drain(level, pos, amount, simulate);
     }
 
+    public static float withdrawFlux(ServerLevel level, BlockPos pos, float amount, TransactionContext transaction) {
+        if (!level.getServer().isSameThread() || !Float.isFinite(amount) || amount <= 0.0F) {
+            return 0.0F;
+        }
+        AuraData found = chunkAt(level, pos);
+        float stock = found == null ? 0.0F : found.getFlux();
+        if (!Float.isFinite(stock) || stock <= 0.0F) {
+            return 0.0F;
+        }
+        float taken = Math.min(amount, stock);
+        found.setFlux(stock - taken, transaction);
+        BlockPos position = pos.immutable();
+        new RootCommitJournal(() -> markChunkDirty(level, position)).updateSnapshots(transaction);
+        return taken;
+    }
+
     public static float withdrawVis(Level level, BlockPos pos, float amount, boolean simulate) {
         return Pool.VIS.drain(level, pos, amount, simulate);
     }

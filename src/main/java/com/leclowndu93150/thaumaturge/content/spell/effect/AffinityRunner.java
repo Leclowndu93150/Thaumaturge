@@ -50,6 +50,9 @@ final class AffinityRunner {
 
     private static void run(List<SpellAction> actions, ActionContext action) {
         for (SpellAction step : actions) {
+            if (!action.cast().permits(action.target())) {
+                return;
+            }
             step.apply(action);
         }
     }

@@ -1,5 +1,17 @@
 package com.leclowndu93150.thaumaturge;
 
+import com.leclowndu93150.thaumaturge.api.spell.cast.SpellAuthorities;
+import com.leclowndu93150.thaumaturge.content.spell.engine.CastAuthorities;
+import com.leclowndu93150.thaumaturge.api.aura.AuraBaseline;
+import com.leclowndu93150.thaumaturge.api.rifts.RiftAccess;
+import com.leclowndu93150.thaumaturge.api.rifts.RiftAuthorization;
+import com.leclowndu93150.thaumaturge.api.rifts.RiftTransfers;
+import com.leclowndu93150.thaumaturge.content.aura.AuraBaselineBindings;
+import com.leclowndu93150.thaumaturge.content.entity.RiftOperations;
+import com.leclowndu93150.thaumaturge.content.entity.RiftAuthorizations;
+import com.leclowndu93150.thaumaturge.content.entity.RiftTransferOperations;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
+
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import com.leclowndu93150.thaumaturge.registry.TTAttributes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
@@ -171,6 +183,10 @@ public final class Thaumaturge {
         AspectOrbAccess.bind(new AspectOrbAccessBindings());
         NodeAccess.bind(new NodeAccessBindings());
         NodeTransfers.bind(new NodeTransferOperations());
+        RiftAccess.bind(new RiftOperations());
+        RiftAuthorization.bind(new RiftAuthorizations());
+        RiftTransfers.bind(new RiftTransferOperations());
+        NeoForge.EVENT_BUS.addListener((ServerAboutToStartEvent event) -> RiftAuthorizations.freeze());
         EssentiaCrystalAccess.bind(TTItems.ESSENTIA_CRYSTAL, TTDataComponents.CRYSTAL_ASPECT);
         EssentiaAccess.bind(TTDataComponents.ASPECT_FILTER);
         ArcaneCraftCost.bind(WorkbenchPayment::cost);
@@ -178,6 +194,7 @@ public final class Thaumaturge {
         InfusionCraftingTransaction.bind(new InfusionCraftingTransactions());
         InfusionDelegation.bind(new InfusionDelegations());
         AuraHelper.bind(new AuraHelperBindings());
+        AuraBaseline.bind(new AuraBaselineBindings());
         VisRelayHelper.bind(new VisRelayNetwork());
         TaintApi.bind(new TaintApiBindings());
         MobTraits.bind(new MobTraitBindings());
@@ -191,6 +208,7 @@ public final class Thaumaturge {
         GogglesAccess.bind(new GogglesBindings());
         SpellRegistries.bind(TTSpellBehaviors.registry(), TTSpellActions.registry(), TTSpellFx.registry());
         Spells.bind(new SpellBindings());
+        SpellAuthorities.bind(new CastAuthorities());
         LabyrinthHelper.bind(new LabyrinthBindings());
 
         if (ModList.get().isLoaded(TTIds.CURIOS))

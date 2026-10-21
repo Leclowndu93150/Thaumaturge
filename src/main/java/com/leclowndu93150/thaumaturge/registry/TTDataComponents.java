@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.rifts.CapturedRift;
 import com.leclowndu93150.thaumaturge.content.legacy.LegacyFocusPackage;
 import com.leclowndu93150.thaumaturge.api.items.ChargeProfile;
 import com.leclowndu93150.thaumaturge.TTIds;
@@ -42,6 +43,9 @@ public final class TTDataComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.leclowndu93150.thaumaturge.api.nodes.CapturedNode>> CAPTURED_NODE = DATA_COMPONENTS
             .registerComponentType("captured_node", builder -> builder.persistent(com.leclowndu93150.thaumaturge.api.nodes.CapturedNode.CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CapturedRift>> CAPTURED_RIFT = DATA_COMPONENTS.registerComponentType("captured_rift",
+            builder -> builder.persistent(CapturedRift.CODEC));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<AspectList>> ASPECTS = DATA_COMPONENTS.registerComponentType("aspects",
             builder -> builder.persistent(AspectList.CODEC).networkSynchronized(AspectList.STREAM_CODEC));

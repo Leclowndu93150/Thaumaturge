@@ -5,12 +5,16 @@ import com.leclowndu93150.thaumaturge.content.spell.delivery.SpellLook;
 import com.leclowndu93150.thaumaturge.content.spell.world.SpellTargeting;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTParticles;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -41,9 +45,20 @@ public final class SpellCloud extends AbstractSpellCarrier {
     private static final double PUFF_HEIGHT_SPREAD = 0.225;
     private static final double PUFF_DRIFT = 0.01;
     private static final int LOOK_PUFF_ODDS = 3;
+    private static final int MAX_COOLDOWNS = 4096;
 
-    private final Map<Integer, Long> entityCooldowns = new HashMap<>();
+    private final Map<UUID, Long> entityCooldowns = new HashMap<>();
     private final Map<Long, Long> blockCooldowns = new HashMap<>();
+
+    private record EntityCooldown(UUID target, long until) {
+        private static final Codec<EntityCooldown> CODEC = RecordCodecBuilder.create(instance -> instance
+                .group(UUIDUtil.CODEC.fieldOf("target").forGetter(EntityCooldown::target), Codec.LONG.fieldOf("until").forGetter(EntityCooldown::until)).apply(instance, EntityCooldown::new));
+    }
+
+    private record BlockCooldown(long target, long until) {
+        private static final Codec<BlockCooldown> CODEC = RecordCodecBuilder.create(instance -> instance
+                .group(Codec.LONG.fieldOf("target").forGetter(BlockCooldown::target), Codec.LONG.fieldOf("until").forGetter(BlockCooldown::until)).apply(instance, BlockCooldown::new));
+    }
 
     public SpellCloud(EntityType<? extends SpellCloud> type, Level level) {
         super(type, level);
@@ -82,11 +97,29 @@ public final class SpellCloud extends AbstractSpellCarrier {
     @Override
     protected void saveCarrierData(ValueOutput output) {
         output.putFloat(RADIUS_KEY, radius());
+        long now = level().getGameTime();
+        output.store("entity_cooldowns", EntityCooldown.CODEC.listOf(0, MAX_COOLDOWNS),
+                entityCooldowns.entrySet().stream().filter(entry -> entry.getValue() > now).map(entry -> new EntityCooldown(entry.getKey(), entry.getValue())).toList());
+        output.store("block_cooldowns", BlockCooldown.CODEC.listOf(0, MAX_COOLDOWNS),
+                blockCooldowns.entrySet().stream().filter(entry -> entry.getValue() > now).map(entry -> new BlockCooldown(entry.getKey(), entry.getValue())).toList());
     }
 
     @Override
     protected void loadCarrierData(ValueInput input) {
         entityData.set(RADIUS, input.getFloatOr(RADIUS_KEY, DEFAULT_RADIUS));
+        entityCooldowns.clear();
+        blockCooldowns.clear();
+        long now = level().getGameTime();
+        for (EntityCooldown cooldown : input.read("entity_cooldowns", EntityCooldown.CODEC.listOf(0, MAX_COOLDOWNS)).orElse(List.of())) {
+            if (cooldown.until() > now) {
+                entityCooldowns.merge(cooldown.target(), Math.min(cooldown.until(), now + REHIT_COOLDOWN), Math::max);
+            }
+        }
+        for (BlockCooldown cooldown : input.read("block_cooldowns", BlockCooldown.CODEC.listOf(0, MAX_COOLDOWNS)).orElse(List.of())) {
+            if (cooldown.until() > now) {
+                blockCooldowns.merge(cooldown.target(), Math.min(cooldown.until(), now + REHIT_COOLDOWN), Math::max);
+            }
+        }
     }
 
     @Override
@@ -117,10 +150,13 @@ public final class SpellCloud extends AbstractSpellCarrier {
     }
 
     private List<SpellTarget> gatherEntityTargets(ServerLevel server, Vec3 centre, float radius, long now) {
-        List<LivingEntity> fresh = SpellTargeting.livingWithin(server, centre, radius, candidate -> !entityCooldowns.containsKey(candidate.getId()));
+        List<LivingEntity> fresh = SpellTargeting.livingWithin(server, centre, radius, candidate -> !entityCooldowns.containsKey(candidate.getUUID()));
         List<SpellTarget> targets = new ArrayList<>(fresh.size());
         for (LivingEntity living : fresh) {
-            entityCooldowns.put(living.getId(), now + REHIT_COOLDOWN);
+            if (entityCooldowns.size() >= MAX_COOLDOWNS) {
+                break;
+            }
+            entityCooldowns.put(living.getUUID(), now + REHIT_COOLDOWN);
             targets.add(aimAt(living, centre));
         }
         return targets;
@@ -147,7 +183,7 @@ public final class SpellCloud extends AbstractSpellCarrier {
         Vec3 landing = centre.add(offset);
         BlockPos cell = BlockPos.containing(landing);
         long key = cell.asLong();
-        if (blockCooldowns.containsKey(key) || server.getBlockState(cell).isAir()) {
+        if (blockCooldowns.size() >= MAX_COOLDOWNS || blockCooldowns.containsKey(key) || server.getBlockState(cell).isAir()) {
             return null;
         }
         blockCooldowns.put(key, now + REHIT_COOLDOWN);

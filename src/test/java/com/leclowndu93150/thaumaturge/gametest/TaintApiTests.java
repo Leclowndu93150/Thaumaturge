@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -44,10 +45,12 @@ public final class TaintApiTests {
                 TaintBlooms.register(level, pos);
                 helper.assertTrue(TaintApi.tryTaintBiome(level, pos, null) == TaintApi.BiomeChange.DENIED, "Blooms must protect the column");
                 TaintBlooms.unregister(level, pos);
-                var neighbor = level.getBiome(pos.offset(4, 0, 0));
+                BlockPos neighbor = pos.offset(4, 0, 0);
+                var neighborBiome = level.getNoiseBiome(QuartPos.fromBlock(neighbor.getX()), QuartPos.fromBlock(neighbor.getY()), QuartPos.fromBlock(neighbor.getZ()));
                 helper.assertTrue(TaintApi.tryTaintBiome(level, pos, null) == TaintApi.BiomeChange.CHANGED, "Allowed mutation must change the column");
                 helper.assertTrue(TaintBiomeManager.isTainted(level, pos), "The changed biome must be tainted");
-                helper.assertTrue(level.getBiome(pos.offset(4, 0, 0)).equals(neighbor), "Neighboring quart columns must remain unchanged");
+                helper.assertTrue(level.getNoiseBiome(QuartPos.fromBlock(neighbor.getX()), QuartPos.fromBlock(neighbor.getY()), QuartPos.fromBlock(neighbor.getZ())).equals(neighborBiome),
+                        "Neighboring quart columns must remain unchanged");
                 helper.assertTrue(TaintApi.tryTaintBiome(level, pos, null) == TaintApi.BiomeChange.UNCHANGED, "Repeated mutation must not report another change");
                 BlockPos unloaded = new BlockPos(25000000, pos.getY(), 25000000);
                 helper.assertTrue(TaintApi.tryTaintBiome(level, unloaded, null) == TaintApi.BiomeChange.UNLOADED, "Unloaded columns must not be loaded");

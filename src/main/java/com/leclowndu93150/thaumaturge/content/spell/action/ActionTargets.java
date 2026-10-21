@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.action;
 
 import com.leclowndu93150.thaumaturge.api.spell.affinity.ActionContext;
+import com.leclowndu93150.thaumaturge.content.spell.engine.SpellBlockAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ final class ActionTargets {
         List<BlockPos> out = new ArrayList<>();
         Vec3 middle = Vec3.atCenterOf(centre);
         for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-reach, -reach, -reach), centre.offset(reach, reach, reach))) {
-            if (pos.distToCenterSqr(middle) <= clamped * clamped + EDGE_TOLERANCE && ctx.cast().budget().claim(pos)) {
+            if (pos.distToCenterSqr(middle) <= clamped * clamped + EDGE_TOLERANCE && SpellBlockAccess.mayAffect(ctx.cast(), pos) && ctx.cast().budget().claim(pos)) {
                 out.add(pos.immutable());
             }
         }

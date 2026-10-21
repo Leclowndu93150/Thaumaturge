@@ -44,6 +44,9 @@ public final class HarvestEffect extends AbstractEffectBehavior {
         int radius = Math.min(MAX_RADIUS, ctx.setting(RADIUS) + Math.round(ctx.state().get(SpellStats.RADIUS)));
         boolean reaped = false;
         for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-radius, -1, -radius), centre.offset(radius, 1, radius))) {
+            if (!SpellBlockAccess.mayAffect(ctx, pos)) {
+                continue;
+            }
             BlockState state = level.getBlockState(pos);
             if (state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state) && SpellBlockAccess.mayBreak(ctx, pos) && ctx.budget().claim(pos)) {
                 reap(ctx, level, pos.immutable(), state, crop);

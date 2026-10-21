@@ -4,11 +4,13 @@ import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.affinity.AspectAffinity;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.api.spell.part.SpellPartKind;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
@@ -183,6 +185,15 @@ public final class Spells {
     }
 
     /**
+     * Starts a server-authorized machine cast. The trusted payment callback is invoked at most
+     * once for this authority after the pre-cast event permits it; failure consumes the attempt.
+     * Carriers retain the authority and never invoke payment again.
+     */
+    public static boolean castAuthorized(LivingEntity source, ItemStack focus, Spell spell, List<SpellTarget> origin, float power, CastAuthority authority, BooleanSupplier payment) {
+        return BINDING.get().castAuthorized(source, focus, spell, origin, power, authority, payment);
+    }
+
+    /**
      * Resumes a spell held by a carrier. Server side only.
      *
      * @param level        the level
@@ -237,6 +248,10 @@ public final class Spells {
          * @param power  the starting power
          */
         void cast(LivingEntity caster, ItemStack focus, Spell spell, List<SpellTarget> origin, float power);
+
+        default boolean castAuthorized(LivingEntity source, ItemStack focus, Spell spell, List<SpellTarget> origin, float power, CastAuthority authority, BooleanSupplier payment) {
+            return false;
+        }
 
         /**
          * Resumes a continuation.

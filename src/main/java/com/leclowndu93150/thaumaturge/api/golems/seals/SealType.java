@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import net.minecraft.world.item.ItemStack;
 import java.util.Optional;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
@@ -51,6 +53,8 @@ public final class SealType {
     private final Supplier<? extends ItemLike> placer;
     private final @Nullable Identifier icon;
     private final List<SealPanel> panels;
+    private final List<Identifier> research;
+    private final Predicate<ItemStack> placerPredicate;
 
     private SealType(Builder builder) {
         this.behavior = builder.behavior;
@@ -65,6 +69,8 @@ public final class SealType {
         this.placer = builder.placer;
         this.icon = builder.icon;
         this.panels = derivePanels();
+        this.research = List.copyOf(builder.research);
+        this.placerPredicate = builder.placerPredicate;
     }
 
     /**
@@ -163,6 +169,16 @@ public final class SealType {
         return placer.get();
     }
 
+    /** Research required to place this seal. Empty preserves unrestricted native placement. */
+    public List<Identifier> research() {
+        return research;
+    }
+
+    /** Checks the registered placer item and any additional component requirements. */
+    public boolean acceptsPlacer(ItemStack stack) {
+        return !stack.isEmpty() && stack.is(placer().asItem()) && placerPredicate.test(stack.copy());
+    }
+
     /**
      * @return the icon texture drawn on placed seals, when the type overrides the default {@code <namespace>:textures/item/seal_<path>.png}
      */
@@ -194,6 +210,8 @@ public final class SealType {
         private SealPlacement placement = (level, pos, face) -> !level.getBlockState(pos).isAir();
         private @Nullable Supplier<? extends ItemLike> placer;
         private @Nullable Identifier icon;
+        private final List<Identifier> research = new ArrayList<>();
+        private Predicate<ItemStack> placerPredicate = stack -> true;
 
         private Builder(Supplier<? extends ISealBehavior> behavior) {
             this.behavior = behavior;
@@ -293,6 +311,21 @@ public final class SealType {
          */
         public Builder placer(Supplier<? extends ItemLike> item) {
             this.placer = item;
+            return this;
+        }
+
+        /** Adds research keys that must all be complete before placement. */
+        public Builder research(Identifier... keys) {
+            research.addAll(List.of(keys));
+            return this;
+        }
+
+        /**
+         * Adds a pure component-aware check for a shared placer item. The predicate receives a copy;
+         * it must not modify the world or player inventory.
+         */
+        public Builder placerPredicate(Predicate<ItemStack> predicate) {
+            this.placerPredicate = java.util.Objects.requireNonNull(predicate, "predicate");
             return this;
         }
 

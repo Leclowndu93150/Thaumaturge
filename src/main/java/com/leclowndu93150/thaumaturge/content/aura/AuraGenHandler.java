@@ -4,6 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.BiomeAuraModifier;
 import com.leclowndu93150.thaumaturge.registry.TTDataMaps;
 import java.util.Random;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
 import net.minecraft.server.level.ServerLevel;
@@ -57,7 +60,7 @@ public final class AuraGenHandler {
         chunk.markUnsaved();
     }
 
-    private static short generateBase(ServerLevel level, ChunkPos pos) {
+    static short generateBase(ServerLevel level, ChunkPos pos) {
         double modifierSum = 0.0;
         for (int[] offset : SAMPLE_OFFSETS) {
             modifierSum += modifierAt(level, pos.x() + offset[0], pos.z() + offset[1]);
@@ -67,6 +70,25 @@ public final class AuraGenHandler {
         double gaussian = new Random(level.getSeed() ^ key).nextGaussian();
         int base = (int) (mean * AuraManager.AURA_CEILING * (1.0 + VARIANCE_FACTOR * gaussian));
         return (short) Mth.clamp(base, 0, AuraManager.AURA_CEILING);
+    }
+
+    static Optional<UUID> loadedBiomeRevision(ServerLevel level, ChunkPos pos) {
+        StringBuilder samples = new StringBuilder();
+        for (int[] offset : SAMPLE_OFFSETS) {
+            int chunkX = pos.x() + offset[0];
+            int chunkZ = pos.z() + offset[1];
+            if (level.getChunkSource().getChunkNow(chunkX, chunkZ) == null) {
+                return Optional.empty();
+            }
+            int blockX = chunkX * CHUNK_WIDTH + CHUNK_CENTER_OFFSET;
+            int blockZ = chunkZ * CHUNK_WIDTH + CHUNK_CENTER_OFFSET;
+            Holder<Biome> biome = level.getNoiseBiome(QuartPos.fromBlock(blockX), QuartPos.fromBlock(SAMPLE_HEIGHT), QuartPos.fromBlock(blockZ));
+            if (biome.unwrapKey().isEmpty()) {
+                return Optional.empty();
+            }
+            samples.append(biome.unwrapKey().orElseThrow().identifier()).append(':').append(Float.floatToIntBits(modifierAt(level, chunkX, chunkZ))).append(';');
+        }
+        return Optional.of(UUID.nameUUIDFromBytes(samples.toString().getBytes(StandardCharsets.UTF_8)));
     }
 
     private static float modifierAt(ServerLevel level, int chunkX, int chunkZ) {

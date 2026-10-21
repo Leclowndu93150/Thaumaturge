@@ -55,7 +55,7 @@ public final class FireBatAttackGoal extends Goal {
             ticksUntilStrike--;
         } else if (canStrike(prey)) {
             ticksUntilStrike = COOLDOWN_MIN_TICKS + flyer.getRandom().nextInt(COOLDOWN_SPREAD_TICKS);
-            if (flyer.getRandom().nextInt(EXPLODE_ONE_IN) == 0) {
+            if (!flyer.hasCastAuthority() && flyer.getRandom().nextInt(EXPLODE_ONE_IN) == 0) {
                 detonate(world, prey);
             } else {
                 bite(world, prey);

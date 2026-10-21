@@ -1,8 +1,14 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import com.leclowndu93150.thaumaturge.api.rifts.RiftChange;
+import com.leclowndu93150.thaumaturge.api.rifts.RiftSnapshot;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,8 +25,19 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jspecify.annotations.Nullable;
 
 public final class EntityFluxRift extends Entity {
+    private static final AtomicLong REVISION_CLOCK = new AtomicLong();
+    private long revision = REVISION_CLOCK.updateAndGet(current -> current == Long.MAX_VALUE ? current : current + 1);
+    private @Nullable UUID transferToken;
+    private boolean persistedTransferToken;
+    private boolean transferSuspended;
+    private boolean transferChecked;
+    private @Nullable RiftChange pendingChange;
+    private final MutationJournal mutationJournal = new MutationJournal();
     public static final int MAX_RIFT_SIZE = 100;
 
     private static final EntityDataAccessor<Boolean> COLLAPSE = SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.BOOLEAN);
@@ -91,7 +108,97 @@ public final class EntityFluxRift extends Entity {
     }
 
     private <T> void publish(EntityDataAccessor<T> accessor, T value) {
+        if (!java.util.Objects.equals(this.entityData.get(accessor), value)) {
+            changed();
+        }
         this.entityData.set(accessor, value);
+    }
+
+    private void changed() {
+        if (revision < Long.MAX_VALUE) {
+            long next = revision + 1;
+            revision = REVISION_CLOCK.updateAndGet(current -> current == Long.MAX_VALUE ? current : Math.max(current + 1, next));
+        }
+    }
+
+    public RiftSnapshot snapshot() {
+        return new RiftSnapshot(getUUID(), level().dimension(), revision, position(), currentSize(), shapeSeed(), stabilityValue(), isCollapsing(),
+                pendingChange != null || transferSuspended || revision == Long.MAX_VALUE);
+    }
+
+    public Optional<UUID> transferToken() {
+        return Optional.ofNullable(transferToken);
+    }
+
+    public void transferToken(UUID token) {
+        transferToken = token;
+        persistedTransferToken = false;
+        transferChecked = false;
+    }
+
+    public boolean hasPersistedTransferToken() {
+        return persistedTransferToken;
+    }
+
+    public void suspendTransfer() {
+        transferSuspended = true;
+    }
+
+    public void resumeTransfer() {
+        transferSuspended = false;
+        transferChecked = true;
+    }
+
+    public void restoreSnapshot(RiftSnapshot snapshot) {
+        setUUID(snapshot.identity());
+        setPos(snapshot.position());
+        reseed(snapshot.seed());
+        resize(snapshot.size());
+        restoreStability(snapshot.stability());
+        publish(COLLAPSE, snapshot.collapsing());
+        revision = Math.max(revision, snapshot.revision());
+        changed();
+    }
+
+    void stageChange(RiftChange change, TransactionContext transaction) {
+        mutationJournal.updateSnapshots(transaction);
+        pendingChange = change;
+    }
+
+    private final class MutationJournal extends SnapshotJournal<RiftSnapshot> {
+        @Override
+        protected RiftSnapshot createSnapshot() {
+            return snapshot();
+        }
+
+        @Override
+        protected void revertToSnapshot(RiftSnapshot original) {
+            pendingChange = null;
+        }
+
+        @Override
+        protected void onRootCommit(RiftSnapshot original) {
+            RiftChange change = pendingChange;
+            pendingChange = null;
+            if (change != null) {
+                setPos(change.position());
+                reseed(change.seed());
+                resize(change.size());
+                restoreStability(change.stability());
+                if (change.collapse()) {
+                    beginCollapse();
+                }
+                changed();
+            }
+        }
+    }
+
+    @Override
+    public void setPos(double x, double y, double z) {
+        if (getX() != x || getY() != y || getZ() != z) {
+            changed();
+        }
+        super.setPos(x, y, z);
     }
 
     private void refreshOutlineIfStale() {
@@ -151,7 +258,29 @@ public final class EntityFluxRift extends Entity {
     }
 
     @Override
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
+        if (level() instanceof ServerLevel && !transferChecked) {
+            transferChecked = true;
+            if (!RiftTransferOperations.reconcile(this)) {
+                transferSuspended = true;
+            }
+        }
+    }
+
+    @Override
     public void tick() {
+        if (this.level() instanceof ServerLevel) {
+            if (!transferChecked) {
+                transferChecked = true;
+                if (!RiftTransferOperations.reconcile(this)) {
+                    transferSuspended = true;
+                }
+            }
+            if (transferSuspended || pendingChange != null || isRemoved()) {
+                return;
+            }
+        }
         super.tick();
         refreshOutlineIfStale();
         if (this.level() instanceof ServerLevel server) {
@@ -238,6 +367,10 @@ public final class EntityFluxRift extends Entity {
 
     @Override
     protected void addAdditionalSaveData(ValueOutput output) {
+        output.putLong("api_revision", revision);
+        if (transferToken != null) {
+            output.store("transfer_token", UUIDUtil.CODEC, transferToken);
+        }
         output.putBoolean(COLLAPSING_KEY, isCollapsing());
         output.putFloat(STABILITY_KEY, stabilityValue());
         output.putInt(SEED_KEY, shapeSeed());
@@ -252,6 +385,11 @@ public final class EntityFluxRift extends Entity {
         publish(SIZE, input.getIntOr(SIZE_KEY, input.getIntOr(LEGACY_SIZE_KEY, DEFAULT_SIZE)));
         publish(SEED, input.getIntOr(SEED_KEY, input.getIntOr(LEGACY_SEED_KEY, 0)));
         this.collapseSize = input.getIntOr(COLLAPSE_SIZE_KEY, input.getIntOr(LEGACY_COLLAPSE_SIZE_KEY, 0));
+        revision = Math.max(0, input.getLongOr("api_revision", 0));
+        changed();
+        transferToken = input.read("transfer_token", UUIDUtil.CODEC).orElse(null);
+        persistedTransferToken = transferToken != null;
+        transferChecked = false;
         rebuildOutline();
     }
 

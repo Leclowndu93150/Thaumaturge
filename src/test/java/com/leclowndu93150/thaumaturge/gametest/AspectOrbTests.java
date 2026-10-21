@@ -4,10 +4,13 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.wands.AspectOrbAccess;
 import com.leclowndu93150.thaumaturge.api.wands.AspectOrbPickupEvent;
+import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.api.wands.WandSnapshot;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import com.leclowndu93150.thaumaturge.content.wands.WandParts;
 import com.leclowndu93150.thaumaturge.content.wands.WandVisHelper;
 import com.leclowndu93150.thaumaturge.gametest.base.TTTestRegistrar;
+import com.leclowndu93150.thaumaturge.gametest.fixture.WandApiConsumer;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.mojang.authlib.GameProfile;
@@ -92,7 +95,11 @@ public final class AspectOrbTests {
             EntityAspectOrb orb = orb(helper, player);
             Consumer<AspectOrbPickupEvent> listener = event -> {
                 if (event.getPlayer() == player) {
-                    event.setCreditCentivis(175);
+                    WandApiConsumer.applyBonus(event, ResourceKey.create(WandRod.REGISTRY_KEY, Identifier.parse("fixture:other_rod")), WandSnapshot.Variant.WAND, 75);
+                    if (event.getCreditCentivis() != 100) {
+                        helper.fail("An unrelated rod received the API consumer's bonus");
+                    }
+                    WandApiConsumer.applyBonus(event, ResourceKey.create(WandRod.REGISTRY_KEY, Identifier.parse("thaumaturge:wood")), WandSnapshot.Variant.WAND, 75);
                     if (AspectOrbAccess.collect(orb, player) != 0) {
                         helper.fail("Reentrant pickup credited an orb twice");
                     }
@@ -100,7 +107,7 @@ public final class AspectOrbTests {
             };
             NeoForge.EVENT_BUS.addListener(listener);
             try {
-                if (AspectOrbAccess.collect(orb, player) != 175 || WandVisHelper.storedIn(player.getInventory().getItem(0), TTAspects.AER) != 175) {
+                if (WandApiConsumer.collect(orb, player) != 175 || WandVisHelper.storedIn(player.getInventory().getItem(0), TTAspects.AER) != 175) {
                     helper.fail("The pickup modifier was not applied in centivis");
                     return;
                 }

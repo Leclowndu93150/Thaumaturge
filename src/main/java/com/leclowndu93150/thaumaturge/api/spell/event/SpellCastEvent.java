@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.api.spell.event;
 
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.cast.CastAuthority;
+import java.util.Optional;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.Event;
@@ -16,6 +18,7 @@ public abstract sealed class SpellCastEvent extends Event permits SpellCastEvent
     private final LivingEntity caster;
     private final ItemStack focus;
     private final Spell spell;
+    private final Optional<CastAuthority> authority;
 
     /**
      * Creates the event.
@@ -25,9 +28,18 @@ public abstract sealed class SpellCastEvent extends Event permits SpellCastEvent
      * @param spell  the spell
      */
     protected SpellCastEvent(LivingEntity caster, ItemStack focus, Spell spell) {
+        this(caster, focus, spell, Optional.empty());
+    }
+
+    protected SpellCastEvent(LivingEntity caster, ItemStack focus, Spell spell, Optional<CastAuthority> authority) {
         this.caster = caster;
         this.focus = focus;
         this.spell = spell;
+        this.authority = authority;
+    }
+
+    public Optional<CastAuthority> authority() {
+        return authority;
     }
 
     /**
@@ -85,7 +97,11 @@ public abstract sealed class SpellCastEvent extends Event permits SpellCastEvent
          * @param visCost the vis this cast will drain, 0 for mob casts
          */
         public Pre(LivingEntity caster, ItemStack focus, Spell spell, float power, float visCost) {
-            super(caster, focus, spell);
+            this(caster, focus, spell, power, visCost, Optional.empty());
+        }
+
+        public Pre(LivingEntity caster, ItemStack focus, Spell spell, float power, float visCost, Optional<CastAuthority> authority) {
+            super(caster, focus, spell, authority);
             this.power = power;
             this.visCost = visCost;
         }
@@ -143,6 +159,10 @@ public abstract sealed class SpellCastEvent extends Event permits SpellCastEvent
          */
         public Post(LivingEntity caster, ItemStack focus, Spell spell) {
             super(caster, focus, spell);
+        }
+
+        public Post(LivingEntity caster, ItemStack focus, Spell spell, Optional<CastAuthority> authority) {
+            super(caster, focus, spell, authority);
         }
     }
 }

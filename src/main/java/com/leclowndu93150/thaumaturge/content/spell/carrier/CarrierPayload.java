@@ -1,7 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.spell.carrier;
 
 import com.leclowndu93150.thaumaturge.api.spell.SpellRegistries;
-import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.content.spell.engine.SpellEngine;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellContinuation;
 import com.leclowndu93150.thaumaturge.api.spell.cast.SpellTarget;
 import com.leclowndu93150.thaumaturge.api.spell.fx.SpellFxStyle;
@@ -25,8 +25,8 @@ public record CarrierPayload(SpellContinuation continuation, SpellLook look) {
 
     private static final String KEY = "spell";
 
-    public void resume(ServerLevel level, List<SpellTarget> targets) {
-        Spells.resume(level, continuation, targets);
+    public boolean resume(ServerLevel level, List<SpellTarget> targets) {
+        return SpellEngine.resume(level, continuation, targets);
     }
 
     public static void save(ValueOutput output, @Nullable CarrierPayload payload) {

@@ -23,6 +23,9 @@ public record ExplodeAction(float base, float perPower, float max, boolean break
 
     @Override
     public void apply(ActionContext ctx) {
+        if (ctx.cast().authority().isPresent()) {
+            return;
+        }
         Vec3 at = ctx.target().position();
         float radius = Math.min(max, ActionTargets.magnitude(base, perPower, ctx));
         ctx.cast().level().explode(ctx.cast().caster(), at.x, at.y, at.z, radius, breaksBlocks ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE);
