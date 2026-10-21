@@ -151,6 +151,6 @@ public final class BlockTaintFeature extends DirectionalBlock implements ITaintB
 
     @Override
     public void decay(Level level, BlockPos pos, BlockState state) {
-        level.setBlock(pos, TTBlocks.FLUX_GOO.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.removeBlock(pos, false);
     }
 }
