@@ -132,24 +132,41 @@ public final class TaintBiomeManager {
 
     public static boolean revertColumn(ServerLevel level, BlockPos pos, ResourceKey<Biome> painted) {
         LevelChunk chunk = loadedChunk(level, pos);
-        if (chunk == null || !level.getBiome(pos).is(painted)) {
+        if (chunk == null) {
             return false;
         }
         int quartX = QuartPos.fromBlock(pos.getX());
         int quartZ = QuartPos.fromBlock(pos.getZ());
+        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
         BiomeSource source = level.getChunkSource().getGenerator().getBiomeSource();
         Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
-        if (source.getNoiseBiome(quartX, QuartPos.fromBlock(pos.getY()), quartZ, sampler)
-                .is(painted)) {
+        if (!snapshot.columnHas(quartX, quartZ, biome -> biome.is(painted))
+                || !paintedOverGenerated(snapshot, source, sampler, quartX, quartZ, painted)) {
             return false;
         }
-        BiomeSnapshot snapshot = BiomeSnapshot.of(level, chunk);
         rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, ignored) -> {
             Holder<Biome> current = snapshot.get(x, y, z);
             return current.is(painted) ? source.getNoiseBiome(x, y, z, sampler) : current;
         });
         setChanged(chunk, quartX, quartZ, false);
         return true;
+    }
+
+    private static boolean paintedOverGenerated(
+            BiomeSnapshot snapshot,
+            BiomeSource source,
+            Climate.Sampler sampler,
+            int quartX,
+            int quartZ,
+            ResourceKey<Biome> painted) {
+        for (int y = 0; y < snapshot.quartHeight(); y++) {
+            int quartY = snapshot.minQuartY() + y;
+            if (snapshot.get(quartX, quartY, quartZ).is(painted)
+                    && !source.getNoiseBiome(quartX, quartY, quartZ, sampler).is(painted)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean isTaintedBiome(Holder<Biome> biome) {
