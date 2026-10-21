@@ -10,6 +10,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.MiscOverworldPlacements;
 import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -26,6 +27,8 @@ public final class TTBiomes {
     public static final ResourceKey<Biome> MAGICAL_FOREST_CAVES = key("magical_forest_caves");
     public static final ResourceKey<Biome> EERIE = key("eerie");
     public static final ResourceKey<Biome> ELDRITCH = key("eldritch");
+    public static final ResourceKey<Biome> BOP_MYSTIC_GROVE = ResourceKey.create(
+            Registries.BIOME, ResourceLocation.fromNamespaceAndPath(TTIds.BIOMES_O_PLENTY, "mystic_grove"));
     public static final ResourceKey<Biome> TAINTED_LANDS = key("tainted_lands");
 
     private static final float MAGICAL_FOREST_TEMPERATURE = 0.8F;

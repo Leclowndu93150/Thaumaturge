@@ -45,6 +45,7 @@ public final class TTPlacedFeatures {
     public static final ResourceKey<PlacedFeature> GREATWOOD_NATURAL = key("greatwood_natural");
     public static final ResourceKey<PlacedFeature> GREATWOOD_NATURAL_RARE = key("greatwood_natural_rare");
     public static final ResourceKey<PlacedFeature> SILVERWOOD_NATURAL = key("silverwood_natural");
+    public static final ResourceKey<PlacedFeature> SILVERWOOD_ABUNDANT = key("silverwood_abundant");
     public static final ResourceKey<PlacedFeature> MAGIC_FOREST_FLORA = key("magic_forest_flora");
     public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_GRASS = key("magical_cave_grass");
     public static final ResourceKey<PlacedFeature> MAGICAL_CAVE_AMBIENT_GRASS = key("magical_cave_ambient_grass");
@@ -91,6 +92,7 @@ public final class TTPlacedFeatures {
     private static final int GREATWOOD_RARITY = 25;
     private static final int GREATWOOD_RARE_RARITY = 125;
     private static final int SILVERWOOD_RARITY = 60;
+    private static final int SILVERWOOD_ABUNDANT_RARITY = 4;
     private static final int CINDERPEARL_RARITY = 30;
     private static final int CINDERPEARL_TRIES = 18;
     private static final int CINDERPEARL_XZ_SPREAD = 8;
@@ -204,6 +206,16 @@ public final class TTPlacedFeatures {
                         configured.getOrThrow(TTConfiguredFeatures.SILVERWOOD_TREE),
                         List.of(
                                 RarityFilter.onAverageOnceEvery(SILVERWOOD_RARITY),
+                                InSquarePlacement.spread(),
+                                PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
+                                PlacementUtils.filteredByBlockSurvival(TTBlocks.SAPLING_SILVERWOOD.get()),
+                                BiomeFilter.biome())));
+        context.register(
+                SILVERWOOD_ABUNDANT,
+                new PlacedFeature(
+                        configured.getOrThrow(TTConfiguredFeatures.SILVERWOOD_TREE),
+                        List.of(
+                                RarityFilter.onAverageOnceEvery(SILVERWOOD_ABUNDANT_RARITY),
                                 InSquarePlacement.spread(),
                                 PlacementUtils.HEIGHTMAP_OCEAN_FLOOR,
                                 PlacementUtils.filteredByBlockSurvival(TTBlocks.SAPLING_SILVERWOOD.get()),

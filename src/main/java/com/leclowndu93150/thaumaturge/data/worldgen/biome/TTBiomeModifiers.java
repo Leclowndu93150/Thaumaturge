@@ -32,6 +32,7 @@ public final class TTBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_GREATWOOD = key("add_greatwood");
     public static final ResourceKey<BiomeModifier> ADD_GREATWOOD_RARE = key("add_greatwood_rare");
     public static final ResourceKey<BiomeModifier> ADD_SILVERWOOD = key("add_silverwood");
+    public static final ResourceKey<BiomeModifier> ADD_SILVERWOOD_ABUNDANT = key("add_silverwood_abundant");
     public static final ResourceKey<BiomeModifier> ADD_CINDERPEARL = key("add_cinderpearl");
     public static final ResourceKey<BiomeModifier> ADD_NETHER_WISPS = key("add_nether_wisps");
     public static final ResourceKey<BiomeModifier> ADD_NETHER_FIREBATS = key("add_nether_firebats");
@@ -140,6 +141,13 @@ public final class TTBiomeModifiers {
                 new BiomeModifiers.AddFeaturesBiomeModifier(
                         biomes.getOrThrow(TTBiomeTags.HAS_SILVERWOOD),
                         HolderSet.direct(features.getOrThrow(TTPlacedFeatures.SILVERWOOD_NATURAL)),
+                        GenerationStep.Decoration.VEGETAL_DECORATION));
+
+        context.register(
+                ADD_SILVERWOOD_ABUNDANT,
+                new BiomeModifiers.AddFeaturesBiomeModifier(
+                        biomes.getOrThrow(TTBiomeTags.HAS_SILVERWOOD_ABUNDANT),
+                        HolderSet.direct(features.getOrThrow(TTPlacedFeatures.SILVERWOOD_ABUNDANT)),
                         GenerationStep.Decoration.VEGETAL_DECORATION));
 
         context.register(

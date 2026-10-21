@@ -19,6 +19,7 @@ public final class TTIds {
     public static final String SABLE = "sable";
     public static final String IRIS = "iris";
     public static final String DYNAMIC_TREES = "dynamictrees";
+    public static final String BIOMES_O_PLENTY = "biomesoplenty";
     public static final ResourceLocation DYNAMIC_TREES_RESOURCE_PACK = rl("resourcepacks/dynamictrees");
     public static final ResourceLocation DT_SILVERWOOD_BRANCH =
             ResourceLocation.fromNamespaceAndPath(DYNAMIC_TREES, "silverwood_branch");

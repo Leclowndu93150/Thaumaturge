@@ -20,6 +20,7 @@ import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -38,7 +39,8 @@ final class TTBiomeTagsProviderTest {
                 Set.of(
                         TTBiomes.MAGICAL_FOREST.location(),
                         TTBiomes.TAINTED_LANDS.location(),
-                        TTBiomes.ELDRITCH.location()),
+                        TTBiomes.ELDRITCH.location(),
+                        Biomes.GROVE.location()),
                 silverwoodExclusions);
 
         Set<ResourceLocation> overworldBiomes = builder(provider, BiomeTags.IS_OVERWORLD).build().stream()

@@ -22,6 +22,7 @@ public final class TTBiomeTags {
     public static final TagKey<Biome> HAS_GREATWOOD = biome("has_greatwood");
     public static final TagKey<Biome> HAS_GREATWOOD_RARE = biome("has_greatwood_rare");
     public static final TagKey<Biome> HAS_SILVERWOOD = biome("has_silverwood");
+    public static final TagKey<Biome> HAS_SILVERWOOD_ABUNDANT = biome("has_silverwood_abundant");
     public static final TagKey<Biome> HAS_CINDERPEARL = biome("has_cinderpearl");
     public static final TagKey<Biome> HAS_MOUND = biome("has_structure/mound");
     public static final TagKey<Biome> HAS_ELDRITCH_OBELISK = biome("has_structure/eldritch_obelisk");
