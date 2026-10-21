@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
+import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.content.aspect.ReadOnlyAspectContainer;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
@@ -27,6 +28,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -78,6 +81,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
     private static final double GOGGLES_TEXT_Y_OFFSET = 1.5;
 
     private static final DecimalFormat STABILITY_FORMAT = new DecimalFormat("#######.##");
+    private static final String KEY_RESEARCH_LOCKED = "message.thaumaturge.infusion.research_locked";
     private static final String STABILITY_LANG_PREFIX = "gui.thaumaturge.infusion.stability.";
 
     private boolean active;
@@ -254,7 +258,14 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
             return false;
         }
         InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, player, input);
-        if (match == null || match.locked()) {
+        if (match == null) {
+            return false;
+        }
+        if (match.locked()) {
+            match.recipe()
+                    .researchGate()
+                    .ifPresent(gate -> player.displayClientMessage(
+                            Component.translatable(KEY_RESEARCH_LOCKED, researchName(level, gate.entry())), true));
             return false;
         }
         InfusionJobRecipe recipe = match.recipe();
@@ -267,6 +278,14 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity
         setChanged();
         syncToClient();
         return true;
+    }
+
+    private static Component researchName(ServerLevel level, ResourceLocation entry) {
+        return level.registryAccess()
+                .lookupOrThrow(IResearchEntry.REGISTRY_KEY)
+                .get(ResourceKey.create(IResearchEntry.REGISTRY_KEY, entry))
+                .map(holder -> Component.translatable(holder.value().nameKey()))
+                .orElseGet(() -> Component.literal(entry.toString()));
     }
 
     static @Nullable InfusionCraftJob createCraftJob(

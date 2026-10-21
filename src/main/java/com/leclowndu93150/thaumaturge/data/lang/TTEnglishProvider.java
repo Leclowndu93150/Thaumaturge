@@ -165,6 +165,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("gui.thaumaturge.research_table.combine", "Combine the two aspects into their compound");
         add("gui.thaumaturge.research_table.helper", "Aspect combination reference");
         add("message.thaumaturge.device.not_understood", "You do not yet understand how this device works.");
+        add("message.thaumaturge.infusion.research_locked", "This infusion needs the research \"%s\" first.");
         add("gui.thaumaturge.research_table.select", "Drag an aspect here to combine it");
         add("gui.thaumaturge.research_table.page_prev", "Previous page");
         add("gui.thaumaturge.research_table.page_next", "Next page");
