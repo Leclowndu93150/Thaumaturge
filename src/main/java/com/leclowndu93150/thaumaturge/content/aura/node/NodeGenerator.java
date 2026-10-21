@@ -112,14 +112,7 @@ public final class NodeGenerator {
         if (data == null) {
             return false;
         }
-        boolean placed = createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
-        if (placed
-                && data.type() == NodeType.TAINTED
-                && !(level instanceof net.minecraft.server.level.ServerLevel)
-                && level.getBlockEntity(pos) instanceof BlockEntityNode node) {
-            node.markNaturalTaintBootstrap();
-        }
-        return placed;
+        return createNodeAt(level, pos, data.type(), data.modifier().orElse(null), data.aspects());
     }
 
     /**
@@ -160,13 +153,7 @@ public final class NodeGenerator {
         if (requiredType == NodeType.HUNGRY) {
             aspects = addTypeFlavor(aspectRegistry(level), aspects, NodeType.HUNGRY, random);
         }
-        if (!createNodeAt(level, pos, requiredType, data.modifier().orElse(null), aspects)) {
-            return false;
-        }
-        if (level.getBlockEntity(pos) instanceof BlockEntityNode node) {
-            node.markNaturalTaintBootstrap();
-        }
-        return true;
+        return createNodeAt(level, pos, requiredType, data.modifier().orElse(null), aspects);
     }
 
     static Optional<NodeData> firstRollOfType(Supplier<@Nullable NodeData> roll, NodeType requiredType) {

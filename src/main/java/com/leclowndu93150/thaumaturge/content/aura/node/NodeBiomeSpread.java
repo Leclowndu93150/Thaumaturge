@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
-import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
@@ -10,10 +9,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 
 final class NodeBiomeSpread {
-    private static final int TAINT_CONVERSION_INTERVAL = 100;
-    private static final int TAINT_CONVERSION_ODDS = 500;
     private static final int SPREAD_INTERVAL = 50;
-    private static final int TAINTED_RANGE = 8;
     private static final int DARK_RANGE = 12;
     private static final int PURE_RANGE = 8;
     private static final int SILVERWOOD_RADIUS = 1;
@@ -24,38 +20,20 @@ final class NodeBiomeSpread {
         if (level.dimension() != Level.OVERWORLD) {
             return;
         }
-        RandomSource random = level.getRandom();
-        NodeType type = node.getNodeType();
-        if (tickCounter % TAINT_CONVERSION_INTERVAL == 0
-                && type != NodeType.PURE
-                && type != NodeType.TAINTED
-                && TaintBiomeManager.isTainted(level, pos)
-                && random.nextInt(TAINT_CONVERSION_ODDS) == 0) {
-            node.setNodeType(NodeType.TAINTED);
-            node.nodeChange();
-            type = NodeType.TAINTED;
-        }
         if (tickCounter % SPREAD_INTERVAL != 0) {
             return;
         }
-        switch (type) {
-            case TAINTED -> taint(level, sample(pos, TAINTED_RANGE, random));
+        RandomSource random = level.getRandom();
+        switch (node.getNodeType()) {
             case DARK -> eerie(level, sample(pos, DARK_RANGE, random));
             case PURE -> purify(level, pos, sample(pos, PURE_RANGE, random));
-            case NORMAL, UNSTABLE, HUNGRY -> {}
+            case NORMAL, UNSTABLE, HUNGRY, TAINTED -> {}
         }
     }
 
     private static BlockPos sample(BlockPos origin, int range, RandomSource random) {
         return origin.offset(
                 random.nextInt(range) - random.nextInt(range), 0, random.nextInt(range) - random.nextInt(range));
-    }
-
-    private static void taint(ServerLevel level, BlockPos sample) {
-        if (level.hasChunkAt(sample)) {
-            // TaintBiomeManager owns loaded-chunk checks and bloom-protection policy.
-            TaintBiomeManager.taintColumn(level, sample);
-        }
     }
 
     private static void eerie(ServerLevel level, BlockPos sample) {

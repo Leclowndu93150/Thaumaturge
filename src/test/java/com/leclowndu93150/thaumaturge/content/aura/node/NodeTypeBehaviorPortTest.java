@@ -11,12 +11,10 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
@@ -34,29 +32,6 @@ class NodeTypeBehaviorPortTest {
                 new BlockEntityNode(BlockPos.ZERO, TTBlocks.NODE.get().defaultBlockState());
         node.setNodeType(type);
         return node;
-    }
-
-    @Test
-    void taintedBehaviorRollsChanceBeforeDrawingOffsets() {
-        BlockEntityNode node = node(NodeType.TAINTED);
-        ServerLevel level = mock(ServerLevel.class);
-        RandomSource random = mock(RandomSource.class);
-        AtomicBoolean chanceRolled = new AtomicBoolean();
-        when(random.nextBoolean()).thenAnswer(invocation -> {
-            chanceRolled.set(true);
-            return true;
-        });
-        when(random.nextInt(5)).thenAnswer(invocation -> {
-            assertTrue(chanceRolled.get(), "offset draws must follow the spread chance roll");
-            return 0;
-        });
-
-        try (MockedStatic<TaintHelper> taint = mockStatic(TaintHelper.class)) {
-            NodeTypeBehavior.tick(node, level, BlockPos.ZERO, 50, random);
-            verify(random).nextBoolean();
-            verify(random, org.mockito.Mockito.times(6)).nextInt(5);
-            taint.verify(() -> TaintHelper.attemptFibreGrowth(level, BlockPos.ZERO, true));
-        }
     }
 
     @Test

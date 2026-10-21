@@ -14,6 +14,7 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.DoubleValue TAINT_GROWTH_COST;
     public static final ModConfigSpec.DoubleValue TAINT_CHILD_SEED_COST;
     public static final ModConfigSpec.IntValue TAINT_STARVE_TICKS;
+    public static final ModConfigSpec.DoubleValue TAINTED_LANDS_STARTING_FLUX;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
@@ -77,6 +78,9 @@ public final class ThaumaturgeCommonConfig {
         TAINT_STARVE_TICKS = builder.comment(
                         "Ticks a taint seed survives with nothing to eat before it withers away. A tainted node inside an Ethereal Bloom's range is purified after the same time.")
                 .defineInRange("taintStarveTicks", 12000, 20, 1000000);
+        TAINTED_LANDS_STARTING_FLUX = builder.comment(
+                        "Flux a freshly generated Tainted Lands chunk starts with, as a multiple of its base aura. The tainted nodes and seeds there feed on it. 0 leaves Tainted Lands dormant until flux reaches them.")
+                .defineInRange("taintedLandsStartingFlux", 1.0, 0.0, 10.0);
         TAINT_FROM_FLUX = builder.comment(
                         "Allows deep, exposed Flux Goo to develop into Fibrous Taint and Tainted Lands.")
                 .define("taintFromFlux", true);

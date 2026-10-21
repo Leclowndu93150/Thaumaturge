@@ -1,6 +1,5 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
-import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSwarm;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
@@ -19,8 +18,6 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
     private static final float SWARM_SPAWN_CHANCE = 0.2F;
     private static final double SWARM_PLAYER_RANGE = 32.0;
     private static final double SWARM_EXCLUSION_RANGE = 32.0;
-    private static final float LOW_FLUX_BASE_RATIO = 0.25F;
-    private static final float POLLUTE_AMOUNT = 1.0F;
 
     public BlockTaintGeyser(Properties properties) {
         super(properties);
@@ -55,11 +52,6 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
             if (swarm != null) {
                 swarm.moveTo(x, pos.getY() + 1.25, z, random.nextInt(360), 0.0F);
                 level.addFreshEntity(swarm);
-            }
-        } else {
-            int auraBase = AuraHelper.getAuraBase(level, pos);
-            if (auraBase > 0 && AuraHelper.getFlux(level, pos) < auraBase * LOW_FLUX_BASE_RATIO) {
-                AuraHelper.polluteAura(level, pos, POLLUTE_AMOUNT, true);
             }
         }
     }

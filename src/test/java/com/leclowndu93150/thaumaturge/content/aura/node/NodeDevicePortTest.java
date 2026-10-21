@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.aura.node;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -15,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.Test;
@@ -27,17 +25,6 @@ class NodeDevicePortTest {
         BlockEntityJarNode node =
                 new BlockEntityJarNode(BlockPos.ZERO, TTBlocks.JAR_NODE.get().defaultBlockState());
         assertFalse(node.allowLock());
-    }
-
-    @Test
-    void naturalBootstrapRequiresCenterAndCardinalColumnsToBeLoaded() {
-        LevelReader level = mock(LevelReader.class);
-        BlockPos target = new BlockPos(16, 70, 16);
-        when(level.hasChunkAt(any(BlockPos.class))).thenReturn(true);
-        assertTrue(NodeBootstrap.columnsGenerated(level, target));
-
-        when(level.hasChunkAt(target.east())).thenReturn(false);
-        assertFalse(NodeBootstrap.columnsGenerated(level, target));
     }
 
     @Test

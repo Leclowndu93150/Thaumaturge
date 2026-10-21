@@ -10,10 +10,11 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
+import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.api.transaction.TransactionContext;
-import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.content.effect.Effects;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import com.leclowndu93150.thaumaturge.content.wands.WandChargingEvents;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
@@ -44,7 +45,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
-public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspectContainer {
+public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspectContainer, ITaintOrigin {
     private static final int REGEN_INTERVAL_NORMAL = 600;
     private static final int REGEN_INTERVAL_BRIGHT = 400;
     private static final int REGEN_INTERVAL_PALE = 900;
@@ -52,7 +53,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private static final int STARVATION_DRIFT_THRESHOLD = 10;
     private static final int DECAY_INTERVAL = 1200;
     private static final int DISCHARGE_RANGE = 4;
-    private static final int BEHAVIOR_INTERVAL = 50;
+    static final int BEHAVIOR_INTERVAL = 50;
     private static final int STABILITY_INTERVAL = 100;
     private static final float FLUX_TAINT_THRESHOLD = 0.5F;
     private static final int FLUX_TAINT_CHANCE = 20;
@@ -90,7 +91,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     private int drainColor = 0xFFFFFF;
     private int drainTicks;
     private int jarringTicks;
-    private boolean naturalTaintBootstrapPending;
+    private float taintReserve;
+    int taintPurifyTicks;
     public int clientDrainRed = 255;
     public int clientDrainGreen = 255;
     public int clientDrainBlue = 255;
@@ -126,23 +128,45 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
 
     public void setNodeType(NodeType type) {
         this.nodeType = type;
-        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
-            NodeLocationIndex.get(serverLevel).register(worldPosition, type);
+        if (type != NodeType.TAINTED) {
+            taintReserve = 0.0F;
+            taintPurifyTicks = 0;
         }
-    }
-
-    /** Marks a world-generated tainted node for its one-time pollution hotspot bootstrap. */
-    public void markNaturalTaintBootstrap() {
-        naturalTaintBootstrapPending = true;
-        setChanged();
+        refreshIndex();
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level instanceof ServerLevel serverLevel && isNodeBlock()) {
-            NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        refreshIndex();
+    }
+
+    private void refreshIndex() {
+        if (!(level instanceof ServerLevel serverLevel) || !isNodeBlock()) {
+            return;
         }
+        NodeLocationIndex.get(serverLevel).register(worldPosition, nodeType);
+        if (nodeType == NodeType.TAINTED) {
+            TaintOrigins.register(serverLevel, worldPosition);
+        } else {
+            TaintOrigins.unregister(serverLevel, worldPosition);
+        }
+    }
+
+    @Override
+    public boolean isLiveTaintOrigin() {
+        return nodeType == NodeType.TAINTED && allowTypeBehavior() && !isRemoved();
+    }
+
+    @Override
+    public float getTaintReserve() {
+        return taintReserve;
+    }
+
+    @Override
+    public void setTaintReserve(float reserve) {
+        taintReserve = Math.max(0.0F, reserve);
+        setChanged();
     }
 
     void removeDepleted(ServerLevel serverLevel, BlockPos pos) {
@@ -356,7 +380,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (!(tickLevel instanceof ServerLevel serverLevel)) {
             return;
         }
-        applyNaturalTaintBootstrap(serverLevel, pos);
         if (energized) {
             boolean changed = false;
             if (NodeEnergy.refillDue(serverLevel) && NodeEnergy.refill(this, serverLevel, pos)) {
@@ -855,18 +878,6 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         NodeHunger.predict(clientLevel, pos, nodeModifier);
     }
 
-    private void applyNaturalTaintBootstrap(ServerLevel level, BlockPos pos) {
-        if (!naturalTaintBootstrapPending) {
-            return;
-        }
-        naturalTaintBootstrapPending = false;
-        setChanged();
-        if (nodeType != NodeType.TAINTED || ThaumaturgeCommonConfig.WUSS_MODE.get()) {
-            return;
-        }
-        NodeBootstrap.run(level, pos);
-    }
-
     @Override
     protected void saveAdditional(CompoundTag output, HolderLookup.Provider registries) {
         super.saveAdditional(output, registries);
@@ -889,8 +900,11 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (jarringTicks > 0) {
             output.putInt("Jarring", jarringTicks);
         }
-        if (naturalTaintBootstrapPending) {
-            output.putBoolean("NaturalTaintBootstrap", true);
+        if (taintReserve > 0.0F) {
+            output.putFloat("TaintReserve", taintReserve);
+        }
+        if (taintPurifyTicks > 0) {
+            output.putInt("TaintPurify", taintPurifyTicks);
         }
     }
 
@@ -910,7 +924,8 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
                 TTNbt.read(input, "DrainPlayer", UUIDUtil.CODEC, registries).orElse(null);
         drainColor = input.contains("DrainColor") ? input.getInt("DrainColor") : 0xFFFFFF;
         jarringTicks = input.getInt("Jarring");
-        naturalTaintBootstrapPending = input.getBoolean("NaturalTaintBootstrap");
+        taintReserve = Math.max(0.0F, input.getFloat("TaintReserve"));
+        taintPurifyTicks = input.getInt("TaintPurify");
         regeneration = -1;
     }
 }

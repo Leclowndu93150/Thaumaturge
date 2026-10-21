@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.serialization.MapCodec;
@@ -165,6 +166,7 @@ public final class BlockNode extends Block implements EntityBlock {
     public static void unindexNode(BlockState state, Level level, BlockPos pos, BlockState newState) {
         if (level instanceof ServerLevel serverLevel && !state.is(newState.getBlock())) {
             NodeLocationIndex.get(serverLevel).remove(pos);
+            TaintOrigins.unregister(serverLevel, pos);
         }
     }
 }

@@ -11,6 +11,8 @@ import org.jspecify.annotations.Nullable;
 
 public final class TaintFeeding {
     private static final int CHUNK_CENTER = 8;
+    private static final int GROWTH_EXTRA_LIMIT = 3;
+    private static final float GROWTH_FILL_FACTOR = 3.0F;
 
     private TaintFeeding() {}
 
@@ -38,6 +40,11 @@ public final class TaintFeeding {
         }
         origin.setTaintReserve(origin.getTaintReserve() + eaten);
         return true;
+    }
+
+    public static int growthAttempts(ITaintOrigin origin) {
+        float fill = origin.getTaintReserve() / reserveCap();
+        return 1 + Math.min(GROWTH_EXTRA_LIMIT, (int) Math.floor(fill * GROWTH_FILL_FACTOR));
     }
 
     public static boolean isDormant(ITaintOrigin origin) {

@@ -29,8 +29,6 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
     private static final double AMBIENT_FUME_RISE = 0.015;
     private static final float AMBIENT_FUME_SCALE = 1.5F;
     private static final float TICKS_PER_SECOND = 20.0F;
-    private static final int MAX_EXTRA_SPREAD_ATTEMPTS = 3;
-    private static final float SPREAD_ATTEMPTS_PER_FILL = 3.0F;
     private static final float FLUX_TAINT_RADIUS_MULT = 4.0F;
     private static final int FLUX_TAINT_TICKS = 100;
     private static final float ATTACK_ANIM_START = 0.5F;
@@ -116,8 +114,7 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
 
     private void spreadFibres(ServerLevel server, BlockPos pos) {
         int area = getArea();
-        float fill = this.reserve / TaintFeeding.reserveCap();
-        int attempts = 1 + Math.min(MAX_EXTRA_SPREAD_ATTEMPTS, Mth.floor(fill * SPREAD_ATTEMPTS_PER_FILL));
+        int attempts = TaintFeeding.growthAttempts(this);
         for (int attempt = 0; attempt < attempts; attempt++) {
             int dx = Mth.nextInt(server.getRandom(), -area * 3, area * 3);
             int dy = Mth.nextInt(server.getRandom(), -area, area);
