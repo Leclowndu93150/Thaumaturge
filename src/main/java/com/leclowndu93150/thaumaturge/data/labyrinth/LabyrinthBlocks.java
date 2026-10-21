@@ -16,7 +16,12 @@ public final class LabyrinthBlocks {
     private LabyrinthBlocks() {}
 
     public static List<Block> passableBlocks() {
-        return List.of(TTBlocks.ELDRITCH_DOOR.get(), TTBlocks.ELDRITCH_LOCK.get());
+        return List.of(
+                TTBlocks.ELDRITCH_DOOR.get(),
+                TTBlocks.ELDRITCH_LOCK.get(),
+                TTBlocks.STAIRS_ELDRITCH.get(),
+                TTBlocks.STAIRS_ELDRITCH_TILE.get(),
+                TTBlocks.STAIRS_ELDRITCH_ROCK.get());
     }
 
     static boolean passable(BlockState state) {
