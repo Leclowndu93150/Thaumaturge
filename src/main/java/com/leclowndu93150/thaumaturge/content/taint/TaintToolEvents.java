@@ -13,10 +13,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber(modid = TTIds.MODID)
-public final class TaintHoeEvents {
-    private static final float TAINT_HOE_SPEED_MULTIPLIER = 4.0F;
+public final class TaintToolEvents {
+    private static final float TAINT_TOOL_SPEED_MULTIPLIER = 4.0F;
 
-    private TaintHoeEvents() {}
+    private TaintToolEvents() {}
 
     @SubscribeEvent
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
@@ -25,7 +25,7 @@ public final class TaintHoeEvents {
         }
         Player player = event.getEntity();
         ItemStack held = player.getMainHandItem();
-        if (!held.is(TTItemTags.TAINT_HOES)) {
+        if (!held.is(TTItemTags.TAINT_TOOLS)) {
             return;
         }
         Tool tool = held.get(DataComponents.TOOL);
@@ -33,7 +33,7 @@ public final class TaintHoeEvents {
             return;
         }
         float toolSpeed = bestRuleSpeed(tool) + (float) player.getAttributeValue(Attributes.MINING_EFFICIENCY);
-        event.setNewSpeed(event.getNewSpeed() * toolSpeed * TAINT_HOE_SPEED_MULTIPLIER);
+        event.setNewSpeed(event.getNewSpeed() * toolSpeed * TAINT_TOOL_SPEED_MULTIPLIER);
     }
 
     private static float bestRuleSpeed(Tool tool) {
