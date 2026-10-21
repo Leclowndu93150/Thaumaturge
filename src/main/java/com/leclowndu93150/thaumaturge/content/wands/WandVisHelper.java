@@ -5,7 +5,9 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.wands.IWandVisStorage;
+import com.leclowndu93150.thaumaturge.api.wands.ITransactionalWandVisStorage;
 import com.leclowndu93150.thaumaturge.api.wands.WandVis;
+import com.leclowndu93150.thaumaturge.api.items.VisDiscountAccess;
 import com.leclowndu93150.thaumaturge.content.casters.CasterManager;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import java.util.LinkedHashMap;
@@ -65,21 +67,35 @@ public final class WandVisHelper {
     }
 
     public static int topUpCentivis(ItemStack wand, ResourceKey<IAspect> aspect, int centivis, boolean apply) {
-        if (!TTAspects.PRIMALS.contains(aspect)) {
+        if (centivis <= 0) {
             return 0;
         }
-        int capacity = capacityOf(wand);
-        int desired = storedIn(wand, aspect) + centivis;
-        if (apply) {
-            setStored(wand, aspect, desired > capacity ? capacity : desired);
+        if (!TTAspects.PRIMALS.contains(aspect)) {
+            return centivis;
         }
-        return desired > capacity ? desired - capacity : 0;
+        IWandVisStorage storage = partsOf(wand).rod().visStorage();
+        int capacity = storage instanceof ITransactionalWandVisStorage transactional ? transactional.capacityCentivis(wand, aspect) : capacityOf(wand);
+        int stored = storedIn(wand, aspect);
+        int accepted = (int) Math.min(centivis, Math.max(0L, (long) capacity - stored));
+        if (apply && accepted > 0) {
+            setStored(wand, aspect, stored + accepted);
+        }
+        return centivis - accepted;
     }
 
     public static float costFactor(ItemStack wand, @Nullable Player player, ResourceKey<IAspect> aspect, boolean crafting) {
+        return costFactor(wand, player, aspect, crafting, CENTIVIS_PER_VIS);
+    }
+
+    public static float costFactor(ItemStack wand, @Nullable Player player, ResourceKey<IAspect> aspect, boolean crafting, int baseCentivis) {
         WandParts parts = partsOf(wand);
-        float capBase = parts.cap().costModifier(aspect);
+        float capBase = parts.cap().costModifier(aspect) - VisDiscountAccess.additionalDiscount(player, aspect, crafting, baseCentivis);
         return modifier(parts, player, capBase);
+    }
+
+    public static float scalarCostFactor(ItemStack wand, @Nullable Player player, ResourceKey<IAspect> aspect) {
+        WandParts parts = partsOf(wand);
+        return modifier(parts, player, parts.cap().costModifier(aspect));
     }
 
     static float modifier(WandParts parts, @Nullable Player player, float base) {
@@ -98,11 +114,19 @@ public final class WandVisHelper {
         return affordable;
     }
 
-    private static int scaledCost(ItemStack wand, @Nullable Player player, ResourceKey<IAspect> aspect, int base, boolean crafting) {
-        return (int) (base * costFactor(wand, player, aspect, crafting));
+    public static int scaledCost(ItemStack wand, @Nullable Player player, ResourceKey<IAspect> aspect, int base, boolean crafting) {
+        return (int) (base * costFactor(wand, player, aspect, crafting, base));
     }
 
     public static boolean payCosts(ItemStack wand, Player player, Map<ResourceKey<IAspect>, Integer> costs, boolean apply, boolean crafting) {
+        return payCosts(wand, player, costs, apply, crafting, true);
+    }
+
+    public static boolean payScalarCosts(ItemStack wand, Player player, Map<ResourceKey<IAspect>, Integer> costs, boolean apply, boolean crafting) {
+        return payCosts(wand, player, costs, apply, crafting, false);
+    }
+
+    private static boolean payCosts(ItemStack wand, Player player, Map<ResourceKey<IAspect>, Integer> costs, boolean apply, boolean crafting, boolean aspectDiscounts) {
         if (costs.isEmpty()) {
             return false;
         }
@@ -110,7 +134,7 @@ public final class WandVisHelper {
         WandVis after = before;
         for (Map.Entry<ResourceKey<IAspect>, Integer> line : costs.entrySet()) {
             ResourceKey<IAspect> aspect = line.getKey();
-            int owed = scaledCost(wand, player, aspect, line.getValue(), crafting);
+            int owed = aspectDiscounts ? scaledCost(wand, player, aspect, line.getValue(), crafting) : (int) (line.getValue() * scalarCostFactor(wand, player, aspect));
             int held = before.amount(aspect);
             if (held < owed) {
                 return false;
@@ -203,7 +227,7 @@ public final class WandVisHelper {
         if (split.isEmpty()) {
             return false;
         }
-        return firstHotbarWand(player, wand -> payCosts(wand, player, split, apply, false)) != null;
+        return firstHotbarWand(player, wand -> aspect == null ? payScalarCosts(wand, player, split, apply, false) : payCosts(wand, player, split, apply, false)) != null;
     }
 
     private static @Nullable ItemStack firstHotbarWand(Player player, Predicate<ItemStack> accepts) {

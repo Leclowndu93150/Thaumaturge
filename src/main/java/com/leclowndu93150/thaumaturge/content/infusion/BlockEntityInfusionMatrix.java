@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.content.infusion;
 
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.capability.IPlayerKnowledge;
+import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.casters.IInteractWithCaster;
 import com.leclowndu93150.thaumaturge.api.infusion.InfusionCraftedEvent;
 import com.leclowndu93150.thaumaturge.api.items.IGogglesReadout;
@@ -17,10 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -32,6 +36,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -89,6 +94,10 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     private boolean active;
     private final StabilityState stability = new StabilityState();
     private @Nullable InfusionCraftJob job;
+    private long craftRevision;
+    private boolean clientCrafting;
+    private int clientInstability;
+    private AspectList clientEssentia = AspectList.EMPTY;
     private int tickCount;
     private boolean stale;
     private @Nullable MatrixEnvironment environment;
@@ -110,7 +119,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     }
 
     public boolean isCrafting() {
-        return job != null;
+        return level != null && level.isClientSide() ? clientCrafting : job != null;
     }
 
     public float stability() {
@@ -118,7 +127,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     }
 
     public AspectList remainingEssentia() {
-        return job == null ? AspectList.EMPTY : job.essentia();
+        return level != null && level.isClientSide() ? clientEssentia : job == null ? AspectList.EMPTY : job.essentia();
     }
 
     @Override
@@ -159,6 +168,20 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     }
 
     public boolean tryStartCraft(ServerLevel level, Player player) {
+        return tryStartCraft(level, player, 0);
+    }
+
+    public boolean tryStartCraft(ServerLevel level, Player player, int extraInstability) {
+        if (player.level() != level) {
+            return false;
+        }
+        return tryStartCraft(level, player.getUUID(), KnowledgeAccess.of(player), null, extraInstability);
+    }
+
+    boolean tryStartCraft(ServerLevel level, UUID owner, IPlayerKnowledge knowledge, @Nullable ResourceKey<Recipe<?>> expectedRecipeId, int extraInstability) {
+        if (!level.getServer().isSameThread() || !active || job != null || extraInstability < 0 || extraInstability > 100) {
+            return false;
+        }
         stale = true;
         sources.invalidate();
         if (!MatrixEnvironment.validLocation(level, worldPosition)) {
@@ -170,8 +193,8 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
         if (input.catalyst().isEmpty() || input.components().isEmpty()) {
             return false;
         }
-        InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, player, input);
-        if (match == null || match.locked()) {
+        InfusionRecipeMatcher.Match match = InfusionRecipeMatcher.find(level, knowledge, input);
+        if (match == null || match.locked() || expectedRecipeId != null && !expectedRecipeId.equals(match.holder().id())) {
             return false;
         }
         InfusionJobRecipe recipe = match.recipe();
@@ -180,10 +203,36 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
             return false;
         }
         AspectList quote = projectedCost(level, recipe.jobEssentia(input));
-        job = new InfusionCraftJob(ingredients, quote, quote, recipe.jobResult(input, level.getRandom()), input.catalyst(), recipe.jobInstability(input), Optional.of(player.getUUID()));
+        int instability = recipe.jobInstability(input);
+        if (instability < 0 || instability > Integer.MAX_VALUE - extraInstability) {
+            return false;
+        }
+        ItemStack result = recipe.jobResult(input, level.getRandom());
+        if (result.isEmpty() || !sameInputs(input, stagedInput(level))) {
+            return false;
+        }
+        job = new InfusionCraftJob(ingredients, quote, quote, result, input.catalyst(), instability + extraInstability, Optional.of(owner),
+                recipe instanceof DynamicInfusionAdapter ? Optional.of(new InfusionCraftJob.PreparedRecipe(match.holder().id(), 1, input.components())) : Optional.empty());
+        craftRevision++;
         pipeline.reset();
         playSound(level, TTSounds.CRAFTSTART.get(), SOUND_VOLUME, SOUND_PITCH);
         setChangedAndSync();
+        return true;
+    }
+
+    public long craftRevision() {
+        return craftRevision;
+    }
+
+    private static boolean sameInputs(InfusionInput expected, InfusionInput current) {
+        if (!ItemStack.matches(expected.catalyst(), current.catalyst()) || expected.components().size() != current.components().size()) {
+            return false;
+        }
+        for (int index = 0; index < expected.components().size(); index++) {
+            if (!ItemStack.matches(expected.components().get(index), current.components().get(index))) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -197,7 +246,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
         List<Component> lines = new ArrayList<>();
         lines.add(Component.translatable(stability.tier().key).withStyle(ChatFormatting.BOLD));
         lines.add(Component.translatable(KEY_GAIN, formatNumber(stability.gain())).withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
-        float maxLoss = job == null ? 0.0F : stability.maxLoss(job.instability());
+        float maxLoss = level != null && level.isClientSide() ? stability.maxLoss(clientInstability) : job == null ? 0.0F : stability.maxLoss(job.instability());
         if (maxLoss != 0.0F) {
             lines.add(Component.translatable(KEY_LOSS, formatNumber(maxLoss)).withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
         }
@@ -213,9 +262,19 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     }
 
     @Override
+    protected void writeClientData(ValueOutput output) {
+        output.putBoolean(ACTIVE_KEY, active);
+        output.putBoolean("Crafting", job != null);
+        output.putInt("Instability", job == null ? 0 : job.instability());
+        output.store("Essentia", AspectList.CODEC, remainingEssentia());
+        stability.save(output);
+    }
+
+    @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putBoolean(ACTIVE_KEY, active);
+        output.putLong("CraftRevision", craftRevision);
         stability.save(output);
         if (job != null) {
             output.store(JOB_KEY, InfusionCraftJob.CODEC, job);
@@ -226,12 +285,16 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         active = input.getBooleanOr(ACTIVE_KEY, false);
+        craftRevision = input.getLongOr("CraftRevision", 0);
+        clientCrafting = input.getBooleanOr("Crafting", false);
+        clientInstability = input.getIntOr("Instability", 0);
+        clientEssentia = input.read("Essentia", AspectList.CODEC).orElse(AspectList.EMPTY);
         stability.load(input);
         job = input.read(JOB_KEY, InfusionCraftJob.CODEC).orElse(null);
     }
 
     InfusionInput stagedInput(ServerLevel level) {
-        MatrixEnvironment env = environment(level);
+        MatrixEnvironment env = MatrixEnvironment.survey(level, worldPosition);
         BlockEntityPedestal center = centralPedestal(level);
         ItemStack catalyst = ItemStack.EMPTY;
         if (center != null) {
@@ -251,7 +314,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     }
 
     AspectList projectedCost(ServerLevel level, AspectList base) {
-        float multiplier = Math.max(MIN_COST_MULTIPLIER, environment(level).costMult());
+        float multiplier = Math.max(MIN_COST_MULTIPLIER, MatrixEnvironment.survey(level, worldPosition).costMult());
         AspectList scaled = AspectList.EMPTY;
         for (AspectInstance entry : base.entries()) {
             int amount = (int) (entry.amount() * multiplier);
@@ -343,6 +406,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
     private void shutDown() {
         active = false;
         job = null;
+        craftRevision++;
         pipeline.reset();
         setChangedAndSync();
     }
@@ -421,12 +485,13 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
 
     private void abortCraft(ServerLevel level) {
         job = null;
+        craftRevision++;
         pipeline.reset();
         playSound(level, TTSounds.CRAFTFAIL.get(), FAIL_VOLUME, FAIL_PITCH);
     }
 
     private void tickClient(Level level) {
-        clientCraftTicks = ClientAnimator.craftTicks(level, worldPosition, clientCraftTicks, job != null);
+        clientCraftTicks = ClientAnimator.craftTicks(level, worldPosition, clientCraftTicks, isCrafting());
         clientStartUp = ClientAnimator.startUp(clientStartUp, active);
         MatrixPullEffects.tickSources(level, worldPosition, clientSources);
     }
@@ -504,6 +569,7 @@ public final class BlockEntityInfusionMatrix extends AbstractSyncedBlockEntity i
 
         private void clearJob() {
             job = null;
+            craftRevision++;
         }
 
         private void playSound(SoundEvent sound) {

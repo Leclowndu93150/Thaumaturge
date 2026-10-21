@@ -233,11 +233,18 @@ public final class ResearchManager {
         Stream.of(ResearchFlag.POPUP, ResearchFlag.RESEARCH).forEach(flag -> knowledge.setResearchFlag(id, flag));
     }
 
-    public static boolean doesPassGate(Player player, ResearchGate gate) {
+    public static boolean doesPassGate(Player player, @Nullable ResearchGate gate) {
         if (gate == null) {
             return true;
         }
-        IPlayerKnowledge knowledge = KnowledgeAccess.of(player);
+        return doesPassGate(KnowledgeAccess.of(player), gate);
+    }
+
+    public static boolean doesPassGate(IPlayerKnowledge knowledge, @Nullable ResearchGate gate) {
+        return gate == null || gate.requirements().stream().allMatch(requirement -> passesRequirement(knowledge, requirement));
+    }
+
+    private static boolean passesRequirement(IPlayerKnowledge knowledge, ResearchGate gate) {
         boolean known = gate.stage().map(stage -> knowledge.isResearchKnown(gate.entry(), stage)).orElseGet(() -> knowledge.isResearchComplete(gate.entry()));
         return gate.negate() != known;
     }

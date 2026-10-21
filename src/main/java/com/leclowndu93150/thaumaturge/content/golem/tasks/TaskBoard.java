@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.api.golems.seals.ISealEntity;
 import com.leclowndu93150.thaumaturge.api.golems.seals.SealPos;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.golem.seals.SealHandler;
+import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.Comparator;
 import java.util.List;
@@ -60,6 +61,21 @@ public final class TaskBoard {
 
     public void endAllFrom(SealPos seal) {
         tasks.values().stream().filter(task -> seal.equals(task.origin())).forEach(Task::end);
+    }
+
+    public void cancelFor(ServerLevel level, EntityThaumaturgeGolem golem) {
+        for (Task task : List.copyOf(tasks.values())) {
+            if (task != golem.activeJob() && !golem.getUUID().equals(task.assignedGolem())) {
+                continue;
+            }
+            tasks.remove(task.id());
+            notifySuspended(level, task);
+            if (task.linkedProvision() != null) {
+                task.linkedProvision().unlink();
+            }
+            task.release();
+            task.end();
+        }
     }
 
     public List<Task> openBlockTasks(@Nullable UUID golemId, Entity golem) {

@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.research.IResearchEntry;
 import com.leclowndu93150.thaumaturge.compat.jei.ThaumaturgeJEIPlugin;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,7 @@ public final class ResearchUtils {
     public static List<Component> generateMissingResearchList(ResearchGate... research) {
         List<Component> list = new ArrayList<>();
         list.add(Component.translatable("jei.thaumaturge.research.missing_research").withStyle(ChatFormatting.GOLD));
-        for (ResearchGate gate : research) {
+        for (ResearchGate gate : Arrays.stream(research).flatMap(value -> value.requirements().stream()).distinct().toList()) {
             if (!ResearchManager.doesPassGate(Minecraft.getInstance().player, gate)) {
                 RegistryAccess access = ThaumaturgeJEIPlugin.clientRegistryAccess();
                 if (access == null) {

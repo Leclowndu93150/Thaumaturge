@@ -165,7 +165,7 @@ public final class WorkbenchPayment {
     private static float averageCraftModifier(ItemStack wand, Player player) {
         float total = 0.0F;
         for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
-            total += WandVisHelper.costFactor(wand, player, primal, true);
+            total += WandVisHelper.scalarCostFactor(wand, player, primal);
         }
         return total / WandEconomy.PRIMAL_COUNT;
     }

@@ -6,6 +6,9 @@ import java.util.UUID;
 import java.util.function.UnaryOperator;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.resources.Identifier;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * The surface a golem exposes to seal behaviours, tasks, part abilities and accessories.
@@ -15,6 +18,24 @@ import net.minecraft.world.level.Level;
  * @since 1.0.0
  */
 public interface IGolemAPI {
+    /** The active exclusive duty id, or empty. Only this presentation value is synced to clients. */
+    default Optional<Identifier> duty() {
+        return Optional.empty();
+    }
+
+    /**
+     * Enters a registered duty for an equipped accessory. Only a nearby owner may enter;
+     * an existing duty wins conflicts. State is copied. Server thread only.
+     */
+    default boolean tryEnterDuty(ServerPlayer actor, Identifier duty, CompoundTag state) {
+        return false;
+    }
+
+    /** Leaves the current duty and restores the preceding home and follow mode. Server thread only. */
+    default boolean exitDuty(ServerPlayer actor) {
+        return false;
+    }
+
     /**
      * The UUID of the golem's owner, available while the owner is offline.
      *

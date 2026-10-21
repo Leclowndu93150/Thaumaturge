@@ -316,7 +316,7 @@ public class ItemWand extends Item implements ICaster, IArchitect, IChanneledIte
 
     private static boolean payEvenly(ItemStack stack, Player player, float vis, boolean crafting, boolean commit) {
         int total = Math.round(vis * WandEconomy.CENTIVIS_PER_VIS);
-        return WandVisHelper.payCosts(stack, player, WandVisHelper.evenSplit(total), commit, crafting);
+        return WandVisHelper.payScalarCosts(stack, player, WandVisHelper.evenSplit(total), commit, crafting);
     }
 
     private void tickChannel(ServerLevel level, Player player, ItemStack wand, int remaining) {

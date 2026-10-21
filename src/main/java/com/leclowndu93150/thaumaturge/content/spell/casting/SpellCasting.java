@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.spell.casting;
 
+import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.spell.CastStyle;
 import com.leclowndu93150.thaumaturge.api.spell.FocusTier;
@@ -49,7 +50,7 @@ public final class SpellCasting {
             return InteractionResult.CONSUME;
         }
         SpellSummary summary = Spells.analyze(spell, Spells.tierOf(focus).orElse(null), level.registryAccess(), player);
-        if (!summary.valid() || !affordable(player, wand, summary, 1.0F)) {
+        if (!summary.valid() || !level.isClientSide() && !affordable(player, wand, summary, 1.0F)) {
             if (player instanceof ServerPlayer serverPlayer) {
                 refuse(serverPlayer, summary);
             }
@@ -113,8 +114,7 @@ public final class SpellCasting {
         if (pre.isCanceled()) {
             return false;
         }
-        Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.primalSplit(Math.round(pre.visCost() * WandEconomy.CENTIVIS_PER_VIS), FocusItems.aspects(summary, player.registryAccess()));
-        if (!player.getAbilities().instabuild && !WandVisHelper.payCosts(wand, player, split, true, false)) {
+        if (!player.getAbilities().instabuild && !payVis(player, wand, summary, pre.visCost(), true)) {
             if (player instanceof ServerPlayer serverPlayer) {
                 TTActionBar.send(serverPlayer, SpellText.notEnoughVis().copy().withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
             }
@@ -128,8 +128,13 @@ public final class SpellCasting {
         if (player.getAbilities().instabuild) {
             return true;
         }
-        Map<ResourceKey<IAspect>, Integer> split = FocusItems.visSplit(summary, visShare, player.registryAccess());
-        return WandVisHelper.payCosts(wand, player, split, false, false);
+        return payVis(player, wand, summary, summary.vis() * visShare, false);
+    }
+
+    private static boolean payVis(Player player, ItemStack wand, SpellSummary summary, float vis, boolean apply) {
+        AspectList aspects = FocusItems.aspects(summary, player.registryAccess());
+        Map<ResourceKey<IAspect>, Integer> split = WandVisHelper.primalSplit(Math.max(0, Math.round(vis * WandEconomy.CENTIVIS_PER_VIS)), aspects);
+        return aspects.isEmpty() ? WandVisHelper.payScalarCosts(wand, player, split, apply, false) : WandVisHelper.payCosts(wand, player, split, apply, false);
     }
 
     private static void startCooldown(Player player, ItemStack wand, int ticks) {

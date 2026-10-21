@@ -64,6 +64,9 @@ public abstract class TaskGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (golem.duty().isPresent()) {
+            return false;
+        }
         if (!(golem.level() instanceof ServerLevel level)) {
             return false;
         }
@@ -108,7 +111,7 @@ public abstract class TaskGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        return phase != Phase.FINISHED && steps <= MAX_STEPS && current != null && golem.activeJob() == current && !current.isEnded();
+        return golem.duty().isEmpty() && phase != Phase.FINISHED && steps <= MAX_STEPS && current != null && golem.activeJob() == current && !current.isEnded();
     }
 
     @Override

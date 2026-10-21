@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.api.taint;
 import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Static facade over the taint spread engine. Addons can seed, query, and drive taint without
@@ -21,6 +23,28 @@ public final class TaintApi {
 
     private static Bindings impl() {
         return BINDING.get();
+    }
+
+    /**
+     * Attempts to taint the four-by-four block biome column containing {@code at}, across the
+     * level's full build height. Honours wuss mode, disabled spread, bloom protection and
+     * {@link TaintBiomeEvent}. Never loads a chunk. Existing biome persistence and client
+     * updates are used. Only {@link BiomeChange#CHANGED} reports a resource-producing change;
+     * callers must not charge for any other outcome. This operation does not consume fuel.
+     *
+     * @param world the server level
+     * @param at the requested position, inside the world border and build height
+     * @param player the initiator, or null for a trusted server mechanic; never supplied by a client
+     * @return the outcome of this attempt
+     * @since 1.0.4
+     */
+    public static BiomeChange tryTaintBiome(ServerLevel world, BlockPos at, @Nullable ServerPlayer player) {
+        return impl().tryTaintBiome(world, at, player);
+    }
+
+    /** Outcomes of an addon biome mutation. */
+    public enum BiomeChange {
+        CHANGED, UNCHANGED, DISABLED, DENIED, UNLOADED, UNSUPPORTED, NOT_SERVER_THREAD
     }
 
     /**
@@ -163,6 +187,8 @@ public final class TaintApi {
      * @since 1.0.0
      */
     public interface Bindings {
+        BiomeChange tryTaintBiome(ServerLevel level, BlockPos pos, @Nullable ServerPlayer player);
+
         void addTaintSeed(ServerLevel level, BlockPos pos);
 
         void removeTaintSeed(ServerLevel level, BlockPos pos);

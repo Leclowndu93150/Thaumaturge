@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.api.recipe.MinecraftEnchantmentInfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionEnchantmentRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRunicAugmentRecipe;
@@ -31,6 +32,9 @@ public final class TTRecipeSerializers {
             () -> DustTriggerMultiblockRecipe.SERIALIZER);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<InfusionRecipe>> INFUSION = RECIPE_SERIALIZERS.register("infusion", () -> InfusionRecipe.SERIALIZER);
+
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MinecraftEnchantmentInfusionRecipe>> MINECRAFT_ENCHANTMENT_INFUSION = RECIPE_SERIALIZERS
+            .register("minecraft_enchantment_infusion", () -> MinecraftEnchantmentInfusionRecipe.SERIALIZER);
 
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<InfusionEnchantmentRecipe>> INFUSION_ENCHANTMENT = RECIPE_SERIALIZERS.register("infusion_enchantment",
             () -> InfusionEnchantmentRecipe.SERIALIZER);

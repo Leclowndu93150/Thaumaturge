@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.api.golems.IGolemProperties;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessoryBehavior;
+import com.leclowndu93150.thaumaturge.api.golems.duty.GolemDuty.StopReason;
 import com.leclowndu93150.thaumaturge.api.golems.parts.IGolemPartAbility;
 import com.leclowndu93150.thaumaturge.api.golems.tasks.Task;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityOwnedConstruct;
@@ -25,12 +26,14 @@ import java.util.function.UnaryOperator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
@@ -73,6 +76,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     private static final EntityDataAccessor<GolemProperties> DATA_PROPERTIES = syncedField(TTEntityDataSerializers.GOLEM_PROPERTIES.get());
     private static final EntityDataAccessor<GolemAccessoryStates> DATA_ACCESSORY_STATES = syncedField(TTEntityDataSerializers.GOLEM_ACCESSORY_STATES.get());
     private static final EntityDataAccessor<String> DATA_ACCESSORIES = syncedField(EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<String> DATA_DUTY = syncedField(EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Byte> DATA_COLOR = syncedField(EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> DATA_FLAGS = syncedField(EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Byte> DATA_CLIMBING = syncedField(EntityDataSerializers.BYTE);
@@ -123,6 +127,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     int rankXp;
 
     private final GolemHands hands = new GolemHands(this);
+    private final GolemDutyController dutyController = new GolemDutyController(this);
     private final GolemAccessoryStateHolder accessoryHolder = new GolemAccessoryStateHolder(this);
     private List<GolemAccessory> accessories = List.of();
     private @Nullable Task task;
@@ -151,6 +156,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         super.defineSynchedData(builder);
         builder.define(DATA_ACCESSORY_STATES, GolemAccessoryStates.EMPTY);
         builder.define(DATA_ACCESSORIES, "");
+        builder.define(DATA_DUTY, "");
         builder.define(DATA_CLIMBING, (byte) 0);
         builder.define(DATA_FLAGS, (byte) 0);
         builder.define(DATA_COLOR, (byte) 0);
@@ -159,6 +165,34 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     public List<GolemAccessory> getAccessories() {
         return accessories;
+    }
+
+    @Override
+    public Optional<Identifier> duty() {
+        String stored = entityData.get(DATA_DUTY);
+        return stored.isEmpty() ? Optional.empty() : Optional.ofNullable(Identifier.tryParse(stored));
+    }
+
+    @Override
+    public boolean tryEnterDuty(ServerPlayer actor, Identifier duty, CompoundTag state) {
+        return dutyController.enter(actor, duty, state);
+    }
+
+    @Override
+    public boolean exitDuty(ServerPlayer actor) {
+        return dutyController.exit(actor);
+    }
+
+    void setDutyPresentation(@Nullable Identifier id) {
+        entityData.set(DATA_DUTY, id == null ? "" : id.toString());
+    }
+
+    @Override
+    public void setOwner(LivingEntity owner) {
+        if (!isOwner(owner)) {
+            dutyController.leave(StopReason.OWNER_CHANGED);
+        }
+        super.setOwner(owner);
     }
 
     public GolemAccessoryStates syncedAccessoryStates() {
@@ -303,9 +337,15 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public void tick() {
+        if (!level().isClientSide()) {
+            dutyController.validate();
+        }
         super.tick();
         if (!isRemoved()) {
             runUpkeep();
+            if (!level().isClientSide()) {
+                dutyController.tick();
+            }
         }
     }
 
@@ -390,6 +430,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     @Override
     public void die(DamageSource source) {
+        dutyController.leave(StopReason.REMOVED);
         releaseTask();
         super.die(source);
         spillHeldItems();
@@ -470,6 +511,10 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     public void assignJob(@Nullable Task job) {
+        if (job != null && duty().isPresent()) {
+            job.release();
+            return;
+        }
         Task previous = task;
         task = job;
         if (previous != job) {
@@ -520,6 +565,9 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     @Override
     public void onRemovedFromLevel() {
         releaseTaskOnServer();
+        if (!level().isClientSide()) {
+            dutyController.leave(getRemovalReason() != null && getRemovalReason().shouldDestroy() ? StopReason.REMOVED : StopReason.UNLOADED);
+        }
         super.onRemovedFromLevel();
     }
 
@@ -536,6 +584,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         writeBuildAndHome(output);
         writeProgress(output);
         writeAccessories(output);
+        dutyController.save(output);
     }
 
     private void writeBuildAndHome(ValueOutput output) {
@@ -571,6 +620,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
         accessoryHolder.load(input.childOrEmpty(KEY_ACCESSORY_STATES), accessories);
         syncAccessoryStates();
         recomputeStats();
+        dutyController.load(input);
     }
 
     private void readBuildAndHome(ValueInput input) {
@@ -608,12 +658,21 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     void dropAccessories(ServerLevel level) {
+        dutyController.leave(StopReason.ACCESSORY_REMOVED);
         for (GolemAccessory accessory : List.copyOf(accessories)) {
             dropReturnedAccessory(level, accessoryHolder.detach(accessory));
         }
         accessoryHolder.clear();
         entityData.set(DATA_ACCESSORIES, "");
         syncAccessoryStates();
+    }
+
+    void removeAccessory(GolemAccessory accessory) {
+        accessoryHolder.detach(accessory);
+        storeAccessories(accessories.stream().filter(worn -> !worn.id().equals(accessory.id())).toList());
+        dutyController.validate();
+        syncAccessoryStates();
+        recomputeStats();
     }
 
     private void dropReturnedAccessory(ServerLevel level, ItemStack returned) {
@@ -675,7 +734,7 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
 
     private void refreshStats(boolean rebuildBehaviour) {
         GolemStatSheet.apply(this);
-        if (isTrailingOwner()) {
+        if (isTrailingOwner() || duty().isPresent()) {
             clearHome();
         } else {
             setHomeTo(hasHome() ? getHomePosition() : blockPosition(), GolemStatSheet.homeRadius(this));

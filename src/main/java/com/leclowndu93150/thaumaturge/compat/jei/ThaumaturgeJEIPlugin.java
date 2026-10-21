@@ -190,6 +190,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         categories.add(new ArcaneWorkbenchCategory(helpers.getGuiHelper()));
         categories.add(new CrucibleCategory(helpers.getGuiHelper()));
         categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RECIPE_TYPE, "gui.thaumaturge.recipe_type.infusion"));
+        categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.DYNAMIC_RECIPE_TYPE, "gui.thaumaturge.recipe_type.infusion"));
         categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.ENCHANTMENT_RECIPE_TYPE, "gui.thaumaturge.recipe_type.infusion_enchantment"));
         categories.add(new InfusionCategory<>(helpers.getGuiHelper(), InfusionCategory.RUNIC_RECIPE_TYPE, "gui.thaumaturge.recipe_type.runic_augment"));
         categories.add(new DustTriggerCategory(helpers.getGuiHelper()));
@@ -211,6 +212,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         addTypedRecipes(registration, ArcaneWorkbenchCategory.RECIPE_TYPE, TTRecipeTypes.ARCANE.get(), null);
         addTypedRecipes(registration, CrucibleCategory.RECIPE_TYPE, TTRecipeTypes.CRUCIBLE.get(), null);
         addTypedRecipes(registration, InfusionCategory.RECIPE_TYPE, TTRecipeTypes.INFUSION.get(), null);
+        addTypedRecipes(registration, InfusionCategory.DYNAMIC_RECIPE_TYPE, TTRecipeTypes.DYNAMIC_INFUSION.get(), null);
         addTypedRecipes(registration, InfusionCategory.ENCHANTMENT_RECIPE_TYPE, TTRecipeTypes.INFUSION_ENCHANTMENT.get(), null);
         addTypedRecipes(registration, InfusionCategory.RUNIC_RECIPE_TYPE, TTRecipeTypes.RUNIC_AUGMENT.get(), null);
         registerAspectCompositions(registration);
@@ -256,6 +258,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addCraftingStation(RecipeTypes.CRAFTING, TTItems.ARCANE_WORKBENCH.get());
         registration.addCraftingStation(ArcaneWorkbenchCategory.RECIPE_TYPE, TTItems.ARCANE_WORKBENCH.get());
         registration.addCraftingStation(InfusionCategory.RECIPE_TYPE, TTItems.INFUSION_MATRIX.get());
+        registration.addCraftingStation(InfusionCategory.DYNAMIC_RECIPE_TYPE, TTItems.INFUSION_MATRIX.get());
         registration.addCraftingStation(InfusionCategory.ENCHANTMENT_RECIPE_TYPE, TTItems.INFUSION_MATRIX.get());
         registration.addCraftingStation(InfusionCategory.RUNIC_RECIPE_TYPE, TTItems.INFUSION_MATRIX.get());
         registration.addCraftingStation(DustTriggerCategory.RECIPE_TYPE, TTItems.SALIS_MUNDUS.get());

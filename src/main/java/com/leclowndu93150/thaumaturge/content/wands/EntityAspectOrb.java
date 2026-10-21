@@ -3,6 +3,10 @@ package com.leclowndu93150.thaumaturge.content.wands;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
+import com.leclowndu93150.thaumaturge.api.wands.AspectOrbPickupEvent;
+import com.leclowndu93150.thaumaturge.api.wands.AspectOrbSnapshot;
+import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
+import com.leclowndu93150.thaumaturge.api.wands.WandSlot;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,6 +29,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jspecify.annotations.Nullable;
 
 public class EntityAspectOrb extends Entity {
@@ -66,6 +72,7 @@ public class EntityAspectOrb extends Entity {
     private int age = DEFAULT_AGE;
     private int health = DEFAULT_HEALTH;
     private int value = DEFAULT_VALUE;
+    private boolean collecting;
     private @Nullable Player followTarget;
 
     public EntityAspectOrb(EntityType<? extends EntityAspectOrb> type, Level level) {
@@ -91,6 +98,12 @@ public class EntityAspectOrb extends Entity {
         String text = entityData.get(DATA_ASPECT);
         Identifier id = Identifier.tryParse(text.indexOf(':') >= 0 ? text : TTIds.MODID + ":" + text);
         return id == null ? TTAspects.AER : ResourceKey.create(IAspect.REGISTRY_KEY, id);
+    }
+
+    boolean hasKnownAspect() {
+        String text = entityData.get(DATA_ASPECT);
+        Identifier id = Identifier.tryParse(text.indexOf(':') >= 0 ? text : TTIds.MODID + ":" + text);
+        return id != null && level().registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY).get(ResourceKey.create(IAspect.REGISTRY_KEY, id)).isPresent();
     }
 
     public void setAspect(ResourceKey<IAspect> aspect) {
@@ -180,18 +193,65 @@ public class EntityAspectOrb extends Entity {
 
     @Override
     public void playerTouch(Player player) {
-        if (!(player instanceof ServerPlayer) || player.takeXpDelay != 0 || !TTAspects.PRIMALS.contains(getAspect())) {
-            return;
+        if (player instanceof ServerPlayer serverPlayer) {
+            collect(serverPlayer);
         }
-        ItemStack wand = findWand(player);
-        if (wand.isEmpty()) {
-            return;
+    }
+
+    public AspectOrbSnapshot pickupSnapshot(ServerPlayer player) {
+        return new AspectOrbSnapshot(getAspect(), value, !collecting && canCollect(player));
+    }
+
+    private boolean canCollect(ServerPlayer player) {
+        return level() instanceof ServerLevel serverLevel && serverLevel.getServer().isSameThread() && player.level() == serverLevel && serverLevel.getEntity(getUUID()) == this && isAlive()
+                && age < MAX_AGE && value > 0 && value <= Integer.MAX_VALUE / WandEconomy.CENTIVIS_PER_VIS && player.isAlive() && !player.isSpectator() && player.takeXpDelay == 0
+                && player.distanceToSqr(this) <= 9.0 && hasKnownAspect() && TTAspects.PRIMALS.contains(getAspect());
+    }
+
+    public int collect(ServerPlayer player) {
+        if (collecting || !canCollect(player)) {
+            return 0;
         }
-        WandVisHelper.topUp(wand, getAspect(), value, true);
-        player.takeXpDelay = PICKUP_DELAY_TICKS;
-        player.take(this, PICKUP_ITEM_COUNT);
-        playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, PICKUP_VOLUME, PICKUP_PITCH_FACTOR * ((random.nextFloat() - random.nextFloat()) * PICKUP_PITCH_SPREAD + PICKUP_PITCH_BASE));
-        discard();
+        collecting = true;
+        try {
+            AspectOrbSnapshot source = new AspectOrbSnapshot(getAspect(), value, true);
+            int originalCredit = value * WandEconomy.CENTIVIS_PER_VIS;
+            for (int slotIndex = 0; slotIndex < 9; slotIndex++) {
+                WandSlot slot = WandSlot.playerInventory(player, slotIndex);
+                var initialQuote = WandAccess.quoteCharge(player, slot, source.aspect(), originalCredit);
+                if (initialQuote.isEmpty() || initialQuote.get().acceptedCentivis() == 0) {
+                    continue;
+                }
+                ItemStack recipient = slot.stack();
+                ItemStack before = recipient.copy();
+                int capacity = WandAccess.capacityCentivis(recipient, source.aspect()).orElse(0);
+                AspectOrbPickupEvent event = new AspectOrbPickupEvent(player, recipient, source, capacity, originalCredit);
+                NeoForge.EVENT_BUS.post(event);
+                int credit = event.getCreditCentivis();
+                if (credit <= 0 || !canCollect(player) || value != source.vis() || !getAspect().equals(source.aspect()) || slot.stack() != recipient || !ItemStack.matches(before, recipient)) {
+                    return 0;
+                }
+                var quote = WandAccess.quoteCharge(player, slot, source.aspect(), credit);
+                if (quote.isEmpty() || quote.get().acceptedCentivis() != credit) {
+                    continue;
+                }
+                try (Transaction transaction = Transaction.openRoot()) {
+                    if (WandAccess.tryCharge(player, slot, quote.get(), transaction) != credit || !canCollect(player) || value != source.vis() || !getAspect().equals(source.aspect())
+                            || slot.stack() != recipient) {
+                        return 0;
+                    }
+                    transaction.commit();
+                }
+                player.takeXpDelay = PICKUP_DELAY_TICKS;
+                player.take(this, PICKUP_ITEM_COUNT);
+                playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, PICKUP_VOLUME, PICKUP_PITCH_FACTOR * ((random.nextFloat() - random.nextFloat()) * PICKUP_PITCH_SPREAD + PICKUP_PITCH_BASE));
+                discard();
+                return credit;
+            }
+            return 0;
+        } finally {
+            collecting = false;
+        }
     }
 
     @Override

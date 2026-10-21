@@ -1,0 +1,9 @@
+{
+  "type": "thaumaturge:minecraft_enchantment_infusion",
+  "enchantment": "minecraft:sharpness",
+  "catalyst": "minecraft:diamond_sword",
+  "components": ["minecraft:diamond"],
+  "aspects": [{"aspect": "thaumaturge:aer", "amount": 10}],
+  "instability": 4,
+  "max_level": 5
+}

@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.registry;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.recipe.DustTrigger;
+import com.leclowndu93150.thaumaturge.api.recipe.DynamicInfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionEnchantmentRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipe;
 import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipeDisplay;
@@ -71,6 +72,13 @@ public final class TTRecipeTypes {
     });
 
     private TTRecipeTypes() {}
+
+    public static final DeferredHolder<RecipeType<?>, RecipeType<DynamicInfusionRecipe>> DYNAMIC_INFUSION = RECIPE_TYPES.register("dynamic_infusion", () -> new RecipeType<DynamicInfusionRecipe>() {
+        @Override
+        public String toString() {
+            return "thaumaturge:dynamic_infusion";
+        }
+    });
 
     public static final DeferredRegister<RecipeDisplay.Type<?>> RECIPE_DISPLAYS = DeferredRegister.create(Registries.RECIPE_DISPLAY, TTIds.MODID);
 

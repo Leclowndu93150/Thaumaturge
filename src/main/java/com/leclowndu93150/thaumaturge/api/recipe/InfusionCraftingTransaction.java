@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -70,6 +71,70 @@ public final class InfusionCraftingTransaction {
         return BINDING.get().start(context, player, expectedRecipeId);
     }
 
+    /** Reads the loaded pedestals without reserving or consuming their items. */
+    public static StagedInspection inspectStaged(InfusionMatrixContext context, ServerPlayer player) {
+        return BINDING.get().inspectStaged(context, player);
+    }
+
+    /** Reports matrix activity without disclosing the current recipe or its ingredients. */
+    public static Status status(InfusionMatrixContext context, ServerPlayer player) {
+        return BINDING.get().status(context, player);
+    }
+
+    /** Inspects a granted device using the owner's current authoritative knowledge. */
+    public static StagedInspection inspectStaged(InfusionDelegation.Context context) {
+        return BINDING.get().inspectStaged(context);
+    }
+
+    /** Reports activity only while the device's server-owned grant is valid. */
+    public static Status status(InfusionDelegation.Context context) {
+        return BINDING.get().status(context);
+    }
+
+    /** Revalidates the grant, current knowledge and inspected layout before starting. */
+    public static Failure startDelegated(InfusionDelegation.Context context, StagedInspection expected) {
+        return BINDING.get().startDelegated(context, Objects.requireNonNull(expected, "expected"));
+    }
+
+    /** Starts a previously inspected layout only if its items and matrix revision still match. */
+    public static Failure start(InfusionMatrixContext context, ServerPlayer player, StagedInspection expected) {
+        return BINDING.get().start(context, player, Objects.requireNonNull(expected, "expected"), null);
+    }
+
+    /** Applies the named trusted server policy exactly once to a successful staged start. */
+    public static Failure startAutomated(InfusionMatrixContext context, ServerPlayer player, StagedInspection expected, Identifier policy) {
+        return BINDING.get().start(context, player, Objects.requireNonNull(expected, "expected"), Objects.requireNonNull(policy, "policy"));
+    }
+
+    public enum State {
+        UNAVAILABLE, INACTIVE, IDLE, CRAFTING
+    }
+
+    public record Status(Failure failure, State state, long revision) {
+        public boolean isCrafting() {
+            return failure == Failure.NONE && state == State.CRAFTING;
+        }
+    }
+
+    /** A copied layout and revision. Only successful inspections contain pedestal contents. */
+    public record StagedInspection(Inspection inspection, long revision, ItemStack catalyst, List<ItemStack> components) {
+        public StagedInspection {
+            Objects.requireNonNull(inspection, "inspection");
+            catalyst = catalyst.copy();
+            components = components.stream().map(ItemStack::copy).toList();
+        }
+
+        @Override
+        public ItemStack catalyst() {
+            return catalyst.copy();
+        }
+
+        @Override
+        public List<ItemStack> components() {
+            return components.stream().map(ItemStack::copy).toList();
+        }
+    }
+
     /**
      * Binds the implementation. Called once at mod init by Thaumaturge; addons must not call this.
      *
@@ -105,7 +170,13 @@ public final class InfusionCraftingTransaction {
         /** The staged items no longer resolve to the expected recipe. */
         INGREDIENTS_CHANGED,
         /** The recipe still matched but the matrix did not start the craft. */
-        NOT_STARTED
+        NOT_STARTED,
+        /** The actor may not interact with this matrix. */
+        ACCESS_DENIED,
+        /** The automation policy is unknown or rejected the start. */
+        INVALID_AUTOMATION_POLICY,
+        /** The device grant or authoritative owner knowledge is unavailable. */
+        DELEGATION_DENIED
     }
 
     /**
@@ -193,6 +264,18 @@ public final class InfusionCraftingTransaction {
      * @since 1.0.0
      */
     public interface Bindings {
+        StagedInspection inspectStaged(InfusionDelegation.Context context);
+
+        Status status(InfusionDelegation.Context context);
+
+        Failure startDelegated(InfusionDelegation.Context context, StagedInspection expected);
+
+        StagedInspection inspectStaged(InfusionMatrixContext context, ServerPlayer player);
+
+        Status status(InfusionMatrixContext context, ServerPlayer player);
+
+        Failure start(InfusionMatrixContext context, ServerPlayer player, StagedInspection expected, @Nullable Identifier policy);
+
         /**
          * Implements {@link InfusionCraftingTransaction#inspect}.
          *

@@ -76,6 +76,9 @@ final class GolemBehaviours {
         if (fighter) {
             goals.addGoal(PRIORITY_MELEE, new MeleeAttackGoal(golem, MELEE_SPEED, false));
         }
+        if (golem.duty().isPresent()) {
+            return;
+        }
         if (following) {
             goals.addGoal(PRIORITY_FOLLOW, new ConstructFollowOwnerGoal(golem, FOLLOW_SPEED, FOLLOW_START, FOLLOW_STOP));
         } else {

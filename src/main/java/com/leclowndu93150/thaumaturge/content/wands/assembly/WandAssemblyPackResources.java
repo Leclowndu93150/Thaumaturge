@@ -6,6 +6,11 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.Thaumaturge;
 import com.leclowndu93150.thaumaturge.api.wands.WandCap;
 import com.leclowndu93150.thaumaturge.api.wands.WandRod;
+import com.leclowndu93150.thaumaturge.api.wands.WandAssemblyPart;
+import com.leclowndu93150.thaumaturge.api.wands.WandAssemblyPart.Variant;
+import com.leclowndu93150.thaumaturge.api.wands.RegisterWandAssemblyEvent;
+import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
+import com.mojang.serialization.JsonOps;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandCap;
 import com.leclowndu93150.thaumaturge.content.wands.ItemWandRod;
 import com.leclowndu93150.thaumaturge.content.wands.WandEconomy;
@@ -16,10 +21,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
@@ -27,6 +38,8 @@ import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jspecify.annotations.Nullable;
 
 public final class WandAssemblyPackResources implements PackResources {
@@ -46,39 +59,57 @@ public final class WandAssemblyPackResources implements PackResources {
 
     private static Map<Identifier, byte[]> generate() {
         Map<Identifier, byte[]> out = new LinkedHashMap<>();
-        Map<Identifier, Identifier> capItems = new LinkedHashMap<>();
-        Map<Identifier, Identifier> rodItems = new LinkedHashMap<>();
+        RegisterWandAssemblyEvent registration = new RegisterWandAssemblyEvent();
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ItemWandCap capItem && capItem.cap() != null) {
                 Identifier partId = TTWandParts.caps().getKey(capItem.cap());
                 if (partId != null) {
-                    capItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
+                    registration.registerCap(new WandAssemblyPart<>(ResourceKey.create(WandCap.REGISTRY_KEY, partId), Ingredient.of(item), List.of(), Set.of(Variant.values()), true));
                 }
             } else if (item instanceof ItemWandRod rodItem && rodItem.rod() != null) {
                 Identifier partId = TTWandParts.rods().getKey(rodItem.rod());
                 if (partId != null) {
-                    rodItems.putIfAbsent(partId, BuiltInRegistries.ITEM.getKey(item));
+                    registration.registerRod(new WandAssemblyPart<>(ResourceKey.create(WandRod.REGISTRY_KEY, partId), Ingredient.of(item), List.of(),
+                            rodItem.rod().staff() ? Set.of(Variant.STAFF) : Set.of(Variant.WAND, Variant.SCEPTRE), true));
                 }
             }
         }
         Identifier woodRod = TTIds.rl("wood");
         if (TTWandParts.rods().containsKey(woodRod)) {
-            rodItems.putIfAbsent(woodRod, BuiltInRegistries.ITEM.getKey(Items.STICK));
+            registration.registerRod(new WandAssemblyPart<>(ResourceKey.create(WandRod.REGISTRY_KEY, woodRod), Ingredient.of(Items.STICK), List.of(), Set.of(Variant.WAND, Variant.SCEPTRE), true));
         }
+        NeoForge.EVENT_BUS.post(registration);
+        registration.close();
+        Map<Identifier, WandAssemblyPart<WandCap>> capItems = registration.caps();
+        Map<Identifier, WandAssemblyPart<WandRod>> rodItems = registration.rods();
+        capItems.keySet().forEach(id -> {
+            if (!TTWandParts.caps().containsKey(id)) {
+                throw new IllegalArgumentException("Unknown wand assembly cap: " + id);
+            }
+        });
+        rodItems.keySet().forEach(id -> {
+            if (!TTWandParts.rods().containsKey(id)) {
+                throw new IllegalArgumentException("Unknown wand assembly rod: " + id);
+            }
+        });
 
         Identifier ironCap = TTIds.rl("iron");
-        for (Map.Entry<Identifier, Identifier> capEntry : capItems.entrySet()) {
+        for (var capEntry : capItems.entrySet()) {
             WandCap cap = TTWandParts.caps().getValue(capEntry.getKey());
-            for (Map.Entry<Identifier, Identifier> rodEntry : rodItems.entrySet()) {
+            for (var rodEntry : rodItems.entrySet()) {
                 WandRod rod = TTWandParts.rods().getValue(rodEntry.getKey());
+                if (!capEntry.getValue().enabled() || !rodEntry.getValue().enabled()) {
+                    continue;
+                }
                 boolean starterCombo = capEntry.getKey().equals(ironCap) && rodEntry.getKey().equals(woodRod);
-                if (!starterCombo) {
+                Variant variant = rod.staff() ? Variant.STAFF : Variant.WAND;
+                if (!starterCombo && capEntry.getValue().variants().contains(variant) && rodEntry.getValue().variants().contains(variant)) {
                     int vis = WandEconomy.PRIMAL_COUNT * cap.craftCost() * rod.craftCost();
                     out.put(recipeFile("assembly", capEntry.getKey(), rodEntry.getKey()), recipe(capEntry, rodEntry, false, vis, assemblyGate(rod)));
                 }
-                if (!rod.staff()) {
+                if (!rod.staff() && capEntry.getValue().variants().contains(Variant.SCEPTRE) && rodEntry.getValue().variants().contains(Variant.SCEPTRE)) {
                     int vis = WandEconomy.PRIMAL_COUNT * (int) (cap.craftCost() * rod.craftCost() * WandEconomy.SCEPTRE_CRAFT_COST_FACTOR);
-                    out.put(recipeFile("sceptre", capEntry.getKey(), rodEntry.getKey()), recipe(capEntry, rodEntry, true, vis, TTIds.rl("sceptre").toString()));
+                    out.put(recipeFile("sceptre", capEntry.getKey(), rodEntry.getKey()), recipe(capEntry, rodEntry, true, vis, assemblyGate(rod)));
                 }
             }
         }
@@ -93,14 +124,19 @@ public final class WandAssemblyPackResources implements PackResources {
 
     private static Identifier recipeFile(String kind, Identifier capId, Identifier rodId) {
         boolean modPair = capId.getNamespace().equals(TTIds.MODID) && rodId.getNamespace().equals(TTIds.MODID);
-        String name = modPair ? capId.getPath() + "_" + rodId.getPath() : capId.getNamespace() + "_" + capId.getPath() + "_" + rodId.getNamespace() + "_" + rodId.getPath();
+        String name = modPair ? capId.getPath() + "_" + rodId.getPath() : "external/" + encode(capId) + "/" + encode(rodId);
         return TTIds.rl("recipe/wand/" + kind + "/" + name + ".json");
     }
 
-    private static byte[] recipe(Map.Entry<Identifier, Identifier> cap, Map.Entry<Identifier, Identifier> rod, boolean sceptre, int vis, String gate) {
+    private static String encode(Identifier id) {
+        return java.util.HexFormat.of().formatHex(id.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static byte[] recipe(Map.Entry<Identifier, WandAssemblyPart<WandCap>> cap, Map.Entry<Identifier, WandAssemblyPart<WandRod>> rod, boolean sceptre, int vis, String gate) {
         JsonObject key = new JsonObject();
-        key.addProperty("C", cap.getValue().toString());
-        key.addProperty("R", rod.getValue().toString());
+        var ops = RegistryOps.create(JsonOps.INSTANCE, RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+        key.add("C", Ingredient.CODEC.encodeStart(ops, cap.getValue().ingredient()).getOrThrow());
+        key.add("R", Ingredient.CODEC.encodeStart(ops, rod.getValue().ingredient()).getOrThrow());
         JsonArray pattern = new JsonArray();
         if (sceptre) {
             key.addProperty("P", BuiltInRegistries.ITEM.getKey(TTItems.PRIMAL_CHARM.get()).toString());
@@ -112,8 +148,17 @@ public final class WandAssemblyPackResources implements PackResources {
             pattern.add(" R ");
             pattern.add("C  ");
         }
+        List<ResearchGate> gates = new ArrayList<>();
+        gates.add(new ResearchGate(Identifier.parse(gate), Optional.empty(), false));
+        gates.addAll(cap.getValue().research());
+        gates.addAll(rod.getValue().research());
+        if (sceptre) {
+            gates.add(new ResearchGate(TTIds.rl("sceptre"), Optional.empty(), false));
+        }
         JsonObject research = new JsonObject();
-        research.addProperty("entry", gate);
+        JsonArray requirements = new JsonArray();
+        gates.stream().distinct().forEach(requirement -> requirements.add(ResearchGate.CODEC.encodeStart(JsonOps.INSTANCE, requirement).getOrThrow()));
+        research.add("all_of", requirements);
         JsonObject parts = new JsonObject();
         parts.addProperty("cap", cap.getKey().toString());
         parts.addProperty("rod", rod.getKey().toString());

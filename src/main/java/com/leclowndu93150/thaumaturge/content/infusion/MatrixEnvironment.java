@@ -29,7 +29,8 @@ public record MatrixEnvironment(List<BlockPos> pedestals, int cycleTime, float c
         List<BlockPos> spots = scanPedestals(level, matrix);
         Stream<InfusionModifier> fromPedestals = spots.stream().map(spot -> modifier(level.getBlockState(spot), InfusionDataMaps.PEDESTAL));
         Stream<InfusionModifier> fromPillars = Stream.of(pillarModifier(level, altarOf(matrix)));
-        Stream<InfusionModifier> fromUpgrades = UPGRADE_OFFSETS.stream().map(offset -> modifier(level.getBlockState(matrix.offset(offset)), InfusionDataMaps.MATRIX_UPGRADE));
+        Stream<InfusionModifier> fromUpgrades = UPGRADE_OFFSETS.stream().map(matrix::offset).filter(level::hasChunkAt)
+                .map(position -> modifier(level.getBlockState(position), InfusionDataMaps.MATRIX_UPGRADE));
         List<InfusionModifier> modifiers = Stream.of(fromPedestals, fromPillars, fromUpgrades).flatMap(stream -> stream).filter(Objects::nonNull).toList();
         int cycle = BASE_CYCLE_TIME;
         float cost = BASE_COST_MULTIPLIER;
@@ -45,6 +46,9 @@ public record MatrixEnvironment(List<BlockPos> pedestals, int cycleTime, float c
 
     public static boolean validLocation(Level level, BlockPos matrix) {
         BlockPos altar = altarOf(matrix);
+        if (!level.hasChunkAt(matrix) || !level.hasChunkAt(altar) || CORNERS.stream().anyMatch(corner -> !level.hasChunkAt(altar.offset(corner)))) {
+            return false;
+        }
         boolean pedestalBelow = level.getBlockState(altar).getBlock() instanceof BlockPedestal;
         return pedestalBelow && cornerBlocks(level, altar).stream().allMatch(BlockPillar.class::isInstance);
     }

@@ -3,7 +3,9 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
+import com.leclowndu93150.thaumaturge.api.recipe.DynamicInfusionRecipe;
 import com.leclowndu93150.thaumaturge.api.recipe.IInfusionRecipe;
+import com.leclowndu93150.thaumaturge.api.recipe.InfusionRecipePreview;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientRenderer;
 import com.leclowndu93150.thaumaturge.compat.jei.ingredient.AspectIngredientType;
@@ -17,6 +19,7 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -44,6 +47,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> implements IRecipeCategory<RecipeHolder<R>> {
     public static final IRecipeHolderType<InfusionRecipe> RECIPE_TYPE = IRecipeHolderType.create(TTRecipeTypes.INFUSION.get());
+    public static final IRecipeHolderType<DynamicInfusionRecipe> DYNAMIC_RECIPE_TYPE = IRecipeHolderType.create(TTRecipeTypes.DYNAMIC_INFUSION.get());
     public static final IRecipeHolderType<InfusionEnchantmentRecipe> ENCHANTMENT_RECIPE_TYPE = IRecipeHolderType.create(TTRecipeTypes.INFUSION_ENCHANTMENT.get());
     public static final IRecipeHolderType<InfusionRunicAugmentRecipe> RUNIC_RECIPE_TYPE = IRecipeHolderType.create(TTRecipeTypes.RUNIC_AUGMENT.get());
 
@@ -125,11 +129,30 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> holder, IFocusGroup focuses) {
         R recipe = holder.value();
-        List<AspectInstance> aspects = recipe.aspects().sortedByAmount();
-
-        builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).add(recipe.resultItem());
-        addIngredientSlot(builder, CENTER_X, CENTER_Y, recipe.catalyst());
-        addRingSlots(builder, recipe.components());
+        List<AspectInstance> aspects;
+        if (recipe instanceof DynamicInfusionRecipe dynamic) {
+            Optional<InfusionRecipePreview> preview = preview(dynamic);
+            if (preview.isEmpty()) {
+                return;
+            }
+            InfusionRecipePreview display = preview.get();
+            aspects = display.essentia().sortedByAmount();
+            builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).add(display.output());
+            builder.addInputSlot(CENTER_X, CENTER_Y).add(display.input().catalyst());
+            List<ItemStack> components = display.input().components();
+            double step = FULL_TURN_DEGREES / components.size();
+            for (int index = 0; index < components.size(); index++) {
+                double angle = Math.toRadians(RING_START_DEGREES + index * step);
+                int x = CENTER_X + (int) (RING_RADIUS * Math.cos(angle));
+                int y = CENTER_Y + (int) (RING_RADIUS * Math.sin(angle));
+                builder.addInputSlot(x, y).add(components.get(index));
+            }
+        } else {
+            aspects = recipe.aspects().sortedByAmount();
+            builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).add(recipe.resultItem());
+            addIngredientSlot(builder, CENTER_X, CENTER_Y, recipe.catalyst());
+            addRingSlots(builder, recipe.components());
+        }
         addAspectSlots(builder, aspects);
 
         addHiddenInputs(builder, aspects, PhialItem::makeFilled);
@@ -153,8 +176,11 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
         PLATE.draw(graphics, PLATE_X, PLATE_Y);
 
         Font font = Minecraft.getInstance().font;
-        Component label = InstabilityLevel.forInstability(recipe.instability()).label();
-        graphics.text(font, label, INSTABILITY_CENTER_X - font.width(label) / 2, INSTABILITY_Y, INSTABILITY_COLOR, false);
+        Optional<Integer> instability = recipe instanceof DynamicInfusionRecipe dynamic ? preview(dynamic).map(InfusionRecipePreview::instability) : Optional.of(recipe.instability());
+        instability.ifPresent(value -> {
+            Component label = InstabilityLevel.forInstability(value).label();
+            graphics.text(font, label, INSTABILITY_CENTER_X - font.width(label) / 2, INSTABILITY_Y, INSTABILITY_COLOR, false);
+        });
 
         if (!unlocked) {
             graphics.item(Items.BARRIER.getDefaultInstance(), LOCK_X, LOCK_Y);
@@ -163,6 +189,11 @@ public final class InfusionCategory<R extends Recipe<?> & IInfusionRecipe> imple
 
     private static boolean isOverLock(double mouseX, double mouseY) {
         return mouseX > LOCK_X && mouseX < LOCK_X + LOCK_SIZE && mouseY > LOCK_Y && mouseY < LOCK_Y + LOCK_SIZE;
+    }
+
+    private static Optional<InfusionRecipePreview> preview(DynamicInfusionRecipe recipe) {
+        var level = Minecraft.getInstance().level;
+        return level == null ? Optional.empty() : recipe.preview(level.registryAccess());
     }
 
     private static void addHiddenInputs(IRecipeLayoutBuilder builder, List<AspectInstance> aspects, Function<Holder<IAspect>, ItemStack> stackFactory) {

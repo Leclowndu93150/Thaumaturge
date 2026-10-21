@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.network;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.content.infusion.InfusionRecipePreviews;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -30,17 +31,18 @@ public final class ServerboundRecipeDisplayHandler {
                 return;
             RecipeManager manager = level.recipeAccess();
             ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, payload.recipeId());
-            List<RecipeDisplay> displays = manager.byKey(key).map(holder -> holder.value().display()).orElseGet(() -> groupDisplays(manager, payload.recipeId().toString()));
+            List<RecipeDisplay> displays = manager.byKey(key).map(holder -> InfusionRecipePreviews.displays(holder.value(), level.registryAccess()))
+                    .orElseGet(() -> groupDisplays(manager, payload.recipeId().toString(), level));
             if (!displays.isEmpty()) {
                 PacketDistributor.sendToPlayer(player, new ClientboundRecipeDisplayPayload(payload.recipeId(), displays));
             }
         });
     }
 
-    private static List<RecipeDisplay> groupDisplays(RecipeManager manager, String group) {
+    private static List<RecipeDisplay> groupDisplays(RecipeManager manager, String group, ServerLevel level) {
         List<RecipeDisplay> displays = new ArrayList<>();
         manager.getRecipes().stream().filter(holder -> group.equals(holder.value().group())).sorted(Comparator.comparing((RecipeHolder<?> holder) -> holder.id().identifier()))
-                .forEach(holder -> displays.addAll(holder.value().display()));
+                .forEach(holder -> displays.addAll(InfusionRecipePreviews.displays(holder.value(), level.registryAccess())));
         return displays;
     }
 
@@ -53,7 +55,7 @@ public final class ServerboundRecipeDisplayHandler {
             ContextMap displayContext = SlotDisplayContext.fromLevel(level);
             RecipeHolder<?> best = null;
             for (RecipeHolder<?> holder : level.recipeAccess().getRecipes()) {
-                List<RecipeDisplay> displays = holder.value().display();
+                List<RecipeDisplay> displays = InfusionRecipePreviews.displays(holder.value(), level.registryAccess());
                 if (displays.isEmpty())
                     continue;
                 ItemStack result = displays.get(0).result().resolveForFirstStack(displayContext);
@@ -68,7 +70,7 @@ public final class ServerboundRecipeDisplayHandler {
                     break;
             }
             if (best != null) {
-                PacketDistributor.sendToPlayer(player, new ClientboundItemRecipePayload(best.id().identifier(), best.value().display()));
+                PacketDistributor.sendToPlayer(player, new ClientboundItemRecipePayload(best.id().identifier(), InfusionRecipePreviews.displays(best.value(), level.registryAccess())));
             }
         });
     }

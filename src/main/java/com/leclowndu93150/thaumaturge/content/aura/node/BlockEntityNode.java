@@ -8,13 +8,22 @@ import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.IVisRelaySource;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeModifier;
 import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeSnapshot;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeChange;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeBehaviorState;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeBehavior;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeBehaviorContext;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeOperationContext;
+import com.leclowndu93150.thaumaturge.api.nodes.NodeResult;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.blockentity.AbstractSyncedBlockEntity;
 import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.UUIDUtil;
@@ -30,9 +39,22 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import net.neoforged.neoforge.transfer.transaction.SnapshotJournal;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jspecify.annotations.Nullable;
 
 public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspectContainer {
+    private static final AtomicLong REVISIONS = new AtomicLong();
+    private UUID identity = UUID.randomUUID();
+    private boolean legacyIdentity;
+    private boolean persistedIdentity;
+    private long revision = REVISIONS.incrementAndGet();
+    private @Nullable NodeBehaviorState behavior;
+    private boolean pendingUpdate;
+    private final MutationJournal mutationJournal = new MutationJournal();
+    private final NodeBehaviorRunner behaviorRunner = new NodeBehaviorRunner();
+    private boolean invokingBehavior;
+    private boolean transferReady = true;
     static final int LOCK_NONE = 0;
     static final int LOCK_BASIC = 1;
     static final int LOCK_ADVANCED = 2;
@@ -112,6 +134,168 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         return type;
     }
 
+    public NodeSnapshot snapshot() {
+        return new NodeSnapshot(identity, revision, held, aspectsBase, Optional.ofNullable(aspectsBaseOriginal), type, Optional.ofNullable(modifier), energized, lock != LOCK_NONE,
+                isJarring() || pendingUpdate || !transferReady, Optional.ofNullable(behavior));
+    }
+
+    public boolean hasLegacyIdentity() {
+        return legacyIdentity;
+    }
+
+    public boolean hasPersistedIdentity() {
+        return persistedIdentity;
+    }
+
+    boolean availableForApi() {
+        return transferReady;
+    }
+
+    void resumeTransfer() {
+        transferReady = true;
+        refreshIndex();
+    }
+
+    void suspendTransfer() {
+        transferReady = false;
+        if (level instanceof ServerLevel serverLevel) {
+            NodeLocationIndex.get(serverLevel).remove(worldPosition);
+        }
+    }
+
+    public void restoreSnapshot(NodeSnapshot snapshot) {
+        restore(snapshot);
+        persistedIdentity = false;
+        behaviorRunner.reset();
+        refreshIndex();
+        invalidateRefill();
+    }
+
+    private void restore(NodeSnapshot snapshot) {
+        identity = snapshot.identity();
+        legacyIdentity = false;
+        held = snapshot.current();
+        aspectsBase = snapshot.base();
+        aspectsBaseOriginal = snapshot.originalBase().orElse(null);
+        type = snapshot.type();
+        modifier = snapshot.modifier().orElse(null);
+        energized = snapshot.energized();
+        behavior = snapshot.behavior().orElse(null);
+    }
+
+    void update(NodeChange change, TransactionContext transaction) {
+        mutationJournal.updateSnapshots(transaction);
+        pendingUpdate = true;
+        held = change.current();
+        aspectsBase = change.base();
+        type = change.type();
+        modifier = change.modifier().orElse(null);
+        behavior = change.behavior().orElse(null);
+        revision = REVISIONS.incrementAndGet();
+    }
+
+    private final class MutationJournal extends SnapshotJournal<NodeSnapshot> {
+        @Override
+        protected NodeSnapshot createSnapshot() {
+            return snapshot();
+        }
+
+        @Override
+        protected void revertToSnapshot(NodeSnapshot snapshot) {
+            restore(snapshot);
+            revision = snapshot.revision();
+            pendingUpdate = false;
+        }
+
+        @Override
+        protected void onRootCommit(NodeSnapshot original) {
+            pendingUpdate = false;
+            refreshIndex();
+            invalidateRefill();
+            if (!invokingBehavior && !original.behavior().equals(Optional.ofNullable(behavior))) {
+                behaviorRunner.reset();
+                boolean sameType = original.behavior().isPresent() && behavior != null && original.behavior().get().id().equals(behavior.id())
+                        && original.behavior().get().version() == behavior.version();
+                if (!sameType) {
+                    notifyDetached(original);
+                    behaviorEvent(NodeBehavior.Event.ATTACH);
+                }
+            }
+        }
+    }
+
+    private void notifyDetached(NodeSnapshot original) {
+        if (original.behavior().isEmpty() || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        new NodeBehaviorRunner().invoke(new NodeBehaviorContext() {
+            @Override
+            public NodeSnapshot snapshot() {
+                return original;
+            }
+
+            @Override
+            public RandomSource random() {
+                return serverLevel.getRandom();
+            }
+
+            @Override
+            public NodeResult update(NodeChange change) {
+                return NodeResult.UNSUPPORTED;
+            }
+        }, original.behavior().get(), NodeBehavior.Event.DETACH);
+    }
+
+    public void behaviorEvent(NodeBehavior.Event event) {
+        if (behavior == null || invokingBehavior || pendingUpdate || !(level instanceof ServerLevel serverLevel) || NodeOperations.find(serverLevel, worldPosition) != this) {
+            return;
+        }
+        NodeSnapshot before = snapshot();
+        NodeChange[] staged = new NodeChange[1];
+        invokingBehavior = true;
+        try {
+            NodeBehaviorRunner.Result result = behaviorRunner.invoke(new NodeBehaviorContext() {
+                @Override
+                public NodeSnapshot snapshot() {
+                    return before;
+                }
+
+                @Override
+                public RandomSource random() {
+                    return serverLevel.getRandom();
+                }
+
+                @Override
+                public NodeResult update(NodeChange change) {
+                    if (event == NodeBehavior.Event.UNLOAD || event == NodeBehavior.Event.DETACH || event == NodeBehavior.Event.CAPTURE) {
+                        return NodeResult.UNSUPPORTED;
+                    }
+                    if (!NodeOperations.valid(change)) {
+                        return NodeResult.INVALID;
+                    }
+                    if (staged[0] != null) {
+                        return NodeResult.BUSY;
+                    }
+                    staged[0] = change;
+                    return NodeResult.SUCCESS;
+                }
+            }, behavior, event);
+            if (!result.success() || event == NodeBehavior.Event.UNLOAD || event == NodeBehavior.Event.CAPTURE || (staged[0] == null && result.state().equals(behavior))) {
+                return;
+            }
+            NodeChange change = staged[0] == null ? NodeChange.of(before) : staged[0];
+            change = new NodeChange(change.current(), change.base(), change.type(), change.modifier(), Optional.of(result.state()));
+            NodeOperationContext context = NodeOperationContext.server(serverLevel, worldPosition, behavior.id());
+            try (Transaction transaction = Transaction.openRoot()) {
+                if (NodeOperations.update(context, before.identity(), before.revision(), change, transaction) == NodeResult.SUCCESS) {
+                    transaction.commit();
+                }
+            }
+        } finally {
+            invokingBehavior = false;
+        }
+    }
+
     public void reclassify(NodeType nodeType) {
         type = nodeType;
         refreshIndex();
@@ -131,7 +315,19 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     @Override
     public void onLoad() {
         super.onLoad();
+        transferReady = NodeTransferOperations.reconcile(this);
+        if (!transferReady) {
+            return;
+        }
         refreshIndex();
+        behaviorRunner.reset();
+        behaviorEvent(NodeBehavior.Event.LOAD);
+    }
+
+    @Override
+    public void setRemoved() {
+        behaviorEvent(NodeBehavior.Event.UNLOAD);
+        super.setRemoved();
     }
 
     @Override
@@ -166,7 +362,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
 
     @Override
     public boolean accepts(Holder<IAspect> aspect) {
-        return true;
+        return transferReady;
     }
 
     public AspectList capacity() {
@@ -182,6 +378,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (amount <= 0) {
             return 0;
         }
+        if (!transferReady) {
+            return amount;
+        }
         int room = Math.max(0, aspectsBase.amountOf(aspect) - held.amountOf(aspect));
         if (room == 0) {
             return amount;
@@ -194,6 +393,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
 
     @Override
     public boolean drain(Holder<IAspect> aspect, int amount) {
+        if (!transferReady) {
+            return false;
+        }
         if (held.amountOf(aspect) < amount) {
             return false;
         }
@@ -219,7 +421,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void setEnergized(boolean value) {
-        if (value == energized) {
+        if (!transferReady || value == energized) {
             return;
         }
         energized = value;
@@ -244,6 +446,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void beginJarring(int ticks) {
+        if (!transferReady) {
+            return;
+        }
         jarring = ticks;
         changed();
     }
@@ -281,10 +486,11 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public int drainCentivis(Holder<IAspect> aspect, int amount, TransactionContext transaction) {
-        return energized ? centivis.drain(aspect, amount, transaction) : 0;
+        return transferReady && energized ? centivis.drain(aspect, amount, transaction) : 0;
     }
 
     void changed() {
+        revision = REVISIONS.incrementAndGet();
         if (inTick) {
             tickDirty = true;
         } else {
@@ -329,6 +535,9 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         if (!(tickLevel instanceof ServerLevel serverLevel)) {
             return;
         }
+        if (pendingUpdate || !transferReady) {
+            return;
+        }
         inTick = true;
         try {
             tickServer(serverLevel, pos);
@@ -337,8 +546,10 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         if (tickDirty) {
             tickDirty = false;
+            revision = REVISIONS.incrementAndGet();
             setChangedAndSync();
         }
+        behaviorEvent(NodeBehavior.Event.TICK);
     }
 
     private void tickServer(ServerLevel serverLevel, BlockPos pos) {
@@ -433,6 +644,7 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
         }
         lock = next;
         refillInterval = UNSET;
+        changed();
     }
 
     private static int lockBeneath(ServerLevel serverLevel, BlockPos below) {
@@ -478,12 +690,16 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     }
 
     public void burstIntoOrbs(ServerLevel serverLevel, BlockPos pos) {
+        if (!transferReady) {
+            return;
+        }
         NodeOrbs.burst(serverLevel, pos, held);
         held = AspectList.EMPTY;
+        changed();
     }
 
     public boolean drainToWand(ServerLevel serverLevel, Player player, ItemStack wand, int remainingUse) {
-        return NodeWandTap.tap(this, serverLevel, player, wand, remainingUse);
+        return transferReady && NodeWandTap.tap(this, serverLevel, player, wand, remainingUse);
     }
 
     void recordDrain(UUID player, int color) {
@@ -503,6 +719,19 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
+        output.store("Identity", UUIDUtil.CODEC, identity);
+        if (behavior != null) {
+            output.store("Behavior", NodeBehaviorState.CODEC, behavior);
+        }
+        writeNodeData(output);
+    }
+
+    @Override
+    protected void writeClientData(ValueOutput output) {
+        writeNodeData(output);
+    }
+
+    private void writeNodeData(ValueOutput output) {
         output.store(KEY_TYPE, NodeType.CODEC, type);
         if (modifier != null) {
             output.store(KEY_MODIFIER, NodeModifier.CODEC, modifier);
@@ -530,6 +759,12 @@ public class BlockEntityNode extends AbstractSyncedBlockEntity implements IAspec
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
+        Optional<UUID> savedIdentity = input.read("Identity", UUIDUtil.CODEC);
+        legacyIdentity = savedIdentity.isEmpty();
+        persistedIdentity = savedIdentity.isPresent();
+        identity = savedIdentity.orElseGet(UUID::randomUUID);
+        revision = REVISIONS.incrementAndGet();
+        behavior = input.read("Behavior", NodeBehaviorState.CODEC).orElse(null);
         type = input.read(KEY_TYPE, NodeType.CODEC).orElse(NodeType.NORMAL);
         modifier = input.read(KEY_MODIFIER, NodeModifier.CODEC).orElse(null);
         held = input.read(KEY_ASPECTS, AspectList.CODEC).orElse(AspectList.EMPTY);

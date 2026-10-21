@@ -4,6 +4,9 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeAccess;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessories;
 import com.leclowndu93150.thaumaturge.api.golems.accessory.GolemAccessory;
+import com.leclowndu93150.thaumaturge.api.golems.duty.GolemDuties;
+import com.leclowndu93150.thaumaturge.api.golems.duty.GolemDuty;
+import net.minecraft.nbt.CompoundTag;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -54,6 +57,9 @@ final class GolemOwnerActions {
     }
 
     private static void toggleFollow(EntityThaumaturgeGolem golem, Player player, InteractionHand hand) {
+        if (golem.duty().isPresent() && player instanceof ServerPlayer actor) {
+            golem.exitDuty(actor);
+        }
         boolean follow = !golem.isTrailingOwner();
         golem.setTrailingOwner(follow);
         golem.releaseTask();
@@ -75,12 +81,21 @@ final class GolemOwnerActions {
             return false;
         }
         GolemAccessory accessory = candidate.get();
+        Optional<GolemDuty> duty = GolemDuties.forAccessory(accessory.id());
+        if (duty.isPresent() && (golem.duty().isPresent() || !(player instanceof ServerPlayer) || golem.distanceToSqr(player) > 64)) {
+            return true;
+        }
         for (GolemAccessory worn : golem.getAccessories()) {
             if (worn.id().equals(accessory.id()) || accessory.group().excludes(worn.group())) {
                 return true;
             }
         }
+        CompoundTag state = duty.map(GolemDuty::initialState).orElseGet(CompoundTag::new);
         golem.fitAccessory(accessory, held);
+        if (duty.isPresent() && !golem.tryEnterDuty((ServerPlayer) player, duty.get().id(), state)) {
+            golem.removeAccessory(accessory);
+            return true;
+        }
         golem.playGolemSound(TTSounds.CLACK.get());
         held.shrink(1);
         player.swing(hand);

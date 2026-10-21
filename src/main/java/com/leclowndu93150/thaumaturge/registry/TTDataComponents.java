@@ -40,6 +40,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class TTDataComponents {
     public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, TTIds.MODID);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<com.leclowndu93150.thaumaturge.api.nodes.CapturedNode>> CAPTURED_NODE = DATA_COMPONENTS
+            .registerComponentType("captured_node", builder -> builder.persistent(com.leclowndu93150.thaumaturge.api.nodes.CapturedNode.CODEC));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<AspectList>> ASPECTS = DATA_COMPONENTS.registerComponentType("aspects",
             builder -> builder.persistent(AspectList.CODEC).networkSynchronized(AspectList.STREAM_CODEC));
 

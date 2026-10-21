@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -19,7 +20,9 @@ import org.jspecify.annotations.Nullable;
  * component by default and fortress helms gain it from their goggles upgrade; any other item becomes revealing gear by gaining the
  * component, including as a default component set by a datapack or KubeJS.
  *
- * <p>All queries are side-agnostic and read live equipment.
+ * <p>Addons may grant derived revealing properties through {@link RevealingEvent}, for example
+ * while an enchantment is present. These grants never write a permanent component.
+ * All queries are side-agnostic and read live equipment.
  *
  * @since 1.0.0
  */
@@ -55,7 +58,7 @@ public final class GogglesAccess {
      * @return whether the stack is revealing gear; false for an empty stack
      */
     public static boolean isRevealing(ItemStack stack) {
-        return !stack.isEmpty() && BINDING.get().isRevealing(stack);
+        return !stack.isEmpty() && (BINDING.get().isRevealing(stack) || NeoForge.EVENT_BUS.post(new RevealingEvent(stack)).isRevealing());
     }
 
     /**

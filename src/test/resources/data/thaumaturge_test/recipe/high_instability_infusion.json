@@ -1,0 +1,8 @@
+{
+  "type": "thaumaturge:infusion",
+  "catalyst": "minecraft:glass",
+  "components": ["minecraft:emerald"],
+  "aspects": [{"aspect": "thaumaturge:aer", "amount": 10}],
+  "instability": 100,
+  "result": {"id": "minecraft:diamond"}
+}

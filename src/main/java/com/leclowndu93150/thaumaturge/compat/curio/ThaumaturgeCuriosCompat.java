@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.compat.curio;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.api.items.IVisDiscountGear;
 import com.leclowndu93150.thaumaturge.api.items.RechargeAccess;
+import com.leclowndu93150.thaumaturge.api.items.VisDiscountAccess;
 import com.leclowndu93150.thaumaturge.compat.curio.client.CuriosityBandCurioRenderer;
 import com.leclowndu93150.thaumaturge.compat.curio.client.GoggleCurioRenderer;
 import com.leclowndu93150.thaumaturge.compat.curio.client.HoverHarnessCurioRenderer;
@@ -41,6 +42,11 @@ public final class ThaumaturgeCuriosCompat {
 
     public static void init(IEventBus modBus) {
         GogglesAccess.bindCurios(ThaumaturgeCuriosCompat::anyCurioMatches);
+        VisDiscountAccess.bindCurios((player, visitor) -> CuriosApi.getCuriosInventory(player).ifPresent(inventory -> {
+            for (SlotResult result : inventory.findCurios(stack -> !stack.isEmpty())) {
+                visitor.accept("curios:" + result.slotContext().identifier() + ":" + result.slotContext().index(), result.stack());
+            }
+        }));
         modBus.addListener(ThaumaturgeCuriosCompat::registerCurio);
         modBus.addListener(ThaumaturgeCuriosCompat::onClientSetup);
         NeoForge.EVENT_BUS.addListener(ThaumaturgeCuriosCompat::onItemAttributeModifier);
