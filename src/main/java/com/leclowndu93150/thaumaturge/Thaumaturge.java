@@ -23,7 +23,6 @@ import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
 import com.leclowndu93150.thaumaturge.api.wands.WandAccess;
 import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.compat.curio.ThaumaturgeCuriosCompat;
-import com.leclowndu93150.thaumaturge.config.TaintConfigMigration;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeServerConfig;
@@ -62,7 +61,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +115,6 @@ public final class Thaumaturge {
 
         LegacyRegistryAliases.register(modBus);
 
-        TaintConfigMigration.migrate(FMLPaths.CONFIGDIR.get().resolve(TTIds.MODID + "-common.toml"));
         container.registerConfig(ModConfig.Type.COMMON, ThaumaturgeCommonConfig.SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, ThaumaturgeClientConfig.SPEC);
         container.registerConfig(ModConfig.Type.SERVER, ThaumaturgeServerConfig.SPEC);
