@@ -18,6 +18,8 @@ final class HallRooms {
     private static final double DOOR_CENTER_Y = F + 3.5;
     private static final double DOOR_RADIUS = 3.6;
     private static final int DOOR_Z = 5;
+    private static final int LOCK_X = (int) DOOR_AXIS - 1;
+    private static final int LOCK_Y = (int) DOOR_CENTER_Y;
     private static final int HALL_MIN_X = 3;
     private static final int HALL_MAX_X = 28;
     private static final int HALL_MIN_Z = 6;
@@ -25,6 +27,8 @@ final class HallRooms {
     private static final int HALL_TOP = F + 9;
     private static final double HALL_CENTER_X = 16.0;
     private static final double HALL_CENTER_Z = 18.0;
+    private static final double NAVE_DOME_RISE = 3.5;
+    private static final int NAVE_COLUMN_TOP = HALL_TOP + (int) Math.ceil(NAVE_DOME_RISE);
     private static final int[] NAVE_PILLAR_X = {9, 22};
     private static final int[] NAVE_PILLAR_Z = {11, 17, 23};
     private static final int[][] NAVE_SPAWNS = {{13, 13}, {19, 13}, {13, 25}, {19, 25}};
@@ -60,13 +64,13 @@ final class HallRooms {
     static void nave(RoomCanvas canvas) {
         vestibule(canvas);
         canvas.carve(RoomShape.box(HALL_MIN_X, F + 1, HALL_MIN_Z, HALL_MAX_X, HALL_TOP, HALL_MAX_Z));
-        canvas.carve(RoomShape.dome(HALL_CENTER_X, HALL_TOP, HALL_CENTER_Z, 13.0, 3.5, 12.0));
+        canvas.carve(RoomShape.dome(HALL_CENTER_X, HALL_TOP, HALL_CENTER_Z, 13.0, NAVE_DOME_RISE, 12.0));
         canvas.fill(RoomShape.box(HALL_MIN_X, F, HALL_MIN_Z, HALL_MAX_X, F, HALL_MAX_Z), LabyrinthBlocks.inert());
         canvas.fill(RoomShape.annulus(HALL_CENTER_X, HALL_CENTER_Z, 7.0, 6.0, F, F), LabyrinthBlocks.obsidianTile());
         canvas.fill(RoomShape.cylinder(HALL_CENTER_X, HALL_CENTER_Z, 2.0, F, F), LabyrinthBlocks.tile());
         for (int x : NAVE_PILLAR_X) {
             for (int z : NAVE_PILLAR_Z) {
-                RoomKit.flaredColumn(canvas, x, z, x + 1, z + 1, F + 1, HALL_TOP);
+                RoomKit.footedColumn(canvas, x, z, x + 1, z + 1, F + 1, NAVE_COLUMN_TOP);
             }
         }
         landmarks(canvas, NAVE_SPAWNS);
@@ -106,7 +110,7 @@ final class HallRooms {
                         && y > F
                         && square(x + 0.5 - DOOR_AXIS) + square(y + 0.5 - DOOR_CENTER_Y) <= DOOR_RADIUS * DOOR_RADIUS,
                 LabyrinthBlocks.door());
-        canvas.marker(4, F + 2, 3, new LockMarker(Direction.EAST));
+        canvas.marker(LOCK_X, LOCK_Y, DOOR_Z, new LockMarker(Direction.NORTH));
     }
 
     private static void landmarks(RoomCanvas canvas, int[][] spawns) {

@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 final class SanctumRooms {
     private static final int PORTAL_X = 7;
     private static final int PORTAL_Z = 7;
+    private static final int OBELISK_Y = F + 3;
+    private static final int OBELISK_PILLARS = 4;
     private static final int SHAFT_TOP = F + 15;
     private static final int[][] SHAFTS = {{4, 4}, {10, 4}, {4, 10}, {10, 10}};
     private static final int[][] RING_PILLARS = {{3, 3}, {12, 3}, {3, 12}, {12, 12}};
@@ -56,7 +58,7 @@ final class SanctumRooms {
                     LabyrinthBlocks.starfield());
         }
         canvas.fill(RoomShape.octagon(RoomKit.MID, RoomKit.MID, 6.0, 4.0, F, F), LabyrinthBlocks.tile());
-        portalAltar(canvas, LabyrinthBlocks.obsidianTile(), F + 8);
+        portalAltar(canvas, LabyrinthBlocks.obsidianTile());
         RoomKit.glyph(canvas, 4, F + 3, 1, Direction.EAST);
         RoomKit.glyph(canvas, 11, F + 3, 14, Direction.WEST);
         RoomKit.glyph(canvas, 1, F + 3, 4, Direction.SOUTH);
@@ -104,15 +106,17 @@ final class SanctumRooms {
             RoomKit.glyph(
                     canvas, pillar[0], F + 3, pillar[1], pillar[0] < RoomKit.MID ? Direction.EAST : Direction.WEST);
         }
-        portalAltar(canvas, LabyrinthBlocks.tile(), F + 10);
+        portalAltar(canvas, LabyrinthBlocks.tile());
     }
 
-    private static void portalAltar(RoomCanvas canvas, BlockState plinth, int pillarTop) {
+    private static void portalAltar(RoomCanvas canvas, BlockState plinth) {
         canvas.fill(RoomShape.box(PORTAL_X - 1, F, PORTAL_Z - 1, PORTAL_X + 1, F, PORTAL_Z + 1), plinth);
         canvas.set(PORTAL_X, F, PORTAL_Z, LabyrinthBlocks.capstone());
         canvas.marker(PORTAL_X, F + 1, PORTAL_Z, EntryPortalMarker.INSTANCE);
-        canvas.set(PORTAL_X, F + 3, PORTAL_Z, LabyrinthBlocks.obelisk());
-        canvas.fill(RoomShape.box(PORTAL_X, F + 4, PORTAL_Z, PORTAL_X, pillarTop, PORTAL_Z), LabyrinthBlocks.pillar());
+        canvas.set(PORTAL_X, OBELISK_Y, PORTAL_Z, LabyrinthBlocks.obelisk());
+        canvas.fill(
+                RoomShape.box(PORTAL_X, OBELISK_Y + 1, PORTAL_Z, PORTAL_X, OBELISK_Y + OBELISK_PILLARS, PORTAL_Z),
+                LabyrinthBlocks.pillar());
         canvas.marker(PORTAL_X, F + 1, PORTAL_Z + 4, new LandmarkMarker(LabyrinthLandmarks.ARRIVAL));
     }
 }

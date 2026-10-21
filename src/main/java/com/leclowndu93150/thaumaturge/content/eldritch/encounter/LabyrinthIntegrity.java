@@ -20,7 +20,9 @@ final class LabyrinthIntegrity {
                 .landmarks()
                 .point(LabyrinthLandmarks.ENTRY_PORTAL)
                 .ifPresent(pos -> EncounterPhases.restoreOriginPortal(level, record, pos));
-        record.plan().landmarks().point(LabyrinthLandmarks.BOSS_DOOR).ifPresent(pos -> lock(level, record, pos));
+        if (!record.state().phase().isPastLock()) {
+            record.plan().landmarks().point(LabyrinthLandmarks.BOSS_DOOR).ifPresent(pos -> lock(level, record, pos));
+        }
         ReliquaryPlacement.ensureKeyRoom(level, record);
         if (record.state().phase().isPastLock()) {
             EncounterPhases.dissolveBarriers(level, record);
@@ -38,7 +40,7 @@ final class LabyrinthIntegrity {
                         () -> TTBlocks.ELDRITCH_LOCK
                                 .get()
                                 .defaultBlockState()
-                                .setValue(BlockEldritchLock.FACING, mountFacing(level, pos)),
+                                .setValue(BlockEldritchLock.FACING, mountFacing(level, record, pos)),
                         TTBlockEntities.ELDRITCH_LOCK.get())
                 .ifPresent(lock -> {
                     lock.bind(record.plan().id());
@@ -50,14 +52,18 @@ final class LabyrinthIntegrity {
                 });
     }
 
-    private static Direction mountFacing(ServerLevel level, BlockPos pos) {
+    private static Direction mountFacing(ServerLevel level, MazeRecord record, BlockPos pos) {
+        BlockPos hall = EncounterGeometry.anchor(record);
+        Direction facing = Direction.NORTH;
+        double farthest = -1.0;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (level.getBlockState(pos.relative(direction)).isAir()
-                    && !level.getBlockState(pos.relative(direction.getOpposite()))
-                            .isAir()) {
-                return direction;
+            BlockPos front = pos.relative(direction);
+            double distance = front.distSqr(hall);
+            if (level.getBlockState(front).isAir() && distance > farthest) {
+                facing = direction;
+                farthest = distance;
             }
         }
-        return Direction.NORTH;
+        return facing;
     }
 }

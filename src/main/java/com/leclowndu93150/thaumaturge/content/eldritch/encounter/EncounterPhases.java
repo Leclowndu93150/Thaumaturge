@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import java.util.Optional;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
@@ -30,6 +31,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class EncounterPhases {
     private static final int BARRIER_PARTICLES = 3;
@@ -175,29 +177,34 @@ public final class EncounterPhases {
     static void dissolveBarriers(ServerLevel level, MazeRecord record) {
         boolean opened = false;
         for (BlockPos pos : record.plan().landmarks().barriers()) {
-            if (!level.isLoaded(pos) || !level.getBlockState(pos).is(TTBlockTags.LABYRINTH_BARRIER)) {
-                continue;
-            }
-            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-            level.sendParticles(
-                    ParticleTypes.REVERSE_PORTAL,
-                    pos.getX() + 0.5,
-                    pos.getY() + 0.5,
-                    pos.getZ() + 0.5,
-                    BARRIER_PARTICLES,
-                    BARRIER_SPREAD,
-                    BARRIER_SPREAD,
-                    BARRIER_SPREAD,
-                    BARRIER_PARTICLE_SPEED);
-            opened = true;
+            opened |= dissolve(level, pos, state -> state.is(TTBlockTags.LABYRINTH_BARRIER));
+        }
+        Optional<BlockPos> door = record.plan().landmarks().point(LabyrinthLandmarks.BOSS_DOOR);
+        if (door.isPresent()) {
+            opened |= dissolve(level, door.get(), state -> state.is(TTBlocks.ELDRITCH_LOCK.get()));
         }
         if (opened) {
-            record.plan()
-                    .landmarks()
-                    .point(LabyrinthLandmarks.BOSS_DOOR)
-                    .ifPresent(pos -> level.playSound(
-                            null, pos, TTSounds.EVILPORTAL.get(), SoundSource.BLOCKS, DOOR_VOLUME, 1.0F));
+            door.ifPresent(pos ->
+                    level.playSound(null, pos, TTSounds.EVILPORTAL.get(), SoundSource.BLOCKS, DOOR_VOLUME, 1.0F));
         }
+    }
+
+    private static boolean dissolve(ServerLevel level, BlockPos pos, Predicate<BlockState> sealed) {
+        if (!level.isLoaded(pos) || !sealed.test(level.getBlockState(pos))) {
+            return false;
+        }
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        level.sendParticles(
+                ParticleTypes.REVERSE_PORTAL,
+                pos.getX() + 0.5,
+                pos.getY() + 0.5,
+                pos.getZ() + 0.5,
+                BARRIER_PARTICLES,
+                BARRIER_SPREAD,
+                BARRIER_SPREAD,
+                BARRIER_SPREAD,
+                BARRIER_PARTICLE_SPEED);
+        return true;
     }
 
     static void shareBar(ServerLevel level, EncounterState state) {

@@ -6,7 +6,6 @@ import com.leclowndu93150.thaumaturge.registry.TTLabyrinthRoomTags;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.state.properties.Half;
 
 final class HubRooms {
     private static final int DEAD_END_DEPTH = 5;
@@ -74,8 +73,7 @@ final class HubRooms {
         Junction.CROSS.carve(canvas);
         canvas.carve(RoomShape.cylinder(RoomKit.MID, RoomKit.MID, 6.0, F + 1, F + 7));
         canvas.carve(RoomShape.dome(RoomKit.MID, F + 7, RoomKit.MID, 6.0, 4.0, 6.0));
-        RoomKit.column(canvas, 7, 7, 8, 8, F + 1, F + 12);
-        RoomKit.flare(canvas, 7, 7, 8, 8, F + 1, Half.BOTTOM);
+        RoomKit.footedColumn(canvas, 7, 7, 8, 8, F + 1, F + 12);
         canvas.fill(RoomShape.annulus(RoomKit.MID, RoomKit.MID, 6.0, 5.0, F, F), LabyrinthBlocks.obsidianTile());
     }
 

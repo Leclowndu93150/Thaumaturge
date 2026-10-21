@@ -106,9 +106,13 @@ final class RoomKit {
     }
 
     static void flaredColumn(RoomCanvas canvas, int x0, int z0, int x1, int z1, int y0, int y1) {
+        footedColumn(canvas, x0, z0, x1, z1, y0, y1);
+        flare(canvas, x0, z0, x1, z1, y1, Half.TOP);
+    }
+
+    static void footedColumn(RoomCanvas canvas, int x0, int z0, int x1, int z1, int y0, int y1) {
         column(canvas, x0, z0, x1, z1, y0, y1);
         flare(canvas, x0, z0, x1, z1, y0, Half.BOTTOM);
-        flare(canvas, x0, z0, x1, z1, y1, Half.TOP);
     }
 
     static void steps(RoomCanvas canvas, int x0, int x1, int y, int z, Direction up) {
