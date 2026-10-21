@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 public final class TaintSprouting {
     private static final float MIN_SATURATION = 0.85F;
@@ -55,22 +56,48 @@ public final class TaintSprouting {
         if (fringe && !TaintOrigins.isOnFringe(level, ground)) {
             return false;
         }
-        EntityTaintSeed seed = TTEntities.TAINT_SEED.get().create(level);
-        if (seed == null) {
-            return false;
-        }
-        seed.moveTo(
-                ground.getX() + CELL_CENTRE,
-                ground.getY() + 1,
-                ground.getZ() + CELL_CENTRE,
-                (float) level.getRandom().nextInt(FULL_TURN_DEGREES),
-                0.0F);
-        if (!hasRoom(level, seed) || !level.addFreshEntity(seed)) {
-            seed.discard();
+        EntityTaintSeed seed = createSeedAt(level, ground.above());
+        if (seed == null || !level.addFreshEntity(seed)) {
             return false;
         }
         TaintEcology.addPressure(level, ground, SPROUT_PRESSURE);
         return true;
+    }
+
+    public static boolean plant(ServerLevel level, BlockPos standing, float reserve) {
+        if (ThaumaturgeCommonConfig.WUSS_MODE.get()
+                || level.getDifficulty() == Difficulty.PEACEFUL
+                || TaintBlooms.isProtected(level, standing)) {
+            return false;
+        }
+        EntityTaintSeed seed = createSeedAt(level, standing);
+        if (seed == null) {
+            return false;
+        }
+        seed.setTaintReserve(reserve);
+        if (!level.addFreshEntity(seed)) {
+            return false;
+        }
+        TaintEcology.addPressure(level, standing, SPROUT_PRESSURE);
+        return true;
+    }
+
+    private static @Nullable EntityTaintSeed createSeedAt(ServerLevel level, BlockPos standing) {
+        EntityTaintSeed seed = TTEntities.TAINT_SEED.get().create(level);
+        if (seed == null) {
+            return null;
+        }
+        seed.moveTo(
+                standing.getX() + CELL_CENTRE,
+                standing.getY(),
+                standing.getZ() + CELL_CENTRE,
+                (float) level.getRandom().nextInt(FULL_TURN_DEGREES),
+                0.0F);
+        if (!hasRoom(level, seed)) {
+            seed.discard();
+            return null;
+        }
+        return seed;
     }
 
     private static boolean isSproutingGround(ServerLevel level, BlockPos ground) {

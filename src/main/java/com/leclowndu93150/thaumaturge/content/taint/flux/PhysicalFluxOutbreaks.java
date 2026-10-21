@@ -2,7 +2,7 @@ package com.leclowndu93150.thaumaturge.content.taint.flux;
 
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
-import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -20,7 +20,6 @@ public final class PhysicalFluxOutbreaks {
     private static final float BASE_PRESSURE = 0.10F;
     private static final float PRESSURE_PER_WEIGHT = 0.0125F;
     private static final float MAX_PRESSURE = 0.30F;
-    private static final int INITIAL_SPREAD_ATTEMPTS = 8;
     private static final int SURFACE_SEARCH_DEPTH = 24;
 
     private PhysicalFluxOutbreaks() {}
@@ -84,14 +83,10 @@ public final class PhysicalFluxOutbreaks {
         }
         int cost = Math.min(flux.outbreakCost(), flux.fluxAmount(sourceState));
         BlockPos target = findTarget(level, source);
-        if (target == null || !TaintBiomeManager.taintColumn(level, target)) {
+        if (target == null || !TaintHelper.plantSeed(level, target, 0.0F)) {
             return false;
         }
-        TaintHelper.establishFoothold(
-                level,
-                target,
-                Math.min(MAX_PRESSURE, BASE_PRESSURE + weight * PRESSURE_PER_WEIGHT),
-                INITIAL_SPREAD_ATTEMPTS);
+        TaintEcology.addPressure(level, target, Math.min(MAX_PRESSURE, BASE_PRESSURE + weight * PRESSURE_PER_WEIGHT));
         PhysicalFlux.reduce(level, source, cost);
         return true;
     }
