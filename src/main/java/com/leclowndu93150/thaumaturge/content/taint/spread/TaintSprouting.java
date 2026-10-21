@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.entity.AbstractTaintSeed;
 import com.leclowndu93150.thaumaturge.content.entity.EntityTaintSeed;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -23,6 +22,7 @@ public final class TaintSprouting {
     private static final float SPROUT_FLUX = 5.0F;
     private static final float SPROUT_PRESSURE = 0.08F;
     private static final double CELL_CENTRE = 0.5;
+    private static final double CROWD_FRACTION = 0.8;
     private static final int FULL_TURN_DEGREES = 360;
 
     private TaintSprouting() {}
@@ -52,7 +52,7 @@ public final class TaintSprouting {
                 || AuraHelper.getFlux(level, ground) < SPROUT_FLUX) {
             return false;
         }
-        if (fringe && !TaintHelper.isOnSeedFringe(level, ground)) {
+        if (fringe && !TaintOrigins.isOnFringe(level, ground)) {
             return false;
         }
         EntityTaintSeed seed = TTEntities.TAINT_SEED.get().create(level);
@@ -69,7 +69,6 @@ public final class TaintSprouting {
             seed.discard();
             return false;
         }
-        AuraHelper.drainFlux(level, ground, SPROUT_FLUX, false);
         TaintEcology.addPressure(level, ground, SPROUT_PRESSURE);
         return true;
     }
@@ -85,7 +84,8 @@ public final class TaintSprouting {
             return false;
         }
         return level.getEntitiesOfClass(
-                        AbstractTaintSeed.class, seed.getBoundingBox().inflate(TaintHelper.fringeDistance()))
+                        AbstractTaintSeed.class,
+                        seed.getBoundingBox().inflate(TaintOrigins.claimRadius() * CROWD_FRACTION))
                 .isEmpty();
     }
 

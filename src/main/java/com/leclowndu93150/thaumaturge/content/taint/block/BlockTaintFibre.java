@@ -4,9 +4,11 @@ import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBlooms;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.effect.FluxTaintExposure;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
@@ -221,19 +223,13 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // Advance the biome boundary from active taint blocks before checking whether the
-        // current fibre was allowed to survive outside Tainted Lands.
-        TaintHelper.trySpreadTaintedBiome(level, pos, random);
         boolean hasGrowth = state.getValue(GROWTH1)
                 || state.getValue(GROWTH2)
                 || state.getValue(GROWTH3)
                 || state.getValue(GROWTH4);
-        if (!hasGrowth && isOnlyAdjacentToTaint(level, pos)) {
+        if (!hasGrowth && isOnlyAdjacentToTaint(level, pos) || !TaintOrigins.isSustained(level, pos)) {
             decay(level, pos, state);
-            return;
-        }
-        if (!TaintHelper.isEcologicallySustained(level, pos)) {
-            decay(level, pos, state);
+            TaintBiomeManager.restoreIfCleared(level, pos);
             return;
         }
         if (!ThaumaturgeCommonConfig.WUSS_MODE.get()

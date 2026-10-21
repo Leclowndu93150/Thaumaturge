@@ -1,9 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.aura.pressure;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintEcology;
 import com.leclowndu93150.thaumaturge.content.taint.flux.PhysicalFlux;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -69,7 +69,7 @@ public final class FluxRain {
         }
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, cursor);
         BlockPos target = level.getBlockState(surface).canBeReplaced() ? surface : surface.above();
-        if (TaintHelper.isWithinSeedInfluence(level, target)) {
+        if (TaintOrigins.claimingOrigin(level, target) != null) {
             return;
         }
         if (AuraHelper.drainFlux(level, target, POOL_FLUX_COST, true) + POOL_FLUX_EPSILON < POOL_FLUX_COST) {

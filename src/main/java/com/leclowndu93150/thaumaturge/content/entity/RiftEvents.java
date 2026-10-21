@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.api.taint.TaintApi;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.content.warp.WarpManager;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
@@ -131,7 +131,7 @@ final class RiftEvents {
                 return false;
             }
         }
-        AABB crowd = body.inflate(TaintHelper.spreadArea() * SEED_CROWD_FRACTION);
+        AABB crowd = body.inflate(TaintOrigins.claimRadius() * SEED_CROWD_FRACTION);
         return level.getEntitiesOfClass(AbstractTaintSeed.class, crowd).isEmpty();
     }
 

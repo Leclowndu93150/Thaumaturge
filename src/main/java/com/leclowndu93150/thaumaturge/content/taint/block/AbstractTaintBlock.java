@@ -1,8 +1,9 @@
 package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.effect.FluxTaintExposure;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -26,9 +27,9 @@ public abstract class AbstractTaintBlock extends Block implements ITaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        TaintHelper.trySpreadTaintedBiome(level, pos, random);
-        if (!TaintHelper.isEcologicallySustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
+        if (!TaintOrigins.isSustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
             decay(level, pos, state);
+            TaintBiomeManager.restoreIfCleared(level, pos);
             return;
         }
         subRandomTick(state, level, pos, random);

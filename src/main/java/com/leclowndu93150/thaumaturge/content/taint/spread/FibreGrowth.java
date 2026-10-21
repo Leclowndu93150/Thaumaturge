@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.spread;
 
+import com.leclowndu93150.thaumaturge.api.taint.ITaintOrigin;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
@@ -32,7 +33,6 @@ public final class FibreGrowth {
     private static final float FEATURE_CHANCE = 0.6F;
     private static final float GROWTH_PRESSURE = 0.01F;
     private static final int SPROUT_ONE_IN = 100;
-    private static final float SPROUT_MIN_SATURATION = 0.85F;
     private static final int WOODY_TAINT_NEIGHBOURS = 2;
     private static final int GROUND_TAINT_NEIGHBOURS = 3;
     private static final List<Conversion> CONVERSIONS = List.of(
@@ -54,33 +54,62 @@ public final class FibreGrowth {
 
     private FibreGrowth() {}
 
-    public static void attempt(ServerLevel level, BlockPos origin, boolean force) {
+    public static boolean attempt(ServerLevel level, BlockPos origin, boolean force) {
+        if (force) {
+            return grow(level, origin, true, null);
+        }
+        ITaintOrigin payer = TaintOrigins.payingOrigin(level, origin, TaintOrigins.growthCost());
+        return payer != null && growPaid(level, origin, payer, false);
+    }
+
+    public static boolean growFromOrigin(ServerLevel level, BlockPos at, ITaintOrigin origin) {
+        return origin.getTaintReserve() >= TaintOrigins.growthCost() && growPaid(level, at, origin, true);
+    }
+
+    private static boolean growPaid(ServerLevel level, BlockPos at, ITaintOrigin payer, boolean force) {
+        if (!grow(level, at, force, payer)) {
+            return false;
+        }
+        payer.spendTaintReserve(TaintOrigins.growthCost());
+        return true;
+    }
+
+    private static boolean grow(ServerLevel level, BlockPos origin, boolean force, @Nullable ITaintOrigin payer) {
         if (ThaumaturgeCommonConfig.WUSS_MODE.get()
                 || !level.hasChunkAt(origin)
                 || TaintBlooms.isProtected(level, origin)) {
-            return;
+            return false;
         }
         RandomSource random = level.getRandom();
         if (!force && random.nextDouble() * PERCENT >= ThaumaturgeCommonConfig.TAINT_SPREAD_RATE.get()) {
-            return;
+            return false;
         }
         BlockPos target = pickTarget(origin, random);
         if (target.equals(origin)) {
-            return;
+            return false;
         }
         BlockState state = level.getBlockState(target);
-        if (!isReachable(level, target, state, force)) {
-            return;
+        if (!isReachable(level, target, state)) {
+            return false;
         }
         if (isOpenSpace(state)) {
-            growInOpenSpace(level, target, force);
-        } else if (state.is(BlockTags.LEAVES)) {
-            sproutFeature(level, target, random);
-        } else if (!tryConvert(level, target, state, force)
-                && random.nextDouble() * SPROUT_ONE_IN < 1.0
-                && TaintEcology.getSaturation(level, target) >= SPROUT_MIN_SATURATION) {
-            TaintSprouting.trySprout(level, target, true);
+            return growInOpenSpace(level, target);
         }
+        if (state.is(BlockTags.LEAVES)) {
+            return sproutFeature(level, target, random);
+        }
+        Conversion conversion = convertible(level, target, state);
+        if (conversion != null) {
+            return convert(level, target, state, conversion);
+        }
+        if (payer != null
+                && random.nextDouble() * SPROUT_ONE_IN < 1.0
+                && payer.getTaintReserve() >= TaintFeeding.reserveCap()
+                && TaintSprouting.trySprout(level, target, true)) {
+            payer.spendTaintReserve(
+                    ThaumaturgeCommonConfig.TAINT_CHILD_SEED_COST.get().floatValue());
+        }
+        return false;
     }
 
     private static BlockPos pickTarget(BlockPos origin, RandomSource random) {
@@ -94,17 +123,14 @@ public final class FibreGrowth {
         return random.nextInt(reach * 2 + 1) - reach;
     }
 
-    private static boolean isReachable(ServerLevel level, BlockPos target, BlockState state, boolean force) {
+    private static boolean isReachable(ServerLevel level, BlockPos target, BlockState state) {
         if (!level.hasChunkAt(target)
                 || TaintBlooms.isProtected(level, target)
                 || state.is(TTBlockTags.TAINT_CONVERSION_IMMUNE)) {
             return false;
         }
         float hardness = state.getDestroySpeed(level, target);
-        if (hardness < 0.0F || hardness > MAX_TARGET_HARDNESS) {
-            return false;
-        }
-        return force || TaintBiomeManager.isTainted(level, target);
+        return hardness >= 0.0F && hardness <= MAX_TARGET_HARDNESS;
     }
 
     private static boolean isOpenSpace(BlockState state) {
@@ -114,52 +140,54 @@ public final class FibreGrowth {
         return state.canBeReplaced() && !state.is(BlockTags.LEAVES) && !state.liquid();
     }
 
-    private static boolean columnReady(ServerLevel level, BlockPos pos, boolean force) {
-        if (TaintBiomeManager.isTainted(level, pos)) {
-            return true;
-        }
-        return force && TaintBiomeManager.taintColumn(level, pos);
+    private static boolean columnReady(ServerLevel level, BlockPos pos) {
+        return TaintBiomeManager.isTainted(level, pos) || TaintBiomeManager.taintColumn(level, pos);
     }
 
-    private static void growInOpenSpace(ServerLevel level, BlockPos target, boolean force) {
+    private static boolean growInOpenSpace(ServerLevel level, BlockPos target) {
         if (!TaintHelper.hasSturdyNeighbour(level, target)
                 || TaintHelper.isRootless(level, target)
-                || !columnReady(level, target, force)) {
-            return;
+                || !columnReady(level, target)) {
+            return false;
         }
         level.setBlock(target, BlockTaintFibre.stateForWorld(level, target), Block.UPDATE_ALL);
         TaintEcology.addPressure(level, target, GROWTH_PRESSURE);
+        return true;
     }
 
-    private static void sproutFeature(ServerLevel level, BlockPos target, RandomSource random) {
+    private static boolean sproutFeature(ServerLevel level, BlockPos target, RandomSource random) {
         for (Direction direction : SCAN_ORDER) {
             if (level.getBlockState(target.relative(direction)).is(TTBlocks.TAINT_LOG)) {
-                if (random.nextFloat() < FEATURE_CHANCE) {
-                    level.setBlock(
-                            target,
-                            TTBlocks.TAINT_FEATURE
-                                    .get()
-                                    .defaultBlockState()
-                                    .setValue(DirectionalBlock.FACING, direction.getOpposite()),
-                            Block.UPDATE_ALL);
-                }
-                return;
+                return random.nextFloat() < FEATURE_CHANCE
+                        && level.setBlock(
+                                target,
+                                TTBlocks.TAINT_FEATURE
+                                        .get()
+                                        .defaultBlockState()
+                                        .setValue(DirectionalBlock.FACING, direction.getOpposite()),
+                                Block.UPDATE_ALL);
             }
         }
+        return false;
     }
 
-    private static boolean tryConvert(ServerLevel level, BlockPos target, BlockState state, boolean force) {
+    private static @Nullable Conversion convertible(ServerLevel level, BlockPos target, BlockState state) {
         if (TaintHelper.isTaintBlock(state) || state.getDestroySpeed(level, target) >= MAX_CONVERTIBLE_HARDNESS) {
-            return false;
+            return null;
         }
         Conversion conversion = matching(state);
         if (conversion == null || TaintHelper.countAdjacentTaint(level, target) < conversion.taintNeighbours()) {
+            return null;
+        }
+        return conversion;
+    }
+
+    private static boolean convert(ServerLevel level, BlockPos target, BlockState state, Conversion conversion) {
+        if (!columnReady(level, target)) {
             return false;
         }
-        if (columnReady(level, target, force)) {
-            level.setBlock(target, conversion.result().apply(state), Block.UPDATE_ALL);
-            TaintEcology.addPressure(level, target, GROWTH_PRESSURE);
-        }
+        level.setBlock(target, conversion.result().apply(state), Block.UPDATE_ALL);
+        TaintEcology.addPressure(level, target, GROWTH_PRESSURE);
         return true;
     }
 

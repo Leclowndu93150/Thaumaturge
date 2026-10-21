@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.ApiBinding;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Static facade over the taint spread engine, letting addons seed, query, and drive taint
@@ -20,9 +21,10 @@ public final class TaintApi {
     private TaintApi() {}
 
     /**
-     * Registers a taint seed anchor. Spread checks treat registered positions as live seeds as
-     * long as a taint seed entity is present within one block of the position; stale entries are
-     * pruned automatically during spread checks.
+     * Registers a taint origin anchor. Spread checks treat a registered position as a live origin
+     * while a block entity at the position, or an entity within one block of it, implements
+     * {@link ITaintOrigin} and reports itself live; stale entries are pruned automatically during
+     * spread checks.
      *
      * @param level the level owning the seed
      * @param pos   the seed anchor position
@@ -43,7 +45,7 @@ public final class TaintApi {
 
     /**
      * Returns whether the position lies within the configured spread radius of a live taint
-     * seed. A registered seed whose entity has died is pruned and reported as absent.
+     * origin. A registered origin that is no longer live is pruned and reported as absent.
      *
      * @param level the level to query
      * @param pos   the position to test
@@ -100,6 +102,32 @@ public final class TaintApi {
     }
 
     /**
+     * Returns the nearest live taint origin whose spread radius covers the position.
+     *
+     * @param level the level to query
+     * @param pos   the position to test
+     * @return the claiming origin, or {@code null} on the client or when no live origin is in range
+     * @since 1.1.0
+     */
+    public static @Nullable ITaintOrigin getClaimingOrigin(Level level, BlockPos pos) {
+        return BINDING.get().getClaimingOrigin(level, pos);
+    }
+
+    /**
+     * Returns whether taint at the position is sustained: it lies within the spread radius of a
+     * live taint origin, or inside naturally generated Tainted Lands. Taint blocks that are not
+     * sustained decay.
+     *
+     * @param level the level to query
+     * @param pos   the position to test
+     * @return {@code true} when taint at the position does not decay
+     * @since 1.1.0
+     */
+    public static boolean isSustained(Level level, BlockPos pos) {
+        return BINDING.get().isSustained(level, pos);
+    }
+
+    /**
      * Binds the facade's implementation. Called once at mod init by the implementation; addons
      * must not call this.
      *
@@ -137,5 +165,10 @@ public final class TaintApi {
         void addEcologicalPressure(ServerLevel level, BlockPos pos, float amount);
 
         void cleanEcologicalPressure(ServerLevel level, BlockPos pos, float amount);
+
+        @Nullable
+        ITaintOrigin getClaimingOrigin(Level level, BlockPos pos);
+
+        boolean isSustained(Level level, BlockPos pos);
     }
 }

@@ -7,8 +7,13 @@ public final class ThaumaturgeCommonConfig {
 
     public static final ModConfigSpec.BooleanValue WUSS_MODE;
     public static final ModConfigSpec.DoubleValue TAINT_SPREAD_RATE;
-    public static final ModConfigSpec.IntValue TAINT_FRONTIER_RATE;
     public static final ModConfigSpec.IntValue TAINT_SPREAD_AREA;
+    public static final ModConfigSpec.IntValue TAINT_FEED_RADIUS;
+    public static final ModConfigSpec.DoubleValue TAINT_FEED_RATE;
+    public static final ModConfigSpec.DoubleValue TAINT_RESERVE_CAP;
+    public static final ModConfigSpec.DoubleValue TAINT_GROWTH_COST;
+    public static final ModConfigSpec.DoubleValue TAINT_CHILD_SEED_COST;
+    public static final ModConfigSpec.IntValue TAINT_STARVE_TICKS;
     public static final ModConfigSpec.BooleanValue TAINT_FROM_FLUX;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_AURA_FLOOR;
     public static final ModConfigSpec.BooleanValue PHYSICAL_FLUX_TAINT_OUTBREAKS;
@@ -54,12 +59,24 @@ public final class ThaumaturgeCommonConfig {
         TAINT_SPREAD_RATE = builder.comment(
                         "Percentage chance, from 0 to 100, that a taint fibre goes ahead with a spread attempt when it gets a block tick. Forced spreads skip this roll. 0 stops ordinary fibre spread.")
                 .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);
-        TAINT_FRONTIER_RATE = builder.comment(
-                        "How quickly the Tainted Lands biome spreads outward. Fibrous taint tries to take over a neighbouring column with a chance of 1 in (taintFrontierRate * 5) per random tick, and only with at least two adjacent taint blocks. Higher is slower. 0 stops the biome from spreading while existing taint stays active.")
-                .defineInRange("taintFrontierRate", 200, 0, 100000);
         TAINT_SPREAD_AREA = builder.comment(
-                        "Base radius in blocks around a taint seed that its taint may spread into. Other seeds inside this radius count as crowding it. The local flux level adjusts the radius further.")
+                        "The range in blocks that a taint origin (a taint seed or a tainted node) claims. Taint outside the range of every living origin decays, except inside naturally generated Tainted Lands.")
                 .defineInRange("taintSpreadArea", 32, 1, 128);
+        TAINT_FEED_RADIUS = builder.comment("How many chunks around itself a taint origin can eat flux from.")
+                .defineInRange("taintFeedRadius", 2, 0, 8);
+        TAINT_FEED_RATE = builder.comment("Flux a taint origin eats from the aura each second.")
+                .defineInRange("taintFeedRate", 5.0, 0.0, 1000.0);
+        TAINT_RESERVE_CAP = builder.comment("Most flux a taint origin can store for growth.")
+                .defineInRange("taintReserveCap", 100.0, 1.0, 100000.0);
+        TAINT_GROWTH_COST = builder.comment(
+                        "Stored flux a taint origin spends for each block of taint it grows. A chunk polluted up to its base aura pays for roughly one chunk of taint at the default.")
+                .defineInRange("taintGrowthCost", 1.0, 0.0, 1000.0);
+        TAINT_CHILD_SEED_COST = builder.comment(
+                        "Stored flux a well fed taint origin spends to sprout a new taint seed at the edge of its range.")
+                .defineInRange("taintChildSeedCost", 25.0, 0.0, 100000.0);
+        TAINT_STARVE_TICKS = builder.comment(
+                        "Ticks a taint seed survives with nothing to eat before it withers away. A tainted node inside an Ethereal Bloom's range is purified after the same time.")
+                .defineInRange("taintStarveTicks", 12000, 20, 1000000);
         TAINT_FROM_FLUX = builder.comment(
                         "Allows deep, exposed Flux Goo to develop into Fibrous Taint and Tainted Lands.")
                 .define("taintFromFlux", true);

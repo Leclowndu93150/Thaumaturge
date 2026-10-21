@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityFallingTaint;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.mojang.serialization.MapCodec;
@@ -44,9 +45,9 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        TaintHelper.trySpreadTaintedBiome(level, pos, random);
-        if (!TaintBiomeManager.isTainted(level, pos) && random.nextInt(OUTSIDE_BIOME_GOO_CHANCE) == 0) {
+        if (!TaintOrigins.isSustained(level, pos) && random.nextInt(OUTSIDE_BIOME_GOO_CHANCE) == 0) {
             decay(level, pos, state);
+            TaintBiomeManager.restoreIfCleared(level, pos);
             return;
         }
         subRandomTick(state, level, pos, random);
@@ -72,7 +73,7 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
             }
         }
 
-        if (!TaintBiomeManager.isTainted(level, pos)) {
+        if (!TaintOrigins.isSustained(level, pos)) {
             return;
         }
         TaintHelper.attemptFibreGrowth(level, pos, false);

@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.content.aura.pressure;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
-import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +39,7 @@ public final class FluxPressureEvents {
         }
         FluxPressureState state = level.getData(TTAttachments.FLUX_PRESSURE);
         if (!event.allowedNearTaint()
-                && (TaintHelper.isWithinSeedInfluence(level, origin)
+                && (TaintOrigins.claimingOrigin(level, origin) != null
                         || state.hasRainNear(origin, STACK_SUPPRESSION_RANGE_SQ))) {
             return false;
         }

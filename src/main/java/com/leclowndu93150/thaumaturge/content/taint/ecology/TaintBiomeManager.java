@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.taint.ecology;
 
+import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
@@ -28,6 +29,8 @@ import org.jspecify.annotations.Nullable;
 public final class TaintBiomeManager {
     private static final int QUARTS_PER_CHUNK = 4;
     private static final int CLEAN_SEARCH_RADIUS = 256;
+    private static final int CLEARED_SCAN_HEIGHT = 8;
+    private static final int BLOCKS_PER_QUART = 4;
 
     private TaintBiomeManager() {}
 
@@ -72,6 +75,28 @@ public final class TaintBiomeManager {
         rewriteColumn(level, chunk, snapshot, quartX, quartZ, (x, y, z, sampler) -> replacement);
         setChanged(chunk, quartX, quartZ, biomeKey.equals(TTBiomes.TAINTED_LANDS));
         return true;
+    }
+
+    public static void restoreIfCleared(ServerLevel level, BlockPos pos) {
+        if (isChangedColumn(level, pos) && !hasTaintInColumn(level, pos)) {
+            restoreColumn(level, pos);
+        }
+    }
+
+    private static boolean hasTaintInColumn(ServerLevel level, BlockPos pos) {
+        int minX = QuartPos.toBlock(QuartPos.fromBlock(pos.getX()));
+        int minZ = QuartPos.toBlock(QuartPos.fromBlock(pos.getZ()));
+        BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();
+        for (int x = minX; x < minX + BLOCKS_PER_QUART; x++) {
+            for (int z = minZ; z < minZ + BLOCKS_PER_QUART; z++) {
+                for (int y = pos.getY() - CLEARED_SCAN_HEIGHT; y <= pos.getY() + CLEARED_SCAN_HEIGHT; y++) {
+                    if (level.getBlockState(probe.set(x, y, z)).getBlock() instanceof ITaintBlock) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean restoreColumn(ServerLevel level, BlockPos pos) {

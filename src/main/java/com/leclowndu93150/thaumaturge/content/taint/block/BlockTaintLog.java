@@ -2,6 +2,8 @@ package com.leclowndu93150.thaumaturge.content.taint.block;
 
 import com.leclowndu93150.thaumaturge.api.taint.ITaintBlock;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
+import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.content.taint.spread.TaintOrigins;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -35,9 +37,9 @@ public final class BlockTaintLog extends RotatedPillarBlock implements ITaintBlo
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        TaintHelper.trySpreadTaintedBiome(level, pos, random);
-        if (!TaintHelper.isEcologicallySustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
+        if (!TaintOrigins.isSustained(level, pos) && random.nextInt(DIE_CHANCE) == 0) {
             decay(level, pos, state);
+            TaintBiomeManager.restoreIfCleared(level, pos);
             return;
         }
         TaintHelper.attemptFibreGrowth(level, pos, false);
