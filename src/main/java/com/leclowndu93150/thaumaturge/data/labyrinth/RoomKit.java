@@ -24,7 +24,7 @@ final class RoomKit {
     private static final int UNCOMMON_WEIGHT = 3;
     private static final int RARE_WEIGHT = 1;
     private static final int WALL_VENT_RISE = 2;
-    private static final int NICHE_HEIGHT = 2;
+    private static final int NICHE_RISE = 2;
     private static final int PLINTH_RISE = 2;
 
     private RoomKit() {}
@@ -49,7 +49,8 @@ final class RoomKit {
                         .add(uncommon.defaultBlockState(), UNCOMMON_WEIGHT)
                         .add(rare.defaultBlockState(), RARE_WEIGHT)
                         .build(),
-                chance);
+                chance,
+                Optional.empty());
     }
 
     static BlockMarker embedded(BlockState state, float chance, BlockState otherwise) {
@@ -64,12 +65,14 @@ final class RoomKit {
 
     static void floorVent(RoomCanvas canvas, int x, int z, float chance) {
         requireOpen(canvas, x, RoomCanvas.F + 1, z);
-        canvas.marker(x, RoomCanvas.F, z, vent(Direction.UP, chance, surface(canvas, x, RoomCanvas.F, z)));
+        requireSolid(canvas, x, RoomCanvas.F, z);
+        canvas.marker(x, RoomCanvas.F + 1, z, vent(Direction.UP, chance));
     }
 
     static void wallVent(RoomCanvas canvas, int x, int z, float chance) {
         int y = RoomCanvas.F + WALL_VENT_RISE;
-        canvas.marker(x, y, z, vent(openSide(canvas, x, y, z), chance, surface(canvas, x, y, z)));
+        Direction out = openSide(canvas, x, y, z);
+        canvas.marker(x + out.getStepX(), y, z + out.getStepZ(), vent(out, chance));
     }
 
     static void floorTrap(RoomCanvas canvas, int x, int z, float chance) {
@@ -78,27 +81,32 @@ final class RoomKit {
                 x, RoomCanvas.F, z, embedded(LabyrinthBlocks.trap(), chance, surface(canvas, x, RoomCanvas.F, z)));
     }
 
-    private static BlockMarker vent(Direction facing, float chance, BlockState otherwise) {
+    private static BlockMarker vent(Direction facing, float chance) {
         return new BlockMarker(
                 SimpleWeightedRandomList.single(LabyrinthBlocks.crabSpawner()),
                 chance,
                 true,
                 Optional.of(facing),
-                Optional.of(otherwise));
+                Optional.empty());
     }
 
     private static BlockState surface(RoomCanvas canvas, int x, int y, int z) {
-        if (canvas.kind(x, y, z).open()) {
-            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " needs a solid surface");
-        }
+        requireSolid(canvas, x, y, z);
         BlockState current = canvas.get(x, y, z);
         return current == null ? LabyrinthBlocks.stone() : current;
     }
 
+    private static void requireSolid(RoomCanvas canvas, int x, int y, int z) {
+        if (canvas.kind(x, y, z).open()) {
+            throw new IllegalArgumentException("Room dressing at " + x + "," + y + "," + z + " needs a solid surface");
+        }
+    }
+
     static void niche(RoomCanvas canvas, int x, int z, LootMarker loot) {
-        openSide(canvas, x, RoomCanvas.F + 1, z);
-        canvas.carve(RoomShape.box(x, RoomCanvas.F + 1, z, x, RoomCanvas.F + NICHE_HEIGHT, z));
-        canvas.marker(x, RoomCanvas.F + 1, z, loot);
+        int y = RoomCanvas.F + NICHE_RISE;
+        openSide(canvas, x, y, z);
+        requireSolid(canvas, x, y - 1, z);
+        canvas.marker(x, y, z, loot.embedded(surface(canvas, x, y, z)));
     }
 
     static void floorLoot(RoomCanvas canvas, int x, int z, LootMarker loot) {

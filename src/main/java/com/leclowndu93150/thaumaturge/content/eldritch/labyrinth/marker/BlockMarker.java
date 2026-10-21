@@ -52,7 +52,12 @@ public record BlockMarker(
                             facing.map(local -> StateOrientation.face(state, context.orient(local)))
                                     .orElse(state)));
         } else {
-            otherwise.ifPresent(state -> context.place(pos, state));
+            stampDisabled(context, pos);
         }
+    }
+
+    @Override
+    public void stampDisabled(MarkerStampContext context, BlockPos pos) {
+        otherwise.ifPresent(state -> context.place(pos, state));
     }
 }

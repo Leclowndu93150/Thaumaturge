@@ -140,19 +140,21 @@ public final class RoomStamper {
                 continue;
             }
             BlockPos world = RoomTransform.toWorld(marker.local(), room.transform(), origin);
-            if (!box.isInside(world) || plan.tuning().disables(marker.marker())) {
+            if (!box.isInside(world)) {
                 continue;
             }
-            marker.marker()
-                    .stamp(
-                            new StampContext(
-                                    level,
-                                    box,
-                                    plan.id(),
-                                    room.transform(),
-                                    plan.tuning(),
-                                    randoms.at(world.getX(), world.getY() ^ plan.stampSalt(), world.getZ())),
-                            world);
+            StampContext context = new StampContext(
+                    level,
+                    box,
+                    plan.id(),
+                    room.transform(),
+                    plan.tuning(),
+                    randoms.at(world.getX(), world.getY() ^ plan.stampSalt(), world.getZ()));
+            if (plan.tuning().disables(marker.marker())) {
+                marker.marker().stampDisabled(context, world);
+            } else {
+                marker.marker().stamp(context, world);
+            }
         }
     }
 

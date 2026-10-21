@@ -53,7 +53,7 @@ final class RoomRounding {
         }
         for (Direction wall : Direction.Plane.HORIZONTAL) {
             if (host(canvas, x + wall.getStepX(), y, z + wall.getStepZ())
-                    && canvas.kind(x - wall.getStepX(), y, z - wall.getStepZ()) == RoomVoxels.Kind.AIR) {
+                    && clear(canvas.kind(x - wall.getStepX(), y, z - wall.getStepZ()))) {
                 return new Placement(new BlockPos(x, y, z), wall, floor ? Half.BOTTOM : Half.TOP);
             }
         }
@@ -67,11 +67,15 @@ final class RoomRounding {
 
     private static boolean clear(RoomCanvas canvas, int x, int y, int z, Direction away) {
         for (int step = 0; step < CLEARANCE; step++) {
-            if (canvas.kind(x, y + away.getStepY() * step, z) != RoomVoxels.Kind.AIR) {
+            if (!clear(canvas.kind(x, y + away.getStepY() * step, z))) {
                 return false;
             }
         }
         return true;
+    }
+
+    private static boolean clear(RoomVoxels.Kind kind) {
+        return kind == RoomVoxels.Kind.AIR || kind == RoomVoxels.Kind.MARKER;
     }
 
     private static StairsShape shape(RoomCanvas canvas, BlockPos pos, BlockState state) {

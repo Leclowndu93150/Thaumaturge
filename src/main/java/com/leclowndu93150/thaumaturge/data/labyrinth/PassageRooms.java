@@ -158,8 +158,8 @@ final class PassageRooms {
 
     static void sunken(RoomCanvas canvas) {
         Junction.STRAIGHT.carve(canvas);
-        canvas.carve(RoomShape.box(6, F, 1, 9, F, 14));
-        canvas.fill(RoomShape.box(6, F - 1, 1, 9, F - 1, 14), LabyrinthBlocks.obsidianTile());
+        canvas.fill(RoomShape.box(6, F, 1, 9, F, 14), LabyrinthBlocks.tile());
+        canvas.fill(RoomShape.box(7, F, 1, 8, F, 14), LabyrinthBlocks.obsidianTile());
         RoomKit.glyph(canvas, 4, F + 3, 8, Direction.EAST);
         RoomKit.floorLoot(canvas, 5, 4, RoomKit.urns(SIDE_LOOT));
         RoomKit.floorLoot(canvas, 10, 11, RoomKit.urns(SIDE_LOOT));

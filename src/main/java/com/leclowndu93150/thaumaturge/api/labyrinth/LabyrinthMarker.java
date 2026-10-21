@@ -70,6 +70,18 @@ public interface LabyrinthMarker {
     default void stamp(MarkerStampContext context, BlockPos pos) {}
 
     /**
+     * Restores a {@link MarkerPhase#STAMP} marker's position when the server's tuning disables its type and {@link #stamp} is skipped.
+     *
+     * <p>Every marker position is air once its template is placed. A marker set into a wall or floor overrides this to put back the surface it stands in for, so a disabled marker never
+     * leaves a hole in the room.
+     *
+     * @param context the placement context
+     * @param pos     the marker's world position, already transformed with the room
+     * @since 1.1.0
+     */
+    default void stampDisabled(MarkerStampContext context, BlockPos pos) {}
+
+    /**
      * Reports whether a {@link MarkerPhase#TRIGGER} marker may fire now. A marker that answers false stays pending and is asked again on the next
      * check, so it is never used up while its conditions are not met.
      *
