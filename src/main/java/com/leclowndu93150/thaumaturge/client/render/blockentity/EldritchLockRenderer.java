@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEldritchLock;
 import com.leclowndu93150.thaumaturge.content.eldritch.lock.BlockEntityEldritchLock;
-import com.leclowndu93150.thaumaturge.content.eldritch.lock.LockDoorway;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,7 +22,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
@@ -57,6 +55,13 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     private static final float TABLET_LIFT = 0.025F;
     private static final float PORTAL_LIFT = 0.005F;
     private static final float PORTAL_HALF_SPAN = 2.5F;
+    private static final float LOCK_HALF_SPAN = 0.5F;
+    private static final float[][] PORTAL_PANELS = {
+        {-PORTAL_HALF_SPAN, -PORTAL_HALF_SPAN, PORTAL_HALF_SPAN, -LOCK_HALF_SPAN},
+        {-PORTAL_HALF_SPAN, LOCK_HALF_SPAN, PORTAL_HALF_SPAN, PORTAL_HALF_SPAN},
+        {-PORTAL_HALF_SPAN, -LOCK_HALF_SPAN, -LOCK_HALF_SPAN, LOCK_HALF_SPAN},
+        {LOCK_HALF_SPAN, -LOCK_HALF_SPAN, PORTAL_HALF_SPAN, LOCK_HALF_SPAN}
+    };
     private static final float TABLET_Y = 0.41F;
     private static final float TABLET_SCALE = 1.025641F;
     private static final float FLIP_DEGREES = 180.0F;
@@ -81,15 +86,12 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
             int packedOverlay) {
         int count = lock.getCount();
         Direction facing = lock.getBlockState().getValue(BlockEldritchLock.FACING);
-        Level level = lock.getLevel();
-        float shift = 0.0F;
-        int light = packedLight;
-        if (level != null) {
-            shift = LockDoorway.centreShift(level, lock.getBlockPos(), facing);
-            light = LevelRenderer.getLightColor(level, lock.getBlockPos().relative(facing));
-        }
+        int light = lock.getLevel() == null
+                ? packedLight
+                : LevelRenderer.getLightColor(
+                        lock.getLevel(), lock.getBlockPos().relative(facing));
         float time = animationTime(partialTick);
-        float[] hub = hub(facing, shift);
+        float[] hub = hub(facing);
         writeArms(
                 poseStack.last(),
                 buffers.getBuffer(RenderType.entityCutout(CUBE_TEXTURE)),
@@ -128,12 +130,11 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
         return viewer == null ? partialTick : viewer.tickCount + partialTick;
     }
 
-    private static float[] hub(Direction facing, float shift) {
-        Direction across = LockDoorway.across(facing);
+    private static float[] hub(Direction facing) {
         return new float[] {
-            CENTER + FACE_OFFSET * facing.getStepX() + shift * across.getStepX(),
-            CENTER + FACE_OFFSET * facing.getStepY() + shift * across.getStepY(),
-            CENTER + FACE_OFFSET * facing.getStepZ() + shift * across.getStepZ()
+            CENTER + FACE_OFFSET * facing.getStepX(),
+            CENTER + FACE_OFFSET * facing.getStepY(),
+            CENTER + FACE_OFFSET * facing.getStepZ()
         };
     }
 
@@ -163,19 +164,63 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
 
     private static void writePortal(
             PoseStack.Pose pose, VertexConsumer buffer, BlockPos pos, Direction facing, float[] hub) {
-        float x0 = hub[0] - PORTAL_HALF_SPAN;
-        float x1 = hub[0] + PORTAL_HALF_SPAN;
-        float y0 = hub[1] - PORTAL_HALF_SPAN;
-        float y1 = hub[1] + PORTAL_HALF_SPAN;
-        float z0 = hub[2] - PORTAL_HALF_SPAN;
-        float z1 = hub[2] + PORTAL_HALF_SPAN;
         float px = hub[0] + PORTAL_LIFT * facing.getStepX();
         float py = hub[1] + PORTAL_LIFT * facing.getStepY();
         float pz = hub[2] + PORTAL_LIFT * facing.getStepZ();
-        switch (facing.getAxis()) {
-            case Z -> EldritchPortalSurface.quad(pose, buffer, pos, x0, y0, pz, x0, y1, pz, x1, y1, pz, x1, y0, pz);
-            case X -> EldritchPortalSurface.quad(pose, buffer, pos, px, y0, z0, px, y1, z0, px, y1, z1, px, y0, z1);
-            case Y -> EldritchPortalSurface.quad(pose, buffer, pos, x0, py, z0, x1, py, z0, x1, py, z1, x0, py, z1);
+        for (float[] panel : PORTAL_PANELS) {
+            switch (facing.getAxis()) {
+                case Z ->
+                    EldritchPortalSurface.quad(
+                            pose,
+                            buffer,
+                            pos,
+                            px + panel[0],
+                            py + panel[1],
+                            pz,
+                            px + panel[0],
+                            py + panel[3],
+                            pz,
+                            px + panel[2],
+                            py + panel[3],
+                            pz,
+                            px + panel[2],
+                            py + panel[1],
+                            pz);
+                case X ->
+                    EldritchPortalSurface.quad(
+                            pose,
+                            buffer,
+                            pos,
+                            px,
+                            py + panel[1],
+                            pz + panel[0],
+                            px,
+                            py + panel[3],
+                            pz + panel[0],
+                            px,
+                            py + panel[3],
+                            pz + panel[2],
+                            px,
+                            py + panel[1],
+                            pz + panel[2]);
+                case Y ->
+                    EldritchPortalSurface.quad(
+                            pose,
+                            buffer,
+                            pos,
+                            px + panel[0],
+                            py,
+                            pz + panel[1],
+                            px + panel[2],
+                            py,
+                            pz + panel[1],
+                            px + panel[2],
+                            py,
+                            pz + panel[3],
+                            px + panel[0],
+                            py,
+                            pz + panel[3]);
+            }
         }
     }
 

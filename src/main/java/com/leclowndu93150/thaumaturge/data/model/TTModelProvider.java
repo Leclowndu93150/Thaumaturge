@@ -2642,9 +2642,31 @@ public final class TTModelProvider implements DataProvider {
 
     private void eldritchLock() {
         Block lock = TTBlocks.ELDRITCH_LOCK.get();
-        ResourceLocation model = ModelTemplates.CUBE_ALL.create(
-                lock, new TextureMapping().put(TextureSlot.ALL, blockTexture("eldritch_door")), modelOutput);
-        blockStateOutput.accept(MultiVariantGenerator.multiVariant(lock, v(model)));
+        ResourceLocation model = ModelTemplates.CUBE_ORIENTABLE.create(
+                lock,
+                new TextureMapping()
+                        .put(TextureSlot.FRONT, blockTexture("eldritch_lock_face"))
+                        .put(TextureSlot.SIDE, blockTexture("eldritch_door"))
+                        .put(TextureSlot.TOP, blockTexture("eldritch_door")),
+                modelOutput);
+        blockStateOutput.accept(MultiVariantGenerator.multiVariant(lock, v(model))
+                .with(PropertyDispatch.property(BlockStateProperties.FACING)
+                        .select(
+                                Direction.DOWN,
+                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(
+                                Direction.UP,
+                                Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
+                        .select(Direction.NORTH, Variant.variant())
+                        .select(
+                                Direction.SOUTH,
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                        .select(
+                                Direction.WEST,
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                        .select(
+                                Direction.EAST,
+                                Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))));
         ResourceLocation item = ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(
                 lock,
                 "_item",

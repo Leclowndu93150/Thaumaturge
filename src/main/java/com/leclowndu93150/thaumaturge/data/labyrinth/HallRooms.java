@@ -14,12 +14,24 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
 
 final class HallRooms {
-    private static final double DOOR_AXIS = 8.0;
-    private static final double DOOR_CENTER_Y = F + 3.5;
-    private static final double DOOR_RADIUS = 3.6;
     private static final int DOOR_Z = 5;
-    private static final int LOCK_X = (int) DOOR_AXIS - 1;
-    private static final int LOCK_Y = (int) DOOR_CENTER_Y;
+    private static final int DOOR_HALF_SPAN = 2;
+    private static final int LOCK_X = 7;
+    private static final int LOCK_Y = F + 3;
+    private static final RoomShape DOORWAY = RoomShape.box(
+            LOCK_X - DOOR_HALF_SPAN,
+            LOCK_Y - DOOR_HALF_SPAN,
+            1,
+            LOCK_X + DOOR_HALF_SPAN,
+            LOCK_Y + DOOR_HALF_SPAN,
+            DOOR_Z - 1);
+    private static final RoomShape DOOR = RoomShape.box(
+            LOCK_X - DOOR_HALF_SPAN,
+            LOCK_Y - DOOR_HALF_SPAN,
+            DOOR_Z,
+            LOCK_X + DOOR_HALF_SPAN,
+            LOCK_Y + DOOR_HALF_SPAN,
+            DOOR_Z);
     private static final int HALL_MIN_X = 3;
     private static final int HALL_MAX_X = 28;
     private static final int HALL_MIN_Z = 6;
@@ -104,12 +116,9 @@ final class HallRooms {
     }
 
     private static void vestibule(RoomCanvas canvas) {
-        RoomKit.entrance(canvas, DOOR_Z);
-        canvas.fill(
-                (x, y, z) -> z == DOOR_Z
-                        && y > F
-                        && square(x + 0.5 - DOOR_AXIS) + square(y + 0.5 - DOOR_CENTER_Y) <= DOOR_RADIUS * DOOR_RADIUS,
-                LabyrinthBlocks.door());
+        RoomKit.entrance(canvas, 1);
+        canvas.carve(DOORWAY);
+        canvas.fill(DOOR, LabyrinthBlocks.door());
         canvas.marker(LOCK_X, LOCK_Y, DOOR_Z, new LockMarker(Direction.NORTH));
     }
 
@@ -126,9 +135,5 @@ final class HallRooms {
                     spawns[i][1],
                     new LandmarkMarker(TTIds.rl(LabyrinthLandmarks.SPAWN_PREFIX + i)));
         }
-    }
-
-    private static double square(double value) {
-        return value * value;
     }
 }
