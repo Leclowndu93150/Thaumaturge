@@ -48,7 +48,7 @@ public final class TTShaders {
     }
 
     public static ShaderInstance portal() {
-        return IrisCompat.shadersActive() ? GameRenderer.getPositionTexShader() : portal;
+        return IrisCompat.shadersActive() ? GameRenderer.getPositionShader() : portal;
     }
 
     public static ShaderInstance voidStream() {
@@ -76,8 +76,7 @@ public final class TTShaders {
                         event.getResourceProvider(), TTIds.rl("tt_occluding_effect"), DefaultVertexFormat.NEW_ENTITY),
                 shader -> occludingEffect = shader);
         event.registerShader(
-                new ShaderInstance(
-                        event.getResourceProvider(), TTIds.rl("tt_portal"), DefaultVertexFormat.POSITION_TEX),
+                new ShaderInstance(event.getResourceProvider(), TTIds.rl("tt_portal"), DefaultVertexFormat.POSITION),
                 shader -> portal = shader);
         event.registerShader(
                 new ShaderInstance(

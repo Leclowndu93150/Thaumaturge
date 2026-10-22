@@ -21,7 +21,7 @@ public final class EldritchPortalSurface {
 
     public static final RenderType SURFACE = RenderType.create(
             "tt_eldritch_portal_surface",
-            DefaultVertexFormat.POSITION_TEX,
+            DefaultVertexFormat.POSITION,
             VertexFormat.Mode.QUADS,
             1536,
             false,
@@ -108,7 +108,7 @@ public final class EldritchPortalSurface {
                     .setLight(LightTexture.FULL_BRIGHT)
                     .setNormal(pose, 0.0F, 1.0F, 0.0F);
         } else {
-            buffer.addVertex(mat, x, y, z).setUv(u, v);
+            buffer.addVertex(mat, x, y, z);
         }
     }
 }
