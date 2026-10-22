@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,6 +16,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -27,6 +30,8 @@ import org.jspecify.annotations.Nullable;
 
 public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEntityEldritchLock> {
     private static final ResourceLocation CUBE_TEXTURE = TTIds.rl("textures/entity/eldritch_cube.png");
+    private static final ResourceLocation LOCK_FACE_SPRITE = TTIds.rl("block/eldritch_lock_face");
+    private static final ResourceLocation LOCK_SIDE_SPRITE = TTIds.rl("block/eldritch_lock_side");
     private static final int ARM_COUNT = 4;
     private static final int ARM_STAGGER = 5;
     private static final int CUBE_LIFETIME = 20;
@@ -56,6 +61,9 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
     private static final float PORTAL_LIFT = 0.005F;
     private static final float PORTAL_HALF_SPAN = 2.5F;
     private static final float LOCK_HALF_SPAN = 0.5F;
+    private static final float PLATE_HALF_DEPTH = 0.25F;
+    private static final float PLATE_DEPTH_UV = 8.0F / 16.0F;
+    private static final float[] VERTICAL_UP = {0.0F, 0.0F, -1.0F};
     private static final float[][] PORTAL_PANELS = {
         {-PORTAL_HALF_SPAN, -PORTAL_HALF_SPAN, PORTAL_HALF_SPAN, -LOCK_HALF_SPAN},
         {-PORTAL_HALF_SPAN, LOCK_HALF_SPAN, PORTAL_HALF_SPAN, PORTAL_HALF_SPAN},
@@ -100,15 +108,24 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                 count,
                 time,
                 light);
+        Function<ResourceLocation, TextureAtlasSprite> blocks =
+                Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
+        writePlate(
+                poseStack.last(),
+                buffers.getBuffer(RenderType.entityCutout(TextureAtlas.LOCATION_BLOCKS)),
+                hub,
+                facing,
+                light,
+                blocks.apply(LOCK_FACE_SPRITE),
+                blocks.apply(LOCK_SIDE_SPRITE));
         if (count >= 0) {
+            float lift = PLATE_HALF_DEPTH + TABLET_LIFT;
             if (tabletStack == null) {
                 tabletStack = new ItemStack(TTItems.RUNED_TABLET.get());
             }
             poseStack.pushPose();
             poseStack.translate(
-                    hub[0] + TABLET_LIFT * facing.getStepX(),
-                    TABLET_Y + hub[1] - CENTER,
-                    hub[2] + TABLET_LIFT * facing.getStepZ());
+                    hub[0] + lift * facing.getStepX(), TABLET_Y + hub[1] - CENTER, hub[2] + lift * facing.getStepZ());
             poseStack.mulPose(Axis.YP.rotationDegrees(tabletYaw(facing) + FLIP_DEGREES));
             poseStack.scale(TABLET_SCALE, TABLET_SCALE, TABLET_SCALE);
             ItemRenderHelper.render(
@@ -222,6 +239,107 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                             pz + panel[3]);
             }
         }
+    }
+
+    private static void writePlate(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float[] hub,
+            Direction facing,
+            int light,
+            TextureAtlasSprite faceSprite,
+            TextureAtlasSprite sideSprite) {
+        float[] normal = {facing.getStepX(), facing.getStepY(), facing.getStepZ()};
+        float[] up = facing.getAxis() == Direction.Axis.Y ? VERTICAL_UP : LOCAL_UP;
+        float[] right = cross(up, normal);
+        writePlateFace(
+                pose,
+                buffer,
+                offset(hub, normal, PLATE_HALF_DEPTH),
+                right,
+                LOCK_HALF_SPAN,
+                up,
+                LOCK_HALF_SPAN,
+                normal,
+                light,
+                faceSprite,
+                1.0F,
+                1.0F);
+        for (int sign = -1; sign <= 1; sign += 2) {
+            float[] across = scale(right, sign);
+            writePlateFace(
+                    pose,
+                    buffer,
+                    offset(hub, across, LOCK_HALF_SPAN),
+                    normal,
+                    PLATE_HALF_DEPTH,
+                    up,
+                    LOCK_HALF_SPAN,
+                    across,
+                    light,
+                    sideSprite,
+                    PLATE_DEPTH_UV,
+                    1.0F);
+            float[] vertical = scale(up, sign);
+            writePlateFace(
+                    pose,
+                    buffer,
+                    offset(hub, vertical, LOCK_HALF_SPAN),
+                    right,
+                    LOCK_HALF_SPAN,
+                    normal,
+                    PLATE_HALF_DEPTH,
+                    vertical,
+                    light,
+                    sideSprite,
+                    1.0F,
+                    PLATE_DEPTH_UV);
+        }
+    }
+
+    private static void writePlateFace(
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
+            float[] centre,
+            float[] uAxis,
+            float uHalf,
+            float[] vAxis,
+            float vHalf,
+            float[] normal,
+            int light,
+            TextureAtlasSprite sprite,
+            float uSpan,
+            float vSpan) {
+        for (int[] corner : CORNERS) {
+            float u = corner[0] * uHalf;
+            float v = corner[1] * vHalf;
+            buffer.addVertex(
+                            pose,
+                            centre[0] + uAxis[0] * u + vAxis[0] * v,
+                            centre[1] + uAxis[1] * u + vAxis[1] * v,
+                            centre[2] + uAxis[2] * u + vAxis[2] * v)
+                    .setColor(WHITE)
+                    .setUv(sprite.getU((corner[0] + 1) * HALF * uSpan), sprite.getV((1 - corner[1]) * HALF * vSpan))
+                    .setOverlay(OverlayTexture.NO_OVERLAY)
+                    .setLight(light)
+                    .setNormal(pose, normal[0], normal[1], normal[2]);
+        }
+    }
+
+    private static float[] cross(float[] a, float[] b) {
+        return new float[] {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
+    }
+
+    private static float[] offset(float[] origin, float[] direction, float distance) {
+        return new float[] {
+            origin[0] + direction[0] * distance,
+            origin[1] + direction[1] * distance,
+            origin[2] + direction[2] * distance
+        };
+    }
+
+    private static float[] scale(float[] vector, float factor) {
+        return new float[] {vector[0] * factor, vector[1] * factor, vector[2] * factor};
     }
 
     private static void writeArms(
