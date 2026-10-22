@@ -32,12 +32,26 @@ public final class AspectIndexBuilder {
         for (IAspectRecipeContributor contributor : TTAspectContributors.all()) {
             contributor.beginBuild(recipes, registries);
         }
-        RecursiveIndex index = new RecursiveIndex(collectBase(registries), recipes, registries);
+        Map<Item, AspectList> base = collectBase(registries);
+        Map<Item, AspectList> first = resolveAll(base, recipes, registries);
+        Map<Item, AspectList> settled =
+                SplitConservation.scan(recipes, registries).settle(first, base.keySet());
+        Map<Item, AspectList> resolved = first;
+        if (!settled.isEmpty()) {
+            Map<Item, AspectList> pinned = new HashMap<>(base);
+            pinned.putAll(settled);
+            resolved = resolveAll(pinned, recipes, registries);
+        }
+        return AspectIndex.of(resolved, Map.of(TTItems.WAND.get(), WandAspectVariants.build(resolved)));
+    }
+
+    private static Map<Item, AspectList> resolveAll(
+            Map<Item, AspectList> base, RecipeManager recipes, HolderLookup.Provider registries) {
+        RecursiveIndex index = new RecursiveIndex(base, recipes, registries);
         for (Item item : BuiltInRegistries.ITEM) {
             index.resolve(item);
         }
-        Map<Item, AspectList> resolved = index.resolved();
-        return AspectIndex.of(resolved, Map.of(TTItems.WAND.get(), WandAspectVariants.build(resolved)));
+        return index.resolved();
     }
 
     private static Map<Item, AspectList> collectBase(HolderLookup.Provider registries) {

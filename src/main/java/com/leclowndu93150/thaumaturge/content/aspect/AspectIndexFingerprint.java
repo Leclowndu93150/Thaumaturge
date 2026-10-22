@@ -26,7 +26,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public record AspectIndexFingerprint(String digest, Map<String, String> sections) {
-    private static final int FORMAT_VERSION = 5;
+    private static final int FORMAT_VERSION = 6;
     private static final String ITEMS = "items";
     private static final String BASE_ASPECTS = "base_aspects";
     private static final String RECIPES_PREFIX = "recipes/";
