@@ -55,13 +55,7 @@ public final class ThaumometerAspectOverlay {
         if (mc.level == null || mc.player == null || mc.options.hideGui) {
             return;
         }
-        if (!holdsThaumometer(mc.player)) {
-            resetAnimation();
-            return;
-        }
-        if (mc.options.getCameraType().isFirstPerson()
-                && mc.player.getMainHandItem().is(TTItems.THAUMOMETER.get())
-                && mc.player.getOffhandItem().isEmpty()) {
+        if (!holdsThaumometer(mc.player) || mc.options.getCameraType().isFirstPerson()) {
             resetAnimation();
             return;
         }

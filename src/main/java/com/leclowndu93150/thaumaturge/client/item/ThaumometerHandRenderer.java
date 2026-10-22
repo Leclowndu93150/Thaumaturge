@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.client.item;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.ItemRenderHelper;
 import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
+import com.leclowndu93150.thaumaturge.mixin.client.renderer.ItemInHandRendererInvoker;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -36,6 +37,19 @@ public final class ThaumometerHandRenderer {
     private static final float HAND_Z = 0.45F;
     private static final float GLASS_Z = 0.056F;
     private static final float READOUT_SCALE = 0.9F;
+    private static final float ONE_HAND_SHIFT = 0.125F;
+    private static final float ONE_HAND_ARM_ROLL = 10.0F;
+    private static final float ONE_HAND_X = 0.51F;
+    private static final float ONE_HAND_Y = -0.08F;
+    private static final float ONE_HAND_Z = -0.75F;
+    private static final float ONE_HAND_EQUIP_DIP = -1.2F;
+    private static final float ONE_HAND_SWING_X = -0.5F;
+    private static final float ONE_HAND_SWING_Y = 0.4F;
+    private static final float ONE_HAND_SWING_DROP = 0.3F;
+    private static final float ONE_HAND_SWING_Z = -0.3F;
+    private static final float ONE_HAND_SWING_PITCH = -45.0F;
+    private static final float ONE_HAND_SWING_YAW = -30.0F;
+    private static final float ONE_HAND_SCALE = UNIT_SCALE * 0.5F;
 
     private ThaumometerHandRenderer() {}
 
@@ -46,15 +60,20 @@ public final class ThaumometerHandRenderer {
         if (player == null || !event.getItemStack().is(TTItems.THAUMOMETER.get())) {
             return;
         }
-        if (event.getHand() != InteractionHand.MAIN_HAND
-                || !player.getOffhandItem().isEmpty()) {
-            return;
-        }
         event.setCanceled(true);
         if (IrisCompat.isSolidHandPass()) {
             return;
         }
-        renderTwoHanded(event, mc, player);
+        if (event.getHand() == InteractionHand.MAIN_HAND
+                && player.getOffhandItem().isEmpty()) {
+            renderTwoHanded(event, mc, player);
+        } else {
+            renderOneHanded(event, mc, player);
+        }
+    }
+
+    private static boolean isScanning(LocalPlayer player) {
+        return player.isUsingItem() && player.getUseItem().is(TTItems.THAUMOMETER.get());
     }
 
     private static void renderTwoHanded(RenderHandEvent event, Minecraft mc, LocalPlayer player) {
@@ -63,8 +82,7 @@ public final class ThaumometerHandRenderer {
         int light = event.getPackedLight();
         float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
         float equip = event.getEquipProgress();
-        boolean scanning = player.isUsingItem() && player.getUseItem().is(TTItems.THAUMOMETER.get());
-        float swing = scanning ? 0.0F : event.getSwingProgress();
+        float swing = isScanning(player) ? 0.0F : event.getSwingProgress();
         float sqrtSwing = Mth.sqrt(swing);
         float ySwing = -0.2F * Mth.sin(swing * (float) Math.PI) * SWING_SCALE;
         float zSwing = -0.4F * Mth.sin(sqrtSwing * (float) Math.PI) * SWING_SCALE;
@@ -86,11 +104,54 @@ public final class ThaumometerHandRenderer {
             poseStack.popPose();
         }
         poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(sqrtSwing * (float) Math.PI) * 20.0F * SWING_SCALE));
-        renderScanner(mc, player, event.getItemStack(), poseStack, buffers, light);
+        renderLens(mc, player, event.getItemStack(), poseStack, buffers, light);
+        poseStack.popPose();
+    }
+
+    private static void renderOneHanded(RenderHandEvent event, Minecraft mc, LocalPlayer player) {
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource buffers = event.getMultiBufferSource();
+        int light = event.getPackedLight();
+        float equip = event.getEquipProgress();
+        float swing = isScanning(player) ? 0.0F : event.getSwingProgress();
+        HumanoidArm arm = event.getHand() == InteractionHand.MAIN_HAND
+                ? player.getMainArm()
+                : player.getMainArm().getOpposite();
+        float invert = arm == HumanoidArm.RIGHT ? 1.0F : -1.0F;
+        poseStack.pushPose();
+        poseStack.translate(invert * ONE_HAND_SHIFT, -ONE_HAND_SHIFT, 0.0F);
+        if (!player.isInvisible()) {
+            poseStack.pushPose();
+            poseStack.mulPose(Axis.ZP.rotationDegrees(invert * ONE_HAND_ARM_ROLL));
+            ((ItemInHandRendererInvoker) mc.gameRenderer.itemInHandRenderer)
+                    .thaumaturge$renderPlayerArm(poseStack, buffers, light, equip, swing, arm);
+            poseStack.popPose();
+        }
+        float sqrtSwing = Mth.sqrt(swing);
+        float xSwing = Mth.sin(sqrtSwing * (float) Math.PI);
+        poseStack.translate(invert * ONE_HAND_X, ONE_HAND_Y + equip * ONE_HAND_EQUIP_DIP, ONE_HAND_Z);
+        poseStack.translate(
+                invert * ONE_HAND_SWING_X * xSwing,
+                ONE_HAND_SWING_Y * Mth.sin(sqrtSwing * (float) (Math.PI * 2)) - ONE_HAND_SWING_DROP * xSwing,
+                ONE_HAND_SWING_Z * Mth.sin(swing * (float) Math.PI));
+        poseStack.mulPose(Axis.XP.rotationDegrees(xSwing * ONE_HAND_SWING_PITCH));
+        poseStack.mulPose(Axis.YP.rotationDegrees(invert * xSwing * ONE_HAND_SWING_YAW));
+        poseStack.scale(ONE_HAND_SCALE, ONE_HAND_SCALE, ONE_HAND_SCALE);
+        renderLens(mc, player, event.getItemStack(), poseStack, buffers, light);
+        poseStack.popPose();
+    }
+
+    private static void renderLens(
+            Minecraft mc,
+            LocalPlayer player,
+            ItemStack stack,
+            PoseStack poseStack,
+            MultiBufferSource buffers,
+            int light) {
+        renderScanner(mc, player, stack, poseStack, buffers, light);
         poseStack.translate(0.0F, 0.0F, GLASS_Z);
         poseStack.scale(READOUT_SCALE, -READOUT_SCALE, READOUT_SCALE);
         ThaumometerLensRenderer.submitReadout(mc, player, poseStack, buffers);
-        poseStack.popPose();
     }
 
     private static void renderScanner(
