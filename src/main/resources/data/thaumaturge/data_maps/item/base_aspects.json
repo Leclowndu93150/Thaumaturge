@@ -397,27 +397,23 @@
     "#c:nuggets/copper": [
       {
         "aspect": "thaumaturge:metallum",
-        "amount": 2
-      },
-      {
-        "aspect": "thaumaturge:permutatio",
         "amount": 1
       }
     ],
     "#c:nuggets/gold": [
       {
         "aspect": "thaumaturge:metallum",
-        "amount": 2
+        "amount": 1
       },
       {
         "aspect": "thaumaturge:desiderium",
-        "amount": 2
+        "amount": 1
       }
     ],
     "#c:nuggets/iron": [
       {
         "aspect": "thaumaturge:metallum",
-        "amount": 2
+        "amount": 1
       }
     ],
     "#c:obsidians/crying": [
@@ -5790,16 +5786,8 @@
     ],
     "thaumaturge:nugget_quicksilver": [
       {
-        "aspect": "thaumaturge:terra",
-        "amount": 5
-      },
-      {
-        "aspect": "thaumaturge:ordo",
-        "amount": 5
-      },
-      {
         "aspect": "thaumaturge:metallum",
-        "amount": 5
+        "amount": 1
       }
     ],
     "thaumaturge:ore_amber": [
