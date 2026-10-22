@@ -8,6 +8,10 @@ interface RoomShape {
         return (x, y, z) -> contains(x, y, z) && other.contains(x, y, z);
     }
 
+    default RoomShape or(RoomShape other) {
+        return (x, y, z) -> contains(x, y, z) || other.contains(x, y, z);
+    }
+
     default RoomShape minus(RoomShape other) {
         return (x, y, z) -> contains(x, y, z) && !other.contains(x, y, z);
     }

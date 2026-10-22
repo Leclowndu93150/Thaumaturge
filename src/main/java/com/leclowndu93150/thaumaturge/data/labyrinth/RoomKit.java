@@ -9,13 +9,19 @@ import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.Guardian
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.marker.LootMarker;
 import com.leclowndu93150.thaumaturge.content.eldritch.labyrinth.room.RoomVoxels;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.StairsShape;
+import org.jspecify.annotations.Nullable;
 
 final class RoomKit {
     static final double MID = MazeGeometry.CELL / 2.0;
@@ -79,6 +85,72 @@ final class RoomKit {
         requireOpen(canvas, x, RoomCanvas.F + 1, z);
         canvas.marker(
                 x, RoomCanvas.F, z, embedded(LabyrinthBlocks.trap(), chance, surface(canvas, x, RoomCanvas.F, z)));
+    }
+
+    static void scatterVents(RoomCanvas canvas, RoomShape interior, int spacing, float expected) {
+        List<Vent> candidates = new ArrayList<>();
+        for (int x = 0; x < canvas.sizeX(); x++) {
+            for (int y = 0; y < canvas.sizeY(); y++) {
+                for (int z = 0; z < canvas.sizeZ(); z++) {
+                    Direction face = onlyOpening(canvas, x, y, z);
+                    if (face == null) {
+                        continue;
+                    }
+                    BlockPos mount = new BlockPos(x + face.getStepX(), y + face.getStepY(), z + face.getStepZ());
+                    if (interior.contains(mount.getX(), mount.getY(), mount.getZ())) {
+                        candidates.add(new Vent(mount, face));
+                    }
+                }
+            }
+        }
+        candidates.sort(Comparator.comparingLong(vent -> Mth.getSeed(vent.mount())));
+        List<Vent> vents = new ArrayList<>();
+        for (Vent candidate : candidates) {
+            if (!crowded(canvas, vents, candidate.mount(), spacing)) {
+                vents.add(candidate);
+            }
+        }
+        if (vents.isEmpty()) {
+            throw new IllegalArgumentException("No surface in the room can hold a crab vent");
+        }
+        float chance = Math.min(1.0F, expected / vents.size());
+        for (Vent vent : vents) {
+            canvas.marker(vent.mount().getX(), vent.mount().getY(), vent.mount().getZ(), vent(vent.facing(), chance));
+        }
+    }
+
+    private static @Nullable Direction onlyOpening(RoomCanvas canvas, int x, int y, int z) {
+        if (canvas.kind(x, y, z).open()) {
+            return null;
+        }
+        Direction found = null;
+        for (Direction side : Direction.values()) {
+            RoomVoxels.Kind kind = canvas.kind(x + side.getStepX(), y + side.getStepY(), z + side.getStepZ());
+            if (kind == RoomVoxels.Kind.AIR) {
+                if (found != null) {
+                    return null;
+                }
+                found = side;
+            } else if (kind.open()) {
+                return null;
+            }
+        }
+        return found;
+    }
+
+    private static boolean crowded(RoomCanvas canvas, List<Vent> vents, BlockPos mount, int spacing) {
+        for (Vent vent : vents) {
+            if (chessboard(vent.mount(), mount) < spacing) {
+                return true;
+            }
+        }
+        for (BlockPos near : BlockPos.betweenClosed(
+                mount.offset(-spacing, -spacing, -spacing), mount.offset(spacing, spacing, spacing))) {
+            if (canvas.kind(near.getX(), near.getY(), near.getZ()) == RoomVoxels.Kind.MARKER) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static BlockMarker vent(Direction facing, float chance) {
@@ -211,5 +283,12 @@ final class RoomKit {
     static void steps(RoomCanvas canvas, int x0, int x1, int y, int z, Direction up) {
         canvas.fill(
                 RoomShape.box(x0, y, z, x1, y, z), LabyrinthBlocks.tileStairs(up, Half.BOTTOM, StairsShape.STRAIGHT));
+    }
+
+    private record Vent(BlockPos mount, Direction facing) {}
+
+    private static int chessboard(BlockPos a, BlockPos b) {
+        return Math.max(
+                Math.abs(a.getX() - b.getX()), Math.max(Math.abs(a.getY() - b.getY()), Math.abs(a.getZ() - b.getZ())));
     }
 }

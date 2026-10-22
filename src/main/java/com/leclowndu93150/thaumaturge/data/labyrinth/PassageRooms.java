@@ -29,12 +29,11 @@ final class PassageRooms {
     private static final float RUIN_LOOT = 0.4F;
     private static final float VENT_CHANCE = 0.15F;
     private static final float LAIR_VENT_CHANCE = 0.25F;
-    private static final float WARREN_FLOOR_VENT = 0.35F;
-    private static final float WARREN_WALL_VENT = 0.3F;
+    private static final int WARREN_VENT_SPACING = 3;
+    private static final float WARREN_VENTS = 4.0F;
+    private static final RoomShape WARREN_INTERIOR = RoomShape.box(5, F + 1, 1, 10, F + 6, 14);
     private static final float WARREN_LOOT = 0.5F;
     private static final float FLOOR_TRAP_CHANCE = 0.15F;
-    private static final int[][] WARREN_FLOOR_VENTS = {{6, 3}, {9, 8}, {7, 12}};
-    private static final int[][] WARREN_WALL_VENTS = {{4, 5}, {11, 10}};
     private static final int[] RIBS = {3, 7, 11};
     private static final int[] CRYPT_NICHES = {2, 6, 10};
     private static final int[][] STRAIGHT_TRAPS = {{7, 3}, {8, 6}, {6, 9}, {9, 12}};
@@ -197,14 +196,9 @@ final class PassageRooms {
     static void warren(RoomCanvas canvas) {
         Junction.STRAIGHT.carve(canvas);
         canvas.fill(RoomShape.box(5, F, 2, 10, F, 13), LabyrinthBlocks.crust());
-        for (int[] vent : WARREN_FLOOR_VENTS) {
-            RoomKit.floorVent(canvas, vent[0], vent[1], WARREN_FLOOR_VENT);
-        }
-        for (int[] vent : WARREN_WALL_VENTS) {
-            RoomKit.wallVent(canvas, vent[0], vent[1], WARREN_WALL_VENT);
-        }
         RoomKit.niche(canvas, 11, 3, RoomKit.crates(WARREN_LOOT));
         canvas.fill(RoomShape.box(7, F + 6, 6, 8, F + 6, 9), LabyrinthBlocks.glowingCrust());
+        RoomKit.scatterVents(canvas, WARREN_INTERIOR, WARREN_VENT_SPACING, WARREN_VENTS);
     }
 
     static void rounded(RoomCanvas canvas) {

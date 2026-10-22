@@ -34,6 +34,8 @@ public final class LabyrinthDefinitionBootstrap {
     private static final int WEIGHT_COMMON = 4;
     private static final int WEIGHT_UNCOMMON = 3;
     private static final int WEIGHT_RARE = 2;
+    private static final int MIN_NESTS = 2;
+    private static final int MAX_NESTS = 4;
 
     private LabyrinthDefinitionBootstrap() {}
 
@@ -49,7 +51,7 @@ public final class LabyrinthDefinitionBootstrap {
                 List.of(
                         new FeatureQuota(
                                 rooms.getOrThrow(TTLabyrinthRoomTags.NESTS),
-                                UniformInt.of(1, 3),
+                                UniformInt.of(MIN_NESTS, MAX_NESTS),
                                 FeatureQuota.Placement.DEAD_END,
                                 FEATURE_PORTAL_DISTANCE),
                         new FeatureQuota(

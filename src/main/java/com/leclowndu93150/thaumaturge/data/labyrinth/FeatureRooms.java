@@ -21,10 +21,12 @@ final class FeatureRooms {
     private static final float SPIDER_LOOT = 0.5F;
     private static final float WEB_CHANCE = 0.75F;
     private static final float LIBRARY_LOOT = 0.4F;
-    private static final float NEST_VENT = 1.0F;
-    private static final float NEST_WALL_VENT = 0.6F;
-    private static final int[][] CRAB_SPAWNERS = {{5, 10}, {10, 10}};
-    private static final int[][] CRAB_WALL_VENTS = {{2, 9}, {13, 9}, {8, 14}};
+    private static final double NEST_RADIUS = 5.0;
+    private static final double NEST_SHELL = 6.0;
+    private static final double NEST_DOME_RISE = 2.5;
+    private static final double NEST_SHELL_RISE = 3.5;
+    private static final int NEST_VENT_SPACING = 3;
+    private static final float NEST_VENTS = 12.0F;
     private static final int[][] GUARDIAN_PILLARS = {{5, 7}, {10, 7}};
     private static final int[][] SPIDER_WEBS = {{4, 8}, {11, 8}, {6, 12}, {9, 13}, {7, 6}};
 
@@ -53,17 +55,17 @@ final class FeatureRooms {
     }
 
     static void crabs(RoomCanvas canvas) {
+        RoomShape cavity = RoomShape.cylinder(RoomKit.MID, NEST_DEPTH, NEST_RADIUS, F + 1, F + 5)
+                .or(RoomShape.dome(RoomKit.MID, F + 5, NEST_DEPTH, NEST_RADIUS, NEST_DOME_RISE, NEST_RADIUS));
+        canvas.fill(
+                RoomShape.cylinder(RoomKit.MID, NEST_DEPTH, NEST_SHELL, F, F + 5)
+                        .or(RoomShape.dome(RoomKit.MID, F + 5, NEST_DEPTH, NEST_SHELL, NEST_SHELL_RISE, NEST_SHELL)),
+                LabyrinthBlocks.crust());
         RoomKit.entrance(canvas, 5);
-        canvas.carve(RoomShape.cylinder(RoomKit.MID, NEST_DEPTH, 5.0, F + 1, F + 5));
-        canvas.carve(RoomShape.dome(RoomKit.MID, F + 5, NEST_DEPTH, 5.0, 2.5, 5.0));
+        canvas.carve(cavity);
         canvas.fill(RoomShape.box(6, F, 8, 9, F, 11), LabyrinthBlocks.glowingCrust());
-        for (int[] spawner : CRAB_SPAWNERS) {
-            RoomKit.floorVent(canvas, spawner[0], spawner[1], NEST_VENT);
-        }
-        for (int[] vent : CRAB_WALL_VENTS) {
-            RoomKit.wallVent(canvas, vent[0], vent[1], NEST_WALL_VENT);
-        }
         canvas.marker(7, F + 1, 13, RoomKit.crates(NEST_LOOT));
+        RoomKit.scatterVents(canvas, cavity, NEST_VENT_SPACING, NEST_VENTS);
     }
 
     static void guardians(RoomCanvas canvas) {
