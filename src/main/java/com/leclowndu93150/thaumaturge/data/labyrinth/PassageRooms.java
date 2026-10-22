@@ -297,7 +297,7 @@ final class PassageRooms {
     private static void rubble(RoomCanvas canvas, BlockState block) {
         canvas.fill(RoomShape.box(5, F + 1, 4, 5, F + 1, 6), block);
         canvas.fill(RoomShape.box(10, F + 1, 9, 10, F + 2, 11), block);
-        canvas.fill(RoomShape.box(6, F + 5, 7, 7, F + 5, 8), block);
+        canvas.fill(RoomShape.box(6, F + 5, 7, 7, F + 6, 8), block);
     }
 
     static void webbedStraight(RoomCanvas canvas) {

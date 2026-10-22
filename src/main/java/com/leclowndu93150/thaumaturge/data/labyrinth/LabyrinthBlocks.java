@@ -107,7 +107,15 @@ public final class LabyrinthBlocks {
     static boolean roundingHost(BlockState state) {
         return state.is(TTBlocks.ELDRITCH_STONE.get())
                 || state.is(TTBlocks.ELDRITCH_STONE_INERT.get())
-                || state.is(TTBlocks.ELDRITCH_ROCK.get());
+                || state.is(TTBlocks.ELDRITCH_ROCK.get())
+                || state.is(TTBlocks.ELDRITCH_CRUST_GLOWING.get());
+    }
+
+    static boolean roundingFloor(BlockState state) {
+        return roundingHost(state)
+                || state.is(TTBlocks.STONE_ELDRITCH_TILE.get())
+                || state.is(TTBlocks.OBSIDIAN_TILE.get())
+                || state.is(TTBlocks.ELDRITCH_CRUST.get());
     }
 
     static BlockState rockStairs(Direction facing) {

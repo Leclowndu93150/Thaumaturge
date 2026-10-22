@@ -24,7 +24,7 @@ public final class LabyrinthRoomProvider implements DataProvider {
             recipe.body().accept(canvas);
             canvas.skin(LabyrinthBlocks.skin());
             if (recipe.decorate()) {
-                RoomRounding.apply(canvas);
+                RoomRounding.apply(canvas, LabyrinthBlocks.skin().ceiling());
             }
             List<String> problems = RoomShapeRules.check(canvas, recipe.width(), recipe.depth(), recipe.sockets());
             if (!problems.isEmpty()) {
