@@ -14,9 +14,13 @@ import com.leclowndu93150.thaumaturge.content.entity.champion.trait.WardedChampi
 import com.leclowndu93150.thaumaturge.content.entity.champion.trait.WarpChampionTrait;
 import com.leclowndu93150.thaumaturge.content.entity.trait.LeapingTrait;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MarkerTrait;
+import com.leclowndu93150.thaumaturge.content.entity.trait.StrikeEffectTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintBroodTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintGrazingTrait;
 import com.leclowndu93150.thaumaturge.content.taint.entity.TaintedTrait;
+import com.leclowndu93150.thaumaturge.content.taint.entity.ability.TaintLayingTrait;
+import com.leclowndu93150.thaumaturge.content.taint.entity.ability.TaintacleLureTrait;
+import com.leclowndu93150.thaumaturge.content.taint.entity.ability.WarpingStrikeTrait;
 import net.minecraft.core.Registry;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -31,6 +35,8 @@ public final class TTMobTraits {
     private static final int GRIM_WITHER_TICKS = 200;
     private static final int SICKLY_HUNGER_TICKS = 500;
     private static final int VENOMOUS_POISON_TICKS = 100;
+    private static final int LIFTING_LEVITATION_TICKS = 60;
+    private static final int LIFTING_LEVITATION_AMPLIFIER = 1;
 
     public static final DeferredRegister<MobTrait> TRAITS = DeferredRegister.create(MobTrait.REGISTRY_KEY, TTIds.MODID);
 
@@ -75,6 +81,25 @@ public final class TTMobTraits {
     public static final DeferredHolder<MobTrait, TaintBroodTrait> TAINT_BROOD =
             TRAITS.register("taint_brood", TaintBroodTrait::new);
     public static final DeferredHolder<MobTrait, LeapingTrait> LEAPING = TRAITS.register("leaping", LeapingTrait::new);
+    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_SHEARING =
+            TRAITS.register("taint_shearing", MarkerTrait::new);
+    public static final DeferredHolder<MobTrait, MarkerTrait> FLUX_MILK =
+            TRAITS.register("flux_milk", MarkerTrait::new);
+    public static final DeferredHolder<MobTrait, TaintLayingTrait> TAINT_LAYING =
+            TRAITS.register("taint_laying", TaintLayingTrait::new);
+    public static final DeferredHolder<MobTrait, MarkerTrait> SWARM_BURST =
+            TRAITS.register("swarm_burst", MarkerTrait::new);
+    public static final DeferredHolder<MobTrait, WarpingStrikeTrait> WARPING_STRIKE =
+            TRAITS.register("warping_strike", WarpingStrikeTrait::new);
+    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_ARROWS =
+            TRAITS.register("taint_arrows", MarkerTrait::new);
+    public static final DeferredHolder<MobTrait, MarkerTrait> TAINT_BREWING =
+            TRAITS.register("taint_brewing", MarkerTrait::new);
+    public static final DeferredHolder<MobTrait, StrikeEffectTrait> LIFTING_STRIKE = TRAITS.register(
+            "lifting_strike",
+            () -> new StrikeEffectTrait(MobEffects.LEVITATION, LIFTING_LEVITATION_TICKS, LIFTING_LEVITATION_AMPLIFIER));
+    public static final DeferredHolder<MobTrait, TaintacleLureTrait> TAINTACLE_LURE =
+            TRAITS.register("taintacle_lure", TaintacleLureTrait::new);
 
     private TTMobTraits() {}
 

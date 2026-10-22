@@ -26,6 +26,7 @@ import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellSprite;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellWall;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSporeSwarmer;
+import com.leclowndu93150.thaumaturge.content.taint.entity.ability.ThrownTaintedEgg;
 import com.leclowndu93150.thaumaturge.content.wands.EntityAspectOrb;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
@@ -178,6 +179,13 @@ public final class TTEntities {
             () -> EntityType.Builder.<EntityBottleTaint>of(EntityBottleTaint::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(8)
+                    .updateInterval(10));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<ThrownTaintedEgg>> TAINTED_EGG = register(
+            "tainted_egg",
+            () -> EntityType.Builder.<ThrownTaintedEgg>of(ThrownTaintedEgg::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(4)
                     .updateInterval(10));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpellProjectile>> FOCUS_PROJECTILE = register(

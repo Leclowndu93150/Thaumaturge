@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.particle.TaintSwarmParticleOptions;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
+import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -36,6 +37,7 @@ public final class EntityTaintSwarm extends Monster {
 
     private static final int ATTACK_RANGE = 3;
     private static final int ATTACK_COOLDOWN = 15;
+    private static final float FULL_TURN_DEGREES = 360.0F;
     private static final int WEAKNESS_DURATION = 100;
     private static final float SELF_DAMAGE_SUMMONED = 5.0F;
     // No swarm model: its body is a cloud of roughly thirty attached particles.
@@ -49,6 +51,15 @@ public final class EntityTaintSwarm extends Monster {
         super(type, level);
         this.moveControl = new FlyingMoveControl(this, 20, false);
         this.xpReward = 4;
+    }
+
+    public static void release(ServerLevel level, double x, double y, double z) {
+        EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
+        if (swarm == null) {
+            return;
+        }
+        swarm.moveTo(x, y, z, level.getRandom().nextFloat() * FULL_TURN_DEGREES, 0.0F);
+        level.addFreshEntity(swarm);
     }
 
     public static AttributeSupplier.Builder createAttributes() {

@@ -290,6 +290,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.liquid_death", "Liquid Death");
         add("fluid_type.thaumaturge.liquid_death", "Liquid Death");
         add("item.thaumaturge.liquid_death_bucket", "Liquid Death Bucket");
+        add("item.thaumaturge.flux_goo_bucket", "Flux Goo Bucket");
         add("item.thaumaturge.purifying_bucket", "Bucket of Purifying Fluid");
         add("gui.thaumaturge.spa.mix.true", "Mix with ingredient");
         add("gui.thaumaturge.spa.mix.false", "Use just the fluid");
@@ -694,6 +695,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("entity.thaumaturge.bottle_taint", "Bottle of Tainted Goo");
         add("item.thaumaturge.bottle_taint", "Bottle of Taint");
         add("item.thaumaturge.tainted_goo", "Tainted Goo");
+        add("item.thaumaturge.tainted_egg", "Tainted Egg");
+        add("entity.thaumaturge.tainted_egg", "Tainted Egg");
         add("item.thaumaturge.taint_tendril", "Taint Tendril");
         add("entity.thaumaturge.wisp", "Wisp");
         add("entity.thaumaturge.brainy_zombie", "Angry Zombie");
@@ -1717,6 +1720,15 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("mob_trait.thaumaturge.taint_blast", "Taint Blast");
         add("mob_trait.thaumaturge.taint_brood", "Taint Brood");
         add("mob_trait.thaumaturge.leaping", "Leaping");
+        add("mob_trait.thaumaturge.taint_shearing", "Taint Shearing");
+        add("mob_trait.thaumaturge.flux_milk", "Flux Milk");
+        add("mob_trait.thaumaturge.taint_laying", "Taint Laying");
+        add("mob_trait.thaumaturge.swarm_burst", "Swarm Burst");
+        add("mob_trait.thaumaturge.warping_strike", "Warping Strike");
+        add("mob_trait.thaumaturge.taint_arrows", "Taint Arrows");
+        add("mob_trait.thaumaturge.taint_brewing", "Taint Brewing");
+        add("mob_trait.thaumaturge.lifting_strike", "Lifting Strike");
+        add("mob_trait.thaumaturge.taintacle_lure", "Taintacle Lure");
         add("block.thaumaturge.loot_crate_common", "Common Crate");
         add("block.thaumaturge.loot_crate_uncommon", "Uncommon Crate");
         add("block.thaumaturge.loot_crate_rare", "Rare Crate");

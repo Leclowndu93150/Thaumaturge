@@ -323,6 +323,7 @@ public final class TTModelProvider implements DataProvider {
         flatItem(TTItems.TAINTED_GOO.get());
         flatItem(TTItems.TAINT_TENDRIL.get());
         flatItem(TTItems.BOTTLE_TAINT.get());
+        flatItem(TTItems.TAINTED_EGG.get());
         flatItem(TTItems.VIS_RESONATOR.get());
         flatItem(TTItems.THAUMIC_SLIME_SPAWN_EGG.get());
         flatItem(TTItems.TAINT_CRAWLER_SPAWN_EGG.get());
@@ -1264,6 +1265,7 @@ public final class TTModelProvider implements DataProvider {
         simpleBlock(TTBlocks.PURIFYING_FLUID.get(), TTIds.rl("block/purifying_fluid"));
         simpleBlock(TTBlocks.LIQUID_DEATH.get(), TTIds.rl("block/liquid_death"));
         flatItem(TTItems.BUCKET_LIQUID_DEATH.get());
+        flatItem(TTItems.BUCKET_FLUX_GOO.get());
         flatItem(TTItems.BUCKET_PURIFYING.get());
     }
 

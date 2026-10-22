@@ -42,7 +42,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(40.0, 6.0, 0.27, 0.0),
                         true,
                         true,
-                        List.of(),
+                        List.<Holder<MobTrait>>of(TTMobTraits.FLUX_MILK),
                         true,
                         Optional.of(TTLootTables.TAINTED_COW)));
         add(
@@ -52,7 +52,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(20.0, 4.0, 0.275, LIVESTOCK_ARMOR),
                         true,
                         true,
-                        List.of(),
+                        List.<Holder<MobTrait>>of(TTMobTraits.SWARM_BURST),
                         true,
                         Optional.of(TTLootTables.TAINTED_PIG)));
         add(
@@ -62,7 +62,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(8.0, 3.0, 0.4, LIVESTOCK_ARMOR),
                         true,
                         true,
-                        List.<Holder<MobTrait>>of(TTMobTraits.LEAPING),
+                        List.<Holder<MobTrait>>of(TTMobTraits.LEAPING, TTMobTraits.TAINT_LAYING),
                         true,
                         Optional.of(TTLootTables.TAINTED_CHICKEN)));
         add(
@@ -72,7 +72,7 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         stats(20.0, 3.0, 0.25, LIVESTOCK_ARMOR),
                         true,
                         false,
-                        List.<Holder<MobTrait>>of(TTMobTraits.TAINT_GRAZING),
+                        List.<Holder<MobTrait>>of(TTMobTraits.TAINT_GRAZING, TTMobTraits.TAINT_SHEARING),
                         true,
                         Optional.of(TTLootTables.TAINTED_SHEEP)));
         add(
@@ -99,6 +99,16 @@ public final class TaintedProfileProvider extends DataMapProvider {
                         List.<Holder<MobTrait>>of(TTMobTraits.TAINT_BLAST),
                         false,
                         Optional.of(TTLootTables.TAINTED_CREEPER)));
+        add(b, EntityType.ZOMBIE, hostile(TTMobTraits.WARPING_STRIKE, true));
+        add(b, EntityType.SKELETON, hostile(TTMobTraits.TAINT_ARROWS, true));
+        add(b, EntityType.PILLAGER, hostile(TTMobTraits.TAINT_ARROWS, false));
+        add(b, EntityType.WITCH, hostile(TTMobTraits.TAINT_BREWING, true));
+        add(b, EntityType.PHANTOM, hostile(TTMobTraits.LIFTING_STRIKE, true));
+        add(b, EntityType.ENDERMAN, hostile(TTMobTraits.TAINTACLE_LURE, true));
+    }
+
+    private static TaintedProfile hostile(Holder<MobTrait> trait, boolean naturalSpawns) {
+        return new TaintedProfile(Map.of(), false, false, List.of(trait), naturalSpawns, Optional.empty());
     }
 
     private static Map<Holder<Attribute>, Double> stats(double health, double attack, double speed, double armor) {

@@ -117,6 +117,7 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.ESSENTIA_INPUT.get());
                         output.accept(TTItems.ESSENTIA_OUTPUT.get());
                         output.accept(TTItems.BUCKET_LIQUID_DEATH.get());
+                        output.accept(TTItems.BUCKET_FLUX_GOO.get());
                         output.accept(TTItems.BUCKET_PURIFYING.get());
                         output.accept(TTItems.JAR_BRACE.get());
                         output.accept(TTItems.JAR_NORMAL.get());
@@ -451,6 +452,7 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.TAINTED_GOO.get());
                         output.accept(TTItems.TAINT_TENDRIL.get());
                         output.accept(TTItems.BOTTLE_TAINT.get());
+                        output.accept(TTItems.TAINTED_EGG.get());
                         output.accept(TTItems.TAINT_ROCK.get());
                         output.accept(TTItems.TAINT_SOIL.get());
                         output.accept(TTItems.TAINT_CRUST.get());

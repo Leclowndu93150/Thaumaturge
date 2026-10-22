@@ -129,13 +129,17 @@ public final class TaintedTrait implements MobTrait {
 
     @Override
     public void onAdded(LivingEntity mob) {
+        grantProfileTraits(mob);
+        mob.heal(ASSIGN_HEAL);
+    }
+
+    public static void grantProfileTraits(LivingEntity mob) {
         TaintedProfile profile = TaintedProfile.of(mob.getType());
         if (profile != null) {
             for (Holder<MobTrait> trait : profile.traits()) {
                 MobTraits.add(mob, trait);
             }
         }
-        mob.heal(ASSIGN_HEAL);
     }
 
     @Override
