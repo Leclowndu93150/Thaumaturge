@@ -74,6 +74,7 @@ class NodeHungerPortTest {
         when(chunks.getChunkNow(anyInt(), anyInt())).thenReturn(mock(LevelChunk.class));
         when(level.getRandom()).thenReturn(random);
         when(level.getBlockState(any(BlockPos.class))).thenReturn(Blocks.AIR.defaultBlockState());
+        when(level.isPositionEntityTicking(any())).thenReturn(true);
         return level;
     }
 

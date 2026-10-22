@@ -103,7 +103,9 @@ final class NodeHunger {
             return;
         }
         for (Entity entity : pulled) {
-            if (!isPullable(entity) || entity.level() != level) {
+            if (!isPullable(entity)
+                    || entity.level() != level
+                    || !level.isPositionEntityTicking(entity.blockPosition())) {
                 continue;
             }
             Vec3 toCentre = centre.subtract(entity.getBoundingBox().getCenter());
