@@ -16,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public final class EldritchPortalSurface {
-    public static final ResourceLocation TUNNEL_TEXTURE = TTIds.rl("textures/misc/tunnel.png");
     public static final ResourceLocation PARTICLE_FIELD_TEXTURE = TTIds.rl("textures/misc/particlefield.png");
+    private static final int UV_WRAP = 1024;
 
     public static final RenderType SURFACE = RenderType.create(
             "tt_eldritch_portal_surface",
@@ -28,10 +28,6 @@ public final class EldritchPortalSurface {
             false,
             RenderType.CompositeState.builder()
                     .setShaderState(new RenderStateShard.ShaderStateShard(TTShaders::portal))
-                    .setTextureState(RenderStateShard.MultiTextureStateShard.builder()
-                            .add(TUNNEL_TEXTURE, false, false)
-                            .add(PARTICLE_FIELD_TEXTURE, true, false)
-                            .build())
                     .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                     .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                     .setCullState(RenderStateShard.NO_CULL)
@@ -41,10 +37,6 @@ public final class EldritchPortalSurface {
 
     private EldritchPortalSurface() {}
 
-    /**
-     * The full portal uses two texture samplers. Shader packs cannot safely run that custom position-texture
-     * render type, so use Minecraft's Iris-recognised entity-translucent type with the dark particle field there.
-     */
     public static RenderType surface() {
         return IrisCompat.shadersActive() ? SHADER_FALLBACK_SURFACE : SURFACE;
     }
@@ -93,9 +85,9 @@ public final class EldritchPortalSurface {
             float y,
             float z,
             boolean shaderFallback) {
-        float wx = worldPos.getX() + x;
-        float wy = worldPos.getY() + y;
-        float wz = worldPos.getZ() + z;
+        float wx = Math.floorMod(worldPos.getX(), UV_WRAP) + x;
+        float wy = Math.floorMod(worldPos.getY(), UV_WRAP) + y;
+        float wz = Math.floorMod(worldPos.getZ(), UV_WRAP) + z;
         float u;
         float v;
         if (axis == 1) {

@@ -9,12 +9,14 @@ uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
 uniform int FogShape;
 
-out vec2 texCoord0;
+out vec2 surfaceCoord;
+out vec3 viewRay;
 out float vertexDistance;
 
 void main() {
     gl_Position = ProjMat * ModelViewMat * vec4(Position, 1.0);
 
-    texCoord0 = UV0;
+    surfaceCoord = UV0;
+    viewRay = Position;
     vertexDistance = fog_distance(Position, FogShape);
 }
