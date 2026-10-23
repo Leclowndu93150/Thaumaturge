@@ -81,7 +81,7 @@ public final class WarpManager {
     }
 
     public static int getWarpFromGear(ServerPlayer player) {
-        int warp = getFinalWarp(player.getMainHandItem(), player);
+        int warp = getFinalWarp(player.getMainHandItem(), player) + getFinalWarp(player.getOffhandItem(), player);
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             if (isHumanoidArmorSlot(slot)) {
                 warp += getFinalWarp(player.getItemBySlot(slot), player);
