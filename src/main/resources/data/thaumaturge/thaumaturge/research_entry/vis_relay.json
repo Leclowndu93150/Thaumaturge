@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:node_transducer"
   ],
-  "column": -8,
-  "row": 9,
+  "column": 8,
+  "row": -6,
   "icons": [
     "thaumaturge:vis_relay"
   ],

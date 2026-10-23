@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_bolt"
   ],
-  "column": 8,
-  "row": -1,
+  "column": 5,
+  "row": 2,
   "icons": [
     "focus:thaumaturge:beam",
     "focus:thaumaturge:chain",

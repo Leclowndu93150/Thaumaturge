@@ -2,10 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.cap_silver.title",
   "parents": [
-    "thaumaturge:cap_gold"
+    "thaumaturge:cap_gold",
+    "thaumaturge:infusion"
   ],
-  "column": -1,
-  "row": -3,
+  "column": -4,
+  "row": -4,
   "icons": [
     "thaumaturge:wand_cap_silver"
   ],

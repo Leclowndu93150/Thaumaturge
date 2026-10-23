@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_projectile"
   ],
-  "column": 1,
-  "row": 1,
+  "column": 0,
+  "row": -1,
   "icons": [
     "focus:thaumaturge:aura",
     "focus:thaumaturge:self"

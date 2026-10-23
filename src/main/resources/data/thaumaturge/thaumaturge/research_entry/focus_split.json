@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_scatter"
   ],
-  "column": 5,
-  "row": -3,
+  "column": 7,
+  "row": 4,
   "icons": [
     "focus:thaumaturge:branch"
   ],

@@ -6,8 +6,8 @@
     "thaumaturge:f_bat",
     "thaumaturge:scanned/entity/thaumaturge/firebat"
   ],
-  "column": 7,
-  "row": 4,
+  "column": 9,
+  "row": -1,
   "meta": [
     "reverse"
   ],

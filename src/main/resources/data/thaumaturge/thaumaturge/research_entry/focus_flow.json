@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_split"
   ],
-  "column": 3,
-  "row": -4,
+  "column": 7,
+  "row": 6,
   "icons": [
     "focus:thaumaturge:relay",
     "focus:thaumaturge:delay",

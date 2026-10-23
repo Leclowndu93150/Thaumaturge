@@ -2,10 +2,10 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.sceptre.title",
   "parents": [
-    "thaumaturge:cap_gold"
+    "thaumaturge:rod_silverwood"
   ],
-  "column": -3,
-  "row": -5,
+  "column": -5,
+  "row": -2,
   "icons": [
     "thaumaturge:primal_charm"
   ],

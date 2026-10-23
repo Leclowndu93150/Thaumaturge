@@ -3,10 +3,11 @@
   "name": "research.thaumaturge.vis_battery.title",
   "parents": [
     "thaumaturge:recharge_pedestal",
-    "thaumaturge:crystal_farmer"
+    "thaumaturge:crystal_farmer",
+    "thaumaturge:paving_stones"
   ],
-  "column": -5,
-  "row": 0,
+  "column": 3,
+  "row": -5,
   "icons": [
     "thaumaturge:vis_battery"
   ],

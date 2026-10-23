@@ -1,15 +1,14 @@
 {
-  "category": "thaumaturge:basics",
+  "category": "thaumaturge:infusion",
   "name": "research.thaumaturge.crystal_farmer.title",
   "parents": [
     "thaumaturge:ore",
     "thaumaturge:infusion",
     "thaumaturge:scanned/orecrystal"
   ],
-  "column": -5,
-  "row": 1,
+  "column": 1,
+  "row": -2,
   "meta": [
-    "round",
     "hidden"
   ],
   "icons": [

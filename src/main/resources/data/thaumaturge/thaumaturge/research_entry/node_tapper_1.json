@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": -5,
-  "row": 2,
+  "column": 0,
+  "row": -8,
   "icons": [
     "thaumaturge:textures/research/r_researcher1.png"
   ],

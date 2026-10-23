@@ -2,10 +2,10 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.focus_harvest.title",
   "parents": [
-    "thaumaturge:focus_break"
+    "thaumaturge:focus_flux"
   ],
-  "column": 2,
-  "row": 8,
+  "column": -1,
+  "row": 7,
   "icons": [
     "focus:thaumaturge:harvest"
   ],

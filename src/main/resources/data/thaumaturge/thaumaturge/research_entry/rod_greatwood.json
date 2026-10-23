@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": -4,
-  "row": -1,
+  "column": -6,
+  "row": -6,
   "icons": [
     "thaumaturge:wand_rod_greatwood"
   ],

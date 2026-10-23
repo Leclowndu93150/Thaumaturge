@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": -2,
-  "row": -2,
+  "column": -3,
+  "row": -5,
   "icons": [
     "thaumaturge:wand_cap_gold"
   ],

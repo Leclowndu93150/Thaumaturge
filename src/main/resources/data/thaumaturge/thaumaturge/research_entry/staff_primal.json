@@ -2,10 +2,17 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.staff_primal.title",
   "parents": [
-    "thaumaturge:staves"
+    "thaumaturge:staves",
+    "thaumaturge:rod_obsidian",
+    "thaumaturge:rod_bone",
+    "thaumaturge:rod_quartz",
+    "thaumaturge:rod_reed",
+    "thaumaturge:rod_blaze",
+    "thaumaturge:rod_ice",
+    "thaumaturge:base_eldritch"
   ],
-  "column": -5,
-  "row": -7,
+  "column": -8,
+  "row": -6,
   "icons": [
     "thaumaturge:staff_rod_primal"
   ],
@@ -41,5 +48,9 @@
       "amount": 3
     }
   ],
-  "complexity": 3
+  "complexity": 3,
+  "meta": [
+    "spiky",
+    "hidden"
+  ]
 }

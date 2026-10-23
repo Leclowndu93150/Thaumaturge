@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_heal"
   ],
-  "column": -1,
-  "row": 8,
+  "column": -5,
+  "row": 2,
   "icons": [
     "focus:thaumaturge:imbue"
   ],

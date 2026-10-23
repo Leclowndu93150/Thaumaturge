@@ -2,10 +2,10 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.node_transducer.title",
   "parents": [
-    "thaumaturge:node_stabilizer_advanced"
+    "thaumaturge:node_stabilizer"
   ],
-  "column": -7,
-  "row": 8,
+  "column": 7,
+  "row": -7,
   "icons": [
     "thaumaturge:node_transducer"
   ],

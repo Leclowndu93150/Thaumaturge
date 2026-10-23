@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_elemental"
   ],
-  "column": 1,
-  "row": 3,
+  "column": -2,
+  "row": 0,
   "icons": [
     "focus:thaumaturge:burst"
   ],

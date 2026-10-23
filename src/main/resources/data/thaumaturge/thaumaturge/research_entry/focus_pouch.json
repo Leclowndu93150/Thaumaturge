@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": -2,
-  "row": -1,
+  "column": -3,
+  "row": -8,
   "icons": [
     "thaumaturge:focus_pouch"
   ],

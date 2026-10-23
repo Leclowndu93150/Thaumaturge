@@ -2,10 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.focus_blink.title",
   "parents": [
-    "thaumaturge:focus_rift"
+    "thaumaturge:focus_rift",
+    "thaumaturge:base_eldritch"
   ],
-  "column": 4,
-  "row": 7,
+  "column": 1,
+  "row": 8,
   "icons": [
     "focus:thaumaturge:blink"
   ],

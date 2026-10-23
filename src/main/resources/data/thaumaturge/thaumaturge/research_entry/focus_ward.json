@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_plan"
   ],
-  "column": 2,
-  "row": 2,
+  "column": 4,
+  "row": 7,
   "icons": [
     "focus:thaumaturge:ward"
   ],

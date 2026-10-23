@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_break"
   ],
-  "column": 1,
-  "row": 7,
+  "column": 2,
+  "row": 1,
   "icons": [
     "focus:thaumaturge:silk_touch",
     "focus:thaumaturge:fortune"

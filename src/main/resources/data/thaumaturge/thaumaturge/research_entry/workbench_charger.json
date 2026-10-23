@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:recharge_pedestal"
   ],
-  "column": -3,
-  "row": 4,
+  "column": 4,
+  "row": -5,
   "icons": [
     "thaumaturge:arcane_workbench_charger"
   ],

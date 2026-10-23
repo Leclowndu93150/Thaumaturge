@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_scatter"
   ],
-  "column": 7,
-  "row": -3,
+  "column": 6,
+  "row": 3,
   "icons": [
     "focus:thaumaturge:pierce",
     "focus:thaumaturge:fan"

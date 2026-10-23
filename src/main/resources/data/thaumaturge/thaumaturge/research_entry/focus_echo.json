@@ -4,14 +4,22 @@
   "parents": [
     "thaumaturge:focus_split"
   ],
-  "column": 5,
-  "row": -5,
+  "column": 8,
+  "row": 5,
   "icons": [
     "focus:thaumaturge:echo"
   ],
   "stages": [
     {
       "text": "research.thaumaturge.focus_echo.stage_0",
+      "obtain": [
+        {
+          "items": [
+            "minecraft:sculk_sensor"
+          ],
+          "amount": 1
+        }
+      ],
       "required_knowledge": [
         {
           "type": "theory",

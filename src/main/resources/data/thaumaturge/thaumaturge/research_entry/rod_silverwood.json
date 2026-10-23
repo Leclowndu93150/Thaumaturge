@@ -2,9 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.rod_silverwood.title",
   "parents": [
-    "thaumaturge:rod_greatwood"
+    "thaumaturge:rod_greatwood",
+    "thaumaturge:infusion",
+    "thaumaturge:crystal_farmer"
   ],
-  "column": -4,
+  "column": -6,
   "row": -3,
   "icons": [
     "thaumaturge:wand_rod_silverwood"

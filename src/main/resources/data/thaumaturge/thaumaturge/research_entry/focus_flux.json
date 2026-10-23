@@ -4,7 +4,7 @@
   "parents": [
     "thaumaturge:focus_elemental"
   ],
-  "column": 0,
+  "column": -1,
   "row": 4,
   "icons": [
     "focus:thaumaturge:flux"

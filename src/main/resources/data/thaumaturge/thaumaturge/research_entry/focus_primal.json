@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_greater"
   ],
-  "column": 0,
-  "row": -6,
+  "column": 6,
+  "row": -3,
   "icons": [
     "focus:thaumaturge:primal"
   ],

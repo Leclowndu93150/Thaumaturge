@@ -2,10 +2,10 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.focus_exchange.title",
   "parents": [
-    "thaumaturge:focus_flux"
+    "thaumaturge:focus_break"
   ],
-  "column": 2,
-  "row": 4,
+  "column": 3,
+  "row": 3,
   "icons": [
     "focus:thaumaturge:exchange"
   ],

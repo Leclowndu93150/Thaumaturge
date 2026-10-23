@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": -3,
-  "row": 2,
+  "column": 3,
+  "row": -6,
   "icons": [
     "thaumaturge:recharge_pedestal"
   ],

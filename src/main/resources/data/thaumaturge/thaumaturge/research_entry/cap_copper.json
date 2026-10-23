@@ -2,10 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.cap_copper.title",
   "parents": [
-    "thaumaturge:cap_gold"
+    "thaumaturge:base_auromancy",
+    "thaumaturge:infusion"
   ],
-  "column": -3,
-  "row": -3,
+  "column": -2,
+  "row": -4,
   "icons": [
     "thaumaturge:wand_cap_copper"
   ],

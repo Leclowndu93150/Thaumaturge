@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_flux"
   ],
-  "column": 0,
-  "row": 7,
+  "column": -3,
+  "row": 2,
   "icons": [
     "focus:thaumaturge:heal"
   ],

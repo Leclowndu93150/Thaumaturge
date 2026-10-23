@@ -3,10 +3,11 @@
   "name": "research.thaumaturge.vis_amulet.title",
   "parents": [
     "thaumaturge:recharge_pedestal",
-    "thaumaturge:infusion"
+    "thaumaturge:infusion",
+    "thaumaturge:crystal_farmer"
   ],
-  "column": -5,
-  "row": 4,
+  "column": 5,
+  "row": -4,
   "icons": [
     "thaumaturge:amulet_vis_crafted"
   ],

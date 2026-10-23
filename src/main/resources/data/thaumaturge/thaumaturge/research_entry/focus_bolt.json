@@ -2,9 +2,9 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.focus_bolt.title",
   "parents": [
-    "thaumaturge:focus_projectile@2"
+    "thaumaturge:focus_projectile"
   ],
-  "column": 7,
+  "column": 4,
   "row": 0,
   "icons": [
     "focus:thaumaturge:bolt"

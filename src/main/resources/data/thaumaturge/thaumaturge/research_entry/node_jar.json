@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:node_stabilizer"
   ],
-  "column": -7,
-  "row": 6,
+  "column": 4,
+  "row": -7,
   "icons": [
     "thaumaturge:jar_node"
   ],
@@ -17,26 +17,68 @@
         "y_size": 4,
         "z_size": 3,
         "cells": [
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks"
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks"
         ],
         "cost": [
-          {"aspect": "thaumaturge:ignis", "amount": 70},
-          {"aspect": "thaumaturge:terra", "amount": 70},
-          {"aspect": "thaumaturge:aer", "amount": 70},
-          {"aspect": "thaumaturge:aqua", "amount": 70},
-          {"aspect": "thaumaturge:ordo", "amount": 70},
-          {"aspect": "thaumaturge:perditio", "amount": 70}
+          {
+            "aspect": "thaumaturge:ignis",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:terra",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:aer",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:aqua",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:ordo",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:perditio",
+            "amount": 70
+          }
         ]
       },
       "required_knowledge": [
@@ -54,26 +96,68 @@
         "y_size": 4,
         "z_size": 3,
         "cells": [
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#minecraft:wooden_slabs", "#minecraft:wooden_slabs", "#minecraft:wooden_slabs",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks",
-          "#c:glass_blocks", "#c:glass_blocks", "#c:glass_blocks"
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#minecraft:wooden_slabs",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks",
+          "#c:glass_blocks"
         ],
         "cost": [
-          {"aspect": "thaumaturge:ignis", "amount": 70},
-          {"aspect": "thaumaturge:terra", "amount": 70},
-          {"aspect": "thaumaturge:aer", "amount": 70},
-          {"aspect": "thaumaturge:aqua", "amount": 70},
-          {"aspect": "thaumaturge:ordo", "amount": 70},
-          {"aspect": "thaumaturge:perditio", "amount": 70}
+          {
+            "aspect": "thaumaturge:ignis",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:terra",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:aer",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:aqua",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:ordo",
+            "amount": 70
+          },
+          {
+            "aspect": "thaumaturge:perditio",
+            "amount": 70
+          }
         ]
       }
     }

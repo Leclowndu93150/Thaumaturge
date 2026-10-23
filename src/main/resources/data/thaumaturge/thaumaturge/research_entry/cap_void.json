@@ -2,10 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.cap_void.title",
   "parents": [
-    "thaumaturge:cap_thaumium"
+    "thaumaturge:cap_thaumium",
+    "thaumaturge:base_eldritch"
   ],
-  "column": -2,
-  "row": -6,
+  "column": -3,
+  "row": -1,
   "icons": [
     "thaumaturge:wand_cap_void"
   ],

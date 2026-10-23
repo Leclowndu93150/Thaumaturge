@@ -3,10 +3,11 @@
   "name": "research.thaumaturge.cap_thaumium.title",
   "parents": [
     "thaumaturge:cap_gold",
-    "thaumaturge:metallurgy"
+    "thaumaturge:metallurgy",
+    "thaumaturge:infusion"
   ],
-  "column": -2,
-  "row": -4,
+  "column": -3,
+  "row": -3,
   "icons": [
     "thaumaturge:wand_cap_thaumium"
   ],

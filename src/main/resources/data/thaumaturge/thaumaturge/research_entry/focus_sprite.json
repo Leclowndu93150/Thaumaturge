@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:focus_spellbat"
   ],
-  "column": 6,
-  "row": 6,
+  "column": 8,
+  "row": 2,
   "icons": [
     "focus:thaumaturge:sprite"
   ],

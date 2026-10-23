@@ -4,8 +4,8 @@
   "parents": [
     "thaumaturge:base_auromancy"
   ],
-  "column": 0,
-  "row": 2,
+  "column": -1,
+  "row": -2,
   "icons": [
     "focus:thaumaturge:air",
     "focus:thaumaturge:frost",

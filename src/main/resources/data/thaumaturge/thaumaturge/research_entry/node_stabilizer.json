@@ -2,10 +2,11 @@
   "category": "thaumaturge:auromancy",
   "name": "research.thaumaturge.node_stabilizer.title",
   "parents": [
-    "thaumaturge:node_preserve"
+    "thaumaturge:node_preserve",
+    "thaumaturge:recharge_pedestal"
   ],
-  "column": -6,
-  "row": 5,
+  "column": 5,
+  "row": -6,
   "icons": [
     "thaumaturge:node_stabilizer"
   ],
