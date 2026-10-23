@@ -34,6 +34,7 @@ import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
+import com.leclowndu93150.thaumaturge.content.research.ResearchProgression;
 import com.leclowndu93150.thaumaturge.content.research.link.ResearchLinkData;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.taint.flux.BlockFluxGas;
@@ -432,8 +433,7 @@ public final class TTCommands {
         ServerPlayer player = source.getPlayerOrException();
         var knowledge = PlayerResearchAccess.of(player);
         int cleared = knowledge.knownEntries().size();
-        knowledge.wipe();
-        ResearchManager.applyAutoUnlock(player);
+        ResearchProgression.reset(player);
         knowledge.queueSync(player);
         success(source, "research.reset", cleared);
         return Command.SINGLE_SUCCESS;
