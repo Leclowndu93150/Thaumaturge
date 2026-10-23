@@ -73,6 +73,8 @@ public final class TTItemTags {
     public static final TagKey<Item> STORAGE_BLOCKS_THAUMIUM = common("storage_blocks/thaumium");
     public static final TagKey<Item> STORAGE_BLOCKS_VOID_METAL = common("storage_blocks/void_metal");
     public static final TagKey<Item> STORAGE_BLOCKS_AMBER = common("storage_blocks/amber");
+    public static final TagKey<Item> STORAGE_BLOCKS_FLESH = common("storage_blocks/flesh");
+    public static final TagKey<Item> STORAGE_BLOCKS_TALLOW = common("storage_blocks/tallow");
 
     public static final TagKey<Item> CANDLES = key("candles");
 
@@ -84,6 +86,7 @@ public final class TTItemTags {
     public static final TagKey<Item> ARMORS_BOOTS = common("armors/boots");
 
     public static final TagKey<Item> SCRIBING_TOOLS = key("scribing_tools");
+    public static final TagKey<Item> CURIOSITIES = key("curiosities");
     public static final TagKey<Item> TAINT_TOOLS = key("taint_tools");
     public static final TagKey<Item> DT_BRANCHES_THAT_BURN = dynamicTrees("branches_that_burn");
     public static final TagKey<Item> DT_SEEDS = dynamicTrees("seeds");

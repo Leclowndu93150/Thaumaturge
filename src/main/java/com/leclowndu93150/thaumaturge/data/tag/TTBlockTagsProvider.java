@@ -489,6 +489,8 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
         tag(TTBlockTags.PORTABLE_HOLE_BLACKLIST);
 
         tag(TTBlockTags.STORAGE_BLOCKS_AMBER).add(TTBlocks.AMBER_BLOCK.get());
+        tag(TTBlockTags.STORAGE_BLOCKS_FLESH).add(TTBlocks.FLESH_BLOCK.get());
+        tag(TTBlockTags.STORAGE_BLOCKS_TALLOW).add(TTBlocks.TALLOW_BLOCK.get());
         tag(TTBlockTags.STORAGE_BLOCKS_BRASS).add(TTBlocks.METAL_BRASS_BLOCK.get());
         tag(TTBlockTags.STORAGE_BLOCKS_THAUMIUM).add(TTBlocks.METAL_THAUMIUM_BLOCK.get());
         tag(TTBlockTags.STORAGE_BLOCKS_VOID_METAL).add(TTBlocks.METAL_VOID_BLOCK.get());
@@ -497,7 +499,9 @@ public final class TTBlockTagsProvider extends BlockTagsProvider {
                         TTBlockTags.STORAGE_BLOCKS_AMBER,
                         TTBlockTags.STORAGE_BLOCKS_BRASS,
                         TTBlockTags.STORAGE_BLOCKS_THAUMIUM,
-                        TTBlockTags.STORAGE_BLOCKS_VOID_METAL);
+                        TTBlockTags.STORAGE_BLOCKS_VOID_METAL,
+                        TTBlockTags.STORAGE_BLOCKS_FLESH,
+                        TTBlockTags.STORAGE_BLOCKS_TALLOW);
 
         tag(TTBlockTags.GREATWOOD_LOGS)
                 .add(TTBlocks.LOG_GREATWOOD.get())
