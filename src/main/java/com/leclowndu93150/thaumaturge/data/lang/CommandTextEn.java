@@ -13,6 +13,7 @@ public final class CommandTextEn {
         add.accept("commands.thaumaturge.research.unknown_category", "Unknown research category: %s");
         add.accept("commands.thaumaturge.research.reset", "Reset research and knowledge for %s");
         add.accept("commands.thaumaturge.research.everything", "Completed all research for %s (%s entries)");
+        add.accept("commands.thaumaturge.scan.everything", "Scanned %s things for %s");
         add.accept("commands.thaumaturge.research.stage", "Set %s to the %s stage (%s research completed)");
         add.accept(
                 "commands.thaumaturge.research.category", "Completed the %s category for %s (%s research completed)");

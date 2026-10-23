@@ -5,6 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.capability.KnowledgeType;
 import com.leclowndu93150.thaumaturge.api.capability.PlayerResearchAccess;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -66,26 +67,52 @@ public final class ScanningManager {
             report(player, result.refusal(), result.found(), result.silent());
             return;
         }
-        List<ItemStack> pending = new ArrayList<>(contents);
+        result = result.merge(scanUntilSettled(
+                player, contents.stream().map(ScanTarget::stack).toList(), entries));
+        report(player, result.found() ? null : result.refusal(), result.found(), result.silent());
+    }
+
+    /**
+     * Scans many targets for a player at once without action bar messages. Targets refused because a component aspect is still
+     * unknown are retried until a pass teaches nothing new, so compound aspects are learned after their components. Server side
+     * only.
+     *
+     * @param player  the scanning player
+     * @param targets the targets to scan
+     * @return whether any target taught the player something
+     * @since 1.1.0
+     */
+    public static boolean scanSilently(Player player, Collection<? extends ScanTarget> targets) {
+        if (player.level().isClientSide()) {
+            return false;
+        }
+        return scanUntilSettled(player, List.copyOf(targets), entries(player)).found();
+    }
+
+    private static ScanResult scanUntilSettled(Player player, List<ScanTarget> targets, List<ScanEntry> entries) {
+        ScanResult result = ScanResult.NONE;
+        List<ScanTarget> pending = targets;
         boolean progressed;
         do {
             progressed = false;
-            List<ItemStack> refused = new ArrayList<>();
-            for (ItemStack stack : pending) {
-                ScanResult item = scanTarget(player, ScanTarget.stack(stack), entries);
-                result = result.merge(item);
-                progressed |= item.progressed();
-                if (item.refusal() != null) {
-                    refused.add(stack);
+            List<ScanTarget> refused = new ArrayList<>();
+            for (ScanTarget target : pending) {
+                ScanResult scanned = scanTarget(player, target, entries);
+                result = result.merge(scanned);
+                progressed |= scanned.progressed();
+                if (scanned.refusal() != null) {
+                    refused.add(target);
                 }
             }
             pending = refused;
         } while (progressed && !pending.isEmpty());
-        report(player, result.found() ? null : result.refusal(), result.found(), result.silent());
+        return result;
     }
 
     private record ScanResult(
             boolean found, boolean silent, @Nullable Component refusal, boolean progressed) {
+        static final ScanResult NONE = new ScanResult(false, false, null, false);
+
         ScanResult merge(ScanResult other) {
             return new ScanResult(
                     found || other.found,
