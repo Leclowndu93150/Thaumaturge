@@ -4,11 +4,6 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.mojang.serialization.MapCodec;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -25,8 +20,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public final class BlockCrystal extends Block {
     private static final int MAX_SIZE = 3;
@@ -47,25 +40,8 @@ public final class BlockCrystal extends Block {
     private static final float DECAY_FLUX = 1.0F;
     private static final float FLUX_CONVERSION_DIVISOR = 2.0F;
     private static final float DRAIN_TOLERANCE = 0.001F;
-    private static final double[][][] SHARD_BOXES = {
-        {{6.0, 0.0, 5.5, 10.0, 7.5, 9.0}, {7.0, 0.0, 9.0, 9.5, 6.0, 10.0}, {7.0, 6.5, 7.0, 9.0, 8.0, 8.5}},
-        {{12.0, 0.0, 5.5, 15.0, 4.5, 7.5}, {13.0, 0.0, 7.5, 14.0, 3.5, 8.0}, {13.0, 2.0, 5.0, 13.5, 3.0, 5.5}},
-        {{2.0, 0.0, 10.5, 4.5, 3.5, 12.0}, {2.0, 0.0, 12.0, 4.5, 3.0, 12.5}, {2.5, 3.0, 11.0, 4.0, 4.5, 12.5}},
-        {{9.0, 0.0, 1.5, 12.0, 6.5, 3.5}, {10.0, 0.0, 3.5, 11.5, 5.0, 4.5}, {10.0, 2.5, 1.0, 10.5, 5.0, 1.5}},
-        {{4.5, 0.0, 2.0, 7.5, 4.5, 3.5}, {5.0, 0.0, 1.0, 7.0, 4.0, 2.0}, {5.0, 0.0, 3.0, 7.0, 4.0, 4.0}},
-        {{11.5, 0.0, 9.5, 14.0, 5.0, 12.5}, {12.5, 5.0, 10.5, 13.5, 6.0, 11.5}, {14.0, 2.5, 10.0, 14.5, 4.0, 10.5}},
-        {{6.5, 0.0, 12.0, 9.5, 4.0, 14.5}, {7.0, 3.5, 12.5, 9.0, 5.5, 14.5}, {7.5, 1.5, 14.5, 9.0, 4.5, 15.0}},
-        {{1.0, 0.0, 5.0, 4.0, 6.0, 7.0}, {1.5, 1.5, 4.5, 3.0, 4.0, 5.0}, {2.0, 0.5, 7.0, 3.5, 4.0, 7.5}}
-    };
-
-    private static final double SHAPE_SNAP = 32.0;
-
-    private static final Map<Direction, List<VoxelShape>> SHARD_SHAPES = shardShapes();
-    private static final int SHAPE_CACHE_LIMIT = 4096;
-
     private final ResourceKey<IAspect> aspect;
     private final boolean flux;
-    private final Map<Long, VoxelShape> shapeCache = new ConcurrentHashMap<>();
 
     public BlockCrystal(BlockBehaviour.Properties properties, ResourceKey<IAspect> aspect, boolean flux) {
         super(properties);
@@ -104,87 +80,13 @@ public final class BlockCrystal extends Block {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        long seed = CrystalShards.seed(state, pos);
-        int count = growth(state) + 1;
-        long key = 0L;
-        for (Direction face : Direction.values()) {
-            if (!CrystalShards.supports(level, pos, face)) {
-                continue;
-            }
-            List<Integer> order = CrystalShards.order(face, seed);
-            long faceMask = 0L;
-            for (int i = 0; i < count; i++) {
-                faceMask |= 1L << order.get(i);
-            }
-            key |= faceMask << (face.ordinal() * CrystalShards.COUNT);
-        }
-        if (key == 0L) {
-            return SHARD_SHAPES.get(Direction.DOWN).get(CrystalShards.unsupported(seed));
-        }
-        VoxelShape cached = shapeCache.get(key);
-        if (cached != null) {
-            return cached;
-        }
-        VoxelShape shape = buildShape(key);
-        if (shapeCache.size() < SHAPE_CACHE_LIMIT) {
-            shapeCache.put(key, shape);
-        }
-        return shape;
-    }
-
-    private static VoxelShape buildShape(long key) {
-        List<VoxelShape> parts = new ArrayList<>();
-        for (Direction face : Direction.values()) {
-            List<VoxelShape> shards = SHARD_SHAPES.get(face);
-            long faceMask = key >>> (face.ordinal() * CrystalShards.COUNT);
-            for (int shard = 0; shard < CrystalShards.COUNT; shard++) {
-                if ((faceMask & (1L << shard)) != 0L) {
-                    parts.add(shards.get(shard));
-                }
-            }
-        }
-        return Shapes.or(Shapes.empty(), parts.toArray(new VoxelShape[0])).optimize();
+        return CrystalShapes.shapeFor(level, pos);
     }
 
     @Override
     protected VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Shapes.empty();
-    }
-
-    private static Map<Direction, List<VoxelShape>> shardShapes() {
-        Map<Direction, List<VoxelShape>> shapes = new EnumMap<>(Direction.class);
-        for (Direction face : Direction.values()) {
-            Matrix4f transform = CrystalFaceTransforms.forFace(face);
-            List<VoxelShape> shards = new ArrayList<>();
-            for (double[][] boxes : SHARD_BOXES) {
-                VoxelShape shard = Shapes.empty();
-                for (double[] box : boxes) {
-                    shard = Shapes.or(shard, transformed(transform, box));
-                }
-                shards.add(shard.optimize());
-            }
-            shapes.put(face, List.copyOf(shards));
-        }
-        return shapes;
-    }
-
-    private static VoxelShape transformed(Matrix4f transform, double[] box) {
-        Vector3f from = transform.transformPosition(
-                new Vector3f((float) (box[0] / 16.0), (float) (box[1] / 16.0), (float) (box[2] / 16.0)));
-        Vector3f to = transform.transformPosition(
-                new Vector3f((float) (box[3] / 16.0), (float) (box[4] / 16.0), (float) (box[5] / 16.0)));
-        return Shapes.box(
-                snap(Math.min(from.x, to.x)),
-                snap(Math.min(from.y, to.y)),
-                snap(Math.min(from.z, to.z)),
-                snap(Math.max(from.x, to.x)),
-                snap(Math.max(from.y, to.y)),
-                snap(Math.max(from.z, to.z)));
-    }
-
-    private static double snap(float value) {
-        return Math.round(value * SHAPE_SNAP) / SHAPE_SNAP;
     }
 
     @Override

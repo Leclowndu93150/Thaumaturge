@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.crystal;
 
 import com.leclowndu93150.thaumaturge.client.model.mesh.TTMesh;
-import com.leclowndu93150.thaumaturge.client.model.mesh.TTMeshPart;
 import com.leclowndu93150.thaumaturge.content.world.crystal.BlockCrystal;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalFaceTransforms;
 import com.leclowndu93150.thaumaturge.content.world.crystal.CrystalShards;
@@ -30,15 +29,25 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
 
     private static final ModelProperty<Long> SHARD_SEED = new ModelProperty<>();
     private static final Direction[] FACES = Direction.values();
-    private static final int PART_COUNT = 8;
 
-    private final TTMesh mesh;
+    private final List<List<List<BakedQuad>>> shards;
     private final TextureAtlasSprite particle;
     private final ChunkRenderTypeSet renderTypes;
 
     public CrystalBakedModel(TTMesh mesh, TextureAtlasSprite particle) {
-        this.mesh = mesh;
         this.particle = particle;
+        List<List<List<BakedQuad>>> baked = new ArrayList<>(FACES.length);
+        for (Direction face : FACES) {
+            Matrix4f transform = CrystalFaceTransforms.forFace(face);
+            List<List<BakedQuad>> faceShards = new ArrayList<>(CrystalShards.COUNT);
+            for (int shard = 0; shard < CrystalShards.COUNT; shard++) {
+                List<BakedQuad> quads = new ArrayList<>();
+                CrystalQuadBaker.bakePart(mesh.parts().get(shard), particle, 0, transform, quads);
+                faceShards.add(List.copyOf(quads));
+            }
+            baked.add(List.copyOf(faceShards));
+        }
+        this.shards = List.copyOf(baked);
         this.renderTypes = ChunkRenderTypeSet.of(RenderType.cutout());
     }
 
@@ -80,19 +89,15 @@ public final class CrystalBakedModel implements IDynamicBakedModel {
             if ((faceMask & (1 << face.ordinal())) == 0) {
                 continue;
             }
-            Matrix4f transform = CrystalFaceTransforms.forFace(face);
             List<Integer> shuffled = CrystalShards.order(face, seed);
+            List<List<BakedQuad>> faceShards = shards.get(face.ordinal());
             for (int i = 0; i < partsPerFace; i++) {
-                TTMeshPart part = mesh.parts().get(shuffled.get(i));
-                CrystalQuadBaker.bakePart(part, particle, 0, transform, quads);
+                quads.addAll(faceShards.get(shuffled.get(i)));
                 any = true;
             }
         }
         if (!any) {
-            int unsupportedSeed = CrystalShards.unsupported(seed);
-            Matrix4f transform = CrystalFaceTransforms.forFace(Direction.DOWN);
-            TTMeshPart part = mesh.parts().get(unsupportedSeed % PART_COUNT);
-            CrystalQuadBaker.bakePart(part, particle, 0, transform, quads);
+            quads.addAll(shards.get(Direction.DOWN.ordinal()).get(CrystalShards.unsupported(seed)));
         }
         return quads;
     }
