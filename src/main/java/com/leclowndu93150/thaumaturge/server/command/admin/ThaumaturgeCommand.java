@@ -22,6 +22,7 @@ public final class ThaumaturgeCommand {
         List<AdminSubcommand> subcommands = List.of(
                 new ResearchSubcommand(),
                 new ScanSubcommand(),
+                new PatrolSubcommand(),
                 new KnowledgeSubcommand(),
                 new AspectSubcommand(),
                 PlacementSubcommand.structures(),

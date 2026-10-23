@@ -1,9 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.content.entity.ai.AltarFocusGoal;
-import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
-import com.leclowndu93150.thaumaturge.content.entity.ai.CultistSquatGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
+import com.leclowndu93150.thaumaturge.content.entity.cult.CultSpells;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -21,17 +20,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.MoveTowardsRestrictionGoal;
-import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.SmallFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
@@ -47,12 +37,6 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
     private static final int RITUAL_RESTRICTION_RADIUS = 8;
     private static final int RITUAL_ANCHOR_SEARCH_RADIUS = 4;
     private static final int RITUAL_ANCHOR_SEARCH_HEIGHT = 2;
-    private static final float ORB_CHANCE = 0.34F;
-    private static final float ORB_SPEED = 0.66F;
-    private static final float ORB_SPREAD = 3.0F;
-    private static final int FIREBALL_COUNT = 3;
-    private static final float FIREBALL_FAN_SPREAD = 2.5F;
-    private static final int FIREBALL_LEVEL_EVENT = 1009;
 
     public int rage;
 
@@ -69,16 +53,8 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
         this.goalSelector.addGoal(1, new AltarFocusGoal(this));
         this.goalSelector.addGoal(2, new LongRangeAttackGoal(this, 2.0, 1.0, 20, 40, 24.0F));
         this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(5, new OpenDoorGoal(this, true));
-        this.goalSelector.addGoal(6, new MoveTowardsRestrictionGoal(this, 0.8));
-        this.goalSelector.addGoal(6, new CultistSquatGoal(this));
-        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.8));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new CultistHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, EntityEldritchGuardian.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, AbstractIllager.class, true));
+        this.addIdleGoals();
+        this.addTargetGoals();
     }
 
     @Override
@@ -115,36 +91,7 @@ public class EntityCultistCleric extends EntityCultist implements RangedAttackMo
 
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
-        double dx = target.getX() - this.getX();
-        double dy =
-                target.getBoundingBox().minY + target.getBbHeight() / 2.0F - (this.getY() + this.getBbHeight() / 2.0F);
-        double dz = target.getZ() - this.getZ();
-        this.swing(this.getUsedItemHand());
-        if (this.random.nextFloat() > 1.0F - ORB_CHANCE) {
-            EntityGolemOrb blast = new EntityGolemOrb(this.level(), this, target, true);
-            Vec3 v = target.position()
-                    .add(target.getDeltaMovement().scale(10.0))
-                    .subtract(this.position())
-                    .normalize();
-            blast.setPos(blast.getX() + v.x, blast.getY() + v.y, blast.getZ() + v.z);
-            blast.shoot(v.x, v.y, v.z, ORB_SPEED, ORB_SPREAD);
-            this.playSound(TTSounds.EGATTACK.get(), 1.0F, 1.0F + this.random.nextFloat() * 0.1F);
-            this.level().addFreshEntity(blast);
-        } else {
-            float spread = fireballFanSpread(velocity);
-            this.level().levelEvent(null, FIREBALL_LEVEL_EVENT, this.blockPosition(), 0);
-            for (int i = 0; i < FIREBALL_COUNT; i++) {
-                Vec3 shot = new Vec3(
-                        dx + this.random.nextGaussian() * spread, dy, dz + this.random.nextGaussian() * spread);
-                SmallFireball fireball = new SmallFireball(this.level(), this, shot.normalize());
-                fireball.setPos(fireball.getX(), this.getY() + this.getBbHeight() / 2.0F + 0.5, fireball.getZ());
-                this.level().addFreshEntity(fireball);
-            }
-        }
-    }
-
-    static float fireballFanSpread(float distanceFactor) {
-        return Mth.sqrt(distanceFactor) * FIREBALL_FAN_SPREAD;
+        CultSpells.cast(this, target, velocity);
     }
 
     @Override

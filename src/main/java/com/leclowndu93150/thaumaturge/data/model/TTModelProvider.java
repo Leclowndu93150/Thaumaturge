@@ -345,6 +345,8 @@ public final class TTModelProvider implements DataProvider {
         flatItem(TTItems.ELDRITCH_GUARDIAN_SPAWN_EGG.get());
         flatItem(TTItems.CULTIST_KNIGHT_SPAWN_EGG.get());
         flatItem(TTItems.CULTIST_CLERIC_SPAWN_EGG.get());
+        flatItem(TTItems.CULTIST_RANGER_SPAWN_EGG.get());
+        flatItem(TTItems.CULTIST_RANGER_CAPTAIN_SPAWN_EGG.get());
         flatItem(TTItems.CULTIST_PORTAL_LESSER_SPAWN_EGG.get());
         flatItem(TTItems.CULTIST_LEADER_SPAWN_EGG.get());
         flatItem(TTItems.CULTIST_PORTAL_GREATER_SPAWN_EGG.get());
@@ -359,6 +361,11 @@ public final class TTModelProvider implements DataProvider {
         flatItem(TTItems.CRIMSON_PLATE_HELM.get());
         flatItem(TTItems.CRIMSON_PLATE_CHEST.get());
         flatItem(TTItems.CRIMSON_PLATE_LEGS.get());
+        flatItem(TTItems.CRIMSON_RANGER_HELM.get());
+        flatItem(TTItems.CRIMSON_RANGER_CHEST.get());
+        flatItem(TTItems.CRIMSON_RANGER_LEGS.get());
+        flatItem(TTItems.CRIMSON_CAPTAIN_HELM.get());
+        flatItem(TTItems.CRIMSON_CAPTAIN_CHEST.get());
         flatItem(TTItems.CRIMSON_BOOTS.get());
         flatItem(TTItems.CRIMSON_ROBE_HELM.get());
         flatItem(TTItems.CRIMSON_ROBE_CHEST.get());

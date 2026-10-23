@@ -31,6 +31,14 @@ public final class TTModelLayers {
     public static final ModelLayerLocation KNIGHT_ARMOR_CHEST =
             new ModelLayerLocation(TTIds.rl("knight_armor"), "chest");
     public static final ModelLayerLocation KNIGHT_ARMOR_LEGS = new ModelLayerLocation(TTIds.rl("knight_armor"), "legs");
+    public static final ModelLayerLocation RANGER_ARMOR_HEAD = new ModelLayerLocation(TTIds.rl("ranger_armor"), "head");
+    public static final ModelLayerLocation RANGER_ARMOR_CHEST =
+            new ModelLayerLocation(TTIds.rl("ranger_armor"), "chest");
+    public static final ModelLayerLocation RANGER_ARMOR_LEGS = new ModelLayerLocation(TTIds.rl("ranger_armor"), "legs");
+    public static final ModelLayerLocation CAPTAIN_ARMOR_HEAD =
+            new ModelLayerLocation(TTIds.rl("captain_armor"), "head");
+    public static final ModelLayerLocation CAPTAIN_ARMOR_CHEST =
+            new ModelLayerLocation(TTIds.rl("captain_armor"), "chest");
     public static final ModelLayerLocation ELDRITCH_GOLEM = new ModelLayerLocation(TTIds.rl("eldritch_golem"), "main");
     public static final ModelLayerLocation TURRET_CROSSBOW =
             new ModelLayerLocation(TTIds.rl("turret_crossbow"), "main");

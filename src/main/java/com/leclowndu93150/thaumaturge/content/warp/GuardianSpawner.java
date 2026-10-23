@@ -48,14 +48,18 @@ public final class GuardianSpawner {
     }
 
     public static void spawnPortal(ServerPlayer player) {
-        ServerLevel level = (ServerLevel) player.level();
-        RandomSource rand = player.getRandom();
+        if (summonPortalNear(
+                (ServerLevel) player.level(), player.blockPosition(), player.getRandom(), MobSpawnType.EVENT)) {
+            WarpManager.sendActionBar(player, "warp.thaumaturge.text.16");
+        }
+    }
+
+    public static boolean summonPortalNear(ServerLevel level, BlockPos origin, RandomSource rand, MobSpawnType reason) {
         EntityCultistPortalLesser portal =
                 TTEntities.CULTIST_PORTAL_LESSER.get().create(level);
         if (portal == null) {
-            return;
+            return false;
         }
-        BlockPos origin = player.blockPosition();
         for (int attempt = 0; attempt < SPAWN_ATTEMPTS; attempt++) {
             BlockPos pos = SpawnSpots.ringCell(origin, rand);
             if (!level.getBlockState(pos.below()).isSolidRender(level, pos.below())) {
@@ -66,11 +70,11 @@ public final class GuardianSpawner {
                 continue;
             }
             EventHooks.finalizeMobSpawn(
-                    portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), MobSpawnType.EVENT, null);
+                    portal, level, level.getCurrentDifficultyAt(portal.blockPosition()), reason, null);
             level.addFreshEntity(portal);
-            WarpManager.sendActionBar(player, "warp.thaumaturge.text.16");
-            return;
+            return true;
         }
+        return false;
     }
 
     private static boolean canPlace(ServerLevel level, Mob mob) {

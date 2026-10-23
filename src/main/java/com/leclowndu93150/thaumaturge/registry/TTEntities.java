@@ -16,6 +16,8 @@ import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
 import com.leclowndu93150.thaumaturge.content.entity.projectile.EntityGrapple;
+import com.leclowndu93150.thaumaturge.content.entity.ranger.EntityCultistRanger;
+import com.leclowndu93150.thaumaturge.content.entity.ranger.EntityCultistRangerCaptain;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.misc.alumentum.ThrownAlumentum;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
@@ -374,6 +376,23 @@ public final class TTEntities {
                     .eyeHeight(1.62F)
                     .clientTrackingRange(8)
                     .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistRanger>> CULTIST_RANGER = register(
+            "cultist_ranger",
+            () -> EntityType.Builder.of(EntityCultistRanger::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F)
+                    .eyeHeight(1.62F)
+                    .clientTrackingRange(8)
+                    .updateInterval(3));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistRangerCaptain>> CULTIST_RANGER_CAPTAIN =
+            register(
+                    "cultist_ranger_captain",
+                    () -> EntityType.Builder.of(EntityCultistRangerCaptain::new, MobCategory.MONSTER)
+                            .sized(0.6F, 1.8F)
+                            .eyeHeight(1.62F)
+                            .clientTrackingRange(8)
+                            .updateInterval(3));
 
     public static final DeferredHolder<EntityType<?>, EntityType<EntityCultistLeader>> CULTIST_LEADER = register(
             "cultist_leader",

@@ -433,6 +433,41 @@ public final class TTItems {
                     ArmorItem.Type.LEGGINGS,
                     props.durability(ArmorItem.Type.LEGGINGS.getDurability(TTMaterials.DURABILITY_CULTIST_PLATE))
                             .rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<ArmorItem> CRIMSON_RANGER_HELM = ITEMS.registerItem(
+            "crimson_ranger_helm",
+            props -> new ArmorItem(
+                    TTMaterials.ARMOR_CULTIST_RANGER,
+                    ArmorItem.Type.HELMET,
+                    props.durability(ArmorItem.Type.HELMET.getDurability(TTMaterials.DURABILITY_CULTIST_RANGER))
+                            .rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<ArmorItem> CRIMSON_RANGER_CHEST = ITEMS.registerItem(
+            "crimson_ranger_chest",
+            props -> new ArmorItem(
+                    TTMaterials.ARMOR_CULTIST_RANGER,
+                    ArmorItem.Type.CHESTPLATE,
+                    props.durability(ArmorItem.Type.CHESTPLATE.getDurability(TTMaterials.DURABILITY_CULTIST_RANGER))
+                            .rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<ArmorItem> CRIMSON_RANGER_LEGS = ITEMS.registerItem(
+            "crimson_ranger_legs",
+            props -> new ArmorItem(
+                    TTMaterials.ARMOR_CULTIST_RANGER,
+                    ArmorItem.Type.LEGGINGS,
+                    props.durability(ArmorItem.Type.LEGGINGS.getDurability(TTMaterials.DURABILITY_CULTIST_RANGER))
+                            .rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<ArmorItem> CRIMSON_CAPTAIN_HELM = ITEMS.registerItem(
+            "crimson_captain_helm",
+            props -> new ArmorItem(
+                    TTMaterials.ARMOR_CULTIST_CAPTAIN,
+                    ArmorItem.Type.HELMET,
+                    props.durability(ArmorItem.Type.HELMET.getDurability(TTMaterials.DURABILITY_CULTIST_CAPTAIN))
+                            .rarity(Rarity.RARE)));
+    public static final DeferredItem<ArmorItem> CRIMSON_CAPTAIN_CHEST = ITEMS.registerItem(
+            "crimson_captain_chest",
+            props -> new ArmorItem(
+                    TTMaterials.ARMOR_CULTIST_CAPTAIN,
+                    ArmorItem.Type.CHESTPLATE,
+                    props.durability(ArmorItem.Type.CHESTPLATE.getDurability(TTMaterials.DURABILITY_CULTIST_CAPTAIN))
+                            .rarity(Rarity.RARE)));
     public static final DeferredItem<CultistRobeItem> CRIMSON_BOOTS = ITEMS.registerItem(
             "crimson_boots",
             props -> new CultistRobeItem(
@@ -606,6 +641,10 @@ public final class TTItems {
             registerSpawnEgg("cultist_knight_spawn_egg", TTEntities.CULTIST_KNIGHT);
     public static final DeferredItem<SpawnEggItem> CULTIST_CLERIC_SPAWN_EGG =
             registerSpawnEgg("cultist_cleric_spawn_egg", TTEntities.CULTIST_CLERIC);
+    public static final DeferredItem<SpawnEggItem> CULTIST_RANGER_SPAWN_EGG =
+            registerSpawnEgg("cultist_ranger_spawn_egg", TTEntities.CULTIST_RANGER);
+    public static final DeferredItem<SpawnEggItem> CULTIST_RANGER_CAPTAIN_SPAWN_EGG =
+            registerSpawnEgg("cultist_ranger_captain_spawn_egg", TTEntities.CULTIST_RANGER_CAPTAIN);
     public static final DeferredItem<SpawnEggItem> CULTIST_PORTAL_LESSER_SPAWN_EGG =
             registerSpawnEgg("cultist_portal_lesser_spawn_egg", TTEntities.CULTIST_PORTAL_LESSER);
 

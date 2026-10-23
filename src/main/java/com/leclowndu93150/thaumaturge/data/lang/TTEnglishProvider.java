@@ -1672,6 +1672,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("entity.thaumaturge.eldritch_guardian", "Eldritch Guardian");
         add("entity.thaumaturge.cultist_knight", "Crimson Knight");
         add("entity.thaumaturge.cultist_cleric", "Crimson Cleric");
+        add("entity.thaumaturge.cultist_ranger", "Crimson Ranger");
+        add("entity.thaumaturge.cultist_ranger_captain", "Crimson Ranger Captain");
         add("entity.thaumaturge.cultist_portal_lesser", "Lesser Crimson Portal");
         add("entity.thaumaturge.eldritch_orb", "Eldritch Orb");
         add("entity.thaumaturge.golem_orb", "Arcane Orb");
@@ -1681,6 +1683,8 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.eldritch_guardian_spawn_egg", "Eldritch Guardian Spawn Egg");
         add("item.thaumaturge.cultist_knight_spawn_egg", "Crimson Knight Spawn Egg");
         add("item.thaumaturge.cultist_cleric_spawn_egg", "Crimson Cleric Spawn Egg");
+        add("item.thaumaturge.cultist_ranger_spawn_egg", "Crimson Ranger Spawn Egg");
+        add("item.thaumaturge.cultist_ranger_captain_spawn_egg", "Crimson Ranger Captain Spawn Egg");
         add("item.thaumaturge.cultist_portal_lesser_spawn_egg", "Lesser Crimson Portal Spawn Egg");
         add("item.thaumaturge.cultist_leader_spawn_egg", "Cultist Leader Spawn Egg");
         add("item.thaumaturge.cultist_portal_greater_spawn_egg", "Greater Crimson Portal Spawn Egg");
@@ -1696,6 +1700,12 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.crimson_plate_helm", "Crimson Cult Helm");
         add("item.thaumaturge.crimson_plate_chest", "Crimson Cult Chestplate");
         add("item.thaumaturge.crimson_plate_legs", "Crimson Cult Greaves");
+        add("item.thaumaturge.crimson_ranger_helm", "Crimson Ranger Helm");
+        add("item.thaumaturge.crimson_ranger_chest", "Crimson Ranger Chestplate");
+        add("item.thaumaturge.crimson_ranger_legs", "Crimson Ranger Leggings");
+        add("item.thaumaturge.crimson_captain_helm", "Crimson Captain Helm");
+        add("item.thaumaturge.crimson_captain_chest", "Crimson Captain Chestplate");
+        add("filled_map.thaumaturge.cult", "Crimson Cult Map");
         add("tooltip.thaumaturge.crimson_blade.greater_sapping", "Greater Sapping");
         add("tooltip.thaumaturge.curio.read", "What knowledge does this hold?");
         add("message.thaumaturge.pech_wand.unfathomable", "You cannot fathom the workings of this yet.");

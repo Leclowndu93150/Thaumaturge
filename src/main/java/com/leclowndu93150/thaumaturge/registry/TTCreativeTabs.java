@@ -473,6 +473,11 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.CRIMSON_PLATE_HELM.get());
                         output.accept(TTItems.CRIMSON_PLATE_CHEST.get());
                         output.accept(TTItems.CRIMSON_PLATE_LEGS.get());
+                        output.accept(TTItems.CRIMSON_RANGER_HELM.get());
+                        output.accept(TTItems.CRIMSON_RANGER_CHEST.get());
+                        output.accept(TTItems.CRIMSON_RANGER_LEGS.get());
+                        output.accept(TTItems.CRIMSON_CAPTAIN_HELM.get());
+                        output.accept(TTItems.CRIMSON_CAPTAIN_CHEST.get());
                         output.accept(TTItems.CRIMSON_BOOTS.get());
                         output.accept(TTItems.CRIMSON_ROBE_HELM.get());
                         output.accept(TTItems.CRIMSON_ROBE_CHEST.get());
@@ -529,6 +534,8 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.ELDRITCH_GUARDIAN_SPAWN_EGG.get());
                         output.accept(TTItems.CULTIST_KNIGHT_SPAWN_EGG.get());
                         output.accept(TTItems.CULTIST_CLERIC_SPAWN_EGG.get());
+                        output.accept(TTItems.CULTIST_RANGER_SPAWN_EGG.get());
+                        output.accept(TTItems.CULTIST_RANGER_CAPTAIN_SPAWN_EGG.get());
                         output.accept(TTItems.CULTIST_PORTAL_LESSER_SPAWN_EGG.get());
                         output.accept(TTItems.CULTIST_LEADER_SPAWN_EGG.get());
                         output.accept(TTItems.CULTIST_PORTAL_GREATER_SPAWN_EGG.get());

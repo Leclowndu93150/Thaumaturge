@@ -62,6 +62,8 @@ public final class TTMaterials {
     public static final int DURABILITY_VOID_ROBE = 18;
     public static final int DURABILITY_FORTRESS = 40;
     public static final int DURABILITY_CULTIST_PLATE = 18;
+    public static final int DURABILITY_CULTIST_RANGER = 18;
+    public static final int DURABILITY_CULTIST_CAPTAIN = 18;
     public static final int DURABILITY_CULTIST_ROBE = 17;
     public static final int DURABILITY_CULTIST_BOOTS = 15;
     public static final int DURABILITY_CULTIST_LEADER = 30;
@@ -154,6 +156,24 @@ public final class TTMaterials {
             defense(2, 5, 6, 2),
             9,
             SoundEvents.ARMOR_EQUIP_IRON,
+            0.0F,
+            0.0F,
+            () -> Ingredient.of(Tags.Items.INGOTS_IRON),
+            false);
+    public static final Holder<ArmorMaterial> ARMOR_CULTIST_RANGER = register(
+            "cultist_ranger",
+            defense(2, 5, 6, 2),
+            13,
+            SoundEvents.ARMOR_EQUIP_CHAIN,
+            0.0F,
+            0.0F,
+            () -> Ingredient.of(Tags.Items.INGOTS_IRON),
+            false);
+    public static final Holder<ArmorMaterial> ARMOR_CULTIST_CAPTAIN = register(
+            "cultist_captain",
+            defense(2, 5, 6, 2),
+            13,
+            SoundEvents.ARMOR_EQUIP_CHAIN,
             0.0F,
             0.0F,
             () -> Ingredient.of(Tags.Items.INGOTS_IRON),

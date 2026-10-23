@@ -6,6 +6,7 @@ import com.leclowndu93150.thaumaturge.content.entity.EntityGolemOrb;
 import com.leclowndu93150.thaumaturge.content.entity.ai.CultistHurtByTargetGoal;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
+import com.leclowndu93150.thaumaturge.content.entity.cult.CultRally;
 import com.leclowndu93150.thaumaturge.content.entity.trait.MobTraitNames;
 import com.leclowndu93150.thaumaturge.registry.TTLootTables;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -15,8 +16,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -75,9 +74,6 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
     private static final float ORB_SPREAD = 3.0F;
     private static final double ORB_LOFT = 2.0;
     private static final float AIM_TURN = 30.0F;
-    private static final double RALLY_RADIUS = 8.0;
-    private static final int RALLY_DURATION = 60;
-    private static final int RALLY_AMPLIFIER = 1;
     private static final float BLADE_ENCHANT_CHANCE = 0.5F;
 
     private int title;
@@ -151,13 +147,9 @@ public class EntityCultistLeader extends EntityThaumaturgeBoss implements Ranged
 
     @Override
     protected void customServerAiStep() {
-        ServerLevel level = (ServerLevel) level();
         super.customServerAiStep();
-        for (EntityCultist follower : level.getEntitiesOfClass(
-                EntityCultist.class,
-                getBoundingBox().inflate(RALLY_RADIUS),
-                follower -> !follower.hasEffect(MobEffects.REGENERATION))) {
-            follower.addEffect(new MobEffectInstance(MobEffects.REGENERATION, RALLY_DURATION, RALLY_AMPLIFIER));
+        if (tickCount % CultRally.INTERVAL == 0) {
+            CultRally.rally(this, (ServerLevel) level());
         }
     }
 

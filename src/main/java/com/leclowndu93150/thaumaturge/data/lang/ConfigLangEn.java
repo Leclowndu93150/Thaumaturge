@@ -44,6 +44,7 @@ final class ConfigLangEn {
             Map.entry("world.fluxPressureEvents", "Flux Pressure Events"),
             Map.entry("world.energizedNodeVisPerPoint", "Energized Node Vis per Point"),
             Map.entry("world.crimsonPortalRarity", "Crimson Portal Rarity"),
+            Map.entry("world.crimsonPatrolChance", "Crimson Patrol Chance"),
             Map.entry("world.nodes", "Aura Nodes"),
             Map.entry("world.nodes.wildSpawnChance", "Wild Node Chance"),
             Map.entry("world.nodes.magicalBonusSpawnChance", "Magical Forest Bonus Chance"),

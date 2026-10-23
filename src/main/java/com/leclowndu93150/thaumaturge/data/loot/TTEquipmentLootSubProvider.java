@@ -64,6 +64,25 @@ public final class TTEquipmentLootSubProvider implements LootTableSubProvider {
                                 LootItem.lootTableItem(TTItems.VOID_SWORD.get())
                                         .when(LootItemRandomChanceCondition.randomChance(onlyOn(Difficulty.EASY))),
                                 LootItem.lootTableItem(TTItems.CRIMSON_BLADE.get())))));
+        output.accept(
+                TTLootTables.EQUIPMENT_CULTIST_RANGER,
+                withEach(
+                                LootTable.lootTable(),
+                                TTItems.CRIMSON_RANGER_HELM.get(),
+                                TTItems.CRIMSON_RANGER_CHEST.get(),
+                                TTItems.CRIMSON_RANGER_LEGS.get(),
+                                TTItems.THAUMIUM_AXE.get())
+                        .withPool(chance(
+                                TTItems.CRIMSON_BOOTS.get(), hardOr(CLERIC_BOOTS_CHANCE_HARD, CLERIC_BOOTS_CHANCE))));
+        output.accept(
+                TTLootTables.EQUIPMENT_CULTIST_RANGER_CAPTAIN,
+                withEach(
+                        LootTable.lootTable(),
+                        TTItems.CRIMSON_CAPTAIN_HELM.get(),
+                        TTItems.CRIMSON_CAPTAIN_CHEST.get(),
+                        TTItems.CRIMSON_RANGER_LEGS.get(),
+                        TTItems.CRIMSON_BOOTS.get(),
+                        TTItems.THAUMIUM_AXE.get()));
         NumberProvider zombieGear = hardOr(ZOMBIE_GEAR_CHANCE_HARD, ZOMBIE_GEAR_CHANCE);
         output.accept(
                 TTLootTables.EQUIPMENT_INHABITED_ZOMBIE,

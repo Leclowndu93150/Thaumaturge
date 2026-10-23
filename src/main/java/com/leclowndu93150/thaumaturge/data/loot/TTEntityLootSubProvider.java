@@ -9,24 +9,29 @@ import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
+import com.leclowndu93150.thaumaturge.registry.TTStructureTags;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.SlimePredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.EntityLootSubProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
+import net.minecraft.world.level.storage.loot.functions.ExplorationMapFunction;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SetNameFunction;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -53,6 +58,9 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
     private static final float CRAB_PEARL_LOOTING_BONUS = 0.25F;
     private static final float CURIO_CHANCE = 0.0125F;
     private static final float CURIO_LOOTING_BONUS = 0.01F;
+    private static final float CAPTAIN_RITES_CHANCE = 0.1F;
+    private static final byte CULT_MAP_ZOOM = 2;
+    private static final String CULT_MAP_NAME = "filled_map.thaumaturge.cult";
 
     public TTEntityLootSubProvider(HolderLookup.Provider registries) {
         super(FeatureFlags.REGISTRY.allFlags(), FeatureFlagSet.of(), registries);
@@ -110,6 +118,15 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
         add(
                 TTEntities.CULTIST_CLERIC.get(),
                 LootTable.lootTable().withPool(goldNuggetPool()).withPool(curioPool(TTItems.CURIO_RITES.get())));
+        add(
+                TTEntities.CULTIST_RANGER.get(),
+                LootTable.lootTable().withPool(goldNuggetPool()).withPool(curioPool(TTItems.CURIO_RITES.get())));
+        add(
+                TTEntities.CULTIST_RANGER_CAPTAIN.get(),
+                LootTable.lootTable()
+                        .withPool(goldNuggetPool())
+                        .withPool(playerKillPool(TTItems.CURIO_RITES.get(), CAPTAIN_RITES_CHANCE, CURIO_LOOTING_BONUS))
+                        .withPool(cultMapPool()));
         add(
                 TTEntities.ELDRITCH_CRAB.get(),
                 LootTable.lootTable()
@@ -213,6 +230,19 @@ public final class TTEntityLootSubProvider extends EntityLootSubProvider {
                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                 .when(LootItemRandomChanceWithEnchantedBonusCondition.randomChanceAndLootingBoost(
                         this.registries, chance, lootingBonus));
+    }
+
+    private LootPool.Builder cultMapPool() {
+        return LootPool.lootPool()
+                .setRolls(ConstantValue.exactly(1))
+                .add(LootItem.lootTableItem(Items.MAP)
+                        .apply(ExplorationMapFunction.makeExplorationMap()
+                                .setDestination(TTStructureTags.ON_CULT_MAPS)
+                                .setMapDecoration(MapDecorationTypes.RED_X)
+                                .setZoom(CULT_MAP_ZOOM))
+                        .apply(SetNameFunction.setName(
+                                Component.translatable(CULT_MAP_NAME), SetNameFunction.Target.ITEM_NAME)))
+                .when(LootItemKilledByPlayerCondition.killedByPlayer());
     }
 
     private LootPool.Builder goldNuggetPool() {

@@ -21,6 +21,7 @@ public final class ThaumaturgeCommonConfig {
     public static final ModConfigSpec.BooleanValue FLUX_PRESSURE_EVENTS;
     public static final ModConfigSpec.DoubleValue ENERGIZED_NODE_VIS_PER_POINT;
     public static final ModConfigSpec.IntValue CRIMSON_PORTAL_RARITY;
+    public static final ModConfigSpec.DoubleValue CRIMSON_PATROL_CHANCE;
     public static final ModConfigSpec.DoubleValue WILD_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue MAGICAL_NODE_CHANCE;
     public static final ModConfigSpec.DoubleValue EERIE_NODE_CHANCE;
@@ -96,8 +97,11 @@ public final class ThaumaturgeCommonConfig {
                         "Aura Vis consumed per aspect point restored by an energized node. Higher values increase consumption; 0 makes recharging free.")
                 .defineInRange("energizedNodeVisPerPoint", 6.0, 0.0, 100.0);
         CRIMSON_PORTAL_RARITY = builder.comment(
-                        "Average chunks per naturally generated lesser Crimson Portal. Higher values make portals rarer; 0 disables natural generation.")
-                .defineInRange("crimsonPortalRarity", 500, 0, 1000000);
+                        "Average chunks per naturally generated lesser Crimson Portal. Higher values make portals rarer; 0, the default, disables natural generation and crimson ranger patrols open portals instead.")
+                .defineInRange("crimsonPortalRarity", 0, 0, 1000000);
+        CRIMSON_PATROL_CHANCE = builder.comment(
+                        "Chance from 0 to 100 that a crimson ranger patrol spawns near a random overworld player at each daytime attempt, about every 10 minutes from day 5 on. 0 disables patrols.")
+                .defineInRange("crimsonPatrolChance", 10.0, 0.0, 100.0);
 
         builder.push("nodes");
 

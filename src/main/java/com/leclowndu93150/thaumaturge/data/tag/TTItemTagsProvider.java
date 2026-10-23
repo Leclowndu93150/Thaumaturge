@@ -326,7 +326,9 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CRIMSON_PLATE_HELM.get(),
                         TTItems.CRIMSON_ROBE_HELM.get(),
                         TTItems.CRIMSON_PRAETOR_HELM.get(),
-                        TTItems.GOGGLES_REVEALING.get());
+                        TTItems.GOGGLES_REVEALING.get(),
+                        TTItems.CRIMSON_RANGER_HELM.get(),
+                        TTItems.CRIMSON_CAPTAIN_HELM.get());
         tag(ItemTags.CHEST_ARMOR)
                 .add(
                         TTItems.THAUMIUM_CHEST.get(),
@@ -336,7 +338,9 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_CHEST.get(),
                         TTItems.CRIMSON_PLATE_CHEST.get(),
                         TTItems.CRIMSON_ROBE_CHEST.get(),
-                        TTItems.CRIMSON_PRAETOR_CHEST.get());
+                        TTItems.CRIMSON_PRAETOR_CHEST.get(),
+                        TTItems.CRIMSON_RANGER_CHEST.get(),
+                        TTItems.CRIMSON_CAPTAIN_CHEST.get());
         tag(ItemTags.LEG_ARMOR)
                 .add(
                         TTItems.THAUMIUM_LEGS.get(),
@@ -346,7 +350,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_LEGS.get(),
                         TTItems.CRIMSON_PLATE_LEGS.get(),
                         TTItems.CRIMSON_ROBE_LEGS.get(),
-                        TTItems.CRIMSON_PRAETOR_LEGS.get());
+                        TTItems.CRIMSON_PRAETOR_LEGS.get(),
+                        TTItems.CRIMSON_RANGER_LEGS.get());
         tag(ItemTags.FOOT_ARMOR)
                 .add(
                         TTItems.THAUMIUM_BOOTS.get(),
@@ -364,7 +369,9 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CRIMSON_PLATE_HELM.get(),
                         TTItems.CRIMSON_ROBE_HELM.get(),
                         TTItems.CRIMSON_PRAETOR_HELM.get(),
-                        TTItems.GOGGLES_REVEALING.get());
+                        TTItems.GOGGLES_REVEALING.get(),
+                        TTItems.CRIMSON_RANGER_HELM.get(),
+                        TTItems.CRIMSON_CAPTAIN_HELM.get());
         tag(TTItemTags.ARMORS_CHESTPLATES)
                 .add(
                         TTItems.THAUMIUM_CHEST.get(),
@@ -374,7 +381,9 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_CHEST.get(),
                         TTItems.CRIMSON_PLATE_CHEST.get(),
                         TTItems.CRIMSON_ROBE_CHEST.get(),
-                        TTItems.CRIMSON_PRAETOR_CHEST.get());
+                        TTItems.CRIMSON_PRAETOR_CHEST.get(),
+                        TTItems.CRIMSON_RANGER_CHEST.get(),
+                        TTItems.CRIMSON_CAPTAIN_CHEST.get());
         tag(TTItemTags.ARMORS_LEGGINGS)
                 .add(
                         TTItems.THAUMIUM_LEGS.get(),
@@ -384,7 +393,8 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.CLOTH_LEGS.get(),
                         TTItems.CRIMSON_PLATE_LEGS.get(),
                         TTItems.CRIMSON_ROBE_LEGS.get(),
-                        TTItems.CRIMSON_PRAETOR_LEGS.get());
+                        TTItems.CRIMSON_PRAETOR_LEGS.get(),
+                        TTItems.CRIMSON_RANGER_LEGS.get());
         tag(TTItemTags.ARMORS_BOOTS)
                 .add(
                         TTItems.THAUMIUM_BOOTS.get(),

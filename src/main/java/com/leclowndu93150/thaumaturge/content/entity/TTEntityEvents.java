@@ -10,6 +10,8 @@ import com.leclowndu93150.thaumaturge.content.entity.boss.hierophant.EntityEldri
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityArcaneBore;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbow;
 import com.leclowndu93150.thaumaturge.content.entity.construct.EntityTurretCrossbowAdvanced;
+import com.leclowndu93150.thaumaturge.content.entity.ranger.EntityCultistRanger;
+import com.leclowndu93150.thaumaturge.content.entity.ranger.EntityCultistRangerCaptain;
 import com.leclowndu93150.thaumaturge.content.golem.EntityThaumaturgeGolem;
 import com.leclowndu93150.thaumaturge.content.spell.carrier.SpellBat;
 import com.leclowndu93150.thaumaturge.content.taint.entity.EntityTaintSpore;
@@ -212,6 +214,12 @@ public final class TTEntityEvents {
         event.put(
                 TTEntities.CULTIST_CLERIC.get(),
                 EntityCultistCleric.createAttributes().build());
+        event.put(
+                TTEntities.CULTIST_RANGER.get(),
+                EntityCultistRanger.createAttributes().build());
+        event.put(
+                TTEntities.CULTIST_RANGER_CAPTAIN.get(),
+                EntityCultistRangerCaptain.createAttributes().build());
         event.put(
                 TTEntities.CULTIST_PORTAL_LESSER.get(),
                 EntityCultistPortalLesser.createAttributes().build());
