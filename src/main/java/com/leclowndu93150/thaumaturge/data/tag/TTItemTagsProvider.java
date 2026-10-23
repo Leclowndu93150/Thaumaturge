@@ -165,5 +165,7 @@ public final class TTItemTagsProvider extends BlockTagCopyingItemTagProvider {
         tag(Tags.Items.MELEE_WEAPON_TOOLS).add(TTItems.THAUMIUM_SWORD.get(), TTItems.VOID_SWORD.get(), TTItems.ELEMENTAL_SWORD.get(), TTItems.CRIMSON_BLADE.get(), TTItems.THAUMIUM_AXE.get(),
                 TTItems.VOID_AXE.get(), TTItems.ELEMENTAL_AXE.get(), TTItems.THAUMIUM_SPEAR.get(), TTItems.VOID_SPEAR.get(), TTItems.ELEMENTAL_SPEAR.get());
         tag(Tags.Items.MINING_TOOL_TOOLS).add(TTItems.THAUMIUM_PICKAXE.get(), TTItems.VOID_PICKAXE.get(), TTItems.ELEMENTAL_PICKAXE.get(), TTItems.PRIMAL_CRUSHER.get());
+
+        tag(TTItemTags.CURIOSITIES).add(TTItems.CURIO_ARCANE.get(), TTItems.CURIO_PRESERVED.get(), TTItems.CURIO_ANCIENT.get(), TTItems.CURIO_ELDRITCH.get(), TTItems.CURIO_KNOWLEDGE.get(), TTItems.CURIO_TWISTED.get(), TTItems.CURIO_RITES.get(), TTItems.PECH_WAND.get());
     }
 }
