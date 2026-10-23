@@ -4,6 +4,7 @@ import com.leclowndu93150.thaumaturge.api.nodes.NodeType;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.data.worldgen.biome.TTBiomes;
 import com.leclowndu93150.thaumaturge.registry.TTBlockTags;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.resources.ResourceKey;
@@ -14,9 +15,11 @@ import net.minecraft.world.level.biome.Biome;
 
 final class NodeBiomeSpread {
     private static final int SPREAD_INTERVAL = 50;
-    private static final int DARK_RANGE = 12;
+    private static final int DARK_RANGE = 16;
     private static final int PURE_RANGE = 8;
     private static final int SILVERWOOD_RADIUS = 1;
+    private static final int HALF_QUART = 2;
+    private static final double BLOCK_CENTER = 0.5;
 
     private NodeBiomeSpread() {}
 
@@ -29,8 +32,8 @@ final class NodeBiomeSpread {
         }
         RandomSource random = level.getRandom();
         switch (node.getNodeType()) {
-            case DARK -> eerie(level, sample(pos, DARK_RANGE, random));
-            case PURE -> purify(level, pos, sample(pos, PURE_RANGE, random));
+            case DARK -> sample(pos, DARK_RANGE, random).ifPresent(sample -> eerie(level, sample));
+            case PURE -> sample(pos, PURE_RANGE, random).ifPresent(sample -> purify(level, pos, sample));
             case NORMAL, UNSTABLE, HUNGRY, TAINTED -> {}
         }
     }
@@ -60,9 +63,16 @@ final class NodeBiomeSpread {
         }
     }
 
-    private static BlockPos sample(BlockPos origin, int range, RandomSource random) {
-        return origin.offset(
+    private static Optional<BlockPos> sample(BlockPos origin, int range, RandomSource random) {
+        BlockPos sample = origin.offset(
                 random.nextInt(range) - random.nextInt(range), 0, random.nextInt(range) - random.nextInt(range));
+        return withinRadius(origin, sample, range) ? Optional.of(sample) : Optional.empty();
+    }
+
+    private static boolean withinRadius(BlockPos origin, BlockPos sample, int range) {
+        double dx = QuartPos.toBlock(QuartPos.fromBlock(sample.getX())) + HALF_QUART - (origin.getX() + BLOCK_CENTER);
+        double dz = QuartPos.toBlock(QuartPos.fromBlock(sample.getZ())) + HALF_QUART - (origin.getZ() + BLOCK_CENTER);
+        return dx * dx + dz * dz <= range * range;
     }
 
     private static void eerie(ServerLevel level, BlockPos sample) {
