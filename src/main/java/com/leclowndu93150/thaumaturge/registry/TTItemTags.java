@@ -17,6 +17,9 @@ public final class TTItemTags {
     public static final TagKey<Item> RESEARCH_NOTES = key("research_notes");
     public static final TagKey<Item> LOOT_CONTAINERS = key("loot_containers");
     public static final TagKey<Item> RUNIC_SHIELDABLE = key("runic_shieldable");
+    public static final TagKey<Item> SHIELDS_WARDING = key("shields/warding");
+    public static final TagKey<Item> SHIELDS_REFLECTING = key("shields/reflecting");
+    public static final TagKey<Item> SHIELDS_SAPPING = key("shields/sapping");
     public static final TagKey<Item> SCAN_IRON = key("scan/f_matiron");
     public static final TagKey<Item> NITORS = key("nitors");
     public static final TagKey<Item> MEAT_CHUNKS = key("meat_chunks");

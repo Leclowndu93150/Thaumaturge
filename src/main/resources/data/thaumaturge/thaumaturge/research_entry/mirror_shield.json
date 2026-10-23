@@ -1,0 +1,51 @@
+{
+  "category": "thaumaturge:artifice",
+  "name": "research.thaumaturge.mirror_shield.title",
+  "parents": [
+    "thaumaturge:mirror",
+    "thaumaturge:thaumium_shield"
+  ],
+  "column": -5,
+  "row": 2,
+  "icons": [
+    "thaumaturge:mirror_shield"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.mirror_shield.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        },
+        {
+          "type": "observation",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.mirror_shield.stage_1",
+      "recipes": [
+        "thaumaturge:infusion/mirror_shield"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:permutatio",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:vitreus",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

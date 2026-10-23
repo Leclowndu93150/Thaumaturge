@@ -301,6 +301,8 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.THAUMIUM_CHEST.get());
                         output.accept(TTItems.THAUMIUM_LEGS.get());
                         output.accept(TTItems.THAUMIUM_BOOTS.get());
+                        output.accept(TTItems.THAUMIUM_SHIELD.get());
+                        output.accept(TTItems.MIRROR_SHIELD.get());
                         output.accept(TTItems.VOID_SWORD.get());
                         output.accept(TTItems.VOID_PICKAXE.get());
                         output.accept(TTItems.VOID_AXE.get());
@@ -310,6 +312,7 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.VOID_CHEST.get());
                         output.accept(TTItems.VOID_LEGS.get());
                         output.accept(TTItems.VOID_BOOTS.get());
+                        output.accept(TTItems.VOID_SHIELD.get());
                         ItemStack elementalSword = new ItemStack(TTItems.ELEMENTAL_SWORD.get());
                         InfusionEnchantmentHelper.add(elementalSword, InfusionEnchantment.ARCING, 2);
                         output.accept(elementalSword);

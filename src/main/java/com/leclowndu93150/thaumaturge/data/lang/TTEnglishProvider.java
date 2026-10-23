@@ -1062,6 +1062,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.thaumium_legs", "Thaumium Greaves");
         add("item.thaumaturge.thaumium_boots", "Thaumium Boots");
         add("item.thaumaturge.void_sword", "Void Sword");
+        add("item.thaumaturge.thaumium_shield", "Thaumium Shield");
+        add("item.thaumaturge.mirror_shield", "Mirror Shield");
+        add("item.thaumaturge.void_shield", "Void Shield");
         add("item.thaumaturge.void_pickaxe", "Void Pickaxe");
         add("item.thaumaturge.void_axe", "Void Axe");
         add("item.thaumaturge.void_shovel", "Void Shovel");

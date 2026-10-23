@@ -1,0 +1,46 @@
+{
+  "category": "thaumaturge:artifice",
+  "name": "research.thaumaturge.thaumium_shield.title",
+  "parents": [
+    "thaumaturge:base_artifice",
+    "thaumaturge:metallurgy@3"
+  ],
+  "column": -1,
+  "row": 2,
+  "icons": [
+    "thaumaturge:thaumium_shield"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.thaumium_shield.stage_0",
+      "required_knowledge": [
+        {
+          "type": "theory",
+          "category": "thaumaturge:artifice",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.thaumium_shield.stage_1",
+      "recipes": [
+        "thaumaturge:arcane_workbench/thaumium_shield"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:metallum",
+      "amount": 3
+    },
+    {
+      "aspect": "thaumaturge:ordo",
+      "amount": 3
+    }
+  ],
+  "complexity": 1
+}

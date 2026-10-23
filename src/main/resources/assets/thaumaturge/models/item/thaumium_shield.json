@@ -1,0 +1,359 @@
+{
+  "gui_light": "front",
+  "textures": {
+    "shield": "thaumaturge:item/thaumium_shield",
+    "particle": "thaumaturge:item/thaumium_shield"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        10,
+        6,
+        -4
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        0
+      ],
+      "translation": [
+        10,
+        6,
+        12
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        180,
+        5
+      ],
+      "translation": [
+        -10,
+        1.75,
+        -10
+      ],
+      "scale": [
+        1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        180,
+        5
+      ],
+      "translation": [
+        10,
+        0,
+        -10
+      ],
+      "scale": [
+        1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "gui": {
+      "rotation": [
+        15,
+        -25,
+        -5
+      ],
+      "translation": [
+        2,
+        3,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        -4.5,
+        4.5,
+        -5
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "on_shelf": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        11,
+        18.5,
+        8.7
+      ],
+      "scale": [
+        1.4,
+        1.4,
+        1.4
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        2,
+        4,
+        2
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    }
+  },
+  "elements": [
+    {
+      "from": [
+        -1,
+        -3,
+        -5
+      ],
+      "to": [
+        1,
+        3,
+        1
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            1.5,
+            8.5,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            1.5,
+            8,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "north": {
+          "uv": [
+            10,
+            1.5,
+            10.5,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            8.5,
+            1.5,
+            10,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            8.5,
+            1.5
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            8.5,
+            1.5,
+            9,
+            0
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "from": [
+        -6,
+        -11,
+        1
+      ],
+      "to": [
+        6,
+        11,
+        2
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0.25,
+            0.25,
+            3.25,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            0,
+            0.25,
+            0.25,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "north": {
+          "uv": [
+            3.5,
+            0.25,
+            6.5,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            3.25,
+            0.25,
+            3.5,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            0.25,
+            0,
+            3.25,
+            0.25
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            3.25,
+            0.25,
+            6.25,
+            0
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "from": [
+        -5,
+        -5,
+        1.5
+      ],
+      "to": [
+        5,
+        5,
+        2.5
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            6.75,
+            3.25,
+            9.25,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            3.25,
+            6.75,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "north": {
+          "uv": [
+            9.5,
+            3.25,
+            12,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            9.25,
+            3.25,
+            9.5,
+            5.75
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            6.75,
+            3,
+            9.25,
+            3.25
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            9.25,
+            3.25,
+            11.75,
+            3
+          ],
+          "texture": "#shield"
+        }
+      }
+    }
+  ],
+  "overrides": [
+    {
+      "predicate": {
+        "blocking": 1
+      },
+      "model": "thaumaturge:item/thaumium_shield_blocking"
+    }
+  ]
+}

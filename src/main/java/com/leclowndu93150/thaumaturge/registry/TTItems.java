@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.VoidGearItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidHoeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidPickaxeItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidRobeArmorItem;
+import com.leclowndu93150.thaumaturge.content.equipment.VoidShieldItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidShovelItem;
 import com.leclowndu93150.thaumaturge.content.equipment.VoidSwordItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.AmuletVisItem;
@@ -39,6 +40,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.bauble.TrinketItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VerdantCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.bauble.VoidseerCharmItem;
 import com.leclowndu93150.thaumaturge.content.equipment.hover.ThaumostaticHarnessItem;
+import com.leclowndu93150.thaumaturge.content.equipment.shield.ThaumicShieldItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
@@ -100,6 +102,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -317,6 +320,15 @@ public final class TTItems {
                     TTMaterials.ARMOR_THAUMIUM,
                     ArmorItem.Type.BOOTS,
                     props.durability(ArmorItem.Type.BOOTS.getDurability(TTMaterials.DURABILITY_THAUMIUM))));
+    public static final DeferredItem<ThaumicShieldItem> THAUMIUM_SHIELD = ITEMS.registerItem(
+            "thaumium_shield",
+            props -> new ThaumicShieldItem(
+                    props, TTItemTags.INGOTS_THAUMIUM, TTMaterials.TOOL_THAUMIUM.getEnchantmentValue()),
+            new Item.Properties().durability(512));
+    public static final DeferredItem<ThaumicShieldItem> MIRROR_SHIELD = ITEMS.registerItem(
+            "mirror_shield",
+            props -> new ThaumicShieldItem(props, Tags.Items.INGOTS_GOLD, 0),
+            new Item.Properties().durability(336).rarity(Rarity.UNCOMMON));
 
     public static final DeferredItem<VoidSwordItem> VOID_SWORD = ITEMS.registerItem(
             "void_sword",
@@ -361,6 +373,8 @@ public final class TTItems {
                     TTMaterials.ARMOR_VOID,
                     ArmorItem.Type.BOOTS,
                     props.durability(ArmorItem.Type.BOOTS.getDurability(TTMaterials.DURABILITY_VOID))));
+    public static final DeferredItem<VoidShieldItem> VOID_SHIELD =
+            ITEMS.registerItem("void_shield", VoidShieldItem::new, new Item.Properties().durability(512));
 
     public static final DeferredItem<ElementalSwordItem> ELEMENTAL_SWORD = ITEMS.registerItem(
             "elemental_sword",

@@ -624,6 +624,20 @@ public final class ResearchTextEn {
         add.accept(
                 "research.thaumaturge.mirror_hand.stage_1",
                 "I have created a magical hand mirror that functions in much the same way as other magical mirrors. I simply push items through the glass and they will pop out at the linked mirror.<BR>Right-click while holding the linked hand mirror and I will be able to place any items in my inventory into the looking glass to have them transported.<BR>The hand mirror can be linked to a mirror that is already paired with another.<BR>I should note that the hand mirror can only send items, not receive them.");
+        add.accept("research.thaumaturge.thaumium_shield.title", "Thaumium Shield");
+        add.accept(
+                "research.thaumaturge.thaumium_shield.stage_0",
+                "A wooden shield turns aside a blade or an arrow well enough, but spells, curses and the beams of the deep sea guardians pass through it as if it were not there. Thaumium answers to magic. A shield faced with it might answer too.");
+        add.accept(
+                "research.thaumaturge.thaumium_shield.stage_1",
+                "I have faced a greatwood shield with thaumium plates. It is sturdier than a common shield, and when raised it catches magic as well as steel: spells, harmful potions and guardian beams that strike its face are stopped.<BR>Turning magic aside wears the metal quickly, and a blocked spell costs the shield twice the wear of a blow of the same strength.");
+        add.accept("research.thaumaturge.mirror_shield.title", "Mirror Shield");
+        add.accept(
+                "research.thaumaturge.mirror_shield.stage_0",
+                "My mirrors send what passes into them somewhere else. A shield faced with mirrored glass could send what strikes it back where it came from.");
+        add.accept(
+                "research.thaumaturge.mirror_shield.stage_1",
+                "I have infused a shield with a face of mirrored glass set in gold. Any projectile that strikes the raised mirror - arrows, fireballs, thrown potions, even spells - is turned around and sent back the way it came, and it counts as mine once it leaves the glass.<BR>The mirror is no stronger than an ordinary shield, and every reflection wears it a little.");
         add.accept("research.thaumaturge.mirror_essentia.title", "Essentia Mirrors");
         add.accept(
                 "research.thaumaturge.mirror_essentia.stage_0",
@@ -1052,6 +1066,13 @@ public final class ResearchTextEn {
         add.accept(
                 "research.thaumaturge.void_robe_armor.stage_1",
                 "Using the knowledge I have gained thus far, I have designed a set of armored robes that combines the utility of Thaumaturge's Robes with the practacality of Thaumium Fortress Armor.<BR>Primarily made from void metal this armor has all the benefits (and side-effects) that metal offers.<BR>Lastly, the hood of the robes contain integrated Goggles of Revealing.<BR>This armor can be dyed.");
+        add.accept("research.thaumaturge.void_shield.title", "Void Shield");
+        add.accept(
+                "research.thaumaturge.void_shield.stage_0",
+                "My thaumium shield holds against magic, but it wears down fast doing it. Void metal mends itself. A shield made of it would not wear down at all, given time.");
+        add.accept(
+                "research.thaumaturge.void_shield.stage_1",
+                "I have infused my thaumium shield with void metal. Like the thaumium shield it stops magic as well as steel, and like all void metal it slowly repairs itself and gnaws at the mind of whoever carries it.<BR>Anything that strikes it in melee comes away weakened for a few moments, as if the void had drunk some of its strength.");
         add.accept("research.thaumaturge.primal_crusher.title", "Primal Crusher");
         add.accept(
                 "research.thaumaturge.primal_crusher.stage_0",

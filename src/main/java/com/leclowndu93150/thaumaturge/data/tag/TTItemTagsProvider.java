@@ -13,6 +13,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagEntry;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -305,6 +306,12 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.VOID_HOE.get(),
                         TTItems.ELEMENTAL_HOE.get(),
                         TTItems.PRIMAL_CRUSHER.get());
+        Item[] shields = {TTItems.THAUMIUM_SHIELD.get(), TTItems.MIRROR_SHIELD.get(), TTItems.VOID_SHIELD.get()};
+        tag(Tags.Items.TOOLS_SHIELD).add(shields);
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(shields);
+        tag(TTItemTags.SHIELDS_WARDING).add(TTItems.THAUMIUM_SHIELD.get(), TTItems.VOID_SHIELD.get());
+        tag(TTItemTags.SHIELDS_REFLECTING).add(TTItems.MIRROR_SHIELD.get());
+        tag(TTItemTags.SHIELDS_SAPPING).add(TTItems.VOID_SHIELD.get());
 
         tag(ItemTags.HEAD_ARMOR)
                 .add(

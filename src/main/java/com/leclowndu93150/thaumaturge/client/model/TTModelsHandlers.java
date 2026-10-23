@@ -28,6 +28,7 @@ public final class TTModelsHandlers {
     public static final ResourceLocation VERDANT_TYPE_PROPERTY_ID = TTIds.rl("verdant_type");
     public static final ResourceLocation CELESTIAL_BODY_PROPERTY_ID = TTIds.rl("celestial_body");
     public static final ResourceLocation MESH_LOADER_ID = TTIds.rl("mesh");
+    private static final ResourceLocation BLOCKING_PROPERTY_ID = ResourceLocation.withDefaultNamespace("blocking");
     public static final ResourceLocation CRYSTAL_LOADER_ID = TTIds.rl("crystal");
 
     private TTModelsHandlers() {}
@@ -46,6 +47,9 @@ public final class TTModelsHandlers {
                     WAND_IS_STAFF_PROPERTY_ID,
                     (stack, level, entity, seed) ->
                             WandVisHelper.getParts(stack).rod().staff() ? 1.0F : 0.0F);
+            registerBlocking(TTItems.THAUMIUM_SHIELD.get());
+            registerBlocking(TTItems.MIRROR_SHIELD.get());
+            registerBlocking(TTItems.VOID_SHIELD.get());
             registerComponentFlag(TTItems.MIRROR.get(), LINKED_PROPERTY_ID, TTDataComponents.MIRROR_LINK.get());
             registerComponentFlag(
                     TTItems.MIRROR_ESSENTIA.get(), LINKED_PROPERTY_ID, TTDataComponents.MIRROR_LINK.get());
@@ -64,6 +68,14 @@ public final class TTModelsHandlers {
                         return body == null ? 0.0F : body.ordinal();
                     });
         });
+    }
+
+    private static void registerBlocking(Item item) {
+        ItemProperties.register(
+                item,
+                BLOCKING_PROPERTY_ID,
+                (stack, level, entity, seed) ->
+                        entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
     }
 
     private static void registerComponentFlag(Item item, ResourceLocation id, DataComponentType<?> component) {

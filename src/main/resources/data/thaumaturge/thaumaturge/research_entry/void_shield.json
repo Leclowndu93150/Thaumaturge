@@ -1,0 +1,51 @@
+{
+  "category": "thaumaturge:eldritch",
+  "name": "research.thaumaturge.void_shield.title",
+  "parents": [
+    "thaumaturge:base_eldritch",
+    "thaumaturge:thaumium_shield"
+  ],
+  "column": 2,
+  "row": 2,
+  "icons": [
+    "thaumaturge:void_shield"
+  ],
+  "stages": [
+    {
+      "text": "research.thaumaturge.void_shield.stage_0",
+      "required_knowledge": [
+        {
+          "type": "observation",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        },
+        {
+          "type": "theory",
+          "category": "thaumaturge:eldritch",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "text": "research.thaumaturge.void_shield.stage_1",
+      "recipes": [
+        "thaumaturge:infusion/void_shield"
+      ]
+    }
+  ],
+  "note_aspects": [
+    {
+      "aspect": "thaumaturge:praemunio",
+      "amount": 6
+    },
+    {
+      "aspect": "thaumaturge:vacuos",
+      "amount": 4
+    },
+    {
+      "aspect": "thaumaturge:alienis",
+      "amount": 3
+    }
+  ],
+  "complexity": 2
+}

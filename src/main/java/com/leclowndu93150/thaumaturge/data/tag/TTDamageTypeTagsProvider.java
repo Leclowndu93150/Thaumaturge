@@ -2,6 +2,7 @@ package com.leclowndu93150.thaumaturge.data.tag;
 
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.damagesource.TTDamageTypes;
+import com.leclowndu93150.thaumaturge.registry.TTDamageTypeTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -11,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 
 public final class TTDamageTypeTagsProvider extends DamageTypeTagsProvider {
     public static final TagKey<DamageType> IS_MAGIC =
@@ -29,5 +31,6 @@ public final class TTDamageTypeTagsProvider extends DamageTypeTagsProvider {
         tag(IS_MAGIC).add(TTDamageTypes.TAINT, TTDamageTypes.ELDRITCH_SPELL);
         tag(DamageTypeTags.IS_FIRE).add(TTDamageTypes.FOCUS_FIRE);
         tag(DamageTypeTags.IS_PROJECTILE).add(TTDamageTypes.FOCUS_FIRE);
+        tag(TTDamageTypeTags.WARDED_BY_SHIELDS).add(DamageTypes.MAGIC, DamageTypes.INDIRECT_MAGIC);
     }
 }
