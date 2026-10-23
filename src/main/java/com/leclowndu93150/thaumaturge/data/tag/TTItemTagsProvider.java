@@ -130,6 +130,12 @@ public final class TTItemTagsProvider extends ItemTagsProvider {
                         TTItems.SEAL_PROVIDER.get(),
                         TTItems.SEAL_STOCK.get());
         tag(TTItemTags.RESEARCH_NOTES).add(TTItems.RESEARCH_NOTE.get(), TTItems.CELESTIAL_NOTES.get());
+        tag(ItemTags.BOOKSHELF_BOOKS)
+                .add(
+                        TTItems.THAUMONOMICON.get(),
+                        TTItems.THAUMONOMICON_CHEAT.get(),
+                        TTItems.THAUMONOMICON_SHARING.get(),
+                        TTItems.THAUMONOMICON_LINKING.get());
         tag(TTItemTags.LOOT_CONTAINERS)
                 .add(
                         TTItems.LOOT_BAG_COMMON.get(),
