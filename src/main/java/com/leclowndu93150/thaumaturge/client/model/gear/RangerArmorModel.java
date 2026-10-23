@@ -13,14 +13,15 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 public final class RangerArmorModel extends AbstractTTArmorModel {
     private static final int TEXTURE_WIDTH = 256;
     private static final int TEXTURE_HEIGHT = 128;
-    private static final String HELMET = "helmet";
-    private static final String MASK = "mask";
+    private static final String EARS = "ears";
+    private static final String VISOR = "visor";
+    private static final int VISOR_U = 101;
+    private static final int VISOR_V = 28;
     private static final String HIP = "hip";
     private static final String TABARD_FRONT = "tabard_front";
     private static final String TABARD_FRONT_HEM = "tabard_front_hem";
     private static final String TABARD_BACK = "tabard_back";
     private static final String TABARD_BACK_HEM = "tabard_back_hem";
-    private static final PartPose MASK_POSE = PartPose.offsetAndRotation(-0.5F, 2.0F, 0.5F, 0.0873F, 0.0F, 0.0F);
 
     private final ModelPart frontTabard;
     private final ModelPart frontTabardHem;
@@ -57,57 +58,16 @@ public final class RangerArmorModel extends AbstractTTArmorModel {
 
     public static LayerDefinition createHead(boolean captain) {
         MeshDefinition mesh = createMesh();
-        PartDefinition head = mesh.getRoot().getChild("head");
-        PartDefinition helmet = head.addOrReplaceChild(
-                HELMET,
-                CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-5.0F, -9.0F, -5.0F, 10.0F, 6.0F, 10.0F, new CubeDeformation(-0.5F))
-                        .texOffs(6, 32)
-                        .addBox(-5.5F, -5.25F, -6.5F, 11.0F, 2.0F, 3.0F, new CubeDeformation(-0.5F)),
-                PartPose.offset(0.0F, -1.0F, 0.0F));
-        helmet.addOrReplaceChild(
-                "right_guard",
-                CubeListBuilder.create()
-                        .texOffs(8, 16)
-                        .mirror()
-                        .addBox(-0.5F, -2.5F, -1.0F, 2.0F, 6.0F, 10.0F, new CubeDeformation(-0.5F))
-                        .mirror(false),
-                PartPose.offsetAndRotation(4.5F, -1.5F, -4.0F, 0.0F, 0.0F, -0.2618F));
-        helmet.addOrReplaceChild(
-                "neck_guard",
-                CubeListBuilder.create()
-                        .texOffs(8, 16)
-                        .addBox(-1.5F, -2.5F, -1.0F, 2.0F, 6.0F, 10.0F, new CubeDeformation(-0.5F)),
-                PartPose.offsetAndRotation(4.0F, -1.75F, 5.0F, 1.5708F, -1.309F, -1.5708F));
-        helmet.addOrReplaceChild(
-                "left_guard",
-                CubeListBuilder.create()
-                        .texOffs(8, 16)
-                        .addBox(-1.5F, -2.5F, -1.0F, 2.0F, 6.0F, 10.0F, new CubeDeformation(-0.5F)),
-                PartPose.offsetAndRotation(-4.5F, -1.5F, -4.0F, 0.0F, 0.0F, 0.2618F));
+        PartDefinition helmet = PlateHelmet.shell(mesh.getRoot().getChild("head"));
         if (captain) {
             addPlume(helmet);
         } else {
-            addEars(helmet);
+            PlateHelmet.flaps(helmet, EARS, CubeListBuilder.create());
         }
-        PartDefinition mask =
-                helmet.addOrReplaceChild(MASK, CubeListBuilder.create(), PartPose.offset(4.5F, -4.0F, -5.5F));
-        mask.addOrReplaceChild(
-                "visor",
-                CubeListBuilder.create()
-                        .texOffs(101, 28)
-                        .addBox(-9.0F, -3.0F, 0.0F, 10.0F, 7.0F, 2.0F, new CubeDeformation(-0.51F)),
-                MASK_POSE);
+        PartDefinition mask = PlateHelmet.mask(helmet);
+        PlateHelmet.visor(mask, VISOR, VISOR_U, VISOR_V);
         if (captain) {
-            mask.addOrReplaceChild(
-                    "goggles",
-                    CubeListBuilder.create()
-                            .texOffs(176, 0)
-                            .addBox(-8.0F, -1.5F, -0.5F, 4.0F, 4.0F, 1.0F)
-                            .texOffs(176, 0)
-                            .addBox(-4.0F, -1.5F, -0.5F, 4.0F, 4.0F, 1.0F),
-                    MASK_POSE);
+            PlateHelmet.goggles(mask);
         }
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
@@ -280,25 +240,6 @@ public final class RangerArmorModel extends AbstractTTArmorModel {
                         .mirror(false),
                 PartPose.rotation(0.0F, 0.0F, -0.1745F));
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
-    }
-
-    private static void addEars(PartDefinition helmet) {
-        PartDefinition ears =
-                helmet.addOrReplaceChild("ears", CubeListBuilder.create(), PartPose.offset(4.0F, -3.0F, -4.0F));
-        ears.addOrReplaceChild(
-                "left_ear",
-                CubeListBuilder.create()
-                        .texOffs(22, 21)
-                        .addBox(-2.5F, -2.5F, -1.0F, 3.0F, 3.0F, 2.0F, new CubeDeformation(-0.5F)),
-                PartPose.offsetAndRotation(-9.0F, 1.5F, -0.5F, 0.0F, -0.6981F, 0.2618F));
-        ears.addOrReplaceChild(
-                "right_ear",
-                CubeListBuilder.create()
-                        .texOffs(22, 21)
-                        .mirror()
-                        .addBox(-0.5F, -2.5F, -1.0F, 3.0F, 3.0F, 2.0F, new CubeDeformation(-0.5F))
-                        .mirror(false),
-                PartPose.offsetAndRotation(1.0F, 1.5F, -0.5F, 0.0F, 0.6981F, -0.2618F));
     }
 
     private static void addPlume(PartDefinition helmet) {
