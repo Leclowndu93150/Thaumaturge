@@ -1,0 +1,34 @@
+{
+	"format_version": "26.3",
+	"credit": "Made with Blockbench",
+	"parent": "block/block",
+	"render_type": "minecraft:translucent",
+	"textures": {
+		"0": "thaumaturge:block/essentia_reservoir",
+		"particle": "thaumaturge:block/metal_void"
+	},
+	"elements": [
+		{
+			"name": "glass",
+			"from": [2, 2, 2],
+			"to": [14, 14, 14],
+			"faces": {
+				"north": {"uv": [8, 11, 11, 14], "texture": "#0"},
+				"east": {"uv": [8, 11, 11, 14], "texture": "#0"},
+				"south": {"uv": [8, 11, 11, 14], "texture": "#0"},
+				"west": {"uv": [8, 11, 11, 14], "texture": "#0"},
+				"up": {"uv": [8, 11, 11, 14], "texture": "#0"},
+				"down": {"uv": [8, 11, 11, 14], "texture": "#0"}
+			}
+		}
+	],
+	"groups": [
+		{
+			"name": "frame",
+			"origin": [0, 0, 0],
+			"scope": 0,
+			"color": 0,
+			"children": [0]
+		}
+	]
+}
