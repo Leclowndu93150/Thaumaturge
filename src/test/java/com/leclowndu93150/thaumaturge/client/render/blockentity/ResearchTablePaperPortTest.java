@@ -35,7 +35,7 @@ class ResearchTablePaperPortTest {
     void eachSheetUsesSourceHeightAndTiltInItsSubmittedPose() {
         for (int sheet = 0; sheet < SOURCE_TILTS.length; sheet++) {
             PoseStack poseStack = new PoseStack();
-            ResearchTableRenderer.applySheetPose(poseStack, sheet);
+            ResearchTableTop.applySheetPose(poseStack, sheet);
 
             Vector3f origin = poseStack.last().pose().transformPosition(0.0F, 0.0F, 0.0F, new Vector3f());
             Vector3f xAxis = poseStack.last().pose().transformPosition(1.0F, 0.0F, 0.0F, new Vector3f());

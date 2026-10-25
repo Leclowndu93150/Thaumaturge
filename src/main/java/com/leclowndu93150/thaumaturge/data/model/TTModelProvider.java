@@ -1172,41 +1172,25 @@ public final class TTModelProvider implements DataProvider {
                             };
                         })));
         modelOutput.accept(
-                ModelLocationUtils.getModelLocation(block.asItem()),
-                () -> new Gson()
-                        .toJsonTree(Map.of(
-                                "parent",
-                                "minecraft:block/block",
-                                "loader",
-                                "neoforge:composite",
-                                "children",
-                                Map.of(
-                                        "main",
-                                                Map.of(
-                                                        "parent",
-                                                        "thaumaturge:block/research_table_main",
-                                                        "transform",
-                                                        Map.of(
-                                                                "origin",
-                                                                "corner",
-                                                                "translation",
-                                                                List.of(0.25F, 0.25F, 0.5F),
-                                                                "scale",
-                                                                0.5F)),
-                                        "ext",
-                                                Map.of(
-                                                        "parent",
-                                                        "thaumaturge:block/research_table_ext",
-                                                        "transform",
-                                                        Map.of(
-                                                                "origin",
-                                                                "corner",
-                                                                "translation",
-                                                                List.of(0.75F, 0.25F, 0.5F),
-                                                                "rotation",
-                                                                List.of(0.0F, -180.0F, 0.0F),
-                                                                "scale",
-                                                                0.5F))))));
+                ModelLocationUtils.getModelLocation(block.asItem()), TTModelProvider::researchTableItemModel);
+    }
+
+    private static JsonObject researchTableItemModel() {
+        JsonObject model = new JsonObject();
+        model.addProperty("parent", "minecraft:builtin/entity");
+        model.addProperty("gui_light", "side");
+        JsonObject textures = new JsonObject();
+        textures.addProperty("particle", "thaumaturge:block/plank_greatwood");
+        model.add("textures", textures);
+        JsonObject display = new JsonObject();
+        display.add("gui", displayTransform(30, 225, 0, 0, 0, 0, 0.625F));
+        display.add("ground", displayTransform(0, 0, 0, 0, 3, 0, 0.25F));
+        display.add("fixed", displayTransform(0, 0, 0, 0, 0, 0, 0.5F));
+        display.add("thirdperson_righthand", displayTransform(75, 45, 0, 0, 2.5F, 0, 0.375F));
+        display.add("firstperson_righthand", displayTransform(0, 45, 0, 0, 0, 0, 0.4F));
+        display.add("firstperson_lefthand", displayTransform(0, 225, 0, 0, 0, 0, 0.4F));
+        model.add("display", display);
+        return model;
     }
 
     private void registerInvisibleBlock(Block block) {

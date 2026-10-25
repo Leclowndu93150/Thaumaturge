@@ -30,14 +30,13 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private static final ResourceLocation INKWELL_TEXTURE = TTIds.rl("textures/entity/research_inkwell.png");
     private static final ResourceLocation TABLE_TEXTURE = TTIds.rl("textures/entity/restable2.png");
     private static final ResourceLocation QUILL_TEXTURE = TTIds.rl("textures/entity/tablequill.png");
-    private static final ResourceLocation PARCHMENT_TEXTURE = TTIds.rl("textures/misc/parchment.png");
 
     private static final int DEFAULT_SCROLL_COLOR = 0x999999;
-    private static final float FRAME_HEIGHT = 1.0F;
     private static final float BOUNDS_MARGIN = 0.5F;
     private static final float INKWELL_X = -0.28125F;
     private static final float INKWELL_Z = 0.28125F;
     private static final int WHITE = 0xFFFFFFFF;
+    private static final float HALF_TURN = 180.0F;
     private static final float QUILL_X = -0.226F;
     private static final float QUILL_Y = -0.095F;
     private static final float QUILL_Z = 0.076F;
@@ -45,14 +44,6 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private static final float QUILL_SCALE = 0.5F;
     private static final float QUILL_THICKNESS = 0.025F;
     private static final int QUILL_TEXELS = 16;
-    private static final float SHEET_X = 0.12F;
-    private static final float SHEET_Z = 0.32F;
-    private static final float SHEET_WIDTH = 0.48F;
-    private static final float SHEET_LENGTH = 0.56F;
-    private static final float SHEET_BASE_HEIGHT = 1.008F;
-    private static final float SHEET_STEP = 0.013F;
-    private static final float[] SHEET_TILTS = {-6.0F, 8.0F, 14.0F, -3.0F, 11.0F};
-    private static final float LAY_FLAT = -90.0F;
     private static final float RIBBON_SCALE = 1.2F;
 
     private final ResearchTableModel model;
@@ -96,10 +87,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
         int noteColor = data != null ? data.color() : DEFAULT_SCROLL_COLOR;
 
         poseStack.pushPose();
-        poseStack.translate(0.5F, 1.0F, 0.5F);
-        BlockFacingPose.northBased(poseStack, facing);
-        poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        ResearchTableTop.pose(poseStack, facing);
 
         if (hasTools) {
             renderInkwell(poseStack, buffers, light);
@@ -109,12 +97,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
             poseStack.popPose();
         }
 
-        for (int sheet = 0; sheet < SHEET_TILTS.length; sheet++) {
-            poseStack.pushPose();
-            applySheetPose(poseStack, sheet);
-            parchmentQuad(poseStack.last(), buffers.getBuffer(RenderType.entityTranslucent(PARCHMENT_TEXTURE)), light);
-            poseStack.popPose();
-        }
+        ResearchTableTop.renderSheets(poseStack, buffers, light);
 
         if (hasNote) {
             model.scrollTube.render(
@@ -136,17 +119,10 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
         poseStack.popPose();
     }
 
-    static void applySheetPose(PoseStack poseStack, int sheet) {
-        poseStack.translate(SHEET_X, FRAME_HEIGHT - (SHEET_BASE_HEIGHT + sheet * SHEET_STEP), SHEET_Z);
-        poseStack.mulPose(Axis.YP.rotationDegrees(SHEET_TILTS[sheet]));
-        poseStack.mulPose(Axis.XP.rotationDegrees(LAY_FLAT));
-        poseStack.scale(SHEET_WIDTH, SHEET_LENGTH, 1.0F);
-    }
-
     static void applyQuillPose(PoseStack poseStack) {
         poseStack.translate(QUILL_X, QUILL_Y, QUILL_Z);
         poseStack.mulPose(Axis.YP.rotationDegrees(QUILL_YAW));
-        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(HALF_TURN));
         poseStack.scale(QUILL_SCALE, QUILL_SCALE, QUILL_SCALE);
     }
 
@@ -157,7 +133,7 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
     private static void renderInkwell(PoseStack poseStack, MultiBufferSource buffers, int light) {
         poseStack.pushPose();
         poseStack.translate(INKWELL_X, 0.0F, INKWELL_Z);
-        poseStack.mulPose(Axis.XP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(HALF_TURN));
         VertexConsumer buffer = buffers.getBuffer(RenderType.entityCutout(INKWELL_TEXTURE));
         for (TTMeshPart part : GolemMeshes.get(INKWELL_MESH).parts()) {
             GolemMeshes.renderPart(part, poseStack.last(), buffer, light, WHITE);
@@ -165,78 +141,51 @@ public final class ResearchTableRenderer implements BlockEntityRenderer<BlockEnt
         poseStack.popPose();
     }
 
-    private static void parchmentQuad(PoseStack.Pose pose, VertexConsumer buffer, int light) {
-        vertexLit(pose, buffer, 0.0F, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 1.0F, 0.0F, 1.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
-    }
-
     private static void itemIn2D(PoseStack.Pose pose, VertexConsumer buffer, int light) {
         float t = QUILL_THICKNESS;
         int texels = QUILL_TEXELS;
-        vertexLit(pose, buffer, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.0F, 0.0F, 1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, light);
-        vertexLit(pose, buffer, 0.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, light);
-        vertexLit(pose, buffer, 0.0F, 1.0F, -t, 1.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 1.0F, -t, 0.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 1.0F, 0.0F, -t, 0.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
-        vertexLit(pose, buffer, 0.0F, 0.0F, -t, 1.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.0F, 0.0F, 1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 1.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 0.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 0.0F, 1.0F, -t, 1.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 1.0F, 1.0F, -t, 0.0F, 0.0F, 0.0F, 0.0F, -1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 1.0F, 0.0F, -t, 0.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
+        ResearchTableTop.vertex(pose, buffer, 0.0F, 0.0F, -t, 1.0F, 1.0F, 0.0F, 0.0F, -1.0F, light);
         float half = 0.5F / texels;
         for (int k = 0; k < texels; k++) {
             float x = k / (float) texels;
             float u = 1.0F - x - half;
-            vertexLit(pose, buffer, x, 0.0F, -t, u, 1.0F, -1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x, 0.0F, 0.0F, u, 1.0F, -1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x, 1.0F, 0.0F, u, 0.0F, -1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x, 1.0F, -t, u, 0.0F, -1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x, 0.0F, -t, u, 1.0F, -1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x, 0.0F, 0.0F, u, 1.0F, -1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x, 1.0F, 0.0F, u, 0.0F, -1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x, 1.0F, -t, u, 0.0F, -1.0F, 0.0F, 0.0F, light);
         }
         for (int k = 0; k < texels; k++) {
             float x = k / (float) texels;
             float u = 1.0F - x - half;
             float x1 = x + 1.0F / texels;
-            vertexLit(pose, buffer, x1, 1.0F, -t, u, 0.0F, 1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x1, 1.0F, 0.0F, u, 0.0F, 1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x1, 0.0F, 0.0F, u, 1.0F, 1.0F, 0.0F, 0.0F, light);
-            vertexLit(pose, buffer, x1, 0.0F, -t, u, 1.0F, 1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x1, 1.0F, -t, u, 0.0F, 1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x1, 1.0F, 0.0F, u, 0.0F, 1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x1, 0.0F, 0.0F, u, 1.0F, 1.0F, 0.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, x1, 0.0F, -t, u, 1.0F, 1.0F, 0.0F, 0.0F, light);
         }
         for (int k = 0; k < texels; k++) {
             float y = k / (float) texels;
             float v = 1.0F - y - half;
             float y1 = y + 1.0F / texels;
-            vertexLit(pose, buffer, 0.0F, y1, 0.0F, 1.0F, v, 0.0F, 1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 1.0F, y1, 0.0F, 0.0F, v, 0.0F, 1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 1.0F, y1, -t, 0.0F, v, 0.0F, 1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 0.0F, y1, -t, 1.0F, v, 0.0F, 1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 0.0F, y1, 0.0F, 1.0F, v, 0.0F, 1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 1.0F, y1, 0.0F, 0.0F, v, 0.0F, 1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 1.0F, y1, -t, 0.0F, v, 0.0F, 1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 0.0F, y1, -t, 1.0F, v, 0.0F, 1.0F, 0.0F, light);
         }
         for (int k = 0; k < texels; k++) {
             float y = k / (float) texels;
             float v = 1.0F - y - half;
-            vertexLit(pose, buffer, 1.0F, y, 0.0F, 0.0F, v, 0.0F, -1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 0.0F, y, 0.0F, 1.0F, v, 0.0F, -1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 0.0F, y, -t, 1.0F, v, 0.0F, -1.0F, 0.0F, light);
-            vertexLit(pose, buffer, 1.0F, y, -t, 0.0F, v, 0.0F, -1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 1.0F, y, 0.0F, 0.0F, v, 0.0F, -1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 0.0F, y, 0.0F, 1.0F, v, 0.0F, -1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 0.0F, y, -t, 1.0F, v, 0.0F, -1.0F, 0.0F, light);
+            ResearchTableTop.vertex(pose, buffer, 1.0F, y, -t, 0.0F, v, 0.0F, -1.0F, 0.0F, light);
         }
-    }
-
-    private static void vertexLit(
-            PoseStack.Pose pose,
-            VertexConsumer buffer,
-            float x,
-            float y,
-            float z,
-            float u,
-            float v,
-            float nx,
-            float ny,
-            float nz,
-            int light) {
-        buffer.addVertex(pose, x, y, z)
-                .setColor(-1)
-                .setUv(u, v)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(light)
-                .setNormal(pose, nx, ny, nz);
     }
 }
