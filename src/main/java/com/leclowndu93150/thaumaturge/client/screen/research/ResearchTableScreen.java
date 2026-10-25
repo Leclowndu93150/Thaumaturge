@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -325,6 +326,9 @@ public final class ResearchTableScreen extends AbstractTTContainerScreen<MenuRes
     private List<Component> aspectTooltip(Holder<IAspect> aspect) {
         List<Component> lines = new ArrayList<>();
         lines.add(AspectComponents.name(aspect));
+        if (!aspect.value().isPrimal()) {
+            lines.add(AspectComponents.composition(aspect).withStyle(ChatFormatting.DARK_GRAY));
+        }
         return lines;
     }
 
