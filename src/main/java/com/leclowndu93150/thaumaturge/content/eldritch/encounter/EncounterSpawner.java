@@ -49,6 +49,7 @@ final class EncounterSpawner {
             return Optional.empty();
         }
         record.state().encounter().add(BoundEntity.spawned(mob.getUUID(), type, role));
+        EncounterPhases.dirty(level);
         return Optional.of(mob);
     }
 
