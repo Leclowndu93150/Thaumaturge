@@ -292,7 +292,10 @@ public class EntityTurretCrossbow extends EntityOwnedConstruct implements Ranged
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-        if (!level().isClientSide() && isOwner(player) && isAlive()) {
+        if (isOwner(player) && isAlive()) {
+            if (level().isClientSide()) {
+                return InteractionResult.SUCCESS;
+            }
             if (player.isShiftKeyDown()) {
                 playSound(TTSounds.ZAP.get(), 1.0F, 1.0F);
                 dropAmmo();

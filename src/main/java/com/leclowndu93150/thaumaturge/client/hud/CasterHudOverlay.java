@@ -4,7 +4,12 @@ import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.aspect.TTAspects;
 import com.leclowndu93150.thaumaturge.api.casters.FocusCaster;
+import com.leclowndu93150.thaumaturge.api.casters.IFocusBlockPicker;
+import com.leclowndu93150.thaumaturge.api.spell.Spell;
+import com.leclowndu93150.thaumaturge.api.spell.SpellNode;
 import com.leclowndu93150.thaumaturge.api.spell.SpellSummary;
+import com.leclowndu93150.thaumaturge.api.spell.Spells;
+import com.leclowndu93150.thaumaturge.api.spell.part.SpellPart;
 import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import com.leclowndu93150.thaumaturge.config.ThaumaturgeClientConfig;
 import com.leclowndu93150.thaumaturge.content.spell.item.FocusItems;
@@ -21,6 +26,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,6 +40,7 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
 
     private static final int[] previousVis = new int[WandEconomy.PRIMAL_COUNT];
     private static long changeSyncTime;
+    private static int snapshotSlot = Integer.MIN_VALUE;
     private static final int TEX_SIZE = 256;
 
     public static final int STACK_HEIGHT = 60;
@@ -142,6 +149,15 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         float costModifier = wand.visCostFactor(casterStack, player, false);
         boolean sneak = player.isShiftKeyDown();
         long now = Util.getMillis();
+        int slot = player.getMainHandItem().getItem() instanceof FocusCaster ? player.getInventory().selected : -1;
+        if (slot != snapshotSlot) {
+            int index = 0;
+            for (ResourceKey<IAspect> primal : TTAspects.PRIMALS) {
+                previousVis[index++] = WandVisHelper.getVis(casterStack, primal);
+            }
+            changeSyncTime = now + CHANGE_SYNC_INTERVAL_MS;
+            snapshotSlot = slot;
+        }
         boolean snapshot = now >= changeSyncTime;
         if (snapshot) {
             changeSyncTime = now + CHANGE_SYNC_INTERVAL_MS;
@@ -257,7 +273,9 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
         graphics.pose().popPose();
 
         if (hasFocus) {
-            BlockState picked = wand.rememberedBlock(player.getMainHandItem());
+            BlockState picked = picksBlocks(focusStack, player.registryAccess())
+                    ? wand.rememberedBlock(player.getMainHandItem())
+                    : null;
             ItemStack pickedStack = picked == null
                     ? ItemStack.EMPTY
                     : new ItemStack(picked.getBlock().asItem());
@@ -267,6 +285,20 @@ public final class CasterHudOverlay implements LayeredDraw.Layer {
                 graphics.renderItem(focusStack, ANCHOR - ITEM_HALF, dialY + ANCHOR - ITEM_HALF);
             }
         }
+    }
+
+    private static boolean picksBlocks(ItemStack focus, HolderLookup.Provider registries) {
+        Spell spell = Spells.spellOf(focus);
+        if (spell == null) {
+            return false;
+        }
+        for (SpellNode node : spell.nodes()) {
+            Optional<SpellPart> part = Spells.part(registries, node.part());
+            if (part.isPresent() && part.get().behavior() instanceof IFocusBlockPicker) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static int primalColor(Minecraft mc, ResourceKey<IAspect> primal) {

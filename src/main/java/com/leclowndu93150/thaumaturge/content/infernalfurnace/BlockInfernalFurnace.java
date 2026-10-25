@@ -107,7 +107,10 @@ public class BlockInfernalFurnace extends BaseEntityBlock {
         }
         BlockPos barsPos = pos.relative(state.getValue(FACING).getOpposite());
         if (level.isEmptyBlock(barsPos) && !barsPos.equals(startpos)) {
-            level.setBlock(barsPos, Blocks.IRON_BARS.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(
+                    barsPos,
+                    Block.updateFromNeighbourShapes(Blocks.IRON_BARS.defaultBlockState(), level, barsPos),
+                    Block.UPDATE_ALL);
         }
         if (!ThaumaturgeServerConfig.INFERNAL_FURNACE_TURN_TO_BLAZE.get()) {
             level.setBlock(pos, Blocks.LAVA.defaultBlockState(), Block.UPDATE_ALL);

@@ -70,7 +70,6 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
                     "Yibb-Tstll",
                     "Zathog",
                     "Zushakon"));
-    private static final byte EMERGE_EVENT = 18;
     private static final double HEALTH = 400.0;
     private static final double SPEED = 0.33;
     private static final double STRIKE = 10.0;
@@ -175,9 +174,6 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     public void tick() {
-        if (getSpawnTimer() == EMERGENCE && !level().isClientSide()) {
-            level().broadcastEntityEvent(this, EMERGE_EVENT);
-        }
         super.tick();
         if (level().isClientSide()) {
             arms.relax();
@@ -289,9 +285,7 @@ public class EntityEldritchWarden extends EntityThaumaturgeBoss implements Range
 
     @Override
     public void handleEntityEvent(byte event) {
-        if (event == EMERGE_EVENT) {
-            spawnTimer = EMERGENCE;
-        } else if (!arms.receive(event)) {
+        if (!arms.receive(event)) {
             super.handleEntityEvent(event);
         }
     }

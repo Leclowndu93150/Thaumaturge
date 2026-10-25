@@ -17,6 +17,7 @@ import com.leclowndu93150.thaumaturge.content.item.ThaumometerItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,6 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -83,7 +85,11 @@ public final class NodeRenderer implements BlockEntityRenderer<BlockEntityNode> 
 
     @Override
     public AABB getRenderBoundingBox(BlockEntityNode node) {
-        return new AABB(node.getBlockPos()).inflate(ORB_SWEEP);
+        AABB bounds = new AABB(node.getBlockPos()).inflate(ORB_SWEEP);
+        UUID drainId = node.getDrainPlayer();
+        Level level = node.getLevel();
+        Player drainer = drainId == null || level == null ? null : level.getPlayerByUUID(drainId);
+        return drainer == null ? bounds : bounds.minmax(drainer.getBoundingBox());
     }
 
     @Override

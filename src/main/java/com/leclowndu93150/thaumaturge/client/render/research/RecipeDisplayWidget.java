@@ -1038,8 +1038,9 @@ public final class RecipeDisplayWidget {
     }
 
     private static int[] aspectCell(int sx, int sy, int index, int count, int perRow, int rows) {
-        int shift = (perRow - count % perRow) * ASPECT_HALF_CELL;
-        int m = index / perRow >= rows && (rows > 1 || count < perRow) ? 1 : 0;
+        int lastRowCount = count % perRow;
+        int shift = (perRow - lastRowCount) * ASPECT_HALF_CELL;
+        int m = lastRowCount != 0 && index / perRow >= rows && (rows > 1 || count < perRow) ? 1 : 0;
         return new int[] {sx + index % perRow * ASPECT_CELL + shift * m, sy + index / perRow * ASPECT_CELL};
     }
 

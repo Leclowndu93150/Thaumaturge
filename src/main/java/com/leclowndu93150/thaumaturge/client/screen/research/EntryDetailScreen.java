@@ -586,7 +586,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             renderedAspectHits.clear();
         }
         graphics.flush();
-        if (knowsResearch(KNOWLEDGETYPES_RESEARCH) && entryId.equals(KNOWLEDGETYPES_RESEARCH)) {
+        if (currentPage == 0 && knowsResearch(KNOWLEDGETYPES_RESEARCH) && entryId.equals(KNOWLEDGETYPES_RESEARCH)) {
             drawKnowledges(graphics, sw, sh + KNOW_INPAGE_INSERT_INPAGE_Y_OFFSET - 16, pageMouseX, pageMouseY, true);
         }
         graphics.pose().pushPose();

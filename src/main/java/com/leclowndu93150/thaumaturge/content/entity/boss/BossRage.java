@@ -66,7 +66,7 @@ final class BossRage {
         if (damage <= THRESHOLD || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return damage;
         }
-        if (anger() == 0) {
+        if (anger() == 0 && !boss.level().isClientSide() && !boss.isInvulnerableTo(source) && boss.isAlive()) {
             boss.addEffect(new MobEffectInstance(MobEffects.REGENERATION, RAGE_TICKS, (int) (damage / REGEN_DIVISOR)));
             boss.addEffect(
                     new MobEffectInstance(MobEffects.DAMAGE_BOOST, RAGE_TICKS, (int) (damage / STRENGTH_DIVISOR)));

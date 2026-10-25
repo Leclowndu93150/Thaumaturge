@@ -26,6 +26,7 @@ public abstract class StreamInstance implements IFXInstance {
     private static final double RISE_PER_TICK = 0.01 * 0.2;
     private static final double FRICTION = 0.985;
     private static final double EPSILON = 1.0E-6;
+    private static final double PULL_DISTANCE_FLOOR = 0.05;
     private static final float TEX_SLICE = 0.075F;
     private static final float SCALE_SPREAD = 0.15F;
     private static final float PULSE_BASE = 0.75F;
@@ -137,7 +138,7 @@ public abstract class StreamInstance implements IFXInstance {
         double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
         restrainMotion(distance);
         if (distance > EPSILON) {
-            double pull = pullStrength(distance) / Math.min(1.0, distance);
+            double pull = pullStrength(distance) / Math.max(PULL_DISTANCE_FLOOR, Math.min(1.0, distance));
             this.motionX += dx / distance * pull + steerJitter(level);
             this.motionY += dy / distance * pull + steerJitter(level);
             this.motionZ += dz / distance * pull + steerJitter(level);

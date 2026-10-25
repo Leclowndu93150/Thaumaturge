@@ -38,6 +38,8 @@ import org.jspecify.annotations.Nullable;
 public class EntityThaumaturgeBoss extends Monster {
     private static final EntityDataAccessor<Integer> DATA_AGGRO =
             SynchedEntityData.defineId(EntityThaumaturgeBoss.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_EMERGENCE =
+            SynchedEntityData.defineId(EntityThaumaturgeBoss.class, EntityDataSerializers.INT);
 
     private static final int BOSS_XP = 50;
     private static final int HOME_RADIUS = 24;
@@ -70,6 +72,7 @@ public class EntityThaumaturgeBoss extends Monster {
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         super.defineSynchedData(entityData);
         entityData.define(DATA_AGGRO, 0);
+        entityData.define(DATA_EMERGENCE, 0);
     }
 
     public int getAnger() {
@@ -81,7 +84,7 @@ public class EntityThaumaturgeBoss extends Monster {
     }
 
     public int getSpawnTimer() {
-        return this.spawnTimer;
+        return this.level().isClientSide() ? this.entityData.get(DATA_EMERGENCE) : this.spawnTimer;
     }
 
     @Override
@@ -140,11 +143,12 @@ public class EntityThaumaturgeBoss extends Monster {
     @Override
     public void tick() {
         super.tick();
-        if (this.getSpawnTimer() > 0) {
+        if (this.spawnTimer > 0) {
             this.spawnTimer--;
         }
         this.rage.tick();
         if (!this.level().isClientSide()) {
+            this.entityData.set(DATA_EMERGENCE, Math.max(0, this.spawnTimer));
             if (this.tickCount % HEAL_INTERVAL == 0) {
                 this.heal(passiveHealing());
             }

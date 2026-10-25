@@ -92,7 +92,7 @@ public class EntityCultistPortalLesser extends Monster {
         if (this.isActive()) {
             this.activeCounter++;
         }
-        if (this.level().isClientSide()) {
+        if (this.level().isClientSide() || !this.isAlive()) {
             return;
         }
         if (!this.isActive()) {

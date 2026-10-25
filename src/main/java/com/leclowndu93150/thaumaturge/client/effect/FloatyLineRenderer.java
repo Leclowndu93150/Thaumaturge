@@ -18,6 +18,7 @@ public final class FloatyLineRenderer {
     private static final RenderType WISPY_LINE = TTFlatRenderTypes.entityAdditiveFlat(WISPY_TEXTURE);
 
     private static final float SEGMENTS_PER_BLOCK = 3.0F;
+    private static final long CLOCK_WRAP = 1_048_576L;
     private static final float TIME_UNITS_PER_TICK = 50.0F / 30.0F;
     private static final int EMISSIVE_LIGHT = 0x00F000F0;
     private static final float MIN_SPAN = 0.1F;
@@ -126,6 +127,6 @@ public final class FloatyLineRenderer {
     }
 
     public static float time(long gameTime, float partialTicks) {
-        return (gameTime + partialTicks) * TIME_UNITS_PER_TICK;
+        return (Math.floorMod(gameTime, CLOCK_WRAP) + partialTicks) * TIME_UNITS_PER_TICK;
     }
 }

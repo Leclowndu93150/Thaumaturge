@@ -322,7 +322,7 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
         if (facing.getAxis() == Direction.Axis.Z) poseStack.mulPose(Axis.YP.rotationDegrees(180));
         poseStack.mulPose(Axis.YP.rotationDegrees(facing.toYRot()));
         poseStack.translate(0.0, -0.1, -0.315 - 0.001);
-        float rot = (blockPos.getX() + facing.ordinal()) % 4 - 2;
+        float rot = Math.floorMod(blockPos.getX() + facing.ordinal(), 4) - 2;
         poseStack.mulPose(Axis.ZN.rotationDegrees(rot));
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
         labelQuad(buffers.getBuffer(RenderType.entityCutout(LABEL_TEXTURE)), poseStack.last(), light);
