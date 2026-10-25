@@ -5,6 +5,8 @@ import com.leclowndu93150.thaumaturge.api.warp.WarpHelper;
 import com.leclowndu93150.thaumaturge.api.warp.WarpType;
 import com.leclowndu93150.thaumaturge.content.entity.ai.LongRangeAttackGoal;
 import com.leclowndu93150.thaumaturge.content.entity.eldritch.CastingArms;
+import com.leclowndu93150.thaumaturge.content.entity.eldritch.GuardianShield;
+import com.leclowndu93150.thaumaturge.content.entity.eldritch.GuardianWispTrail;
 import com.leclowndu93150.thaumaturge.network.ClientboundWarpFXPayload;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
@@ -14,6 +16,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -21,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -41,6 +45,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jspecify.annotations.Nullable;
 
 public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
+    private static final double MAX_HEALTH = 50.0;
     private static final float SCREECH_CHANCE = 0.15F;
     private static final int WITHER_TICKS = 400;
     private static final int FOG_INTERVAL_TICKS = 100;
@@ -58,11 +63,12 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 50.0)
+                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.FOLLOW_RANGE, 40.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.28)
                 .add(Attributes.ATTACK_DAMAGE, 7.0)
-                .add(Attributes.ARMOR, 4.0);
+                .add(Attributes.ARMOR, 4.0)
+                .add(Attributes.MAX_ABSORPTION, GuardianShield.capacityFor(MAX_HEALTH));
     }
 
     public static boolean checkGuardianSpawnRules(
@@ -106,17 +112,34 @@ public class EntityEldritchGuardian extends Monster implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide()) {
+        if (!(this.level() instanceof ServerLevel level)) {
             this.arms.relax();
-        } else if ((this.tickCount == 0 || this.tickCount % FOG_INTERVAL_TICKS == 0)
-                && this.level().getDifficulty() != Difficulty.EASY) {
-            double rangeSq = this.level().getDifficulty() == Difficulty.HARD ? FOG_RANGE_HARD_SQ : FOG_RANGE_SQ;
-            for (Player player : this.level().players()) {
+            return;
+        }
+        if ((this.tickCount == 0 || this.tickCount % FOG_INTERVAL_TICKS == 0)
+                && level.getDifficulty() != Difficulty.EASY) {
+            double rangeSq = level.getDifficulty() == Difficulty.HARD ? FOG_RANGE_HARD_SQ : FOG_RANGE_SQ;
+            for (Player player : level.players()) {
                 if (shouldReceiveFog(player, this, rangeSq) && player instanceof ServerPlayer serverPlayer) {
                     PacketDistributor.sendToPlayer(serverPlayer, ClientboundWarpFXPayload.mistShort());
                 }
             }
         }
+        if (this.isAlive()) {
+            GuardianShield.tick(this);
+            GuardianWispTrail.emit(level, this);
+        }
+    }
+
+    @Override
+    public @Nullable SpawnGroupData finalizeSpawn(
+            ServerLevelAccessor level,
+            DifficultyInstance difficulty,
+            MobSpawnType reason,
+            @Nullable SpawnGroupData groupData) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, groupData);
+        GuardianShield.grant(this);
+        return data;
     }
 
     static boolean shouldReceiveFog(Player player, Entity guardian, double rangeSqr) {
