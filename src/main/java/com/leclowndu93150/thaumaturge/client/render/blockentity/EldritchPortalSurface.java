@@ -1,24 +1,14 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
-import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.client.render.TTShaders;
-import com.leclowndu93150.thaumaturge.compat.iris.IrisCompat;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix4f;
 
 public final class EldritchPortalSurface {
-    public static final ResourceLocation PARTICLE_FIELD_TEXTURE = TTIds.rl("textures/misc/particlefield.png");
-    private static final int UV_WRAP = 1024;
-
     public static final RenderType SURFACE = RenderType.create(
             "tt_eldritch_portal_surface",
             DefaultVertexFormat.POSITION,
@@ -33,18 +23,11 @@ public final class EldritchPortalSurface {
                     .setCullState(RenderStateShard.NO_CULL)
                     .createCompositeState(false));
 
-    private static final RenderType SHADER_FALLBACK_SURFACE = RenderType.entityTranslucent(PARTICLE_FIELD_TEXTURE);
-
     private EldritchPortalSurface() {}
-
-    public static RenderType surface() {
-        return IrisCompat.shadersActive() ? SHADER_FALLBACK_SURFACE : SURFACE;
-    }
 
     public static void quad(
             PoseStack.Pose pose,
             VertexConsumer buffer,
-            BlockPos worldPos,
             float x1,
             float y1,
             float z1,
@@ -57,58 +40,9 @@ public final class EldritchPortalSurface {
             float x4,
             float y4,
             float z4) {
-        Matrix4f mat = pose.pose();
-        float e1x = x2 - x1;
-        float e1y = y2 - y1;
-        float e1z = z2 - z1;
-        float e2x = x3 - x1;
-        float e2y = y3 - y1;
-        float e2z = z3 - z1;
-        float nx = Math.abs(e1y * e2z - e1z * e2y);
-        float ny = Math.abs(e1z * e2x - e1x * e2z);
-        float nz = Math.abs(e1x * e2y - e1y * e2x);
-        int axis = ny >= nx && ny >= nz ? 1 : nx >= nz ? 0 : 2;
-        boolean shaderFallback = IrisCompat.shadersActive();
-        addVertex(buffer, pose, mat, worldPos, axis, x1, y1, z1, shaderFallback);
-        addVertex(buffer, pose, mat, worldPos, axis, x2, y2, z2, shaderFallback);
-        addVertex(buffer, pose, mat, worldPos, axis, x3, y3, z3, shaderFallback);
-        addVertex(buffer, pose, mat, worldPos, axis, x4, y4, z4, shaderFallback);
-    }
-
-    private static void addVertex(
-            VertexConsumer buffer,
-            PoseStack.Pose pose,
-            Matrix4f mat,
-            BlockPos worldPos,
-            int axis,
-            float x,
-            float y,
-            float z,
-            boolean shaderFallback) {
-        float wx = Math.floorMod(worldPos.getX(), UV_WRAP) + x;
-        float wy = Math.floorMod(worldPos.getY(), UV_WRAP) + y;
-        float wz = Math.floorMod(worldPos.getZ(), UV_WRAP) + z;
-        float u;
-        float v;
-        if (axis == 1) {
-            u = wx;
-            v = wz;
-        } else if (axis == 0) {
-            u = wz;
-            v = wy;
-        } else {
-            u = wx;
-            v = wy;
-        }
-        if (shaderFallback) {
-            buffer.addVertex(mat, x, y, z)
-                    .setColor(-1)
-                    .setUv(u, v)
-                    .setOverlay(OverlayTexture.NO_OVERLAY)
-                    .setLight(LightTexture.FULL_BRIGHT)
-                    .setNormal(pose, 0.0F, 1.0F, 0.0F);
-        } else {
-            buffer.addVertex(mat, x, y, z);
-        }
+        buffer.addVertex(pose, x1, y1, z1);
+        buffer.addVertex(pose, x2, y2, z2);
+        buffer.addVertex(pose, x3, y3, z3);
+        buffer.addVertex(pose, x4, y4, z4);
     }
 }

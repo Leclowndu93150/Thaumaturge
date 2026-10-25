@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -94,8 +93,8 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
         poseStack.popPose();
 
         if (linked && inRange) {
-            VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.surface());
-            portalWindow(poseStack.last(), surface, mirror.getBlockPos());
+            VertexConsumer surface = buffers.getBuffer(EldritchPortalSurface.SURFACE);
+            portalWindow(poseStack.last(), surface);
         }
         RenderType paneType = RenderType.entityTranslucent(linked && inRange ? PANE_TRANS_TEXTURE : PANE_TEXTURE);
         paneQuad(poseStack.last(), buffers.getBuffer(paneType), light);
@@ -128,7 +127,7 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
         }
     }
 
-    private static void portalWindow(PoseStack.Pose pose, VertexConsumer buffer, BlockPos worldPos) {
+    private static void portalWindow(PoseStack.Pose pose, VertexConsumer buffer) {
         for (int[] row : WINDOW_ROWS) {
             float z0 = row[0] * PIXEL - 0.5F;
             float z1 = z0 + PIXEL;
@@ -137,7 +136,6 @@ public final class MirrorRenderer implements BlockEntityRenderer<BlockEntityMirr
             EldritchPortalSurface.quad(
                     pose,
                     buffer,
-                    worldPos,
                     x0,
                     PORTAL_PLANE,
                     z0,

@@ -38,10 +38,10 @@ public final class TTShaders {
 
     /**
      * Core effect shaders that must keep their Thaumaturge fragment program under Iris. Iris normally blocks unknown
-     * core shaders while a shader pack is active; the Iris compatibility mixin selectively opts these two back in.
+     * core shaders while a shader pack is active; the Iris compatibility mixin selectively opts these back in.
      */
     public static boolean isIrisAllowedCustomEffectShader(ShaderInstance shader) {
-        return shader != null && (shader == ender || shader == occludingEffect);
+        return shader != null && (shader == ender || shader == occludingEffect || shader == portal);
     }
 
     public static ShaderInstance fx() {
@@ -53,7 +53,7 @@ public final class TTShaders {
     }
 
     public static ShaderInstance portal() {
-        return IrisCompat.shadersActive() ? GameRenderer.getPositionShader() : portal;
+        return portal;
     }
 
     public static ShaderInstance voidStream() {

@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -138,8 +137,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                     DISPLAY_SEED);
             poseStack.popPose();
         }
-        writePortal(
-                poseStack.last(), buffers.getBuffer(EldritchPortalSurface.surface()), lock.getBlockPos(), facing, hub);
+        writePortal(poseStack.last(), buffers.getBuffer(EldritchPortalSurface.SURFACE), facing, hub);
     }
 
     private static float animationTime(float partialTick) {
@@ -179,8 +177,7 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
         };
     }
 
-    private static void writePortal(
-            PoseStack.Pose pose, VertexConsumer buffer, BlockPos pos, Direction facing, float[] hub) {
+    private static void writePortal(PoseStack.Pose pose, VertexConsumer buffer, Direction facing, float[] hub) {
         float px = hub[0] + PORTAL_LIFT * facing.getStepX();
         float py = hub[1] + PORTAL_LIFT * facing.getStepY();
         float pz = hub[2] + PORTAL_LIFT * facing.getStepZ();
@@ -190,7 +187,6 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                     EldritchPortalSurface.quad(
                             pose,
                             buffer,
-                            pos,
                             px + panel[0],
                             py + panel[1],
                             pz,
@@ -207,7 +203,6 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                     EldritchPortalSurface.quad(
                             pose,
                             buffer,
-                            pos,
                             px,
                             py + panel[1],
                             pz + panel[0],
@@ -224,7 +219,6 @@ public final class EldritchLockRenderer implements BlockEntityRenderer<BlockEnti
                     EldritchPortalSurface.quad(
                             pose,
                             buffer,
-                            pos,
                             px + panel[0],
                             py,
                             pz + panel[1],
