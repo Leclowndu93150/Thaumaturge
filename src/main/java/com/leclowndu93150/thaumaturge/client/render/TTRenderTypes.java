@@ -37,6 +37,8 @@ public final class TTRenderTypes {
             new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader);
     private static final RenderStateShard.ShaderStateShard OCCLUDING_EFFECT_SHADER =
             new RenderStateShard.ShaderStateShard(TTShaders::occludingEffect);
+    private static final RenderStateShard.ShaderStateShard ENTITY_FLAT_SHADER =
+            new RenderStateShard.ShaderStateShard(TTShaders::entityFlat);
     private static final RenderStateShard.OverlayStateShard OVERLAY = new RenderStateShard.OverlayStateShard(true);
     private static final RenderStateShard.LayeringStateShard FX_ALPHA_TEST = new RenderStateShard.LayeringStateShard(
             "tt_fx_alpha_test",
@@ -148,13 +150,8 @@ public final class TTRenderTypes {
                     RenderStateShard.NO_DEPTH_TEST,
                     false));
 
-    private static final Function<ResourceLocation, RenderType> ENTITY_CUTOUT_FLAT = Util.memoize(texture -> flat(
-            "tt_entity_cutout_flat",
-            texture,
-            null,
-            RenderStateShard.LEQUAL_DEPTH_TEST,
-            RenderStateShard.COLOR_DEPTH_WRITE,
-            false));
+    private static final Function<ResourceLocation, RenderType> ENTITY_CUTOUT_FLAT = Util.memoize(
+            texture -> litFlat("tt_entity_cutout_flat", texture, null, RenderStateShard.COLOR_DEPTH_WRITE, false));
     private static final Function<ResourceLocation, RenderType> OCCLUDING_EFFECT =
             Util.memoize(texture -> RenderType.create(
                     "tt_occluding_effect",
@@ -172,13 +169,13 @@ public final class TTRenderTypes {
                             .setCullState(RenderStateShard.NO_CULL)
                             .setOverlayState(OVERLAY)
                             .createCompositeState(false)));
-    private static final Function<ResourceLocation, RenderType> ENTITY_TRANSLUCENT_FLAT = Util.memoize(texture -> flat(
-            "tt_entity_translucent_flat",
-            texture,
-            RenderStateShard.TRANSLUCENT_TRANSPARENCY,
-            RenderStateShard.LEQUAL_DEPTH_TEST,
-            RenderStateShard.COLOR_WRITE,
-            true));
+    private static final Function<ResourceLocation, RenderType> ENTITY_TRANSLUCENT_FLAT =
+            Util.memoize(texture -> litFlat(
+                    "tt_entity_translucent_flat",
+                    texture,
+                    RenderStateShard.TRANSLUCENT_TRANSPARENCY,
+                    RenderStateShard.COLOR_WRITE,
+                    true));
     private static final Function<ResourceLocation, RenderType> ENTITY_ADDITIVE_EMISSIVE = Util.memoize(texture -> flat(
             "tt_entity_additive_emissive",
             texture,
@@ -389,8 +386,38 @@ public final class TTRenderTypes {
             RenderStateShard.DepthTestStateShard depthTest,
             RenderStateShard.WriteMaskStateShard writeMask,
             boolean sort) {
+        return flatType(
+                name,
+                sort,
+                flatState(
+                        RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER,
+                        texture,
+                        transparency,
+                        depthTest,
+                        writeMask));
+    }
+
+    private static RenderType litFlat(
+            String name,
+            ResourceLocation texture,
+            RenderStateShard.TransparencyStateShard transparency,
+            RenderStateShard.WriteMaskStateShard writeMask,
+            boolean sort) {
+        return flatType(
+                name,
+                sort,
+                flatState(ENTITY_FLAT_SHADER, texture, transparency, RenderStateShard.LEQUAL_DEPTH_TEST, writeMask)
+                        .setLightmapState(RenderStateShard.LIGHTMAP));
+    }
+
+    private static RenderType.CompositeState.CompositeStateBuilder flatState(
+            RenderStateShard.ShaderStateShard shader,
+            ResourceLocation texture,
+            RenderStateShard.TransparencyStateShard transparency,
+            RenderStateShard.DepthTestStateShard depthTest,
+            RenderStateShard.WriteMaskStateShard writeMask) {
         RenderType.CompositeState.CompositeStateBuilder builder = RenderType.CompositeState.builder()
-                .setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                .setShaderState(shader)
                 .setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
                 .setDepthTestState(depthTest)
                 .setWriteMaskState(writeMask)
@@ -399,6 +426,11 @@ public final class TTRenderTypes {
         if (transparency != null) {
             builder.setTransparencyState(transparency);
         }
+        return builder;
+    }
+
+    private static RenderType flatType(
+            String name, boolean sort, RenderType.CompositeState.CompositeStateBuilder builder) {
         return RenderType.create(
                 name,
                 DefaultVertexFormat.NEW_ENTITY,

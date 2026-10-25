@@ -14,6 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 @EventBusSubscriber(modid = TTIds.MODID, value = Dist.CLIENT)
 public final class TTShaders {
     private static ShaderInstance ender;
+    private static ShaderInstance entityFlat;
     private static ShaderInstance occludingEffect;
     private static ShaderInstance fx;
     private static ShaderInstance fxAlphaTest;
@@ -29,6 +30,10 @@ public final class TTShaders {
 
     public static ShaderInstance occludingEffect() {
         return occludingEffect;
+    }
+
+    public static ShaderInstance entityFlat() {
+        return IrisCompat.shadersActive() ? GameRenderer.getRendertypeEntityTranslucentEmissiveShader() : entityFlat;
     }
 
     /**
@@ -64,6 +69,10 @@ public final class TTShaders {
         event.registerShader(
                 new ShaderInstance(event.getResourceProvider(), TTIds.rl("tt_ender"), DefaultVertexFormat.POSITION),
                 shader -> ender = shader);
+        event.registerShader(
+                new ShaderInstance(
+                        event.getResourceProvider(), TTIds.rl("tt_entity_flat"), DefaultVertexFormat.NEW_ENTITY),
+                shader -> entityFlat = shader);
         event.registerShader(
                 new ShaderInstance(event.getResourceProvider(), TTIds.rl("tt_fx"), DefaultVertexFormat.PARTICLE),
                 shader -> fx = shader);
