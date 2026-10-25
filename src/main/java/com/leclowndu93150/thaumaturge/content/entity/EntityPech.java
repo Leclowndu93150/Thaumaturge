@@ -25,6 +25,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -193,21 +194,23 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             DifficultyInstance difficulty,
             MobSpawnType reason,
             @Nullable SpawnGroupData groupData) {
-        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, groupData);
         RandomSource random = level.getRandom();
         ItemStack held = new ItemStack(PechLoadout.roll(random));
         boolean wand = held.is(TTItems.PECH_WAND.get());
-        int rolledVariant = wand ? TYPE_MAGE : held.is(Items.BOW) ? TYPE_STALKER : TYPE_FORAGER;
-        this.assignVariant(rolledVariant);
         this.setItemSlot(EquipmentSlot.MAINHAND, held);
-        if (!wand) {
+        this.setDropChance(EquipmentSlot.OFFHAND, 0.2F);
+        this.setDropChance(EquipmentSlot.MAINHAND, wand ? 0.1F : 0.2F);
+        if (wand) {
+            this.assignVariant(TYPE_MAGE);
+        } else if (held.is(Items.BOW)) {
+            this.assignVariant(TYPE_STALKER);
+        }
+        if (!wand && !held.isEmpty()) {
             this.populateDefaultEquipmentEnchantments(level, random, difficulty);
         }
-        this.setDropChance(EquipmentSlot.MAINHAND, wand ? 0.1F : 0.2F);
-        this.setDropChance(EquipmentSlot.OFFHAND, 0.2F);
         this.setCanPickUpLoot(random.nextFloat() < 0.75F * difficulty.getSpecialMultiplier());
         this.refreshCombatGoal();
-        return data;
+        return super.finalizeSpawn(level, difficulty, reason, groupData);
     }
 
     @Override
@@ -237,19 +240,20 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     @Override
     public void playAmbientSound() {
-        if (!(this.level() instanceof ServerLevel level)) {
-            return;
-        }
-        if (this.getRandom().nextInt(3) == 0
-                && !level.getEntitiesOfClass(
-                                EntityPech.class, this.getBoundingBox().inflate(4.0, 2.0, 4.0), peer -> peer != this)
-                        .isEmpty()) {
-            this.playSound(TTSounds.PECH_TRADE.get(), this.getSoundVolume(), this.getVoicePitch());
-            PechMoods.gossip(this);
-            return;
+        if (this.level() instanceof ServerLevel level) {
+            if (this.getRandom().nextInt(3) == 0
+                    && !level.getEntitiesOfClass(
+                                    EntityPech.class,
+                                    this.getBoundingBox().inflate(4.0, 2.0, 4.0),
+                                    peer -> peer != this)
+                            .isEmpty()) {
+                level.broadcastEntityEvent(this, PechMoods.EVENT_TRADE);
+                this.playSound(TTSounds.PECH_TRADE.get(), this.getSoundVolume(), this.getVoicePitch());
+                return;
+            }
+            level.broadcastEntityEvent(this, PechMoods.EVENT_IDLE);
         }
         super.playAmbientSound();
-        PechMoods.mutter(this);
     }
 
     @Override
@@ -278,7 +282,10 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             this.heal(1.0F);
         }
         int rage = PechTemper.decayRage(this);
-        PechTemper.tickCharge(this, rage);
+        if (rage > 0 && this.getTarget() != null) {
+            PechTemper.tickCharge(this);
+            this.level().broadcastEntityEvent(this, PechMoods.EVENT_TRADE);
+        }
     }
 
     @Override
@@ -332,20 +339,18 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
 
     @Override
     public ItemStack collect(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return stack;
-        }
-        if (!this.isDomesticated() && this.isPrizedItem(stack)) {
-            int value = this.getValue(stack);
-            ItemStack rest = stack.copyWithCount(stack.getCount() - 1);
+        ItemStack rest = stack.copy();
+        if (!this.isDomesticated() && this.isPrizedItem(rest)) {
+            int value = this.getValue(rest);
+            rest.shrink(1);
             if (this.getRandom().nextInt(10) < value) {
+                this.level().broadcastEntityEvent(this, PechMoods.EVENT_HAPPY);
                 this.setDomesticated(true);
-                PechMoods.delight(this);
                 this.refreshCombatGoal();
             }
             return rest;
         }
-        return PechHoard.store(this.loot, stack);
+        return PechHoard.store(this.loot, rest);
     }
 
     public boolean isPrizedItem(ItemStack stack) {
@@ -419,33 +424,30 @@ public class EntityPech extends Monster implements RangedAttackMob, HoldsStill, 
             provoke(pech, culprit);
         }
 
-        private static void provoke(EntityPech pech, Player culprit) {
-            if (culprit.isCreative() || culprit.isSpectator()) {
+        private static void provoke(EntityPech pech, Entity culprit) {
+            if (culprit instanceof Player player && player.isCreative()) {
                 return;
             }
-            if (pech.rageTicks() <= 0) {
-                PechMoods.flareUp(pech);
-                playCharge(pech);
+            if (!(culprit instanceof LivingEntity living)) {
+                return;
             }
-            pech.setTarget(culprit);
-            pech.setRageTicks(ANGER_MIN + pech.getRandom().nextInt(ANGER_SPREAD + 1));
+            boolean wasCalm = pech.rageTicks() <= 0;
+            if (wasCalm && pech.level() instanceof ServerLevel server) {
+                server.broadcastEntityEvent(pech, PechMoods.EVENT_ANGRY);
+                pech.playSound(TTSounds.PECH_CHARGE.get(), pech.getSoundVolume(), pech.getVoicePitch());
+            }
+            pech.setTarget(living);
+            pech.setRageTicks(ANGER_MIN + pech.getRandom().nextInt(ANGER_SPREAD));
             pech.setDomesticated(false);
             pech.refreshCombatGoal();
         }
 
-        static void tickCharge(EntityPech pech, int rage) {
-            if (rage <= 0 || pech.getTarget() == null) {
-                return;
+        static void tickCharge(EntityPech pech) {
+            pech.chargeCooldown = Math.max(pech.chargeCooldown - 1, 0);
+            if (pech.chargeCooldown == 0) {
+                pech.chargeCooldown = CHARGE_INTERVAL;
+                pech.playSound(TTSounds.PECH_CHARGE.get(), pech.getSoundVolume(), pech.getVoicePitch());
             }
-            PechMoods.gossip(pech);
-            if (--pech.chargeCooldown <= 0) {
-                playCharge(pech);
-            }
-        }
-
-        private static void playCharge(EntityPech pech) {
-            pech.playSound(TTSounds.PECH_CHARGE.get(), pech.getSoundVolume(), pech.getVoicePitch());
-            pech.chargeCooldown = CHARGE_INTERVAL;
         }
 
         static int decayRage(EntityPech pech) {

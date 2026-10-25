@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -10,108 +11,201 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public final class EntityFluxRift extends Entity implements ISidedHurt {
     public static final int MAX_RIFT_SIZE = 100;
-    public static final int MIN_RIFT_SIZE = 1;
-    public static final float MAX_STABILITY = 100.0F;
-    public static final float MIN_STABILITY = -100.0F;
 
-    private static final String SIZE_KEY = "RiftSize";
-    private static final String COLLAPSE_SIZE_KEY = "MaxSize";
-    private static final String SEED_KEY = "RiftSeed";
-    private static final String STABILITY_KEY = "Stability";
-    private static final String COLLAPSING_KEY = "collapse";
-    private static final EntityDataAccessor<Integer> DATA_SIZE =
-            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> DATA_SEED =
-            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Float> DATA_STABILITY =
-            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_COLLAPSING =
+    private static final EntityDataAccessor<Boolean> COLLAPSE =
             SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> STABILITY =
+            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> SIZE =
+            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> SEED =
+            SynchedEntityData.defineId(EntityFluxRift.class, EntityDataSerializers.INT);
 
-    private static final int DEFAULT_RIFT_SIZE = 5;
-    private static final int UNSEEDED = 0;
-    private static final int MIN_BODY_POINTS = 3;
+    private static final String COLLAPSE_SIZE_KEY = "collapse_size";
+    private static final String SIZE_KEY = "rift_size";
+    private static final String SEED_KEY = "rift_seed";
+    private static final String STABILITY_KEY = "stability_value";
+    private static final String COLLAPSING_KEY = "is_collapsing";
+    private static final String LEGACY_COLLAPSE_SIZE_KEY = "MaxSize";
+    private static final String LEGACY_SIZE_KEY = "RiftSize";
+    private static final String LEGACY_SEED_KEY = "RiftSeed";
+    private static final String LEGACY_STABILITY_KEY = "Stability";
+    private static final String LEGACY_COLLAPSING_KEY = "collapse";
+    private static final int DEFAULT_SIZE = 5;
+
+    private static final float MAX_STABILITY = 100.0F;
+    private static final float VERY_STABLE_THRESHOLD = 50.0F;
+    private static final float UNSTABLE_THRESHOLD = 0.0F;
+    private static final float VERY_UNSTABLE_THRESHOLD = -25.0F;
+    private static final float STABILIZER_STEP = 0.125F;
     private static final int DECAY_INTERVAL = 120;
     private static final float DECAY_AMOUNT = 0.2F;
-    private static final int HUM_INTERVAL = 300;
-    private static final float HUM_VOLUME = 0.15F;
-    private static final float HUM_VOLUME_DEVIATION = 0.066F;
-    private static final float HUM_PITCH = 0.75F;
-    private static final float HUM_PITCH_DEVIATION = 0.1F;
 
-    public final List<Vec3> outline;
-    public final List<Float> outlineWidths;
+    private static final int MIN_OUTLINE_POINTS = 3;
+    private static final int INITIAL_OUTLINE_CAPACITY = 16;
 
-    private final RiftOutline body = new RiftOutline();
+    private static final int SOUND_INTERVAL = 300;
+    private static final float SOUND_VOLUME_BASE = 0.15F;
+    private static final float SOUND_VOLUME_SPREAD = 0.066F;
+    private static final float SOUND_PITCH_BASE = 0.75F;
+    private static final float SOUND_PITCH_SPREAD = 0.1F;
+
+    public final List<Vec3> outline = new ArrayList<>(INITIAL_OUTLINE_CAPACITY);
+    public final List<Float> outlineWidths = new ArrayList<>(INITIAL_OUTLINE_CAPACITY);
+
     private final RiftSegmentSweep sweep = new RiftSegmentSweep();
     private final RiftCollapse collapse = new RiftCollapse();
     private final RiftTaskSchedule schedule = new RiftTaskSchedule(List.of(new RiftGrowthTask(), new RiftEventTask()));
+
     private int collapseSize;
+    private int builtSize = -1;
+    private int builtSeed;
 
     public EntityFluxRift(EntityType<? extends EntityFluxRift> type, Level level) {
         super(type, level);
-        this.outline = this.body.points();
-        this.outlineWidths = this.body.widths();
+        this.setNoGravity(true);
         this.noPhysics = true;
-        setNoGravity(true);
-        reshape();
     }
 
-    public static void spawnNear(ServerLevel level, BlockPos chunkCorner) {
-        RiftSpawner.tryForm(level, chunkCorner);
+    public static void spawnNear(ServerLevel level, BlockPos origin) {
+        RiftSpawner.spawnNear(level, origin);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(SEED, 0);
+        builder.define(SIZE, DEFAULT_SIZE);
+        builder.define(STABILITY, 0.0F);
+        builder.define(COLLAPSE, false);
+    }
+
+    private <T> T synced(EntityDataAccessor<T> accessor) {
+        return this.entityData.get(accessor);
+    }
+
+    private <T> void publish(EntityDataAccessor<T> accessor, T value) {
+        this.entityData.set(accessor, value);
+    }
+
+    private void refreshOutlineIfStale() {
+        boolean stale = this.builtSize != currentSize() || this.builtSeed != shapeSeed();
+        if (stale) {
+            rebuildOutline();
+        }
+    }
+
+    private void ensureSeeded() {
+        if (shapeSeed() != 0) {
+            return;
+        }
+        reseed(this.random.nextInt());
+    }
+
+    private boolean onInterval(int interval) {
+        return this.tickCount % interval == 0;
+    }
+
+    private void tickServer(ServerLevel level) {
+        ensureSeeded();
+        this.sweep.tick(level, this);
+        boolean collapsing = isCollapsing();
+        if (!collapsing && this.outline.size() < MIN_OUTLINE_POINTS) {
+            beginCollapse();
+            collapsing = true;
+        }
+        if (collapsing && this.collapse.tick(level, this)) {
+            return;
+        }
+        if (this.tickCount > 0 && onInterval(DECAY_INTERVAL)) {
+            adjustStability(-DECAY_AMOUNT);
+        }
+        this.schedule.tick(level, this);
+        if (onInterval(SOUND_INTERVAL) && !this.isRemoved()) {
+            emitAmbientSound(level);
+        }
+    }
+
+    private float gaussianAround(float base, float spread) {
+        return base + (float) this.random.nextGaussian() * spread;
+    }
+
+    private void emitAmbientSound(ServerLevel world) {
+        world.playSound(
+                null,
+                this.getX(),
+                this.getY(),
+                this.getZ(),
+                TTSounds.EVILPORTAL.get(),
+                SoundSource.AMBIENT,
+                gaussianAround(SOUND_VOLUME_BASE, SOUND_VOLUME_SPREAD),
+                gaussianAround(SOUND_PITCH_BASE, SOUND_PITCH_SPREAD));
+    }
+
+    private void rebuildOutline() {
+        this.builtSize = currentSize();
+        this.builtSeed = shapeSeed();
+        this.outlineWidths.clear();
+        this.outline.clear();
+        RiftOutline.build(this.builtSize, this.builtSeed, this.outline, this.outlineWidths);
+        this.reapplyPosition();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        refreshOutlineIfStale();
+        if (this.level() instanceof ServerLevel server) {
+            tickServer(server);
+        }
+    }
+
+    @Override
+    public void move(MoverType type, Vec3 movement) {}
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        return hurtSided(level(), source, amount);
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
+    }
+
+    @Override
+    public boolean hurtClient(DamageSource source, float amount) {
+        return false;
     }
 
     public int currentSize() {
-        return this.entityData.get(DATA_SIZE);
+        return synced(SIZE);
     }
 
     public void resize(int size) {
-        this.entityData.set(DATA_SIZE, Mth.clamp(size, 0, MAX_RIFT_SIZE));
+        publish(SIZE, size);
+        rebuildOutline();
     }
 
-    public int collapseSize() {
-        return this.collapseSize;
-    }
-
-    public int seed() {
-        return this.entityData.get(DATA_SEED);
+    public int shapeSeed() {
+        return synced(SEED);
     }
 
     public void reseed(int seed) {
-        this.entityData.set(DATA_SEED, seed);
-    }
-
-    public float stabilityValue() {
-        return this.entityData.get(DATA_STABILITY);
-    }
-
-    public Stability stabilityTier() {
-        return Stability.of(stabilityValue());
-    }
-
-    public void adjustStability(float amount) {
-        setStability(stabilityValue() + amount);
-    }
-
-    public void nudgeStability() {
-        adjustStability(0.125F);
+        publish(SEED, seed);
     }
 
     public boolean isCollapsing() {
-        return this.entityData.get(DATA_COLLAPSING);
+        return synced(COLLAPSE);
     }
 
     public void beginCollapse() {
@@ -119,118 +213,77 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
             return;
         }
         this.collapseSize = currentSize();
-        this.entityData.set(DATA_COLLAPSING, true);
+        publish(COLLAPSE, true);
     }
 
-    private void setStability(float stability) {
-        this.entityData.set(DATA_STABILITY, Mth.clamp(stability, MIN_STABILITY, MAX_STABILITY));
+    public int collapseSize() {
+        return this.collapseSize;
     }
 
-    @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-        builder.define(DATA_SIZE, DEFAULT_RIFT_SIZE);
-        builder.define(DATA_SEED, UNSEEDED);
-        builder.define(DATA_STABILITY, 0.0F);
-        builder.define(DATA_COLLAPSING, false);
+    public float stabilityValue() {
+        return synced(STABILITY);
     }
 
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
-        super.onSyncedDataUpdated(accessor);
-        if (DATA_SIZE.equals(accessor) || DATA_SEED.equals(accessor)) {
-            reshape();
+    public void adjustStability(float delta) {
+        restoreStability(stabilityValue() + delta);
+    }
+
+    public void nudgeStability() {
+        adjustStability(STABILIZER_STEP);
+    }
+
+    private void restoreStability(float stability) {
+        publish(STABILITY, Mth.clamp(stability, -MAX_STABILITY, MAX_STABILITY));
+    }
+
+    public Stability stabilityTier() {
+        float stability = stabilityValue();
+        if (stability > VERY_STABLE_THRESHOLD) {
+            return Stability.VERY_STABLE;
         }
-    }
-
-    private void reshape() {
-        this.body.shape(seed(), currentSize());
-        setBoundingBox(makeBoundingBox());
+        if (stability >= UNSTABLE_THRESHOLD) {
+            return Stability.STABLE;
+        }
+        return stability > VERY_UNSTABLE_THRESHOLD ? Stability.UNSTABLE : Stability.VERY_UNSTABLE;
     }
 
     @Override
     protected AABB makeBoundingBox() {
-        // the base constructor asks for bounds before the outline exists
-        return this.body == null ? super.makeBoundingBox() : this.body.bounds().move(position());
-    }
-
-    @Override
-    public void tick() {
-        if (level() instanceof ServerLevel serverLevel) {
-            serverTick(serverLevel);
+        List<Vec3> points = this.outline;
+        if (points == null || points.isEmpty()) {
+            return super.makeBoundingBox();
         }
+        return RiftBounds.around(points, position());
     }
 
-    private void serverTick(ServerLevel level) {
-        if (seed() == UNSEEDED) {
-            reseed(nonZeroSeed(getRandom()));
+    @Override
+    protected void addAdditionalSaveData(CompoundTag output) {
+        output.putBoolean(COLLAPSING_KEY, isCollapsing());
+        output.putFloat(STABILITY_KEY, stabilityValue());
+        output.putInt(SEED_KEY, shapeSeed());
+        output.putInt(SIZE_KEY, currentSize());
+        output.putInt(COLLAPSE_SIZE_KEY, this.collapseSize);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag input) {
+        publish(COLLAPSE, input.getBoolean(input.contains(COLLAPSING_KEY) ? COLLAPSING_KEY : LEGACY_COLLAPSING_KEY));
+        restoreStability(input.getFloat(input.contains(STABILITY_KEY) ? STABILITY_KEY : LEGACY_STABILITY_KEY));
+        publish(SIZE, savedInt(input, SIZE_KEY, LEGACY_SIZE_KEY, DEFAULT_SIZE));
+        publish(SEED, savedInt(input, SEED_KEY, LEGACY_SEED_KEY, 0));
+        this.collapseSize = savedInt(input, COLLAPSE_SIZE_KEY, LEGACY_COLLAPSE_SIZE_KEY, 0);
+        rebuildOutline();
+    }
+
+    private static int savedInt(CompoundTag input, String key, String legacyKey, int fallback) {
+        if (input.contains(key)) {
+            return input.getInt(key);
         }
-        if (this.outline.size() < MIN_BODY_POINTS) {
-            beginCollapse();
-        }
-        this.sweep.tick(level, this);
-        if (isCollapsing() && this.collapse.tick(level, this)) {
-            return;
-        }
-        if (tickCount % DECAY_INTERVAL == 0) {
-            adjustStability(-DECAY_AMOUNT);
-        }
-        this.schedule.tick(level, this);
-        if (!isRemoved() && tickCount % HUM_INTERVAL == 0) {
-            hum(level);
-        }
-    }
-
-    static int nonZeroSeed(RandomSource random) {
-        int seed = random.nextInt();
-        return seed == UNSEEDED ? 1 : seed;
-    }
-
-    private void hum(ServerLevel level) {
-        float volume = Math.max(0.0F, HUM_VOLUME + (float) getRandom().nextGaussian() * HUM_VOLUME_DEVIATION);
-        float pitch = HUM_PITCH + (float) getRandom().nextGaussian() * HUM_PITCH_DEVIATION;
-        level.playSound(null, getX(), getY(), getZ(), TTSounds.EVILPORTAL.get(), SoundSource.AMBIENT, volume, pitch);
+        return input.contains(legacyKey) ? input.getInt(legacyKey) : fallback;
     }
 
     @Override
-    public void move(MoverType type, Vec3 delta) {}
-
-    @Override
-    public boolean isPushedByFluid() {
-        return false;
-    }
-
-    @Override
-    public PushReaction getPistonPushReaction() {
-        return PushReaction.IGNORE;
-    }
-
-    @Override
-    public boolean canUsePortal(boolean ignorePassenger) {
-        return false;
-    }
-
-    @Override
-    public boolean hurt(DamageSource source, float damage) {
-        return hurtSided(level(), source, damage);
-    }
-
-    @Override
-    public boolean hurtServer(ServerLevel level, DamageSource source, float damage) {
-        return false;
-    }
-
-    @Override
-    public boolean hurtClient(DamageSource source, float damage) {
-        return false;
-    }
-
-    @Override
-    public boolean isAttackable() {
-        return false;
-    }
-
-    @Override
-    public boolean skipAttackInteraction(Entity source) {
+    public boolean fireImmune() {
         return true;
     }
 
@@ -239,53 +292,10 @@ public final class EntityFluxRift extends Entity implements ISidedHurt {
         return false;
     }
 
-    @Override
-    public boolean ignoreExplosion(Explosion explosion) {
-        return true;
-    }
-
-    @Override
-    public boolean displayFireAnimation() {
-        return false;
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag output) {
-        output.putInt(SIZE_KEY, currentSize());
-        output.putInt(COLLAPSE_SIZE_KEY, this.collapseSize);
-        output.putInt(SEED_KEY, seed());
-        output.putFloat(STABILITY_KEY, stabilityValue());
-        output.putBoolean(COLLAPSING_KEY, isCollapsing());
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag input) {
-        reseed(input.getInt(SEED_KEY));
-        resize(input.contains(SIZE_KEY) ? input.getInt(SIZE_KEY) : DEFAULT_RIFT_SIZE);
-        setStability(input.getFloat(STABILITY_KEY));
-        boolean collapsing = input.getBoolean(COLLAPSING_KEY);
-        int savedCollapseSize = input.getInt(COLLAPSE_SIZE_KEY);
-        this.collapseSize = collapsing && savedCollapseSize <= 0 ? currentSize() : savedCollapseSize;
-        this.entityData.set(DATA_COLLAPSING, collapsing);
-    }
-
     public enum Stability {
         VERY_STABLE,
         STABLE,
         UNSTABLE,
-        VERY_UNSTABLE;
-
-        private static final float VERY_STABLE_ABOVE = 50.0F;
-        private static final float VERY_UNSTABLE_AT = -25.0F;
-
-        public static Stability of(float stability) {
-            if (stability > VERY_STABLE_ABOVE) {
-                return VERY_STABLE;
-            }
-            if (stability >= 0.0F) {
-                return STABLE;
-            }
-            return stability > VERY_UNSTABLE_AT ? UNSTABLE : VERY_UNSTABLE;
-        }
+        VERY_UNSTABLE
     }
 }

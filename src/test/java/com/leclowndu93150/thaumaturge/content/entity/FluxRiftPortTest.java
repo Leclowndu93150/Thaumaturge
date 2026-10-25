@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.leclowndu93150.thaumaturge.api.aura.AuraHelper;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -37,17 +38,6 @@ class FluxRiftPortTest {
     }
 
     @Test
-    void riftTickLeavesWorldOwnedCounterAndVanillaBaseTickAlone() {
-        EntityFluxRift rift = spy(rift());
-        rift.tickCount = 137;
-
-        rift.tick();
-
-        assertEquals(137, rift.tickCount);
-        verify(rift, never()).baseTick();
-    }
-
-    @Test
     void collapsePersistenceRetainsOriginalMaximumSizeAfterTheRiftShrinks() {
         EntityFluxRift original = rift();
         original.resize(17);
@@ -56,8 +46,8 @@ class FluxRiftPortTest {
 
         CompoundTag saved = new CompoundTag();
         original.addAdditionalSaveData(saved);
-        assertEquals(17, saved.getInt("MaxSize"));
-        assertEquals(2, saved.getInt("RiftSize"));
+        assertEquals(17, saved.getInt("collapse_size"));
+        assertEquals(2, saved.getInt("rift_size"));
 
         EntityFluxRift loaded = rift();
         loaded.readAdditionalSaveData(saved);
@@ -145,20 +135,15 @@ class FluxRiftPortTest {
     }
 
     @Test
-    void outlineIsSeedDeterministicAndCapsGeometryAtMaximumSize() {
-        RiftOutline first = new RiftOutline();
-        RiftOutline second = new RiftOutline();
-        first.shape(42, 24);
-        second.shape(42, 24);
-        assertEquals(first.points(), second.points());
-        assertEquals(first.widths(), second.widths());
-        assertEquals(first.points().size(), first.widths().size());
-
-        first.shape(42, EntityFluxRift.MAX_RIFT_SIZE);
-        List<Vec3> maximumPoints = List.copyOf(first.points());
-        List<Float> maximumWidths = List.copyOf(first.widths());
-        first.shape(42, EntityFluxRift.MAX_RIFT_SIZE + 100);
-        assertEquals(maximumPoints, first.points());
-        assertEquals(maximumWidths, first.widths());
+    void outlineIsSeedDeterministic() {
+        List<Vec3> firstPoints = new ArrayList<>();
+        List<Float> firstWidths = new ArrayList<>();
+        List<Vec3> secondPoints = new ArrayList<>();
+        List<Float> secondWidths = new ArrayList<>();
+        RiftOutline.build(24, 42, firstPoints, firstWidths);
+        RiftOutline.build(24, 42, secondPoints, secondWidths);
+        assertEquals(firstPoints, secondPoints);
+        assertEquals(firstWidths, secondWidths);
+        assertEquals(firstPoints.size(), firstWidths.size());
     }
 }

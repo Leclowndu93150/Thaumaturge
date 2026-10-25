@@ -32,9 +32,10 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
     private static final int USE_DURATION = 72000;
     private static final double FIELD_REACH = 2.5;
     private static final double DISTANCE_SOFTENING = 0.1;
-    private static final double DESCENT_RETAINED = 0.8;
-    private static final double MAX_RISE_PER_TICK = 0.5;
-    private static final double RISE_AFTER_OVERSHOOT = 0.15;
+    private static final double LIFT = 0.08;
+    private static final double FALL_DIVISOR = 1.2;
+    private static final double CEILING = 0.5;
+    private static final double CEILING_RESET = 0.2;
     private static final int SMOKE_COLOR = 14540253;
     private static final int PULSE_INTERVAL_TICKS = 20;
 
@@ -96,12 +97,13 @@ public final class ElementalSwordItem extends SwordItem implements IChanneledIte
         Vec3 movement = player.getDeltaMovement();
         double dy = movement.y;
         if (dy < 0.0) {
-            dy *= DESCENT_RETAINED;
-            player.fallDistance *= DESCENT_RETAINED;
+            dy = dy / FALL_DIVISOR + LIFT;
+            player.fallDistance = (float) (player.fallDistance / FALL_DIVISOR);
+        } else {
+            dy += LIFT;
         }
-        dy += player.getGravity();
-        if (dy > MAX_RISE_PER_TICK) {
-            dy = RISE_AFTER_OVERSHOOT;
+        if (dy > CEILING) {
+            dy = CEILING_RESET;
         }
         player.setDeltaMovement(movement.x, dy, movement.z);
         if (player instanceof ServerPlayer serverPlayer) {

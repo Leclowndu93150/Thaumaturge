@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 
 final class RiftGrowthTask implements RiftTask {
     private static final int GROWTH_INTERVAL = 600;
-    private static final double COST_SIZE_FACTOR = 2.0;
+    private static final double COST_FACTOR = 2.0;
 
     @Override
     public int interval() {
@@ -15,16 +15,14 @@ final class RiftGrowthTask implements RiftTask {
 
     @Override
     public void run(ServerLevel level, EntityFluxRift rift) {
+        BlockPos here = rift.blockPosition();
         int size = rift.currentSize();
-        if (size >= EntityFluxRift.MAX_RIFT_SIZE || rift.stabilityTier() == EntityFluxRift.Stability.VERY_STABLE) {
-            return;
+        float cost = (float) Math.sqrt(COST_FACTOR * size);
+        boolean mayGrow =
+                size < EntityFluxRift.MAX_RIFT_SIZE && rift.stabilityTier() != EntityFluxRift.Stability.VERY_STABLE;
+        if (mayGrow && AuraHelper.getFlux(level, here) >= cost) {
+            AuraHelper.drainFlux(level, here, cost, false);
+            rift.resize(size + 1);
         }
-        float cost = (float) Math.sqrt(COST_SIZE_FACTOR * size);
-        BlockPos pos = rift.blockPosition();
-        if (AuraHelper.getFlux(level, pos) < cost) {
-            return;
-        }
-        AuraHelper.drainFlux(level, pos, cost, false);
-        rift.resize(size + 1);
     }
 }

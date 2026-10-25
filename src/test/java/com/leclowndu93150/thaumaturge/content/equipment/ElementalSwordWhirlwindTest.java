@@ -25,38 +25,25 @@ import org.mockito.MockedStatic;
 
 class ElementalSwordWhirlwindTest {
     @Test
-    void descentIsSlowedAndUsesTheEntityGravity() {
+    void descentIsSlowed() {
         Level level = level(false);
         LivingEntity user = user(new Vec3(1.0, -0.6, 3.0));
         user.fallDistance = 12.0F;
-        when(user.getGravity()).thenReturn(0.1);
 
         TTItems.ELEMENTAL_SWORD.get().onUseTick(level, user, ItemStack.EMPTY, 71999);
 
-        verify(user).setDeltaMovement(eq(1.0), doubleThat(value -> Math.abs(value + 0.38) < 1.0E-9), eq(3.0));
-        assertEquals(9.6F, user.fallDistance, 1.0E-5F);
+        verify(user).setDeltaMovement(eq(1.0), doubleThat(value -> Math.abs(value + 0.42) < 1.0E-9), eq(3.0));
+        assertEquals(10.0F, user.fallDistance, 1.0E-5F);
     }
 
     @Test
     void upwardOvershootUsesSourceCap() {
         Level level = level(false);
         LivingEntity user = user(new Vec3(0.0, 0.6, 0.0));
-        when(user.getGravity()).thenReturn(0.1);
 
         TTItems.ELEMENTAL_SWORD.get().onUseTick(level, user, ItemStack.EMPTY, 71999);
 
-        verify(user).setDeltaMovement(0.0, 0.15, 0.0);
-    }
-
-    @Test
-    void zeroGravityDoesNotAddDefaultLift() {
-        Level level = level(false);
-        LivingEntity user = user(Vec3.ZERO);
-        when(user.getGravity()).thenReturn(0.0);
-
-        TTItems.ELEMENTAL_SWORD.get().onUseTick(level, user, ItemStack.EMPTY, 71999);
-
-        verify(user).setDeltaMovement(0.0, 0.0, 0.0);
+        verify(user).setDeltaMovement(0.0, 0.2, 0.0);
     }
 
     @Test

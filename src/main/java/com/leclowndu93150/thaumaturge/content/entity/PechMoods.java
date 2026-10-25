@@ -1,94 +1,76 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
 
 final class PechMoods {
-    private static final byte EVENT_MUTTER = 16;
-    private static final byte EVENT_GOSSIP = 17;
-    private static final byte EVENT_TEMPER = 18;
-    private static final byte EVENT_DELIGHT = 19;
-    private static final float MUTTER_LEVEL = (float) Math.PI;
-    private static final float GOSSIP_LEVEL = (float) (Math.PI * 2.0);
-    private static final float CHATTER_DECAY = 0.75F;
-    private static final int CONTENT_ONE_IN = 25;
-    private static final int CROSS_ONE_IN = 15;
-    private static final int MOOD_BURST = 5;
-    private static final double LOW_OFFSET = 0.5;
-    private static final double DRIFT = 0.02;
+    static final byte EVENT_IDLE = 70;
+    static final byte EVENT_TRADE = 71;
+    static final byte EVENT_HAPPY = 72;
+    static final byte EVENT_ANGRY = 73;
+
+    private static final float MUMBLE_IDLE = (float) Math.PI;
+    private static final float MUMBLE_EXCITED = (float) (Math.PI * 2.0);
+    private static final float MUMBLE_DECAY = 0.75F;
+    private static final int BURST_PARTICLES = 5;
+    private static final int ANGRY_PARTICLE_ODDS = 15;
+    private static final int HAPPY_PARTICLE_ODDS = 25;
+    private static final double PARTICLE_LIFT = 0.5;
+    private static final double PARTICLE_VELOCITY = 0.02;
 
     private PechMoods() {}
 
     static void decay(EntityPech pech) {
         if (pech.chatterLevel > 0.0F) {
-            pech.chatterLevel *= CHATTER_DECAY;
+            pech.chatterLevel *= MUMBLE_DECAY;
         }
-    }
-
-    static void mutter(EntityPech pech) {
-        pech.chatterLevel = MUTTER_LEVEL;
-        pech.level().broadcastEntityEvent(pech, EVENT_MUTTER);
-    }
-
-    static void gossip(EntityPech pech) {
-        pech.chatterLevel = GOSSIP_LEVEL;
-        pech.level().broadcastEntityEvent(pech, EVENT_GOSSIP);
-    }
-
-    static void flareUp(EntityPech pech) {
-        pech.chatterLevel = GOSSIP_LEVEL;
-        pech.level().broadcastEntityEvent(pech, EVENT_TEMPER);
-    }
-
-    static void delight(EntityPech pech) {
-        pech.level().broadcastEntityEvent(pech, EVENT_DELIGHT);
-    }
-
-    static boolean handleEvent(EntityPech pech, byte id) {
-        switch (id) {
-            case EVENT_MUTTER -> pech.chatterLevel = MUTTER_LEVEL;
-            case EVENT_GOSSIP -> pech.chatterLevel = GOSSIP_LEVEL;
-            case EVENT_TEMPER -> {
-                pech.chatterLevel = GOSSIP_LEVEL;
-                puff(pech, ParticleTypes.ANGRY_VILLAGER, MOOD_BURST);
-            }
-            case EVENT_DELIGHT -> puff(pech, ParticleTypes.HAPPY_VILLAGER, MOOD_BURST);
-            default -> {
-                return false;
-            }
-        }
-        return true;
     }
 
     static void tickClient(EntityPech pech) {
         RandomSource random = pech.getRandom();
-        if (pech.isDomesticated() && random.nextInt(CONTENT_ONE_IN) == 0) {
-            puff(pech, ParticleTypes.HAPPY_VILLAGER, 1);
+        if (pech.rageTicks() > 0 && random.nextInt(ANGRY_PARTICLE_ODDS) == 0) {
+            particle(pech, true);
         }
-        if (pech.rageTicks() > 0 && random.nextInt(CROSS_ONE_IN) == 0) {
-            puff(pech, ParticleTypes.ANGRY_VILLAGER, 1);
+        if (pech.isDomesticated() && random.nextInt(HAPPY_PARTICLE_ODDS) == 0) {
+            particle(pech, false);
         }
     }
 
-    private static void puff(EntityPech pech, ParticleOptions particle, int count) {
-        Level level = pech.level();
-        RandomSource random = pech.getRandom();
-        double spread = pech.getBbWidth();
-        double rise = pech.getBbHeight();
-        for (int index = 0; index < count; index++) {
-            double x = pech.getX() + (random.nextDouble() * 2.0 - 1.0) * spread;
-            double y = pech.getY() + LOW_OFFSET + random.nextDouble() * rise;
-            double z = pech.getZ() + (random.nextDouble() * 2.0 - 1.0) * spread;
-            level.addParticle(
-                    particle,
-                    x,
-                    y,
-                    z,
-                    random.nextGaussian() * DRIFT,
-                    random.nextGaussian() * DRIFT,
-                    random.nextGaussian() * DRIFT);
+    static boolean handleEvent(EntityPech pech, byte id) {
+        if (id == EVENT_IDLE) {
+            pech.chatterLevel = MUMBLE_IDLE;
+        } else if (id == EVENT_TRADE) {
+            pech.chatterLevel = MUMBLE_EXCITED;
+        } else if (id == EVENT_HAPPY) {
+            burst(pech, false);
+        } else if (id == EVENT_ANGRY) {
+            burst(pech, true);
+            pech.chatterLevel = MUMBLE_EXCITED;
+        } else {
+            return false;
         }
+        return true;
+    }
+
+    private static void burst(EntityPech pech, boolean angry) {
+        for (int i = 0; i < BURST_PARTICLES; i++) {
+            particle(pech, angry);
+        }
+    }
+
+    private static void particle(EntityPech pech, boolean angry) {
+        RandomSource random = pech.getRandom();
+        double x = pech.getX() + (random.nextFloat() * 2.0F - 1.0F) * pech.getBbWidth();
+        double y = pech.getY() + PARTICLE_LIFT + random.nextFloat() * pech.getBbHeight();
+        double z = pech.getZ() + (random.nextFloat() * 2.0F - 1.0F) * pech.getBbWidth();
+        pech.level()
+                .addParticle(
+                        angry ? ParticleTypes.ANGRY_VILLAGER : ParticleTypes.HAPPY_VILLAGER,
+                        x,
+                        y,
+                        z,
+                        random.nextGaussian() * PARTICLE_VELOCITY,
+                        random.nextGaussian() * PARTICLE_VELOCITY,
+                        random.nextGaussian() * PARTICLE_VELOCITY);
     }
 }

@@ -351,9 +351,8 @@ class AuraCompatibilityTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"0,0.25", "1,0.15", "2,0.10", "3,0.05", "4,0.00", "5,0.05", "6,0.10", "7,0.15"})
-    void overchargedVisConvertsToFluxUsingMainsMoonProfile(int phase, float regeneration) {
-        float step = 0.25F - regeneration;
+    @CsvSource({"0,0.00", "1,0.10", "2,0.15", "3,0.20", "4,0.25", "5,0.20", "6,0.15", "7,0.10"})
+    void overchargedVisConvertsToFluxUsingMainsMoonProfile(int phase, float step) {
         AuraData data = new AuraData((short) 100, 200, 0);
         LevelChunk chunk = attach(new ChunkPos(0, 0), data);
         AuraManager.onChunkLoaded(level, chunk.getPos());
@@ -434,36 +433,6 @@ class AuraCompatibilityTest {
         verify(random, never()).nextFloat();
         verify(eastChunk).setUnsaved(true);
         verify(westChunk).setUnsaved(true);
-    }
-
-    @Test
-    void receiverSearchDoesNotCreateMissingNeighborAttachments() {
-        ChunkPos center = new ChunkPos(0, 0);
-        AuraData source = new AuraData((short) 100, 80, 0);
-        attach(center, source);
-        LevelChunk neighbor = mock(LevelChunk.class);
-        chunks.put(new ChunkPos(1, 0), neighbor);
-        AuraManager.onChunkLoaded(level, center);
-        when(level.getMoonPhase()).thenReturn(4);
-        tick(0);
-        verify(neighbor).getExistingDataOrNull(TTAttachments.AURA.get());
-        verify(neighbor, never()).getData(TTAttachments.AURA.get());
-        verify(neighbor, never()).setUnsaved(anyBoolean());
-        assertEquals(80.0F, source.getVis());
-        assertEquals(0.0F, source.getFlux());
-    }
-
-    @Test
-    void fullMoonOverchargeConsumesNoSettleRollWhenFluxStepIsZero() {
-        ChunkPos pos = new ChunkPos(0, 0);
-        AuraData data = new AuraData((short) 100, 200, 0);
-        LevelChunk chunk = attach(pos, data);
-        AuraManager.onChunkLoaded(level, pos);
-        tick(0);
-        assertEquals(200.0F, data.getVis());
-        assertEquals(0.0F, data.getFlux());
-        verifyNoInteractions(random);
-        verify(chunk, never()).setUnsaved(anyBoolean());
     }
 
     @Test

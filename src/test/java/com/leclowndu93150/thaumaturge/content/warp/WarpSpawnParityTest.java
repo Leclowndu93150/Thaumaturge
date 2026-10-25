@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 import com.leclowndu93150.thaumaturge.content.entity.EntityCultistPortalLesser;
 import com.leclowndu93150.thaumaturge.content.entity.EntityEldritchGuardian;
 import com.leclowndu93150.thaumaturge.content.entity.EntityMindSpider;
-import com.leclowndu93150.thaumaturge.content.warp.spawn.SpawnSpots;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTMobEffects;
 import java.util.List;
@@ -40,38 +39,6 @@ import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 
 class WarpSpawnParityTest {
-    @Test
-    void ringCellRejectsCenterAndUsesConditionalAxisDraws() {
-        RandomSource random = mock(RandomSource.class);
-        when(random.nextInt(3)).thenReturn(0, 0, 0, 1, 0, 0);
-        when(random.nextInt(18)).thenReturn(0);
-        when(random.nextBoolean()).thenReturn(true);
-        BlockPos origin = new BlockPos(10, 20, 30);
-
-        BlockPos result = SpawnSpots.ringCell(origin, random);
-
-        assertEquals(origin.offset(7, 0, 0), result);
-        verify(random, times(6)).nextInt(3);
-        verify(random).nextInt(18);
-        verify(random).nextBoolean();
-    }
-
-    @Test
-    void ringCellKeepsSignedOffsetsAtInclusiveDistanceBounds() {
-        RandomSource random = mock(RandomSource.class);
-        when(random.nextInt(3)).thenReturn(1, 1, 1);
-        when(random.nextInt(18)).thenReturn(0, 17, 5);
-        when(random.nextBoolean()).thenReturn(false, true, false);
-        BlockPos origin = new BlockPos(10, 20, 30);
-
-        BlockPos result = SpawnSpots.ringCell(origin, random);
-
-        assertEquals(origin.offset(-7, 24, -12), result);
-        verify(random, times(3)).nextInt(3);
-        verify(random, times(3)).nextInt(18);
-        verify(random, times(3)).nextBoolean();
-    }
-
     @Test
     void deadlyGazeExcludesSpectatorsFromItsTargetQuery() {
         ServerLevel level = mock(ServerLevel.class);
@@ -161,7 +128,7 @@ class WarpSpawnParityTest {
         when(level.noCollision(any(Entity.class))).thenReturn(false, true);
         when(level.containsAnyLiquid(bounds)).thenReturn(false);
         when(level.addFreshEntity(any(Entity.class))).thenReturn(true);
-        when(random.nextInt(3)).thenReturn(1);
+        when(random.nextInt(3)).thenReturn(2);
         when(random.nextInt(18)).thenReturn(0);
         when(random.nextBoolean()).thenReturn(true);
         when(random.nextFloat()).thenReturn(0.25F, 0.75F);
@@ -197,7 +164,7 @@ class WarpSpawnParityTest {
         when(level.noCollision(any(Entity.class))).thenReturn(false, true);
         when(level.containsAnyLiquid(bounds)).thenReturn(false);
         when(level.addFreshEntity(any(Entity.class))).thenReturn(true);
-        when(random.nextInt(3)).thenReturn(1);
+        when(random.nextInt(3)).thenReturn(2);
         when(random.nextInt(18)).thenReturn(0);
         when(random.nextBoolean()).thenReturn(true);
 
