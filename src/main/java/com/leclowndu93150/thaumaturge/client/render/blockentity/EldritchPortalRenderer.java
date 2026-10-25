@@ -1,6 +1,7 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import com.leclowndu93150.thaumaturge.TTIds;
+import com.leclowndu93150.thaumaturge.client.effect.LateWorldRenderQueue;
 import com.leclowndu93150.thaumaturge.client.render.TTRenderTypes;
 import com.leclowndu93150.thaumaturge.content.eldritch.OuterLands;
 import com.leclowndu93150.thaumaturge.content.eldritch.portal.BlockEntityEldritchPortal;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEntityEldritchPortal> {
@@ -48,17 +50,22 @@ public final class EldritchPortalRenderer implements BlockEntityRenderer<BlockEn
         int frame = (int) animationTime % FRAMES;
         float u0 = frame * FRAME_WIDTH;
         float u1 = u0 + FRAME_WIDTH;
-        poseStack.pushPose();
-        poseStack.translate(0.5F, 0.5F, 0.5F);
-        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
         boolean towardOverworld = portal.getLevel() != null && portal.getLevel().dimension() == OuterLands.DIMENSION;
-        VertexConsumer buffer = buffers.getBuffer(towardOverworld ? OVERWORLD_PORTAL_TYPE : PORTAL_TYPE);
+        RenderType type = towardOverworld ? OVERWORLD_PORTAL_TYPE : PORTAL_TYPE;
+        LateWorldRenderQueue.enqueueBlockEntityAfterTranslucent(
+                Vec3.atCenterOf(portal.getBlockPos()),
+                (latePose, lateBuffers) -> drawQuad(latePose, lateBuffers, type, sx, sy, u0, u1));
+    }
+
+    private static void drawQuad(
+            PoseStack poseStack, MultiBufferSource buffers, RenderType type, float sx, float sy, float u0, float u1) {
+        poseStack.mulPose(Minecraft.getInstance().gameRenderer.getMainCamera().rotation());
+        VertexConsumer buffer = buffers.getBuffer(type);
         Matrix4f mat = poseStack.last().pose();
         buffer.addVertex(mat, -sx, -sy, 0.0F).setUv(u1, 0.0F).setColor(-1).setLight(LIGHT);
         buffer.addVertex(mat, -sx, sy, 0.0F).setUv(u1, 1.0F).setColor(-1).setLight(LIGHT);
         buffer.addVertex(mat, sx, sy, 0.0F).setUv(u0, 1.0F).setColor(-1).setLight(LIGHT);
         buffer.addVertex(mat, sx, -sy, 0.0F).setUv(u0, 0.0F).setColor(-1).setLight(LIGHT);
-        poseStack.popPose();
     }
 
     @Override
