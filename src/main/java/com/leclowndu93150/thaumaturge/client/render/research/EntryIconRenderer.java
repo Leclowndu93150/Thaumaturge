@@ -57,7 +57,7 @@ public final class EntryIconRenderer {
     private static final int COLOR_COMPLETE = 0xFFFFFFFF;
     private static final int COLOR_UNKNOWN_LOCKED_FRAME = 0xFF4D4D4D;
     private static final int COLOR_UNKNOWN_LOCKED_ICON = 0xFF333333;
-    private static final int LOCKED_ICON_OVERLAY = 0x7F000000;
+    private static final float LOCKED_ITEM_SHADE = 128.0F / 255.0F;
     private static final int ICON_TEX_SIZE = 16;
     private static final long FLIPBOOK_FRAME_MS = 150L;
 
@@ -173,10 +173,11 @@ public final class EntryIconRenderer {
     public static void drawResearchIcon(GuiGraphics graphics, int iconX, int iconY, Object icon, boolean locked) {
         if (icon instanceof ItemStack stack) {
             if (stack.isEmpty()) return;
-            RecipeDisplayWidget.renderDisplayItem(graphics, stack, iconX, iconY);
             if (locked) {
-                graphics.fill(iconX, iconY, iconX + ICON_TEX_SIZE, iconY + ICON_TEX_SIZE, LOCKED_ICON_OVERLAY);
+                graphics.setColor(LOCKED_ITEM_SHADE, LOCKED_ITEM_SHADE, LOCKED_ITEM_SHADE, 1.0F);
             }
+            RecipeDisplayWidget.renderDisplayItem(graphics, stack, iconX, iconY);
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
             return;
         }
         if (icon instanceof FocusIcon focus) {
