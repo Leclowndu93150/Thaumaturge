@@ -2243,8 +2243,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                         && mx < aspectNavLeftX + 14
                         && my >= aspectNavY
                         && my < aspectNavY + 14) {
-                    aspectsPage--;
-                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
+                    stepAspectsPage(-1);
                     return true;
                 }
                 if (aspectsPage < maxAspectPages() - 1
@@ -2252,8 +2251,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                         && mx < aspectNavRightX + 14
                         && my >= aspectNavY
                         && my < aspectNavY + 14) {
-                    aspectsPage++;
-                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
+                    stepAspectsPage(1);
                     return true;
                 }
             }
@@ -2315,9 +2313,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                         && mx < recipeNavLeftX + 14
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
-                    recipePage--;
-                    resetConstructPreview();
-                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
+                    stepRecipeVariant(-1);
                     return true;
                 }
                 if (recipePage < max
@@ -2325,9 +2321,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                         && mx < recipeNavRightX + 14
                         && my >= recipeNavY
                         && my < recipeNavY + 14) {
-                    recipePage++;
-                    resetConstructPreview();
-                    playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
+                    stepRecipeVariant(1);
                     return true;
                 }
             }
@@ -2686,21 +2680,60 @@ public final class EntryDetailScreen extends AbstractTTScreen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (insertOpen() || scrollY == 0.0) {
+        if (scrollY == 0.0) {
             return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
         }
-        if (hasShiftDown()) {
+        int step = scrollY < 0.0 ? 1 : -1;
+        if (showingAspects) {
+            stepAspectsPage(step);
+            return true;
+        }
+        if (shownRecipe != null) {
+            stepRecipeVariant(step);
+            return true;
+        }
+        if (insertOpen()) {
+            return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        }
+        boolean overStages = canNavigateStageHistory() && overStageStrip(mouseX, mouseY);
+        if (overStages || hasShiftDown()) {
             if (hasStageHistory()) {
-                stepHistoryStage(scrollY > 0.0 ? -1 : 1);
+                stepHistoryStage(step);
             }
             return true;
         }
-        if (scrollY > 0.0) {
-            prevPage();
-        } else {
+        if (step > 0) {
             nextPage();
+        } else {
+            prevPage();
         }
         return true;
+    }
+
+    private boolean overStageStrip(double mx, double my) {
+        int left = sw + STAGE_HISTORY_LEFT_X - 1;
+        int right = sw + STAGE_HISTORY_RIGHT_X - 1 + STAGE_HISTORY_HIT_SIZE;
+        int top = sh + STAGE_HISTORY_HIT_Y;
+        return mx >= left && mx < right && my >= top && my < top + STAGE_HISTORY_HIT_SIZE;
+    }
+
+    private void stepAspectsPage(int delta) {
+        int target = aspectsPage + delta;
+        if (target < 0 || target >= maxAspectPages()) {
+            return;
+        }
+        aspectsPage = target;
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
+    }
+
+    private void stepRecipeVariant(int delta) {
+        int target = recipePage + delta;
+        if (target < 0 || target >= RecipeDisplayCache.get(shownRecipe).size()) {
+            return;
+        }
+        recipePage = target;
+        resetConstructPreview();
+        playSound(TTSounds.PAGE.get(), 0.7F, 0.9F);
     }
 
     @Override

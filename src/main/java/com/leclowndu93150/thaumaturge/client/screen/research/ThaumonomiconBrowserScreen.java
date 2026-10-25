@@ -497,6 +497,10 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
     @Override
     public boolean mouseScrolled(double x, double y, double scrollX, double scrollY) {
         if (!searching) {
+            if (scrollY != 0.0 && categoryScrollVisible() && x >= width - CATEGORY_BUTTON_X_RIGHT_MARGIN) {
+                shiftCategoryScroll(scrollY < 0.0 ? 1 : -1);
+                return true;
+            }
             if (scrollY < 0.0) {
                 screenZoom += ZOOM_STEP;
             } else if (scrollY > 0.0) {
@@ -1239,6 +1243,20 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
     private static final float BUTTON_CLACK_VOLUME = 0.4F;
     private static final float PAGE_OPEN_VOLUME = 0.66F;
 
+    private boolean categoryScrollVisible() {
+        return catScrollMax > 0 || catScrollPos != 0;
+    }
+
+    private void shiftCategoryScroll(int delta) {
+        int target = catScrollPos + delta;
+        if (target < 0 || target > catScrollMax) {
+            return;
+        }
+        playButtonClack();
+        catScrollPos = target;
+        updateResearch();
+    }
+
     private void playButtonClack() {
         if (minecraft != null && minecraft.player != null) {
             minecraft
@@ -1266,19 +1284,11 @@ public final class ThaumonomiconBrowserScreen extends AbstractTTScreen {
             return true;
         }
         if (hitScrollUp(mx, my)) {
-            if (catScrollPos > 0) {
-                playButtonClack();
-                catScrollPos--;
-                updateResearch();
-            }
+            shiftCategoryScroll(-1);
             return true;
         }
         if (hitScrollDown(mx, my)) {
-            if (catScrollPos < catScrollMax) {
-                playButtonClack();
-                catScrollPos++;
-                updateResearch();
-            }
+            shiftCategoryScroll(1);
             return true;
         }
         Holder.Reference<IResearchCategory> tabHit = hitCategoryButton(mx, my);
