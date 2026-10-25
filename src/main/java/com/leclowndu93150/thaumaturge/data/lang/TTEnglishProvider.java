@@ -41,9 +41,9 @@ public final class TTEnglishProvider extends LanguageProvider {
         aspect("praecantatio", "Praecantatio", "Structured Magic, Spells, Enchantment", "magical things");
         aspect("auram", "Auram", "Aura, Vis", "the aura");
         aspect("alkimia", "Alkimia", "Alchemy, Chemistry", "alchemy");
-        aspect("vitium", "Vitium", "Taint, Change, Mutation", "corrupted things");
+        aspect("vitium", "Vitium", "Taint, Change, Mutation", "taint and flux");
         aspect("tenebrae", "Tenebrae", "Darkness", "darkness");
-        aspect("alienis", "Alienis", "Alien, Strange, The Eldritch", "otherworldly things");
+        aspect("alienis", "Alienis", "Alien, Strange, The Eldritch", "things from beyond this world");
         aspect("volatus", "Volatus", "Flight", "flight");
         aspect("herba", "Herba", "Plant", "plants");
         aspect("instrumentum", "Instrumentum", "Tool, Instrument", "tools");
@@ -156,7 +156,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("message.thaumaturge.research_note.learned", "You have completed your research on %s!");
         add(
                 "message.thaumaturge.research_note.missing_tools",
-                "You need scribing tools and paper to get this research note!");
+                "Writing a research note takes scribing tools with ink and a sheet of paper");
         add("message.thaumaturge.research.aspect_discovered", "You have discovered the aspect %s!");
         add("message.thaumaturge.research.discovery_error", "To understand this you need to study %1$s.");
         add("gui.thaumaturge.thaumonomicon.research_cost", "Required research points:");
@@ -177,28 +177,28 @@ public final class TTEnglishProvider extends LanguageProvider {
                 "There must be a more efficient way to work through my research notes. If I complete another theory I am sure I can find ways to recover some of the research points I expend.");
         add(
                 "research.thaumaturge.research_expertise.stage.2",
-                "You have become more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 25%% chance that you will regain the research point.");
+                "My studies are paying off. When I make a mistake on a research note and erase an aspect, I now get the point back about one time in four, so false starts cost me less.");
         add("research.thaumaturge.research_mastery.title", "Research Mastery");
         add(
                 "research.thaumaturge.research_mastery.stage.1",
                 "My expertise has grown, but true mastery of the research process still eludes me. More theory work should get me there, though I fear what prolonged exposure to these mysteries is doing to my mind.");
         add(
                 "research.thaumaturge.research_mastery.stage.2",
-                "You have become even more efficient at performing research.<BR>Whenever you remove an aspect that you placed in a hex, there is a 50%% chance that you will regain the research point.<BR>Additionally there is a 10%% chance that whenever you place an aspect that it will not cost any research points to do so.<BR>Lastly you are able to combine aspects in the research table by shift-clicking on the aspect you wish to create. If you have enough of the component aspects they will automatically combine to create the clicked aspect.");
+                "I understand the craft of research far better now. Erasing an aspect from a note returns the point half the time, and now and then an aspect I place costs me nothing at all.<BR>I can also shift-click a compound aspect at the research table to combine its two components into it in one step.");
         add("research.thaumaturge.research_duplication.title", "Research Duplication");
         add(
                 "research.thaumaturge.research_duplication.stage.1",
                 "A completed discovery holds its pattern permanently. Surely I could copy one onto fresh paper for a colleague, given enough research points and one more theory to work out the method.");
         add(
                 "research.thaumaturge.research_duplication.stage.2",
-                "You have discovered a way to copy completed research notes.<BR>When you complete research or place a completed research note in the research table you will see a star icon. Clicking this will create a copy of this research as long as you are carrying paper and ink and have enough aspects available.<BR>The more copies are created of that research, the more expensive copying it will become.");
+                "Once a research note is complete, the research table now offers to duplicate it. Each copy needs a sheet of paper, some ink and the note's aspects, and every further copy of the same note costs a little more than the last.<BR>A copied note teaches its theory to anyone who has not learned it yet, so I can share my discoveries with other thaumaturges.");
         add("research.thaumaturge.deconstructor.title", "Deconstruction Table");
         add(
                 "research.thaumaturge.deconstructor.stage.1",
                 "Breaking things apart to see what makes them tick has always come naturally to me. A purpose-built table should let me reduce objects to their base essences and salvage research points from the wreckage.");
         add(
                 "research.thaumaturge.deconstructor.stage.2",
-                "There comes a point in any thaumaturge's career where he is unable to progress with research due to his lack of knowledge.<BR>One possible recourse is the Deconstruction Table. The table allows you to break down objects into their simplest parts which you can examine. There are limits however - the table breaks compound aspects into their component aspects until only primal aspects remain. During this process much knowledge is lost and at best the thaumaturge can hope for is a single piece of primal knowledge.<BR>For example iron (Metallum) <PAGE>will be simplified into §2Terra§0 and §7Ordo§0, only one of which will have a chance of being discovered.<BR>It is also fairly slow and the fewer aspects an object has, the lower the chance to discover something.");
+                "The Deconstruction Table breaks down any item with aspects that I place inside. Every couple of seconds it consumes the item and reduces its aspects to their primal roots. Items rich in aspects almost always leave a primal behind, while poor ones often leave nothing.<BR>When an aspect appears above the table, I click it to add that primal to my research pool. The table waits until I do.");
         add("gui.thaumaturge.research_table.inspiration", "Inspiration: %s");
         add("gui.thaumaturge.research_table.draw", "Draw");
         add("gui.thaumaturge.research_table.play", "Play");
@@ -872,11 +872,11 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("research.thaumaturge.enter_outer_lands.title", "The Outer Lands");
         add(
                 "research.thaumaturge.enter_outer_lands.stage_0",
-                "You are not quite sure what you were expecting when you stepped through the Oculus, but this strange structure of crumbling stone and twisted passageways was not it.<BR>Something is not quite right here - this structure was not designed for any practical purpose you can discern... unless that purpose was for it to be a deadly maze.<BR>Strange energies abound and your magic seems to act strangely in this alien environment. Even the other denizens you encounter seem out of place here.");
+                "I have stepped through the portal and into somewhere else entirely. The air is still, the stone is old and cut with a purpose I cannot read, and the light comes from nowhere in particular. Whoever built this place has been gone a long time, or so I hope.<BR>I should tread carefully and record everything I find.");
         add("research.thaumaturge.outer_revelations.title", "Outer Revelations");
         add(
                 "research.thaumaturge.outer_revelations.stage_0",
-                "Your suspicions have been confirmed. This is not the home of the race you have come to call the Eldritch. This place is something else entirely and you do not believe it exists in what you understand as being \"reality\" - it is as much a mental construct as a physical one, but what mind can contain this?<BR>You have been able to decipher only a small number of the symbols, but you are sure this place is a trap - a place to test visitors and weed out the weak. For what purpose you are not sure.");
+                "The crystals growing from the stone here, and the crust that glows along the walls, are not decoration. Scanning them, I sense the same alien quality I have found in ender pearls and the things of the End, only far stronger and far older.<BR>This place was not built by anyone from my world. Whatever its makers wanted from it, they wanted it badly enough to wall it away.");
         add(
                 "gui.thaumaturge.altar.ritual_unknown",
                 "The keystone hums with power, but its purpose escapes you... for now.");
@@ -1225,10 +1225,10 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("item.thaumaturge.staff_rod_primal", "Staff Core of the Primal");
         add("item.thaumaturge.primal_charm", "Primal Charm");
         add("tooltip.thaumaturge.primal_charm.0", "It seems to be leaking");
-        add("tooltip.thaumaturge.primal_charm.1", "You think you hear whispering");
-        add("tooltip.thaumaturge.primal_charm.2", "It is vibrating violently");
-        add("tooltip.thaumaturge.primal_charm.3", "It's humming is quite soothing");
-        add("tooltip.thaumaturge.primal_charm.4", "Wait, did it just flash a seventh color?");
+        add("tooltip.thaumaturge.primal_charm.1", "Six colours chase each other through it");
+        add("tooltip.thaumaturge.primal_charm.2", "It hums faintly against your palm");
+        add("tooltip.thaumaturge.primal_charm.3", "Warm on one side, cold on the other");
+        add("tooltip.thaumaturge.primal_charm.4", "Something inside it wants to be whole");
         add("item.thaumaturge.focus_1", "Blank Lesser Focus");
         add("item.thaumaturge.focus_2", "Blank Advanced Focus");
         add("item.thaumaturge.focus_3", "Blank Greater Focus");
