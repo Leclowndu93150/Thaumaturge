@@ -18,7 +18,7 @@ public final class EntityCausalityCollapser extends AbstractThrownCharge {
 
     private static final float EXPLOSION_STRENGTH = 2.0F;
     private static final double RIFT_COLLAPSE_RANGE = 3.0;
-    private static final ChargeTrail EMBERS = new ChargeTrail(0xF07A1E, 0.3F, 0.55F, 3.0F);
+    private static final ChargeTrail COLLAPSE_TRAIL = new ChargeTrail(0x9A6AAE, 0.3F, 0.55F, 3.0F);
 
     public EntityCausalityCollapser(EntityType<? extends EntityCausalityCollapser> type, Level level) {
         super(type, level);
@@ -40,7 +40,7 @@ public final class EntityCausalityCollapser extends AbstractThrownCharge {
 
     @Override
     protected ChargeTrail trail() {
-        return EMBERS;
+        return COLLAPSE_TRAIL;
     }
 
     @Override
