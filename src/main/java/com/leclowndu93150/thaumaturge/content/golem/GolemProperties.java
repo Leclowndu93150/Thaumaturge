@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +37,7 @@ import org.jspecify.annotations.Nullable;
 public final class GolemProperties implements IGolemProperties {
     private static final int MAX_RANK = 10;
     private static final int BASE_SHARE = 2;
+    private static final String NAME_KEY = "entity.thaumaturge.golem.material";
 
     public static final Codec<GolemProperties> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     TTGolemParts.materials().byNameCodec().fieldOf("material").forGetter(GolemProperties::material),
@@ -171,6 +173,13 @@ public final class GolemProperties implements IGolemProperties {
     @Override
     public GolemMaterial material() {
         return material;
+    }
+
+    public Component name(Component fallback) {
+        ResourceLocation id = TTGolemParts.materials().getKey(material);
+        return id == null
+                ? fallback
+                : Component.translatable(NAME_KEY, Component.translatable(GolemMaterial.nameKey(id)));
     }
 
     @Override

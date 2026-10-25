@@ -2,17 +2,14 @@ package com.leclowndu93150.thaumaturge.content.golem;
 
 import com.leclowndu93150.thaumaturge.api.golems.GolemTrait;
 import com.leclowndu93150.thaumaturge.api.golems.ISealDisplayer;
-import com.leclowndu93150.thaumaturge.api.golems.parts.GolemMaterial;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
-import com.leclowndu93150.thaumaturge.registry.TTGolemParts;
 import com.leclowndu93150.thaumaturge.registry.TTGolemTraits;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.MobSpawnType;
@@ -27,6 +24,13 @@ import net.neoforged.neoforge.event.EventHooks;
 public final class ItemGolemPlacer extends Item implements ISealDisplayer {
     public ItemGolemPlacer(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        Component name = super.getName(stack);
+        GolemProperties props = stack.get(TTDataComponents.GOLEM_PROPERTIES.get());
+        return props == null ? name : props.name(name);
     }
 
     @Override
@@ -53,11 +57,6 @@ public final class ItemGolemPlacer extends Item implements ISealDisplayer {
                         Component.translatable("tooltip.thaumaturge.golem.xp", xp, needed)
                                 .withStyle(ChatFormatting.DARK_GREEN)));
             }
-        }
-        ResourceLocation materialKey = TTGolemParts.materials().getKey(props.material());
-        if (materialKey != null) {
-            tooltip.add(
-                    Component.translatable(GolemMaterial.nameKey(materialKey)).withStyle(ChatFormatting.GREEN));
         }
         for (GolemTrait trait : props.traits()) {
             tooltip.add(Component.translatable(

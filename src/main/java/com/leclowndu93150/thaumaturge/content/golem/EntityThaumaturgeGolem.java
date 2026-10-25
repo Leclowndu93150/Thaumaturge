@@ -304,6 +304,11 @@ public class EntityThaumaturgeGolem extends EntityOwnedConstruct implements IGol
     }
 
     @Override
+    protected Component getTypeName() {
+        return properties().name(super.getTypeName());
+    }
+
+    @Override
     public void applyBuild(IGolemProperties properties) {
         if (level().isClientSide()) {
             return;

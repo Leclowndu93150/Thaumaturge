@@ -1356,6 +1356,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.placeholder_anvil", "Anvil");
         add("block.thaumaturge.placeholder_table", "Stone Table");
         add("entity.thaumaturge.golem", "Thaumaturge Golem");
+        add("entity.thaumaturge.golem.material", "%s Golem");
         add("entity.thaumaturge.golem_dart", "Golem Dart");
         add("message.thaumaturge.golem.follow", "I'm coming, Master!");
         add("message.thaumaturge.golem.stay", "I will stay here, Master.");
