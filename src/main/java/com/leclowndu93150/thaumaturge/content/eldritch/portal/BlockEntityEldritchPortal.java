@@ -11,15 +11,19 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import org.jspecify.annotations.Nullable;
 
 public final class BlockEntityEldritchPortal extends BlockEntity {
     private static final int OPEN_TICKS = 30;
     private static final int SOUND_INTERVAL = 250;
     private static final String LINK = "link";
+    private static final double REACH = 0.25;
 
     private Optional<PortalLink> link = Optional.empty();
     private int openTicks = -1;
     private int age;
+    private @Nullable AABB reach;
 
     public BlockEntityEldritchPortal(BlockPos pos, BlockState state) {
         super(TTBlockEntities.ELDRITCH_PORTAL.get(), pos, state);
@@ -45,6 +49,13 @@ public final class BlockEntityEldritchPortal extends BlockEntity {
 
     public int openTicks() {
         return openTicks;
+    }
+
+    public AABB reach() {
+        if (reach == null) {
+            reach = new AABB(worldPosition).inflate(REACH, 0.0, REACH);
+        }
+        return reach;
     }
 
     public Optional<PortalLink> link() {
