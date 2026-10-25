@@ -924,7 +924,6 @@ public final class RecipeDisplayWidget {
             pose.popPose();
         }
         buffers.endBatch();
-        Lighting.setupForFlatItems();
         pose.popPose();
     }
 

@@ -233,7 +233,6 @@ public final class MultiblockCategory implements IRecipeCategory<RecipeHolder<Du
             pose.popPose();
         }
         buffers.endBatch();
-        Lighting.setupForFlatItems();
         pose.popPose();
         rotation++;
     }
