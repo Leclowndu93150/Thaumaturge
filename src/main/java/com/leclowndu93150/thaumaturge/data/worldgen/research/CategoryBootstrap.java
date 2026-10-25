@@ -36,7 +36,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.TERRA, 3),
                         e(aspects, TTAspects.AQUA, 5))),
                 tex("textures/item/thaumonomicon_cheat.png"),
-                tex("textures/gui/gui_research_back_1.png"),
+                tex("textures/gui/gui_research_back_1_smooth.png"),
                 0);
 
         register(
@@ -51,7 +51,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.GELUM, 5),
                         e(aspects, TTAspects.AER, 5))),
                 tex("textures/research/cat_auromancy.png"),
-                tex("textures/gui/gui_research_back_2.png"),
+                tex("textures/gui/gui_research_back_2_smooth.png"),
                 1);
 
         register(
@@ -67,7 +67,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.DESIDERIUM, 5),
                         e(aspects, TTAspects.AQUA, 5))),
                 tex("textures/research/cat_alchemy.png"),
-                tex("textures/gui/gui_research_back_3.png"),
+                tex("textures/gui/gui_research_back_3_smooth.png"),
                 2);
 
         register(
@@ -85,7 +85,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.VINCULUM, 5),
                         e(aspects, TTAspects.IGNIS, 5))),
                 tex("textures/research/cat_artifice.png"),
-                tex("textures/gui/gui_research_back_4.png"),
+                tex("textures/gui/gui_research_back_4_smooth.png"),
                 3);
 
         register(
@@ -101,7 +101,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.SPIRITUS, 5),
                         e(aspects, TTAspects.TERRA, 3))),
                 tex("textures/research/cat_infusion.png"),
-                tex("textures/gui/gui_research_back_7.png"),
+                tex("textures/gui/gui_research_back_7_smooth.png"),
                 4);
 
         register(
@@ -118,7 +118,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.BESTIA, 5),
                         e(aspects, TTAspects.ORDO, 5))),
                 tex("textures/research/cat_golemancy.png"),
-                tex("textures/gui/gui_research_back_5.png"),
+                tex("textures/gui/gui_research_back_5_smooth.png"),
                 5);
 
         register(
@@ -135,7 +135,7 @@ public final class CategoryBootstrap {
                         e(aspects, TTAspects.EXANIMIS, 5),
                         e(aspects, TTAspects.PERDITIO, 5))),
                 tex("textures/research/cat_eldritch.png"),
-                tex("textures/gui/gui_research_back_6.png"),
+                tex("textures/gui/gui_research_back_6_smooth.png"),
                 6);
     }
 
