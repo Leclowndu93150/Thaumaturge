@@ -1,7 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.render.blockentity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.RETURNS_SELF;
@@ -86,14 +85,6 @@ class ResearchTablePaperPortTest {
         renderer.render(table, 0.0F, new PoseStack(), buffers, 15728880, 0);
 
         verify(buffer, times(20)).addVertex(any(PoseStack.Pose.class), anyFloat(), anyFloat(), anyFloat());
-    }
-
-    @Test
-    void tableModelIncludesTheProceduralInkwellPart() {
-        ResearchTableModel model =
-                new ResearchTableModel(ResearchTableModel.createLayer().bakeRoot());
-
-        assertNotNull(model.inkwell);
     }
 
     @Test

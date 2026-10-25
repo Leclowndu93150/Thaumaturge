@@ -28,7 +28,6 @@ public final class ResearchTableModel {
 
     public final ModelPart root;
     public final ModelPart table;
-    public final ModelPart inkwell;
     public final ModelPart scrollTube;
     public final ModelPart scrollRibbon;
 
@@ -37,7 +36,6 @@ public final class ResearchTableModel {
     public ResearchTableModel(ModelPart root) {
         this.root = root;
         this.table = root.getChild("table");
-        this.inkwell = root.getChild("inkwell");
         this.scrollTube = root.getChild("scroll_tube");
         this.scrollRibbon = root.getChild("scroll_ribbon");
         this.shelfScrolls = root.getChild("shelf_scrolls");
@@ -46,10 +44,6 @@ public final class ResearchTableModel {
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild(
-                "inkwell",
-                CubeListBuilder.create().texOffs(0, 44).mirror().addBox(0.0F, 0.0F, 0.0F, 4.0F, 3.0F, 4.0F),
-                PartPose.offset(-6.0F, -3.0F, 3.0F));
         PartDefinition table = root.addOrReplaceChild("table", CubeListBuilder.create(), PartPose.ZERO);
         table.addOrReplaceChild(
                 "top",
