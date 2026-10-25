@@ -25,6 +25,8 @@ public final class ResearchTableTop {
     private static final float SHEET_STEP = 0.013F;
     private static final float[] SHEET_TILTS = {-6.0F, 8.0F, 14.0F, -3.0F, 11.0F};
     private static final float LAY_FLAT = -90.0F;
+    private static final float SHEET_CENTER_X = SHEET_X + SHEET_WIDTH / 2.0F;
+    private static final float SHEET_CENTER_Z = SHEET_Z - SHEET_LENGTH / 2.0F;
 
     private ResearchTableTop() {}
 
@@ -33,6 +35,12 @@ public final class ResearchTableTop {
         BlockFacingPose.northBased(poseStack, facing);
         poseStack.mulPose(Axis.YP.rotationDegrees(EXTENSION_SIDE_YAW));
         poseStack.mulPose(Axis.XP.rotationDegrees(HALF_TURN));
+    }
+
+    public static void turnSheetsAround(PoseStack poseStack) {
+        poseStack.translate(SHEET_CENTER_X, 0.0F, SHEET_CENTER_Z);
+        poseStack.mulPose(Axis.YP.rotationDegrees(HALF_TURN));
+        poseStack.translate(-SHEET_CENTER_X, 0.0F, -SHEET_CENTER_Z);
     }
 
     public static void renderSheets(PoseStack poseStack, MultiBufferSource buffers, int light) {

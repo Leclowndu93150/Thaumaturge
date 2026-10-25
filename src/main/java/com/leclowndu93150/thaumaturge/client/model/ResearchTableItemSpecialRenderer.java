@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class ResearchTableItemSpecialRenderer extends BlockEntityWithoutLevelRenderer {
-    private static final Direction ITEM_FACING = Direction.SOUTH;
+    private static final Direction ITEM_FACING = Direction.NORTH;
     private static final float ITEM_X = 0.25F;
     private static final float ITEM_Y = 0.25F;
     private static final float ITEM_Z = 0.5F;
@@ -47,6 +47,7 @@ public final class ResearchTableItemSpecialRenderer extends BlockEntityWithoutLe
         poseStack.popPose();
         poseStack.pushPose();
         ResearchTableTop.pose(poseStack, ITEM_FACING);
+        ResearchTableTop.turnSheetsAround(poseStack);
         ResearchTableTop.renderSheets(poseStack, buffers, light);
         poseStack.popPose();
         poseStack.popPose();
