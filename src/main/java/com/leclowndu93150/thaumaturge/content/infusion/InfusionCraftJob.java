@@ -55,7 +55,7 @@ public final class InfusionCraftJob {
         this.catalyst = catalyst;
         this.instability = instability;
         this.player = player;
-        this.cost = cost;
+        this.cost = cost.isEmpty() ? essentia : cost;
     }
 
     public List<ItemStack> ingredients() {
