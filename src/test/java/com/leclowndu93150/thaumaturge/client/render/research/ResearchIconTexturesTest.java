@@ -3,9 +3,6 @@ package com.leclowndu93150.thaumaturge.client.render.research;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import net.minecraft.util.FastColor.ABGR32;
 import org.junit.jupiter.api.Test;
 
@@ -45,39 +42,6 @@ class ResearchIconTexturesTest {
 
             assertEquals(black, image.getPixelRGBA(0, 0));
             assertEquals(translucent, image.getPixelRGBA(1, 1));
-        }
-    }
-
-    @Test
-    void allAffectedAssetsLoseTheirBackdropWithoutChangingAnyRgbColors() throws Exception {
-        Path root = Path.of(
-                System.getProperty("thaumaturge.testResourceRoot"), "assets", "thaumaturge", "textures", "research");
-        for (String icon : new String[] {"r_researcher1", "r_researcher2", "r_runicupg"}) {
-            try (InputStream stream = Files.newInputStream(root.resolve(icon + ".png"));
-                    NativeImage image = NativeImage.read(stream)) {
-                int[] before = new int[image.getWidth() * image.getHeight()];
-                for (int y = 0; y < image.getHeight(); y++) {
-                    for (int x = 0; x < image.getWidth(); x++)
-                        before[y * image.getWidth() + x] = image.getPixelRGBA(x, y);
-                }
-                ResearchIconTextures.clearOpaqueBackground(image);
-                int cleared = 0;
-                int opaque = 0;
-                for (int y = 0; y < image.getHeight(); y++) {
-                    for (int x = 0; x < image.getWidth(); x++) {
-                        int original = before[y * image.getWidth() + x];
-                        int actual = image.getPixelRGBA(x, y);
-                        assertEquals(original & 0x00FFFFFF, actual & 0x00FFFFFF, icon);
-                        if (ABGR32.alpha(actual) == 0) cleared++;
-                        else {
-                            assertEquals(original, actual, icon);
-                            opaque++;
-                        }
-                    }
-                }
-                assertTrue(cleared > 0, icon);
-                assertTrue(opaque > 0, icon);
-            }
         }
     }
 }

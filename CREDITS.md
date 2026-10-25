@@ -156,9 +156,9 @@ Every aspect icon and the focus icons come from [game-icons.net](https://game-ic
 By J. W. Bjerk (eleazzaar), licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 - `textures/research/r_inf_enchant.png` (https://opengameart.org/content/painterly-spell-icons-part-3)
-- `textures/research/r_researcher1.png` (https://opengameart.org/content/painterly-spell-icons-part-1)
-- `textures/research/r_researcher2.png` (https://opengameart.org/content/painterly-spell-icons-part-1)
-- `textures/research/r_runicupg.png` (https://opengameart.org/content/painterly-spell-icons-part-3)
+- `textures/research/r_researcher1.png` (https://opengameart.org/content/painterly-spell-icons-part-1), background cut out to transparency
+- `textures/research/r_researcher2.png` (https://opengameart.org/content/painterly-spell-icons-part-1), background cut out to transparency
+- `textures/research/r_runicupg.png` (https://opengameart.org/content/painterly-spell-icons-part-3), background cut out to transparency
 
 ## Tainted mob textures
 
