@@ -55,11 +55,10 @@ public final class ThaumaturgeCommonConfig {
 
         builder.push("world");
 
-        WUSS_MODE = builder.comment(
-                        "Turns off the harsher side of the mod. While on: no warp is gained from any source and warp events stop; taint fibres, taint seeds and taint creatures stop spreading, the Tainted Lands biome and its landmarks stop spreading, and mobs are no longer infected; wild nodes never generate tainted, even in the Tainted Lands; flux pressure events stop and Flux Rifts are not started by their triggers; Flux Goo no longer festers into taint and physical flux cannot start a taint outbreak.")
+        WUSS_MODE = builder.comment("Setting this to true disables Warp, Taint spread and similar mechanics. You wuss.")
                 .define("wussMode", false);
         TAINT_SPREAD_RATE = builder.comment(
-                        "Percentage chance, from 0 to 100, that a taint fibre goes ahead with a spread attempt when it gets a block tick. Forced spreads skip this roll. 0 stops ordinary fibre spread.")
+                        "The % chance of taint fibres spreading on a block tick. Setting this to 0 will effectively stop taint fibre spread.")
                 .defineInRange("taintSpreadRate", 100.0, 0.0, 100.0);
         TAINT_SPREAD_AREA = builder.comment(
                         "The range in blocks that a taint origin (a taint seed or a tainted node) claims. Taint outside the range of every living origin decays, except inside naturally generated Tainted Lands.")
@@ -166,7 +165,7 @@ public final class ThaumaturgeCommonConfig {
                 .defineInRange("shieldCost", 1.0, 0.0, 100.0);
         ALLOW_CHAMPION_MOBS = builder.comment("Allows champion mobs to spawn.").define("allowChampionMobs", true);
         NO_SLEEP = builder.comment(
-                        "If true, a player gets the Dream Journal and its research as soon as they pick up their first vis crystal, without having to sleep for the first dream.")
+                        "Setting this to true will make you get the recipe book for salis mundus without having to sleep first.")
                 .define("noSleep", false);
 
         builder.pop();
@@ -179,7 +178,7 @@ public final class ThaumaturgeCommonConfig {
         builder.push("golems");
 
         SHOW_GOLEM_EMOTES = builder.comment(
-                        "Whether golems show small emote particles when they take an order or run into a problem.")
+                        "Will golems display emote particles if they receive orders or encounter problems.")
                 .define("showGolemEmotes", true);
 
         builder.pop();
