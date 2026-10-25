@@ -88,10 +88,6 @@ public final class LabyrinthBlocks {
         return TTBlocks.ELDRITCH_OBELISK.get().defaultBlockState();
     }
 
-    static BlockState pillar() {
-        return TTBlocks.ELDRITCH_PILLAR.get().defaultBlockState();
-    }
-
     static BlockState column(Direction.Axis axis) {
         return TTBlocks.STONE_ELDRITCH_PILLAR.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, axis);
     }

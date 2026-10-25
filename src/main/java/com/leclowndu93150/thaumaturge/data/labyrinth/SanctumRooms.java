@@ -16,7 +16,6 @@ final class SanctumRooms {
     private static final int PORTAL_Z = 7;
     private static final int CAPSTONE_Y = F + 1;
     private static final int OBELISK_Y = F + 4;
-    private static final int OBELISK_PILLARS = 4;
     private static final int SHAFT_TOP = F + 15;
     private static final int[][] SHAFTS = {{4, 4}, {10, 4}, {4, 10}, {10, 10}};
     private static final int[][] RING_PILLARS = {{3, 3}, {12, 3}, {3, 12}, {12, 12}};
@@ -116,9 +115,6 @@ final class SanctumRooms {
         canvas.set(PORTAL_X, CAPSTONE_Y, PORTAL_Z, LabyrinthBlocks.capstone());
         canvas.marker(PORTAL_X, CAPSTONE_Y + 1, PORTAL_Z, EntryPortalMarker.INSTANCE);
         canvas.set(PORTAL_X, OBELISK_Y, PORTAL_Z, LabyrinthBlocks.obelisk());
-        canvas.fill(
-                RoomShape.box(PORTAL_X, OBELISK_Y + 1, PORTAL_Z, PORTAL_X, OBELISK_Y + OBELISK_PILLARS, PORTAL_Z),
-                LabyrinthBlocks.pillar());
         canvas.marker(PORTAL_X, F + 1, PORTAL_Z + 4, new LandmarkMarker(LabyrinthLandmarks.ARRIVAL));
     }
 }

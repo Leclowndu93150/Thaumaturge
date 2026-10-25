@@ -18,7 +18,6 @@ final class ObeliskSiteTemplates {
     private static final int EDGE_MIN = 1;
     private static final int EDGE_MAX = 7;
     private static final int OBELISK_Y = 3;
-    private static final int PILLAR_TOP = 7;
     private static final int[][] CAPSTONES = {{3, 1}, {5, 1}, {3, 7}, {5, 7}, {1, 3}, {1, 5}, {7, 3}, {7, 5}};
     private static final int[][] BANNERS = {
         {CENTER, EDGE_MIN, 8}, {CENTER, EDGE_MAX, 0}, {EDGE_MIN, CENTER, 4}, {EDGE_MAX, CENTER, 12}
@@ -49,9 +48,6 @@ final class ObeliskSiteTemplates {
         }
         canvas.marker(CENTER, 2, CENTER, ObeliskSitePiece.NODE_MARKER);
         canvas.set(CENTER, OBELISK_Y, CENTER, LabyrinthBlocks.obelisk());
-        for (int y = OBELISK_Y + 1; y <= PILLAR_TOP; y++) {
-            canvas.set(CENTER, y, CENTER, LabyrinthBlocks.pillar());
-        }
         if (cult) {
             for (int[] banner : BANNERS) {
                 canvas.set(
