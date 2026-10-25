@@ -83,11 +83,12 @@ public final class EntryDetailScreen extends AbstractTTScreen {
     private static final int PANE_H = 181;
     private static final float PANE_SCALE = 1.3F;
 
-    private static final int PAGE_WIDTH = 140;
-    private static final int PAGE_LEFT_OFFSET = -15;
-    private static final int PAGE_SIDE_OFFSET = 152;
+    private static final int PAGE_WIDTH = PageParser.PAGE_WIDTH;
+    private static final int PAGE_LEFT_OFFSET = -13;
+    private static final int PAGE_SIDE_OFFSET = 151;
     private static final int CONTENT_Y_OFFSET = -10;
     private static final int TITLE_Y_ADVANCE = 28;
+    private static final int CONTINUATION_Y_SHIFT = 4;
 
     private static final int LINE_HEIGHT = 9;
     private static final int TEXT_LINE_COLOR = 0xFF000000;
@@ -646,6 +647,8 @@ public final class EntryDetailScreen extends AbstractTTScreen {
             renderTitle(graphics, x, currentY);
             drawDivider(graphics, x + 4, currentY + 10);
             currentY += TITLE_Y_ADVANCE;
+        } else {
+            currentY += CONTINUATION_Y_SHIFT;
         }
         int textX = x + PAGE_LEFT_OFFSET + side * PAGE_SIDE_OFFSET;
         for (PageParser.PageElement element : page.elements()) {
@@ -655,7 +658,7 @@ public final class EntryDetailScreen extends AbstractTTScreen {
                 graphics.drawString(font, sequence, textX, currentY - 6, TEXT_LINE_COLOR, false);
                 currentY += LINE_HEIGHT;
                 if (text.paragraphBreak()) {
-                    currentY += (int) (LINE_HEIGHT * 0.66F);
+                    currentY += page.paragraphGap();
                 }
             } else if (element instanceof PageParser.PageElement.Image image) {
                 PageParser.PageImage pi = image.image();
