@@ -13,9 +13,9 @@ distributing builds of it. If the author disappears for a year, the license
 converts to MIT so the project can be continued by someone else.
 
 The project, its name, and its branding belong to the author. Contributors keep
-the copyright in the code they wrote and may reuse it in their own work, but
-contributing does not give anyone the right to publish this mod or to pull
-their code back out of it.
+the copyright in the code and art they made and may reuse it in their own work,
+but contributing does not give anyone the right to publish this mod, to pull
+their work back out of it, or to have the project taken down.
 
 
 1. DEFINITIONS
@@ -40,11 +40,15 @@ their code back out of it.
     Software taken as a whole, including the selection and arrangement of its
     parts, and every part of the Software that is not a Contribution.
 
-1.7 "Contribution" means code or other material written by a Contributor and
-    merged into the Canonical Repository.
+1.7 "Contribution" means code, textures, models, sounds, text, or any other
+    material made by a Contributor and submitted for inclusion in the Software,
+    once it has been merged into the Canonical Repository or otherwise included
+    in the Software.
 
-1.8 "Contributor" means a person, other than the Author, whose Contribution has
-    been merged into the Canonical Repository.
+1.8 "Contributor" means a person, other than the Author, who submits material
+    for inclusion in the Software by any means, including a pull request, a
+    patch, an upload to the Thaumaturge asset audit, or a file sent to the
+    Author on Discord or by email.
 
 
 2. PERMISSIONS
@@ -142,27 +146,41 @@ license automatically if the Author becomes inactive or unreachable.
 6.1 Ownership. The Author owns the Project. Each Contributor keeps the copyright
     in their own Contributions.
 
-6.2 License to the Author. By submitting a pull request or patch to the
-    Canonical Repository, You grant the Author a perpetual, worldwide,
-    irrevocable, non-exclusive, royalty-free license to use, modify, distribute,
-    sublicense, and relicense Your Contribution as part of the Software or any
-    later version of it, including under the conversion described in section 4.
-    This license cannot be withdrawn, and it does not require the Author to
-    remove a Contribution that has already been merged.
+6.2 License to the Author. By submitting material for inclusion in the
+    Software by any of the means listed in section 1.8, You grant the Author a
+    perpetual, worldwide, irrevocable, non-exclusive, royalty-free license to
+    use, reproduce, modify, distribute, publish, sublicense, and relicense Your
+    Contribution as part of the Software or any later version of it, including
+    under the conversion described in section 4. This license cannot be
+    withdrawn or terminated, including if You stop contributing, leave the
+    project, delete Your accounts, or disagree with later changes to the
+    Software or to this license. It does not require the Author to remove a
+    Contribution that has already been included.
 
-6.3 Your own code. You may use, publish, and license Your own Contributions
+6.3 No takedowns. You will not file, or ask anyone else to file, a takedown
+    notice, copyright claim, or similar request against the Canonical
+    Repository, the Author's releases of the Software, or any copy of the
+    Software permitted under this license, on the ground that it contains Your
+    Contribution. You may ask the Author to remove a Contribution; the Author
+    may decline.
+
+6.4 Right to grant. You confirm that each Contribution is Your own work, or that
+    You have the right to license it on these terms, and that it does not copy
+    material whose rights You do not hold.
+
+6.5 Your own work. You may use, publish, and license Your own Contributions
     anywhere else, under any terms You choose, for example in another mod or a
-    library. This covers only the code You wrote. It does not let You Publish
+    library. This covers only the work You made. It does not let You Publish
     the Software, a modified version of it, or a substantial part of the Project
     together with Your Contribution.
 
-6.4 No extra rights. Being a Contributor gives You no rights in the Project or
+6.6 No extra rights. Being a Contributor gives You no rights in the Project or
     in other people's Contributions beyond those section 2 gives everyone. In
     particular, You may not Publish the Software, use the Thaumaturge name,
     logo, or branding for another release, or present Yourself as an owner of
     the Project. You may describe Yourself as a contributor to Thaumaturge.
 
-6.5 Credit. The Author will keep crediting each Contributor in the copyright
+6.7 Credit. The Author will keep crediting each Contributor in the copyright
     notice, or in a credits file in the Canonical Repository, for as long as
     their Contributions remain in the Software.
 
