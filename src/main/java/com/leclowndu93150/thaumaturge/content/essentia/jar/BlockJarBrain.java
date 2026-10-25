@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -41,6 +42,7 @@ public final class BlockJarBrain extends BaseEntityBlock {
     private static final float SPARKLE_DECAY = 1.0F;
     private static final float SPARKLE_GRAVITY = 0.0F;
     private static final int SPARKLE_BASE_AGE = 16;
+    private static final float ENCHANTING_POWER_PER_JAR = 5.0F;
 
     public BlockJarBrain(BlockBehaviour.Properties properties) {
         super(properties);
@@ -59,6 +61,11 @@ public final class BlockJarBrain extends BaseEntityBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return BlockJar.SHAPE;
+    }
+
+    @Override
+    public float getEnchantPowerBonus(BlockState state, LevelReader level, BlockPos pos) {
+        return ENCHANTING_POWER_PER_JAR;
     }
 
     @Override
