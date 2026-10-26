@@ -148,12 +148,9 @@ public final class AspectTagWorldRenderer {
         double offsetX = tagScale * 2.0F * stepX;
         double offsetZ = tagScale * 2.0F * stepZ;
         if (centerHorizontally && (stepX != 0 || stepZ != 0)) {
-            // Keep the side readout in the adjacent space even while the icons animate from zero size.
-            Vec3 towardCamera = new Vec3(cam.x - (x + 0.5), 0.0, cam.z - (z + 0.5))
-                    .normalize()
-                    .scale(SIDE_READOUT_DISTANCE);
-            offsetX = towardCamera.x;
-            offsetZ = towardCamera.z;
+            // Anchor the readout to the adjacent block instead of following the camera around the reservoir.
+            offsetX = SIDE_READOUT_DISTANCE * stepX;
+            offsetZ = SIDE_READOUT_DISTANCE * stepZ;
         }
         List<AspectInstance> entries = aspects.sortedByTag();
         List<TagOffset> tagOffsets = new ArrayList<>(entries.size());

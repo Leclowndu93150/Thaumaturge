@@ -106,8 +106,9 @@ final class AspectTagWorldRendererAmountsTest {
             iris.when(() -> IrisCompat.entityEffectBuffers(buffers)).thenReturn(buffers);
             for (Vec3 cameraPos : List.of(new Vec3(4.5, 0.5, 0.5), new Vec3(4.5, 0.5, 4.5), new Vec3(-3.5, 0.5, 4.5))) {
                 when(camera.getPosition()).thenReturn(cameraPos);
-                Vec3 normal = cameraPos.subtract(0.5, 0.5, 0.5).normalize();
-                double blockExtent = 0.5 * (Math.abs(normal.x) + Math.abs(normal.z));
+                Direction side = Direction.getNearest((float) (cameraPos.x - 0.5), 0.0F, (float) (cameraPos.z - 0.5));
+                Vec3 normal = Vec3.atLowerCornerOf(side.getNormal());
+                double blockExtent = 0.5;
                 for (float scale : new float[] {0.05F, 0.15F, 0.3F}) {
                     vertices.clear();
                     amounts.clear();
@@ -118,7 +119,7 @@ final class AspectTagWorldRendererAmountsTest {
                             0.0,
                             0.0,
                             aspects,
-                            Direction.NORTH,
+                            side,
                             scale,
                             0.75F,
                             aspect -> true,
@@ -146,11 +147,8 @@ final class AspectTagWorldRendererAmountsTest {
                                     .orElseThrow()
                             + cameraPos.z
                             - 0.5;
-                    assertEquals(
-                            0.0,
-                            centerX * normal.z - centerZ * normal.x,
-                            0.00001,
-                            "The two icons must remain horizontally centered on the reservoir");
+                    assertEquals(side.getStepX(), centerX, 0.00001, "Icons must occupy the adjacent block's center X");
+                    assertEquals(side.getStepZ(), centerZ, 0.00001, "Icons must occupy the adjacent block's center Z");
                 }
             }
         }
