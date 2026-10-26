@@ -282,6 +282,8 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
         registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TTItems.THAUMONOMICON.get());
         registration.addRecipeCatalysts(InfernalFurnaceCategory.RECIPE_TYPE, TTItems.INFERNAL_FURNACE.get());
         registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TTItems.SMELTER_BASIC.get());
+        registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TTItems.SMELTER_THAUMIUM.get());
+        registration.addRecipeCatalysts(AspectFromStacksCategory.RECIPE_TYPE, TTItems.SMELTER_VOID.get());
         registration.addRecipeCatalysts(
                 AspectFromStacksCategory.RECIPE_TYPE, TTItems.ADVANCED_ALCHEMICAL_FURNACE.get());
     }
