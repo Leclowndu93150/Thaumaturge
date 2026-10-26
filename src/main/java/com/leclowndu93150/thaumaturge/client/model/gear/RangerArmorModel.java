@@ -66,9 +66,6 @@ public final class RangerArmorModel extends AbstractTTArmorModel {
         }
         PartDefinition mask = PlateHelmet.mask(helmet);
         PlateHelmet.visor(mask, VISOR, VISOR_U, VISOR_V);
-        if (captain) {
-            PlateHelmet.goggles(mask);
-        }
         return LayerDefinition.create(mesh, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
 
