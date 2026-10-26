@@ -71,10 +71,11 @@ public final class DioptraRenderer implements BlockEntityRenderer<BlockEntityDio
         dioptra.copyGrid(gridSnapshot);
 
         VertexConsumer surface = buffers.getBuffer(SURFACE_TYPE);
-        VertexConsumer walls = buffers.getBuffer(WALL_TYPE);
         PoseStack.Pose pose = poseStack.last();
         writeSurface(surface, pose, gridSnapshot, palette);
         writeSkirts(surface, pose, gridSnapshot, palette);
+
+        VertexConsumer walls = buffers.getBuffer(WALL_TYPE);
         writeWalls(walls, pose, palette);
     }
 
