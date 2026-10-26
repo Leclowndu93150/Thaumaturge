@@ -34,17 +34,12 @@ public final class AspectIngredientHelper implements IIngredientHelper<AspectIns
 
     @Override
     public Object getUid(AspectInstance ingredient, UidContext context) {
-        return getUniqueId(ingredient, context);
+        return getResourceLocation(ingredient).toString();
     }
 
     @Override
     public String getUniqueId(AspectInstance ingredient, UidContext context) {
-        return ingredient
-                .aspect()
-                .unwrapKey()
-                .map(ResourceKey::location)
-                .orElse(UNKNOWN)
-                .toString();
+        return getResourceLocation(ingredient).toString();
     }
 
     @Override

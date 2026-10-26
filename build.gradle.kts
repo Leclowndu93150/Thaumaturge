@@ -140,11 +140,15 @@ prism {
                     mustRunAfter(tasks.named("compileJava"))
                 }
                 tasks.matching {
-                    it.name in listOf("runClient", "runServer", "runGameTestServer", "runData")
+                    it.name in listOf("runClient", "runServer", "runGameTestServer", "runData", "compileTestJava", "javadoc")
                 }.configureEach {
                     dependsOn(syncDynamicTreesTreePack)
                 }
                 val removeDynamicTreesTreePackForJar = tasks.register<Delete>("removeDynamicTreesTreePackForJar") {
+                    dependsOn(syncDynamicTreesTreePack)
+                    mustRunAfter(tasks.matching {
+                        it.name in listOf("runClient", "runServer", "runGameTestServer", "runData", "compileTestJava", "javadoc")
+                    })
                     delete(layout.buildDirectory.dir("classes/java/main/trees"))
                 }
                 tasks.named<Jar>("jar") {
