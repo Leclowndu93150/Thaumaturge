@@ -294,6 +294,7 @@ class PortAndResonatorCompatibilityTest {
         when(context.getLevel()).thenReturn(level);
         when(context.getClickedPos()).thenReturn(BlockPos.ZERO);
         when(context.getClickedFace()).thenReturn(Direction.UP);
+        when(context.getClickLocation()).thenReturn(Vec3.atCenterOf(BlockPos.ZERO));
         when(context.getHand()).thenReturn(InteractionHand.MAIN_HAND);
         return context;
     }
