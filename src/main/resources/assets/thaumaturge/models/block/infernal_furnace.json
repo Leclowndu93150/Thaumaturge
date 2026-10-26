@@ -1,5 +1,6 @@
 {
   "parent": "block/block",
+  "render_type": "minecraft:cutout",
   "ambientocclusion": false,
   "textures": {
     "side": "thaumaturge:block/infernal_furnace",
