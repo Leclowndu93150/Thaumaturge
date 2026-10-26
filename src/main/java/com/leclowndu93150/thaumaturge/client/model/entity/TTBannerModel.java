@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.client.model.entity;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.EnumSet;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -235,5 +236,14 @@ public final class TTBannerModel {
     public static float clothBend(float phase, int segment) {
         float amplitude = segment == 0 ? 1.15F : 0.6F;
         return -amplitude * (1.0F - Mth.sin(phase - segment * 0.65F)) * Mth.DEG_TO_RAD;
+    }
+
+    public void translateToCloth(PoseStack poseStack, int segment) {
+        root.translateAndRotate(poseStack);
+        root.getChild("root").translateAndRotate(poseStack);
+        header.translateAndRotate(poseStack);
+        for (int i = 0; i <= segment; i++) {
+            cloth[i].translateAndRotate(poseStack);
+        }
     }
 }

@@ -25,19 +25,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Matrix4f;
+import net.minecraft.world.phys.AABB;
 
 public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBanner> {
     private static final ResourceLocation TEX_BLANK = TTIds.rl("textures/entity/banner_blank.png");
     private static final ResourceLocation TEX_CULTIST = TTIds.rl("textures/entity/banner_cultist.png");
     private static final float SWAY_PERIOD = 11.0F;
     private static final float MODEL_FLIP = 180.0F;
-    private static final int UPPER_CLOTH_SEGMENT = 0;
     private static final float WALL_FORWARD = -0.21875F;
     private static final float ASPECT_HALF_WIDTH = 0.3F;
-    private static final float ASPECT_TOP = 0.35F;
-    private static final float ASPECT_BOTTOM = 0.95F;
-    private static final float ASPECT_Z = -0.052F;
+    private static final float ASPECT_TOP = 0.3F;
+    private static final float ASPECT_BOTTOM = 0.9F;
+    private static final float ASPECT_Z = -0.001F;
+    private static final float CLOTH_SEGMENT_HEIGHT = 0.5F;
 
     private final TTBannerModel frame;
     private final TTBannerModel cloth;
@@ -45,6 +45,17 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
     public BannerRenderer(BlockEntityRendererProvider.Context context) {
         this.frame = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), false);
         this.cloth = new TTBannerModel(context.bakeLayer(TTModelLayers.TT_BANNER), true);
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(BlockEntityBanner banner) {
+        boolean onWall = banner.getBlockState().getBlock() instanceof BannerWallBlock;
+        return new AABB(banner.getBlockPos()).expandTowards(0, onWall ? -1 : 1, 0).inflate(0.25);
+    }
+
+    @Override
+    public boolean shouldRenderOffScreen(BlockEntityBanner banner) {
+        return true;
     }
 
     @Override
@@ -87,7 +98,6 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
                 + (Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.tickCount)
                 + partialTick;
         float phase = time / SWAY_PERIOD;
-        float sway = -TTBannerModel.clothBend(phase, UPPER_CLOTH_SEGMENT);
 
         ResourceLocation texture = color == -1 ? TEX_CULTIST : TEX_BLANK;
         poseStack.pushPose();
@@ -104,35 +114,42 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
         cloth.setupAnim(onWall, phase);
         frame.root.render(poseStack, cutout, light, overlay, -1);
         cloth.root.render(poseStack, cutout, light, overlay, color);
-        poseStack.popPose();
         if (aspectTexture != null) {
-            submitAspect(poseStack, buffers, sway, aspectTexture, light);
+            submitAspect(poseStack, buffers, aspectTexture, light);
         }
+        poseStack.popPose();
         poseStack.popPose();
     }
 
     private void submitAspect(
-            PoseStack poseStack, MultiBufferSource buffers, float sway, ResourceLocation aspectTexture, int light) {
-        poseStack.pushPose();
-        poseStack.translate(0.0F, -5.0F / 16.0F, 0.0F);
-        poseStack.mulPose(Axis.XP.rotation(sway));
-        VertexConsumer buffer = buffers.getBuffer(RenderType.entityTranslucent(aspectTexture));
-        Matrix4f mat = poseStack.last().pose();
+            PoseStack poseStack, MultiBufferSource buffers, ResourceLocation aspectTexture, int light) {
+        VertexConsumer buffer = buffers.getBuffer(RenderType.entityTranslucentCull(aspectTexture));
         int color = ARGB32.colorFromFloat(0.75F, 1.0F, 1.0F, 1.0F);
-        addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_TOP, 0.0F, 1.0F, color, light);
-        addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_TOP, 1.0F, 1.0F, color, light);
-        addVertex(buffer, mat, ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 1.0F, 0.0F, color, light);
-        addVertex(buffer, mat, -ASPECT_HALF_WIDTH, ASPECT_BOTTOM, 0.0F, 0.0F, color, light);
-        poseStack.popPose();
+        // The symbol crosses the upper/middle seam, so each part must follow its own cloth bend.
+        for (int segment = 0; segment < 2; segment++) {
+            float offset = segment * CLOTH_SEGMENT_HEIGHT;
+            float top = Math.max(ASPECT_TOP, offset);
+            float bottom = Math.min(ASPECT_BOTTOM, offset + CLOTH_SEGMENT_HEIGHT);
+            float vTop = (top - ASPECT_TOP) / (ASPECT_BOTTOM - ASPECT_TOP);
+            float vBottom = (bottom - ASPECT_TOP) / (ASPECT_BOTTOM - ASPECT_TOP);
+            poseStack.pushPose();
+            cloth.translateToCloth(poseStack, segment);
+            PoseStack.Pose pose = poseStack.last();
+            addVertex(buffer, pose, -ASPECT_HALF_WIDTH, top - offset, 0.0F, vTop, color, light);
+            addVertex(buffer, pose, -ASPECT_HALF_WIDTH, bottom - offset, 0.0F, vBottom, color, light);
+            addVertex(buffer, pose, ASPECT_HALF_WIDTH, bottom - offset, 1.0F, vBottom, color, light);
+            addVertex(buffer, pose, ASPECT_HALF_WIDTH, top - offset, 1.0F, vTop, color, light);
+            poseStack.popPose();
+        }
     }
 
     private static void addVertex(
-            VertexConsumer buffer, Matrix4f mat, float x, float y, float u, float v, int color, int light) {
-        buffer.addVertex(mat, x, y, ASPECT_Z)
+            VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float u, float v, int color, int light) {
+        buffer.addVertex(pose, x, y, ASPECT_Z)
                 .setUv(u, v)
                 .setColor(color)
                 .setLight(light)
-                .setNormal(0.0F, 0.0F, -1.0F)
+                .setNormal(pose, 0.0F, 0.0F, -1.0F)
                 .setOverlay(OverlayTexture.NO_OVERLAY);
     }
 }
