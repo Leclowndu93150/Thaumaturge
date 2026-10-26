@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -57,6 +58,22 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
     }
 
     @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (!oldState.is(this) || oldState.getValue(AXIS) != state.getValue(AXIS)) {
+            refreshNearby(level, pos);
+        }
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        super.onRemove(state, level, pos, newState, movedByPiston);
+        if (!newState.is(this)) {
+            refreshNearby(level, pos);
+        }
+    }
+
+    @Override
     protected BlockState rotate(BlockState state, Rotation rotation) {
         return super.rotate(state, rotation)
                 .setValue(
@@ -74,23 +91,58 @@ public final class BlockGreatwoodLog extends RotatedPillarBlock {
         if (state.getValue(AXIS) != Direction.Axis.Y) {
             return TrunkCorner.NONE;
         }
-        boolean east = isTrunk(level.getBlockState(pos.east()));
-        boolean west = isTrunk(level.getBlockState(pos.west()));
-        boolean south = isTrunk(level.getBlockState(pos.south()));
-        boolean north = isTrunk(level.getBlockState(pos.north()));
-        if (east && south) {
+        if (isSquare(level, pos, 1, 1)) {
             return TrunkCorner.NORTH_WEST;
         }
-        if (west && south) {
+        if (isSquare(level, pos, -1, 1)) {
             return TrunkCorner.NORTH_EAST;
         }
-        if (east && north) {
+        if (isSquare(level, pos, 1, -1)) {
             return TrunkCorner.SOUTH_WEST;
         }
-        if (west && north) {
+        if (isSquare(level, pos, -1, -1)) {
             return TrunkCorner.SOUTH_EAST;
         }
         return TrunkCorner.NONE;
+    }
+
+    private boolean isSquare(LevelReader level, BlockPos pos, int dx, int dz) {
+        if (!isTrunk(level.getBlockState(pos.offset(dx, 0, 0)))
+                || !isTrunk(level.getBlockState(pos.offset(0, 0, dz)))
+                || !isTrunk(level.getBlockState(pos.offset(dx, 0, dz)))) {
+            return false;
+        }
+        for (int x = 0; x <= 1; x++) {
+            for (int z = 0; z <= 1; z++) {
+                BlockPos corner = pos.offset(x * dx, 0, z * dz);
+                if (isTrunk(level.getBlockState(corner.offset((x == 0 ? -1 : 1) * dx, 0, 0)))
+                        || isTrunk(level.getBlockState(corner.offset(0, 0, (z == 0 ? -1 : 1) * dz)))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void refreshNearby(Level level, BlockPos changedPos) {
+        if (level.isClientSide) {
+            return;
+        }
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                BlockPos pos = changedPos.offset(dx, 0, dz);
+                BlockState state = level.getBlockState(pos);
+                if (state.is(this)) {
+                    TrunkCorner corner = cornerAt(level, pos, state);
+                    if (state.getValue(TrunkCorner.PROPERTY) != corner) {
+                        level.setBlock(
+                                pos,
+                                state.setValue(TrunkCorner.PROPERTY, corner),
+                                Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+                    }
+                }
+            }
+        }
     }
 
     private boolean isTrunk(BlockState state) {
