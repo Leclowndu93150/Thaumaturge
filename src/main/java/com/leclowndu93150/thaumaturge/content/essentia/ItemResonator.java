@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.EssentiaPull;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.device.BlockEntityCondenser;
 import com.leclowndu93150.thaumaturge.content.essentia.tube.BlockEntityTubeBuffer;
+import com.leclowndu93150.thaumaturge.content.essentia.tube.TubeGeometry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class ItemResonator extends Item {
@@ -49,6 +51,13 @@ public final class ItemResonator extends Item {
         Direction face = context.getClickedFace();
         if (player == null) {
             return InteractionResult.FAIL;
+        }
+        if (level.getBlockEntity(pos) instanceof BlockEntityTubeBuffer) {
+            int part = TubeGeometry.BUFFER.subHit(context.getClickLocation().subtract(Vec3.atLowerCornerOf(pos)));
+            // An arm's surface normal can point across the arm rather than along its connection.
+            if (part != TubeGeometry.CORE_HIT) {
+                face = Direction.from3DDataValue(part);
+            }
         }
         IEssentiaConduit conduit = EssentiaAccess.conduit(level, pos, face);
         if (conduit == null) {
