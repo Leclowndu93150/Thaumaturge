@@ -88,6 +88,17 @@ public final class CommandTextEn {
         add.accept("commands.thaumaturge.tools.aspect.all", "Granted %s research points to all %s aspects");
         add.accept("commands.thaumaturge.tools.aspect.one", "Granted %s research points of %s");
         add.accept("commands.thaumaturge.tools.jar.given", "Gave a jar containing %s essentia of %s");
+        add.accept(
+                "commands.thaumaturge.tools.reservoir.usage",
+                "Usage: /tt reservoir <aspect> <amount> [<aspect> <amount> ...]");
+        add.accept("commands.thaumaturge.tools.reservoir.pairs", "Provide one or more aspect and amount pairs");
+        add.accept("commands.thaumaturge.tools.reservoir.bad_amount", "Amounts must be positive whole numbers: %s");
+        add.accept(
+                "commands.thaumaturge.tools.reservoir.capacity",
+                "Total amount cannot exceed the reservoir capacity of %s");
+        add.accept(
+                "commands.thaumaturge.tools.reservoir.given",
+                "Gave a reservoir containing %s essentia across %s aspect types");
         add.accept("commands.thaumaturge.tools.warp.info", "Warp: permanent %s, normal %s, temporary %s, counter %s");
         add.accept("commands.thaumaturge.tools.warp.unknown_type", "Unknown warp type: %s");
         add.accept("commands.thaumaturge.tools.warp.added", "Added %s %s warp");
@@ -148,6 +159,7 @@ public final class CommandTextEn {
                 "commands.thaumaturge.tools.node.pairs",
                 "Aspects must come in pairs: <aspect> <amount> [<aspect> <amount> ...]");
         add.accept("commands.thaumaturge.tools.node.bad_amount", "Amounts must be positive whole numbers: %s");
+        add.accept("commands.thaumaturge.tools.node.capacity", "Total aspect amount is too large: %s");
         add.accept("commands.thaumaturge.tools.link.removed", "Removed %s research links");
         add.accept("commands.thaumaturge.tools.unknown_spell_part", "Unknown spell part: %s");
     }

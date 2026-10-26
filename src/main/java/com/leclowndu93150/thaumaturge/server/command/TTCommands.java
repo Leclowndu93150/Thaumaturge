@@ -32,6 +32,7 @@ import com.leclowndu93150.thaumaturge.content.effect.StreamPathfinder;
 import com.leclowndu93150.thaumaturge.content.entity.EntityFluxRift;
 import com.leclowndu93150.thaumaturge.content.entity.ThaumicSlime;
 import com.leclowndu93150.thaumaturge.content.entity.champion.ChampionHelper;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.research.ResearchGrants;
 import com.leclowndu93150.thaumaturge.content.research.ResearchManager;
 import com.leclowndu93150.thaumaturge.content.research.ResearchProgression;
@@ -43,6 +44,8 @@ import com.leclowndu93150.thaumaturge.content.taint.item.EssentiaCrystalFactory;
 import com.leclowndu93150.thaumaturge.content.warp.WarpEvents;
 import com.leclowndu93150.thaumaturge.data.worldgen.feature.TTConfiguredFeatures;
 import com.leclowndu93150.thaumaturge.registry.TTAttachments;
+import com.leclowndu93150.thaumaturge.registry.TTBlockEntities;
+import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import com.leclowndu93150.thaumaturge.registry.TTDataComponents;
 import com.leclowndu93150.thaumaturge.registry.TTEntities;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
@@ -75,6 +78,7 @@ import net.minecraft.commands.arguments.ResourceKeyArgument;
 import net.minecraft.commands.arguments.coordinates.Vec3Argument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -92,6 +96,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -316,6 +321,10 @@ public final class TTCommands {
                                         .executes(guarded(
                                                 "jar",
                                                 ctx -> giveJar(ctx, IntegerArgumentType.getInteger(ctx, "amount")))))))
+                .then(admin("reservoir")
+                        .executes(bySource("reservoir", source -> failure(source, "reservoir.usage")))
+                        .then(Commands.argument("aspects", StringArgumentType.greedyString())
+                                .executes(guarded("reservoir", TTCommands::giveReservoir))))
                 .then(admin("node")
                         .executes(guarded("node", ctx -> spawnNode(ctx, RANDOM, NO_MODIFIER, "")))
                         .then(Commands.argument("type", StringArgumentType.word())
@@ -474,6 +483,36 @@ public final class TTCommands {
             player.drop(jar, false);
         }
         success(ctx.getSource(), "jar.given", amount, key.location().toString());
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int giveReservoir(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        HolderLookup.RegistryLookup<IAspect> aspects = player.registryAccess().lookupOrThrow(IAspect.REGISTRY_KEY);
+        AspectList contents = parseAspectPairs(
+                ctx.getSource(),
+                aspects,
+                StringArgumentType.getString(ctx, "aspects"),
+                "reservoir",
+                BlockEntityEssentiaReservoir.CAPACITY);
+        if (contents == null) {
+            return 0;
+        }
+
+        BlockEntityEssentiaReservoir reservoir = new BlockEntityEssentiaReservoir(
+                BlockPos.ZERO, TTBlocks.ESSENTIA_RESERVOIR.get().defaultBlockState());
+        for (AspectInstance entry : contents.entries()) {
+            reservoir.insert(entry.aspect(), entry.amount(), Direction.DOWN, false);
+        }
+        ItemStack stack = new ItemStack(TTBlocks.ESSENTIA_RESERVOIR.get());
+        BlockItem.setBlockEntityData(
+                stack,
+                TTBlockEntities.ESSENTIA_RESERVOIR.get(),
+                reservoir.saveWithoutMetadata(player.registryAccess()));
+        if (!player.getInventory().add(stack)) {
+            player.drop(stack, false);
+        }
+        success(ctx.getSource(), "reservoir.given", contents.totalAmount(), contents.size());
         return Command.SINGLE_SUCCESS;
     }
 
@@ -953,9 +992,18 @@ public final class TTCommands {
 
     private static @Nullable AspectList parseNodeAspects(
             CommandSourceStack source, HolderLookup.RegistryLookup<IAspect> aspects, String spec) {
+        return parseAspectPairs(source, aspects, spec, "node", Integer.MAX_VALUE);
+    }
+
+    private static @Nullable AspectList parseAspectPairs(
+            CommandSourceStack source,
+            HolderLookup.RegistryLookup<IAspect> aspects,
+            String spec,
+            String command,
+            int maximumTotal) {
         String[] tokens = spec.trim().split("\\s+");
-        if (tokens.length % 2 != 0) {
-            failure(source, "node.pairs");
+        if (tokens.length == 0 || tokens[0].isEmpty() || tokens.length % 2 != 0) {
+            failure(source, command + ".pairs");
             return null;
         }
         AspectList list = AspectList.EMPTY;
@@ -974,11 +1022,15 @@ public final class TTCommands {
             try {
                 amount = Integer.parseInt(tokens[i + 1]);
             } catch (NumberFormatException e) {
-                failure(source, "node.bad_amount", tokens[i + 1]);
+                failure(source, command + ".bad_amount", tokens[i + 1]);
                 return null;
             }
             if (amount < 1) {
-                failure(source, "node.bad_amount", tokens[i + 1]);
+                failure(source, command + ".bad_amount", tokens[i + 1]);
+                return null;
+            }
+            if (amount > maximumTotal - list.totalAmount()) {
+                failure(source, command + ".capacity", maximumTotal);
                 return null;
             }
             list = list.add(holder, amount);
