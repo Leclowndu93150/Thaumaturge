@@ -20,7 +20,7 @@
               "function": "minecraft:explosion_decay"
             }
           ],
-          "name": "thaumaturge:log_greatwood"
+          "name": "thaumaturge:log_silverwood"
         }
       ],
       "rolls": 1.0
@@ -44,5 +44,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "thaumaturge:trees/branches/greatwood"
+  "random_sequence": "thaumaturge:trees/branches/silverwood_branch"
 }
