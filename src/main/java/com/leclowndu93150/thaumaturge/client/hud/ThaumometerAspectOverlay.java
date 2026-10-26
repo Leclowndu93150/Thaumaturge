@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.api.research.scan.ScanningManager;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aspect.EntityAspects;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
+import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.research.pool.AspectPools;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanRaycastHelper;
@@ -102,6 +103,31 @@ public final class ThaumometerAspectOverlay {
                     Direction.UP);
             return;
         }
+        if (mc.level.getBlockEntity(pos) instanceof BlockEntityEssentiaReservoir reservoir) {
+            AspectList stored = scannedAspects(
+                    mc.player,
+                    reservoir.contents(),
+                    ScanKeys.item(reservoir.getBlockState().getBlock().asItem()));
+            if (stored.isEmpty()) {
+                resetAnimation();
+                return;
+            }
+            advanceAnimation(pos.immutable());
+            Direction dir = mc.level.getBlockState(pos.above()).isAir() && mc.player.getEyeY() > pos.getY() + 1.0
+                    ? Direction.UP
+                    : hit.getDirection();
+            drawTags(
+                    event.getPoseStack(),
+                    mc,
+                    pos.getX(),
+                    pos.getY() + dir.getStepY() / 2.0,
+                    pos.getZ(),
+                    stored,
+                    dir,
+                    1.2F,
+                    true);
+            return;
+        }
         ItemStack pick = ScanningManager.stackOf(mc.player, ScanTarget.block(pos));
         if (pick.isEmpty()) {
             resetAnimation();
@@ -156,6 +182,19 @@ public final class ThaumometerAspectOverlay {
 
     private static void drawTags(
             PoseStack poseStack, Minecraft mc, double x, double y, double z, AspectList aspects, Direction dir) {
+        drawTags(poseStack, mc, x, y, z, aspects, dir, tagScale * 4.0F, false);
+    }
+
+    private static void drawTags(
+            PoseStack poseStack,
+            Minecraft mc,
+            double x,
+            double y,
+            double z,
+            AspectList aspects,
+            Direction dir,
+            float columnSpacing,
+            boolean centerHorizontally) {
         Player player = mc.player;
         AspectTagWorldRenderer.renderTagCloud(
                 poseStack,
@@ -167,6 +206,10 @@ public final class ThaumometerAspectOverlay {
                 dir,
                 tagScale,
                 TAG_ALPHA,
-                aspect -> player != null && AspectPools.isDiscovered(player, aspect));
+                aspect -> player != null && AspectPools.isDiscovered(player, aspect),
+                true,
+                0.0F,
+                columnSpacing,
+                centerHorizontally);
     }
 }

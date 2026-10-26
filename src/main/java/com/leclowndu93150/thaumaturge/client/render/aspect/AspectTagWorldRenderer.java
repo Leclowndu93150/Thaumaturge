@@ -33,6 +33,7 @@ public final class AspectTagWorldRenderer {
     private static final float HALF_QUAD = 0.5F;
     private static final int ROW_SIZE = 5;
     private static final float ROW_SPACING = 1.05F;
+    private static final double SIDE_READOUT_DISTANCE = 1.0D;
     private static final float TEXT_SCALE = 0.04F;
     private static final int TEXT_SHADOW_COLOR = 0xFF111111;
     private static final int TEXT_COLOR = 0xFFFFFFFF;
@@ -96,6 +97,38 @@ public final class AspectTagWorldRenderer {
             Predicate<Holder<IAspect>> discovered,
             boolean showAmounts,
             float iconOffsetY) {
+        renderTagCloud(
+                poseStack,
+                mc,
+                x,
+                y,
+                z,
+                aspects,
+                dir,
+                tagScale,
+                alpha,
+                discovered,
+                showAmounts,
+                iconOffsetY,
+                tagScale * 4.0F,
+                false);
+    }
+
+    public static void renderTagCloud(
+            PoseStack poseStack,
+            Minecraft mc,
+            double x,
+            double y,
+            double z,
+            AspectList aspects,
+            @Nullable Direction dir,
+            float tagScale,
+            float alpha,
+            Predicate<Holder<IAspect>> discovered,
+            boolean showAmounts,
+            float iconOffsetY,
+            float columnSpacing,
+            boolean centerHorizontally) {
         Camera camera = mc.gameRenderer.getMainCamera();
         Vec3 cam = camera.getPosition();
         MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
@@ -111,6 +144,16 @@ public final class AspectTagWorldRenderer {
         } else {
             x -= 0.5;
             z -= 0.5;
+        }
+        double offsetX = tagScale * 2.0F * stepX;
+        double offsetZ = tagScale * 2.0F * stepZ;
+        if (centerHorizontally && (stepX != 0 || stepZ != 0)) {
+            // Keep the side readout in the adjacent space even while the icons animate from zero size.
+            Vec3 towardCamera = new Vec3(cam.x - (x + 0.5), 0.0, cam.z - (z + 0.5))
+                    .normalize()
+                    .scale(SIDE_READOUT_DISTANCE);
+            offsetX = towardCamera.x;
+            offsetZ = towardCamera.z;
         }
         List<AspectInstance> entries = aspects.sortedByTag();
         List<TagOffset> tagOffsets = new ArrayList<>(entries.size());
@@ -128,15 +171,12 @@ public final class AspectTagWorldRenderer {
                     div = left % ROW_SIZE;
                 }
             }
-            float shift = (current - div / 2.0F + 0.5F) * tagScale * 4.0F;
-            shift *= tagScale;
+            float shift = (current - div / 2.0F + 0.5F) * tagScale * columnSpacing;
             tagOffsets.add(new TagOffset(shift, rowShift));
 
             poseStack.pushPose();
             poseStack.translate(
-                    x + 0.5 + tagScale * 2.0F * stepX - cam.x,
-                    y + 0.5 + tagScale * 2.0F * stepY - cam.y,
-                    z + 0.5 + tagScale * 2.0F * stepZ - cam.z);
+                    x + 0.5 + offsetX - cam.x, y + 0.5 + tagScale * 2.0F * stepY - cam.y, z + 0.5 + offsetZ - cam.z);
             poseStack.mulPose(Axis.YP.rotationDegrees(yawDeg + 180.0F));
             poseStack.scale(-1.0F, 1.0F, 1.0F);
             poseStack.translate(shift, rowShift, 0.0);
@@ -168,9 +208,9 @@ public final class AspectTagWorldRenderer {
                 int width = font.width(amount);
                 poseStack.pushPose();
                 poseStack.translate(
-                        x + 0.5 + tagScale * 2.0F * stepX - cam.x,
+                        x + 0.5 + offsetX - cam.x,
                         y + 0.5 + tagScale * 2.0F * stepY - cam.y,
-                        z + 0.5 + tagScale * 2.0F * stepZ - cam.z);
+                        z + 0.5 + offsetZ - cam.z);
                 poseStack.mulPose(Axis.YP.rotationDegrees(yawDeg + 180.0F));
                 poseStack.scale(-1.0F, 1.0F, 1.0F);
                 poseStack.translate(offset.x(), offset.y(), 0.0F);

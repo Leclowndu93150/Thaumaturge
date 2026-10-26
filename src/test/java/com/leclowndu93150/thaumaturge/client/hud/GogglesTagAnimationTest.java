@@ -25,11 +25,11 @@ final class GogglesTagAnimationTest {
 
         assertEquals(0.0F, GogglesWorldOverlay.advanceAnimation(target, 100.0D), 0.000001F);
         assertEquals(0.0F, GogglesWorldOverlay.advanceAnimation(target, 100.0D), 0.000001F);
-        assertEquals(0.4375F, GogglesWorldOverlay.advanceAnimation(target, 105.0D), 0.000001F);
+        assertEquals(0.2625F, GogglesWorldOverlay.advanceAnimation(target, 105.0D), 0.000001F);
         assertEquals(
-                0.5F * (1.0F - 0.45F * 0.45F * 0.45F), GogglesWorldOverlay.advanceAnimation(target, 105.5D), 0.000001F);
-        assertEquals(0.5F, GogglesWorldOverlay.advanceAnimation(target, 110.0D), 0.000001F);
-        assertEquals(0.5F, GogglesWorldOverlay.advanceAnimation(target, 112.0D), 0.000001F);
+                0.3F * (1.0F - 0.45F * 0.45F * 0.45F), GogglesWorldOverlay.advanceAnimation(target, 105.5D), 0.000001F);
+        assertEquals(0.3F, GogglesWorldOverlay.advanceAnimation(target, 110.0D), 0.000001F);
+        assertEquals(0.3F, GogglesWorldOverlay.advanceAnimation(target, 112.0D), 0.000001F);
     }
 
     @Test
@@ -39,7 +39,7 @@ final class GogglesTagAnimationTest {
 
         GogglesWorldOverlay.advanceAnimation(firstTarget, 100.0D);
         assertEquals(0.0F, GogglesWorldOverlay.advanceAnimation(secondTarget, 105.0D), 0.000001F);
-        assertEquals(0.4375F, GogglesWorldOverlay.advanceAnimation(secondTarget, 110.0D), 0.000001F);
+        assertEquals(0.2625F, GogglesWorldOverlay.advanceAnimation(secondTarget, 110.0D), 0.000001F);
 
         resetOverlayAnimation();
         assertEquals(0.0F, GogglesWorldOverlay.advanceAnimation(secondTarget, 200.0D), 0.000001F);
