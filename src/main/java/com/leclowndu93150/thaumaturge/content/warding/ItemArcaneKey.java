@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public final class ItemArcaneKey extends Item {
     public ItemArcaneKey(Properties properties) {
-        super(properties.stacksTo(1));
+        super(properties);
     }
 
     @Override
