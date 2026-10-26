@@ -24,6 +24,7 @@ import org.jspecify.annotations.Nullable;
 public final class BannerStandingBlock extends AbstractBannerBlock {
     public static final IntegerProperty ROTATION = BlockStateProperties.ROTATION_16;
     private static final VoxelShape SHAPE = Block.box(5.28, 0.0, 5.28, 10.56, 32.0, 10.56);
+    private static final double POLE_OFFSET = 3.0 / 16.0;
 
     public BannerStandingBlock(@Nullable DyeColor dye, Properties properties) {
         super(dye, properties);
@@ -54,7 +55,8 @@ public final class BannerStandingBlock extends AbstractBannerBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        double angle = Math.toRadians(RotationSegment.convertToDegrees(state.getValue(ROTATION)));
+        return SHAPE.move(Math.sin(angle) * POLE_OFFSET, 0.0, -Math.cos(angle) * POLE_OFFSET);
     }
 
     @Override
