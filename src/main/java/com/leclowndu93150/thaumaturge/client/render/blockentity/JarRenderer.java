@@ -33,8 +33,8 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
     public static final Material ANIMATED_GLOW_MATERIAL =
             new Material(TextureAtlas.LOCATION_BLOCKS, ANIMATED_GLOW_LOCATION);
 
-    public static final float FLUID_MIN = 4.5F / 16.0F;
-    public static final float FLUID_MAX = 11.5F / 16.0F;
+    public static final float FLUID_MIN = 4.0F / 16.0F;
+    public static final float FLUID_MAX = 12.0F / 16.0F;
     public static final float FLUID_BASE_Y = 1.0F / 16.0F;
     public static final float FLUID_MAX_HEIGHT = 10.5F / 16.0F;
 
