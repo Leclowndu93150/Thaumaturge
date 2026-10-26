@@ -165,7 +165,8 @@ final class JadeMachineDetails {
 
     static void furnace(BlockEntityInfernalFurnace machine, JadeDetailBuilder data) {
         data.title(Component.translatable("block.thaumaturge.infernal_furnace"));
-        progress(data, machine.furnaceCookTime, machine.furnaceMaxCookTime);
+        int completed = machine.furnaceCookTime > 0 ? machine.furnaceMaxCookTime - machine.furnaceCookTime : 0;
+        progress(data, completed, machine.furnaceMaxCookTime);
         int stored = 0;
         for (int i = 0; i < machine.inventory().getSlots(); i++)
             stored += machine.inventory().getStackInSlot(i).getCount();
