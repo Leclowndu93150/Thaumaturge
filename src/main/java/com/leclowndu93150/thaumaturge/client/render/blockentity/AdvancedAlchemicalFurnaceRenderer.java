@@ -326,8 +326,13 @@ public final class AdvancedAlchemicalFurnaceRenderer
             }
             // Sample just outside each surface, rather than inside the enclosed controller cell.
             center.fma(NORMAL_OFFSET, normal);
-            int light =
-                    LevelRenderer.getLightColor(furnace.getLevel(), BlockPos.containing(center.x, center.y, center.z));
+            BlockPos lightPos = BlockPos.containing(center.x, center.y, center.z);
+            if (normal.y > 0.5F
+                    && lightPos.equals(origin.above())
+                    && furnace.getLevel().getBlockState(lightPos).isSolidRender(furnace.getLevel(), lightPos)) {
+                lightPos = lightPos.above();
+            }
+            int light = LevelRenderer.getLightColor(furnace.getLevel(), lightPos);
             for (int corner = 0; corner < 4; corner++) {
                 int vertex = quad * 4 + corner;
                 int index = vertex * 3;
