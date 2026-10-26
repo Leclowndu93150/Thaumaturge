@@ -1,8 +1,8 @@
 package com.leclowndu93150.thaumaturge.content.device;
 
-import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -113,7 +113,9 @@ public final class BlockItemGrate extends BaseEntityBlock {
 
     private static void playToggleSound(Level level, BlockPos pos, boolean open) {
         if (!level.isClientSide()) {
-            level.playSound(null, pos, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, open ? 1.0F : 0.9F);
+            level.playSound(
+                    null, pos, open ? SoundEvents.IRON_TRAPDOOR_OPEN : SoundEvents.IRON_TRAPDOOR_CLOSE,
+                    SoundSource.BLOCKS, 1.0F, 1.0F);
         }
     }
 

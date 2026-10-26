@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
-import com.leclowndu93150.thaumaturge.registry.TTSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -114,15 +114,15 @@ class ItemGrateTest {
         BlockItemGrate block = TTBlocks.ITEM_GRATE.get();
         BlockState closed = block.defaultBlockState();
         block.useWithoutItem(closed, level, BlockPos.ZERO, null, null);
-        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        verify(level).playSound(null, BlockPos.ZERO, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
         clearInvocations(level);
         BlockState open = closed.setValue(BlockItemGrate.OPEN, true);
         block.useWithoutItem(open, level, BlockPos.ZERO, null, null);
-        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 0.9F);
+        verify(level).playSound(null, BlockPos.ZERO, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
         clearInvocations(level);
         when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(true);
         block.neighborChanged(closed, level, BlockPos.ZERO, block, BlockPos.ZERO, false);
-        verify(level).playSound(null, BlockPos.ZERO, TTSounds.CREAK.get(), SoundSource.BLOCKS, 0.5F, 1.0F);
+        verify(level).playSound(null, BlockPos.ZERO, SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
         clearInvocations(level);
         block.neighborChanged(open, level, BlockPos.ZERO, block, BlockPos.ZERO, false);
         verify(level, never())
@@ -133,5 +133,9 @@ class ItemGrateTest {
                         any(),
                         anyFloat(),
                         anyFloat());
+        clearInvocations(level);
+        when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(false);
+        block.neighborChanged(open.setValue(BlockItemGrate.POWERED, true), level, BlockPos.ZERO, block, BlockPos.ZERO, false);
+        verify(level).playSound(null, BlockPos.ZERO, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 }
