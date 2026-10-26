@@ -50,7 +50,9 @@ public final class BannerRenderer implements BlockEntityRenderer<BlockEntityBann
     @Override
     public AABB getRenderBoundingBox(BlockEntityBanner banner) {
         boolean onWall = banner.getBlockState().getBlock() instanceof BannerWallBlock;
-        return new AABB(banner.getBlockPos()).expandTowards(0, onWall ? -1 : 1, 0).inflate(0.25);
+        return new AABB(banner.getBlockPos())
+                .expandTowards(0, onWall ? -1 : 1, 0)
+                .inflate(0.25);
     }
 
     @Override

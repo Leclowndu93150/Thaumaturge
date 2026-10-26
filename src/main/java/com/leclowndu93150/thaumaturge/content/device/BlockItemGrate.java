@@ -114,8 +114,12 @@ public final class BlockItemGrate extends BaseEntityBlock {
     private static void playToggleSound(Level level, BlockPos pos, boolean open) {
         if (!level.isClientSide()) {
             level.playSound(
-                    null, pos, open ? SoundEvents.IRON_TRAPDOOR_OPEN : SoundEvents.IRON_TRAPDOOR_CLOSE,
-                    SoundSource.BLOCKS, 1.0F, 1.0F);
+                    null,
+                    pos,
+                    open ? SoundEvents.IRON_TRAPDOOR_OPEN : SoundEvents.IRON_TRAPDOOR_CLOSE,
+                    SoundSource.BLOCKS,
+                    1.0F,
+                    1.0F);
         }
     }
 

@@ -135,7 +135,8 @@ class ItemGrateTest {
                         anyFloat());
         clearInvocations(level);
         when(level.hasNeighborSignal(BlockPos.ZERO)).thenReturn(false);
-        block.neighborChanged(open.setValue(BlockItemGrate.POWERED, true), level, BlockPos.ZERO, block, BlockPos.ZERO, false);
+        block.neighborChanged(
+                open.setValue(BlockItemGrate.POWERED, true), level, BlockPos.ZERO, block, BlockPos.ZERO, false);
         verify(level).playSound(null, BlockPos.ZERO, SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 }
