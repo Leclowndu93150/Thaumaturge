@@ -22,8 +22,17 @@ public abstract class AbstractTTArmorModel extends HumanoidModel<LivingEntity> {
             float ageInTicks,
             float netHeadYaw,
             float headPitch) {
-        root.getAllParts().forEach(ModelPart::resetPose);
-        super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        // Preserve the wearer's pose while resetting the armor's animated parts.
+        root.getAllParts()
+                .filter(part -> part != root
+                        && part != head
+                        && part != hat
+                        && part != body
+                        && part != leftArm
+                        && part != rightArm
+                        && part != leftLeg
+                        && part != rightLeg)
+                .forEach(ModelPart::resetPose);
         if (entity instanceof ArmorStand stand) {
             setRotation(head, stand.getHeadPose());
             setRotation(body, stand.getBodyPose());
