@@ -80,15 +80,10 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         ISubtypeInterpreter<ItemStack> aspectsInterpreter =
                 new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectsSubtype);
-        ISubtypeInterpreter<ItemStack> essentiaInterpreter =
-                new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::essentiaSubtype);
         ISubtypeInterpreter<ItemStack> filterInterpreter =
                 new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::aspectFilterSubtype);
         ISubtypeInterpreter<ItemStack> crystalAspectInterpreter =
                 new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::crystalAspectSubtype);
-        registration.registerSubtypeInterpreter(TTItems.JAR_NORMAL.get(), essentiaInterpreter);
-        registration.registerSubtypeInterpreter(TTItems.JAR_VOID.get(), essentiaInterpreter);
-        registration.registerSubtypeInterpreter(TTItems.JAR_CREATIVE.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TTItems.LABEL.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.TUBE_FILTER.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.SALIS_MUNDUS.get(), aspectsInterpreter);
@@ -485,11 +480,6 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
             return "";
         }
         return list.toString();
-    }
-
-    private static String essentiaSubtype(ItemStack stack, UidContext context) {
-        var contents = stack.get(TTDataComponents.ESSENTIA_CONTENTS.get());
-        return contents == null ? "" : contents.toString();
     }
 
     private static String aspectFilterSubtype(ItemStack stack, UidContext context) {
