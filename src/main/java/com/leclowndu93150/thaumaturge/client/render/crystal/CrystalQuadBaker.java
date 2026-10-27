@@ -14,6 +14,6 @@ public final class CrystalQuadBaker {
 
     public static void bakePart(
             TTMeshPart part, TextureAtlasSprite sprite, int tintIndex, Matrix4f transform, List<BakedQuad> output) {
-        TTMeshQuadBaker.bakePart(part, sprite, tintIndex, transform, false, false, FULLBRIGHT, FULLBRIGHT, output);
+        TTMeshQuadBaker.bakePart(part, sprite, tintIndex, transform, false, false, FULLBRIGHT, 0, output);
     }
 }
