@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.compat.jei.drawables;
 
+import com.leclowndu93150.thaumaturge.client.render.GuiBlend;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -77,6 +78,6 @@ public class AlphaDrawable implements IDrawableStatic {
         int v = this.v + maskTop;
         int width = this.width - maskRight - maskLeft;
         int height = this.height - maskBottom - maskTop;
-        guiGraphics.blit(identifier, x, y, u, v, width, height, 512, 512);
+        GuiBlend.withAlphaBlend(guiGraphics, () -> guiGraphics.blit(identifier, x, y, u, v, width, height, 512, 512));
     }
 }
