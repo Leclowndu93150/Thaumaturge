@@ -144,7 +144,7 @@ public final class ScanEntryBootstrap {
                 "f_matbrass",
                 "f_matbrass",
                 blocks(blockReg, TTBlocks.METAL_BRASS_BLOCK.get()),
-                items(itemReg, TTItems.INGOT_BRASS.get()),
+                itemReg.getOrThrow(TTItemTags.INGOTS_BRASS),
                 null);
         register(
                 ctx,
