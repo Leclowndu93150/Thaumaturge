@@ -246,6 +246,7 @@ public final class TTEnglishProvider extends LanguageProvider {
         add("block.thaumaturge.smelter_vent", "Auxiliary Venting Port");
         add("block.thaumaturge.jar_normal", "Warded Jar");
         add("block.thaumaturge.jar_void", "Void Jar");
+        add("block.thaumaturge.jar_creative", "Creative Jar");
         add("item.thaumaturge.thaumonomicon", "Thaumonomicon");
         add("item.thaumaturge.thaumonomicon_cheat", "Cheater's Thaumonomicon");
         add("item.thaumaturge.thaumonomicon_sharing", "Thaumonomicon of Sharing");

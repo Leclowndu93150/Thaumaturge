@@ -194,6 +194,7 @@ public final class TTModelProvider implements DataProvider {
         registerInvisibleBlock(TTBlocks.NODE.get());
         registerJar(TTBlocks.JAR_NORMAL.get(), "jar_normal");
         registerJar(TTBlocks.JAR_VOID.get(), "jar_void");
+        registerJar(TTBlocks.JAR_CREATIVE.get(), "jar_normal");
         registerJarBrain();
         registerAuraDevices(blockModels);
         registerNoiseDevices();

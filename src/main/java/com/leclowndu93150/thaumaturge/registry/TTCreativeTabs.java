@@ -122,6 +122,7 @@ public final class TTCreativeTabs {
                         output.accept(TTItems.JAR_BRACE.get());
                         output.accept(TTItems.JAR_NORMAL.get());
                         output.accept(TTItems.JAR_VOID.get());
+                        output.accept(TTItems.JAR_CREATIVE.get());
                         output.accept(TTItems.JAR_BRAIN.get());
                         output.accept(TTItems.JAR_NODE.get());
                         output.accept(TTItems.TUBE.get());

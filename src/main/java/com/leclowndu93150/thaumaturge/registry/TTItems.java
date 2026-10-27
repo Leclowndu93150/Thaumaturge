@@ -43,6 +43,7 @@ import com.leclowndu93150.thaumaturge.content.equipment.hover.ThaumostaticHarnes
 import com.leclowndu93150.thaumaturge.content.equipment.shield.ThaumicShieldItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvancedAlchemicalFurnace;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.CreativeJarItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
@@ -146,6 +147,9 @@ public final class TTItems {
     public static final DeferredItem<BlockItem> JAR_NORMAL = registerSimpleBlockItem(TTBlocks.JAR_NORMAL, JarItem::new);
 
     public static final DeferredItem<BlockItem> JAR_VOID = registerSimpleBlockItem(TTBlocks.JAR_VOID, JarItem::new);
+
+    public static final DeferredItem<BlockItem> JAR_CREATIVE =
+            registerSimpleBlockItem(TTBlocks.JAR_CREATIVE, CreativeJarItem::new);
 
     public static final DeferredItem<BlockItem> TUBE = ITEMS.registerSimpleBlockItem(TTBlocks.TUBE);
 

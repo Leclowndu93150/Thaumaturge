@@ -88,6 +88,7 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
                 new StringSubtypeInterpreter(ThaumaturgeJEIPlugin::crystalAspectSubtype);
         registration.registerSubtypeInterpreter(TTItems.JAR_NORMAL.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TTItems.JAR_VOID.get(), essentiaInterpreter);
+        registration.registerSubtypeInterpreter(TTItems.JAR_CREATIVE.get(), essentiaInterpreter);
         registration.registerSubtypeInterpreter(TTItems.LABEL.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.TUBE_FILTER.get(), filterInterpreter);
         registration.registerSubtypeInterpreter(TTItems.SALIS_MUNDUS.get(), aspectsInterpreter);

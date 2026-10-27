@@ -23,6 +23,10 @@ public interface SingleAspectEssentiaHost {
 
     boolean releasesOn(Direction face);
 
+    default boolean hasInfiniteEssentia() {
+        return false;
+    }
+
     int storageInsertLimit(int requested);
 
     void setStorageContents(@Nullable ResourceKey<IAspect> aspect, int amount);

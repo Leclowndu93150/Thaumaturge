@@ -81,7 +81,7 @@ public final class SingleAspectStorage {
             ResourceKey<IAspect> previous = host.aspectKey();
             if (stored > 0 || !Objects.equals(previous, key) || voided > 0) {
                 journal.updateSnapshots(transaction);
-                host.setStorageContents(key, current + stored);
+                host.setStorageContents(key, host.hasInfiniteEssentia() ? host.capacity() : current + stored);
                 deferredVoided += voided;
             }
             return accepted;
@@ -107,6 +107,9 @@ public final class SingleAspectStorage {
             int current = host.amount();
             if (amount <= 0 || key == null || current <= 0 || !host.releasesOn(side) || !key.equals(host.aspectKey())) {
                 return 0;
+            }
+            if (host.hasInfiniteEssentia()) {
+                return amount;
             }
             int taken = Math.min(amount, current);
             int left = current - taken;

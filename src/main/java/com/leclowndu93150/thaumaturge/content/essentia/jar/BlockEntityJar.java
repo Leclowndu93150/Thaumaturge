@@ -67,6 +67,23 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
         return getBlockState().getBlock() instanceof IEssentiaJar jar ? jar.jarCapacity() : CAPACITY;
     }
 
+    public boolean isCreativeJar() {
+        return getBlockState().getBlock() instanceof BlockJarCreative;
+    }
+
+    public void setCreativeAspect(ResourceKey<IAspect> newAspect) {
+        if (!isCreativeJar()) {
+            return;
+        }
+        boolean changed = !newAspect.equals(aspect) || amount != capacity();
+        aspect = newAspect;
+        amount = capacity();
+        if (changed) {
+            storage.markChanged();
+            setChangedAndSync();
+        }
+    }
+
     @Override
     public @Nullable ResourceKey<IAspect> aspectKey() {
         return aspect;
@@ -101,13 +118,16 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     public void clearAspectIfEmpty() {
-        if (amount <= 0 && aspectFilter == null) {
+        if (!isCreativeJar() && amount <= 0 && aspectFilter == null) {
             aspect = null;
             setChangedAndSync();
         }
     }
 
     public void emptyJar() {
+        if (isCreativeJar()) {
+            return;
+        }
         if (amount > 0) {
             if (level != null && !level.isClientSide() && aspectFilter == null) {
                 AuraHelper.addFlux(level, worldPosition, amount);
@@ -131,6 +151,9 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     protected void clearAspect() {
+        if (isCreativeJar()) {
+            return;
+        }
         if (amount > 0) {
             storage.markChanged();
         }
@@ -184,6 +207,9 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     protected int acceptable(ResourceKey<IAspect> key, int requested) {
+        if (isCreativeJar()) {
+            return requested > 0 && !refuses(key) ? requested : 0;
+        }
         if (requested <= 0 || refuses(key)) {
             return 0;
         }
@@ -197,6 +223,10 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
         if (refuses(key)) {
             return requested;
         }
+        if (isCreativeJar()) {
+            setCreativeAspect(key);
+            return 0;
+        }
         int stored = Math.max(0, Math.min(requested, capacity() - amount));
         aspect = key;
         amount += stored;
@@ -208,6 +238,9 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
     }
 
     protected boolean doTakeFromContainer(ResourceKey<IAspect> key, int requested) {
+        if (isCreativeJar()) {
+            return requested > 0 && key.equals(aspect);
+        }
         if (amount < requested || !key.equals(aspect)) {
             return false;
         }
@@ -232,6 +265,11 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
     @Override
     public int storageInsertLimit(int requested) {
         return Math.max(0, Math.min(requested, capacity() - amount));
+    }
+
+    @Override
+    public boolean hasInfiniteEssentia() {
+        return isCreativeJar();
     }
 
     @Override
@@ -312,6 +350,9 @@ public class BlockEntityJar extends AbstractSyncedBlockEntity
         Optional<ResourceKey<IAspect>> key = taken.unwrapKey();
         if (key.isEmpty()) {
             return 0;
+        }
+        if (isCreativeJar()) {
+            return key.get().equals(aspect) ? requested : 0;
         }
         if (simulate) {
             return amount >= requested && key.get().equals(aspect) ? requested : 0;
