@@ -32,7 +32,7 @@ public final class TTItemRenderExtensions {
 
     @SubscribeEvent
     public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
-        register(event, JarItemSpecialRenderer::new, TTItems.JAR_NORMAL, TTItems.JAR_VOID);
+        register(event, JarItemSpecialRenderer::new, TTItems.JAR_NORMAL, TTItems.JAR_VOID, TTItems.JAR_CREATIVE);
         register(event, JarBrainItemSpecialRenderer::new, TTItems.JAR_BRAIN);
         register(event, JarNodeItemSpecialRenderer::new, TTItems.JAR_NODE);
         register(event, AdvancedAlchemicalFurnaceItemSpecialRenderer::new, TTItems.ADVANCED_ALCHEMICAL_FURNACE);

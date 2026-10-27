@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.util.FastColor.ARGB32;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -32,9 +33,12 @@ public final class JarItemSpecialRenderer extends BlockEntityWithoutLevelRendere
         if (!(stack.getItem() instanceof BlockItem blockItem)) {
             return;
         }
+        MultiBufferSource jarBuffers = stack.hasFoil() && displayContext == ItemDisplayContext.GUI
+                ? renderType -> ItemRenderer.getFoilBuffer(buffers, renderType, true, true)
+                : buffers;
         Minecraft.getInstance()
                 .getBlockRenderer()
-                .renderSingleBlock(blockItem.getBlock().defaultBlockState(), poseStack, buffers, light, overlay);
+                .renderSingleBlock(blockItem.getBlock().defaultBlockState(), poseStack, jarBuffers, light, overlay);
         AspectInstance contents = extractContents(stack);
         if (contents != null) {
             int capacity = blockItem.getBlock() instanceof IEssentiaJar jar
