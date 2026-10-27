@@ -325,12 +325,12 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
         float rot = Math.floorMod(blockPos.getX() + facing.ordinal(), 4) - 2;
         poseStack.mulPose(Axis.ZN.rotationDegrees(rot));
         poseStack.mulPose(Axis.YP.rotationDegrees(180));
-        labelQuad(buffers.getBuffer(RenderType.entityCutout(LABEL_TEXTURE)), poseStack.last(), light);
+        labelQuad(buffers.getBuffer(RenderType.entityCutoutNoCull(LABEL_TEXTURE)), poseStack.last(), light);
         if (filterTexture != null) {
             poseStack.pushPose();
             poseStack.translate(0.0, 0.0, 0.001);
             aspectIconQuad(
-                    buffers.getBuffer(RenderType.entityTranslucent(filterTexture)),
+                    buffers.getBuffer(RenderType.entityTranslucentCull(filterTexture)),
                     poseStack.last(),
                     filterColor,
                     light);
