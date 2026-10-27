@@ -34,9 +34,8 @@ final class EquipmentAspects {
     static AspectList bonusFor(Item item, HolderLookup.Provider registries) {
         ItemStack stack = new ItemStack(item);
         AspectList bonus = AspectList.EMPTY;
-        int defense = (int) attributeTotal(stack, Attributes.ARMOR);
-        if (defense > 0 && isHumanoidArmor(stack)) {
-            bonus = with(bonus, registries, TTAspects.PRAEMUNIO, defense * ASPECT_PER_POINT);
+        if (item instanceof ArmorItem armor && isHumanoidArmor(armor)) {
+            bonus = with(bonus, registries, TTAspects.PRAEMUNIO, armor.getDefense() * ASPECT_PER_POINT);
         }
         if (stack.is(ItemTags.SWORDS)) {
             int attack = (int) attributeTotal(stack, Attributes.ATTACK_DAMAGE);
@@ -92,8 +91,7 @@ final class EquipmentAspects {
         return total;
     }
 
-    private static boolean isHumanoidArmor(ItemStack stack) {
-        return stack.getItem() instanceof ArmorItem armor
-                && armor.getEquipmentSlot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR;
+    private static boolean isHumanoidArmor(ArmorItem armor) {
+        return armor.getEquipmentSlot().getType() == EquipmentSlot.Type.HUMANOID_ARMOR;
     }
 }
