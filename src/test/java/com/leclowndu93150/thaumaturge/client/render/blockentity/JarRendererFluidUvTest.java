@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 class JarRendererFluidUvTest {
     @Test
     void fluidIsInsetFromTheJarWalls() {
-        assertEquals(4.5F / 16.0F, JarRenderer.FLUID_MIN);
-        assertEquals(11.5F / 16.0F, JarRenderer.FLUID_MAX);
+        assertEquals(4.0F / 16.0F, JarRenderer.FLUID_MIN);
+        assertEquals(12.0F / 16.0F, JarRenderer.FLUID_MAX);
         assertEquals(10.5F / 16.0F, JarRenderer.FLUID_MAX_HEIGHT);
     }
 

@@ -272,6 +272,7 @@ public final class TTBlockLootSubProvider extends BlockLootSubProvider {
         dropSelf(TTBlocks.SMELTER_VENT.get());
         add(TTBlocks.JAR_NORMAL.get(), jarLootTable(TTBlocks.JAR_NORMAL.get()));
         add(TTBlocks.JAR_VOID.get(), jarLootTable(TTBlocks.JAR_VOID.get()));
+        add(TTBlocks.JAR_CREATIVE.get(), jarLootTable(TTBlocks.JAR_CREATIVE.get()));
         dropSelf(TTBlocks.TUBE.get());
         dropSelf(TTBlocks.TUBE_VALVE.get());
         dropSelf(TTBlocks.TUBE_RESTRICT.get());
