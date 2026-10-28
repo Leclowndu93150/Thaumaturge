@@ -26,6 +26,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor.ARGB32;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 
@@ -114,7 +115,7 @@ public class ArcaneWorkbenchScreen extends AbstractTTContainerScreen<MenuArcaneW
                 graphics.pose().translate(slotX + 7.5F, slotY + 8F, 0.0F);
                 graphics.pose()
                         .mulPose(Axis.ZP.rotationDegrees(
-                                index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) % 360));
+                                index * 60 + ((float) minecraft.getCameraEntity().tickCount / 75) * Mth.RAD_TO_DEG));
                 graphics.pose().scale(0.5f, 0.5f, 1.0f);
                 GuiBlend.blitTinted(
                         graphics,
