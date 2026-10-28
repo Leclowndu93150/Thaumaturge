@@ -255,6 +255,9 @@ public final class NodeGenerator {
             return configureNode(existing, type, modifier, aspects);
         }
         BlockState current = level.getBlockState(pos);
+        if (current.getFluidState().is(FluidTags.WATER)) {
+            return false;
+        }
         if (!current.isAir() && !current.canBeReplaced() && !current.is(BlockTags.LEAVES)) {
             return false;
         }
