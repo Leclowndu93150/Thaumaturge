@@ -3,6 +3,7 @@ package com.leclowndu93150.thaumaturge.compat.jei.category;
 import com.leclowndu93150.thaumaturge.TTIds;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectInstance;
 import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
+import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.recipe.ResearchGate;
 import com.leclowndu93150.thaumaturge.compat.jei.drawables.AlphaDrawable;
 import com.leclowndu93150.thaumaturge.compat.jei.utils.ResearchUtils;
@@ -15,9 +16,7 @@ import com.leclowndu93150.thaumaturge.content.workbench.MenuArcaneWorkbench;
 import com.leclowndu93150.thaumaturge.content.workbench.WorkbenchPayment;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTRecipeTypes;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -33,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -135,9 +135,8 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
         int width = recipe.getWidth();
         int height = recipe.getHeight();
         List<Optional<Ingredient>> ingredients = recipe.optionalIngredients();
-        // Keep all nine crafting positions in the JEI slot list. The transfer
-        // handler maps those positions directly to the workbench's fixed grid,
-        // followed by its six fixed primal-crystal slots.
+        // Keep all nine crafting positions in the JEI slot list so they map to
+        // the workbench's fixed grid before any required crystal slots.
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
                 IRecipeSlotBuilder slot =
@@ -164,20 +163,17 @@ public final class ArcaneWorkbenchCategory implements IRecipeCategory<RecipeHold
     }
 
     private void layoutCrystals(IRecipeLayoutBuilder builder, AspectList crystals) {
-        int index = 0;
-        List<AspectInstance> aspects = crystals.entries().stream()
-                .sorted(Comparator.comparingInt(
-                        k -> MenuArcaneWorkbench.PRIMAL_ORDER.indexOf(k.aspect().getKey())))
-                .toList();
         for (int i = 0; i < 6; i++) {
-            IRecipeSlotBuilder slot = builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + i * CRYSTAL_SPACING);
-            boolean isAdded = index < aspects.size()
-                    && Objects.equals(aspects.get(index).aspect().getKey(), MenuArcaneWorkbench.PRIMAL_ORDER.get(i));
-            if (isAdded) {
-                AspectInstance instance = aspects.get(index);
-                ItemStack crystal = EssentiaCrystalFactory.of(instance.aspect(), instance.amount());
-                slot.addItemStack(crystal).addIngredients(Ingredient.of(crystal));
-                index++;
+            ResourceKey<IAspect> aspectKey = MenuArcaneWorkbench.PRIMAL_ORDER.get(i);
+            Optional<AspectInstance> instance = crystals.entries().stream()
+                    .filter(entry -> entry.aspect().is(aspectKey))
+                    .findFirst();
+            if (instance.isPresent()) {
+                AspectInstance crystalCost = instance.get();
+                ItemStack crystal = EssentiaCrystalFactory.of(crystalCost.aspect(), crystalCost.amount());
+                builder.addInputSlot(CRYSTAL_X, CRYSTAL_Y + i * CRYSTAL_SPACING)
+                        .addItemStack(crystal)
+                        .addIngredients(Ingredient.of(crystal));
             }
         }
     }

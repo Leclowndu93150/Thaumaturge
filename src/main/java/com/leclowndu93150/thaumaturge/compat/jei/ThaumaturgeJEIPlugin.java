@@ -20,6 +20,7 @@ import com.leclowndu93150.thaumaturge.content.recipe.SalisMundusRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerMultiblockRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerSimpleRecipe;
 import com.leclowndu93150.thaumaturge.content.recipe.dust.DustTriggerTagRecipe;
+import com.leclowndu93150.thaumaturge.content.recipe.workbench.ArcaneCraftingRecipe;
 import com.leclowndu93150.thaumaturge.content.research.note.NoteGenerator;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNoteData;
 import com.leclowndu93150.thaumaturge.content.research.note.ResearchNotes;
@@ -44,6 +45,7 @@ import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.transfer.IRecipeTransferInfo;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.registration.IExtraIngredientRegistration;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -55,7 +57,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -286,16 +291,52 @@ public final class ThaumaturgeJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-        registration.addRecipeTransferHandler(
-                MenuArcaneWorkbench.class,
-                TTMenus.ARCANE_WORKBENCH.get(),
-                ArcaneWorkbenchCategory.RECIPE_TYPE,
-                1,
-                15,
-                17,
-                36);
+        registration.addRecipeTransferHandler(new ArcaneWorkbenchTransferInfo());
         registration.addRecipeTransferHandler(
                 MenuArcaneWorkbench.class, TTMenus.ARCANE_WORKBENCH.get(), RecipeTypes.CRAFTING, 1, 9, 17, 36);
+    }
+
+    private static final class ArcaneWorkbenchTransferInfo
+            implements IRecipeTransferInfo<MenuArcaneWorkbench, RecipeHolder<ArcaneCraftingRecipe>> {
+        @Override
+        public Class<? extends MenuArcaneWorkbench> getContainerClass() {
+            return MenuArcaneWorkbench.class;
+        }
+
+        @Override
+        public Optional<MenuType<MenuArcaneWorkbench>> getMenuType() {
+            return Optional.of(TTMenus.ARCANE_WORKBENCH.get());
+        }
+
+        @Override
+        public RecipeType<RecipeHolder<ArcaneCraftingRecipe>> getRecipeType() {
+            return ArcaneWorkbenchCategory.RECIPE_TYPE;
+        }
+
+        @Override
+        public boolean canHandle(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+            return true;
+        }
+
+        @Override
+        public List<Slot> getRecipeSlots(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+            List<Slot> slots = new ArrayList<>(15);
+            slots.addAll(menu.slots.subList(1, 10));
+            AspectList crystalCost = recipe.value().crystalCost();
+            for (int i = 0; i < MenuArcaneWorkbench.PRIMAL_ORDER.size(); i++) {
+                ResourceKey<IAspect> aspect = MenuArcaneWorkbench.PRIMAL_ORDER.get(i);
+                if (crystalCost.entries().stream()
+                        .anyMatch(instance -> instance.aspect().is(aspect))) {
+                    slots.add(menu.slots.get(10 + i));
+                }
+            }
+            return slots;
+        }
+
+        @Override
+        public List<Slot> getInventorySlots(MenuArcaneWorkbench menu, RecipeHolder<ArcaneCraftingRecipe> recipe) {
+            return menu.slots.subList(17, 53);
+        }
     }
 
     private static void registerAspectCompositions(IRecipeRegistration registration) {
