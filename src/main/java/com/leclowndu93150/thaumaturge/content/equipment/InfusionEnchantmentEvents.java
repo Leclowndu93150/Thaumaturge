@@ -307,7 +307,7 @@ public final class InfusionEnchantmentEvents {
             }
         }
 
-        if (!player.getAbilities().instabuild
+        if (!player.isCreative()
                 && !DESTRUCTIVE_RECURSION.get()
                 && InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
                 && !player.isShiftKeyDown()
@@ -349,7 +349,7 @@ public final class InfusionEnchantmentEvents {
                     BlockPos offset = pos.offset(xx, yy, zz);
                     BlockState neighbour = level.getBlockState(offset);
                     if (neighbour.getDestroySpeed(level, offset) >= 0.0F && held.getDestroySpeed(neighbour) > 1.0F) {
-                        if (!player.getAbilities().instabuild) {
+                        if (!player.isCreative()) {
                             held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
                         }
                         EnchantMining.harvestBlock(level, player, offset, false);
