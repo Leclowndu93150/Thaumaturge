@@ -18,6 +18,9 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
     private static final float SWARM_SPAWN_CHANCE = 0.2F;
     private static final double SWARM_PLAYER_RANGE = 32.0;
     private static final double SWARM_EXCLUSION_RANGE = 32.0;
+    private static final double SWARM_HEIGHT = 1.25;
+    private static final double CELL_CENTRE = 0.5;
+    private static final float FULL_TURN_DEGREES = 360.0F;
 
     public BlockTaintGeyser(Properties properties) {
         super(properties);
@@ -35,22 +38,16 @@ public final class BlockTaintGeyser extends AbstractTaintBlock {
 
     @Override
     protected void subRandomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.5;
-        double z = pos.getZ() + 0.5;
+        double x = pos.getX() + CELL_CENTRE;
+        double y = pos.getY() + CELL_CENTRE;
+        double z = pos.getZ() + CELL_CENTRE;
         if (random.nextFloat() < SWARM_SPAWN_CHANCE
                 && level.hasNearbyAlivePlayer(x, y, z, SWARM_PLAYER_RANGE)
-                && level.getEntitiesOfClass(
-                                EntityTaintSwarm.class,
-                                AABB.ofSize(
-                                        pos.getCenter(),
-                                        SWARM_EXCLUSION_RANGE * 2,
-                                        SWARM_EXCLUSION_RANGE * 2,
-                                        SWARM_EXCLUSION_RANGE * 2))
+                && level.getEntitiesOfClass(EntityTaintSwarm.class, new AABB(pos).inflate(SWARM_EXCLUSION_RANGE))
                         .isEmpty()) {
             EntityTaintSwarm swarm = TTEntities.TAINT_SWARM.get().create(level);
             if (swarm != null) {
-                swarm.moveTo(x, pos.getY() + 1.25, z, random.nextInt(360), 0.0F);
+                swarm.moveTo(x, pos.getY() + SWARM_HEIGHT, z, random.nextFloat() * FULL_TURN_DEGREES, 0.0F);
                 level.addFreshEntity(swarm);
             }
         }

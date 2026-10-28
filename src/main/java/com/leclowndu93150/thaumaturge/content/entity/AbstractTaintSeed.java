@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -81,6 +80,9 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
         if (!position.equals(registeredPosition)) {
             TaintOriginRegistry.get(server).move(registeredPosition, position);
             registeredPosition = position.immutable();
+        }
+        if (!this.isAlive()) {
+            return;
         }
         if (this.tickCount % SPREAD_INTERVAL != 0) {
             return;
@@ -179,11 +181,11 @@ public abstract class AbstractTaintSeed extends AbstractRootedTaint implements I
     }
 
     @Override
-    public void remove(Entity.RemovalReason reason) {
+    public void onRemovedFromLevel() {
+        super.onRemovedFromLevel();
         if (this.level() instanceof ServerLevel server && registeredPosition != null) {
             TaintOriginRegistry.get(server).remove(registeredPosition);
             registeredPosition = null;
         }
-        super.remove(reason);
     }
 }

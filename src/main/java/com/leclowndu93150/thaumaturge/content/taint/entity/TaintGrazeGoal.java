@@ -68,7 +68,7 @@ public final class TaintGrazeGoal extends Goal {
         int grassId = Block.getId(Blocks.GRASS_BLOCK.defaultBlockState());
         if (level.getBlockState(pos).is(Blocks.SHORT_GRASS)) {
             level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, grassId);
-            level.destroyBlock(pos, false);
+            level.removeBlock(pos, false);
             infect(level, pos);
         } else if (level.getBlockState(pos.below()).is(Blocks.GRASS_BLOCK)) {
             level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos.below(), grassId);

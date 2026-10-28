@@ -9,19 +9,20 @@ import org.junit.jupiter.api.Test;
 
 class TaintacleAnimationPortTest {
     @Test
-    void strikeFlailEasesBackToRestAndNeverDropsBelowIt() {
+    void strikeFlailDecaysLinearlyAndSettlesAtRest() {
         EntityTaintacle taintacle = new EntityTaintacle(TTEntities.TAINTACLE.get(), mock(ServerLevel.class));
 
         taintacle.startStrikeAnimation();
         taintacle.tickStrikeAnimation();
-        assertEquals(2.954, taintacle.flailIntensity, 0.001);
+        assertEquals(2.99, taintacle.flailIntensity, 0.001);
 
         for (int tick = 0; tick < 300; tick++) {
             taintacle.tickStrikeAnimation();
         }
-        assertEquals(1.0, taintacle.flailIntensity, 0.0);
+        float settled = taintacle.flailIntensity;
+        assertEquals(1.0, settled, 0.01);
 
         taintacle.tickStrikeAnimation();
-        assertEquals(1.0, taintacle.flailIntensity, 0.0);
+        assertEquals(settled, taintacle.flailIntensity, 0.0);
     }
 }

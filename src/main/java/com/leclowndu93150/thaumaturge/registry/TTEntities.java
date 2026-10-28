@@ -230,7 +230,7 @@ public final class TTEntities {
                     () -> EntityType.Builder.of(EntityTaintSporeSwarmer::new, MobCategory.MONSTER)
                             .sized(0.9F, 0.9F)
                             .clientTrackingRange(8)
-                            .updateInterval(20));
+                            .updateInterval(3));
 
     public static final DeferredHolder<EntityType<?>, EntityType<Spider>> LEGACY_TAINT_SPIDER = register(
             "taint_spider",

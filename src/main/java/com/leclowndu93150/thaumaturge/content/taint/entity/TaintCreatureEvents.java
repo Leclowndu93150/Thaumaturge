@@ -16,6 +16,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -28,6 +30,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
+import org.jspecify.annotations.Nullable;
 
 @EventBusSubscriber(modid = TTIds.MODID)
 public final class TaintCreatureEvents {
@@ -37,30 +40,31 @@ public final class TaintCreatureEvents {
     private static final float SPLOSION_SPREAD = 5.0F;
     private static final float INFECTION_HEALTH = 2.0F;
     private static final int BROOD_EXPERIENCE = 2;
+    private static final double BODY_MIDDLE = 0.5;
 
     private TaintCreatureEvents() {}
 
     @SubscribeEvent
     public static void onExplosionStart(ExplosionEvent.Start event) {
-        if (!(event.getLevel() instanceof ServerLevel level)
-                || !(event.getExplosion().getDirectSourceEntity() instanceof Creeper creeper)
-                || !MobTraits.has(creeper, TTMobTraits.TAINT_BLAST.getKey())) {
+        if (!(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
+        Creeper creeper = findBlastingCreeper(event.getExplosion());
+        if (creeper == null) {
             return;
         }
         event.setCanceled(true);
         level.explode(
-                null,
-                level.damageSources().explosion(creeper, creeper),
-                null,
+                creeper,
                 creeper.getX(),
-                creeper.getY() + creeper.getBbHeight() / 2.0F,
+                creeper.getY(BODY_MIDDLE),
                 creeper.getZ(),
                 BLAST_STRENGTH,
                 false,
                 Level.ExplosionInteraction.NONE);
-        AABB area = new AABB(creeper.position(), creeper.position()).inflate(POISON_RANGE);
+        AABB area = creeper.getBoundingBox().inflate(POISON_RANGE);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area)) {
-            if (!FluxTaintExposure.isImmune(living)) {
+            if (living.distanceTo(creeper) <= POISON_RANGE && !FluxTaintExposure.isImmune(living)) {
                 FluxTaintExposure.expose(living, BLAST_DURATION, false, true);
             }
         }
@@ -123,18 +127,30 @@ public final class TaintCreatureEvents {
         table.getRandomItems(
                 params.create(LootContextParamSets.ENTITY),
                 entity.getLootTableSeed(),
-                stack -> event.getDrops()
-                        .add(new ItemEntity(level, entity.getX(), entity.getY(), entity.getZ(), stack)));
+                stack -> event.getDrops().add(dropOf(level, entity, stack)));
     }
 
     @SubscribeEvent
     public static void onExperienceDrop(LivingExperienceDropEvent event) {
         if (event.getEntity().getData(TTAttachments.LEGACY_TAINT_SPIDERLING)) {
-            event.setDroppedExperience(2);
+            event.setDroppedExperience(BROOD_EXPERIENCE);
             return;
         }
         if (MobTraits.has(event.getEntity(), TTMobTraits.TAINT_BROOD.getKey())) {
             event.setDroppedExperience(BROOD_EXPERIENCE);
         }
+    }
+
+    private static @Nullable Creeper findBlastingCreeper(Explosion explosion) {
+        if (explosion.radius() == BLAST_STRENGTH || !(explosion.getDirectSourceEntity() instanceof Creeper creeper)) {
+            return null;
+        }
+        return MobTraits.has(creeper, TTMobTraits.TAINT_BLAST.getKey()) ? creeper : null;
+    }
+
+    private static ItemEntity dropOf(ServerLevel level, LivingEntity source, ItemStack stack) {
+        ItemEntity drop = new ItemEntity(level, source.getX(), source.getY(), source.getZ(), stack);
+        drop.setDefaultPickUpDelay();
+        return drop;
     }
 }

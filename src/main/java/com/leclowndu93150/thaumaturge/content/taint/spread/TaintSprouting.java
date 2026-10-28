@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jspecify.annotations.Nullable;
 
 public final class TaintSprouting {
@@ -93,11 +94,7 @@ public final class TaintSprouting {
                 standing.getZ() + CELL_CENTRE,
                 (float) level.getRandom().nextInt(FULL_TURN_DEGREES),
                 0.0F);
-        if (!hasRoom(level, seed)) {
-            seed.discard();
-            return null;
-        }
-        return seed;
+        return hasRoom(level, seed) ? seed : null;
     }
 
     private static boolean isSproutingGround(ServerLevel level, BlockPos ground) {
@@ -107,13 +104,11 @@ public final class TaintSprouting {
     }
 
     private static boolean hasRoom(ServerLevel level, AbstractTaintSeed seed) {
-        if (!level.noCollision(seed)) {
-            return false;
-        }
-        return level.getEntitiesOfClass(
-                        AbstractTaintSeed.class,
-                        seed.getBoundingBox().inflate(TaintOrigins.claimRadius() * CROWD_FRACTION))
+        AABB box = seed.getBoundingBox();
+        boolean crowded = !level.getEntitiesOfClass(
+                        AbstractTaintSeed.class, box.inflate(TaintOrigins.claimRadius() * CROWD_FRACTION))
                 .isEmpty();
+        return level.noBlockCollision(seed, box) && !crowded;
     }
 
     private static int offset(RandomSource random, int reach) {

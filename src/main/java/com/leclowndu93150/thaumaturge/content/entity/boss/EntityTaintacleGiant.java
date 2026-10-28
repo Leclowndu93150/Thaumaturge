@@ -7,7 +7,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,6 +24,9 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
 
     private static final int GIANT_XP = 20;
     private static final int HEAL_INTERVAL = 30;
+    private static final float HEAL_AMOUNT = 1.0F;
+    private static final double MAX_HEALTH = 175.0;
+    private static final double ATTACK_DAMAGE = 9.0;
 
     private final BossBar bossBar = new BossBar(this);
     private final BossRage rage = new BossRage(this, DATA_AGGRO);
@@ -35,7 +37,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createTaintacleAttributes(175.0, 9.0);
+        return createTaintacleAttributes(MAX_HEALTH, ATTACK_DAMAGE);
     }
 
     @Override
@@ -64,7 +66,7 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
             MobSpawnType reason,
             @Nullable SpawnGroupData data) {
         ChampionHelper.makeChampion(this, true);
-        return data;
+        return super.finalizeSpawn(level, difficulty, reason, data);
     }
 
     @Override
@@ -72,13 +74,12 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
         super.tick();
         this.rage.tick();
         if (!this.level().isClientSide() && this.tickCount % HEAL_INTERVAL == 0) {
-            this.heal(1.0F);
+            this.heal(HEAL_AMOUNT);
         }
     }
 
     @Override
     protected void customServerAiStep() {
-        ServerLevel level = (ServerLevel) level();
         super.customServerAiStep();
         this.bossBar.update();
     }
@@ -108,7 +109,9 @@ public class EntityTaintacleGiant extends AbstractTaintacle {
         if (ShowcaseEntities.isDisplay(this)) {
             return false;
         }
-        if (!(level() instanceof ServerLevel level)) return false;
+        if (level().isClientSide()) {
+            return false;
+        }
         damage = this.rage.absorb(source, damage);
         return super.hurt(source, damage);
     }

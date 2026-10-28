@@ -53,7 +53,7 @@ final class TaintedHarvest {
         AuraHelper.polluteAura(level, sheep.blockPosition(), SHEARING_FLUX, true);
         sheep.gameEvent(GameEvent.SHEAR, player);
         shears.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
-        return InteractionResult.sidedSuccess(false);
+        return InteractionResult.SUCCESS;
     }
 
     private static InteractionResult milk(Player player, InteractionHand hand, ItemStack bucket) {

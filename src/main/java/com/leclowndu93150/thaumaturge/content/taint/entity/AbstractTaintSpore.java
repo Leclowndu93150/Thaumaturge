@@ -4,7 +4,6 @@ import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintSporeStalk;
 import com.leclowndu93150.thaumaturge.content.taint.ecology.TaintBiomeManager;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -27,6 +26,7 @@ public abstract class AbstractTaintSpore extends Monster {
 
     private static final EntityDataAccessor<Integer> DATA_SPORE_SIZE =
             SynchedEntityData.defineId(AbstractTaintSpore.class, EntityDataSerializers.INT);
+    private static final String SIZE_KEY = "SporeSize";
     private static final int CHECK_INTERVAL = 20;
     private static final int GROWTH_INTERVAL = 1200;
     private static final float DISPLAY_GROWTH_PER_TICK = 0.02F;
@@ -169,15 +169,13 @@ public abstract class AbstractTaintSpore extends Monster {
 
     @Override
     public void addAdditionalSaveData(CompoundTag output) {
-        HolderLookup.Provider registries = registryAccess();
         super.addAdditionalSaveData(output);
-        output.putInt("SporeSize", getSporeSize());
+        output.putInt(SIZE_KEY, getSporeSize());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag input) {
-        HolderLookup.Provider registries = registryAccess();
         super.readAdditionalSaveData(input);
-        setSporeSize((input.contains("SporeSize") ? input.getInt("SporeSize") : MIN_SIZE));
+        setSporeSize(input.contains(SIZE_KEY) ? input.getInt(SIZE_KEY) : MIN_SIZE);
     }
 }

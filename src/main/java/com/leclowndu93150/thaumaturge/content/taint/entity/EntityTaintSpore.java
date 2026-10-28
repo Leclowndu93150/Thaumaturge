@@ -19,8 +19,7 @@ public final class EntityTaintSpore extends AbstractTaintSpore {
     private static final float SATELLITE_MIN_PRESSURE = 0.85F;
     private static final int SATELLITE_CHANCE = 4;
     private static final int MAX_SPIDERS = 6;
-    private static final int SPIDERS_PER_SIZE = 3;
-    private static final int BONUS_SPIDER_DIVISOR = 2;
+    private static final double BROOD_SPREAD = 0.5;
     private static final float FULL_TURN = 360.0F;
 
     public EntityTaintSpore(EntityType<? extends EntityTaintSpore> type, Level level) {
@@ -49,14 +48,14 @@ public final class EntityTaintSpore extends AbstractTaintSpore {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return;
         }
-        int count = Math.min(MAX_SPIDERS, size / SPIDERS_PER_SIZE + random.nextInt(size / BONUS_SPIDER_DIVISOR + 1));
+        int count = Math.min(MAX_SPIDERS, random.nextInt(size + 1));
         for (int i = 0; i < count; i++) {
             Spider spider = EntityType.SPIDER.create(level);
             if (spider != null) {
                 spider.moveTo(
-                        getX() + random.nextDouble() - 0.5,
+                        getX() + random.nextDouble() - BROOD_SPREAD,
                         getY(),
-                        getZ() + random.nextDouble() - 0.5,
+                        getZ() + random.nextDouble() - BROOD_SPREAD,
                         random.nextFloat() * FULL_TURN,
                         0.0F);
                 MobTraits.add(spider, TTMobTraits.TAINT_BROOD);

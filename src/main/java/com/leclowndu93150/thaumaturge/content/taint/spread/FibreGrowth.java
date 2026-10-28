@@ -83,7 +83,7 @@ public final class FibreGrowth {
             return false;
         }
         BlockPos target = pickTarget(origin, random);
-        if (target.equals(origin)) {
+        if (!level.hasChunkAt(target) || TaintBlooms.isProtected(level, target)) {
             return false;
         }
         BlockState state = level.getBlockState(target);
@@ -127,13 +127,8 @@ public final class FibreGrowth {
     }
 
     private static boolean isReachable(ServerLevel level, BlockPos target, BlockState state) {
-        if (!level.hasChunkAt(target)
-                || TaintBlooms.isProtected(level, target)
-                || state.is(TTBlockTags.TAINT_CONVERSION_IMMUNE)) {
-            return false;
-        }
         float hardness = state.getDestroySpeed(level, target);
-        return hardness >= 0.0F && hardness <= MAX_TARGET_HARDNESS;
+        return hardness >= 0.0F && hardness <= MAX_TARGET_HARDNESS && !state.is(TTBlockTags.TAINT_CONVERSION_IMMUNE);
     }
 
     private static boolean isOpenSpace(BlockState state) {
@@ -186,11 +181,7 @@ public final class FibreGrowth {
         if (TaintHelper.isTaintBlock(state) || state.getDestroySpeed(level, target) >= MAX_CONVERTIBLE_HARDNESS) {
             return null;
         }
-        Conversion conversion = matching(state);
-        if (conversion == null || TaintHelper.countAdjacentTaint(level, target) < conversion.taintNeighbours()) {
-            return null;
-        }
-        return conversion;
+        return matching(state, TaintHelper.countAdjacentTaint(level, target));
     }
 
     private static boolean convert(ServerLevel level, BlockPos target, BlockState state, Conversion conversion) {
@@ -202,9 +193,9 @@ public final class FibreGrowth {
         return true;
     }
 
-    private static @Nullable Conversion matching(BlockState state) {
+    private static @Nullable Conversion matching(BlockState state, int adjacentTaint) {
         for (Conversion conversion : CONVERSIONS) {
-            if (state.is(conversion.family())) {
+            if (adjacentTaint >= conversion.taintNeighbours() && state.is(conversion.family())) {
                 return conversion;
             }
         }

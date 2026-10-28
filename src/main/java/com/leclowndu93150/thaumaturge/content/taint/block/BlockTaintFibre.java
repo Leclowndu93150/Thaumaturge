@@ -17,6 +17,7 @@ import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -75,6 +77,9 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     private static final int GROWTH4_THRESHOLD = 47;
 
     private static final int CONTACT_ONE_IN = 750;
+    private static final float STALK_PRESSURE = 0.02F;
+    private static final int GROWTH3_POLLUTION_BASE = 3;
+    private static final int GROWTH3_POLLUTION_RANGE = 3;
     private final Map<BlockState, VoxelShape> shapes;
 
     public BlockTaintFibre(Properties properties) {
@@ -161,7 +166,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
             LevelAccessor level,
             BlockPos pos,
             BlockPos neighborPos) {
-        return computeState(state, level, pos);
+        return hasSolidAttachment(level, pos) ? computeState(state, level, pos) : Blocks.AIR.defaultBlockState();
     }
 
     public static BlockState stateForWorld(LevelReader level, BlockPos pos) {
@@ -184,7 +189,7 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
         boolean west = canAttachTo(level, pos.west(), Direction.EAST);
         boolean up = canAttachTo(level, pos.above(), Direction.DOWN);
         boolean down = canAttachTo(level, pos.below(), Direction.UP);
-        int q = RandomSource.create(pos.asLong()).nextInt(GROWTH_RNG_RANGE);
+        int q = RandomSource.create(Mth.getSeed(pos)).nextInt(GROWTH_RNG_RANGE);
         boolean growth1 = down && q < GROWTH1_THRESHOLD;
         boolean growth2 = down && (q == GROWTH2_THRESHOLD_LO || q == GROWTH2_THRESHOLD_HI);
         boolean growth3 = down && q == GROWTH3_VALUE;
@@ -236,12 +241,10 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
                 && state.getValue(GROWTH3)
                 && !TaintBlooms.isProtected(level, pos)
                 && TaintEcology.isTainted(level, pos)) {
-            // A growth-3 fibre is the stalk candidate and promotes on its next random tick;
-            // BlockTaintSporeStalk uses a 1/10 maturation roll.
             BlockState stalk = TTBlocks.TAINT_SPORE_STALK.get().defaultBlockState();
             if (stalk.canSurvive(level, pos)) {
                 level.setBlock(pos, stalk, Block.UPDATE_ALL);
-                TaintEcology.addPressure(level, pos, 0.02F);
+                TaintEcology.addPressure(level, pos, STALK_PRESSURE);
                 return;
             }
         }
@@ -251,7 +254,11 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level instanceof ServerLevel serverLevel && state.getValue(GROWTH3)) {
-            AuraHelper.polluteAura(serverLevel, pos, 3 + serverLevel.getRandom().nextInt(3), true);
+            AuraHelper.polluteAura(
+                    serverLevel,
+                    pos,
+                    GROWTH3_POLLUTION_BASE + serverLevel.getRandom().nextInt(GROWTH3_POLLUTION_RANGE),
+                    true);
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
@@ -277,21 +284,5 @@ public final class BlockTaintFibre extends Block implements ITaintBlock {
             return false;
         }
         return true;
-    }
-
-    public static boolean isHemmedByTaint(LevelAccessor level, BlockPos pos) {
-        int c = 0;
-        for (Direction direction : Direction.values()) {
-            BlockState neighbor = level.getBlockState(pos.relative(direction));
-            if (neighbor.getBlock() instanceof ITaintBlock) {
-                c++;
-            } else if (neighbor.isAir()) {
-                c--;
-            } else if (!neighbor.liquid()
-                    && !neighbor.isFaceSturdy(level, pos.relative(direction), direction.getOpposite())) {
-                c--;
-            }
-        }
-        return c > 0;
     }
 }

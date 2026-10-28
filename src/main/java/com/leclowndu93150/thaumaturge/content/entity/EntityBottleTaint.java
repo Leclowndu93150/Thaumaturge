@@ -28,6 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public final class EntityBottleTaint extends ThrowableItemProjectile implements ItemSupplier {
     public static final ThrowProfile THROW = new ThrowProfile(0.66F, 1.0F, -5.0F, 0.5F);
@@ -37,10 +38,17 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
     private static final int FIBRE_SEARCH_UP = 2;
     private static final int FIBRE_SEARCH_DOWN = 3;
     private static final int HYBRID_GOO_ATTEMPTS = 3;
-    private static final int HYBRID_GOO_RANGE = 5;
+    private static final int HYBRID_GOO_REACH = 2;
     private static final int HYBRID_GOO_MAX_EXTRA_QUANTA = 2;
     private static final int SPLOSION_COUNT = 100;
+    private static final double SPLOSION_VELOCITY = 1.0;
     private static final int BOTTLE_CRACK_COUNT = 8;
+    private static final double CRACK_SPREAD = 0.15;
+    private static final double CRACK_LIFT = 0.2;
+    private static final float BREAK_VOLUME = 1.0F;
+    private static final float BREAK_PITCH_BASE = 0.9F;
+    private static final float BREAK_PITCH_SPREAD = 0.1F;
+    private static final byte SHATTER_EVENT = 3;
 
     public EntityBottleTaint(EntityType<? extends EntityBottleTaint> type, Level level) {
         super(type, level);
@@ -58,7 +66,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == 3) {
+        if (id == SHATTER_EVENT) {
             for (int a = 0; a < SPLOSION_COUNT; a++) {
                 this.level()
                         .addParticle(
@@ -66,9 +74,9 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
                                 this.getX(),
                                 this.getY() + this.random.nextFloat() * this.getBbHeight(),
                                 this.getZ(),
-                                this.random.nextDouble() * 2.0 - 1.0,
-                                this.random.nextDouble() * 2.0 - 1.0,
-                                this.random.nextDouble() * 2.0 - 1.0);
+                                signed() * SPLOSION_VELOCITY,
+                                signed() * SPLOSION_VELOCITY,
+                                signed() * SPLOSION_VELOCITY);
             }
             ItemParticleOption crack =
                     new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(TTItems.BOTTLE_TAINT.get()));
@@ -79,9 +87,9 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
                                 this.getX(),
                                 this.getY(),
                                 this.getZ(),
-                                this.random.nextGaussian() * 0.15,
-                                this.random.nextDouble() * 0.2,
-                                this.random.nextGaussian() * 0.15);
+                                this.random.nextGaussian() * CRACK_SPREAD,
+                                this.random.nextDouble() * CRACK_LIFT,
+                                this.random.nextGaussian() * CRACK_SPREAD);
             }
             this.level()
                     .playLocalSound(
@@ -90,8 +98,8 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
                             this.getZ(),
                             SoundEvents.SPLASH_POTION_BREAK,
                             SoundSource.NEUTRAL,
-                            1.0F,
-                            this.random.nextFloat() * 0.1F + 0.9F,
+                            BREAK_VOLUME,
+                            this.random.nextFloat() * BREAK_PITCH_SPREAD + BREAK_PITCH_BASE,
                             false);
         } else {
             super.handleEntityEvent(id);
@@ -104,15 +112,17 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
         if (!(this.level() instanceof ServerLevel server)) {
             return;
         }
-        applyAreaEffect(server);
-        plantSeed(server);
-        scatterHybridGoo(server);
-        server.broadcastEntityEvent(this, (byte) 3);
+        Vec3 impact = result.getLocation();
+        BlockPos origin = BlockPos.containing(impact);
+        applyAreaEffect(server, impact);
+        plantSeed(server, origin);
+        scatterHybridGoo(server, origin);
+        server.broadcastEntityEvent(this, SHATTER_EVENT);
         this.discard();
     }
 
-    private void applyAreaEffect(ServerLevel server) {
-        AABB box = new AABB(this.position(), this.position()).inflate(SPLASH_RADIUS);
+    private void applyAreaEffect(ServerLevel server, Vec3 impact) {
+        AABB box = new AABB(impact, impact).inflate(SPLASH_RADIUS);
         for (LivingEntity target : server.getEntitiesOfClass(
                 LivingEntity.class,
                 box,
@@ -121,8 +131,7 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
         }
     }
 
-    private void plantSeed(ServerLevel server) {
-        BlockPos origin = this.blockPosition();
+    private void plantSeed(ServerLevel server, BlockPos origin) {
         BlockPos.MutableBlockPos cursor = origin.mutable();
         for (int y = origin.getY() + FIBRE_SEARCH_UP; y >= origin.getY() - FIBRE_SEARCH_DOWN; y--) {
             cursor.setY(y);
@@ -135,25 +144,31 @@ public final class EntityBottleTaint extends ThrowableItemProjectile implements 
         }
     }
 
-    private void scatterHybridGoo(ServerLevel server) {
-        BlockPos center = this.blockPosition();
+    private void scatterHybridGoo(ServerLevel server, BlockPos origin) {
         for (int attempt = 0; attempt < HYBRID_GOO_ATTEMPTS; attempt++) {
-            BlockPos target = center.offset(
-                    this.random.nextInt(HYBRID_GOO_RANGE) - HYBRID_GOO_RANGE / 2,
-                    0,
-                    this.random.nextInt(HYBRID_GOO_RANGE) - HYBRID_GOO_RANGE / 2);
+            BlockPos column = origin.offset(gooOffset(), 0, gooOffset());
             int quanta = 1 + this.random.nextInt(HYBRID_GOO_MAX_EXTRA_QUANTA);
-            if (canHostGoo(server, target)) {
-                PhysicalFlux.placeGoo(server, target, quanta);
-            } else if (canHostGoo(server, target.below())) {
-                PhysicalFlux.placeGoo(server, target.below(), quanta);
+            if (server.hasChunkAt(column) && !tryGoo(server, column, quanta)) {
+                tryGoo(server, column.below(), quanta);
             }
         }
     }
 
-    private static boolean canHostGoo(ServerLevel server, BlockPos pos) {
-        BlockState below = server.getBlockState(pos.below());
+    private int gooOffset() {
+        return this.random.nextInt(HYBRID_GOO_REACH * 2 + 1) - HYBRID_GOO_REACH;
+    }
+
+    private static boolean tryGoo(ServerLevel server, BlockPos pos, int quanta) {
         BlockState here = server.getBlockState(pos);
-        return below.isRedstoneConductor(server, pos.below()) && (here.isAir() || here.canBeReplaced());
+        BlockPos support = pos.below();
+        if ((here.isAir() || here.canBeReplaced())
+                && server.getBlockState(support).isRedstoneConductor(server, support)) {
+            return PhysicalFlux.placeGoo(server, pos, quanta);
+        }
+        return false;
+    }
+
+    private double signed() {
+        return this.random.nextDouble() * 2.0 - 1.0;
     }
 }

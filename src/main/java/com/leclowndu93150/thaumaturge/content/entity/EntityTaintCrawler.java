@@ -1,5 +1,6 @@
 package com.leclowndu93150.thaumaturge.content.entity;
 
+import com.leclowndu93150.thaumaturge.config.ThaumaturgeCommonConfig;
 import com.leclowndu93150.thaumaturge.content.taint.TaintHelper;
 import com.leclowndu93150.thaumaturge.content.taint.block.BlockTaintFibre;
 import com.leclowndu93150.thaumaturge.registry.TTBlocks;
@@ -26,79 +27,86 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 
 public final class EntityTaintCrawler extends Monster {
+    private static final double MAX_HEALTH = 8.0;
+    private static final double MOVEMENT_SPEED = 0.275;
+    private static final double ATTACK_DAMAGE = 2.0;
+    private static final double FOLLOW_RANGE = 16.0;
+    private static final double MOVE_SPEED_MODIFIER = 1.0;
+    private static final float LOOK_DISTANCE = 8.0F;
+    private static final int FLOAT_PRIORITY = 1;
+    private static final int MELEE_PRIORITY = 2;
+    private static final int STROLL_PRIORITY = 3;
+    private static final int LOOK_PRIORITY = 4;
+    private static final int RETALIATE_PRIORITY = 1;
+    private static final int HUNT_PRIORITY = 2;
     private static final int TRAIL_INTERVAL = 40;
+    private static final float TAINT_CHANCE = 0.3F;
     private static final int FLUX_TAINT_BASE_TICKS = 60;
+    private static final int TAINT_AMPLIFIER = 0;
 
-    private BlockPos lastPos;
+    private @Nullable BlockPos lastFibre;
 
     public EntityTaintCrawler(EntityType<? extends EntityTaintCrawler> type, Level level) {
         super(type, level);
-        this.lastPos = BlockPos.ZERO;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 8.0)
-                .add(Attributes.MOVEMENT_SPEED, 0.275)
-                .add(Attributes.ATTACK_DAMAGE, 2.0)
-                .add(Attributes.FOLLOW_RANGE, 16.0);
+                .add(Attributes.MAX_HEALTH, MAX_HEALTH)
+                .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                .add(Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE)
+                .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.goalSelector.addGoal(FLOAT_PRIORITY, new FloatGoal(this));
+        this.goalSelector.addGoal(MELEE_PRIORITY, new MeleeAttackGoal(this, MOVE_SPEED_MODIFIER, false));
+        this.goalSelector.addGoal(STROLL_PRIORITY, new WaterAvoidingRandomStrollGoal(this, MOVE_SPEED_MODIFIER));
+        this.goalSelector.addGoal(LOOK_PRIORITY, new LookAtPlayerGoal(this, Player.class, LOOK_DISTANCE));
+        this.goalSelector.addGoal(LOOK_PRIORITY, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(RETALIATE_PRIORITY, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(HUNT_PRIORITY, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!(this.level() instanceof ServerLevel server)) {
+        if (!this.isAlive() || this.tickCount % TRAIL_INTERVAL != 0 || !(this.level() instanceof ServerLevel server)) {
             return;
         }
-        if (this.tickCount % TRAIL_INTERVAL != 0) {
+        layFibreAtFeet(server);
+    }
+
+    private void layFibreAtFeet(ServerLevel level) {
+        BlockPos here = this.blockPosition();
+        if (here.equals(this.lastFibre) || ThaumaturgeCommonConfig.WUSS_MODE.get() || !isFibreSpot(level, here)) {
             return;
         }
-        BlockPos pos = this.blockPosition();
-        if (pos.equals(lastPos)) {
-            return;
+        level.setBlockAndUpdate(here, BlockTaintFibre.stateForWorld(level, here));
+        this.lastFibre = here;
+    }
+
+    private static boolean isFibreSpot(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (!state.getFluidState().isEmpty() || state.is(TTBlocks.TAINT_FIBRE.get())) {
+            return false;
         }
-        lastPos = pos;
-        BlockState here = server.getBlockState(pos);
-        if (!here.isAir() && !here.canBeReplaced()) {
-            return;
+        if (!state.isAir() && !state.canBeReplaced()) {
+            return false;
         }
-        if (here.liquid()) {
-            return;
-        }
-        if (here.is(TTBlocks.TAINT_FIBRE.get())) {
-            return;
-        }
-        if (!TaintHelper.hasSturdyNeighbour(server, pos)) {
-            return;
-        }
-        if (BlockTaintFibre.isOnlyAdjacentToTaint(server, pos)) {
-            return;
-        }
-        server.setBlockAndUpdate(pos, BlockTaintFibre.stateForWorld(server, pos));
+        return TaintHelper.hasSturdyNeighbour(level, pos) && !BlockTaintFibre.isOnlyAdjacentToTaint(level, pos);
     }
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        ServerLevel level = (ServerLevel) level();
         boolean attacked = super.doHurtTarget(target);
-        if (attacked && target instanceof LivingEntity living) {
-            if (level.getRandom().nextFloat() < 0.3F) {
-                living.addEffect(
-                        new MobEffectInstance(TTMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, 0, true, false, false));
-            }
+        if (attacked && target instanceof LivingEntity living && this.random.nextFloat() < TAINT_CHANCE) {
+            living.addEffect(new MobEffectInstance(
+                    TTMobEffects.FLUX_TAINT, FLUX_TAINT_BASE_TICKS, TAINT_AMPLIFIER, true, false, false));
         }
         return attacked;
     }
@@ -120,6 +128,6 @@ public final class EntityTaintCrawler extends Monster {
 
     @Override
     public boolean isPushable() {
-        return true;
+        return this.isAlive() && !this.isSpectator();
     }
 }

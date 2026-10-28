@@ -27,6 +27,8 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
     private static final int GOO_BLOCKING_AMOUNT = 4;
     private static final int SWARMER_CHANCE = 200;
     private static final int OUTSIDE_BIOME_GOO_CHANCE = 20;
+    private static final double SWARMER_SPACING = 16.0;
+    private static final double CELL_CENTRE = 0.5;
 
     public BlockTaintCrust(Properties properties) {
         super(properties);
@@ -59,15 +61,16 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
         }
         if (level.isEmptyBlock(pos.above())) {
             Direction dir = Direction.Plane.HORIZONTAL.getRandomDirection(random);
-            boolean canCreep = true;
-            for (int a = 1; a < CREEP_REACH; a++) {
-                if (!level.isEmptyBlock(pos.relative(dir).below(a))
+            BlockPos side = pos.relative(dir);
+            boolean canCreep = isPassable(level.getBlockState(side));
+            for (int a = 1; canCreep && a < CREEP_REACH; a++) {
+                if (!level.isEmptyBlock(side.below(a))
                         || !level.getBlockState(pos.below(a)).is(this)) {
                     canCreep = false;
                     break;
                 }
             }
-            if (canCreep && tryToFall(level, pos, pos.relative(dir))) {
+            if (canCreep && tryToFall(level, pos, side)) {
                 return;
             }
         }
@@ -77,22 +80,20 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
         }
         TaintHelper.attemptFibreGrowth(level, pos, false);
 
-        // Exposed crust occasionally uproots itself into a Swarmer.
         if (level.isEmptyBlock(pos.above())
                 && random.nextInt(SWARMER_CHANCE) == 0
-                && level.getEntitiesOfClass(EntityTaintSporeSwarmer.class, new AABB(pos).inflate(16.0))
+                && level.getEntitiesOfClass(EntityTaintSporeSwarmer.class, new AABB(pos).inflate(SWARMER_SPACING))
                         .isEmpty()) {
-            level.removeBlock(pos, false);
             EntityTaintSporeSwarmer swarmer =
                     TTEntities.TAINT_SPORE_SWARMER.get().create(level);
             if (swarmer != null) {
-                swarmer.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+                swarmer.moveTo(pos.getX() + CELL_CENTRE, pos.getY(), pos.getZ() + CELL_CENTRE, 0.0F, 0.0F);
+                level.removeBlock(pos, false);
                 level.addFreshEntity(swarmer);
+                return;
             }
-            return;
         }
 
-        // Fully enclosed crust decays when it has nowhere left to spread.
         if (level.getBlockState(pos.above()).is(this)) {
             boolean enclosed = true;
             for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -115,7 +116,12 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
             return false;
         }
         EntityFallingTaint falling = new EntityFallingTaint(
-                level, target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, level.getBlockState(pos), pos);
+                level,
+                target.getX() + CELL_CENTRE,
+                target.getY() + CELL_CENTRE,
+                target.getZ() + CELL_CENTRE,
+                level.getBlockState(pos),
+                pos);
         level.addFreshEntity(falling);
         return true;
     }
@@ -131,19 +137,20 @@ public final class BlockTaintCrust extends AbstractTaintBlock {
                 }
             }
         }
-        if (state.isAir()) {
+        if (state.is(TTBlocks.FLUX_GOO.get()) && state.getFluidState().getAmount() >= GOO_BLOCKING_AMOUNT) {
+            return false;
+        }
+        return isPassable(state);
+    }
+
+    private static boolean isPassable(BlockState state) {
+        if (state.isAir()
+                || state.getBlock() instanceof BaseFireBlock
+                || state.is(TTBlocks.TAINT_FIBRE.get())
+                || state.canBeReplaced()) {
             return true;
         }
         FluidState fluid = state.getFluidState();
-        if (state.is(TTBlocks.FLUX_GOO.get()) && fluid.getAmount() >= GOO_BLOCKING_AMOUNT) {
-            return false;
-        }
-        if (state.getBlock() instanceof BaseFireBlock || state.is(TTBlocks.TAINT_FIBRE.get())) {
-            return true;
-        }
-        if (state.canBeReplaced()) {
-            return true;
-        }
         return fluid.is(FluidTags.WATER) || fluid.is(FluidTags.LAVA);
     }
 }
