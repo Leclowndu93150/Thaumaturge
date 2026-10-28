@@ -42,6 +42,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
@@ -196,6 +197,31 @@ public final class InfusionEnchantmentEvents {
         held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCreativeDestructiveBreak(BreakEvent event) {
+        if (event.getLevel().isClientSide() || event.isCanceled() || DESTRUCTIVE_RECURSION.get()) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (player == null || !player.getAbilities().instabuild || player.isShiftKeyDown()) {
+            return;
+        }
+        ItemStack held = player.getMainHandItem();
+        if (!InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
+                || !held.isCorrectToolForDrops(event.getState())) {
+            return;
+        }
+
+        ServerLevel level = (ServerLevel) event.getLevel();
+        DestructiveSwingMemory swingMemory = player.getExistingDataOrNull(TTAttachments.DESTRUCTIVE_SWING.get());
+        Direction face = swingMemory == null ? null : swingMemory.takeFace(level.dimension(), event.getPos());
+        if (face == null) {
+            face = Direction.getNearest(
+                    player.getViewVector(1.0F).x, player.getViewVector(1.0F).y, player.getViewVector(1.0F).z);
+        }
+        breakDestructiveNeighbors(level, player, held, event.getPos(), face);
+    }
+
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getLevel().isClientSide()) {
@@ -281,49 +307,57 @@ public final class InfusionEnchantmentEvents {
             }
         }
 
-        if (!DESTRUCTIVE_RECURSION.get()
+        if (!player.getAbilities().instabuild
+                && !DESTRUCTIVE_RECURSION.get()
                 && InfusionEnchantmentHelper.has(held, InfusionEnchantment.DESTRUCTIVE)
                 && !player.isShiftKeyDown()
                 && held.isCorrectToolForDrops(state)) {
-            DESTRUCTIVE_RECURSION.set(true);
-            try {
-                Direction face = swungFace != null
-                        ? swungFace
-                        : Direction.getNearest(
-                                player.getViewVector(1.0F).x,
-                                player.getViewVector(1.0F).y,
-                                player.getViewVector(1.0F).z);
-                for (int aa = -1; aa <= 1 && !held.isEmpty(); aa++) {
-                    for (int bb = -1; bb <= 1 && !held.isEmpty(); bb++) {
-                        if (aa == 0 && bb == 0) {
-                            continue;
-                        }
-                        int xx = 0;
-                        int yy = 0;
-                        int zz = 0;
-                        int axis = face.ordinal();
-                        if (axis <= 1) {
-                            xx = aa;
-                            zz = bb;
-                        } else if (axis <= 3) {
-                            xx = aa;
-                            yy = bb;
-                        } else {
-                            zz = aa;
-                            yy = bb;
-                        }
-                        BlockPos offset = pos.offset(xx, yy, zz);
-                        BlockState neighbour = level.getBlockState(offset);
-                        if (neighbour.getDestroySpeed(level, offset) >= 0.0F
-                                && held.getDestroySpeed(neighbour) > 1.0F) {
+            Direction face = swungFace != null
+                    ? swungFace
+                    : Direction.getNearest(
+                            player.getViewVector(1.0F).x, player.getViewVector(1.0F).y, player.getViewVector(1.0F).z);
+            breakDestructiveNeighbors(level, player, held, pos, face);
+        }
+    }
+
+    private static void breakDestructiveNeighbors(
+            ServerLevel level, Player player, ItemStack held, BlockPos pos, Direction face) {
+        if (DESTRUCTIVE_RECURSION.get()) {
+            return;
+        }
+        DESTRUCTIVE_RECURSION.set(true);
+        try {
+            for (int aa = -1; aa <= 1 && !held.isEmpty(); aa++) {
+                for (int bb = -1; bb <= 1 && !held.isEmpty(); bb++) {
+                    if (aa == 0 && bb == 0) {
+                        continue;
+                    }
+                    int xx = 0;
+                    int yy = 0;
+                    int zz = 0;
+                    int axis = face.ordinal();
+                    if (axis <= 1) {
+                        xx = aa;
+                        zz = bb;
+                    } else if (axis <= 3) {
+                        xx = aa;
+                        yy = bb;
+                    } else {
+                        zz = aa;
+                        yy = bb;
+                    }
+                    BlockPos offset = pos.offset(xx, yy, zz);
+                    BlockState neighbour = level.getBlockState(offset);
+                    if (neighbour.getDestroySpeed(level, offset) >= 0.0F && held.getDestroySpeed(neighbour) > 1.0F) {
+                        if (!player.getAbilities().instabuild) {
                             held.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-                            EnchantMining.harvestBlock(level, player, offset, false);
                         }
+                        EnchantMining.harvestBlock(level, player, offset, false);
                     }
                 }
-            } finally {
-                DESTRUCTIVE_RECURSION.set(false);
             }
+        } finally {
+            DESTRUCTIVE_RECURSION.set(false);
         }
     }
 
