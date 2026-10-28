@@ -37,11 +37,7 @@ public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
     private static final int FLUID_X = 107;
     private static final int FLUID_Y = 15;
     private static final int FLUID_WIDTH = 8;
-    private static final int FLUID_SEGMENTS = 6;
     private static final int FLUID_HEIGHT = 48;
-    private static final int COVER_U = 107;
-    private static final int COVER_V = 15;
-    private static final int COVER_WIDTH = 10;
     private static final int GAUGE_X = 106;
     private static final int GAUGE_Y = 11;
     private static final int GAUGE_U = 232;
@@ -83,6 +79,7 @@ public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
         boolean mix = spa.getMix();
         graphics.blit(
                 TEXTURE, x + MIX_X, y + MIX_Y, MIX_ON_U, mix ? MIX_ON_V : MIX_OFF_V, MIX_SIZE, MIX_SIZE, 256, 256);
+        graphics.blit(TEXTURE, x + GAUGE_X, y + GAUGE_Y, GAUGE_U, GAUGE_V, GAUGE_WIDTH, GAUGE_HEIGHT, 256, 256);
 
         FluidStack resource = spa.getTank().getFluid();
         int amount = spa.getTank().getFluidAmount();
@@ -99,19 +96,25 @@ public class SpaScreen extends AbstractTTContainerScreen<MenuSpa> {
             float g = ARGB32.green(tint) / 255.0F;
             float b = ARGB32.blue(tint) / 255.0F;
             float a = ARGB32.alpha(tint) / 255.0F;
-            for (int seg = 0; seg < FLUID_SEGMENTS; seg++) {
+            int fluidHeight = (Math.clamp(amount, 0, BlockEntitySpa.TANK_CAPACITY) * FLUID_HEIGHT
+                            + BlockEntitySpa.TANK_CAPACITY / 2)
+                    / BlockEntitySpa.TANK_CAPACITY;
+            for (int remaining = fluidHeight; remaining > 0; ) {
+                int segmentHeight = Math.min(FLUID_WIDTH, remaining);
                 graphics.blit(
-                        x + FLUID_X, y + FLUID_Y + seg * FLUID_WIDTH, 0, FLUID_WIDTH, FLUID_WIDTH, sprite, r, g, b, a);
-            }
-            float bar = (float) amount / BlockEntitySpa.TANK_CAPACITY;
-            int coverHeight = (int) (FLUID_HEIGHT - FLUID_HEIGHT * bar);
-            if (coverHeight > 0) {
-                graphics.blit(TEXTURE, x + FLUID_X, y + FLUID_Y, COVER_U, COVER_V, COVER_WIDTH, coverHeight, 256, 256);
+                        x + FLUID_X,
+                        y + FLUID_Y + FLUID_HEIGHT - remaining,
+                        0,
+                        FLUID_WIDTH,
+                        segmentHeight,
+                        sprite,
+                        r,
+                        g,
+                        b,
+                        a);
+                remaining -= segmentHeight;
             }
         }
-
-        graphics.blit(TEXTURE, x + GAUGE_X, y + GAUGE_Y, GAUGE_U, GAUGE_V, GAUGE_WIDTH, GAUGE_HEIGHT, 256, 256);
-
         int tankX = mouseX - (x + TANK_HOVER_X);
         int tankY = mouseY - (y + TANK_HOVER_Y);
         if (tankX >= 0
