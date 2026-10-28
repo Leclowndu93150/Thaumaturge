@@ -21,6 +21,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -50,6 +51,9 @@ public class BlockEntityArcaneWorkbench extends AbstractSyncedBlockEntity implem
     @Override
     protected void loadAdditional(CompoundTag input, HolderLookup.Provider registries) {
         super.loadAdditional(input, registries);
+        for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+            inventory.getItems().set(slot, ItemStack.EMPTY);
+        }
         ContainerHelper.loadAllItems(input, inventory.getItems(), registries);
         inventory.setChanged();
     }
