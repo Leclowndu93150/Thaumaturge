@@ -249,7 +249,7 @@ public final class BlockFluxGas extends Block implements PhysicalFluxBlock, Liqu
             return -1;
         }
         if (!state.getFluidState().isEmpty()) {
-            return -1;
+            return state.getBlock() instanceof LiquidBlock ? 0 : -1;
         }
         return state.canBeReplaced() ? 0 : -1;
     }

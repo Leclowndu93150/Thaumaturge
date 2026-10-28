@@ -145,9 +145,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         if (quantaRemaining != prevRemaining) {
             setGoo(level, pos, quantaRemaining, Block.UPDATE_CLIENTS);
             scheduleGooTick(level, pos);
-            if (quantaRemaining == 1) {
-                return;
-            }
+            return;
         } else if (quantaRemaining == 1) {
             return;
         }
@@ -302,7 +300,7 @@ public abstract class FluxGooFluid extends BaseFlowingFluid {
         if (state.blocksMotion()) {
             return false;
         }
-        return state.canBeReplaced();
+        return state.canBeReplaced() && state.getCollisionShape(level, pos).isEmpty();
     }
 
     private boolean displaceIfPossible(ServerLevel level, BlockPos pos) {

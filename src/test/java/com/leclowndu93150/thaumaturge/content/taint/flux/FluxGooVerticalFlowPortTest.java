@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,24 +55,22 @@ class FluxGooVerticalFlowPortTest {
     }
 
     @Test
-    void partialResidualIsCommittedBeforeSidewaysLeveling() throws Exception {
+    void partialResidualIsCommittedBeforeTheNextSidewaysFlowTick() throws Exception {
         WorldFixture world = new WorldFixture(8, FluxGooFluid.gooBlockState(7));
         BlockPos north = world.origin.north();
         world.states.put(north, FluxGooFluid.gooBlockState(3));
-        when(world.random.nextInt(2)).thenReturn(1);
 
         invokeSpread(world, 8);
 
         assertEquals(8, world.state(world.below).getFluidState().getAmount());
-        assertEquals(5, world.state(world.origin).getFluidState().getAmount());
-        assertEquals(5, world.state(north).getFluidState().getAmount());
+        assertEquals(7, world.state(world.origin).getFluidState().getAmount());
+        assertEquals(3, world.state(north).getFluidState().getAmount());
         verify(world.level).setBlock(world.origin, FluxGooFluid.gooBlockState(7), Block.UPDATE_CLIENTS);
-        verify(world.level).setBlock(world.origin, FluxGooFluid.gooBlockState(5), Block.UPDATE_CLIENTS);
-        verify(world.level).setBlock(north, FluxGooFluid.gooBlockState(5), Block.UPDATE_CLIENTS);
+        verify(world.level, never()).setBlock(eq(world.origin), eq(FluxGooFluid.gooBlockState(5)), anyInt());
+        verify(world.level, never()).setBlock(eq(north), any(BlockState.class), anyInt());
         verifyTick(world, world.below, gooFluid(8));
-        verify(world.level, times(2))
-                .scheduleTick(eq(world.origin), eq(gooFluid(5)), eq(gooFluid(5).getTickDelay(world.level)));
-        verifyTick(world, north, gooFluid(5));
+        verifyTick(world, world.origin, gooFluid(7));
+        verifyNoTick(world, north);
         int total = world.state(world.below).getFluidState().getAmount()
                 + world.state(world.origin).getFluidState().getAmount()
                 + world.state(north).getFluidState().getAmount();

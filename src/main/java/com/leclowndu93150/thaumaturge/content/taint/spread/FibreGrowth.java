@@ -30,7 +30,7 @@ public final class FibreGrowth {
     private static final int VERTICAL_REACH = 2;
     private static final float MAX_TARGET_HARDNESS = 10.0F;
     private static final float MAX_CONVERTIBLE_HARDNESS = 5.0F;
-    private static final float FEATURE_CHANCE = 0.6F;
+    private static final int FEATURE_CHANCE_PERCENT = 60;
     private static final float GROWTH_PRESSURE = 0.01F;
     private static final int SPROUT_ONE_IN = 100;
     private static final int WOODY_TAINT_NEIGHBOURS = 2;
@@ -49,8 +49,6 @@ public final class FibreGrowth {
                     TTBlockTags.TAINT_CONVERTIBLE_ROCK,
                     GROUND_TAINT_NEIGHBOURS,
                     state -> TTBlocks.TAINT_ROCK.get().defaultBlockState()));
-    private static final List<Direction> SCAN_ORDER =
-            List.of(Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
 
     private FibreGrowth() {}
 
@@ -113,9 +111,14 @@ public final class FibreGrowth {
     }
 
     private static BlockPos pickTarget(BlockPos origin, RandomSource random) {
-        int dx = offset(random, HORIZONTAL_REACH);
-        int dy = offset(random, VERTICAL_REACH);
-        int dz = offset(random, HORIZONTAL_REACH);
+        int dx;
+        int dy;
+        int dz;
+        do {
+            dx = offset(random, HORIZONTAL_REACH);
+            dy = offset(random, VERTICAL_REACH);
+            dz = offset(random, HORIZONTAL_REACH);
+        } while ((dx | dy | dz) == 0);
         return origin.offset(dx, dy, dz);
     }
 
@@ -137,7 +140,9 @@ public final class FibreGrowth {
         if (state.isAir()) {
             return true;
         }
-        return state.canBeReplaced() && !state.is(BlockTags.LEAVES) && !state.liquid();
+        return state.canBeReplaced()
+                && !state.is(BlockTags.LEAVES)
+                && state.getFluidState().isEmpty();
     }
 
     private static boolean columnReady(ServerLevel level, BlockPos pos) {
@@ -156,19 +161,25 @@ public final class FibreGrowth {
     }
 
     private static boolean sproutFeature(ServerLevel level, BlockPos target, RandomSource random) {
-        for (Direction direction : SCAN_ORDER) {
+        Direction logSide = null;
+        int logCount = 0;
+        for (Direction direction : Direction.values()) {
             if (level.getBlockState(target.relative(direction)).is(TTBlocks.TAINT_LOG)) {
-                return random.nextFloat() < FEATURE_CHANCE
-                        && level.setBlock(
-                                target,
-                                TTBlocks.TAINT_FEATURE
-                                        .get()
-                                        .defaultBlockState()
-                                        .setValue(DirectionalBlock.FACING, direction.getOpposite()),
-                                Block.UPDATE_ALL);
+                logCount++;
+                if (random.nextInt(logCount) == 0) {
+                    logSide = direction;
+                }
             }
         }
-        return false;
+        return logSide != null
+                && random.nextInt((int) PERCENT) < FEATURE_CHANCE_PERCENT
+                && level.setBlock(
+                        target,
+                        TTBlocks.TAINT_FEATURE
+                                .get()
+                                .defaultBlockState()
+                                .setValue(DirectionalBlock.FACING, logSide.getOpposite()),
+                        Block.UPDATE_ALL);
     }
 
     private static @Nullable Conversion convertible(ServerLevel level, BlockPos target, BlockState state) {
