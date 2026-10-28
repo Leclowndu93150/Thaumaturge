@@ -44,10 +44,11 @@ import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityEssentiaPort;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.bellows.BlockEntityBellows;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockJar;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarBrain;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarCreative;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarVoid;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
@@ -63,6 +64,7 @@ import com.leclowndu93150.thaumaturge.content.golem.press.BlockEntityGolemBuilde
 import com.leclowndu93150.thaumaturge.content.infernalfurnace.BlockEntityInfernalFurnace;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityPedestal;
+import com.leclowndu93150.thaumaturge.content.legacy.LegacyJarEntities;
 import com.leclowndu93150.thaumaturge.content.manabean.BlockEntityManaPod;
 import com.leclowndu93150.thaumaturge.content.misc.nitor.BlockEntityNitor;
 import com.leclowndu93150.thaumaturge.content.research.decon.BlockEntityDeconstructionTable;
@@ -73,6 +75,7 @@ import com.leclowndu93150.thaumaturge.content.spell.manipulator.BlockEntityFocal
 import com.leclowndu93150.thaumaturge.content.taint.ecology.BlockEntityEtherealBloom;
 import com.leclowndu93150.thaumaturge.content.workbench.BlockEntityArcaneWorkbench;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -205,13 +208,13 @@ public final class TTBlockEntities {
                     "bellows",
                     () -> new BlockEntityType<>(BlockEntityBellows::new, Set.of(TTBlocks.BELLOWS.get()), null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJar>> JAR =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AbstractBlockEntityJar>> JAR =
             BLOCK_ENTITIES.register(
                     "jar",
                     () -> new BlockEntityType<>(
-                            BlockEntityJar::new,
+                            LegacyJarEntities::create,
                             BuiltInRegistries.BLOCK.stream()
-                                    .filter(BlockJar.class::isInstance)
+                                    .filter(AbstractBlockJar.class::isInstance)
                                     .collect(Collectors.toUnmodifiableSet()),
                             null));
 
@@ -406,6 +409,16 @@ public final class TTBlockEntities {
             BLOCK_ENTITIES.register(
                     "jar_void",
                     () -> new BlockEntityType<>(BlockEntityJarVoid::new, Set.of(TTBlocks.JAR_VOID.get()), null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityJarCreative>> JAR_CREATIVE =
+            BLOCK_ENTITIES.register(
+                    "jar_creative",
+                    () -> new BlockEntityType<>(
+                            BlockEntityJarCreative::new, Set.of(TTBlocks.JAR_CREATIVE.get()), null));
+
+    public static List<BlockEntityType<? extends AbstractBlockEntityJar>> essentiaJars() {
+        return List.of(JAR.get(), JAR_VOID.get(), JAR_CREATIVE.get());
+    }
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlockEntityTube>> TUBE =
             BLOCK_ENTITIES.register(

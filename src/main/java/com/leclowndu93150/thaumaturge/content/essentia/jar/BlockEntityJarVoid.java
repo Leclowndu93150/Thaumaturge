@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 
-public final class BlockEntityJarVoid extends BlockEntityJar {
+public final class BlockEntityJarVoid extends AbstractBlockEntityJar {
     private static final int LEAK_ODDS = 250;
     private static final float LEAK_FLUX = 1.0F;
     private static final int FILTERED_SUCTION = 48;

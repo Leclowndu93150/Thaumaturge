@@ -6,7 +6,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.AspectList;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.api.essentia.IEssentiaConduit;
 import com.leclowndu93150.thaumaturge.content.essentia.item.ComponentEssentia;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
 import com.leclowndu93150.thaumaturge.registry.TTItems;
 import com.leclowndu93150.thaumaturge.registry.TTSounds;
@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -68,7 +67,7 @@ public final class PhialItem extends Item {
         if (player == null || !(level.getBlockEntity(pos) instanceof IEssentiaConduit container)) {
             return InteractionResult.PASS;
         }
-        boolean jar = container instanceof BlockEntityJar;
+        boolean jar = container instanceof AbstractBlockEntityJar;
         if (!jar && !(container instanceof BlockEntityAlembic)) {
             return InteractionResult.PASS;
         }
@@ -124,21 +123,7 @@ public final class PhialItem extends Item {
         }
 
         InteractionResult store(IEssentiaConduit container, AspectInstance contents) {
-            if (container instanceof BlockEntityJar jar && jar.isCreativeJar()) {
-                ResourceKey<IAspect> key = contents.aspect().unwrapKey().orElse(null);
-                if (key == null) {
-                    return InteractionResult.PASS;
-                }
-                if (level.isClientSide()) {
-                    player.swing(hand);
-                    return InteractionResult.SUCCESS;
-                }
-                jar.setCreativeAspect(key);
-                new Transfer(container, contents.aspect(), contents.amount(), Flow.DEPOSIT).settle(player, hand, held);
-                level.playSound(null, pos, TTSounds.JAR.get(), SoundSource.BLOCKS, SOUND_VOLUME, SOUND_PITCH);
-                return InteractionResult.SUCCESS;
-            }
-            if (container.heldAmount(CONTAINER_FACE) + contents.amount() > BlockEntityJar.CAPACITY) {
+            if (container.roomFor(contents.aspect(), CONTAINER_FACE) < contents.amount()) {
                 return InteractionResult.PASS;
             }
             return run(new Transfer(container, contents.aspect(), contents.amount(), Flow.DEPOSIT));

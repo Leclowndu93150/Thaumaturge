@@ -43,7 +43,6 @@ import com.leclowndu93150.thaumaturge.content.equipment.hover.ThaumostaticHarnes
 import com.leclowndu93150.thaumaturge.content.equipment.shield.ThaumicShieldItem;
 import com.leclowndu93150.thaumaturge.content.essentia.ItemResonator;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.ItemAdvancedAlchemicalFurnace;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.CreativeJarItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBraceItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarBrainItem;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.JarItem;
@@ -87,6 +86,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -148,8 +148,10 @@ public final class TTItems {
 
     public static final DeferredItem<BlockItem> JAR_VOID = registerSimpleBlockItem(TTBlocks.JAR_VOID, JarItem::new);
 
-    public static final DeferredItem<BlockItem> JAR_CREATIVE =
-            registerSimpleBlockItem(TTBlocks.JAR_CREATIVE, CreativeJarItem::new);
+    public static final DeferredItem<BlockItem> JAR_CREATIVE = ITEMS.registerItem(
+            "jar_creative",
+            props -> new JarItem(TTBlocks.JAR_CREATIVE.get(), props),
+            new Item.Properties().component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true));
 
     public static final DeferredItem<BlockItem> TUBE = ITEMS.registerSimpleBlockItem(TTBlocks.TUBE);
 

@@ -5,7 +5,7 @@ import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.crucible.BlockEntityCrucible;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
 import com.leclowndu93150.thaumaturge.content.essentia.crystalizer.BlockEntityEssentiaCrystalizer;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJarBrain;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntityAlembic;
@@ -27,7 +27,7 @@ import org.jspecify.annotations.Nullable;
 final class JadeEssentiaDetails {
     private JadeEssentiaDetails() {}
 
-    static void jar(BlockEntityJar jar, JadeDetailBuilder data) {
+    static void jar(AbstractBlockEntityJar jar, JadeDetailBuilder data) {
         data.storage(jar.getContents(jar.getLevel().registryAccess()), jar.capacity(), false);
         filter(data, jar, jar.aspectFilterKey());
     }

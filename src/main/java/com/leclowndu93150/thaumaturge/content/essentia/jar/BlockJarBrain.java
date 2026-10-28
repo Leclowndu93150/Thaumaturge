@@ -60,7 +60,7 @@ public final class BlockJarBrain extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return BlockJar.SHAPE;
+        return AbstractBlockJar.SHAPE;
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class BlockJarBrain extends BaseEntityBlock {
     @Override
     protected VoxelShape getCollisionShape(
             BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return BlockJar.SHAPE;
+        return AbstractBlockJar.SHAPE;
     }
 
     @Override

@@ -27,8 +27,7 @@ public final class TTBlockEntityRenderers {
                 TTBlockEntities.RECHARGE_PEDESTAL.get(),
                 context ->
                         new RechargePedestalRenderer(context, RECHARGE_PEDESTAL_ITEM_SCALE, RECHARGE_PEDESTAL_FLOAT));
-        event.registerBlockEntityRenderer(TTBlockEntities.JAR.get(), JarRenderer::new);
-        event.registerBlockEntityRenderer(TTBlockEntities.JAR_VOID.get(), JarRenderer::new);
+        TTBlockEntities.essentiaJars().forEach(type -> event.registerBlockEntityRenderer(type, JarRenderer::new));
         event.registerBlockEntityRenderer(TTBlockEntities.JAR_BRAIN.get(), JarBrainRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.DIOPTRA.get(), DioptraRenderer::new);
         event.registerBlockEntityRenderer(TTBlockEntities.CENTRIFUGE.get(), CentrifugeRenderer::new);

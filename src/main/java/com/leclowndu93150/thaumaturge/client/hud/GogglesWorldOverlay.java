@@ -10,7 +10,7 @@ import com.leclowndu93150.thaumaturge.api.essentia.IAspectQuery;
 import com.leclowndu93150.thaumaturge.api.items.GogglesAccess;
 import com.leclowndu93150.thaumaturge.client.render.aspect.AspectTagWorldRenderer;
 import com.leclowndu93150.thaumaturge.content.aura.node.BlockEntityNode;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.leclowndu93150.thaumaturge.content.essentia.reservoir.BlockEntityEssentiaReservoir;
 import com.leclowndu93150.thaumaturge.content.infusion.BlockEntityInfusionMatrix;
 import com.leclowndu93150.thaumaturge.content.research.scan.ScanNode;
@@ -86,7 +86,7 @@ public final class GogglesWorldOverlay {
         boolean spaceAbove = mc.level.getBlockState(pos.above()).isAir();
         Direction dir = spaceAbove ? Direction.UP : mc.player.getDirection().getOpposite();
         double y = pos.getY() + (spaceAbove ? SPACE_ABOVE_LIFT : 0.0F);
-        if (be instanceof BlockEntityJar && dir == Direction.UP) {
+        if (be instanceof AbstractBlockEntityJar && dir == Direction.UP) {
             y += JAR_READOUT_LIFT - scale * 2.0F;
         }
         drawTags(
@@ -99,7 +99,7 @@ public final class GogglesWorldOverlay {
                 dir,
                 scale,
                 readout.showAmounts(),
-                be instanceof BlockEntityJar ? scale * 0.4F : 0.0F,
+                be instanceof AbstractBlockEntityJar ? scale * 0.4F : 0.0F,
                 be instanceof BlockEntityEssentiaReservoir ? 1.2F : scale * 4.0F,
                 be instanceof BlockEntityEssentiaReservoir);
     }

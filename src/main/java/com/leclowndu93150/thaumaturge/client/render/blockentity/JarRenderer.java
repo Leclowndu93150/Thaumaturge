@@ -3,7 +3,7 @@ package com.leclowndu93150.thaumaturge.client.render.blockentity;
 import com.leclowndu93150.thaumaturge.api.aspect.IAspect;
 import com.leclowndu93150.thaumaturge.content.essentia.EssentiaTransportHelper;
 import com.leclowndu93150.thaumaturge.content.essentia.flow.EssentiaFlowHandler;
-import com.leclowndu93150.thaumaturge.content.essentia.jar.BlockEntityJar;
+import com.leclowndu93150.thaumaturge.content.essentia.jar.AbstractBlockEntityJar;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -23,7 +23,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
-public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
+public final class JarRenderer implements BlockEntityRenderer<AbstractBlockEntityJar> {
     private static final ResourceLocation BRINE_TEXTURE =
             ResourceLocation.fromNamespaceAndPath("thaumaturge", "textures/entity/jarbrine.png");
     private static final ResourceLocation LABEL_TEXTURE =
@@ -53,7 +53,7 @@ public final class JarRenderer implements BlockEntityRenderer<BlockEntityJar> {
 
     @Override
     public void render(
-            BlockEntityJar jar,
+            AbstractBlockEntityJar jar,
             float partialTick,
             PoseStack poseStack,
             MultiBufferSource buffers,
