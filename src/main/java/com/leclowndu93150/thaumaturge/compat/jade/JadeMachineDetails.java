@@ -10,6 +10,7 @@ import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFlu
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorBase;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorEssentia;
+import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockEntityPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.essentia.advancedfurnace.BlockEntityAdvancedAlchemicalFurnace;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.BlockEntitySmelter;
 import com.leclowndu93150.thaumaturge.content.essentia.smeltery.SmelterGauge;
@@ -160,7 +161,27 @@ final class JadeMachineDetails {
 
     static void spa(BlockEntitySpa machine, JadeDetailBuilder data) {
         data.detail("jade.thaumaturge.machine.fluid", machine.getTank().getFluidAmount(), BlockEntitySpa.TANK_CAPACITY);
+        if (!machine.getTank().isEmpty())
+            data.detail(
+                    "jade.thaumaturge.spa.fluid",
+                    machine.getTank().getFluid().getFluid().getFluidType().getDescription());
         data.summary(machine.getMix() ? "jade.thaumaturge.spa.mix" : "jade.thaumaturge.spa.water");
+    }
+
+    static void potionSprayer(BlockEntityPotionSprayer machine, JadeDetailBuilder data) {
+        data.summary(
+                "jade.thaumaturge.potion_sprayer.doses", machine.sprayShots(), BlockEntityPotionSprayer.MAX_CHARGES);
+        if (machine.getPotion().isEmpty()) return;
+        data.detail(
+                "jade.thaumaturge.potion_sprayer.potion", machine.getPotion().getHoverName());
+        if (machine.sprayShots() >= BlockEntityPotionSprayer.MAX_CHARGES) return;
+        for (var entry : machine.essentiaNeeded().entries()) {
+            data.detail(
+                    "jade.thaumaturge.essentia.fill",
+                    data.aspectName(entry.aspect()),
+                    machine.essentiaStored().amountOf(entry.aspect()),
+                    entry.amount());
+        }
     }
 
     static void furnace(BlockEntityInfernalFurnace machine, JadeDetailBuilder data) {

@@ -8,6 +8,7 @@ import com.leclowndu93150.thaumaturge.content.device.BlockEntityVoidSiphon;
 import com.leclowndu93150.thaumaturge.content.device.fluxscrubber.BlockEntityFluxScrubber;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirror;
 import com.leclowndu93150.thaumaturge.content.device.mirror.BlockEntityMirrorEssentia;
+import com.leclowndu93150.thaumaturge.content.device.sprayer.BlockEntityPotionSprayer;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEldritchObelisk;
 import com.leclowndu93150.thaumaturge.content.eldritch.block.BlockEntityEldritchObelisk;
 import com.leclowndu93150.thaumaturge.content.essentia.BlockEntityCentrifuge;
@@ -80,6 +81,8 @@ final class JadeBlockProviderHolder {
                     JadeConfig.DECONSTRUCTION_TABLES,
                     JadeMachineDetails::deconstruction),
             new JadeBlockHandler<>(BlockEntitySpa.class, JadeConfig.SPAS, JadeMachineDetails::spa),
+            new JadeBlockHandler<>(
+                    BlockEntityPotionSprayer.class, JadeConfig.POTION_SPRAYERS, JadeMachineDetails::potionSprayer),
             new JadeBlockHandler<>(
                     BlockEntityEverfullUrn.class, JadeConfig.EVERFULL_URNS, (urn, data) -> data.hideFluid()),
             new JadeBlockHandler<>(

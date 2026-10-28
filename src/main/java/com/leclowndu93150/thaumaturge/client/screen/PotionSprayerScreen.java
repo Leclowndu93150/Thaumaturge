@@ -67,7 +67,17 @@ public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPot
         if (sprayer == null || minecraft == null || minecraft.player == null) {
             return;
         }
-        int charges = sprayer.sprayShots();
+        graphics.blit(
+                TEXTURE,
+                leftPos + CHARGE_OVERLAY_X,
+                topPos + CHARGE_OVERLAY_Y,
+                CHARGE_OVERLAY_U,
+                CHARGE_OVERLAY_V,
+                CHARGE_OVERLAY_WIDTH,
+                CHARGE_OVERLAY_HEIGHT,
+                256,
+                256);
+        int charges = Math.clamp(sprayer.sprayShots(), 0, BlockEntityPotionSprayer.MAX_CHARGES);
         if (charges > 0) {
             int scroll = minecraft.player.tickCount % CHARGE_SCROLL_PERIOD;
             int tint = 0xFF000000 | (sprayer.color() & 0x00FFFFFF);
@@ -86,16 +96,6 @@ public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPot
                     tint);
         }
         drawAspects(graphics, sprayer);
-        graphics.blit(
-                TEXTURE,
-                leftPos + CHARGE_OVERLAY_X,
-                topPos + CHARGE_OVERLAY_Y,
-                CHARGE_OVERLAY_U,
-                CHARGE_OVERLAY_V,
-                CHARGE_OVERLAY_WIDTH,
-                CHARGE_OVERLAY_HEIGHT,
-                256,
-                256);
     }
 
     private void drawAspects(GuiGraphics graphics, BlockEntityPotionSprayer sprayer) {
@@ -117,7 +117,8 @@ public final class PotionSprayerScreen extends AbstractTTContainerScreen<MenuPot
                     256,
                     256,
                     BAR_BACKGROUND_TINT);
-            int filled = (int) ((float) progress.amountOf(entry.aspect()) / entry.amount() * BAR_HEIGHT);
+            int filled = Math.clamp(
+                    (int) ((float) progress.amountOf(entry.aspect()) / entry.amount() * BAR_HEIGHT), 0, BAR_HEIGHT);
             if (filled > 0) {
                 int tint = 0xFF000000 | (entry.aspect().value().color() & 0x00FFFFFF);
                 GuiBlend.blitTinted(

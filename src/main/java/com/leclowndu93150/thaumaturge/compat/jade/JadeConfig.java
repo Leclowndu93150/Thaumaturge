@@ -34,6 +34,7 @@ final class JadeConfig {
     static final ResourceLocation VOID_SIPHONS = option("void_siphons");
     static final ResourceLocation DECONSTRUCTION_TABLES = option("deconstruction_tables");
     static final ResourceLocation SPAS = option("spas");
+    static final ResourceLocation POTION_SPRAYERS = option("potion_sprayers");
     static final ResourceLocation EVERFULL_URNS = option("everfull_urns");
     static final ResourceLocation INFERNAL_FURNACES = option("infernal_furnaces");
     static final ResourceLocation FOCAL_MANIPULATORS = option("focal_manipulators");
@@ -66,6 +67,7 @@ final class JadeConfig {
             VOID_SIPHONS,
             DECONSTRUCTION_TABLES,
             SPAS,
+            POTION_SPRAYERS,
             EVERFULL_URNS,
             INFERNAL_FURNACES,
             FOCAL_MANIPULATORS,
